@@ -1,0 +1,1070 @@
+<script>
+  /* Utilidades compartidas entre Admin e Interfaz */
+
+  var IDENTIDAD_ST90 = { nombre: 'Secundaria Técnica 90', pie: 'Plan de Estudio NEM', logo: '' };
+
+  function aplicarIdentidad(obj) {
+    if (!obj) return IDENTIDAD_ST90;
+    if (obj.nombre) IDENTIDAD_ST90.nombre = String(obj.nombre);
+    if (obj.pie) IDENTIDAD_ST90.pie = String(obj.pie);
+    if (obj.logo != null) IDENTIDAD_ST90.logo = String(obj.logo || '');
+    return IDENTIDAD_ST90;
+  }
+
+  function escaparHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizarNombrePref_(s) {
+    return String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function toast(mensaje, tipo) {
+    let t = document.getElementById('st90-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'st90-toast';
+      document.body.appendChild(t);
+    }
+    t.className = (tipo || '');
+    t.textContent = mensaje;
+    // forzar reflow para reiniciar animación
+    void t.offsetWidth;
+    t.classList.add('visible');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove('visible'); }, 3200);
+  }
+
+  function modal(opciones) {
+    // opciones: {titulo, mensaje, html, botones: [{texto, clase, valor}], capturar}
+    return new Promise(function (resolve) {
+      const fondo = document.createElement('div');
+      fondo.className = 'st90-modal-fondo visible';
+      const listaBotones = opciones.botones || [{ texto: 'Aceptar', valor: true }];
+      const botones = listaBotones
+        .map(function (b, i) {
+          return '<button data-i="' + i + '" class="' + (b.clase || '') + '">' + escaparHtml(b.texto) + '</button>';
+        }).join('');
+      const cuerpo = opciones.html != null
+        ? '<div>' + opciones.html + '</div>'
+        : '<p>' + escaparHtml(opciones.mensaje || '') + '</p>';
+      fondo.innerHTML =
+        '<div class="st90-modal' + (opciones.clase ? ' ' + opciones.clase : '') + '">' +
+          '<h3>' + escaparHtml(opciones.titulo || '') + '</h3>' +
+          cuerpo +
+          '<div class="acciones">' + botones + '</div>' +
+        '</div>';
+      document.body.appendChild(fondo);
+      const inp = fondo.querySelector('input, textarea, select');
+      if (inp) {
+        setTimeout(function () {
+          inp.focus();
+          if (inp.select) inp.select();
+        }, 30);
+      }
+      fondo.addEventListener('click', function (ev) {
+        if (ev.target === fondo && opciones.cerrarFondo) {
+          fondo.remove();
+          resolve(false);
+          return;
+        }
+        const b = ev.target.closest('button[data-i]');
+        if (!b) return;
+        const def = listaBotones[Number(b.dataset.i)];
+        let val = def.valor;
+        if (typeof opciones.capturar === 'function') {
+          val = opciones.capturar(fondo, val);
+        }
+        fondo.remove();
+        resolve(val);
+      });
+      fondo.addEventListener('keydown', function (ev) {
+        if (ev.key !== 'Enter') return;
+        if (ev.target && String(ev.target.tagName) === 'TEXTAREA') return;
+        ev.preventDefault();
+        const aceptar = fondo.querySelector('.acciones button:last-child');
+        if (aceptar) aceptar.click();
+      });
+    });
+  }
+
+  function confirmar(mensaje, titulo) {
+    return modal({
+      titulo: titulo || 'Confirmar',
+      mensaje: mensaje,
+      botones: [
+        { texto: 'Cancelar', valor: false, clase: 'btn-secundario' },
+        { texto: 'Aceptar', valor: true }
+      ]
+    });
+  }
+
+  function pedirNumero(opciones) {
+    const min = opciones.min != null ? opciones.min : 0;
+    const valor = opciones.valor != null ? opciones.valor : 0;
+    return modal({
+      titulo: opciones.titulo || 'Ingresar número',
+      html: '<p>' + escaparHtml(opciones.mensaje || '') + '</p>' +
+        '<input id="st90-pedir-num" type="number" min="' + min + '" value="' + escaparHtml(String(valor)) + '" style="width:100%;">',
+      botones: [
+        { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+        { texto: 'Aceptar', valor: 'ok' }
+      ],
+      capturar: function (fondo, val) {
+        if (val === null) return null;
+        const campo = fondo.querySelector('#st90-pedir-num');
+        if (!campo) return null;
+        const n = parseInt(campo.value, 10);
+        return isNaN(n) ? NaN : n;
+      }
+    });
+  }
+
+  function pedirTexto(opciones) {
+    const tipo = opciones.tipo === 'password' ? 'password' : 'text';
+    return modal({
+      titulo: opciones.titulo || 'Ingresar',
+      html: '<p>' + escaparHtml(opciones.mensaje || '') + '</p>' +
+        '<input id="st90-pedir-txt" type="' + tipo + '" value="" autocomplete="off" style="width:100%;">',
+      botones: [
+        { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+        { texto: 'Aceptar', valor: 'ok' }
+      ],
+      capturar: function (fondo, val) {
+        if (val === null) return null;
+        const campo = fondo.querySelector('#st90-pedir-txt');
+        return campo ? campo.value : '';
+      }
+    });
+  }
+
+  /* Envuelve google.script.run con manejo uniforme */
+  function gsRun(fn) {
+    const args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (resolve, reject) {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(function (err) { reject(err); })
+        [fn].apply(null, args);
+    });
+  }
+
+  function enIframeSitio() {
+    try { return window.self !== window.top; } catch (e) { return true; }
+  }
+
+  function urlBaseWebApp() {
+    if (typeof URL_BASE_APP === 'string' && URL_BASE_APP.indexOf('http') === 0) {
+      return URL_BASE_APP.replace(/\/+$/, '');
+    }
+    try {
+      const href = window.parent && window.parent.location && window.parent.location.href;
+      if (href && href.indexOf('/exec') >= 0) return href.split('?')[0];
+    } catch (e) {}
+    try {
+      const aqui = window.location && window.location.href;
+      if (aqui && aqui.indexOf('/exec') >= 0) return aqui.split('?')[0];
+    } catch (e2) {}
+    return '';
+  }
+
+  function urlWebApp(pagina) {
+    const base = urlBaseWebApp();
+    const q = pagina ? ('?pagina=' + encodeURIComponent(pagina)) : '';
+    return base ? (base + q) : q;
+  }
+
+  function extraerActionYCampos_(url) {
+    const texto = String(url || '');
+    const q = texto.indexOf('?');
+    const action = (q >= 0 ? texto.slice(0, q) : texto).replace(/\/+$/, '');
+    const campos = [];
+    if (q >= 0) {
+      texto.slice(q + 1).split('&').forEach(function (pair) {
+        if (!pair) return;
+        const kv = pair.split('=');
+        const nombre = decodeURIComponent((kv[0] || '').replace(/\+/g, ' '));
+        if (!nombre) return;
+        campos.push({
+          name: nombre,
+          value: decodeURIComponent((kv[1] || '').replace(/\+/g, ' '))
+        });
+      });
+    }
+    return { action: action, campos: campos };
+  }
+
+  function enviarFormularioPadre(url) {
+    if (!url) return false;
+    const parsed = extraerActionYCampos_(url);
+    if (!parsed.action) return false;
+    const form = document.createElement('form');
+    form.method = 'GET';
+    form.action = parsed.action;
+    form.target = '_parent';
+    form.setAttribute('target', '_parent');
+    form.style.display = 'none';
+    parsed.campos.forEach(function (c) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = c.name;
+      input.value = c.value;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    return true;
+  }
+
+  function navegarPaginaWebApp(pagina) {
+    const base = urlBaseWebApp();
+    if (!base) {
+      toast('No se pudo abrir esa vista. Recarga la página.', 'error');
+      return false;
+    }
+    const url = base.split('?')[0] + '?pagina=' + encodeURIComponent(pagina || 'alumno') + '&v=' + Date.now();
+    return enviarFormularioPadre(url);
+  }
+
+  function irWebApp(url, opciones) {
+    const opts = opciones || {};
+    if (!url) return false;
+
+    if (opts.nuevaPestana) {
+      const w = window.open(url, '_blank');
+      if (w) return true;
+    }
+
+    return enviarFormularioPadre(url);
+  }
+
+  function fmtTiempo(seg) {
+    seg = Math.max(0, Math.floor(seg));
+    const m = String(Math.floor(seg / 60)).padStart(2, '0');
+    const s = String(seg % 60).padStart(2, '0');
+    return m + ':' + s;
+  }
+
+  function etiquetaNivelPpm(nivel) {
+    if (nivel === 'bajo') return 'Por debajo del rango';
+    if (nivel === 'alto') return 'Por encima del rango';
+    if (nivel === 'dentro') return 'Dentro del rango';
+    return 'Sin dato';
+  }
+
+  function claseNivelPpm(nivel) {
+    return nivel || 'dentro';
+  }
+
+  function descargarCSV(nombreArchivo, filas) {
+    const csv = filas.map(function (f) {
+      return f.map(function (c) {
+        const s = String(c == null ? '' : c);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(',');
+    }).join('\n');
+    const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nombreArchivo;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  /* =========================================================
+     UTILIDADES DE FORMATO DE LECTURA TIPO LIBRO EDITORIAL
+     ========================================================= */
+  function escaparRegexComun(str) {
+    return String(str || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function contarPalabrasCliente(texto) {
+    const s = String(texto || '').trim();
+    if (!s) return 0;
+    return s.split(/\s+/).length;
+  }
+
+  function partirParrafosLibro(texto, titulo) {
+    let t = String(texto || '').replace(/\r\n/g, '\n').trim();
+    if (!t) return [];
+
+    // Si el texto empieza con el título repetido, removerlo del cuerpo
+    if (titulo) {
+      const titLimpio = String(titulo).trim();
+      const reTit = new RegExp('^' + escaparRegexComun(titLimpio) + '[^\\n.]*(?:[\\n.]*|(?=[A-ZÁÉÍÓÚ]))', 'i');
+      const mTit = t.match(reTit);
+      if (mTit && mTit[0].length < 140 && mTit[0].length < t.length * 0.45) {
+        t = t.substring(mTit[0].length).replace(/^[\s:.-]+/, '').trim();
+      }
+    }
+
+    // Si contiene tags HTML, respetarlos si están estructurados
+    if (/<p[\s>]/i.test(t)) {
+      const div = document.createElement('div');
+      div.innerHTML = t;
+      const ps = Array.from(div.querySelectorAll('p')).map(function (p) { return p.textContent.trim(); }).filter(Boolean);
+      if (ps.length) return ps;
+    }
+
+    // 1. Dividir por saltos dobles o sencillos de línea
+    let parrafos = t.split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean);
+    if (parrafos.length === 1 && parrafos[0].indexOf('\n') >= 0) {
+      parrafos = parrafos[0].split('\n').map(function (p) { return p.trim(); }).filter(Boolean);
+    }
+
+    // 2. Si algún párrafo es monolítico (> 80 palabras), dividirlo inteligentemente por oraciones
+    const resultado = [];
+    parrafos.forEach(function (p) {
+      const palabras = p.split(/\s+/);
+      if (palabras.length <= 80) {
+        resultado.push(p);
+        return;
+      }
+      const oraciones = p.match(/[^.!?]+[.!?]+(?:["»”']*)(?:\s+|$)|[^.!?]+$/g);
+      if (!oraciones || oraciones.length < 3) {
+        resultado.push(p);
+        return;
+      }
+      let grupo = [];
+      let conteoPalabras = 0;
+      oraciones.forEach(function (or) {
+        const orTrim = or.trim();
+        const nOr = orTrim.split(/\s+/).length;
+        grupo.push(orTrim);
+        conteoPalabras += nOr;
+        if (conteoPalabras >= 50 && grupo.length >= 2) {
+          resultado.push(grupo.join(' '));
+          grupo = [];
+          conteoPalabras = 0;
+        }
+      });
+      if (grupo.length) {
+        if (resultado.length > 0 && conteoPalabras < 25) {
+          resultado[resultado.length - 1] += ' ' + grupo.join(' ');
+        } else {
+          resultado.push(grupo.join(' '));
+        }
+      }
+    });
+
+    return resultado.length ? resultado : [t];
+  }
+
+  function renderizarHojaLibro(texto, tema, asignatura, grado, palabras) {
+    const parrafos = partirParrafosLibro(texto, tema);
+    const titTxt = tema ? String(tema).trim() : 'Lectura formativa';
+    const asigTxt = asignatura ? String(asignatura).trim() : 'Comprensión Lectora';
+    let gNum = String(grado || '').match(/[123]/);
+    const gradoTxt = gNum ? (gNum[0] + '° de Secundaria') : 'Fase 6 · NEM';
+    const totalPalabras = palabras || contarPalabrasCliente(texto);
+    const iden = (typeof IDENTIDAD_ST90 === 'object' && IDENTIDAD_ST90) ? IDENTIDAD_ST90 : {};
+    const nomEsc = String(iden.nombre || 'Secundaria Técnica 90').trim();
+    const pieEsc = String(iden.pie || 'Plan de Estudio NEM').trim();
+    const logoEsc = String(iden.logo || '').trim();
+
+    let html = '<div class="hoja-libro-wrapper">';
+    html += '<article class="hoja-libro">';
+    
+    html += '<header class="hoja-libro-encabezado">';
+    html += '  <div class="hoja-libro-marca">';
+    if (logoEsc) {
+      html += '    <img class="hoja-libro-logo" src="' + logoEsc.replace(/"/g, '') + '" alt="">';
+    }
+    html += '    <span class="hoja-libro-escuela">' + escaparHtml(nomEsc) + '</span>';
+    html += '  </div>';
+    html += '  <span class="libro-meta-asignatura">' + escaparHtml(asigTxt) + ' · ' + escaparHtml(gradoTxt) + '</span>';
+    html += '</header>';
+
+    html += '<h1 class="hoja-libro-titulo">' + escaparHtml(titTxt) + '</h1>';
+    html += '<div class="hoja-libro-separador">✦ ✦ ✦</div>';
+
+    html += '<div class="hoja-libro-cuerpo">';
+    parrafos.forEach(function (p) {
+      html += '<p>' + escaparHtml(p) + '</p>';
+    });
+    html += '</div>';
+
+    html += '<footer class="hoja-libro-pie">';
+    html += '  <span>' + escaparHtml(pieEsc) + '</span>';
+    html += '  <span>' + (totalPalabras ? (totalPalabras + ' palabras') : 'Lectura escolar') + '</span>';
+    html += '</footer>';
+
+    html += '</article>';
+    html += '</div>';
+    return html;
+  }
+
+  function htmlBtnAyuda(clave) {
+    return '<button type="button" class="btn-ayuda" onclick="event.stopPropagation();abrirAyuda(\'' +
+      String(clave || '').replace(/'/g, '') +
+      '\')" aria-label="Ayuda" data-tip="Ayuda">' +
+      '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="9"></circle>' +
+      '<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>' +
+      '<circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle>' +
+      '</svg></button>';
+  }
+
+  function abrirAyuda(clave) {
+    const a = AYUDAS_ST90[clave];
+    if (!a) return;
+    modal({
+      titulo: a.titulo,
+      html: '<div class="ayuda-cuerpo">' + a.html + '</div>',
+      clase: 'st90-modal-ayuda',
+      cerrarFondo: true,
+      botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: true }]
+    });
+  }
+
+  var AYUDAS_ST90 = {
+    resKpis: {
+      titulo: 'Resultados · indicadores',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Esta fila resume las evaluaciones que coinciden con los filtros de la pestaña Resultados. Cada número es el promedio (o el conteo) de esas evaluaciones, no de toda la escuela si hay un filtro activo.</p>' +
+        '<h4>Cómo se agregan los datos</h4>' +
+        '<p>Cuando un alumno termina el cuestionario, el sistema califica las respuestas, calcula velocidad y comprensión, y guarda una fila en la hoja <strong>Resultados</strong> de Google Sheets. Aquí se leen esas filas.</p>' +
+        '<h4>Qué significa cada campo</h4>' +
+        '<dl>' +
+        '<dt>Evaluaciones</dt><dd>Cuántas lecturas ya se calificaron con el filtro actual.</dd>' +
+        '<dt>Comprensión</dt><dd>Porcentaje de preguntas correctas. Promedio de esas evaluaciones.</dd>' +
+        '<dt>Velocidad PPM</dt><dd>Palabras por minuto al leer el texto (antes de las preguntas). Promedio.</dd>' +
+        '<dt>PME</dt><dd>Palabras de significado extraídas: cruza velocidad y comprensión. Si alguien lee muy rápido pero no entiende, el PME baja.</dd>' +
+        '<dt>Calif. final</dt><dd>Calificación global: 70&nbsp;% comprensión + 30&nbsp;% velocidad normalizada al objetivo del grado.</dd>' +
+        '<dt>Lit. · Inf. · Crít. · Relect.</dt><dd>En la lista de evaluaciones: porcentaje de aciertos en preguntas literales, inferenciales y críticas, y cuántas veces el alumno volvió al texto. Lit., Inf. y Crít. van ocultas por defecto; el botón «Ver Lit. Inf. Crít.» las muestra.</dd>' +
+        '</dl>' +
+        '<h4>Cálculos</h4>' +
+        '<div class="formula">Comprensión = (aciertos ÷ preguntas) × 100</div>' +
+        '<div class="formula">PPM = (palabras del texto ÷ segundos de lectura) × 60</div>' +
+        '<div class="formula">PME = PPM × (comprensión ÷ 100)</div>' +
+        '<div class="formula">Final = 0.7 × comprensión + 0.3 × min(100, PPM ÷ PPM objetivo × 100)</div>' +
+        '<p>PPM objetivo por defecto: 140 (1°), 150 (2°) y 158 (3°). Se puede cambiar en Configuración.</p>'
+    },
+    resGraficas: {
+      titulo: 'Resultados · gráficas y filtros',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Los filtros recortan el conjunto de evaluaciones. La gráfica compara grupos, grados o alumnos según el indicador que elijas. El recuadro <strong>Niveles de comprensión</strong> (Literal, Inferencial y Crítica) usa solo las evaluaciones cuyas preguntas ya tienen nivel clasificado.</p>' +
+        '<h4>Cómo se agregan los datos</h4>' +
+        '<p>No se capturan a mano. Cada examen guardado aporta una fecha, un alumno, una lectura y las métricas. Si filtras por periodo, se usa la fecha de esa evaluación.</p>' +
+        '<h4>Campos de esta sección</h4>' +
+        '<dl>' +
+        '<dt>Grado / Grupo / Alumno / Lectura / Periodo</dt><dd>Recortan qué evaluaciones entran al promedio y a la gráfica.</dd>' +
+        '<dt>Tipo</dt><dd>Líneas, barras o pastel: solo cambia el dibujo, no el cálculo.</dd>' +
+        '<dt>Comparar</dt><dd>Agrupa los puntos: por grupo, por grado o por alumno.</dd>' +
+        '<dt>Indicador</dt><dd>Qué número se grafica: comprensión, PPM, PME, global, tiempos o niveles Lit/Inf/Crít.</dd>' +
+        '<dt>Vista</dt><dd>«En el tiempo» ordena por fecha. «Promedio» resume un valor por categoría.</dd>' +
+        '</dl>' +
+        '<h4>Cálculos</h4>' +
+        '<p>En vista promedio, cada punto es la media del indicador en ese grupo, grado o alumno. En «Niveles», cada barra es aciertos ÷ preguntas de ese tipo × 100, sumando las evaluaciones filtradas.</p>'
+    },
+    resLista: {
+      titulo: 'Lista de evaluaciones',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Es el detalle de cada examen. Una fila = una lectura presentada por un alumno. Los encabezados con menú filtran esa columna. Lit., Inf. y Crít. están ocultas por defecto; el botón «Ver Lit. Inf. Crít.» las muestra.</p>' +
+        '<h4>Cómo se agregan los datos</h4>' +
+        '<p>Al terminar el cuestionario se guarda automáticamente: no hay captura docente. El nombre se toma de Matrícula; la lectura, del banco.</p>' +
+        '<h4>Qué significa cada campo</h4>' +
+        '<dl>' +
+        '<dt>Fecha</dt><dd>Momento en que se guardó el examen.</dd>' +
+        '<dt>Alumno / Grupo / Lectura</dt><dd>Quién presentó, en qué grupo y qué texto (asignatura · tema).</dd>' +
+        '<dt>Comprensión</dt><dd>Porcentaje de aciertos en todo el cuestionario.</dd>' +
+        '<dt>Lit. (Literal)</dt><dd>Porcentaje de aciertos solo en preguntas de dato explícito: quién, qué, dónde, cuándo, cifras o secuencia que el texto dice de frente. Si no hay preguntas de ese tipo, se muestra —.</dd>' +
+        '<dt>Inf. (Inferencial)</dt><dd>Porcentaje de aciertos en preguntas que piden leer entre líneas: causa, consecuencia, idea principal o conclusión.</dd>' +
+        '<dt>Crít. (Crítica)</dt><dd>Porcentaje de aciertos en preguntas de postura, propósito del autor, sesgo o si una afirmación es adecuada.</dd>' +
+        '<dt>PPM</dt><dd>Palabras por minuto de la lectura (cronómetro desde que abre el texto hasta «He terminado de leer»).</dd>' +
+        '<dt>PME</dt><dd>PPM × (comprensión ÷ 100). Velocidad «útil»: leer rápido sin entender no sube el PME.</dd>' +
+        '<dt>Relect. (Relecturas)</dt><dd>Cuántas veces el alumno pulsó «Ver lectura» durante el cuestionario y regresó al texto. 0 = no volvió a leer.</dd>' +
+        '<dt>Velocidad</dt><dd>Semáforo respecto al rango del grado: por debajo, dentro o por encima.</dd>' +
+        '<dt>Final</dt><dd>70&nbsp;% comprensión + 30&nbsp;% velocidad normalizada.</dd>' +
+        '<dt>T. lectura / T. preguntas</dt><dd>Segundos leyendo el texto y segundos contestando.</dd>' +
+        '<dt>Intento</dt><dd>Número de evaluación de ese alumno (sorteo o trimestral, según el modo).</dd>' +
+        '</dl>' +
+        '<h4>Cálculos de Lit. / Inf. / Crít.</h4>' +
+        '<div class="formula">% del nivel = (aciertos de ese nivel ÷ preguntas de ese nivel) × 100</div>' +
+        '<p>No se mezclan. Si una lectura tiene 4 literales y 2 inferenciales, Lit. usa solo las 4 y Inf. solo las 2. Las preguntas se clasifican en el banco (botón de niveles o al editar cada pregunta).</p>'
+    },
+    resNiveles: {
+      titulo: 'Lit. · Inf. · Crít. · Relect.',
+      html:
+        '<h4>Qué significan las abreviaturas</h4>' +
+        '<dl>' +
+        '<dt>Lit. — Literal</dt><dd>El alumno recupera información que el texto dice de forma explícita (personajes, lugares, cifras, orden de los hechos).</dd>' +
+        '<dt>Inf. — Inferencial</dt><dd>El alumno relaciona ideas: causa-efecto, idea principal, lo que se deduce aunque no esté escrito tal cual.</dd>' +
+        '<dt>Crít. — Crítica</dt><dd>El alumno valora el texto: propósito del autor, sesgo, si conviene afirmar algo o qué postura se sostiene.</dd>' +
+        '<dt>Relect. — Relecturas</dt><dd>Veces que, ya en el cuestionario, volvió a abrir el texto con «Ver lectura».</dd>' +
+        '</dl>' +
+        '<h4>Cómo se agregan</h4>' +
+        '<p>Cada pregunta del banco tiene un campo <strong>Nivel</strong> (literal, inferencial o crítica). Al calificar, se cuentan aciertos y totales de cada cubeta. Las relecturas las cuenta el cronómetro del alumno, no el docente.</p>' +
+        '<h4>Cálculo</h4>' +
+        '<div class="formula">Lit. = aciertos literales ÷ preguntas literales × 100</div>' +
+        '<div class="formula">Inf. = aciertos inferenciales ÷ preguntas inferenciales × 100</div>' +
+        '<div class="formula">Crít. = aciertos críticas ÷ preguntas críticas × 100</div>' +
+        '<p>Si una evaluación no tiene preguntas de un nivel, esa celda queda en — (no es un 0). El 0 solo aparece cuando sí hubo preguntas de ese tipo y no acertó ninguna.</p>'
+    },
+    matDirectorio: {
+      titulo: 'Matrícula',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Es el directorio escolar. Los alumnos activos aparecen en el login de la prueba. Los dados de baja no pueden examinar. Los botones de arriba (Total, Activos, Bajas, 1°, 2°, 3° y Grupos) solo filtran la lista que ves; no dan de alta ni de baja a nadie.</p>' +
+        '<h4>Cómo se agregan los datos</h4>' +
+        '<p>Alta individual, importación CSV, o escribiendo en la hoja <strong>Alumnos</strong> de Google Sheets (columnas: Matrícula, Nombre Completo, Grado, Grupo, Activo, Intentos extra). Los grupos viven en la hoja <strong>Grupos</strong>.</p>' +
+        '<h4>Campos</h4>' +
+        '<dl>' +
+        '<dt>Matrícula</dt><dd>Identificador único del alumno (número de lista o clave de la escuela).</dd>' +
+        '<dt>Nombre</dt><dd>Como debe verse en el menú de la prueba.</dd>' +
+        '<dt>Grado / Grupo</dt><dd>1, 2 o 3 y la letra (1a, 2b…). El grupo determina qué lecturas le sortean (las de su grado).</dd>' +
+        '<dt>Activo</dt><dd>SI = puede entrar. NO = baja temporal; no se borra el historial.</dd>' +
+        '<dt>Intentos extra</dt><dd>Se suman al cupo de la escuela y al extra del grupo.</dd>' +
+        '</dl>' +
+        '<h4>Cálculo de intentos</h4>' +
+        '<div class="formula">Permitidos = intentos de todos + extra del grupo + extra del alumno</div>' +
+        '<p>Cada sorteo consumido resta 1. La lectura trimestral usa un cupo aparte (calendario).</p>'
+    },
+    asiPrefecto: {
+      titulo: 'Asistencia',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>El alumno se pasa <strong>una vez al inicio del turno</strong>. El docente se marca <strong>en cada cambio de hora</strong>.</p>' +
+        '<h4>Prefecto</h4>' +
+        '<p>Cada prefecta entra con su <strong>nombre</strong> y su clave. Solo ve sus grupos: en <strong>Alumnos</strong> pulsa el botón del grupo y pasa lista una vez al turno; en <strong>Docente</strong> marca a los docentes de esos grupos en cada cambio de hora aSc. En ambos casos puede escribir una <strong>observación</strong> por persona. En <strong>Reportes</strong> elige primero si es de alumnos o de docentes; los filtros Periodo, Grado, Grupos y Generar van dentro de la tarjeta. El administrador tiene además estadísticas de toda la escuela.</p>'
+    },
+    maeAccesos: {
+      titulo: 'Docentes · accesos y contraseñas',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Permite administrar las credenciales de entrada de los docentes para el Panel Docente y el pase de lista.</p>' +
+        '<h4>Sincronización del horario</h4>' +
+        '<p>Al pulsar «Sincronizar del horario», el sistema toma los docentes cargados desde el archivo XML del horario y los agrega a la lista de accesos.</p>' +
+        '<h4>Contraseñas</h4>' +
+        '<p>Puedes generar contraseñas seguras para todos con el botón de dados, o editar la clave de cada docente individualmente.</p>'
+    },
+    usuApoyo: {
+      titulo: 'Personal de apoyo',
+      html:
+        '<h4>Quién entra aquí</h4>' +
+        '<p>Secretaría, biblioteca, trabajo social, orientación, laboratorio, intendencia y demás personal de apoyo de la escuela.</p>' +
+        '<h4>Cómo funciona</h4>' +
+        '<p>Da de alta a cada persona con nombre, usuario, área y contraseña. Si dejas la clave vacía, el sistema genera una aleatoria. Cada quien entra al panel con su usuario y contraseña.</p>'
+    },
+    matAlta: {
+      titulo: 'Alta de alumno',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Agrega un estudiante a la hoja Alumnos y queda disponible de inmediato en el login de su grupo.</p>' +
+        '<h4>Cómo se agregan los datos</h4>' +
+        '<p>Llenas matrícula, nombre, grado y grupo y pulsas Guardar. No se crean resultados: esos aparecen cuando presente una lectura.</p>' +
+        '<h4>Campos</h4>' +
+        '<p>La matrícula no debe repetirse. El grupo debe existir (o créalo antes). El alumno nace activo, con 0 intentos extra.</p>'
+    },
+    matCsv: {
+      titulo: 'Importar CSV',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Carga muchos alumnos de una vez. Descarga la plantilla, ábrela en Excel o Sheets, guarda como CSV y súbela.</p>' +
+        '<h4>Columnas de la plantilla</h4>' +
+        '<p>Matricula, Nombre Completo, Grado, Grupo. El grado es 1, 2 o 3; el grupo se escribe en minúsculas (1a, 2b).</p>' +
+        '<p>Las filas se anexan; no sustituyen a quienes ya estaban. Revisa duplicados de matrícula después de importar.</p>'
+    },
+    matGrupo: {
+      titulo: 'Crear grupo',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Registra un grupo extra (por ejemplo 1f) en la hoja Grupos. Luego puedes dar de alta alumnos en ese grupo.</p>' +
+        '<h4>Campos</h4>' +
+        '<p>Grado (1–3), letra del grupo e intentos extra opcionales para todo el grupo. El código queda como 1a, 2c, etc.</p>'
+    },
+    lecBanco: {
+      titulo: 'Banco de lecturas',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Aquí están los textos que puede tocar la ruleta. Cada columna es un grado. Solo las lecturas <strong>activas</strong> entran al sorteo. El alumno no vuelve a recibir un texto que ya presentó.</p>' +
+        '<h4>Cómo se agregan</h4>' +
+        '<p>Puedes crear una lectura a mano, pedirla a la inteligencia artificial o cargar el banco de la NEM. También se pueden pegar textos en la hoja de cálculo <strong>Lecturas</strong>. Las preguntas se escriben al editar esa lectura en este panel; quedan guardadas junto con el texto.</p>' +
+        '<h4>Campos</h4>' +
+        '<dl>' +
+        '<dt>Clave de la lectura</dt><dd>Identificador interno. No la cambies si ya hay alumnos que la presentaron.</dd>' +
+        '<dt>Grado, asignatura, tema</dt><dd>Clasifican el texto y alimentan la ruleta.</dd>' +
+        '<dt>Palabras</dt><dd>Se cuentan del texto; sirven para el PPM.</dd>' +
+        '<dt>Activa</dt><dd>SI = puede salir en el sorteo. NO = se oculta sin borrar.</dd>' +
+        '<dt>Nivel de cada pregunta</dt><dd>Literal, inferencial o crítica. Eso alimenta las columnas Lit. / Inf. / Crít. de Resultados.</dd>' +
+        '</dl>'
+    },
+    lecTrim: {
+      titulo: 'Lectura trimestral',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Es un examen fijo por grado y trimestre, distinto del sorteo. El alumno pulsa «Lectura trimestral» en las fechas del calendario. Esos intentos <strong>no</strong> descuentan el cupo del sorteo.</p>' +
+        '<h4>Cómo se agregan</h4>' +
+        '<p>En cada casilla (grado × trimestre) eliges una lectura del banco de ese grado y guardas. El calendario (icono) define fechas e intentos exclusivos.</p>' +
+        '<h4>Campos</h4>' +
+        '<dl>' +
+        '<dt>Casilla</dt><dd>Qué texto presentarán 1°, 2° o 3° en el trimestre 1, 2 o 3.</dd>' +
+        '<dt>Fechas</dt><dd>Ventana en la que el botón está vigente (o un trimestre forzado).</dd>' +
+        '<dt>Intentos exclusivos</dt><dd>Cuántas veces puede presentar ese examen trimestral. Independiente de Configuración → Intentos.</dd>' +
+        '</dl>'
+    },
+    lecIA: {
+      titulo: 'Generar lectura con IA',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>La IA redacta un texto alineado a la NEM del grado y asignatura, con preguntas y respuestas. Luego puedes editarlo y activarlo.</p>' +
+        '<h4>Cómo se agregan</h4>' +
+        '<p>Elige grado, asignatura y tema (o un PDA sugerido) y genera. El resultado se guarda en el banco como una lectura más, con preguntas ya clasificadas cuando el modelo las etiqueta.</p>'
+    },
+    lecMasivo: {
+      titulo: 'Banco NEM masivo',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Genera un paquete grande de lecturas (hasta 54) cubriendo grados y asignaturas de la NEM. Pide contraseña de activación porque tarda varios minutos.</p>' +
+        '<p>Úsalo al armar el banco del ciclo, no cada semana. Revisa y activa después las que sí quieras en la ruleta.</p>'
+    },
+    lecDetalle: {
+      titulo: 'Texto y preguntas de una lectura',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Al abrir una lectura ves el texto y los reactivos. En edición puedes cambiar enunciados, opciones, respuesta correcta y el nivel (literal, inferencial, crítica).</p>' +
+        '<h4>Cómo se agregan las preguntas</h4>' +
+        '<p>Se guardan con la lectura. Si una pregunta no tiene nivel, no entra a Lit. / Inf. / Crít. de esa evaluación (la comprensión total sí se calcula con todas).</p>' +
+        '<h4>Cálculo al examinar</h4>' +
+        '<p>El alumno no ve cuál es la correcta. Al enviar, cada respuesta se compara con la clave. Un acierto suma 1. El PPM usa las palabras de este texto y el cronómetro de lectura.</p>'
+    },
+    cfgLectora: {
+      titulo: 'Velocidad lectora (PPM)',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Aquí eliges qué tan rápido debe leer un alumno de 1°, 2° o 3°. Con esos números, el semáforo de Resultados dice si va <strong>por debajo</strong>, <strong>dentro</strong> o <strong>por encima</strong> del rango. La calificación final usa 70&nbsp;% de comprensión y 30&nbsp;% de esa velocidad, comparada con el objetivo del grado.</p>' +
+        '<h4>Campos</h4>' +
+        '<dl>' +
+        '<dt>Mínimo / Máximo</dt><dd>Por debajo = lento (rojo). Por encima = muy rápido (ámbar). Dentro = esperado (verde).</dd>' +
+        '<dt>Objetivo</dt><dd>Velocidad de referencia del grado. Sirve para convertir las palabras por minuto en parte de la calificación final.</dd>' +
+        '</dl>' +
+        '<h4>Cálculo</h4>' +
+        '<div class="formula">Velocidad para la calificación = (PPM del alumno ÷ PPM objetivo) × 100, sin pasar de 100</div>' +
+        '<p>Si el alumno lee al doble de lo esperado, esa parte de la calificación se queda en 100: no sube más.</p>'
+    },
+    cfgCupo: {
+      titulo: 'Intentos (cupo del sorteo)',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Controla cuántas lecturas sorteadas puede presentar cada alumno. No aplica al examen trimestral.</p>' +
+        '<h4>Cómo se agregan</h4>' +
+        '<p>«Para todos» se guarda en Configuración. Extra de grupo, en la hoja Grupos. Extra de alumno, en la columna Intentos extra de Alumnos. También puedes asignarlos desde la tabla de matrícula.</p>' +
+        '<div class="formula">Permitidos = todos + extra grupo + extra alumno</div>' +
+        '<p>Cada sorteo terminado suma 1 uso. Al agotarse, el alumno ve el aviso y no arranca otra hasta que le des extras.</p>'
+    },
+    cfgPass: {
+      titulo: 'Contraseña del panel',
+      html:
+        '<p>Es la clave de este panel docente. Los alumnos no la usan: ellos entran eligiendo grado, grupo y nombre. Mínimo 6 caracteres. Queda guardada en el proyecto, no en la hoja de alumnos.</p>'
+    },
+    cfgSitio: {
+      titulo: 'Páginas del sitio',
+      html:
+        '<p>Estas casillas son para quien administra el proyecto. En el aula ya están las páginas: una para alumnos y otra para docentes. Solo hay que cambiarlas si se crea un sitio nuevo. En el trabajo diario del docente no se usan.</p>'
+    },
+    cfgIdentidad: {
+      titulo: 'Identidad de la escuela',
+      html:
+        '<h4>Qué cambia</h4>' +
+        '<p>El <strong>nombre</strong> sale en la cabecera de cada lectura (y en la página del alumno). El <strong>pie</strong> aparece al final del texto. El <strong>logotipo</strong> se muestra junto al nombre en la cabecera.</p>' +
+        '<h4>Logotipo</h4>' +
+        '<p>Sube un PNG o JPG. Se reduce solo para que quepa. Si quitas el archivo, las lecturas siguen con el nombre y el pie, sin imagen.</p>'
+    },
+    cfgGraf: {
+      titulo: 'Datos de prueba',
+      html:
+        '<p>Genera evaluaciones simuladas para ver gráficas con números. No borra alumnos reales. Úsalo solo en pruebas; en el ciclo escolar real los datos deben venir de exámenes verdaderos.</p>'
+    },
+    cfgPda: {
+      titulo: 'Qué se espera por grado',
+      html:
+        '<p>Consulta (no se edita aquí): extensión recomendada de los textos, número de preguntas y tipo de lectura (narrativo, expositivo, argumentativo) según 1°, 2° y 3°. La velocidad se ajusta en la pestaña Velocidad lectora.</p>'
+    },
+    cfgHoja: {
+      titulo: 'Hoja de Google Sheets',
+      html:
+        '<p>Ahí está la información de la escuela: alumnos, grupos, lecturas, resultados y ajustes. Si el panel no ve alumnos, abre esa hoja en Google, pulsa <strong>Compartir</strong> y deja que cualquiera con el enlace pueda verla.</p>'
+    },
+    aluComenzar: {
+      titulo: 'Cómo empezar la prueba',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Elige tu grado, tu grupo y tu nombre. El sistema busca cuántos intentos te quedan. «Iniciar la prueba» sortea una lectura nueva de tu grado. «Lectura trimestral» abre el texto fijo del trimestre, si hay fechas vigentes y te queda cupo.</p>' +
+        '<h4>Cómo se agregan tus datos</h4>' +
+        '<p>Tu docente te da de alta en Matrícula. Tú no escribes tu nombre: solo lo seleccionas para no equivocarte.</p>'
+    },
+    aluPanel: {
+      titulo: 'Tu panel',
+      html:
+        '<h4>Qué ves aquí</h4>' +
+        '<dl>' +
+        '<dt>Evaluaciones</dt><dd>Cuántas lecturas ya terminaste.</dd>' +
+        '<dt>Comprensión</dt><dd>Promedio de aciertos en tus cuestionarios.</dd>' +
+        '<dt>PPM promedio</dt><dd>Qué tan rápido lees, en palabras por minuto.</dd>' +
+        '<dt>Global</dt><dd>Promedio de tu calificación final (comprensión 70&nbsp;% y velocidad 30&nbsp;%).</dd>' +
+        '<dt>Intentos</dt><dd>Cuántos te quedan de los que te asignó la escuela para el sorteo.</dd>' +
+        '<dt>Lecturas nuevas</dt><dd>Textos de tu grado que aún no presentas / total activos.</dd>' +
+        '</dl>' +
+        '<p>Los números se actualizan cada vez que terminas un examen. No los captura el docente a mano.</p>'
+    },
+    aluEvolucion: {
+      titulo: 'Tu evolución',
+      html:
+        '<p>La línea muestra cómo ha cambiado tu calificación global de una evaluación a la siguiente. Aparece cuando ya tienes al menos dos exámenes. Subir la línea significa mejorar comprensión y/o acercarte al PPM de tu grado.</p>'
+    },
+    aluHistorial: {
+      titulo: 'Historial de evaluaciones',
+      html:
+        '<p>Cada fila es un examen que ya presentaste. Tócala para ver el informe: aciertos, PPM, niveles Literal / Inferencial / Crítica y si volviste a leer el texto. Fecha y lectura salen de lo que se guardó al terminar; no se pueden editar desde aquí.</p>'
+    },
+    aluSorteo: {
+      titulo: 'Sorteo de lectura',
+      html:
+        '<p>La ruleta elige asignatura y tema al azar entre las lecturas activas de tu grado que aún no hayas presentado. No puedes escoger el texto. La trimestral no usa ruleta: es la que asignó tu docente para el periodo.</p>'
+    },
+    aluLectura: {
+      titulo: 'Leer el texto',
+      html:
+        '<p>El cronómetro corre desde que aparece la hoja. Lee con calma y pulsa «He terminado de leer» cuando acabes. Ese tiempo se usa para el PPM: palabras del texto ÷ minutos. Los botones + y − cambian el tamaño de la hoja y de la letra; no pausan el reloj.</p>'
+    },
+    aluPpm: {
+      titulo: 'Tu velocidad lectora',
+      html:
+        '<div class="formula">PPM = (palabras del texto ÷ segundos que tardaste) × 60</div>' +
+        '<p>El semáforo compara tu PPM con el rango de tu grado (por defecto 1°: 135–145, 2°: 145–155, 3°: 155–160). Después sigue el cuestionario; la comprensión se calcula con las preguntas, no aquí.</p>'
+    },
+    aluPreguntas: {
+      titulo: 'Responder el cuestionario',
+      html:
+        '<p>Marca una opción por pregunta. «Ver lectura» vuelve al texto y cuenta una <strong>relectura</strong>. El tiempo de cada pregunta se registra. Al enviar, el servidor compara tus respuestas con la clave, cuenta aciertos y arma el informe. No se califica en tu pantalla antes de guardar.</p>' +
+        '<h4>Niveles</h4>' +
+        '<p>Literal = lo que el texto dice. Inferencial = lo que se deduce. Crítica = valorar al autor o una afirmación. Tu porcentaje en cada uno depende de cuántas preguntas de ese tipo tenía esa lectura.</p>'
+    },
+    aluFinal: {
+      titulo: 'Informe de la evaluación',
+      html:
+        '<h4>De dónde salen los números</h4>' +
+        '<div class="formula">Comprensión = aciertos ÷ preguntas × 100</div>' +
+        '<div class="formula">Final = 70% comprensión + 30% velocidad (respecto al PPM objetivo de tu grado)</div>' +
+        '<div class="formula">PME = PPM × (comprensión ÷ 100)</div>' +
+        '<p>Lit. / Inf. / Crít. son el porcentaje de aciertos de cada tipo de pregunta. Relecturas son las veces que volviste al texto durante el cuestionario. Todo queda en tu historial y en el panel docente.</p>'
+    },
+    claseHorario: {
+      titulo: 'Clase · horario',
+      html:
+        '<h4>Cómo funciona</h4>' +
+        '<p>Elige Fecha, Grupo, Alumno o Asignatura en la cinta. La lista del horario queda en el cuerpo. Pulsa una hora para escribir el texto que escuchará el alumno.</p>' +
+        '<p>Cuando ya ves el horario, pulsa <strong>Ocultar</strong> (o un segundo clic en Clases) para guardar Horario, Ayuda y los filtros. El calendario queda a la vista. Vuelve a pulsar Clases si necesitas los filtros.</p>' +
+        '<h4>Filtros</h4>' +
+        '<dl>' +
+        '<dt>Fecha</dt><dd>Semana que se muestra. Hasta que la elijas, el icono dice Fecha.</dd>' +
+        '<dt>Grupo</dt><dd>El grupo del horario. No se marca solo al entrar.</dd>' +
+        '<dt>Alumno</dt><dd>Opcional: centra el aviso en un estudiante.</dd>' +
+        '<dt>Asignatura</dt><dd>Opcional: recorta las horas de esa materia.</dd>' +
+        '</dl>'
+    },
+    claseAluAcc: {
+      titulo: 'Clase · accesos de alumnos',
+      html:
+        '<p>Genera o cambia contraseñas de los alumnos. Los filtros Grado, Grupo y Buscar están en la cinta; la lista queda abajo.</p>'
+    },
+    claseMaeAcc: {
+      titulo: 'Clase · accesos de maestros',
+      html:
+        '<p>Sincroniza nombres del horario, genera contraseñas y busca maestros. Las acciones van en la cinta; la lista queda en el cuerpo.</p>'
+    }
+  };
+  AYUDAS_ST90.resRelect = AYUDAS_ST90.resNiveles;
+
+  var ribbonN2Abierto = true;
+  function ribbonN3CabeceraVisible_(cinta) {
+    const n3 = cinta.querySelector('.cinta-n3');
+    if (!n3 || n3.classList.contains('oculto')) return false;
+    return n3.children.length > 0;
+  }
+  function ribbonActualizarContenedoresN2_() {
+    document.querySelectorAll('.ribbon-main-nav > .cinta-mat, .ribbon-main-nav > .asi-cinta, .ribbon-main-nav > .cinta-lec, .ribbon-main-nav > .cinta-clase, .ribbon-main-nav > .ribbon-content').forEach(function (cinta) {
+      cinta.classList.add('subribbon-container');
+      const n2 = cinta.querySelector('.cinta-n2');
+      if (n2) {
+        n2.classList.toggle('oculto', !ribbonN2Abierto);
+      }
+      if (cinta.classList.contains('oculto')) {
+        cinta.classList.remove('subribbon-container-hidden', 'is-hidden');
+        return;
+      }
+      const ocultarCaja = !ribbonN2Abierto;
+      cinta.classList.toggle('subribbon-container-hidden', ocultarCaja);
+      cinta.classList.toggle('is-hidden', ocultarCaja);
+    });
+  }
+  function ribbonSetNivel2(abierto) {
+    ribbonN2Abierto = !!abierto;
+    document.body.classList.toggle('ribbon-n2-cerrado', !ribbonN2Abierto);
+    document.body.classList.toggle('subribbon-collapsed', !ribbonN2Abierto);
+    document.querySelectorAll('.ribbon-main-nav').forEach(function (el) {
+      el.classList.toggle('subribbon-collapsed', !ribbonN2Abierto);
+      el.classList.toggle('subribbon-hidden', !ribbonN2Abierto);
+    });
+    document.querySelectorAll('.ribbon-main-nav .cinta-n2').forEach(function (n2) {
+      n2.classList.toggle('oculto', !ribbonN2Abierto);
+    });
+    ribbonActualizarContenedoresN2_();
+  }
+  function ribbonToggleNivel2() {
+    ribbonSetNivel2(!ribbonN2Abierto);
+  }
+  function ribbonColapsarTrasN2() {
+    ribbonSetNivel2(false);
+  }
+
+  /* Claves de docentes: un solo módulo para Admin.html y Clase.html */
+  function jsSafe_(s) {
+    return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+  var SVG_DADO = SVG_DADO || '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.3" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.3" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.3" fill="currentColor" stroke="none"/>';
+  var SVG_EDITAR = SVG_EDITAR || '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>';
+  var SVG_COPIAR = SVG_COPIAR || '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+  var SVG_GRUPOS = SVG_GRUPOS || '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>';
+
+  function htmlBtnIconoFila(tip, onclick, svgInner, extraClass) {
+    return '<button type="button" class="btn-icono-res btn-icono-fila' + (extraClass ? ' ' + extraClass : '') + '" data-tip="' + tip + '" aria-label="' + tip + '" onclick="' + onclick + '">' +
+      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' + svgInner + '</svg></button>';
+  }
+
+  function htmlBtnsCredencial_(opts) {
+    opts = opts || {};
+    var html = '';
+    if (opts.aleatoria) html += htmlBtnIconoFila('Contraseña aleatoria', opts.aleatoria, SVG_DADO);
+    if (opts.editar) html += htmlBtnIconoFila('Editar usuario y contraseña', opts.editar, SVG_EDITAR);
+    if (opts.copiar) html += htmlBtnIconoFila('Copiar usuario y contraseña', opts.copiar, SVG_COPIAR);
+    if (opts.grupos) html += htmlBtnIconoFila('Asignar grupos', opts.grupos, SVG_GRUPOS);
+    return html;
+  }
+
+  function copiarTextoAux_(texto) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = texto;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      toast('Credenciales copiadas al portapapeles.', 'ok');
+    } catch (e) {
+      toast('Credenciales: ' + texto, 'info');
+    }
+  }
+
+  var clavesDocentes = {
+    cache: [],
+    ids: {
+      caja: 'cajaTablaMaeAdmin',
+      busc: 'buscMaeAdmin',
+      cont: 'contMaeAdmin',
+      vacio: 'No hay docentes que coincidan con la búsqueda. Pulsa sincronizar si acabas de cargar el horario escolar.'
+    },
+    token: function () {
+      if (typeof token !== 'undefined' && token) return token;
+      if (typeof tokenClase !== 'undefined' && tokenClase) return tokenClase;
+      return '';
+    },
+    configurar: function (ids) {
+      var k;
+      for (k in ids) {
+        if (Object.prototype.hasOwnProperty.call(ids, k)) this.ids[k] = ids[k];
+      }
+    },
+    cargar: function (forzar) {
+      const caja = document.getElementById(this.ids.caja);
+      if (this.cache.length > 0 && !forzar) {
+        this.filtrar();
+        return;
+      }
+      if (caja) caja.innerHTML = '<p class="hint" style="text-align:center;color:#64748b;">Cargando lista de docentes…</p>';
+      const yo = this;
+      gsRun('listarMaestrosClase', this.token()).then(function (r) {
+        yo.cache = (r && r.maestros) || [];
+        yo.filtrar();
+      }).catch(function (e) {
+        if (caja) caja.innerHTML = '<p style="color:var(--st90-rojo);font-weight:600;text-align:center;">Error al cargar docentes: ' + escaparHtml((e && e.message) || String(e)) + '</p>';
+      });
+    },
+    filtrar: function () {
+      const busc = ((document.getElementById(this.ids.busc) || {}).value || '').trim().toLowerCase();
+      const cont = document.getElementById(this.ids.cont);
+      const filtrados = (this.cache || []).filter(function (m) {
+        if (!busc) return true;
+        const nom = String(m.nombre || '').toLowerCase();
+        const usu = String(m.usuario || '').toLowerCase();
+        const gru = (m.grupos || []).join(' ').toLowerCase();
+        const asig = (m.asignaturas || []).join(' ').toLowerCase();
+        return nom.indexOf(busc) >= 0 || usu.indexOf(busc) >= 0 || gru.indexOf(busc) >= 0 || asig.indexOf(busc) >= 0;
+      });
+      if (cont) cont.textContent = 'Docentes encontrados: ' + filtrados.length;
+      this.render(filtrados);
+      if (typeof pintarEtqFiltroPass_ === 'function') pintarEtqFiltroPass_();
+    },
+    render: function (filas) {
+      const caja = document.getElementById(this.ids.caja);
+      if (!caja) return;
+      if (!filas.length) {
+        caja.innerHTML = '<p class="hint" style="text-align:center;color:#64748b;">' + escaparHtml(this.ids.vacio) + '</p>';
+        return;
+      }
+      let html = '<table class="tabla-acc"><thead><tr>' +
+        '<th style="width:30px;">#</th>' +
+        '<th>Docente</th>' +
+        '<th>Grupos asignados</th>' +
+        '<th>Asignaturas</th>' +
+        '<th>Usuario</th>' +
+        '<th>Contraseña</th>' +
+        '<th style="text-align:right;">Acciones</th>' +
+        '</tr></thead><tbody>';
+      html += filas.map(function (m, idx) {
+        const idSafe = jsSafe_(m.id);
+        const nomSafe = jsSafe_(m.nombre);
+        const usuSafe = jsSafe_(m.usuario);
+        const claSafe = jsSafe_(m.clave);
+        const gruposHtml = (m.grupos && m.grupos.length)
+          ? m.grupos.map(function (g) { return '<span class="badge-grupo">' + escaparHtml(g) + '</span>'; }).join('')
+          : '<span style="color:#94a3b8;font-size:12px;">Sin grupos</span>';
+        const asigHtml = (m.asignaturas && m.asignaturas.length)
+          ? m.asignaturas.map(function (a) { return '<span class="badge-asig">' + escaparHtml(a) + '</span>'; }).join('')
+          : '<span style="color:#94a3b8;font-size:12px;">Sin asignaturas</span>';
+        const claveHtml = m.clave
+          ? ('<span class="dato-acc badge-pass">' + escaparHtml(m.clave) + '</span>')
+          : '<span style="color:#94a3b8;font-size:12px;">Sin contraseña</span>';
+        return '<tr>' +
+          '<td style="color:#94a3b8;font-size:12px;">' + (idx + 1) + '</td>' +
+          '<td><strong>' + escaparHtml(m.nombre) + '</strong></td>' +
+          '<td>' + gruposHtml + '</td>' +
+          '<td>' + asigHtml + '</td>' +
+          '<td><span class="dato-acc" style="color:var(--st90-azul);">' + escaparHtml(m.usuario || '—') + '</span></td>' +
+          '<td>' + claveHtml + '</td>' +
+          '<td style="text-align:right;white-space:nowrap;"><span class="acciones-fila">' +
+            htmlBtnsCredencial_({
+              aleatoria: 'generarClaveUnicaMae(\'' + idSafe + '\',\'' + nomSafe + '\')',
+              editar: 'ponerClaveMaeAdmin(\'' + idSafe + '\',\'' + nomSafe + '\',\'' + usuSafe + '\',\'' + claSafe + '\')',
+              copiar: m.clave ? 'copiarCredencialMae(\'' + usuSafe + '\',\'' + claSafe + '\')' : ''
+            }) +
+          '</span></td>' +
+        '</tr>';
+      }).join('');
+      html += '</tbody></table>';
+      caja.innerHTML = html;
+    },
+    sincronizar: function () {
+      toast('Sincronizando docentes del horario…', 'info');
+      const yo = this;
+      gsRun('sincronizarMaestrosClase', this.token()).then(function (r) {
+        toast((r && r.mensaje) || 'Listo.', 'ok');
+        yo.cargar(true);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    },
+    generarUna: function (id, nombre) {
+      toast('Generando contraseña aleatoria para ' + nombre + '…', 'info');
+      const yo = this;
+      gsRun('generarClavesMaestrosClase', this.token(), 'maestro', id).then(function (r) {
+        toast((r && r.mensaje) || 'Contraseña generada.', 'ok');
+        yo.cargar(true);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    },
+    generarTodas: function () {
+      const yo = this;
+      const ir = function () {
+        toast('Generando usuario y contraseña para docentes…', 'info');
+        gsRun('generarClavesMaestrosClase', yo.token(), 'todos', '').then(function (r) {
+          toast((r && r.mensaje) || 'Credenciales generadas.', 'ok');
+          yo.cargar(true);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      };
+      if (typeof confirmarGenerarCredenciales_ === 'function') {
+        confirmarGenerarCredenciales_('docentes', ir);
+        return;
+      }
+      modal({
+        titulo: 'Generar contraseñas aleatorias',
+        html: '<p style="margin:0 0 12px;font-size:14px;line-height:1.45;">¿Generar usuario y contraseña para <strong>todos los docentes</strong>?<br><br><small style="color:#b91c1c;">Se sustituyen las credenciales actuales.</small></p>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Sí, generar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) { return val; }
+      }).then(function (confirmo) {
+        if (!confirmo) return;
+        ir();
+      });
+    },
+    editar: function (id, nombre, usuario, clave) {
+      const yo = this;
+      const nom = (arguments.length >= 4) ? nombre : '';
+      const usu = (arguments.length >= 4) ? usuario : nombre;
+      const cla = (arguments.length >= 4) ? clave : usuario;
+      modal({
+        titulo: nom ? ('Acceso del docente: ' + escaparHtml(nom)) : 'Acceso del docente',
+        html: '<label for="usuClaveMaeAdmin">Usuario</label><input id="usuClaveMaeAdmin" type="text" value="' + escaparHtml(usu || '') + '" autocomplete="off" style="width:100%;margin-bottom:10px;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">' +
+          '<label for="passClaveMaeAdmin">Contraseña (mín. 6)</label><input id="passClaveMaeAdmin" type="text" value="' + escaparHtml(cla || '') + '" autocomplete="off" style="width:100%;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            usuario: (fondo.querySelector('#usuClaveMaeAdmin') || {}).value || '',
+            clave: (fondo.querySelector('#passClaveMaeAdmin') || {}).value || ''
+          };
+        }
+      }).then(function (datos) {
+        if (!datos) return;
+        gsRun('asignarClaveMaestroClase', yo.token(), id, datos.usuario, datos.clave).then(function (r) {
+          toast((r && r.mensaje) || 'Listo.', 'ok');
+          yo.cargar(true);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    },
+    copiar: function (usuario, clave) {
+      const texto = 'Usuario: ' + usuario + '\nContraseña: ' + clave;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () {
+          toast('Credenciales copiadas al portapapeles.', 'ok');
+        }).catch(function () {
+          copiarTextoAux_(texto);
+        });
+      } else {
+        copiarTextoAux_(texto);
+      }
+    }
+  };
+
+  function cargarMaestrosAdmin(forzar) { return clavesDocentes.cargar(forzar); }
+  function cargarMaestrosAcc(forzar) { return clavesDocentes.cargar(forzar); }
+  function filtrarTablaMaeAdminLocal() { return clavesDocentes.filtrar(); }
+  function filtrarTablaMaeClaseLocal() { return clavesDocentes.filtrar(); }
+  function syncMaestrosAdmin() { return clavesDocentes.sincronizar(); }
+  function syncMaestrosClase() { return clavesDocentes.sincronizar(); }
+  function generarClaveUnicaMae(id, nombre) { return clavesDocentes.generarUna(id, nombre); }
+  function generarClavesMasivasMae() { return clavesDocentes.generarTodas(); }
+  function ponerClaveMaeAdmin(id, nombre, usuario, clave) { return clavesDocentes.editar(id, nombre, usuario, clave); }
+  function ponerClaveMae(id, usuario, clave) { return clavesDocentes.editar(id, '', usuario, clave); }
+  function copiarCredencialMae(usuario, clave) { return clavesDocentes.copiar(usuario, clave); }
+</script>

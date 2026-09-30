@@ -1,0 +1,238 @@
+
+    <!-- ==========================================
+         PESTAÑA: ASISTENCIA (PREfectos · independiente de Academia)
+         ========================================== -->
+    <div id="tab-asi" class="bloque oculto">
+      <p class="sub-lec oculto" id="txtAsiRol" style="display:none !important;">Lista de alumnos al inicio del turno. Maestros, en cada cambio de hora.</p>
+
+      <!-- Banner de grupos asignados: oculto; el nombre va en la fila de iconos -->
+      <div id="bannerPrefectaAsi" class="oculto" hidden></div>
+
+      <div id="subAsiAlu" class="oculto">
+        <p class="sub-lec oculto" id="txtListaGruposAsi" style="display:none !important;">Lista de alumnos. Filtra por grado o grupo, o pulsa una fila para pasar lista.</p>
+        <div class="caja-tabla-mat asi-tarjeta-lista">
+        <!-- Fila de filtros y acciones de asistencia alumnos (N3) centrados -->
+        <div id="asiFiltroAlu" class="cinta-n3 asi-cinta-ctx" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;background:transparent;box-shadow:none;border:none;">
+          <span id="etqPrefectaFilaAsi" class="asi-etq-prefecta oculto"></span>
+          <div class="asi-dd" id="ddFechaAsiAlu">
+            <button type="button" class="ribbon-btn" id="btnFechaAsiAlu" onclick="toggleDdFechaAsi('alu', event)" aria-label="Fecha">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span class="ribbon-label" id="etqFechaAsiAlu">Fecha</span>
+            </button>
+            <div id="panelFechaAsiAlu" class="asi-dd-panel panel-fecha-asi oculto" onclick="event.stopPropagation()">
+              <input type="date" id="fechaAsiAlu" onchange="alCambiarFechaAsiAlu()" aria-label="Fecha">
+            </div>
+          </div>
+          <!-- Grupo dropdown directo sin modal -->
+          <div class="ribbon-btn ribbon-btn-select-wrap" id="btnGrupoAsiAlu" aria-label="Grupo">
+            <select id="selGrupoAsiAlu" class="filtro-select-overlay" onchange="cambiarFiltroGrupoAsi();" aria-label="Grupo">
+              <option value="">Elige grupo…</option>
+            </select>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 21V8l9-5 9 5v13"></path>
+              <path d="M9 21V12h6v9"></path>
+            </svg>
+            <span class="ribbon-label" id="etqGrupoAsiAlu">Grupo</span>
+          </div>
+          <div id="chipsAsiGrupos" class="asi-grupos-btns oculto" hidden></div>
+          <div class="asi-acciones-fila" id="asiAccionesAlu" style="display:inline-flex;align-items:center;gap:6px;">
+            <button type="button" class="ribbon-btn ribbon-ico-verde" onclick="marcarTodosAsiAlu('P')" aria-label="Presentes">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M16 11l2 2 4-4"></path>
+              </svg>
+              <span class="ribbon-label">Presentes</span>
+            </button>
+            <button type="button" class="ribbon-btn ribbon-ico-verde" onclick="guardarListaAsiAlu()" aria-label="Guardar">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+              <span class="ribbon-label">Guardar</span>
+            </button>
+          </div>
+        </div>
+        <div id="panelListaGruposAsi">
+          <table class="tabla-asi" id="tablaListaGruposAsi"></table>
+        </div>
+        <p id="lblTurnoAsiAlu" class="asi-turno-badge" hidden></p>
+        <div id="panelListaAluAsi" class="oculto">
+          <table class="tabla-asi" id="tablaAsiAlu"></table>
+        </div>
+        </div>
+      </div>
+
+      <div id="subAsiMae" class="oculto">
+        <!-- Fila única centrada: Fecha + Docente + Horas 1 a 8 en la MISMA FILA y centrados -->
+        <div class="cinta-n3 asi-cinta-ctx" style="display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:0 auto 16px;background:transparent;box-shadow:none;border:none;">
+          <div id="asiFiltroMae" style="display:inline-flex;align-items:center;gap:6px;">
+            <div class="asi-dd" id="ddFechaAsiMae">
+              <button type="button" class="ribbon-btn" id="btnFechaAsiMae" onclick="toggleDdFechaAsi('mae', event)" aria-label="Fecha">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="ribbon-label" id="etqFechaAsiMae">Fecha</span>
+              </button>
+              <div id="panelFechaAsiMae" class="asi-dd-panel panel-fecha-asi oculto" onclick="event.stopPropagation()">
+                <input type="date" id="fechaAsiMae" onchange="alCambiarFechaAsiMae()" aria-label="Fecha">
+              </div>
+            </div>
+            <div class="asi-dd" id="ddDocenteAsiMae" style="position:relative;">
+              <button type="button" class="ribbon-btn" id="btnElegirDocenteAsi" onclick="toggleDdDocenteAsi(event)" aria-label="Docente">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span class="ribbon-label">Docente</span>
+              </button>
+              <div id="panelDocenteAsiMae" class="asi-dd-panel oculto" role="listbox" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);left:0;z-index:100;background:#fff;border:1px solid var(--st90-borde);border-radius:10px;padding:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:220px;">
+                <div class="asi-dd-acc" style="padding:4px 6px;margin-bottom:6px;border-bottom:1px solid #f1f5f9;">
+                  <button type="button" onclick="seleccionarDocenteAsi('')" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;font-weight:700;width:100%;color:#334155;">Todos los docentes</button>
+                </div>
+                <div id="listaDocentesAsiDd" style="max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;"></div>
+              </div>
+            </div>
+            <span id="chipDocenteAsiSel" class="asi-chip activa oculto" style="height:42px;display:inline-flex;align-items:center;gap:6px;padding:0 10px;font-weight:700;font-size:12px;background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc;border-radius:8px;">
+              <span id="txtDocenteAsiSel"></span>
+              <button type="button" onclick="seleccionarDocenteAsi('')" style="background:none;border:none;cursor:pointer;color:#0284c7;font-weight:bold;font-size:16px;padding:0 2px;line-height:1;" title="Quitar filtro de docente">×</button>
+            </span>
+          </div>
+
+          <!-- Botones de horas 1 a 8 centrados en la misma fila -->
+          <div id="tabsAsiBloques" class="asi-bloques asi-horas-fila" role="group" aria-label="Horas" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:0;"></div>
+        </div>
+
+        <p class="sub-lec oculto" id="txtAsiMaeVacio">No hay horarios para tus grupos. En Prefectos (admin), importa el XML del horario.</p>
+        <div class="caja-tabla-mat">
+          <table class="tabla-asi" id="tablaAsiMae"></table>
+        </div>
+      </div>
+
+      <div id="subAsiRep" class="oculto">
+        <div id="cajaTipoRepAsi" class="asi-tipo-rep">
+          <p class="asi-tipo-rep-hint">¿Qué reporte quieres ver?</p>
+          <div class="asi-tipo-rep-fila">
+            <button type="button" id="btnRamaAluRep" class="ribbon-btn ribbon-ico-azul" aria-label="Reporte de alumnos" onclick="cambiarRamaRepAsi('alumno', this)">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span class="ribbon-label">Alumnos</span>
+            </button>
+            <button type="button" id="btnRamaMaeRep" class="ribbon-btn ribbon-ico-morado" aria-label="Reporte de docentes" onclick="cambiarRamaRepAsi('maestro', this)">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"></path>
+              </svg>
+              <span class="ribbon-label">Docentes</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="tarjetaRepAsi" class="caja-tabla-mat asi-tarjeta-lista oculto">
+        <div id="asiFiltroRep" class="asi-rep-fila cinta-n3" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto;background:transparent;box-shadow:none;border:none;">
+          <div class="asi-dd asi-periodo-nav" id="ddPeriodoRepAsi">
+            <button type="button" class="ribbon-btn asi-periodo-paso" id="btnPeriodoPrev" onclick="desplazarPeriodoRepAsi(-1, event)" aria-label="Periodo anterior">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="ribbon-btn" id="btnPeriodoRepAsi" aria-label="Periodo" onclick="toggleDdPeriodoRep(event)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <path d="M16 2v4M8 2v4M3 10h18"></path>
+              </svg>
+              <span class="ribbon-label" id="etqPeriodoRepAsi">Periodo</span>
+            </button>
+            <button type="button" class="ribbon-btn asi-periodo-paso" id="btnPeriodoSig" onclick="desplazarPeriodoRepAsi(1, event)" aria-label="Periodo siguiente">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <div id="panelPeriodoRepAsi" class="asi-dd-panel panel-periodo-rep oculto" onclick="event.stopPropagation()">
+              <div class="asi-periodo-modos" role="group" aria-label="Tipo de periodo">
+                <button type="button" class="asi-chip" data-modo="dia" onclick="setModoPeriodoRepAsi('dia', event)">Día</button>
+                <button type="button" class="asi-chip" data-modo="semana" onclick="setModoPeriodoRepAsi('semana', event)">Semana</button>
+                <button type="button" class="asi-chip activa" data-modo="mes" onclick="setModoPeriodoRepAsi('mes', event)">Mes</button>
+                <button type="button" class="asi-chip" data-modo="trimestre" onclick="setModoPeriodoRepAsi('trimestre', event)">Trimestre</button>
+              </div>
+              <div id="cajaTrimRepAsi" class="asi-periodo-trims oculto" role="group" aria-label="Trimestre">
+                <button type="button" class="asi-chip" data-trim="1" onclick="setTrimPeriodoRepAsi('1', event)">1er</button>
+                <button type="button" class="asi-chip" data-trim="2" onclick="setTrimPeriodoRepAsi('2', event)">2°</button>
+                <button type="button" class="asi-chip" data-trim="3" onclick="setTrimPeriodoRepAsi('3', event)">3er</button>
+              </div>
+              <p id="txtRangoPeriodoRepAsi" class="asi-periodo-rango"></p>
+            </div>
+          </div>
+          <input type="hidden" id="fechaIniRepAsi">
+          <input type="hidden" id="fechaFinRepAsi">
+          <div class="asi-dd" id="ddGruposRepAsi">
+            <button type="button" class="ribbon-btn" id="btnDdGruposRep" aria-label="Grupos" onclick="toggleDdGruposRep(event)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+              </svg>
+              <span class="ribbon-label" id="etqGruposRepAsi">Grupos</span>
+            </button>
+            <div id="panelGruposRepAsi" class="asi-dd-panel oculto" role="listbox" aria-multiselectable="true" onclick="event.stopPropagation()"></div>
+          </div>
+          <div class="ribbon-btn ribbon-btn-select-wrap" id="btnAluRepAsi" aria-label="Alumno">
+            <select id="selAluRepAsi" class="filtro-select-overlay" onchange="actualizarEtqAluRepAsi();" aria-label="Alumno">
+              <option value="">Todos los alumnos</option>
+            </select>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span class="ribbon-label" id="etqAluRepAsi">Alumno</span>
+          </div>
+          <div class="ribbon-btn ribbon-btn-select-wrap oculto" id="btnMaeRepAsi" aria-label="Docente">
+            <select id="selMaeRepAsi" class="filtro-select-overlay" onchange="actualizarEtqMaeRepAsi();" aria-label="Docente">
+              <option value="">Todos los docentes</option>
+            </select>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"></path>
+            </svg>
+            <span class="ribbon-label" id="etqMaeRepAsi">Docente</span>
+          </div>
+          <button type="button" class="ribbon-btn ribbon-ico-verde" onclick="generarReporteAsi()" aria-label="Generar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19V5M4 19h16M8 16V9M12 16V6M16 16v-5"/>
+            </svg>
+            <span class="ribbon-label">Generar</span>
+          </button>
+
+          <!-- Botones de la segunda imagen (Gráficas, Lista, Notas) en la MISMA FILA centrada -->
+          <div id="repAsiVistasWrap" class="asi-rep-vistas" role="tablist" aria-label="Modo de vista" style="display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding-left:6px;border-left:1px solid #cbd5e1;">
+            <button type="button" class="btn-icono-res activo" id="btnVistaGrafRep" data-vista="graf" data-tip="Gráficas" aria-label="Gráficas" onclick="cambiarVistaRepAsi('graf', this)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M12 3v9h9"/></svg>
+            </button>
+            <button type="button" class="btn-icono-res" id="btnVistaListaRep" data-vista="lista" data-tip="Lista" aria-label="Lista" onclick="cambiarVistaRepAsi('lista', this)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="cuerpoRepAsi"></div>
+        </div>
+      </div>
+
+      <div id="subAsiPref" class="oculto">
+        <div style="background:#fff;border-radius:10px;padding:24px;border:1px solid var(--st90-borde);text-align:center;max-width:600px;margin:20px auto;">
+          <p style="color:#334155;font-size:14px;margin:0 0 14px;font-weight:600;">La gestión de prefectas y asignación de horarios se encuentra ahora en el módulo <strong>Usuarios &gt; Prefectas</strong>.</p>
+          <button type="button" class="btn-verde" onclick="tab('mat');aplicarSubUsu('pref');" style="padding:8px 18px;font-weight:700;">Ir a Gestión de Prefectas</button>
+        </div>
+      </div>
+      </div>
+

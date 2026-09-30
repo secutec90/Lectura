@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <!-- st90-build <?= typeof version !== 'undefined' ? version : 'v303' ?> -->
+  <?!= include('ComunCSS') ?>
+  <style>
+    html, body { overflow: visible; }
+    body.clase { background: #f4f7fb; }
+    body.clase .ribbon-main-nav {
+      position: relative !important;
+    }
+    body.clase .ribbon-main-nav > .tabs,
+    body.clase .ribbon-main-nav > .barra-sup-acciones {
+      position: sticky;
+      top: 0;
+      z-index: 201;
+      background: #f4f7fb;
+    }
+    body.clase .ribbon-main-nav > .cinta-clase {
+      position: static !important;
+    }
+    #login {
+      max-width: 420px; margin: 48px auto; background: #fff; padding: 28px;
+      border-radius: 12px; border: 1px solid var(--st90-borde); box-shadow: var(--st90-sombra);
+    }
+    #login h1 { text-align: center; color: var(--st90-azul); font-size: 22px; margin: 0 0 8px; }
+    .login-escuela {
+      text-align: center; margin: 0 0 4px; font-size: 12px; font-weight: 800;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--st90-azul);
+    }
+    .login-ayuda { text-align: center; color: #64748b; font-size: 14px; margin: 0 0 18px; }
+    .login-ver { text-align: center; font-size: 12px; color: #94a3b8; margin: 16px 0 0; font-weight: 600; }
+    label { display: block; font-size: 13px; font-weight: 700; color: #334155; margin: 0 0 6px; }
+    input[type="text"], input[type="password"], input[type="date"], select, textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--st90-borde); border-radius: 8px;
+      font-size: 16px; box-sizing: border-box; margin-bottom: 12px;
+    }
+    textarea { min-height: 180px; font-family: inherit; line-height: 1.45; }
+    .fila-btn { display: flex; justify-content: center; margin-top: 8px; }
+    #errorLogin { color: var(--st90-rojo); text-align: center; font-weight: 700; min-height: 18px; }
+    .envoltorio { width: 96%; max-width: 1600px; margin: 0 auto; padding: 8px 16px 48px; min-width: 0; }
+    @media (max-width: 820px) {
+      .envoltorio { width: 100%; padding: 8px 8px 32px; }
+    }
+    .barra {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .barra strong { color: var(--st90-azul); font-size: 16px; }
+    .barra .meta { color: #64748b; font-size: 13px; font-weight: 700; }
+    .tabs-clase.ribbon-tabs {
+      display: flex; gap: 0; flex-wrap: wrap; margin: 0 0 10px;
+      justify-content: center; align-items: stretch;
+    }
+    .tabs-clase.ribbon-tabs button.ribbon-tab {
+      background: transparent !important; color: #4b5563 !important;
+      border: 1px solid transparent !important; border-radius: 10px !important;
+      min-width: 88px; height: auto;
+      padding: 6px 14px 4px !important; font-weight: 700;
+    }
+    .tabs-clase.ribbon-tabs button.ribbon-tab.activa {
+      background: #fff !important; color: var(--st90-azul) !important;
+      border: 1px solid #94a3b8 !important; border-radius: 10px !important;
+    }
+    .oculto { display: none !important; }
+    .tarjeta {
+      background: #fff; border: 1px solid var(--st90-borde); border-radius: 12px;
+      padding: 18px; box-shadow: var(--st90-sombra); margin-bottom: 14px;
+    }
+    .ahora {
+      font-size: 22px; line-height: 1.3; color: #0f172a; font-weight: 800; margin: 0 0 8px;
+    }
+    .ahora small { display: block; font-size: 15px; font-weight: 600; color: #475569; margin-top: 6px; }
+    .botones-voz {
+      display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 8px;
+    }
+    .botones-voz button {
+      min-height: 56px; min-width: 140px; font-size: 17px; padding: 12px 18px;
+    }
+    .botones-voz button.sec { background: #fff; color: var(--st90-azul); border: 2px solid var(--st90-azul); }
+    .botones-voz button:focus { outline: 3px solid #93c5fd; outline-offset: 2px; }
+    .sr-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    .slots { display: flex; flex-direction: column; gap: 8px; }
+    .slot {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      text-align: left; width: 100%; background: #fff; color: #0f172a;
+      border: 1px solid var(--st90-borde); border-radius: 10px; padding: 10px 12px;
+    }
+    .slot:hover { border-color: var(--st90-azul); }
+    .hint { font-size: 13px; color: #64748b; margin: 0 0 12px; }
+    .slot.en-curso { border-color: var(--st90-verde); box-shadow: 0 0 0 2px rgba(30,132,73,.2); }
+    .slot.con-texto { border-color: #93c5fd; }
+    .slot.ajena { opacity: .72; }
+    .slot strong { font-size: 16px; }
+    .slot span { font-size: 13px; color: #475569; font-weight: 600; }
+    .badge {
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;
+      padding: 3px 8px; border-radius: 999px; background: #e2e8f0; color: #334155;
+    }
+    .badge.ok { background: #dcfce7; color: #15803d; }
+    .badge.curso { background: #d1fae5; color: #047857; }
+    .form-clase label { margin-top: 6px; }
+    .tabla-acc { width: 100%; border-collapse: collapse; }
+    .tabla-acc th, .tabla-acc td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--st90-borde); font-size: 13px; }
+    .tabla-acc .dato-acc {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 700; color: #0f172a; letter-spacing: .02em;
+    }
+    .badge-pass {
+      background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 6px;
+      font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 700; color: #0f172a; display: inline-block;
+    }
+    .caja-alu-acceso { margin: 0 0 14px; overflow-x: auto; }
+    .tabla-acc button {
+      padding: 6px 10px; font-size: 12px; min-height: 0; width: auto; margin: 0;
+    }
+    .cal-nav {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
+      margin: 0 0 14px; text-align: center; width: 100%;
+    }
+    #txtAluPassConteo, #contMaeClase {
+      display: none !important;
+    }
+    .cal-filtros-grupo {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;
+    }
+    .cal-filtros-grupo .ribbon-btn {
+      position: relative;
+      min-width: 44px; min-height: 38px; padding: 2px 8px; margin: 0;
+      border: 1px solid var(--st90-borde); border-radius: 8px; background: #fff;
+      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s ease;
+    }
+    .cal-filtros-grupo .ribbon-btn:hover {
+      background: #f8fafc; border-color: #cbd5e1;
+    }
+    .cal-filtros-grupo .ribbon-btn.activo {
+      border-color: #94a3b8; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .cal-filtros-grupo .ribbon-btn svg {
+      width: 16px; height: 16px; display: block; color: var(--st90-azul); pointer-events: none;
+    }
+    .cal-filtros-grupo .ribbon-btn .ribbon-label {
+      font-size: 11px; font-weight: 700; color: #1e293b; margin-top: 1px;
+      white-space: nowrap; line-height: 1.1; pointer-events: none;
+    }
+    .cal-filtros-grupo .ribbon-btn-select-wrap {
+      position: relative;
+      cursor: pointer;
+    }
+    .cal-filtros-grupo .filtro-select-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 5;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 16px;
+      color: #1e293b;
+      background: transparent;
+      -webkit-appearance: menulist;
+      appearance: menulist;
+    }
+    .cal-filtros-grupo .ribbon-btn-select-wrap:focus-within {
+      border-color: var(--st90-azul);
+      box-shadow: 0 0 0 2px rgba(31, 111, 159, 0.2);
+    }
+    .cal-filtros-grupo .filtro-date-hidden {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      height: 1px;
+      border: 0;
+      padding: 0;
+      margin: 0;
+    }
+    .cal-ayuda-wrap {
+      display: inline-flex;
+      align-items: center;
+    }
+    .cal-ayuda-wrap .btn-ayuda {
+      min-width: 44px; min-height: 38px; padding: 2px 8px; margin: 0;
+      border: 1px solid var(--st90-borde); border-radius: 8px; background: #fff;
+      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s ease;
+      color: #ca8a04 !important;
+    }
+    .cal-ayuda-wrap .btn-ayuda svg {
+      width: 16px; height: 16px; display: block; color: #ca8a04 !important;
+    }
+    .cal-ayuda-wrap .btn-ayuda .ribbon-label {
+      font-size: 11px; font-weight: 700; color: #a16207 !important; margin-top: 1px;
+      white-space: nowrap; line-height: 1.1;
+    }
+    .cal-ayuda-wrap .btn-ayuda:hover {
+      background: #fefce8 !important;
+      border-color: #fde047 !important;
+    }
+    .cal-nav-rango {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+    }
+    .cal-nav strong {
+      color: var(--st90-azul); font-size: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 800; letter-spacing: .02em; padding: 0 4px;
+    }
+    .cal-nav button {
+      width: auto; min-height: 0; padding: 8px 12px; font-size: 14px; margin: 0;
+    }
+    .cal-modo-grupo {
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      background: #eef2f7; padding: 3px; border-radius: 8px;
+    }
+    .btn-cal-modo {
+      border: 0; background: transparent; color: #475569; font-size: 13px; font-weight: 700;
+      padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all .15s ease;
+    }
+    .btn-cal-modo:hover {
+      background: #e2e8f0; color: #0f172a;
+    }
+    .btn-cal-modo.activo {
+      background: #fff; color: var(--st90-azul); box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .cal-clase { overflow-x: auto; margin: 0 0 8px; }
+    /* Scroll visible y explícito únicamente para la vista Mes Horizontal */
+    .cal-clase.scroll-mes-h {
+      overflow-x: scroll !important;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: auto !important;
+      scrollbar-color: var(--st90-azul) #e2e8f0 !important;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .cal-clase.scroll-mes-h::-webkit-scrollbar {
+      width: 12px !important;
+      height: 12px !important;
+      display: block !important;
+    }
+    .cal-clase.scroll-mes-h::-webkit-scrollbar-track {
+      background: #e2e8f0 !important;
+      border-radius: 8px;
+    }
+    .cal-clase.scroll-mes-h::-webkit-scrollbar-thumb {
+      background: var(--st90-azul) !important;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+    }
+    .cal-clase.scroll-mes-h::-webkit-scrollbar-thumb:hover {
+      background: var(--st90-azul-osc) !important;
+    }
+    .cal-tabla {
+      width: 100%; min-width: 720px; border-collapse: separate; border-spacing: 4px;
+    }
+    .cal-tabla.modo-dia { min-width: 320px; max-width: 520px; margin: 0 auto; }
+    .cal-tabla.modo-mes { min-width: 2500px; width: max-content; }
+    .cal-tabla.modo-mes th:not(:first-child),
+    .cal-tabla.modo-mes td:not(:first-child) {
+      min-width: 110px;
+      width: 110px;
+    }
+    .cal-tabla.modo-mes th:first-child,
+    .cal-tabla.modo-mes td.hora {
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      background: #f8fafc;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+    }
+    .cal-tabla.modo-mes thead th:first-child {
+      z-index: 6;
+      background: #eef2f7;
+    }
+    .cal-tabla.modo-vertical { min-width: 820px; width: 100%; margin: 0; }
+    .cal-tabla .hora-dia {
+      width: 110px; min-width: 110px; text-align: center; vertical-align: middle;
+      padding: 8px 6px; font-size: 13px; font-weight: 800; color: #1e293b;
+      background: #eef2f7; border-radius: 8px;
+    }
+    .cal-tabla .hora-dia.hoy-col { background: #dbeafe; color: var(--st90-azul); }
+    .cal-tabla th {
+      text-align: center; font-size: 12px; color: #334155; font-weight: 800;
+      padding: 6px 4px; background: #eef2f7; border-radius: 8px;
+    }
+    .cal-tabla th.hoy-col { background: #dbeafe; color: var(--st90-azul); }
+    .cal-tabla .hora {
+      width: 72px; text-align: right; font-size: 11px; font-weight: 800;
+      color: #64748b; white-space: nowrap; padding-right: 6px; vertical-align: top;
+      padding-top: 10px;
+    }
+    .cal-celda {
+      display: block; width: 100%; min-height: 62px; text-align: left;
+      background: #fff; color: #0f172a;
+      border: 2px solid #cbd5e1; border-radius: 8px; padding: 6px 8px;
+      box-sizing: border-box; box-shadow: none; outline: none;
+    }
+    button.cal-celda:hover:not(:disabled) {
+      background: #fff; color: #0f172a; border-color: #94a3b8;
+    }
+    .cal-celda strong { display: block; font-size: 12px; line-height: 1.25; color: #0f172a; }
+    .cal-celda span { display: block; font-size: 11px; color: #64748b; font-weight: 600; margin-top: 2px; }
+    .cal-celda.publicado,
+    .cal-celda.con-texto {
+      border-width: 3px;
+      border-color: var(--st90-azul);
+      box-shadow: 0 0 0 1px var(--st90-azul);
+    }
+    button.cal-celda.publicado:hover:not(:disabled),
+    button.cal-celda.con-texto:hover:not(:disabled) {
+      background: #fff; border-color: var(--st90-azul);
+    }
+    .cal-celda.en-curso {
+      border-width: 3px;
+      border-color: var(--st90-verde);
+      box-shadow: 0 0 0 2px var(--st90-verde);
+    }
+    button.cal-celda.en-curso:hover:not(:disabled) {
+      background: #fff; border-color: var(--st90-verde);
+    }
+    .cal-celda.publicado.en-curso,
+    .cal-celda.con-texto.en-curso {
+      border-color: var(--st90-verde);
+      box-shadow: 0 0 0 2px var(--st90-verde), inset 0 0 0 2px var(--st90-azul);
+    }
+    .cal-celda.ajena { opacity: .7; }
+    .cal-celda.sel { background: #f1f5f9; }
+    button.cal-celda.sel:hover:not(:disabled) { background: #f1f5f9; }
+    .cal-vacia {
+      min-height: 62px; background: #f8fafc; border-radius: 8px;
+      border: 1px dashed #e2e8f0;
+    }
+    .filtros-clase {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+      margin: 0 0 10px;
+    }
+    .filtros-clase .campo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .filtros-clase label { margin: 0; }
+    .filtros-clase input, .filtros-clase select {
+      margin: 0; width: auto; min-width: 150px; height: 42px;
+    }
+    .filtros-clase #selAluClase { min-width: 240px; }
+    .filtros-clase #selAsigClase { min-width: 180px; }
+    #calAlu .cal-celda { min-height: 70px; }
+    #calAlu .cal-celda strong { font-size: 14px; }
+    #vistaAlu .alu-cab {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 6px 14px; margin: 0 0 10px;
+    }
+    #vistaAlu .alu-cab-izq { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; min-width: 0; }
+    #vistaAlu .alu-saludo {
+      font-size: 18px; line-height: 1.2; color: #0f172a; font-weight: 800; margin: 0;
+    }
+    #vistaAlu .alu-grupo {
+      margin: 0; font-size: 13px; font-weight: 600; color: #475569;
+    }
+    #vistaAlu .alu-fecha-caja { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; margin: 0; }
+    #vistaAlu .alu-fecha {
+      font-size: 14px; font-weight: 800; color: var(--st90-azul); margin: 0;
+    }
+    #vistaAlu .alu-fecha:focus { outline: 3px solid #93c5fd; outline-offset: 2px; }
+    #vistaAlu .alu-fecha-nota {
+      margin: 0; font-size: 12px; font-weight: 700; color: #334155;
+    }
+    #vistaAlu .alu-controles {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px;
+      margin: 0;
+    }
+    #vistaAlu .alu-bloque-clase {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+      border: 1px solid var(--st90-borde); border-radius: 10px; padding: 8px 10px;
+      margin: 0 0 10px; background: #f8fafc;
+    }
+    #vistaAlu .alu-hero {
+      border: 0; border-radius: 0; padding: 0; margin: 0; background: transparent;
+      flex: 1 1 240px; min-width: 0;
+    }
+    #vistaAlu .alu-hero h2 {
+      position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0);
+    }
+    #vistaAlu .alu-hero-fila {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    }
+    #vistaAlu .alu-hero .alu-asig {
+      font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;
+    }
+    #vistaAlu .alu-hero p { margin: 0; font-size: 13px; color: #334155; font-weight: 600; display: inline; }
+    #vistaAlu .alu-etq {
+      display: inline; font-size: 11px; font-weight: 800; letter-spacing: .03em;
+      text-transform: uppercase; margin: 0 8px 0 0; color: #64748b;
+    }
+    #vistaAlu .botones-voz {
+      display: flex; flex-wrap: wrap; gap: 6px; margin: 0;
+      flex: 1 1 auto;
+    }
+    #vistaAlu .botones-voz button {
+      min-height: 36px; min-width: 0; font-size: 13px; padding: 6px 10px;
+    }
+    #vistaAlu #txtVelClase { margin: 0; font-size: 12px; }
+    #vistaAlu .alu-texto {
+      white-space: pre-wrap; font-size: 15px; line-height: 1.45; color: #0f172a;
+      margin: 12px 0 0;
+    }
+    #vistaAlu .alu-texto:empty { display: none; }
+    #vistaAlu .alu-horario-lista {
+      list-style: none; margin: 0; padding: 0;
+      display: flex; flex-direction: column; gap: 6px;
+      max-width: none;
+    }
+    #vistaAlu button.alu-clase {
+      display: flex; flex-direction: column; align-items: stretch; gap: 2px;
+      border: 1px solid var(--st90-borde); border-radius: 10px; padding: 8px 10px;
+      background: #fff; color: #0f172a; text-align: left; width: 100%; margin: 0;
+      font-weight: 600; cursor: pointer; box-shadow: none;
+    }
+    #vistaAlu button.alu-clase:hover:not(:disabled) {
+      background: #fff; border-color: var(--st90-azul); color: #0f172a;
+    }
+    #vistaAlu button.alu-clase:focus {
+      outline: 3px solid #93c5fd; outline-offset: 2px;
+    }
+    #vistaAlu .alu-clase .alu-fila1 {
+      display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0;
+    }
+    #vistaAlu .alu-clase .alu-hora {
+      flex: 0 0 52px; font-size: 15px; font-weight: 800; color: #0f172a;
+      margin: 0; letter-spacing: 0;
+    }
+    #vistaAlu .alu-clase .alu-datos {
+      flex: 1 1 auto; min-width: 0;
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px;
+    }
+    #vistaAlu .alu-clase .alu-asig-mini {
+      font-size: 15px; margin: 0; color: #0f172a; font-weight: 800;
+    }
+    #vistaAlu .alu-clase .alu-meta {
+      margin: 0; font-size: 13px; font-weight: 600; color: #475569;
+    }
+    #vistaAlu .alu-clase .alu-etq {
+      margin: 0 0 0 62px; font-size: 11px; line-height: 1.3;
+    }
+    #vistaAlu .alu-clase .alu-accion {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex: 0 0 auto; min-height: 36px; min-width: 108px; width: auto;
+      padding: 6px 12px; margin: 0;
+      border-radius: 8px; background: var(--st90-azul); color: #fff;
+      font-size: 13px; font-weight: 700; pointer-events: none;
+      box-sizing: border-box;
+    }
+    #vistaAlu button.alu-clase.sel .alu-accion { background: #334155; }
+    #vistaAlu button.alu-clase.ahora { border-color: #15803d; border-width: 2px; }
+    #vistaAlu button.alu-clase.sel { background: #f1f5f9; }
+    #vistaAlu button.alu-clase.sel:hover:not(:disabled) { background: #f1f5f9; }
+    #vistaAlu button.alu-clase.repro { border-color: var(--st90-azul); border-width: 2px; }
+    #vistaAlu button.alu-clase.terminada { opacity: 1; cursor: pointer; }
+    #vistaAlu .alu-sec { font-size: 16px; color: var(--st90-azul); margin: 0 0 10px; }
+    #vistaAlu .botones-voz button:disabled { opacity: .45; cursor: not-allowed; }
+    .alu-solo-lector {
+      position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0);
+    }
+    @media (max-width: 640px) {
+      #vistaAlu .alu-clase { padding: 8px 10px; }
+      #vistaAlu .alu-clase .alu-etq { margin-left: 0; }
+      #vistaAlu .botones-voz button { min-width: 46%; flex: 1 1 46%; }
+    }
+  </style>
+</head>
+<body class="clase">
+  <div class="sr-live" id="vivo" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="login">
+    <p class="login-escuela"><?= typeof escuela !== 'undefined' ? escuela : 'Secundaria Técnica 90' ?></p>
+    <h1><?= (typeof modoClase !== 'undefined' && modoClase === 'maestro') ? 'Clase · Maestro' : 'Clase hablada' ?></h1>
+    <p class="login-ayuda"><?= (typeof modoClase !== 'undefined' && modoClase === 'maestro') ? 'Cada maestro entra con su usuario y su contraseña. El administrador usa el usuario admin.' : 'Escribe tu usuario y tu contraseña para escuchar la clase de esta hora.' ?></p>
+    <label for="usuarioClase">Usuario</label>
+    <input type="text" id="usuarioClase" autocomplete="username" placeholder="Tu usuario">
+    <label for="claveClase">Contraseña</label>
+    <input type="password" id="claveClase" autocomplete="current-password" placeholder="Contraseña">
+    <div class="fila-btn">
+      <button type="button" id="btnEntrarClase" onclick="entrarClase()">Entrar</button>
+    </div>
+    <p id="errorLogin"></p>
+    <p class="login-ver"><?= typeof version !== 'undefined' ? version : 'v303' ?></p>
+  </div>
+
+  <div id="panel" class="envoltorio oculto">
+    <div class="barra-sup ribbon-main-nav" role="banner" aria-label="Clase ST90">
+      <div class="tabs" id="tabsMae" role="tablist">
+        <button type="button" class="ribbon-tab" id="btnN1Clases" onclick="tabN1Clase('clases', this)" aria-label="Clases">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <path d="M16 2v4M8 2v4M3 10h18"></path>
+          </svg>
+          <span class="ribbon-label">Clases</span>
+        </button>
+        <button type="button" class="ribbon-tab oculto" id="btnTabAluAcc" onclick="tabN1Clase('aluAcc', this)" aria-label="Alumnos">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <rect x="14" y="11" width="8" height="10" rx="1"></rect>
+          </svg>
+          <span class="ribbon-label">Alumnos</span>
+        </button>
+        <button type="button" class="ribbon-tab oculto" id="btnTabAccesos" onclick="tabN1Clase('accesos', this)" aria-label="Docentes">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M22 10v6"></path>
+            <path d="M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"></path>
+          </svg>
+          <span class="ribbon-label">Docentes</span>
+        </button>
+      </div>
+      <div id="cintaClase" class="cinta-clase oculto" style="display:none;"></div>
+      <div class="barra-sup-acciones">
+        <button type="button" class="ribbon-btn ribbon-ico-rojo" onclick="salirClase()" aria-label="Cerrar sesión">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <path d="M16 17l5-5-5-5"></path>
+            <path d="M21 12H9"></path>
+          </svg>
+          <span class="ribbon-label">Salir</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="vistaAlu" class="oculto">
+      <div class="tarjeta">
+        <div class="alu-cab">
+          <div class="alu-cab-izq">
+            <h1 class="alu-saludo" id="txtSaludoAlu">Cargando horario…</h1>
+            <p class="alu-grupo" id="txtGrupoAlu"></p>
+            <div class="alu-fecha-caja">
+              <h2 class="alu-fecha" id="titFechaAlu" tabindex="-1">Tu horario</h2>
+              <p class="alu-fecha-nota" id="txtFechaNotaAlu"></p>
+            </div>
+          </div>
+          <div class="alu-controles">
+            <div class="cal-modo-grupo" role="group" aria-label="Vista del horario">
+              <button type="button" class="btn-cal-modo activo" id="btnVistaDiaAlu" onclick="cambiarVistaAlu('dia')" aria-pressed="true">Día</button>
+              <button type="button" class="btn-cal-modo" id="btnVistaSemanaAlu" onclick="cambiarVistaAlu('semana')" aria-pressed="false">Semana</button>
+            </div>
+            <div class="cal-nav-rango" role="group" aria-label="Cambiar fecha">
+              <button type="button" class="btn-secundario" id="btnAluAnt" onclick="moverFechaAlu(-1)" aria-label="Día anterior">←</button>
+              <button type="button" class="btn-secundario" onclick="irHoyAlu()">Hoy</button>
+              <button type="button" class="btn-secundario" id="btnAluSig" onclick="moverFechaAlu(1)" aria-label="Día siguiente">→</button>
+            </div>
+          </div>
+        </div>
+        <div class="alu-bloque-clase">
+          <section class="alu-hero" id="cajaHeroAlu" aria-labelledby="titHeroAlu"></section>
+          <div class="botones-voz" id="cajaPlayAlu">
+            <button type="button" id="btnPlayClase" onclick="hablarClase()">Escuchar clase</button>
+            <button type="button" class="sec" id="btnPausaClase" onclick="pausarClase()">Pausa</button>
+            <button type="button" class="sec" onclick="repetirClase()">Repetir</button>
+            <button type="button" class="sec" onclick="detenerClaseAlu()">Detener</button>
+            <button type="button" class="sec" onclick="cambiarVelocidadClase(-0.1)">Más lento</button>
+            <button type="button" class="sec" onclick="cambiarVelocidadClase(0.1)">Más rápido</button>
+          </div>
+          <p class="hint" id="txtVelClase">Velocidad: normal (1.0)</p>
+        </div>
+        <div id="textoClaseVis" class="alu-texto"></div>
+        <h2 class="alu-sec" id="titHorarioAlu">Horario de hoy</h2>
+        <div id="horarioAluLista"></div>
+        <div id="calAlu" class="cal-clase oculto"></div>
+        <div id="horarioAluSr" class="alu-solo-lector"></div>
+      </div>
+    </div>
+
+    <div id="vistaMae" class="oculto">
+      <div id="tabClases" class="oculto">
+        <div class="tarjeta">
+          <p class="hint oculto" id="txtDiaMae" style="display:none;margin:0;"></p>
+          <div id="wrapCalendarioMae">
+            <div class="cal-nav oculto" id="navCalClase">
+              <div class="cal-filtros-grupo" id="n3Clases" role="group" aria-label="Filtros del horario">
+                <button type="button" class="ribbon-btn" id="btnClaseFecha" onclick="abrirCalendarioFechaClase(event)" aria-label="Fecha">
+                  <input type="date" id="fechaMaeClase" class="filtro-date-hidden" onchange="alCambiarFechaClase()" aria-label="Fecha" tabindex="-1">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <span class="ribbon-label">Fecha</span>
+                </button>
+                <div class="ribbon-btn ribbon-btn-select-wrap" id="btnClaseGrupo">
+                  <select id="selGrupoClase" class="filtro-select-overlay" onchange="cambiarGrupoClase()" aria-label="Grupo">
+                    <option value="">Elige grupo…</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>
+                  <span class="ribbon-label">Grupo</span>
+                </div>
+                <div class="ribbon-btn ribbon-btn-select-wrap" id="btnClaseAlumno">
+                  <select id="selAluClase" class="filtro-select-overlay" onchange="cambiarAlumnoClase()" aria-label="Alumno">
+                    <option value="">Elige alumno…</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  <span class="ribbon-label">Alumno</span>
+                </div>
+                <div class="ribbon-btn ribbon-btn-select-wrap" id="btnClaseAsig">
+                  <select id="selAsigClase" class="filtro-select-overlay" onchange="cambiarAsignaturaClase()" aria-label="Asignatura">
+                    <option value="">Todas las del grupo</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  <span class="ribbon-label">Asignatura</span>
+                </div>
+              </div>
+              <div class="cal-modo-grupo" role="group" aria-label="Filtro de vista de horario">
+                <button type="button" class="btn-cal-modo" id="btnModoDia" onclick="cambiarModoCal('dia')">Día</button>
+                <button type="button" class="btn-cal-modo activo" id="btnModoSemana" onclick="cambiarModoCal('semana')">Semana</button>
+                <button type="button" class="btn-cal-modo" id="btnModoMes" onclick="cambiarModoCal('mes')">Mes</button>
+              </div>
+              <div class="cal-nav-rango">
+                <button type="button" class="btn-secundario" onclick="moverCalClase(-1)" aria-label="Anterior">◀</button>
+                <strong id="txtSemanaClase">--/---/--&gt;--/---/--</strong>
+                <button type="button" class="btn-secundario" onclick="moverCalClase(1)" aria-label="Siguiente">▶</button>
+                <button type="button" class="btn-secundario" onclick="irHoyClase()">Hoy</button>
+              </div>
+              <div class="cal-modo-grupo" role="group" aria-label="Orientación del horario">
+                <button type="button" class="btn-cal-modo activo" id="btnOriH" onclick="cambiarOrientacionCal('h')" title="Días en columnas">Horizontal</button>
+                <button type="button" class="btn-cal-modo" id="btnOriV" onclick="cambiarOrientacionCal('v')" title="Días en filas">Vertical</button>
+              </div>
+              <div class="cal-ayuda-wrap">
+                <button type="button" class="btn-ayuda ribbon-btn ribbon-ico-ambar" onclick="abrirAyuda('claseHorario')" aria-label="Ayuda">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+                  <span class="ribbon-label">Ayuda</span>
+                </button>
+              </div>
+            </div>
+            <div id="listaSlotsMae" class="cal-clase"></div>
+          </div>
+        </div>
+        <div class="tarjeta oculto" id="cajaFormMae">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+            <div>
+              <h2 id="titFormMae" style="font-size:18px;color:var(--st90-azul);margin:0 0 4px;">Contenido</h2>
+              <p class="hint" id="metaFormMae" style="margin:0;"></p>
+            </div>
+            <button type="button" class="ribbon-btn" onclick="toggleHorarioMae(true)" aria-label="Mostrar horario">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span class="ribbon-label">Horario</span>
+            </button>
+          </div>
+          <div class="form-clase">
+            <label for="titContClase">Título</label>
+            <input type="text" id="titContClase" placeholder="Tema de la clase">
+            <label for="txtContClase">Texto que escuchará el alumno</label>
+            <textarea id="txtContClase" placeholder="Escribe o pega aquí lo que se va a leer en voz alta."></textarea>
+            <label><input type="checkbox" id="chkPubClase" checked> Publicar ahora</label>
+            <div class="botones-voz">
+              <button type="button" onclick="guardarContenidoMae()">Guardar</button>
+              <button type="button" class="sec" onclick="probarVozMae()">Escuchar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tabAluAcc" class="oculto">
+        <div class="tarjeta">
+          <div id="txtAluPassConteo" class="oculto" style="display:none;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--st90-azul);text-align:center;">
+            Alumnos encontrados: 0
+          </div>
+          <div class="cal-filtros-grupo" id="n3AluAcc" role="group" aria-label="Filtros y acciones de alumnos" style="display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:0 auto 16px;">
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnPassGrado">
+              <select id="filtroGradoPass" class="filtro-select-overlay" onchange="cambiarGradoPassAlu()" aria-label="Grado">
+                <option value="">Todos los grados</option>
+                <option value="1">1° de secundaria</option>
+                <option value="2">2° de secundaria</option>
+                <option value="3">3° de secundaria</option>
+              </select>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 10l-10-5-10 5 10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+              <span class="ribbon-label">Grado</span>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnPassGrupo">
+              <select id="filtroGrupoPass" class="filtro-select-overlay" onchange="cambiarGrupoPassAlu()" aria-label="Grupo">
+                <option value="">Todos los grupos</option>
+              </select>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>
+              <span class="ribbon-label">Grupo</span>
+            </div>
+            <div class="asi-dd" id="ddPassBuscar" style="position:relative;">
+              <button type="button" class="ribbon-btn" id="btnPassBuscar" onclick="toggleDdPassBuscar(event)" aria-label="Buscar">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+                <span class="ribbon-label" id="etqPassBuscar">Buscar</span>
+              </button>
+              <div id="panelPassBuscar" class="asi-dd-panel oculto" style="position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:100;background:#fff;border:1px solid var(--st90-borde);border-radius:10px;padding:8px 10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:240px;" onclick="event.stopPropagation()">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <input type="search" id="buscAluPass" placeholder="Nombre o matrícula…" oninput="filtrarTablaPassLocal();actualizarEtqPassBuscar();" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--st90-borde);border-radius:6px;font-size:13px;outline:none;">
+                  <button type="button" onclick="limpiarPassBuscar()" style="border:none;background:#f1f5f9;color:#64748b;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;" title="Limpiar">×</button>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="ribbon-btn ribbon-ico-verde" onclick="generarClavesMasivasAlu('grupo')" aria-label="Generar a este grupo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+              <span class="ribbon-label">Generar</span>
+            </button>
+            <button type="button" class="btn-ayuda ribbon-btn ribbon-ico-ambar" onclick="abrirAyuda('claseAluAcc')" aria-label="Ayuda">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+              <span class="ribbon-label">Ayuda</span>
+            </button>
+          </div>
+          <div id="cajaTablaAluPass" style="overflow-x:auto;">
+            <p class="hint">Cargando lista de alumnos…</p>
+          </div>
+        </div>
+      </div>
+      <div id="tabAccesos" class="oculto">
+        <div class="tarjeta" id="cajaMaeAccWrap">
+          <div id="contMaeClase" class="oculto" style="display:none;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--st90-azul);text-align:center;">
+            Docentes registrados: 0
+          </div>
+          <div class="cal-filtros-grupo" id="n3MaeAcc" role="group" aria-label="Filtros y acciones de docentes" style="display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:0 auto 16px;">
+            <div class="asi-dd" id="ddMaeBuscar" style="position:relative;">
+              <button type="button" class="ribbon-btn" id="btnMaeBuscar" onclick="toggleDdMaeBuscar(event)" aria-label="Buscar">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+                <span class="ribbon-label" id="etqMaeBuscar">Buscar</span>
+              </button>
+              <div id="panelMaeBuscar" class="asi-dd-panel oculto" style="position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:100;background:#fff;border:1px solid var(--st90-borde);border-radius:10px;padding:8px 10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:240px;" onclick="event.stopPropagation()">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <input type="search" id="buscMaeClase" placeholder="Docente o usuario…" oninput="filtrarTablaMaeClaseLocal();actualizarEtqMaeBuscar();" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--st90-borde);border-radius:6px;font-size:13px;outline:none;">
+                  <button type="button" onclick="limpiarMaeBuscar()" style="border:none;background:#f1f5f9;color:#64748b;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;" title="Limpiar">×</button>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="ribbon-btn" onclick="syncMaestrosClase()" aria-label="Sincronizar">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              <span class="ribbon-label">Sincronizar</span>
+            </button>
+            <button type="button" class="ribbon-btn ribbon-ico-verde" onclick="generarClavesMasivasMae()" aria-label="Generar claves">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+              <span class="ribbon-label">Generar</span>
+            </button>
+            <button type="button" class="btn-ayuda ribbon-btn ribbon-ico-ambar" onclick="abrirAyuda('claseMaeAcc')" aria-label="Ayuda">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+              <span class="ribbon-label">Ayuda</span>
+            </button>
+          </div>
+          <div id="cajaMaeAcc" style="overflow-x:auto;">
+            <p class="hint" style="text-align:center;">Cargando lista de docentes…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const URL_BASE_APP = <?= JSON.stringify(urlBase || '') ?>;
+    const MODO_CLASE = <?= JSON.stringify(typeof modoClase !== 'undefined' ? modoClase : 'alumno') ?>;
+    const VERSION_CLASE = <?= JSON.stringify(typeof version !== 'undefined' ? version : 'v303') ?>;
+  </script>
+  <?!= include('ComunJS') ?>
+  <script>
+    let tokenClase = '';
+    if (typeof clavesDocentes !== 'undefined') {
+      clavesDocentes.configurar({ caja: 'cajaMaeAcc', busc: 'buscMaeClase', cont: 'contMaeClase' });
+    }
+    let rolClase = '';
+    let slotMaeSel = null;
+    let ctxAlu = null;
+    let velVoz = 1;
+    let utterClase = null;
+    let aluClaseSel = '';
+    let panelMaeUlt = null;
+    let fechaAluCal = '';
+    let selAluSlot = null;
+    let modoVistaAlu = 'dia';
+    let reproduciendoAlu = false;
+    let pendingFocoAlu_ = '';
+    let colaVozAlu_ = [];
+
+    function anunciar(msg) {
+      const el = document.getElementById('vivo');
+      if (el) el.textContent = msg || '';
+    }
+
+    function entrarClase() {
+      const usu = (document.getElementById('usuarioClase') || {}).value || '';
+      const clave = (document.getElementById('claveClase') || {}).value || '';
+      const err = document.getElementById('errorLogin');
+      if (err) err.textContent = '';
+      gsRun('iniciarSesionClase', usu, clave).then(function (r) {
+        if (!r || !r.ok) {
+          if (err) err.textContent = (r && r.mensaje) || 'No se pudo entrar.';
+          return;
+        }
+        tokenClase = r.token;
+        rolClase = r.rol;
+        document.getElementById('login').classList.add('oculto');
+        document.getElementById('panel').classList.remove('oculto');
+        if (r.rol === 'alumno') {
+          document.getElementById('vistaAlu').classList.remove('oculto');
+          document.getElementById('vistaMae').classList.add('oculto');
+          const cinta = document.getElementById('cintaClase');
+          if (cinta) cinta.classList.add('oculto');
+          document.querySelectorAll('#tabsMae button').forEach(function (b) { b.classList.add('oculto'); });
+          fechaAluCal = fechaLocalClase();
+          selAluSlot = null;
+          modoVistaAlu = 'dia';
+          reproduciendoAlu = false;
+          pendingFocoAlu_ = '';
+          cargarContextoAlu();
+        } else {
+          document.getElementById('vistaAlu').classList.add('oculto');
+          document.getElementById('vistaMae').classList.remove('oculto');
+          const tabAcc = document.getElementById('btnTabAccesos');
+          if (tabAcc) tabAcc.classList.toggle('oculto', r.rol !== 'admin');
+          const tabAlu = document.getElementById('btnTabAluAcc');
+          if (tabAlu) tabAlu.classList.toggle('oculto', r.rol !== 'admin');
+          const wrapMae = document.getElementById('cajaMaeAccWrap');
+          if (wrapMae) wrapMae.classList.toggle('oculto', r.rol !== 'admin');
+          iniciarCintaClase_();
+          tabN1Clase('clases', document.getElementById('btnN1Clases'));
+        }
+      }).catch(function (e) {
+        if (err) err.textContent = (e && e.message) || String(e);
+      });
+    }
+
+    function salirClase() {
+      detenerVoz();
+      gsRun('cerrarSesionClase', tokenClase).catch(function () {});
+      tokenClase = '';
+      location.reload();
+    }
+
+    function fechaLocalClase() {
+      const d = new Date();
+      const m = ('0' + (d.getMonth() + 1)).slice(-2);
+      const dia = ('0' + d.getDate()).slice(-2);
+      return d.getFullYear() + '-' + m + '-' + dia;
+    }
+
+    function cargarContextoAlu() {
+      gsRun('contextoClaseAlumno', tokenClase, fechaAluCal || fechaLocalClase()).then(function (r) {
+        ctxAlu = r;
+        const hoy = fechaLocalClase();
+        const enCurso = slotEnCursoAlu_(r);
+        if (!selAluSlot) {
+          if ((fechaAluCal || hoy) === hoy) selAluSlot = enCurso;
+        } else {
+          selAluSlot = buscarSlotCalAlu_(r, selAluSlot.fecha, selAluSlot.idHorario) || null;
+          if (!selAluSlot && (fechaAluCal || hoy) === hoy) selAluSlot = enCurso;
+        }
+        pintarAlu(r);
+        pintarHorarioAlu_(r);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function slotEnCursoAlu_(r) {
+      const dias = (r && r.calendario) || [];
+      for (let i = 0; i < dias.length; i++) {
+        const filas = dias[i].horario || [];
+        for (let j = 0; j < filas.length; j++) {
+          if (filas[j].enCurso) return filas[j];
+        }
+      }
+      return (r && r.clase) || null;
+    }
+
+    function buscarSlotCalAlu_(r, fecha, idHorario) {
+      const fe = String(fecha || '').slice(0, 10);
+      const id = String(idHorario == null ? '' : idHorario);
+      const dias = (r && r.calendario) || [];
+      for (let i = 0; i < dias.length; i++) {
+        const filas = dias[i].horario || [];
+        for (let j = 0; j < filas.length; j++) {
+          const h = filas[j];
+          const feH = String(h.fecha || '').slice(0, 10);
+          const idH = String(h.idHorario == null ? '' : h.idHorario);
+          if (idH === id && feH === fe) return h;
+        }
+      }
+      return null;
+    }
+
+    function esHoyFechaAlu_() {
+      return (fechaAluCal || fechaLocalClase()) === fechaLocalClase();
+    }
+
+    function minutosHmAlu_(hm) {
+      const p = String(hm || '').split(':');
+      const h = Number(p[0]);
+      const m = Number(p[1] || 0);
+      if (isNaN(h)) return 0;
+      return (h * 60) + (isNaN(m) ? 0 : m);
+    }
+
+    function hayTextoAlu_(h) {
+      if (!h) return false;
+      if (h.publicado) return true;
+      return !!(h.contenido && String(h.contenido.texto || '').trim());
+    }
+
+    function claseTerminadaAlu_(h, r) {
+      if (!h || !h.fecha) return false;
+      const hoy = fechaLocalClase();
+      if (h.fecha < hoy) return true;
+      if (h.fecha > hoy) return false;
+      const ahora = minutosHmAlu_((r && r.hora) || '');
+      return ahora >= minutosHmAlu_(h.horaFin);
+    }
+
+    function slotReproAlu_(h) {
+      return !!(reproduciendoAlu && selAluSlot && h &&
+        selAluSlot.idHorario === h.idHorario && selAluSlot.fecha === h.fecha);
+    }
+
+    function ordinalHoraAlu_(bloque) {
+      const n = parseInt(String(bloque || '').replace(/\D/g, ''), 10);
+      const nombres = ['', 'primera', 'segunda', 'tercera', 'cuarta', 'quinta', 'sexta', 'séptima', 'octava', 'novena', 'décima'];
+      if (n >= 1 && n <= 10) return nombres[n] + ' hora';
+      if (n) return n + 'ª hora';
+      return 'hora';
+    }
+
+    function fechaLargaEsMx_(iso, capital) {
+      const d = new Date(String(iso || '') + 'T12:00:00');
+      if (isNaN(d.getTime())) return String(iso || '');
+      const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+      const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+      let nom = dias[d.getDay()] || '';
+      if (capital) nom = nom ? (nom.charAt(0).toUpperCase() + nom.slice(1)) : nom;
+      let t = nom + ' ' + d.getDate() + ' de ' + meses[d.getMonth()];
+      if (d.getFullYear() !== (new Date()).getFullYear()) t += ' de ' + d.getFullYear();
+      return t;
+    }
+
+    function etqVelAlu_() {
+      const base = (Math.abs(velVoz - 1) < 0.05) ? 'Velocidad: normal (1.0)' : ('Velocidad: ' + velVoz.toFixed(1));
+      if (esClaseInglesAlu_()) return base + ' · Narrador: español o inglés, según el texto';
+      return base;
+    }
+
+    function esAsignaturaInglesAlu_(nombre) {
+      const n = String(nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return n.indexOf('ingles') >= 0 || n.indexOf('english') >= 0;
+    }
+
+    function esClaseInglesAlu_() {
+      if (rolClase === 'alumno') {
+        const cl = claseUsoAlu_();
+        return esAsignaturaInglesAlu_(cl && cl.asignatura);
+      }
+      return esAsignaturaInglesAlu_(slotMaeSel && slotMaeSel.asignatura);
+    }
+
+    function idiomaVozClase_() {
+      return esClaseInglesAlu_() ? 'en-US' : 'es-MX';
+    }
+
+    function elegirVozClase_(lang) {
+      const voces = (window.speechSynthesis && window.speechSynthesis.getVoices()) || [];
+      if (!voces.length) return null;
+      let mejor = null;
+      let ptsMejor = -1;
+      voces.forEach(function (v) {
+        const l = String(v.lang || '');
+        const nom = String(v.name || '');
+        let pts = 0;
+        if (lang === 'en-US') {
+          if (/^en-US/i.test(l)) pts += 40;
+          else if (/en_US/i.test(l)) pts += 38;
+          else if (/^en/i.test(l) && /US|America|United States/i.test(nom)) pts += 32;
+          else if (/^en/i.test(l) && !/GB|UK|British|Australia|AU|India|IN/i.test(l + nom)) pts += 18;
+          else if (/^en/i.test(l)) pts += 8;
+          if (/Aria|Jenny|Guy|Zira|David|Google US English|Microsoft (Aria|Jenny|Guy|Zira|David)/i.test(nom)) pts += 8;
+        } else {
+          if (/^es-MX/i.test(l)) pts += 40;
+          else if (/^es-419/i.test(l)) pts += 28;
+          else if (/^es-US/i.test(l)) pts += 22;
+          else if (/^es/i.test(l)) pts += 12;
+          if (/Mexico|Sabina|Dalia|Google Español/i.test(nom)) pts += 6;
+        }
+        if (pts > ptsMejor) { ptsMejor = pts; mejor = v; }
+      });
+      return ptsMejor > 0 ? mejor : null;
+    }
+
+    function prepararVocesClase_() {
+      if (!window.speechSynthesis) return;
+      try { window.speechSynthesis.getVoices(); } catch (e) {}
+    }
+
+    function claveSlotAlu_(h) {
+      if (!h) return '';
+      return String(h.fecha || '').slice(0, 10) + '#' + String(h.idHorario == null ? '' : h.idHorario);
+    }
+
+    function enlazarClicksAlu_(raiz) {
+      const caja = (typeof raiz === 'string') ? document.getElementById(raiz) : raiz;
+      if (!caja) return;
+      const nodos = caja.querySelectorAll('[data-alu-pick]');
+      for (let i = 0; i < nodos.length; i++) {
+        nodos[i].addEventListener('click', function () {
+          elegirClaseAlu(this.getAttribute('data-alu-fecha'), this.getAttribute('data-alu-id'));
+        });
+      }
+    }
+
+    function etiquetasEstadoAlu_(h, r) {
+      const out = [];
+      if (!h) return out;
+      if (slotReproAlu_(h)) out.push('Reproduciendo');
+      if (h.enCurso) out.push('Ahora');
+      else if (selAluSlot && claveSlotAlu_(selAluSlot) === claveSlotAlu_(h)) out.push('Seleccionada');
+      if (hayTextoAlu_(h)) out.push('Contenido disponible');
+      else out.push('Contenido no disponible');
+      if (claseTerminadaAlu_(h, r) && !h.enCurso) out.push('Terminada');
+      return out;
+    }
+
+    function fraseSlotAlu_(h, r) {
+      if (!h) return '';
+      let t = (h.asignatura || 'Clase') + '. ' + ordinalHoraAlu_(h.bloque) + '. De ' +
+        (h.horaInicio || '') + ' a ' + (h.horaFin || '') + '.';
+      if (h.maestro) t += ' Docente ' + h.maestro + '.';
+      t += ' ' + etiquetasEstadoAlu_(h, r).join('. ') + '.';
+      return t.replace(/\.\s*\./g, '.');
+    }
+
+    function jsOnclickAlu_(fecha, idHorario) {
+      return 'elegirClaseAlu(' + JSON.stringify(String(fecha || '')) + ',' +
+        JSON.stringify(String(idHorario || '')) + ')';
+    }
+
+    function claseUsoAlu_() {
+      if (selAluSlot) return selAluSlot;
+      if (esHoyFechaAlu_() && ctxAlu && ctxAlu.clase) return ctxAlu.clase;
+      return null;
+    }
+
+    function contenidoUsoAlu_() {
+      const cl = claseUsoAlu_();
+      if (cl && cl.contenido) return cl.contenido;
+      return null;
+    }
+
+    function pintarAlu(r) {
+      const alu = (r && r.alumno) || {};
+      const saludo = document.getElementById('txtSaludoAlu');
+      const grupo = document.getElementById('txtGrupoAlu');
+      const titFe = document.getElementById('titFechaAlu');
+      const nota = document.getElementById('txtFechaNotaAlu');
+      const vel = document.getElementById('txtVelClase');
+      const fe = fechaAluCal || fechaLocalClase();
+      const hoy = fechaLocalClase();
+      if (saludo) saludo.textContent = 'Hola, ' + (alu.nombre || '');
+      if (grupo) grupo.textContent = alu.grupo ? ('Grupo ' + alu.grupo) : '';
+      if (titFe) {
+        titFe.textContent = (modoVistaAlu === 'semana' && r && r.semanaInicio)
+          ? ('Semana ' + formatearRangoDdMmAa_(r.semanaInicio, r.semanaFin))
+          : fechaLargaEsMx_(fe, true);
+      }
+      if (nota) {
+        if (modoVistaAlu === 'semana') {
+          nota.textContent = (r && r.semanaInicio && r.semanaFin && hoy >= r.semanaInicio && hoy <= r.semanaFin)
+            ? 'Esta es la semana actual.'
+            : 'Estás viendo otra semana.';
+        } else {
+          nota.textContent = (fe === hoy) ? 'Hoy' : 'Estás viendo otro día';
+        }
+      }
+      if (vel) vel.textContent = etqVelAlu_();
+      const bDia = document.getElementById('btnVistaDiaAlu');
+      const bSem = document.getElementById('btnVistaSemanaAlu');
+      if (bDia) {
+        bDia.classList.toggle('activo', modoVistaAlu === 'dia');
+        bDia.setAttribute('aria-pressed', modoVistaAlu === 'dia' ? 'true' : 'false');
+      }
+      if (bSem) {
+        bSem.classList.toggle('activo', modoVistaAlu === 'semana');
+        bSem.setAttribute('aria-pressed', modoVistaAlu === 'semana' ? 'true' : 'false');
+      }
+      const ant = document.getElementById('btnAluAnt');
+      const sigBtn = document.getElementById('btnAluSig');
+      if (ant) ant.setAttribute('aria-label', modoVistaAlu === 'dia' ? 'Día anterior' : 'Semana anterior');
+      if (sigBtn) sigBtn.setAttribute('aria-label', modoVistaAlu === 'dia' ? 'Día siguiente' : 'Semana siguiente');
+      pintarHeroAlu_(r);
+    }
+
+    function pintarHeroAlu_(r) {
+      const caja = document.getElementById('cajaHeroAlu');
+      const play = document.getElementById('cajaPlayAlu');
+      const vis = document.getElementById('textoClaseVis');
+      if (!caja) return;
+      const cl = claseUsoAlu_();
+      const sig = r && r.siguiente;
+      const hoy = fechaLocalClase();
+      const viendoHoy = esHoyFechaAlu_();
+      let html = '';
+      if (cl) {
+        html += '<h2 id="titHeroAlu">' + (cl.enCurso ? 'Clase actual' : 'Clase seleccionada') + '</h2>';
+        html += '<div class="alu-hero-fila">';
+        html += '<p class="alu-asig">' + escaparHtml(cl.asignatura || 'Clase') + '</p>';
+        html += '<p>' + escaparHtml((cl.horaInicio || '') + '–' + (cl.horaFin || '') +
+          (cl.maestro ? (' · ' + cl.maestro) : '')) + '</p>';
+        etiquetasEstadoAlu_(cl, r).forEach(function (e) {
+          html += '<span class="alu-etq">' + escaparHtml(e) + '</span>';
+        });
+        html += '</div>';
+      } else if (viendoHoy) {
+        html += '<h2 id="titHeroAlu">Clase actual</h2>';
+        html += '<p>No tienes una clase en este momento.</p>';
+        if (sig) {
+          const sigRico = buscarSlotCalAlu_(r, sig.fecha || hoy, sig.idHorario) || sig;
+          html += '<p>Próxima clase: ' + escaparHtml(sigRico.asignatura || '') + ' · ' +
+            escaparHtml(sigRico.horaInicio || '') + '</p>';
+          if (hayTextoAlu_(sigRico) && sigRico.idHorario) {
+            html += '<p><button type="button" data-alu-pick="1" data-alu-fecha="' +
+              escaparHtml(String(sigRico.fecha || hoy).slice(0, 10)) + '" data-alu-id="' +
+              escaparHtml(String(sigRico.idHorario)) + '">Ver clase</button></p>';
+          }
+        }
+      } else {
+        html += '<h2 id="titHeroAlu">Clase</h2>';
+        html += '<p>Elige una clase del horario de este día.</p>';
+      }
+      caja.innerHTML = html;
+      enlazarClicksAlu_(caja);
+      if (play) play.classList.toggle('oculto', !cl);
+      const vel = document.getElementById('txtVelClase');
+      if (vel) vel.classList.toggle('oculto', !cl);
+      const btnPlay = document.getElementById('btnPlayClase');
+      if (btnPlay) btnPlay.disabled = !(cl && hayTextoAlu_(cl));
+      const cont = contenidoUsoAlu_();
+      if (vis) vis.textContent = (cont && cont.texto) ? ((cont.titulo ? (cont.titulo + '\n\n') : '') + cont.texto) : '';
+    }
+
+    function textoClaseParaVoz_() {
+      const cont = contenidoUsoAlu_();
+      if (!cont || !String(cont.texto || '').trim()) return '';
+      return ((cont.titulo ? (cont.titulo + '. ') : '') + cont.texto).trim();
+    }
+
+    function puntuarIdiomaTexto_(t) {
+      const s = ' ' + String(t || '').toLowerCase().normalize('NFC') + ' ';
+      let es = 0;
+      let en = 0;
+      if (/[áéíóúñü¿¡]/.test(s)) es += 8;
+      const palEs = [' el ', ' la ', ' los ', ' las ', ' de ', ' que ', ' y ', ' en ', ' un ', ' una ', ' del ', ' con ', ' por ', ' para ', ' es ', ' se ', ' no ', ' su ', ' al ', ' lo ', ' como ', ' mas ', ' más ', ' pero ', ' sus ', ' le ', ' ha ', ' me ', ' si ', ' ya ', ' fue ', ' este ', ' hay ', ' esta ', ' entre ', ' cuando ', ' muy ', ' sin ', ' sobre ', ' tambien ', ' también ', ' hoy ', ' clase ', ' materiales ', ' docente ', ' nosotros ', ' ustedes ', ' también '];
+      const palEn = [' the ', ' a ', ' an ', ' of ', ' to ', ' and ', ' in ', ' is ', ' you ', ' that ', ' it ', ' for ', ' on ', ' are ', ' with ', ' as ', ' this ', ' be ', ' at ', ' or ', ' from ', ' we ', ' they ', ' have ', ' has ', ' not ', ' but ', ' what ', ' when ', ' your ', ' can ', ' will ', ' today ', ' class ', ' hello ', ' there ', ' their ', ' these ', ' those ', ' because ', ' about '];
+      palEs.forEach(function (w) { if (s.indexOf(w) >= 0) es += 2; });
+      palEn.forEach(function (w) { if (s.indexOf(w) >= 0) en += 2; });
+      if (/\b(ción|ciones|mente|ción|ción)\b/.test(s)) es += 4;
+      if (/\b\w+ción\b/.test(s)) es += 3;
+      if (/\b(ing|tion|ness|fully)\b/.test(s)) en += 2;
+      if (en > es) return 'en-US';
+      return 'es-MX';
+    }
+
+    function trozosIdiomaTexto_(texto) {
+      const bruto = String(texto || '').replace(/\r/g, '').trim();
+      if (!bruto) return [];
+      const partes = bruto.replace(/([.!?…])\s+/g, '$1\n').split(/\n+/).map(function (p) {
+        return p.trim();
+      }).filter(Boolean);
+      const out = [];
+      partes.forEach(function (p) {
+        const lang = puntuarIdiomaTexto_(p);
+        if (out.length && out[out.length - 1].lang === lang) {
+          out[out.length - 1].texto += ' ' + p;
+        } else {
+          out.push({ lang: lang, texto: p });
+        }
+      });
+      return out;
+    }
+
+    function hablarTexto(texto) {
+      detenerVoz();
+      if (!window.speechSynthesis) {
+        toast('Este navegador no puede leer en voz alta. Abre Chrome.', 'error');
+        return;
+      }
+      if (esClaseInglesAlu_()) {
+        colaVozAlu_ = trozosIdiomaTexto_(texto);
+        if (!colaVozAlu_.length) colaVozAlu_ = [{ lang: 'en-US', texto: texto }];
+      } else {
+        colaVozAlu_ = [{ lang: 'es-MX', texto: texto }];
+      }
+      function arrancar() {
+        hablarSiguienteTrozosAlu_();
+      }
+      const hayVoces = (window.speechSynthesis.getVoices() || []).length > 0;
+      if (hayVoces) {
+        arrancar();
+        return;
+      }
+      let hecho = false;
+      const go = function () {
+        if (hecho) return;
+        hecho = true;
+        arrancar();
+      };
+      if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+        window.speechSynthesis.onvoiceschanged = function () {
+          window.speechSynthesis.onvoiceschanged = null;
+          go();
+        };
+      }
+      window.setTimeout(go, 500);
+    }
+
+    function hablarSiguienteTrozosAlu_() {
+      if (!colaVozAlu_.length) {
+        reproduciendoAlu = false;
+        if (ctxAlu) pintarHeroAlu_(ctxAlu);
+        return;
+      }
+      const t = colaVozAlu_.shift();
+      reproduciendoAlu = true;
+      utterClase = new SpeechSynthesisUtterance(t.texto);
+      utterClase.lang = t.lang;
+      const voz = elegirVozClase_(t.lang);
+      if (voz) utterClase.voice = voz;
+      utterClase.rate = velVoz;
+      utterClase.onend = function () { hablarSiguienteTrozosAlu_(); };
+      utterClase.onerror = function () {
+        colaVozAlu_ = [];
+        reproduciendoAlu = false;
+      };
+      window.speechSynthesis.speak(utterClase);
+      if (ctxAlu) pintarHeroAlu_(ctxAlu);
+    }
+
+    function hablarClase() {
+      if (!ctxAlu) { cargarContextoAlu(); return; }
+      const t = textoClaseParaVoz_();
+      if (!t) {
+        anunciar('Esta clase no tiene contenido publicado.');
+        return;
+      }
+      anunciar('Reproduciendo la clase.');
+      hablarTexto(t);
+    }
+
+    function pausarClase() {
+      if (!window.speechSynthesis) return;
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        anunciar('Reproducción reanudada.');
+      } else if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        anunciar('Reproducción en pausa.');
+      }
+    }
+
+    function repetirClase() { hablarClase(); }
+
+    function cambiarVelocidadClase(d) {
+      velVoz = Math.max(0.6, Math.min(1.4, Math.round((velVoz + d) * 10) / 10));
+      const el = document.getElementById('txtVelClase');
+      if (el) el.textContent = etqVelAlu_();
+      anunciar(etqVelAlu_());
+      if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) hablarClase();
+    }
+
+    function detenerVoz() {
+      colaVozAlu_ = [];
+      if (utterClase) {
+        utterClase.onend = null;
+        utterClase.onerror = null;
+      }
+      try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+      utterClase = null;
+    }
+
+    function detenerClaseAlu() {
+      detenerVoz();
+      reproduciendoAlu = false;
+      anunciar('Reproducción detenida.');
+      if (ctxAlu) pintarHeroAlu_(ctxAlu);
+    }
+
+    function cambiarVistaAlu(modo) {
+      modoVistaAlu = (modo === 'semana') ? 'semana' : 'dia';
+      if (ctxAlu) {
+        pintarAlu(ctxAlu);
+        pintarHorarioAlu_(ctxAlu);
+      }
+    }
+
+    function moverFechaAlu(delta) {
+      const fe = fechaAluCal || fechaLocalClase();
+      const d = new Date(fe + 'T12:00:00');
+      if (isNaN(d.getTime())) return;
+      d.setDate(d.getDate() + (Number(delta) * (modoVistaAlu === 'semana' ? 7 : 1)));
+      fechaAluCal = fechaLocalDesde_(d);
+      selAluSlot = null;
+      pendingFocoAlu_ = 'fecha';
+      cargarContextoAlu();
+    }
+
+    function moverSemanaAlu(delta) {
+      const fe = fechaAluCal || fechaLocalClase();
+      const d = new Date(fe + 'T12:00:00');
+      if (isNaN(d.getTime())) return;
+      d.setDate(d.getDate() + (Number(delta) * 7));
+      fechaAluCal = fechaLocalDesde_(d);
+      selAluSlot = null;
+      pendingFocoAlu_ = 'fecha';
+      cargarContextoAlu();
+    }
+
+    function irHoyAlu() {
+      fechaAluCal = fechaLocalClase();
+      selAluSlot = null;
+      pendingFocoAlu_ = 'fecha';
+      cargarContextoAlu();
+    }
+
+    function pintarHorarioAlu_(r) {
+      const lista = document.getElementById('horarioAluLista');
+      const cal = document.getElementById('calAlu');
+      const sr = document.getElementById('horarioAluSr');
+      const tit = document.getElementById('titHorarioAlu');
+      const esDia = modoVistaAlu === 'dia';
+      const fe = fechaAluCal || fechaLocalClase();
+      if (tit) {
+        tit.textContent = esDia
+          ? (esHoyFechaAlu_() ? 'Horario de hoy' : ('Horario del ' + fechaLargaEsMx_(fe, false)))
+          : 'Horario de la semana';
+      }
+      if (lista) lista.classList.toggle('oculto', !esDia);
+      if (cal) cal.classList.toggle('oculto', esDia);
+      if (esDia) {
+        pintarListaDiaAlu_(r);
+        if (sr) sr.innerHTML = '';
+      } else {
+        pintarCalendarioAlu_(r);
+        if (sr) sr.innerHTML = listaSrSemanaAlu_(r);
+      }
+      if (pendingFocoAlu_ === 'fecha') {
+        anunciar((esDia ? fechaLargaEsMx_(fe, true) : (tit ? tit.textContent : 'Semana')) +
+          (esHoyFechaAlu_() && esDia ? '. Hoy.' : '.'));
+      }
+      aplicarFocoAlu_();
+    }
+
+    function diaCalAlu_(r, fecha) {
+      const dias = (r && r.calendario) || [];
+      for (let i = 0; i < dias.length; i++) {
+        if (dias[i].fecha === fecha) return dias[i];
+      }
+      return null;
+    }
+
+    function pintarListaDiaAlu_(r) {
+      const caja = document.getElementById('horarioAluLista');
+      if (!caja) return;
+      const fe = fechaAluCal || fechaLocalClase();
+      const dia = diaCalAlu_(r, fe);
+      const filas = ((dia && dia.horario) || []).slice().sort(function (a, b) {
+        return minutosHmAlu_(a.horaInicio) - minutosHmAlu_(b.horaInicio);
+      });
+      if (!filas.length) {
+        caja.innerHTML = '<p class="hint">No hay clases este día.</p>';
+        return;
+      }
+      const selClave = selAluSlot ? claveSlotAlu_(selAluSlot) : '';
+      let html = '<ol class="alu-horario-lista">';
+      filas.forEach(function (h) {
+        const clave = claveSlotAlu_(h);
+        const etqs = etiquetasEstadoAlu_(h, r);
+        const cls = (h.enCurso ? ' ahora' : '') + (clave === selClave ? ' sel' : '') +
+          (slotReproAlu_(h) ? ' repro' : '') + (claseTerminadaAlu_(h, r) ? ' terminada' : '');
+        const sel = clave === selClave;
+        const fe = String(h.fecha || '').slice(0, 10);
+        const idH = String(h.idHorario == null ? '' : h.idHorario);
+        html += '<li><button type="button" class="alu-clase' + cls + '" data-alu-pick="1" data-alu-clave="' +
+          escaparHtml(clave) + '" data-alu-fecha="' + escaparHtml(fe) + '" data-alu-id="' + escaparHtml(idH) + '"' +
+          ' aria-pressed="' + (sel ? 'true' : 'false') + '"' +
+          (sel ? ' aria-current="true"' : '') +
+          ' aria-label="' + escaparHtml(fraseSlotAlu_(h, r) + (sel ? ' Seleccionada.' : ' Botón seleccionar.')) + '">';
+        html += '<span class="alu-fila1">';
+        html += '<span class="alu-hora">' + escaparHtml(h.horaInicio || '') + '</span>';
+        html += '<span class="alu-datos">';
+        html += '<span class="alu-asig-mini">' + escaparHtml(h.asignatura || 'Clase') + '</span>';
+        html += '<span class="alu-meta">' + escaparHtml((h.maestro ? (h.maestro + ' · ') : '') +
+          (h.horaInicio || '') + '–' + (h.horaFin || '')) + '</span>';
+        html += '</span>';
+        html += '<span class="alu-accion">' + (sel ? 'Seleccionada' : 'Seleccionar') + '</span>';
+        html += '</span>';
+        if (etqs.length) html += '<span class="alu-etq">' + escaparHtml(etqs.join(' · ')) + '</span>';
+        html += '</button></li>';
+      });
+      html += '</ol>';
+      caja.innerHTML = html;
+      enlazarClicksAlu_(caja);
+    }
+
+    function listaSrSemanaAlu_(r) {
+      const dias = (r && r.calendario) || [];
+      if (!dias.length) return '<p>No hay horario publicado para tu grupo en esta semana.</p>';
+      let html = '<h3>Horario de la semana en lista</h3>';
+      dias.forEach(function (d) {
+        html += '<h4>' + escaparHtml(fechaLargaEsMx_(d.fecha, true)) + (d.hoy ? '. Hoy.' : '.') + '</h4>';
+        const filas = (d.horario || []).slice().sort(function (a, b) {
+          return minutosHmAlu_(a.horaInicio) - minutosHmAlu_(b.horaInicio);
+        });
+        if (!filas.length) {
+          html += '<p>No hay clases.</p>';
+          return;
+        }
+        html += '<ol>';
+        filas.forEach(function (h) {
+          html += '<li>' + escaparHtml(fraseSlotAlu_(h, r)) + '</li>';
+        });
+        html += '</ol>';
+      });
+      return html;
+    }
+
+    function aplicarFocoAlu_() {
+      const dest = pendingFocoAlu_;
+      pendingFocoAlu_ = '';
+      if (!dest) return;
+      let el = null;
+      if (dest === 'fecha') el = document.getElementById('titFechaAlu');
+      else if (dest.indexOf('slot:') === 0) {
+        const clave = dest.slice(5);
+        const nodos = document.querySelectorAll('button[data-alu-clave]');
+        for (let i = 0; i < nodos.length; i++) {
+          if (nodos[i].getAttribute('data-alu-clave') === clave) { el = nodos[i]; break; }
+        }
+      }
+      if (el && typeof el.focus === 'function') el.focus();
+    }
+
+    function pintarCalendarioAlu_(r) {
+      const caja = document.getElementById('calAlu');
+      if (!caja) return;
+      const dias = (r && r.calendario) || [];
+      const bloques = (r && r.bloques) || [];
+      const mapa = {};
+      dias.forEach(function (d) {
+        (d.horario || []).forEach(function (h) {
+          mapa[claveCeldaCal_(d.fecha, h.idHorario)] = h;
+          mapa[d.fecha + '#' + String(h.horaInicio || '') + '|' + String(h.horaFin || '')] = h;
+        });
+      });
+      caja._mapa = mapa;
+      if (!dias.length || !bloques.length) {
+        caja.innerHTML = '<p class="hint">No hay horario publicado para tu grupo en esta semana.</p>';
+        return;
+      }
+      const selClave = selAluSlot ? claveCeldaCal_(selAluSlot.fecha, selAluSlot.idHorario) : '';
+      let html = '<table class="cal-tabla"><thead><tr><th></th>';
+      dias.forEach(function (d) {
+        html += '<th class="' + (d.hoy ? 'hoy-col' : '') + '">' + escaparHtml(d.etqCorta) + ' ' +
+          escaparHtml(d.etqNum) + (d.hoy ? ' · Hoy' : '') + '</th>';
+      });
+      html += '</tr></thead><tbody>';
+      bloques.forEach(function (b) {
+        html += '<tr><td class="hora">' + escaparHtml(b.horaInicio) + '</td>';
+        dias.forEach(function (d) {
+          const h = mapa[d.fecha + '#' + b.clave];
+          if (!h) {
+            html += '<td><div class="cal-vacia"></div></td>';
+            return;
+          }
+          const hay = hayTextoAlu_(h);
+          const clave = claveCeldaCal_(d.fecha, h.idHorario);
+          const claveSlot = claveSlotAlu_(h);
+          const etqs = etiquetasEstadoAlu_(h, r);
+          const cls = (h.enCurso ? ' en-curso' : '') + (hay ? ' publicado' : '') +
+            (clave === selClave ? ' sel' : '') + (slotReproAlu_(h) ? ' repro' : '');
+          const extra = etqs.join(' · ');
+          const aria = fraseSlotAlu_(h, r);
+          const feCel = String(d.fecha || h.fecha || '').slice(0, 10);
+          const idCel = String(h.idHorario == null ? '' : h.idHorario);
+          html += '<td><button type="button" class="cal-celda' + cls + '" data-alu-pick="1" data-alu-clave="' +
+            escaparHtml(claveSlot) + '" data-alu-fecha="' + escaparHtml(feCel) + '" data-alu-id="' +
+            escaparHtml(idCel) + '" aria-label="' + escaparHtml(aria) + '">' +
+            '<strong>' + escaparHtml(h.asignatura || 'Clase') + '</strong>' +
+            '<span>' + escaparHtml((h.maestro || '') + (h.maestro && h.bloque ? ' · ' : '') +
+              ordinalHoraAlu_(h.bloque)) + '</span>' +
+            (extra ? ('<span>' + escaparHtml(extra) + '</span>') : '') + '</button></td>';
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      caja.innerHTML = html;
+      enlazarClicksAlu_(caja);
+    }
+
+    function elegirClaseAlu(fecha, idHorario) {
+      const h = buscarSlotCalAlu_(ctxAlu, fecha, idHorario);
+      if (!h) {
+        toast('No se encontró esa clase en el horario.', 'error');
+        return;
+      }
+      selAluSlot = h;
+      pendingFocoAlu_ = 'slot:' + claveSlotAlu_(h);
+      if (ctxAlu) {
+        pintarAlu(ctxAlu);
+        pintarHorarioAlu_(ctxAlu);
+      }
+      anunciar((h.asignatura || 'Clase') + '. ' + ordinalHoraAlu_(h.bloque) +
+        (claseTerminadaAlu_(h, ctxAlu) ? '. Clase terminada.' : '.') + ' ' +
+        (hayTextoAlu_(h) ? 'Pulsa Escuchar clase.' : 'Contenido no disponible.'));
+    }
+
+    function tabMae(id, btn) {
+      tabN1Clase(id, btn);
+    }
+
+    var tabN1ClaseActual = '';
+    var subN2ClaseActual = '';
+    var fechaClaseEtiquetaManual = false;
+
+    function hayCuerpoClase_() {
+      return ['tabClases', 'tabAluAcc', 'tabAccesos'].some(function (id) {
+        const el = document.getElementById(id);
+        return el && !el.classList.contains('oculto');
+      });
+    }
+
+    function ocultarSubribbonClase_() {
+      const cinta = document.getElementById('cintaClase');
+      if (cinta) cinta.classList.add('oculto');
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(false);
+    }
+
+    function mostrarN2Clase_(idN1) {
+      const cinta = document.getElementById('cintaClase');
+      if (cinta) cinta.classList.add('oculto');
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(false);
+    }
+
+    function iniciarCintaClase_() {
+      tabN1ClaseActual = '';
+      subN2ClaseActual = '';
+      fechaClaseEtiquetaManual = false;
+      document.querySelectorAll('#tabsMae button').forEach(function (b) {
+        b.classList.remove('activa', 'activo');
+      });
+      const cinta = document.getElementById('cintaClase');
+      if (cinta) cinta.classList.add('oculto');
+      ['tabClases', 'tabAluAcc', 'tabAccesos'].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('oculto');
+      });
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(false);
+    }
+
+    function tabN1Clase(id, btn) {
+      if (id === tabN1ClaseActual) {
+        if (typeof ribbonN2Abierto !== 'undefined' && !ribbonN2Abierto) {
+          if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
+          const cinta = document.getElementById('cintaClase');
+          if (cinta && cinta.children.length) cinta.classList.remove('oculto');
+          return;
+        }
+        ocultarSubribbonClase_();
+        return;
+      }
+      tabN1ClaseActual = id;
+      subN2ClaseActual = '';
+      document.querySelectorAll('#tabsMae button').forEach(function (b) {
+        b.classList.remove('activa', 'activo');
+      });
+      if (btn) btn.classList.add('activa');
+      const cinta = document.getElementById('cintaClase');
+      if (cinta) cinta.classList.add('oculto');
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(false);
+
+      const tC = document.getElementById('tabClases');
+      const tA = document.getElementById('tabAluAcc');
+      const tM = document.getElementById('tabAccesos');
+
+      if (id === 'clases') {
+        if (tA) tA.classList.add('oculto');
+        if (tM) tM.classList.add('oculto');
+        if (tC) tC.classList.remove('oculto');
+        const n3c = document.getElementById('n3Clases');
+        if (n3c) n3c.classList.remove('oculto');
+        const fe = document.getElementById('fechaMaeClase');
+        if (fe && !fe.value) fe.value = fechaLocalClase();
+        toggleHorarioMae(true);
+        cargarHorarioMae();
+        return;
+      }
+
+      if (id === 'aluAcc') {
+        if (tC) tC.classList.add('oculto');
+        if (tM) tM.classList.add('oculto');
+        if (tA) tA.classList.remove('oculto');
+        const n3a = document.getElementById('n3AluAcc');
+        if (n3a) n3a.classList.remove('oculto');
+        cargarAlumnosPass();
+        return;
+      }
+
+      if (id === 'accesos') {
+        if (tC) tC.classList.add('oculto');
+        if (tA) tA.classList.add('oculto');
+        if (tM) tM.classList.remove('oculto');
+        const n3m = document.getElementById('n3MaeAcc');
+        if (n3m) n3m.classList.remove('oculto');
+        cargarMaestrosAcc();
+        return;
+      }
+    }
+
+    function tabN2Clase(id, btn) {
+      if (subN2ClaseActual === id) {
+        subN2ClaseActual = '';
+        if (btn) btn.classList.remove('activo', 'activa');
+        ['n3Clases', 'n3AluAcc', 'n3MaeAcc'].forEach(function (xid) {
+          const el = document.getElementById(xid);
+          if (el) el.classList.add('oculto');
+        });
+        return;
+      }
+      subN2ClaseActual = id;
+      ['btnN2Horario', 'btnN2AluLista', 'btnN2MaeLista'].forEach(function (xid) {
+        const b = document.getElementById(xid);
+        if (b) b.classList.remove('activo', 'activa');
+      });
+      if (btn) btn.classList.add('activo');
+      const n3c = document.getElementById('n3Clases');
+      const n3a = document.getElementById('n3AluAcc');
+      const n3m = document.getElementById('n3MaeAcc');
+      const tC = document.getElementById('tabClases');
+      const tA = document.getElementById('tabAluAcc');
+      const tM = document.getElementById('tabAccesos');
+      if (n3c) n3c.classList.toggle('oculto', id !== 'horario');
+      if (n3a) n3a.classList.toggle('oculto', id !== 'aluLista');
+      if (n3m) n3m.classList.toggle('oculto', id !== 'maeLista');
+      if (tC) tC.classList.toggle('oculto', id !== 'horario');
+      if (tA) tA.classList.toggle('oculto', id !== 'aluLista');
+      if (tM) tM.classList.toggle('oculto', id !== 'maeLista');
+      if (id === 'horario') {
+        const fe = document.getElementById('fechaMaeClase');
+        if (fe && !fe.value) fe.value = fechaLocalClase();
+        toggleHorarioMae(true);
+        cargarHorarioMae();
+      } else if (id === 'aluLista') {
+        cargarAlumnosPass();
+      } else       if (id === 'maeLista' && rolClase === 'admin') {
+        cargarMaestrosAcc();
+      }
+      if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+    }
+
+    function textoOpcionClase_(id) {
+      const sel = document.getElementById(id);
+      if (!sel || sel.selectedIndex < 0) return '';
+      return ((sel.options[sel.selectedIndex] || {}).text || '').trim();
+    }
+
+    function recortarEtq_(t, n) {
+      const s = String(t || '').trim();
+      if (!s) return '';
+      return s.length > n ? (s.slice(0, n) + '…') : s;
+    }
+
+    function pintarEtqFiltroClase_() {
+      function setBtn(idBtn, activo, etq) {
+        const b = document.getElementById(idBtn);
+        if (!b) return;
+        b.classList.toggle('activo', !!activo);
+        const lab = b.querySelector('.ribbon-label');
+        if (lab && etq) lab.textContent = etq;
+      }
+      const fe = valorSel_('fechaMaeClase');
+      setBtn('btnClaseFecha', fechaClaseEtiquetaManual, fechaClaseEtiquetaManual ? fmtFechaCortaClase_(fe) : 'Fecha');
+      const g = valorSel_('selGrupoClase');
+      setBtn('btnClaseGrupo', !!g, g ? recortarEtq_(textoOpcionClase_('selGrupoClase'), 8) : 'Grupo');
+      const a = valorSel_('selAluClase');
+      setBtn('btnClaseAlumno', !!a, a ? recortarEtq_(textoOpcionClase_('selAluClase'), 10) : 'Alumno');
+      const as = valorSel_('selAsigClase');
+      setBtn('btnClaseAsig', !!as, as ? recortarEtq_(textoOpcionClase_('selAsigClase'), 10) : 'Asignatura');
+    }
+
+    function pintarEtqFiltroPass_() {
+      function setBtn(idBtn, activo, etq) {
+        const b = document.getElementById(idBtn);
+        if (!b) return;
+        b.classList.toggle('activo', !!activo);
+        const lab = b.querySelector('.ribbon-label');
+        if (lab && etq) lab.textContent = etq;
+      }
+      const g = valorSel_('filtroGradoPass');
+      setBtn('btnPassGrado', !!g, g ? textoOpcionClase_('filtroGradoPass') : 'Grado');
+      const gp = valorSel_('filtroGrupoPass');
+      setBtn('btnPassGrupo', !!gp, gp ? recortarEtq_(textoOpcionClase_('filtroGrupoPass'), 8) : 'Grupo');
+      const bus = ((document.getElementById('buscAluPass') || {}).value || '').trim();
+      setBtn('btnPassBuscar', !!bus, bus ? recortarEtq_(bus, 10) : 'Buscar');
+      const busM = ((document.getElementById('buscMaeClase') || {}).value || '').trim();
+      setBtn('btnMaeBuscar', !!busM, busM ? recortarEtq_(busM, 10) : 'Buscar');
+    }
+
+    function fmtFechaCortaClase_(iso) {
+      const p = String(iso || '').split('-');
+      if (p.length !== 3) return 'Fecha';
+      return p[2] + '/' + p[1];
+    }
+
+    function abrirModalFiltroClase(cual) {
+      if (cual === 'fecha') {
+        const actual = valorSel_('fechaMaeClase') || fechaLocalClase();
+        modal({
+          titulo: 'Fecha',
+          html: '<div class="form-modal-usu"><div class="campo" style="margin:0;"><label for="modalClaseFecha">Día</label>' +
+            '<input type="date" id="modalClaseFecha" value="' + escaparHtml(actual) + '"></div></div>',
+          botones: [
+            { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+            { texto: 'Aplicar', valor: 'ok' }
+          ],
+          capturar: function (fondo, val) {
+            if (val === null) return null;
+            return ((fondo.querySelector('#modalClaseFecha') || {}).value || '');
+          }
+        }).then(function (v) {
+          if (v === null || typeof v === 'undefined') return;
+          const inp = document.getElementById('fechaMaeClase');
+          if (inp) inp.value = v;
+          fechaClaseEtiquetaManual = true;
+          cargarHorarioMae();
+        });
+        return;
+      }
+      const mapa = {
+        grupo: { id: 'selGrupoClase', titulo: 'Grupo', after: cambiarGrupoClase },
+        alumno: { id: 'selAluClase', titulo: 'Alumno', after: cambiarAlumnoClase },
+        asig: { id: 'selAsigClase', titulo: 'Asignatura', after: function () { cargarHorarioMae(); } }
+      };
+      const cfg = mapa[cual];
+      if (!cfg) return;
+      const sel = document.getElementById(cfg.id);
+      if (!sel) return;
+      let opts = '';
+      Array.from(sel.options).forEach(function (o) {
+        opts += '<option value="' + escaparHtml(o.value) + '"' + (o.value === sel.value ? ' selected' : '') + '>' + escaparHtml(o.text) + '</option>';
+      });
+      modal({
+        titulo: cfg.titulo,
+        html: '<div class="form-modal-usu"><div class="campo" style="margin:0;"><label for="modalFiltroClaseSel">' + escaparHtml(cfg.titulo) + '</label>' +
+          '<select id="modalFiltroClaseSel">' + opts + '</select></div></div>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Aplicar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return ((fondo.querySelector('#modalFiltroClaseSel') || {}).value);
+        }
+      }).then(function (valor) {
+        if (valor === null || typeof valor === 'undefined') return;
+        sel.value = valor;
+        if (typeof cfg.after === 'function') cfg.after();
+        pintarEtqFiltroClase_();
+      });
+    }
+
+    function toggleDdPassBuscar(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const p = document.getElementById('panelPassBuscar');
+      if (!p) return;
+      const oc = p.classList.contains('oculto');
+      document.querySelectorAll('.asi-dd-panel').forEach(function (el) { el.classList.add('oculto'); });
+      if (oc) {
+        p.classList.remove('oculto');
+        const inp = document.getElementById('buscAluPass');
+        if (inp) setTimeout(function () { inp.focus(); inp.select(); }, 50);
+      }
+    }
+
+    function limpiarPassBuscar() {
+      const inp = document.getElementById('buscAluPass');
+      if (inp) inp.value = '';
+      filtrarTablaPassLocal();
+      actualizarEtqPassBuscar();
+      const p = document.getElementById('panelPassBuscar');
+      if (p) p.classList.add('oculto');
+    }
+
+    function actualizarEtqPassBuscar() {
+      const inp = document.getElementById('buscAluPass');
+      const v = (inp ? inp.value : '').trim();
+      const etq = document.getElementById('etqPassBuscar');
+      const btn = document.getElementById('btnPassBuscar');
+      if (etq) etq.textContent = v ? (v.length > 8 ? v.slice(0, 8) + '…' : v) : 'Buscar';
+      if (btn) btn.classList.toggle('activo', !!v);
+    }
+
+    function toggleDdMaeBuscar(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const p = document.getElementById('panelMaeBuscar');
+      if (!p) return;
+      const oc = p.classList.contains('oculto');
+      document.querySelectorAll('.asi-dd-panel').forEach(function (el) { el.classList.add('oculto'); });
+      if (oc) {
+        p.classList.remove('oculto');
+        const inp = document.getElementById('buscMaeClase');
+        if (inp) setTimeout(function () { inp.focus(); inp.select(); }, 50);
+      }
+    }
+
+    function limpiarMaeBuscar() {
+      const inp = document.getElementById('buscMaeClase');
+      if (inp) inp.value = '';
+      filtrarTablaMaeClaseLocal();
+      actualizarEtqMaeBuscar();
+      const p = document.getElementById('panelMaeBuscar');
+      if (p) p.classList.add('oculto');
+    }
+
+    function actualizarEtqMaeBuscar() {
+      const inp = document.getElementById('buscMaeClase');
+      const v = (inp ? inp.value : '').trim();
+      const etq = document.getElementById('etqMaeBuscar');
+      const btn = document.getElementById('btnMaeBuscar');
+      if (etq) etq.textContent = v ? (v.length > 8 ? v.slice(0, 8) + '…' : v) : 'Buscar';
+      if (btn) btn.classList.toggle('activo', !!v);
+    }
+
+    function abrirModalFiltroPass(cual) {
+      if (cual === 'buscar') toggleDdPassBuscar();
+      else if (cual === 'buscarMae') toggleDdMaeBuscar();
+      else if (cual === 'grado') {
+        const s = document.getElementById('filtroGradoPass');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      } else if (cual === 'grupo') {
+        const s = document.getElementById('filtroGrupoPass');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      }
+    }
+
+    function toggleHorarioMae(forzarMostrar) {
+      const wrap = document.getElementById('wrapCalendarioMae');
+      const lbl = document.getElementById('lblToggleHorario');
+      const ico = document.getElementById('icoToggleHorario');
+      if (!wrap) return;
+      let nuevoColapsado;
+      if (typeof forzarMostrar === 'boolean') {
+        nuevoColapsado = !forzarMostrar;
+      } else {
+        nuevoColapsado = !wrap.classList.contains('oculto');
+      }
+      wrap.classList.toggle('oculto', nuevoColapsado);
+      if (lbl) lbl.textContent = nuevoColapsado ? 'Mostrar horario con asignaturas' : 'Colapsar horario';
+      if (ico) ico.textContent = nuevoColapsado ? '📂' : '📅';
+    }
+
+    function valorSel_(id) {
+      return (document.getElementById(id) || {}).value || '';
+    }
+
+    function llenarOpciones_(sel, items, valor, placeholderHtml) {
+      if (!sel) return;
+      sel.innerHTML = placeholderHtml + items.map(function (it) {
+        return '<option value="' + escaparHtml(it.valor) + '"' +
+          (it.valor === valor ? ' selected' : '') + '>' + escaparHtml(it.etq) + '</option>';
+      }).join('');
+    }
+
+    function nombreAluSel_() {
+      const sel = document.getElementById('selAluClase');
+      if (!sel || !sel.value) return '';
+      return ((sel.options[sel.selectedIndex] || {}).text || '').trim();
+    }
+
+    function formatearRangoDdMmAa_(ini, fin) {
+      const meses3 = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      function aDdMmAa(f) {
+        if (!f) return '';
+        const d = (f instanceof Date) ? f : new Date(String(f).indexOf('T') === -1 ? (String(f) + 'T12:00:00') : String(f));
+        if (isNaN(d.getTime())) return String(f);
+        const dd = ('0' + d.getDate()).slice(-2);
+        const mes = meses3[d.getMonth()] || ('0' + (d.getMonth() + 1)).slice(-2);
+        const aa = String(d.getFullYear()).slice(-2);
+        return dd + '/' + mes + '/' + aa;
+      }
+      const fIni = aDdMmAa(ini);
+      const fFin = aDdMmAa(fin || ini);
+      return fIni + '-->' + fFin;
+    }
+
+    function actualizarHintMae_(r) {
+      const dia = document.getElementById('txtDiaMae');
+      if (!dia) return;
+      dia.textContent = '';
+      dia.classList.add('oculto');
+      dia.style.display = 'none';
+    }
+
+    function pintarAlumnosAcceso_(alumnos, grupoSel) {
+      // Los accesos de alumnos ahora se gestionan en la pestaña exclusiva "Contraseñas Alumnos"
+    }
+
+    function abrirCalendarioFechaClase(e) {
+      const inp = document.getElementById('fechaMaeClase');
+      if (!inp) return;
+      if (typeof inp.showPicker === 'function') {
+        try {
+          inp.showPicker();
+          if (e && typeof e.preventDefault === 'function') { e.preventDefault(); e.stopPropagation(); }
+          return;
+        } catch (err) {}
+      }
+      inp.focus();
+    }
+
+    function alCambiarFechaClase() {
+      fechaClaseEtiquetaManual = true;
+      pintarEtqFiltroClase_();
+      cargarHorarioMae();
+    }
+
+    function cambiarAsignaturaClase() {
+      pintarEtqFiltroClase_();
+      cargarHorarioMae();
+    }
+
+    function cambiarGrupoClase() {
+      aluClaseSel = '';
+      const as = document.getElementById('selAsigClase');
+      if (as) as.value = '';
+      const al = document.getElementById('selAluClase');
+      if (al) al.value = '';
+      slotMaeSel = null;
+      const form = document.getElementById('cajaFormMae');
+      if (form) form.classList.add('oculto');
+      toggleHorarioMae(true);
+      pintarEtqFiltroClase_();
+      cargarHorarioMae();
+    }
+
+    function cambiarAlumnoClase() {
+      aluClaseSel = valorSel_('selAluClase');
+      pintarEtqFiltroClase_();
+      const alu = ((panelMaeUlt && panelMaeUlt.alumnos) || []).filter(function (a) {
+        return String(a.matricula) === String(aluClaseSel);
+      })[0];
+      if (alu && alu.grupoClave && valorSel_('selGrupoClase') !== alu.grupoClave) {
+        const selG = document.getElementById('selGrupoClase');
+        if (selG) selG.value = alu.grupoClave;
+        cargarHorarioMae();
+        return;
+      }
+      actualizarHintMae_(panelMaeUlt || {});
+    }
+
+    function cargarHorarioMae() {
+      const fe = valorSel_('fechaMaeClase');
+      const grupo = valorSel_('selGrupoClase');
+      const asig = valorSel_('selAsigClase');
+      aluClaseSel = valorSel_('selAluClase') || aluClaseSel;
+      gsRun('horarioMaestroClase', tokenClase, fe, grupo, asig, modoCalMae).then(function (r) {
+        panelMaeUlt = r;
+        const selG = document.getElementById('selGrupoClase');
+        const grupoUso = grupo || r.grupoClave || '';
+        llenarOpciones_(selG, (r.grupos || []).map(function (g) {
+          return { valor: g.clave, etq: g.etq };
+        }), grupoUso, '<option value="">Elige grupo…</option>');
+        llenarOpciones_(document.getElementById('selAluClase'), (r.alumnos || []).map(function (a) {
+          return { valor: a.matricula, etq: a.nombre + (a.usuario ? (' · ' + a.usuario) : '') };
+        }), aluClaseSel, '<option value="">Elige alumno…</option>');
+        llenarOpciones_(document.getElementById('selAsigClase'), (r.asignaturas || []).map(function (n) {
+          return { valor: n, etq: n };
+        }), r.asignatura || '', '<option value="">Todas las del grupo</option>');
+        pintarEtqFiltroClase_();
+        actualizarHintMae_(r);
+        pintarAlumnosAcceso_(r.alumnos || [], grupoUso);
+        const nav = document.getElementById('navCalClase');
+        const txtSem = document.getElementById('txtSemanaClase');
+        if (txtSem) {
+          if (r.semanaInicio && r.semanaFin) {
+            txtSem.textContent = formatearRangoDdMmAa_(r.semanaInicio, r.semanaFin);
+          } else if (r.fecha) {
+            txtSem.textContent = formatearRangoDdMmAa_(r.fecha, r.fecha);
+          } else {
+            txtSem.textContent = '--/--/----/--/--';
+          }
+        }
+        actualizarBotonesModoCal_();
+        actualizarBotonesOriCal_();
+        if (nav) nav.classList.toggle('oculto', !grupoUso);
+        const caja = document.getElementById('listaSlotsMae');
+        if (!caja) return;
+        if (slotMaeSel) {
+          const sigue = ((r.calendario || []).some(function (d) {
+            return (d.horario || []).some(function (h) {
+              return h.idHorario === slotMaeSel.idHorario && h.fecha === slotMaeSel.fecha;
+            });
+          }));
+          if (!sigue) {
+            slotMaeSel = null;
+            const form = document.getElementById('cajaFormMae');
+            if (form) form.classList.add('oculto');
+          }
+        }
+        if (!grupoUso && !(r.grupos || []).length) {
+          caja.innerHTML = '<p class="hint">No hay grupos en el horario.</p>';
+          caja._mapa = {};
+          return;
+        }
+        if (!grupoUso) {
+          caja.innerHTML = '<p class="hint">No se pudo cargar el horario de la semana.</p>';
+          caja._mapa = {};
+          return;
+        }
+        pintarCalendarioMae_(r);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function claveCeldaCal_(fecha, idHorario) {
+      return String(fecha || '') + '|' + String(idHorario || '');
+    }
+
+    let modoCalMae = 'semana';
+    let orientacionCalMae = 'h';
+
+    function cambiarModoCal(modo) {
+      modoCalMae = modo || 'semana';
+      actualizarBotonesModoCal_();
+      const caja = document.getElementById('listaSlotsMae');
+      if (caja) {
+        caja.classList.toggle('scroll-mes-h', modoCalMae === 'mes' && orientacionCalMae === 'h');
+      }
+      cargarHorarioMae();
+    }
+
+    function cambiarOrientacionCal(ori) {
+      orientacionCalMae = (ori === 'v') ? 'v' : 'h';
+      actualizarBotonesOriCal_();
+      const caja = document.getElementById('listaSlotsMae');
+      if (caja) {
+        caja.classList.toggle('scroll-mes-h', modoCalMae === 'mes' && orientacionCalMae === 'h');
+      }
+      if (panelMaeUlt) {
+        pintarCalendarioMae_(panelMaeUlt);
+      }
+    }
+
+    function actualizarBotonesOriCal_() {
+      const bH = document.getElementById('btnOriH');
+      const bV = document.getElementById('btnOriV');
+      if (bH) bH.classList.toggle('activo', orientacionCalMae === 'h');
+      if (bV) bV.classList.toggle('activo', orientacionCalMae === 'v');
+    }
+
+    function formatearFechaCorta_(iso) {
+      const p = String(iso || '').split('-');
+      return p.length === 3 ? (p[2] + '/' + p[1]) : String(iso || '');
+    }
+
+    function actualizarBotonesModoCal_() {
+      const bDia = document.getElementById('btnModoDia');
+      const bSem = document.getElementById('btnModoSemana');
+      const bMes = document.getElementById('btnModoMes');
+      if (bDia) bDia.classList.toggle('activo', modoCalMae === 'dia');
+      if (bSem) bSem.classList.toggle('activo', modoCalMae === 'semana');
+      if (bMes) bMes.classList.toggle('activo', modoCalMae === 'mes');
+    }
+
+    function moverCalClase(delta) {
+      const fe = valorSel_('fechaMaeClase') || fechaLocalClase();
+      const d = new Date(fe + 'T12:00:00');
+      if (isNaN(d.getTime())) return;
+      if (modoCalMae === 'dia') {
+        d.setDate(d.getDate() + Number(delta));
+      } else if (modoCalMae === 'mes') {
+        d.setMonth(d.getMonth() + Number(delta));
+      } else {
+        d.setDate(d.getDate() + (Number(delta) * 7));
+      }
+      const inp = document.getElementById('fechaMaeClase');
+      if (inp) inp.value = fechaLocalDesde_(d);
+      cargarHorarioMae();
+    }
+
+    function moverSemanaClase(delta) {
+      moverCalClase(delta);
+    }
+
+    function irHoyClase() {
+      const inp = document.getElementById('fechaMaeClase');
+      if (inp) inp.value = fechaLocalClase();
+      cargarHorarioMae();
+    }
+
+    function fechaLocalDesde_(d) {
+      const m = ('0' + (d.getMonth() + 1)).slice(-2);
+      const dia = ('0' + d.getDate()).slice(-2);
+      return d.getFullYear() + '-' + m + '-' + dia;
+    }
+
+    function pintarCalendarioMae_(r) {
+      const caja = document.getElementById('listaSlotsMae');
+      if (!caja) return;
+      const esMesH = (modoCalMae === 'mes' && orientacionCalMae === 'h');
+      caja.classList.toggle('scroll-mes-h', esMesH);
+      if (!caja._wheelInit) {
+        caja._wheelInit = true;
+        caja.addEventListener('wheel', function (e) {
+          if (!caja.classList.contains('scroll-mes-h')) return;
+          if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            caja.scrollLeft += e.deltaY;
+            e.preventDefault();
+          }
+        }, { passive: false });
+      }
+      const dias = r.calendario || [];
+      const bloques = r.bloques || [];
+      const mapa = {};
+      dias.forEach(function (d) {
+        (d.horario || []).forEach(function (h) {
+          mapa[claveCeldaCal_(d.fecha, h.idHorario)] = h;
+          const kHora = String(h.horaInicio || '') + '|' + String(h.horaFin || '');
+          mapa[d.fecha + '#' + kHora] = h;
+        });
+      });
+      caja._mapa = mapa;
+      if (!dias.length) {
+        caja.innerHTML = '<p class="hint">No hay horario para este grupo.</p>';
+        return;
+      }
+      if (!bloques.length) {
+        caja.innerHTML = '<p class="hint">No hay clases en el horario' +
+          (r.asignatura ? ' para esa asignatura' : '') + ' en esta semana.</p>';
+        return;
+      }
+      const selClave = slotMaeSel ? claveCeldaCal_(slotMaeSel.fecha, slotMaeSel.idHorario) : '';
+
+      // Orientación vertical: Días en filas, bloques en columnas
+      if (orientacionCalMae === 'v') {
+        let html = '<table class="cal-tabla modo-vertical"><thead><tr><th style="min-width:105px;">Día / Fecha</th>';
+        bloques.forEach(function (b) {
+          html += '<th>' + escaparHtml((b.bloque ? (b.bloque + 'ª · ') : '') + b.horaInicio) +
+            '<small style="display:block;font-size:10px;font-weight:600;color:#64748b;">' + escaparHtml(b.horaInicio) + '–' + escaparHtml(b.horaFin) + '</small></th>';
+        });
+        html += '</tr></thead><tbody>';
+        dias.forEach(function (d) {
+          html += '<tr><td class="hora-dia' + (d.hoy ? ' hoy-col' : '') + '">' +
+            '<strong>' + escaparHtml(d.etqCorta) + ' ' + escaparHtml(d.etqNum) + '</strong>' +
+            '<small style="display:block;font-size:11px;font-weight:600;color:#64748b;margin-top:2px;">' + escaparHtml(formatearFechaCorta_(d.fecha)) + '</small>' +
+            '</td>';
+          bloques.forEach(function (b) {
+            const h = mapa[d.fecha + '#' + b.clave];
+            if (!h) {
+              html += '<td><div class="cal-vacia"></div></td>';
+              return;
+            }
+            const hay = h.contenido && String(h.contenido.texto || '').trim();
+            const clave = claveCeldaCal_(d.fecha, h.idHorario);
+            const cls = (h.enCurso ? ' en-curso' : '') + (hay ? ' con-texto publicado' : '') +
+              (!h.propia ? ' ajena' : '') + (clave === selClave ? ' sel' : '');
+            const extra = !h.propia ? 'Otro maestro' : (hay ? ((h.contenido && h.contenido.titulo) ? h.contenido.titulo : 'Con texto') : '');
+            html += '<td><button type="button" class="cal-celda' + cls + '" onclick="abrirCeldaCal(\'' +
+              escaparHtml(d.fecha) + '\',\'' + String(h.idHorario || '').replace(/'/g, '') + '\')">' +
+              '<strong>' + escaparHtml(h.asignatura || 'Clase') + '</strong>' +
+              '<span>' + escaparHtml((h.bloque ? (h.bloque + 'ª · ') : '') + (h.maestro || '')) + '</span>' +
+              (extra ? ('<span>' + extra + '</span>') : '') + '</button></td>';
+          });
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+        caja.innerHTML = html;
+        return;
+      }
+      let html = '<table class="cal-tabla' + (modoCalMae === 'dia' ? ' modo-dia' : (modoCalMae === 'mes' ? ' modo-mes' : '')) + '"><thead><tr><th></th>';
+      dias.forEach(function (d) {
+        html += '<th class="' + (d.hoy ? 'hoy-col' : '') + '">' + escaparHtml(d.etqCorta) + ' ' +
+          escaparHtml(d.etqNum) + '</th>';
+      });
+      html += '</tr></thead><tbody>';
+      bloques.forEach(function (b) {
+        html += '<tr><td class="hora">' + escaparHtml(b.horaInicio) + '</td>';
+        dias.forEach(function (d) {
+          const h = mapa[d.fecha + '#' + b.clave];
+          if (!h) {
+            html += '<td><div class="cal-vacia"></div></td>';
+            return;
+          }
+          const hay = h.contenido && String(h.contenido.texto || '').trim();
+          const clave = claveCeldaCal_(d.fecha, h.idHorario);
+          const cls = (h.enCurso ? ' en-curso' : '') + (hay ? ' con-texto publicado' : '') +
+            (!h.propia ? ' ajena' : '') + (clave === selClave ? ' sel' : '');
+          const extra = !h.propia ? 'Otro maestro' : (hay ? ((h.contenido && h.contenido.titulo) ? h.contenido.titulo : 'Con texto') : '');
+          html += '<td><button type="button" class="cal-celda' + cls + '" onclick="abrirCeldaCal(\'' +
+            escaparHtml(d.fecha) + '\',\'' + String(h.idHorario || '').replace(/'/g, '') + '\')">' +
+            '<strong>' + escaparHtml(h.asignatura || 'Clase') + '</strong>' +
+            '<span>' + escaparHtml((h.bloque ? (h.bloque + 'ª · ') : '') + (h.maestro || '')) + '</span>' +
+            (extra ? ('<span>' + extra + '</span>') : '') + '</button></td>';
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      caja.innerHTML = html;
+    }
+
+    function abrirCeldaCal(fecha, idHorario) {
+      const caja = document.getElementById('listaSlotsMae');
+      const mapa = (caja && caja._mapa) || {};
+      slotMaeSel = mapa[claveCeldaCal_(fecha, idHorario)];
+      if (!slotMaeSel) return;
+      if (rolClase === 'maestro' && slotMaeSel.propia === false) {
+        toast('Esa hora es de otro maestro. Solo puedes publicar las tuyas.', 'error');
+        return;
+      }
+      const inp = document.getElementById('fechaMaeClase');
+      if (inp && fecha) inp.value = fecha;
+      const form = document.getElementById('cajaFormMae');
+      form.classList.remove('oculto');
+      toggleHorarioMae(false);
+      document.getElementById('titFormMae').textContent = (slotMaeSel.asignatura || 'Clase') +
+        ' · ' + (slotMaeSel.grupoEtq || '');
+      const nomAlu = nombreAluSel_();
+      const feTxt = fecha || slotMaeSel.fecha || '';
+      document.getElementById('metaFormMae').textContent = feTxt +
+        ' · Hora ' + (slotMaeSel.bloque || '') +
+        ' · ' + slotMaeSel.horaInicio + '–' + slotMaeSel.horaFin +
+        (slotMaeSel.maestro ? (' · ' + slotMaeSel.maestro) : '') +
+        (nomAlu ? (' · Alumno de referencia: ' + nomAlu) : ' · Se publica para todo el grupo');
+      const c = slotMaeSel.contenido || {};
+      document.getElementById('titContClase').value = c.titulo || '';
+      document.getElementById('txtContClase').value = c.texto || '';
+      document.getElementById('chkPubClase').checked = c.publicado !== false;
+      caja.querySelectorAll('.cal-celda.sel').forEach(function (el) { el.classList.remove('sel'); });
+      caja.querySelectorAll('.cal-celda').forEach(function (el) {
+        if (el.getAttribute('onclick') && el.getAttribute('onclick').indexOf(idHorario) >= 0 &&
+          el.getAttribute('onclick').indexOf(fecha) >= 0) {
+          el.classList.add('sel');
+        }
+      });
+      document.getElementById('txtContClase').focus();
+      form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function abrirSlotMae(i) {
+      const caja = document.getElementById('listaSlotsMae');
+      const filas = (caja && caja._datos) || [];
+      const h = filas[i];
+      if (!h) return;
+      abrirCeldaCal(h.fecha || valorSel_('fechaMaeClase'), h.idHorario);
+    }
+
+    function guardarContenidoMae() {
+      if (!slotMaeSel) return;
+      const payload = {
+        idHorario: slotMaeSel.idHorario,
+        fecha: slotMaeSel.fecha || (document.getElementById('fechaMaeClase') || {}).value || '',
+        titulo: (document.getElementById('titContClase') || {}).value || '',
+        texto: (document.getElementById('txtContClase') || {}).value || '',
+        publicado: !!(document.getElementById('chkPubClase') || {}).checked
+      };
+      gsRun('guardarContenidoClase', tokenClase, payload).then(function (r) {
+        toast((r && r.mensaje) || 'Guardado.', 'ok');
+        cargarHorarioMae();
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function probarVozMae() {
+      const tit = (document.getElementById('titContClase') || {}).value || '';
+      const txt = (document.getElementById('txtContClase') || {}).value || '';
+      hablarTexto((tit ? (tit + '. ') : '') + txt);
+    }
+
+    let listaAlumnosPassCache = [];
+
+    function cargarAlumnosPass(forzar) {
+      const caja = document.getElementById('cajaTablaAluPass');
+      if (listaAlumnosPassCache.length > 0 && !forzar) {
+        actualizarGruposPassDropdown_();
+        filtrarTablaPassLocal();
+        return;
+      }
+      if (caja) caja.innerHTML = '<p class="hint">Cargando lista de alumnos…</p>';
+
+      gsRun('listarAlumnosParaClase', tokenClase, '', '').then(function (r) {
+        listaAlumnosPassCache = (r && r.alumnos) || [];
+        actualizarGruposPassDropdown_();
+        filtrarTablaPassLocal();
+      }).catch(function (e) {
+        if (caja) caja.innerHTML = '<p style="color:var(--st90-rojo);font-weight:600;">Error al cargar alumnos: ' + escaparHtml((e && e.message) || String(e)) + '</p>';
+      });
+    }
+
+    function actualizarGruposPassDropdown_() {
+      const selG = document.getElementById('filtroGradoPass');
+      const selGp = document.getElementById('filtroGrupoPass');
+      if (!selGp) return;
+      const gradoSel = selG ? selG.value.trim() : '';
+      const actual = selGp.value;
+
+      const gruposMap = {};
+
+      if (panelMaeUlt && panelMaeUlt.grupos) {
+        panelMaeUlt.grupos.forEach(function (g) {
+          const gr = String(g.grado || (g.clave ? g.clave.split('|')[0] : '')).trim();
+          const gp = String(g.grupo || (g.clave ? g.clave.split('|')[1] : '')).trim().toUpperCase();
+          const etq = g.etq || (gr + gp);
+          if (!gradoSel || gr === gradoSel) {
+            gruposMap[etq] = etq;
+          }
+        });
+      }
+
+      (listaAlumnosPassCache || []).forEach(function (a) {
+        const gr = String(a.grado || '').trim();
+        const gp = String(a.grupo || '').trim().toUpperCase();
+        const etq = String(a.grupoEtq || (gr + gp)).toUpperCase();
+        if (!gradoSel || gr === gradoSel) {
+          if (etq) gruposMap[etq] = etq;
+        }
+      });
+
+      if (Object.keys(gruposMap).length === 0) {
+        const letras = ['A', 'B', 'C', 'D', 'E'];
+        letras.forEach(function (letra) {
+          const etq = gradoSel ? (gradoSel + letra) : letra;
+          gruposMap[etq] = etq;
+        });
+      }
+
+      const lista = Object.keys(gruposMap).sort();
+      let html = '<option value="">Todos los grupos' + (gradoSel ? (' de ' + gradoSel + '°') : '') + '</option>';
+      let mantuvoActual = false;
+      lista.forEach(function (etq) {
+        const sel = (etq === actual);
+        if (sel) mantuvoActual = true;
+        html += '<option value="' + escaparHtml(etq) + '"' + (sel ? ' selected' : '') + '>' + escaparHtml(etq) + '</option>';
+      });
+      selGp.innerHTML = html;
+      if (!mantuvoActual && actual) {
+        selGp.value = '';
+      }
+    }
+
+    function cambiarGradoPassAlu() {
+      actualizarGruposPassDropdown_();
+      filtrarTablaPassLocal();
+    }
+
+    function cambiarGrupoPassAlu() {
+      filtrarTablaPassLocal();
+    }
+
+    function coincideGrupoLocal_(alumno, grFiltro, gpFiltro) {
+      const grA = String(alumno.grado || '').trim();
+      const gpA = String(alumno.grupo || '').trim().toUpperCase();
+      const etqA = String(alumno.grupoEtq || (grA + gpA)).trim().toUpperCase();
+      const grF = String(grFiltro || '').trim();
+      let gpF = String(gpFiltro || '').trim().toUpperCase();
+
+      if (grF && grA !== grF) return false;
+      if (!gpF) return true;
+
+      if (gpF.indexOf('|') >= 0) {
+        const partes = gpF.split('|');
+        if (partes[0].trim() && grA !== partes[0].trim()) return false;
+        gpF = partes[1].trim().toUpperCase();
+      }
+
+      let letraF = gpF;
+      if (grF && letraF.indexOf(grF) === 0) {
+        letraF = letraF.substring(grF.length).replace(/^[-_°\s]+/, '');
+      }
+
+      return (etqA === gpF) ||
+             (gpA === gpF) ||
+             (gpA === letraF) ||
+             (etqA === (grA + letraF));
+    }
+
+    function filtrarTablaPassLocal() {
+      const busc = ((document.getElementById('buscAluPass') || {}).value || '').trim().toLowerCase();
+      const g = ((document.getElementById('filtroGradoPass') || {}).value || '').trim();
+      const gp = ((document.getElementById('filtroGrupoPass') || {}).value || '').trim();
+
+      const filtrados = (listaAlumnosPassCache || []).filter(function (a) {
+        if (!coincideGrupoLocal_(a, g, gp)) return false;
+        if (busc) {
+          const nom = String(a.nombre || '').toLowerCase();
+          const mat = String(a.matricula || '').toLowerCase();
+          const usu = String(a.usuario || '').toLowerCase();
+          if (nom.indexOf(busc) < 0 && mat.indexOf(busc) < 0 && usu.indexOf(busc) < 0) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      renderTablaPassAlu_(filtrados);
+      pintarEtqFiltroPass_();
+    }
+
+    function renderTablaPassAlu_(filas) {
+      const txtConteo = document.getElementById('txtAluPassConteo');
+      if (txtConteo) {
+        txtConteo.textContent = 'Alumnos encontrados: ' + filas.length;
+      }
+      const caja = document.getElementById('cajaTablaAluPass');
+      if (!caja) return;
+      if (!filas.length) {
+        caja.innerHTML = '<p class="hint" style="text-align:center;">No hay alumnos que coincidan con los filtros o la búsqueda.</p>';
+        return;
+      }
+      let html = '<table class="tabla-acc"><thead><tr>' +
+        '<th style="width:30px;">#</th>' +
+        '<th>Alumno</th>' +
+        '<th>Grupo</th>' +
+        '<th>Usuario</th>' +
+        '<th>Contraseña</th>' +
+        '<th style="text-align:right;">Acciones</th>' +
+        '</tr></thead><tbody>';
+
+      html += filas.map(function (a, idx) {
+        const mat = String(a.matricula || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const usu = String(a.usuario || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const cla = String(a.clave || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const claveHtml = a.clave
+          ? ('<span class="dato-acc badge-pass">' + escaparHtml(a.clave) + '</span>')
+          : '<span style="color:#94a3b8;font-size:12px;">Sin contraseña</span>';
+
+        return '<tr>' +
+          '<td style="color:#94a3b8;font-size:12px;">' + (idx + 1) + '</td>' +
+          '<td><strong>' + escaparHtml(a.nombre) + '</strong><br><small style="color:#64748b;">Mat: ' + escaparHtml(a.matricula) + '</small></td>' +
+          '<td><span class="badge">' + escaparHtml((a.grado ? (a.grado + '° ') : '') + (a.grupo || '')) + '</span></td>' +
+          '<td><span class="dato-acc" style="color:var(--st90-azul);">' + escaparHtml(a.usuario || '—') + '</span></td>' +
+          '<td>' + claveHtml + '</td>' +
+          '<td style="text-align:right;white-space:nowrap;">' +
+            '<div style="display:inline-flex;gap:4px;">' +
+              '<button type="button" class="btn-secundario" onclick="generarClaveUnicaAlu(\'' + mat + '\')" title="Generar contraseña aleatoria individual">🎲 Aleatoria</button>' +
+              '<button type="button" class="btn-secundario" onclick="ponerClaveAlu(\'' + mat + '\',\'' + usu + '\',\'' + cla + '\')" title="Editar usuario y contraseña">✏️ Editar</button>' +
+              (a.clave ? ('<button type="button" class="btn-secundario" onclick="copiarCredencialAlu(\'' + usu + '\',\'' + cla + '\')" title="Copiar usuario y contraseña">📋</button>') : '') +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      html += '</tbody></table>';
+      caja.innerHTML = html;
+    }
+
+    function generarClaveUnicaAlu(matricula) {
+      toast('Generando contraseña aleatoria…', 'info');
+      gsRun('generarClavesAlumnosClase', tokenClase, '', '', 'alumno', matricula).then(function (r) {
+        toast((r && r.mensaje) || 'Contraseña generada.', 'ok');
+        cargarAlumnosPass(true);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function generarClavesMasivasAlu(modo) {
+      const g = (document.getElementById('filtroGradoPass') || {}).value || '';
+      const gp = (document.getElementById('filtroGrupoPass') || {}).value || '';
+
+      let pregunta = '';
+      if (modo === 'todos') {
+        pregunta = '¿Deseas generar contraseñas aleatorias para <strong>TODOS los grupos</strong>?<br><br><small style="color:#b91c1c;">Esta acción creará o renovará la contraseña de acceso de todos los alumnos activos.</small>';
+      } else {
+        const etq = (g ? (g + '° ') : '') + (gp || '');
+        if (!etq) {
+          toast('Por favor selecciona primero un grado o grupo en los filtros superiores.', 'error');
+          return;
+        }
+        pregunta = '¿Deseas generar contraseñas aleatorias para los alumnos de <strong>' + escaparHtml(etq) + '</strong>?';
+      }
+
+      modal({
+        titulo: 'Generar contraseñas aleatorias',
+        html: '<p style="margin:0 0 12px;font-size:14px;line-height:1.45;">' + pregunta + '</p>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Sí, generar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) { return val; }
+      }).then(function (confirmo) {
+        if (!confirmo) return;
+        toast('Generando contraseñas aleatorias, por favor espera…', 'info');
+        gsRun('generarClavesAlumnosClase', tokenClase, g, gp, modo, '').then(function (r) {
+          toast((r && r.mensaje) || 'Contraseñas generadas correctamente.', 'ok');
+          cargarAlumnosPass(true);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    function copiarCredencialAlu(usuario, clave) {
+      const texto = 'Usuario: ' + usuario + '\nContraseña: ' + clave;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () {
+          toast('Credenciales copiadas al portapapeles.', 'ok');
+        }).catch(function () {
+          copiarFallback_(texto);
+        });
+      } else {
+        copiarFallback_(texto);
+      }
+    }
+
+    function copiarFallback_(texto) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('Credenciales copiadas al portapapeles.', 'ok');
+      } catch (e) {
+        toast('Credenciales: ' + texto, 'info');
+      }
+    }
+
+    function ponerClaveAlu(mat, usuario, clave) {
+      modal({
+        titulo: 'Cambiar acceso del alumno',
+        html: '<label for="usuClaveAlu">Usuario</label><input id="usuClaveAlu" type="text" value="' + escaparHtml(usuario || '') + '" autocomplete="off">' +
+          '<label for="passClaveAlu">Contraseña (mín. 6)</label><input id="passClaveAlu" type="text" value="' + escaparHtml(clave || '') + '" autocomplete="off">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            usuario: (fondo.querySelector('#usuClaveAlu') || {}).value || '',
+            clave: (fondo.querySelector('#passClaveAlu') || {}).value || ''
+          };
+        }
+      }).then(function (datos) {
+        if (!datos) return;
+        gsRun('asignarClaveAlumnoClase', tokenClase, mat, datos.usuario, datos.clave).then(function (r) {
+          toast((r && r.mensaje) || 'Listo.', 'ok');
+          cargarHorarioMae();
+          if (document.getElementById('tabAluAcc') && !document.getElementById('tabAluAcc').classList.contains('oculto')) {
+            cargarAlumnosPass(true);
+          }
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    document.getElementById('claveClase').addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') entrarClase();
+    });
+    document.getElementById('usuarioClase').addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') document.getElementById('claveClase').focus();
+    });
+      window.addEventListener('click', function (ev) {
+      /* asi-dd-panel-global-closer */
+      if (!ev.target.closest('.asi-dd')) {
+        document.querySelectorAll('.asi-dd-panel').forEach(function (p) { p.classList.add('oculto'); });
+      }
+    });
+    prepararVocesClase_();
+    if (window.speechSynthesis && typeof window.speechSynthesis.addEventListener === 'function') {
+      window.speechSynthesis.addEventListener('voiceschanged', prepararVocesClase_);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estilo UI ST90 · v360</title>
+  <style>
+    :root {
+      --st90-azul: #1f6f9f;
+      --st90-azul-osc: #185a80;
+      --st90-fondo: #f4f7fb;
+      --st90-borde: #e4ecf3;
+      --st90-texto: #2c3e50;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--st90-fondo); color: var(--st90-texto); font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.55; }
+    .caja { max-width: 880px; margin: 0 auto; padding: 28px 20px 64px; }
+    h1 { font-size: 26px; color: var(--st90-azul); margin: 0 0 6px; }
+    h2 { font-size: 18px; color: var(--st90-azul-osc); margin: 28px 0 8px; }
+    p, li { font-size: 15px; }
+    .meta { color: #64748b; font-size: 13px; margin: 0 0 18px; }
+    .aviso { background: #fff; border: 1px solid var(--st90-borde); border-radius: 10px; padding: 12px 14px; font-size: 13px; }
+    pre, textarea {
+      width: 100%; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px;
+      font-size: 12px; line-height: 1.45; overflow: auto; white-space: pre-wrap; word-break: break-word;
+    }
+    textarea { min-height: 340px; border: 0; resize: vertical; font-family: ui-monospace, Consolas, monospace; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; }
+    th, td { border: 1px solid var(--st90-borde); padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #eaf4fb; color: var(--st90-azul-osc); }
+    code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+    .fila-btn { display: flex; gap: 8px; margin: 8px 0 16px; flex-wrap: wrap; }
+    button {
+      border: 0; border-radius: 8px; background: var(--st90-azul); color: #fff;
+      padding: 8px 14px; font-weight: 700; cursor: pointer;
+    }
+    button.sec { background: #fff; color: var(--st90-azul); border: 1px solid var(--st90-borde); }
+    ul { padding-left: 20px; }
+    .esquema { background: #fff; border: 1px dashed #94a3b8; border-radius: 10px; padding: 12px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="caja">
+    <h1>Estilo UI ST90</h1>
+    <p class="meta">Cinta N1 / N2 / N3 · app v360</p>
+    <p class="aviso">Hoja de estilos canónica del panel Lectura. Academia (Filament) no usa este documento. Archivo canónico: <code>EstiloUiSt90.html</code> (<code>?pagina=estilo</code>).</p>
+
+    <h2>Prompt maestro para replicar este estilo en todas las UI</h2>
+    <p>Cópialo y pégalo al iniciar cualquier tarea de interfaz para aplicar todas las reglas de golpe sin repetir indicaciones.</p>
+    <div class="fila-btn">
+      <button type="button" onclick="copiarPrompt()">Copiar prompt maestro</button>
+      <button type="button" class="sec" onclick="copiarEstilo()">Copiar resumen corto</button>
+    </div>
+    <textarea id="txtPrompt" readonly>REGLA OBLIGATORIA E INNEGOCIABLE DE ARQUITECTURA UI ST90 (v360).
+Aplica este estándar en TODAS las interfaces (Admin.html, AdminUsuarios.html, AdminAsistencia.html, AdminLecturas.html, Interfaz.html, Clase.html) sin que el usuario tenga que repetirlo. Antes de tocar HTML/CSS/JS consulta EstiloUiSt90.html.
+
+1. REGLA UNIVERSAL DE LOS 3 NIVELES (N1 / N2 / N3):
+- NIVEL 1 (Barra superior principal .tabs): Contiene únicamente los módulos principales (ej. Usuarios, Asistencia, Lecturas; o Clases, Alumnos, Docentes) y el botón Salir a la derecha (.barra-sup-acciones).
+  * Estado inicial al entrar: Solo se ve el Nivel 1 sin ningún icono preseleccionado, Nivel 2 oculto y hoja inferior vacía. Prohibido auto-abrir módulos al iniciar.
+  * Al hacer clic en un icono del Nivel 1: Marca ese icono con recuadro blanco redondeado (.activa, borde #94a3b8) y muestra TODOS los iconos del segundo nivel completo (ribbonSetNivel2(true)).
+  * Al volver a dar clic en el MISMO icono del Nivel 1: Si el segundo nivel está visible, se OCULTA todo el segundo nivel completo (ribbonSetNivel2(false)); si estaba oculto, se vuelve a MOSTRAR todo el segundo nivel completo (ribbonSetNivel2(true)), conservando intacta la hoja inferior abierta.
+- NIVEL 2 (Submenú desplegable .cinta-n2): Contiene todos los iconos de las subsecciones del módulo activo (ej. Alumnos, Docente, Reportes, Prefectos, Ayuda; o Banco, Trimestre, Resultados, Ajustes, Ayuda).
+  * Al seleccionar CUALQUIER icono del segundo nivel: Se debe OCULTAR TODO el segundo nivel completo inmediatamente (ribbonColapsarTrasN2() -> ribbonSetNivel2(false), ocultando .cinta-n2 por completo) y se abre abajo la hoja correspondiente. Para volver a ver el segundo nivel completo basta con dar clic nuevamente en el icono del primer nivel.
+- NIVEL 3 (Acciones, vistas y filtros):
+  * NUNCA se muestra como tercera fila en la cabecera superior.
+  * SIEMPRE se muestra integrado DENTRO de la hoja inferior (hoja de reporte, gráfica, lista, catálogo o tarjeta de detalle), en una sola fila horizontal centrada (justify-content: center).
+
+2. REGLA DE FILTROS DIRECTOS (100% SIN MODALES):
+- Prohibido usar ventanas modales emergentes para seleccionar filtros (Grado, Grupo, Alumno, Docente, Asignatura, Estado, Tipo de gráfica, Comparación, Indicador o Vista).
+- Todos los iconos de filtro usan un <select class="filtro-select-overlay"> transparente superpuesto sobre un contenedor .ribbon-btn-select-wrap (o calendario nativo showPicker() / panel compacto en línea para fechas y periodos).
+- Al elegir una opción en el desplegable nativo, la etiqueta visible del icono (.ribbon-label) se actualiza inmediatamente con el valor elegido y filtra el reporte/gráfica/lista en vivo.
+
+3. REGLA DE LIMPIEZA VISUAL EN HOJAS INFERIORES:
+- Todos los iconos de Nivel 3 usan estructura .ribbon-btn (SVG + <span class="ribbon-label">). Prohibido usar title, data-tip o globos de tooltip en botones con etiqueta visible.
+- Omitir contadores redundantes y subtítulos repetitivos (ej. "392 de 392 lecturas", "Mostrando X de X alumnos", "Contraseñas y accesos de docentes").
+- En Banco de Lecturas: cuando se ve la lista en 3 columnas (#cajaListaYFiltrosLecturas), los iconos de Nivel 3 (#accionesLecBanco: Lista, Nueva, IA, NEM, Niveles, Actualizar) van en la barra superior de la hoja (#barraSuperiorBancoLec). Al seleccionar una lectura (#vistaDetalleLec), esos mismos iconos se mueven a la misma fila del título de la lectura (#slotAccionesDetalleLec en .cabecera-detalle-lec), entre el título y los iconos de edición/vista de la lectura.
+- En Resultados de Lecturas: los iconos de vista/acción (Gráficas, Lista, Notas, Imprimir) y los filtros directos van juntos en la barra superior de la hoja de reporte (#accionesLecRes dentro de #panelResultadosLec).
+- En Interfaz del Alumno (Examen): si el alumno entra autenticado con usuario y contraseña, jamás se le piden selectores de Grado/Grupo/Nombre; se le muestra directo su tarjeta de bienvenida y los 2 botones: [ Iniciar la prueba ] y [ Lectura trimestral ].
+
+4. CONVENCIONES GENERALES:
+- Español de México, identificadores claros, todo centrado y armónico. No hacer commit ni desplegar salvo indicación o flujo acordado.</textarea>
+
+    <h2>1. Principio de oro</h2>
+    <p>Al seleccionar un icono del <strong>Nivel 2</strong> se oculta todo el <strong>Nivel 2</strong>, al dar clic en un icono del <strong>Nivel 1</strong> se muestra o se oculta el <strong>Nivel 2</strong> completo (alternancia), y el <strong>Nivel 3</strong> siempre se muestra dentro de la hoja inferior (reporte, gráfica, lista o catálogo).</p>
+    <table>
+      <thead><tr><th>Icono N2 / Módulo</th><th>Qué abre</th><th>Dónde va</th></tr></thead>
+      <tbody>
+        <tr><td>Usuarios → Alumnos</td><td>Alta, CSV, Grupo, Claves, Actualizar, Buscar, Grado, Grupo, Estado, Limpiar</td><td>N3 integrado dentro del catálogo en una sola fila centrada; texto "Mostrando X de X alumnos" oculto.</td></tr>
+        <tr><td>Usuarios → Docentes</td><td>Sincronizar, Claves, Actualizar</td><td>N3 integrado dentro de la tarjeta en una sola fila centrada; encabezado "Contraseñas y accesos de docentes" oculto.</td></tr>
+        <tr><td>Usuarios → Prefectas / Apoyo</td><td>Alta, Horario XML, Prueba, Claves, Actualizar</td><td>N3 integrado dentro de la tarjeta inferior (#secUsuPref y #secUsuAdm) en una sola fila centrada.</td></tr>
+        <tr><td>Asistencia → Alumnos</td><td>Fecha, Grupo, Presentes, Guardar</td><td>N3 dentro de #asiFiltroAlu en la hoja inferior; a la izquierda Prefecta: Nombre. Sin Grado ni Buscar. Sin chips de grupos ni Turno matutino ni sesión larga.</td></tr>
+        <tr><td>Asistencia → Docente</td><td>Fecha, docente</td><td>N3 dentro de #asiFiltroMae en la hoja inferior.</td></tr>
+        <tr><td>Asistencia → Reportes</td><td>Alumnos o Docentes, luego Periodo (Día/Semana/Mes/Trimestre), Grupos, Alumno o Docente, Generar</td><td>N3 dentro de la hoja de reporte inferior. Sin Grado. Periodo con panel y flechas. Lista incluye filtros de estado. Fechas dd/sep/26.</td></tr>
+        <tr><td>Lecturas → Banco / Trimestre / Resultados</td><td>Banco: lista en 3 columnas (#cajaListaYFiltrosLecturas) con iconos (Lista, Nueva, IA, NEM, Niveles, Actualizar) en la barra de la hoja inferior (#barraSuperiorBancoLec) o en la fila del título de la lectura (#slotAccionesDetalleLec). Trimestre: lectura trimestral asignada. Resultados: N3 (Gráficas, Lista, Notas, Imprimir + filtros directos) dentro de #panelResultadosLec.</td><td>El Nivel 3 siempre vive dentro de la hoja inferior (reporte, gráfica o lista), nunca en la cinta superior.</td></tr>
+        <tr><td>Alumno → Inicio de prueba / Trimestral</td><td>Si entra autenticado: tarjeta de alumno y botones directos (sin selectores de grado/grupo/nombre). Si es acceso libre: selectores de 3 pasos.</td><td>Interfaz del Alumno (#secRegistro: Comenzar).</td></tr>
+        <tr><td>Clase → Clases / Alumnos / Docentes</td><td>Fecha, Grupo, Alumno, Asignatura o Grado, Grupo, Buscar, Generar</td><td>N3 integrado en el cuerpo/tarjeta en una sola fila centrada (sin textos de conteo redundantes). Todos los controles de la barra de horario centrados. Scroll horizontal visible en vista Mes Horizontal.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>2. Los tres niveles</h2>
+    <pre class="esquema">N1 (cinta superior)  Usuarios   Asistencia   Lecturas              Salir
+N2 (desplegable)     Alumnos    Docente      Reportes              Ayuda
+N3 (hoja inferior)   Fecha      Grupo        Presentes   Guardar</pre>
+    <ul>
+      <li><strong>N1</strong> (<code>ribbon-tab</code>): módulos. Al dar clic muestra todos los iconos del Nivel 2; un segundo clic en el mismo N1 oculta todo el Nivel 2. Salir en <code>.barra-sup-acciones</code>.</li>
+      <li><strong>N2</strong> (<code>.cinta-n2</code>): pestañas de la sección + Ayuda. Al seleccionar cualquier icono del Nivel 2 se oculta todo el Nivel 2.</li>
+      <li><strong>N3</strong> (<code>.cinta-n3</code> / barras de hoja): siempre integrado y centrado dentro de la hoja inferior (reporte, gráfica, lista o catálogo).</li>
+    </ul>
+
+    <h2>3. Revelado progresivo</h2>
+    <ol>
+      <li><strong>Entrada:</strong> solo N1, sin recuadro. N2 oculto. Cuerpo vacío. No auto-abrir Asistencia ni Lecturas.</li>
+      <li><strong>Clic N1:</strong> ese módulo se encierra en rectángulo blanco de esquinas redondeadas y se muestran todos los iconos del Nivel 2.</li>
+      <li><strong>Clic otra vez en el mismo N1:</strong> si el Nivel 2 está visible, se oculta todo el Nivel 2; si está oculto, se vuelve a mostrar el Nivel 2 completo.</li>
+      <li><strong>Clic N2:</strong> se marca ese icono y su N1, <strong>se oculta todo el Nivel 2</strong> (<code>ribbonSetNivel2(false)</code>) y se muestra la hoja inferior con su Nivel 3 integrado arriba de la tabla/gráfica/reporte.</li>
+      <li><strong>Clic en otro N1:</strong> abre el N2 completo de ese módulo, sin preselección.</li>
+      <li><strong>Clic N3 de acción</strong> (Alta, CSV, Grupo): se oculta el catálogo y solo se ve el formulario. Segundo clic restaura la lista.</li>
+      <li><strong>En Lecturas:</strong> alternancia limpia entre Banco, Trimestre y Resultados. Al seleccionar una lectura en Banco, los iconos de Nivel 3 pasan a la misma fila de la cabecera de la lectura. En Resultados, los iconos de Nivel 3 (Gráficas, Lista, Notas, Imprimir y filtros directos sin modales) se muestran siempre en la barra superior de la hoja de reporte/gráfica/lista.</li>
+      <li><strong>En Alumno:</strong> el alumno con sesión iniciada no pasa por selectores; ve directo su saludo y los botones de iniciar prueba y trimestral.</li>
+    </ol>
+    <p>Prohibido al abrir N1: <code>aplicarSubUsu('alu')</code>, <code>aplicarSubAsi('alu')</code>, <code>aplicarSubLec('banco')</code>.</p>
+
+    <h2>4. Icono de cinta</h2>
+    <p>SVG + <code>span.ribbon-label</code>. Prohibido <code>data-tip</code>, <code>title</code> y globo CSS. Sí <code>aria-label</code>. Activo = rectángulo blanco, borde <code>#94a3b8</code>. Tooltips solo en iconos compactos sin label (<code>.btn-icono-res</code>, <code>.asi-e</code>).</p>
+    <p>Colores: azul alumnos · morado docentes · ámbar prefectas/Ayuda · verde apoyo/Alta/Guardar · celeste reportes · rojo Salir.</p>
+
+    <h2>5. Filtros y catálogo</h2>
+    <p>Los filtros de selección directa despliegan listas nativas (select overlay transparente sobre <code>ribbon-btn</code>) o calendario/panel en línea (<code>showPicker()</code> / <code>.asi-dd-panel</code>), actualizando la etiqueta al seleccionar sin modales en todo el nivel 3 y en las barras de filtros de informes (incluyendo Resultados: Grado, Grupo, Alumno, Periodo, Líneas/Tipo, Grupo/Comparar, Comprensión/Indicador y En el tiempo/Vista). En Asistencia → Alumnos se muestra directamente el formato para tomar asistencia (tabla con estados P/T/A/J, sin Permiso/PE, botones Presentes y Guardar) para el grupo seleccionado o el primer grupo disponible, sin mostrar tablas intermedias de directorio. En todas las listas, catálogos, gráficas e informes, el Nivel 3 de filtros/acciones se muestra siempre dentro de la hoja inferior en <strong>una sola fila y centrado</strong> (<code>justify-content: center</code>), omitiendo textos de conteo o encabezados redundantes para una estética limpia y moderna.</p>
+    <p>En el horario, la vista <strong>Mes Horizontal</strong> activa un contenedor de desplazamiento horizontal explícito (<code>.scroll-mes-h</code> con barra de scroll visible estilizada, desplazamiento con rueda de ratón y columna de horas <em>sticky</em>) para abarcar con holgura todas las semanas del mes.</p>
+
+    <h2>6. Checklist</h2>
+    <ul>
+      <li>Entrada sin recuadro en N1. N2 oculto.</li>
+      <li>Clic N1: muestra todos los iconos de N2; otro clic en el mismo N1 oculta todo el N2 (y otro clic lo vuelve a mostrar).</li>
+      <li>Clic en cualquier icono de N2: oculta todo el N2 (<code>ribbonSetNivel2(false)</code>) y muestra la hoja inferior con su N3.</li>
+      <li>El Nivel 3 siempre se muestra dentro de la hoja de reporte, gráfica, lista o catálogo (nunca en la cinta superior).</li>
+      <li>Clic N3 Alta/CSV/Grupo: oculta el catálogo; solo el formulario.</li>
+      <li>Lecturas: alternancia limpia entre Banco, Trimestre y Resultados; al abrir una lectura, los iconos de acción se integran en la misma fila de cabecera de la lectura.</li>
+      <li>Lecturas → Resultados: Gráficas, Lista, Notas, Imprimir y los filtros directos sin modales se muestran siempre en la hoja inferior de reporte/gráfica/lista.</li>
+      <li>Alumno autenticado: ocultar selectores de grado/grupo/nombre y mostrar directo los botones de acción (<code>[ Iniciar la prueba ]</code>, <code>[ Lectura trimestral ]</code>).</li>
+      <li>Asistencia → Alumnos: muestra directamente el formato para pasar lista con sus estados y botones de acción.</li>
+      <li>Asistencia → Reportes: el icono Reportes abre Alumnos o Docentes en el cuerpo; los filtros van dentro de la tarjeta.</li>
+      <li>Filtros y acciones de N3 e informes: 100% sin modales (calendario showPicker(), panel flotante de periodo, select overlay directo para grado, grupo, alumno, indicadores y vistas).</li>
+      <li>Último nivel de controles en lista/catálogo/informe: integrado dentro de la tarjeta en una sola fila centrada, con textos de conteo o títulos redundantes ocultos.</li>
+      <li>Controles, filtros y barras de navegación siempre centrados (<code>justify-content: center</code>).</li>
+      <li>Scroll horizontal visible exclusivamente en vista Mes Horizontal para navegar el mes completo cómodamente.</li>
+      <li>Icono de Ayuda integrado armónicamente en la barra.</li>
+      <li>Sin iconos ni subribbons redundantes.</li>
+      <li>Cero tooltips en cinta. Español MX. <code>snake_case</code>.</li>
+      <li><code>VERSION_APP</code> sin -dev. Solo ST90-dev y ST90-escucha salvo orden explícita.</li>
+      <li>Clase alumno: vista Día por defecto, Semana secundaria, lista lineal accesible, sin autoplay.</li>
+    </ul>
+
+    <h2>7. Fuera de alcance</h2>
+    <p>ST90 / Lectura (GAS). Academia Laravel + Filament usa <code>CLAUDE.md</code>.</p>
+
+    <textarea id="txtEstilo" class="oculto" hidden readonly>
+REGLA UI ST90 v360: 1) Al dar clic en un icono de Nivel 1 se muestra todo el Nivel 2; un segundo clic en el mismo icono de Nivel 1 oculta todo el Nivel 2. 2) Al seleccionar cualquier icono de Nivel 2 se oculta todo el Nivel 2 (ribbonSetNivel2(false)). 3) El Nivel 3 SIEMPRE se muestra centrado dentro de la hoja inferior (reporte, gráfica, lista o catálogo), nunca en la cinta superior. 4) Filtros 100% directos (.filtro-select-overlay / showPicker) sin modales. 5) En Banco de lecturas, al abrir una lectura los iconos pasan a la fila del título (.cabecera-detalle-lec). Ver EstiloUiSt90.html.
+    </textarea>
+  </div>
+  <script>
+    function copiarPrompt() {
+      const t = document.getElementById('txtPrompt');
+      t.select();
+      try { navigator.clipboard.writeText(t.value); } catch (e) { document.execCommand('copy'); }
+    }
+    function copiarEstilo() {
+      const t = document.getElementById('txtEstilo');
+      try { navigator.clipboard.writeText(t.value.trim()); } catch (e) {
+        t.hidden = false;
+        t.select();
+        document.execCommand('copy');
+        t.hidden = true;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+    <!-- ==========================================
+         PESTAÑA: USUARIOS (ALUMNOS, DOCENTES, PREFECTAS, ADMINISTRATIVOS)
+         ========================================== -->
+    <div id="tab-mat" class="bloque oculto">
+      <!-- SUB-SECCIÓN 1: ALUMNOS -->
+      <div id="secUsuAlu" class="oculto">
+      <!-- Banner técnico de conexión (oculto; el enlace a la hoja está en la barra superior) -->
+      <div id="indicadorConexionMat" class="oculto">
+        <span id="txtInfoHojaMat"></span>
+        <a id="btnVerHojaMat" href="https://docs.google.com/spreadsheets/d/1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU/edit" target="_blank" rel="noopener"></a>
+      </div>
+
+      <!-- Alerta de permisos si la hoja no se pudo conectar -->
+      <div id="alertaPermisosHoja" class="oculto" style="background:#fef2f2;border:2px solid #ef4444;border-radius:8px;padding:14px 18px;margin-bottom:14px;color:#991b1b;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="flex:1;">
+            <strong style="font-size:14px;color:#991b1b;display:block;margin-bottom:4px;">Tu hoja de Google Sheets está bloqueada o en modo privado</strong>
+            <p style="font-size:13px;color:#7f1d1d;margin:0 0 8px;line-height:1.4;">
+              El sistema no puede leer tus alumnos porque Google Drive restringe el acceso a la hoja: <code id="txtIdHojaBloqueada" style="background:#fee2e2;padding:2px 6px;border-radius:4px;font-weight:bold;"></code>.
+            </p>
+            <div style="background:#fff;border:1px solid #fca5a5;border-radius:6px;padding:10px 14px;font-size:12px;color:#334155;">
+              <strong>Cómo desbloquearla:</strong>
+              <ol style="margin:6px 0 0 18px;padding:0;line-height:1.6;">
+                <li>Abre tu hoja de cálculo: <a id="lnkHojaBloqueada" href="https://docs.google.com/spreadsheets/d/1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU/edit" target="_blank" style="color:#2563eb;font-weight:700;text-decoration:underline;">Abrir Google Sheets</a>.</li>
+                <li>Haz clic en el botón azul <strong>Compartir</strong> (arriba a la derecha).</li>
+                <li>En <em>Acceso general</em>, cambia de <em>Restringido</em> a <strong>Cualquier persona con el enlace</strong> (con rol <em>Lector</em> o <em>Editor</em>).</li>
+                <li>Regresa aquí y pulsa <button type="button" class="btn-secundario" style="padding:2px 8px;font-size:11px;font-weight:bold;margin-left:4px;" onclick="recargar()">Actualizar datos</button></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 1: Alta individual de alumno -->
+      <div id="panelAltaAlumno" class="panel-accion-mat destacado oculto">
+        <h3>
+          <span>Registrar nuevo estudiante</span>
+          <button type="button" class="btn-icono-res btn-cerrar-panel" onclick="alternarPanelMat('panelAltaAlumno')" data-tip="Cerrar" aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+          </button>
+        </h3>
+        <p style="font-size:13px;color:#475569;margin:0 0 10px;">Ingresa los datos del alumno para asignarlo a su grado y grupo correspondiente.</p>
+        <div class="fila-form" style="margin:0;">
+          <div style="flex:1;min-width:140px;">
+            <label>Matrícula</label>
+            <input id="nMat" placeholder="Ej. 24099" style="width:100%;">
+          </div>
+          <div style="flex:2;min-width:220px;">
+            <label>Nombre completo</label>
+            <input id="nNom" placeholder="Apellidos y Nombres" style="width:100%;">
+          </div>
+          <div>
+            <label>Grado</label>
+            <select id="nGra" onchange="llenarGruposAlta()">
+              <option value="1">1° de secundaria</option>
+              <option value="2">2° de secundaria</option>
+              <option value="3">3° de secundaria</option>
+            </select>
+          </div>
+          <div>
+            <label>Grupo</label>
+            <select id="nGru"></select>
+          </div>
+          <div>
+            <button class="btn-verde" onclick="altaA()">Guardar alumno</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Importación masiva por CSV -->
+      <div id="panelImportarCSV" class="panel-accion-mat oculto">
+        <h3>
+          <span>Importación masiva de matrícula (CSV)</span>
+          <button type="button" class="btn-icono-res btn-cerrar-panel" onclick="alternarPanelMat('panelImportarCSV')" data-tip="Cerrar" aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+          </button>
+        </h3>
+        <p style="font-size:13px;color:#475569;margin:0 0 10px;">Descarga la plantilla oficial, complétala con la lista de tus estudiantes en Excel o Google Sheets y súbela en formato CSV.</p>
+        <div class="fila-form" style="margin:0;align-items:center;">
+          <button class="btn-secundario" type="button" onclick="plantilla()">Descargar plantilla CSV</button>
+          <div style="flex:1;min-width:240px;">
+            <input type="file" id="csv" accept=".csv" style="width:100%;background:#fff;padding:6px;">
+          </div>
+          <button onclick="importar()">Subir e importar</button>
+        </div>
+      </div>
+
+      <!-- Panel 3: Crear nuevo grupo -->
+      <div id="panelNuevoGrupo" class="panel-accion-mat oculto">
+        <h3>
+          <span>Crear nuevo grupo escolar</span>
+          <button type="button" class="btn-icono-res btn-cerrar-panel" onclick="alternarPanelMat('panelNuevoGrupo')" data-tip="Cerrar" aria-label="Cerrar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+          </button>
+        </h3>
+        <p style="font-size:13px;color:#475569;margin:0 0 10px;">Registra grupos adicionales que no figuren en la lista por defecto (ej. 1F, 2G, 3E).</p>
+        <div class="fila-form" style="margin:0;">
+          <div>
+            <label>Grado</label>
+            <select id="gGra">
+              <option value="1">1° de secundaria</option>
+              <option value="2">2° de secundaria</option>
+              <option value="3">3° de secundaria</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:180px;">
+            <label>Nombre del grupo</label>
+            <input id="gGru" placeholder="Ej. 1f o 2d" style="width:100%;">
+          </div>
+          <div>
+            <button onclick="altaG()">Crear grupo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selector de grupos por grado (oculto: se filtra desde la barra de búsqueda) -->
+      <div class="barra-chips-grupos oculto" id="cajaChipsGruposMat">
+        <div id="contenedorChipsGrupos"></div>
+      </div>
+
+      <!-- Barra flotante de acciones masivas (cuando hay alumnos seleccionados) -->
+      <div id="barraAccionesMasivasAlumnos" class="barra-acciones-masivas oculto">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <strong id="lblTotalSeleccionados">0 alumnos seleccionados</strong>
+        </div>
+        <div class="acciones-masivas-iconos">
+          <button type="button" class="btn-icono-res" onclick="abrirModalMoverGrupoSeleccionados()" data-tip="Mover a grupo" aria-label="Mover a grupo">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 3h5v5"/><path d="M21 3l-7 7"/><circle cx="9" cy="13" r="2.4"/><path d="M4 21c.5-2.4 2.2-3.8 5-3.8s4.5 1.4 5 3.8"/></svg>
+          </button>
+          <button type="button" class="btn-icono-res" onclick="abrirModalIntentosSeleccionados()" data-tip="Intentos extra" aria-label="Intentos extra">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+          </button>
+          <button type="button" class="btn-icono-res" onclick="darBajaSeleccionados()" data-tip="Dar de baja" aria-label="Dar de baja">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.6-3.2 3-5 7-5"/><path d="M16 16l5 5M21 16l-5 5"/></svg>
+          </button>
+          <button type="button" class="btn-icono-res verde" onclick="reactivarSeleccionados()" data-tip="Reactivar" aria-label="Reactivar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.2-5.5"/><path d="M20 5v5h-5"/></svg>
+          </button>
+          <button type="button" class="btn-icono-res rojo" onclick="eliminarAlumnosSeleccionados()" data-tip="Eliminar" aria-label="Eliminar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 12h8l1-12"/></svg>
+          </button>
+          <button type="button" class="btn-icono-res" onclick="limpiarSeleccionAlumnos()" data-tip="Deseleccionar" aria-label="Deseleccionar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Fila de acciones y filtros de alumnos (N3) centrados -->
+      <div id="barraAluN3" class="cinta-n3" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto 16px;background:transparent;box-shadow:none;border:none;">
+        <div class="acciones-grupo" id="accionesGrupoMat" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="ribbon-btn ribbon-ico-verde" id="btnMatAlta" onclick="alternarPanelMat('panelAltaAlumno', this)" aria-label="Alta de alumno">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="10" cy="8" r="3.2"></circle>
+              <path d="M4.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"></path>
+              <path d="M17 8v6M14 11h6"></path>
+            </svg>
+            <span class="ribbon-label">Alta</span>
+          </button>
+          <button type="button" class="ribbon-btn" id="btnMatCsv" onclick="alternarPanelMat('panelImportarCSV', this)" aria-label="Importar CSV">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 4v10"></path>
+              <path d="M8 8l4-4 4 4"></path>
+              <path d="M5 14v4h14v-4"></path>
+            </svg>
+            <span class="ribbon-label">CSV</span>
+          </button>
+          <button type="button" class="ribbon-btn" id="btnMatGrupoNuevo" onclick="alternarPanelMat('panelNuevoGrupo', this)" aria-label="Crear grupo">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="8" cy="9" r="2.4"></circle>
+              <circle cx="16" cy="9" r="2.4"></circle>
+              <path d="M4 18c.5-2.4 2.2-3.8 4-3.8s3.5 1.4 4 3.8"></path>
+              <path d="M12 18c.5-2.4 2.2-3.8 4-3.8s3.5 1.4 4 3.8"></path>
+            </svg>
+            <span class="ribbon-label">Grupo</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="generarClavesMasivasAlu()" aria-label="Generar credenciales">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="4"></rect>
+              <circle cx="8" cy="8" r="1.5" fill="currentColor"></circle>
+              <circle cx="16" cy="8" r="1.5" fill="currentColor"></circle>
+              <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+              <circle cx="8" cy="16" r="1.5" fill="currentColor"></circle>
+              <circle cx="16" cy="16" r="1.5" fill="currentColor"></circle>
+            </svg>
+            <span class="ribbon-label">Claves</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="cerrarPanelesAccionMat_();recargar()" aria-label="Actualizar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 12a8 8 0 1 1-2.2-5.5"></path>
+              <path d="M20 5v5h-5"></path>
+            </svg>
+            <span class="ribbon-label">Actualizar</span>
+          </button>
+        </div>
+        <div class="acciones-grupo" id="filtrosGrupoMat" style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <div class="oculto" aria-hidden="true">
+            <input type="text" id="filtroMatBusqueda" placeholder="Buscar por nombre o matrícula..." oninput="filtrarAlumnosUI()">
+            <select id="filtroMatGrado" onchange="cambiarFiltroMatGrado()">
+              <option value="">Todos los grados</option>
+              <option value="1">1° de secundaria</option>
+              <option value="2">2° de secundaria</option>
+              <option value="3">3° de secundaria</option>
+            </select>
+            <select id="filtroMatGrupo" onchange="filtrarAlumnosUI()">
+              <option value="">Todos los grupos</option>
+            </select>
+            <select id="filtroMatEstado" onchange="filtrarAlumnosUI()">
+              <option value="">Todos los estados</option>
+              <option value="SI">Solo activos</option>
+              <option value="NO">Solo en baja</option>
+            </select>
+          </div>
+          <button type="button" class="ribbon-btn" id="btnMatBuscar" onclick="abrirModalFiltroMat('buscar')" aria-label="Buscar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <span class="ribbon-label">Buscar</span>
+          </button>
+          <button type="button" class="ribbon-btn" id="btnMatGrado" onclick="abrirModalFiltroMat('grado')" aria-label="Grado">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 10l-10-5-10 5 10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+            <span class="ribbon-label">Grado</span>
+          </button>
+          <button type="button" class="ribbon-btn" id="btnMatGrupo" onclick="abrirModalFiltroMat('grupo')" aria-label="Grupo">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>
+            <span class="ribbon-label">Grupo</span>
+          </button>
+          <button type="button" class="ribbon-btn" id="btnMatEstado" onclick="abrirModalFiltroMat('estado')" aria-label="Estado">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            <span class="ribbon-label">Estado</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="verTodosAlumnos()" aria-label="Limpiar filtros">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"/></svg>
+            <span class="ribbon-label">Limpiar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de directorio -->
+      <div id="catalogoAlu">
+        <p id="lblConteoAlumnos" class="sub-lec" style="display:none !important;">Mostrando 0 alumnos</p>
+        <div class="caja-tabla-mat" id="cajaTablaAlu">
+          <table id="tablaAlu"></table>
+        </div>
+      </div>
+      </div> <!-- fin secUsuAlu -->
+
+      <!-- SUB-SECCIÓN 2: DOCENTES -->
+      <div id="secUsuDoc" class="oculto">
+        <div style="background:#fff;border-radius:10px;padding:20px;border:1px solid var(--st90-borde);box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:20px;">
+          <div class="cabeza-sec-usu" style="display:none !important;">
+            <h2>Contraseñas y accesos de docentes</h2>
+          </div>
+          <!-- Fila de acciones de docentes (N3) centrados -->
+          <div class="acciones-grupo cinta-n3" id="accionesGrupoDoc" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto 16px;background:transparent;box-shadow:none;border:none;">
+            <button type="button" class="ribbon-btn" onclick="syncMaestrosAdmin()" aria-label="Sincronizar horario">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+              <span class="ribbon-label">Sincronizar</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="generarClavesMasivasMae()" aria-label="Generar credenciales">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="4"></rect>
+                <circle cx="8" cy="8" r="1.5" fill="currentColor"></circle>
+                <circle cx="16" cy="8" r="1.5" fill="currentColor"></circle>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                <circle cx="8" cy="16" r="1.5" fill="currentColor"></circle>
+                <circle cx="16" cy="16" r="1.5" fill="currentColor"></circle>
+              </svg>
+              <span class="ribbon-label">Claves</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="cargarMaestrosAdmin(true)" aria-label="Actualizar docentes">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M20 12a8 8 0 1 1-2.2-5.5"></path>
+                <path d="M20 5v5h-5"></path>
+              </svg>
+              <span class="ribbon-label">Actualizar</span>
+            </button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;">
+              <input type="search" id="buscMaeAdmin" placeholder="Buscar por docente o usuario…" oninput="filtrarTablaMaeAdminLocal()" autocomplete="off" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid var(--st90-borde);border-radius:6px;font-size:14px;">
+            </div>
+            <span id="contMaeAdmin" style="font-size:13px;font-weight:600;color:var(--st90-azul);white-space:nowrap;"></span>
+          </div>
+
+          <div id="cajaTablaMaeAdmin">
+            <p style="color:#64748b;font-size:13px;">Cargando lista de docentes…</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-SECCIÓN 3: PREFECTAS -->
+      <div id="secUsuPref" class="oculto">
+        <div style="background:#fff;border-radius:10px;padding:20px;border:1px solid var(--st90-borde);box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:20px;">
+          <div class="cabeza-sec-usu" style="display:none !important;">
+            <h2>Gestión y accesos de Prefectas</h2>
+          </div>
+          <!-- Fila de acciones de prefectas (N3) centradas -->
+          <div class="acciones-grupo cinta-n3" id="accionesGrupoPref" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto 16px;background:transparent;box-shadow:none;border:none;">
+            <button type="button" class="ribbon-btn" onclick="abrirModalAltaPref()" aria-label="Alta de prefecta">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="10" cy="8" r="3.2"></circle>
+                <path d="M4.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"></path>
+                <path d="M17 8v6M14 11h6"></path>
+              </svg>
+              <span class="ribbon-label">Alta</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="abrirModalHorarioAsi()" aria-label="Importar horario XML">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 4v10"></path>
+                <path d="M8 8l4-4 4 4"></path>
+                <path d="M5 14v4h14v-4"></path>
+              </svg>
+              <span class="ribbon-label">Horario XML</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="abrirModalAsistenciaDemo()" aria-label="Asistencia de prueba">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M10 2v4h4V2"></path>
+                <path d="M8 6h8l1 4H7z"></path>
+                <path d="M9 10v9a3 3 0 0 0 6 0v-9"></path>
+              </svg>
+              <span class="ribbon-label">Prueba</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="generarClavesMasivasPref()" aria-label="Generar credenciales">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="4"></rect>
+                <circle cx="8" cy="8" r="1.5" fill="currentColor"></circle>
+                <circle cx="16" cy="8" r="1.5" fill="currentColor"></circle>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                <circle cx="8" cy="16" r="1.5" fill="currentColor"></circle>
+                <circle cx="16" cy="16" r="1.5" fill="currentColor"></circle>
+              </svg>
+              <span class="ribbon-label">Claves</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="cargarPrefectosAsi()" aria-label="Actualizar prefectas">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M20 12a8 8 0 1 1-2.2-5.5"></path>
+                <path d="M20 5v5h-5"></path>
+              </svg>
+              <span class="ribbon-label">Actualizar</span>
+            </button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;">
+              <input type="search" id="buscPrefAdmin" placeholder="Buscar por nombre o usuario…" oninput="filtrarTablaPrefLocal()" autocomplete="off" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid var(--st90-borde);border-radius:6px;font-size:14px;">
+            </div>
+            <span id="contPrefAdmin" style="font-size:13px;font-weight:600;color:var(--st90-azul);white-space:nowrap;"></span>
+          </div>
+          <div id="cajaTablaPrefAdmin">
+            <p style="color:#64748b;font-size:13px;">Cargando prefectas…</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-SECCIÓN 4: PERSONAL DE APOYO -->
+      <div id="secUsuAdm" class="oculto">
+        <div style="background:#fff;border-radius:10px;padding:20px;border:1px solid var(--st90-borde);box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:20px;">
+          <div class="cabeza-sec-usu" style="display:none !important;">
+            <h2>Personal de apoyo</h2>
+          </div>
+          <!-- Fila de acciones de personal de apoyo (N3) centradas -->
+          <div class="acciones-grupo cinta-n3" id="accionesGrupoAdm" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto 16px;background:transparent;box-shadow:none;border:none;">
+            <button type="button" class="ribbon-btn" onclick="abrirModalAltaApoyo()" aria-label="Alta de personal">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="10" cy="8" r="3.2"></circle>
+                <path d="M4.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"></path>
+                <path d="M17 8v6M14 11h6"></path>
+              </svg>
+              <span class="ribbon-label">Alta</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="generarClavesMasivasApoyo()" aria-label="Generar credenciales">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="4"></rect>
+                <circle cx="8" cy="8" r="1.5" fill="currentColor"></circle>
+                <circle cx="16" cy="8" r="1.5" fill="currentColor"></circle>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                <circle cx="8" cy="16" r="1.5" fill="currentColor"></circle>
+                <circle cx="16" cy="16" r="1.5" fill="currentColor"></circle>
+              </svg>
+              <span class="ribbon-label">Claves</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="cargarPersonalApoyo(true)" aria-label="Actualizar">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M20 12a8 8 0 1 1-2.2-5.5"></path>
+                <path d="M20 5v5h-5"></path>
+              </svg>
+              <span class="ribbon-label">Actualizar</span>
+            </button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:240px;">
+              <input type="search" id="buscApoyoAdmin" placeholder="Buscar por nombre, usuario o área…" oninput="filtrarTablaApoyoLocal()" autocomplete="off" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid var(--st90-borde);border-radius:6px;font-size:14px;">
+            </div>
+            <span id="contApoyoAdmin" style="font-size:13px;font-weight:600;color:var(--st90-azul);white-space:nowrap;"></span>
+          </div>
+          <div id="cajaTablaApoyoAdmin">
+            <p style="color:#64748b;font-size:13px;">Cargando personal de apoyo…</p>
+          </div>
+        </div>
+      </div>
+    </div>

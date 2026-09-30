@@ -1,0 +1,772 @@
+    <!-- ==========================================
+         PESTAÑA 3: LECTURAS (MASTER-DETAIL 2 COLUMNAS IN-PLACE)
+         ========================================== -->
+    <div id="tab-lec" class="bloque oculto">
+      <div id="barraAccionesLec" class="oculto" style="display:none!important;">
+        <h2 id="tituloLec" class="oculto" style="display:none!important;"></h2>
+      </div>
+      <!-- Barra superior integrada en el panel inferior (acciones y búsqueda centradas) -->
+      <div id="barraSuperiorBancoLec" class="barra-superior-tres-col oculto" style="justify-content:center;">
+        <div id="colIzqBarraBanco" class="oculto" style="display:none!important;">
+          <p id="subLec" class="sub-lec oculto" style="display:none!important;"></p>
+          <div class="selector-textos-titulo oculto" id="lblTotalLecturas" style="display:none!important;">Lecturas disponibles (0)</div>
+        </div>
+        <div id="slotAccionesBarraBanco" style="display:flex;justify-content:center;align-items:center;">
+        <div class="acciones-grupo" id="accionesLecBanco" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button type="button" id="btnToggleListaLecturas" class="ribbon-btn oculto" style="display:none!important;" onclick="volverAListaLecturas()" aria-label="Volver a la lista">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span class="ribbon-label">Lista</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="iniciarNuevaLectura()" aria-label="Nueva lectura">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 5v14M5 12h14"></path>
+            </svg>
+            <span class="ribbon-label">Nueva</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="alternarPanelIA()" aria-label="Lectura IA">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M12 2l1.6 5.2L19 9l-5.4 1.8L12 16l-1.6-5.2L5 9l5.4-1.8L12 2z"></path>
+              <path d="M18 13l.7 2.2L21 16l-2.3.8L18 19l-.7-2.2L15 16l2.3-.8L18 13z"></path>
+            </svg>
+            <span class="ribbon-label">IA</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="alternarPanelMasivo()" aria-label="Banco NEM">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M13 2L4 14h7l-1 8 10-14h-7l1-6z"></path>
+            </svg>
+            <span class="ribbon-label">NEM</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="clasificarNivelesBanco()" aria-label="Clasificar niveles de comprensión">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 7h16"></path>
+              <path d="M4 12h10"></path>
+              <path d="M4 17h7"></path>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+            <span class="ribbon-label">Niveles</span>
+          </button>
+          <button type="button" class="ribbon-btn" onclick="cargarDetalleLecturas(true)" aria-label="Actualizar lista">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 12a8 8 0 1 1-2.2-5.5"></path>
+              <path d="M20 5v5h-5"></path>
+            </svg>
+            <span class="ribbon-label">Actualizar</span>
+          </button>
+          <button type="button" id="btnCalendarioTrim" class="ribbon-btn oculto" onclick="abrirCalendarioTrim()" aria-label="Calendario trimestral">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+              <path d="M3 10h18"></path>
+              <path d="M8 3v4M16 3v4"></path>
+            </svg>
+            <span class="ribbon-label">Calendario</span>
+          </button>
+        </div>
+        </div>
+        <div id="wrapBusquedaBancoLec" style="display:flex;align-items:center;gap:10px;">
+          <div class="filtro-busqueda-wrap">
+            <span style="font-size:14px;color:#94a3b8;margin-left:4px;">🔍</span>
+            <input type="text" id="cBusqueda" placeholder="Buscar texto o tema..." oninput="cambiarFiltroLecturasUI()">
+            <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-busqueda oculto" onclick="limpiarBusquedaLecturas()" title="Limpiar búsqueda">✕</button>
+          </div>
+          <button type="button" id="btnRestablecerFiltros" class="btn-secundario oculto" onclick="restablecerTodosFiltros()" style="padding:6px 12px;font-size:12px;">Restablecer filtros</button>
+        </div>
+      </div>
+
+      <!-- Panel Generar con IA (en la fila superior) -->
+      <div id="panelIA" class="oculto">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+          <h3>Generar lectura con inteligencia artificial</h3>
+          <span style="font-size:11px;font-weight:700;color:#1e40af;background:#dbeafe;padding:3px 10px;border-radius:12px;border:1px solid #bfdbfe;">
+            Plan de Estudio NEM · Fase 6 (Secundaria)
+          </span>
+        </div>
+        <p style="font-size:13px;color:#334155;margin:0 0 12px;">IA redactará la lectura adaptada a los contenidos y Procesos de Desarrollo de Aprendizaje (PDA) de la <strong>Nueva Escuela Mexicana</strong> para el grado seleccionado, junto con sus preguntas y respuestas.</p>
+        
+        <div class="fila-form" style="margin:0 0 10px 0;align-items:flex-end;gap:10px;">
+          <div>
+            <label><strong>Grado escolar:</strong></label>
+            <select id="lGra" onchange="actualizarAsignaturasYTemasIA()">
+              <option value="1">1° de secundaria</option>
+              <option value="2">2° de secundaria</option>
+              <option value="3">3° de secundaria</option>
+            </select>
+          </div>
+          <div>
+            <label><strong>Asignatura (NEM):</strong></label>
+            <select id="lAsi" onchange="actualizarSugerenciasTemasIA()">
+              <option value="Español">Español</option>
+              <option value="Matemáticas">Matemáticas</option>
+              <option value="Ciencias (Biología)">Ciencias (Biología)</option>
+              <option value="Geografía">Geografía</option>
+              <option value="Historia">Historia</option>
+              <option value="Formación Cívica y Ética">Formación Cívica y Ética</option>
+              <option value="Tecnología">Tecnología</option>
+              <option value="Inglés">Inglés</option>
+              <option value="Artes">Artes</option>
+              <option value="Tutoría / Socioemocional">Tutoría / Socioemocional</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:260px;">
+            <label><strong>Tema del texto (PDA / Contenido curricular):</strong></label>
+            <input id="lTema" type="text" list="listaTemasNEM" placeholder="Selecciona una sugerencia o escribe un tema..." style="width:100%;" oninput="alEscribirTemaIA()">
+            <datalist id="listaTemasNEM"></datalist>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-verde" id="btnGenerarIA" onclick="generarLec()">Generar lectura</button>
+            <button class="btn-secundario" onclick="alternarPanelIA()">Cerrar</button>
+          </div>
+        </div>
+
+        <!-- Contenedor interactivo de temas sugeridos de la NEM -->
+        <div id="contenedorSugerenciasNEM" style="background:#ffffff;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin-top:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px;">
+            <span style="font-size:12px;font-weight:700;color:#1e40af;display:inline-flex;align-items:center;gap:4px;">
+              Temas y PDA sugeridos de la Nueva Escuela Mexicana:
+            </span>
+            <span style="font-size:11px;color:#64748b;">(Haz clic en cualquier tema para seleccionarlo)</span>
+          </div>
+          <div id="chipsTemasNEM" class="chips-temas-grid"></div>
+        </div>
+
+        <p id="msgIA" style="font-weight:600;margin-top:8px;font-size:13px;color:var(--st90-azul);"></p>
+      </div>
+
+      <!-- Panel Generación Masiva -->
+      <div id="panelMasivo" class="oculto" style="background: linear-gradient(to bottom, #fff7ed, #fffaf5); border: 1px solid #fed7aa; border-radius: 12px; padding: 16px 20px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(194, 65, 12, 0.08);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="color:#c2410c;margin:0;">Generar banco completo NEM (54 lecturas)</h3>
+          <button class="btn-secundario" onclick="alternarPanelMasivo()">Cerrar</button>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <input type="password" id="claveMasiva" placeholder="Contraseña de activación" style="padding:6px;border:1px solid #fed7aa;border-radius:6px;outline:none;">
+          <button class="btn-naranja" id="btnIniciarMasivo" onclick="iniciarGeneracionMasiva()">Iniciar generación</button>
+          <button class="btn-rojo oculto" id="btnDetenerMasivo" onclick="detenerGeneracionMasiva()">Detener</button>
+        </div>
+        <div id="masivoProgresoContenedor" class="oculto" style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;font-weight:600;">
+            <span id="masivoEstadoTexto">Preparando...</span>
+            <span id="masivoContador">0 / 54</span>
+          </div>
+          <div style="width:100%;background:#fed7aa;border-radius:6px;height:12px;overflow:hidden;">
+            <div id="masivoBarra" style="width:0%;height:100%;background:#ea580c;transition:width 0.3s;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor de filtros y selector de lecturas en 3 Columnas por Grado -->
+      <div id="cajaListaYFiltrosLecturas" class="oculto">
+
+        <!-- Rejilla de 3 Columnas: 1° Grado, 2° Grado, 3° Grado -->
+        <div class="contenedor-tres-columnas-grados">
+          <!-- Columna 1° de Secundaria -->
+          <div class="columna-grado-card col-grado-1">
+            <div class="columna-grado-header">
+              <div class="columna-grado-titulo">
+                <span>1° de secundaria</span>
+              </div>
+              <span class="badge-contador-col" id="conteoCol_1">0</span>
+            </div>
+            <div class="columna-grado-filtro-asig">
+              <label class="lbl-filtro-col">Materia:</label>
+              <select id="filtroAsigCol_1" class="select-asig-col" onchange="cambiarFiltroAsigCol('1', this.value)">
+                <option value="">Todas las materias</option>
+              </select>
+            </div>
+            <div class="columna-grado-lista" id="listaLecturasCol_1"></div>
+          </div>
+
+          <!-- Columna 2° de Secundaria -->
+          <div class="columna-grado-card col-grado-2">
+            <div class="columna-grado-header">
+              <div class="columna-grado-titulo">
+                <span>2° de secundaria</span>
+              </div>
+              <span class="badge-contador-col" id="conteoCol_2">0</span>
+            </div>
+            <div class="columna-grado-filtro-asig">
+              <label class="lbl-filtro-col">Materia:</label>
+              <select id="filtroAsigCol_2" class="select-asig-col" onchange="cambiarFiltroAsigCol('2', this.value)">
+                <option value="">Todas las materias</option>
+              </select>
+            </div>
+            <div class="columna-grado-lista" id="listaLecturasCol_2"></div>
+          </div>
+
+          <!-- Columna 3° de Secundaria -->
+          <div class="columna-grado-card col-grado-3">
+            <div class="columna-grado-header">
+              <div class="columna-grado-titulo">
+                <span>3° de secundaria</span>
+              </div>
+              <span class="badge-contador-col" id="conteoCol_3">0</span>
+            </div>
+            <div class="columna-grado-filtro-asig">
+              <label class="lbl-filtro-col">Materia:</label>
+              <select id="filtroAsigCol_3" class="select-asig-col" onchange="cambiarFiltroAsigCol('3', this.value)">
+                <option value="">Todas las materias</option>
+              </select>
+            </div>
+            <div class="columna-grado-lista" id="listaLecturasCol_3"></div>
+          </div>
+        </div>
+
+        <!-- Elementos ocultos para compatibilidad -->
+        <input type="hidden" id="cGra" value="">
+        <input type="hidden" id="cAsi" value="">
+        <div id="navLecturas" style="display:none;"></div>
+      </div>
+
+      <div id="panelLecturaTrimestral" class="oculto">
+        <div class="barra-trim-activo">
+          <div>
+            <p style="margin:0 0 4px;color:#334155;font-size:13px;">
+              Cada columna es un grado y hacia abajo van los tres trimestres.
+              Ahí ves el texto asignado: puedes <strong>ver</strong>, <strong>cambiar</strong> o <strong>quitar</strong>.
+              Solo se listan lecturas de ese grado.
+            </p>
+            <p id="lblCicloTrim" style="margin:0;font-size:13px;font-weight:700;color:var(--st90-azul);"></p>
+          </div>
+        </div>
+        <div class="grid-trimestres" id="gridTrimestres"></div>
+        <div class="fila-guardar-trim">
+          <span id="msgTrimestre" style="font-size:13px;color:#64748b;"></span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-secundario" onclick="pedirMuestraTrimestral()">Cargar 9 lecturas de muestra</button>
+            <button type="button" class="btn-verde" onclick="guardarLecturaTrimestral()">Guardar banco trimestral</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista y Edición en 2 Columnas -->
+      <div id="vistaDetalleLec" class="vista-detalle-lectura oculto">
+        
+        <!-- Cabecera de la lectura seleccionada -->
+        <div class="cabecera-detalle-lec">
+          <div>
+            <h3 id="detTitulo">Asignatura · Tema</h3>
+            <div class="meta-chips" id="detChips"></div>
+          </div>
+
+          <div id="slotAccionesDetalleLec" style="display:flex;justify-content:center;align-items:center;flex:1;"></div>
+          
+          <div class="acciones-grupo">
+            <!-- Botones en Modo Vista -->
+            <div id="grupoAccionesVista" style="display:flex;gap:8px;align-items:center;">
+              <button type="button" class="btn-icono-res" onclick="activarModoEdicion()" data-tip="Editar texto y preguntas" aria-label="Editar texto y preguntas">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+                </svg>
+              </button>
+              <button type="button" id="btnToggleActiva" class="btn-icono-res" onclick="toggleActivaLecturaActual()" data-tip="Ocultar de la ruleta" aria-label="Ocultar de la ruleta">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8"></circle>
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle>
+                </svg>
+              </button>
+              <button type="button" class="btn-icono-res" onclick="eliminarLecturaActual()" data-tip="Eliminar" aria-label="Eliminar lectura" style="color:var(--st90-rojo) !important;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 7h16"></path>
+                  <path d="M9 7V5h6v2"></path>
+                  <path d="M6 7l1 14h10l1-14"></path>
+                </svg>
+              </button>
+              <button type="button" class="btn-icono-res" onclick="abrirVistaPreviaModal()" data-tip="Vista previa" aria-label="Vista previa">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Botones en Modo Edición -->
+            <div id="grupoAccionesEdicion" class="oculto" style="display:flex;gap:8px;align-items:center;">
+              <button type="button" class="btn-icono-res verde" onclick="guardarEdicionDosColumnas()" data-tip="Guardar cambios" aria-label="Guardar cambios">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+              </button>
+              <button type="button" class="btn-icono-res" onclick="cancelarEdicionDosColumnas()" data-tip="Cancelar" aria-label="Cancelar edición">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Selector de visualización de columnas -->
+            <div class="barra-vista-columnas" title="Selector de vista de columnas">
+              <button type="button" id="btnLayoutAmbas" class="activo" onclick="cambiarLayoutColumnas('ambas')" title="Ambas columnas" aria-label="Ambas columnas">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                  <rect x="3" y="4" width="8" height="16" rx="1"></rect>
+                  <rect x="13" y="4" width="8" height="16" rx="1"></rect>
+                </svg>
+              </button>
+              <button type="button" id="btnLayoutTexto" onclick="cambiarLayoutColumnas('texto')" title="Solo texto" aria-label="Solo texto">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M6 4h12v16H6z"></path>
+                  <path d="M9 8h6M9 12h6M9 16h4"></path>
+                </svg>
+              </button>
+              <button type="button" id="btnLayoutPreguntas" onclick="cambiarLayoutColumnas('preguntas')" title="Solo preguntas" aria-label="Solo preguntas">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M8 6h13M8 12h13M8 18h13"></path>
+                  <circle cx="4.2" cy="6" r="1.2" fill="currentColor" stroke="none"></circle>
+                  <circle cx="4.2" cy="12" r="1.2" fill="currentColor" stroke="none"></circle>
+                  <circle cx="4.2" cy="18" r="1.2" fill="currentColor" stroke="none"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRID DE DOS COLUMNAS -->
+        <div class="grid-dos-columnas" id="gridDosColumnas">
+          
+          <!-- ==================== COLUMNA 1: TEXTO ==================== -->
+          <div class="col-panel" id="panelColTexto">
+            <div class="col-header">
+              <h4 id="lblColTextoHeader">Texto de la lectura</h4>
+              <span id="detPalabrasConteo" style="font-size:12px;font-weight:700;color:#64748b;">0 palabras</span>
+            </div>
+
+            <!-- Vista Lectura (Párrafos) -->
+            <div id="cajaVistaTexto" class="col-lectura-texto"></div>
+
+            <!-- Edición Texto (In-Place) -->
+            <div id="cajaEdicionTexto" class="oculto" style="display:flex;flex-direction:column;gap:10px;">
+              <div class="fila-form" style="margin:0 0 6px 0;">
+                <div style="min-width:110px;">
+                  <label style="font-size:12px;font-weight:700;">Grado:</label>
+                  <select id="editGra" onchange="actualizarDatalistTemasEdit();marcarEditorDirty()" style="width:100%;">
+                    <option value="1">1°</option>
+                    <option value="2">2°</option>
+                    <option value="3">3°</option>
+                  </select>
+                </div>
+                <div style="min-width:140px;">
+                  <label style="font-size:12px;font-weight:700;">Asignatura:</label>
+                  <select id="editAsi" onchange="actualizarDatalistTemasEdit();marcarEditorDirty()" style="width:100%;"></select>
+                </div>
+                <div style="flex:1;min-width:180px;">
+                  <label style="font-size:12px;font-weight:700;">Tema:</label>
+                  <input id="editTema" list="listaTemasEdit" type="text" placeholder="Tema" style="width:100%;" oninput="marcarEditorDirty()">
+                  <datalist id="listaTemasEdit"></datalist>
+                </div>
+              </div>
+              <label style="font-size:12px;font-weight:700;">Contenido del texto (Editor enriquecido):</label>
+              <div id="contenedorQuillEditor" style="display:flex;flex-direction:column;">
+                <div id="quillEditor"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== COLUMNA 2: PREGUNTAS ==================== -->
+          <div class="col-panel" id="panelColPreguntas">
+            <div class="col-header">
+              <h4 id="lblColPregHeader">Preguntas y respuestas</h4>
+              <span id="detPreguntasConteo" style="font-size:12px;font-weight:700;color:#64748b;">0 preguntas</span>
+            </div>
+
+            <!-- Vista Preguntas (Tarjetas) -->
+            <div id="cajaVistaPreguntas" class="col-lectura-preguntas"></div>
+
+            <!-- Edición Preguntas (In-Place) -->
+            <div id="cajaEdicionPreguntas" class="oculto" style="padding-right:4px;">
+              <div class="aviso" style="padding:8px 10px;font-size:12px;margin-bottom:8px;">
+                Pulsa <strong>Esta es la correcta</strong> en la opción que vale el punto (se marcará en verde).
+              </div>
+              <div id="listaEditorPreguntasInPlace"></div>
+              <button type="button" onclick="agregarPreguntaInPlace()" style="width:100%;margin-top:10px;background:#f8fafc;color:var(--st90-azul);border:1.5px dashed var(--st90-azul);font-weight:700;">
+                + Agregar otra pregunta
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ==========================================
+           SUBMENÚ: RESULTADOS (DENTRO DE LECTURAS)
+           ========================================== -->
+      <div id="panelResultadosLec" class="oculto">
+        <div id="tab-res" style="display:contents;">
+          <div class="kpi-mini-row oculto" id="kpiGrid" aria-hidden="true">
+            <button type="button" class="kpi-mini"><strong id="kpiTotal">0</strong><span>Evaluaciones</span></button>
+            <button type="button" class="kpi-mini"><strong id="kpiComp">0%</strong><span>Comprensión</span></button>
+            <button type="button" class="kpi-mini"><strong id="kpiPpm">0</strong><span>Velocidad PPM</span></button>
+            <button type="button" class="kpi-mini"><strong id="kpiPme">0</strong><span>PME</span></button>
+            <button type="button" class="kpi-mini naranja"><strong id="kpiGlobal">0%</strong><span>Calif. final</span></button>
+          </div>
+          <div class="cinta-filtros-res" id="accionesLecRes" role="toolbar" aria-label="Acciones y filtros de resultados">
+            <div class="oculto" aria-hidden="true">
+              <select id="fLectura" onchange="pintarResultados()"><option value="">Todas</option></select>
+            </div>
+            <button type="button" class="ribbon-btn activo" data-panel="panelGraficasRes" onclick="abrirPanelRes(this)" aria-label="Gráficas">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                <rect x="4" y="13" width="4" height="7" rx="1"></rect>
+                <rect x="10" y="8" width="4" height="12" rx="1"></rect>
+                <rect x="16" y="4" width="4" height="16" rx="1"></rect>
+              </svg>
+              <span class="ribbon-label">Gráficas</span>
+            </button>
+            <button type="button" class="ribbon-btn" data-panel="panelListaRes" onclick="abrirPanelRes(this)" aria-label="Lista de lecturas">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M8 6h13M8 12h13M8 18h13"></path>
+                <circle cx="4.2" cy="6" r="1.2" fill="currentColor" stroke="none"></circle>
+                <circle cx="4.2" cy="12" r="1.2" fill="currentColor" stroke="none"></circle>
+                <circle cx="4.2" cy="18" r="1.2" fill="currentColor" stroke="none"></circle>
+              </svg>
+              <span class="ribbon-label">Lista</span>
+            </button>
+            <button type="button" class="ribbon-btn" data-panel="panelObservacionesRes" onclick="abrirPanelRes(this)" aria-label="Observaciones">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span class="ribbon-label">Notas</span>
+            </button>
+            <button type="button" class="ribbon-btn" onclick="imprimirReporteResultados()" aria-label="Imprimir reporte">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <span class="ribbon-label">Imprimir</span>
+            </button>
+            <span class="asi-cinta-sep" aria-hidden="true" style="height:26px;width:1px;background:var(--st90-borde);margin:0 2px;"></span>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFGrado" aria-label="Grado">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 10l-10-5-10 5 10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+              <span class="ribbon-label">Grado</span>
+              <select id="fGrado" class="filtro-select-overlay" onchange="cambiarFiltroGrado()" aria-label="Grado">
+                <option value="">Todos</option>
+                <option value="1">1°</option>
+                <option value="2">2°</option>
+                <option value="3">3°</option>
+              </select>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFGrupo" aria-label="Grupo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>
+              <span class="ribbon-label">Grupo</span>
+              <select id="fGrupo" class="filtro-select-overlay" onchange="cambiarFiltroGrupo()" aria-label="Grupo"><option value="">Todos</option></select>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFAlumno" aria-label="Alumno">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <span class="ribbon-label">Alumno</span>
+              <select id="fAlumno" class="filtro-select-overlay" onchange="cambiarFiltroAlumno()" aria-label="Alumno"><option value="">Todos</option></select>
+            </div>
+            <div class="asi-dd" style="position:relative;display:inline-flex;">
+              <button type="button" class="ribbon-btn" id="btnFPeriodo" onclick="toggleDdPeriodoRes(event)" aria-label="Periodo">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span class="ribbon-label">Periodo</span>
+              </button>
+              <div id="panelPeriodoRes" class="asi-dd-panel oculto" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:100;background:#fff;border:1px solid var(--st90-borde);border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:210px;">
+                <div style="display:flex;flex-direction:column;gap:8px;text-align:left;">
+                  <div>
+                    <label for="fDesde" style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Desde</label>
+                    <input type="date" id="fDesde" onchange="pintarResultados()" aria-label="Desde" style="width:100%;padding:5px 8px;font-size:12px;border:1px solid #cbd5e1;border-radius:6px;">
+                  </div>
+                  <div>
+                    <label for="fHasta" style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Hasta</label>
+                    <input type="date" id="fHasta" onchange="pintarResultados()" aria-label="Hasta" style="width:100%;padding:5px 8px;font-size:12px;border:1px solid #cbd5e1;border-radius:6px;">
+                  </div>
+                  <button type="button" class="btn-secundario" onclick="limpiarPeriodoRes(event)" style="font-size:11px;padding:5px 10px;width:100%;margin-top:2px;">Todo el periodo</button>
+                </div>
+              </div>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFTipo" aria-label="Tipo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19h16"/><path d="M4 15l5-6 4 3 7-8"/></svg>
+              <span class="ribbon-label">Tipo</span>
+              <select id="fChartTipo" class="filtro-select-overlay" onchange="pintarResultados()" aria-label="Tipo de gráfica">
+                <option value="lineas">Líneas</option>
+                <option value="barras">Barras</option>
+                <option value="pastel">Pastel</option>
+              </select>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFComparar" aria-label="Comparar">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+              <span class="ribbon-label">Comparar</span>
+              <select id="fAgrupar" class="filtro-select-overlay" onchange="cambiarAgruparGraf()" aria-label="Comparar">
+                <option value="grupo">Grupo</option>
+                <option value="grado">Grado</option>
+                <option value="alumno">Alumno</option>
+              </select>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFIndicador" aria-label="Indicador">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2"/><path d="M12 7v5"/></svg>
+              <span class="ribbon-label">Indicador</span>
+              <select id="fMetrica" class="filtro-select-overlay" onchange="pintarResultados()" aria-label="Indicador">
+                <option value="comprension">Comprensión</option>
+                <option value="ppm">Velocidad PPM</option>
+                <option value="pme">PME</option>
+                <option value="tPregunta">Seg. por pregunta</option>
+                <option value="niveles">Niveles (lit/inf/crít)</option>
+                <option value="ambos">Comprensión y PPM</option>
+              </select>
+            </div>
+            <div class="ribbon-btn ribbon-btn-select-wrap" id="btnFVista" aria-label="Vista">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg>
+              <span class="ribbon-label">Vista</span>
+              <select id="fChartTiempo" class="filtro-select-overlay" onchange="pintarResultados()" aria-label="Vista">
+                <option value="tiempo">En el tiempo</option>
+                <option value="promedio">Promedio</option>
+              </select>
+            </div>
+            <button type="button" class="ribbon-btn" onclick="limpiarFiltros()" aria-label="Limpiar filtros">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"/></svg>
+              <span class="ribbon-label">Limpiar</span>
+            </button>
+            <button type="button" class="ribbon-btn ribbon-ico-verde" onclick="exportarCSV()" aria-label="Exportar CSV">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
+              <span class="ribbon-label">Exportar</span>
+            </button>
+            <p id="lblResumenFiltro" class="resumen-filtro-inline oculto"></p>
+          </div>
+          <div id="panelGraficasRes" class="cuerpo-panel-res">
+            <div id="cajaCompararGrupos" class="caja-comparar-grupos oculto">
+              <span class="lbl-chips">Grupos</span>
+              <div class="chips-multi" id="chipsGruposChart"></div>
+            </div>
+            <p class="titulo-grafica-viva" id="lblGraficaTitulo">Comparación</p>
+            <p class="subtitulo-grafica" id="lblGraficaSub"></p>
+            <div class="grafica" id="gGraficaPrincipal"></div>
+            <div id="cajaNivelesRes"></div>
+            <div id="gCalGrado" class="oculto"></div>
+            <div id="gPpmGrado" class="oculto"></div>
+            <div id="gTiempoPregunta" class="oculto"></div>
+            <div id="gNivelPpm" class="oculto"></div>
+          </div>
+
+          <div id="panelListaRes" class="cuerpo-panel-res oculto" style="overflow-x:auto;">
+            <div class="barra-lista-res">
+              <p id="msgRes" class="msg-res" style="text-align:left;margin:0;"></p>
+              <button type="button" id="btnColsNivelesRes" class="btn-toggle-cols" onclick="alternarColsNivelesRes()" aria-pressed="false">
+                Ver Lit. Inf. Crít.
+              </button>
+            </div>
+            <p id="diagRes" class="oculto"></p>
+            <table id="tablaRes" class="sin-niveles"></table>
+          </div>
+
+          <div id="panelObservacionesRes" class="cuerpo-panel-res oculto">
+            <p class="titulo-grafica-viva">Notas de seguimiento</p>
+            <p class="subtitulo-grafica">Alumnos con comprensión baja, velocidad baja o varias relecturas, según los filtros actuales.</p>
+            <div id="listaObservacionesRes"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         PESTAÑA: MAESTROS / DOCENTES (REDIRECCIÓN A USUARIOS)
+         ========================================== -->
+    <div id="tab-mae" class="bloque oculto"></div>
+
+    <!-- ==========================================
+         PESTAÑA 4: CONFIGURACIÓN
+         ========================================== -->
+    <div id="tab-cfg" class="oculto">
+
+      <div id="modalCfg" class="st90-modal-fondo" onclick="if (event.target === this) cerrarModalCfg()">
+        <div class="st90-modal st90-modal-cfg" role="dialog" aria-modal="true" aria-labelledby="titModalCfgTxt">
+          <div class="cab-modal-cfg">
+            <h3 class="titulo-con-ayuda">
+              <span id="titModalCfgTxt">Velocidad lectora</span>
+              <button type="button" class="btn-ayuda" onclick="abrirAyuda(claveAyudaCfgActual)" aria-label="Ayuda">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+              </button>
+            </h3>
+            <button type="button" class="btn-icono-res btn-cerrar-panel" onclick="cerrarModalCfg()" data-tip="Cerrar" aria-label="Cerrar">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+            </button>
+          </div>
+          <div id="cuerpoModalCfg">
+
+      <section id="secCfgLectora" class="tarjeta-cfg sec-cfg oculto">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; flex-wrap:wrap; gap:10px;">
+          <div class="tabs-sub">
+            <button type="button" id="btnPpmGrado1" class="activa" onclick="mostrarPpmGrado('1')" style="font-size:14px;padding:4px 8px;">1°</button>
+            <button type="button" id="btnPpmGrado2" onclick="mostrarPpmGrado('2')" style="font-size:14px;padding:4px 8px;">2°</button>
+            <button type="button" id="btnPpmGrado3" onclick="mostrarPpmGrado('3')" style="font-size:14px;padding:4px 8px;">3°</button>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <button type="button" class="btn-verde" onclick="guardarPpm()" title="Guardar rangos" style="padding:6px 12px;">Guardar</button>
+            <button type="button" class="btn-secundario" onclick="restaurarPpmRecomendados()" title="Volver a los recomendados" style="padding:6px 12px;">Restaurar</button>
+          </div>
+        </div>
+        <p class="ayuda-cfg">
+          Aquí decides qué tan rápido debe leer un alumno de 1°, 2° o 3°.
+          Eso pinta el semáforo de Resultados: <strong>por debajo</strong>, <strong>dentro</strong> o <strong>por encima</strong> del rango.
+          Los números recomendados ya vienen llenos; solo cámbialos si tu escuela usa otros criterios.
+        </p>
+        <div id="gridPpm" style="margin-top:12px;"></div>
+      </section>
+
+      <section id="secCfgCupo" class="tarjeta-cfg sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">¿Cuántos intentos tiene cada alumno?</h3>
+        <p class="ayuda-cfg">Cupo total = intentos para todos + extra del grupo + extra del alumno. Cada evaluación consume 1 intento. Si se acaba, no puede presentar otra hasta que le asignes más.</p>
+        <div class="cfg-intentos-fila">
+          <div class="cfg-intentos-celda escuela">
+            <div>
+              <label>Para todos</label>
+              <input id="cfgInt" type="number" min="1">
+            </div>
+            <button type="button" onclick="guardarInt()">Guardar</button>
+          </div>
+          <div class="cfg-intentos-celda grupo">
+            <div class="cfg-cel-sel">
+              <label>Extra de grupo</label>
+              <select id="cfgGrupo"></select>
+            </div>
+            <div>
+              <label>Extra</label>
+              <input id="cfgGrupoExtra" type="number" min="0" placeholder="0">
+            </div>
+            <button type="button" onclick="guardarExtraGrupo()">Asignar</button>
+          </div>
+          <div class="cfg-intentos-celda alumno">
+            <div class="cfg-cel-sel">
+              <label>Extra de alumno</label>
+              <select id="cfgAlumno"></select>
+            </div>
+            <div>
+              <label>Extra</label>
+              <input id="cfgAlumnoExtra" type="number" min="0" placeholder="0">
+            </div>
+            <button type="button" onclick="guardarExtraAlumno()">Asignar</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="secCfgPass" class="tarjeta-cfg sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Contraseña del Administrador</h3>
+        <p class="ayuda-cfg">Esta es la clave maestra para entrar a este panel. No es la contraseña de alumnos, docentes, prefectas ni personal de apoyo.</p>
+        <div class="fila-form" style="margin:12px 0 0;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+          <div style="flex:1;min-width:200px;">
+            <label>Nueva contraseña</label>
+            <input type="password" id="nuevaClave" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <label>Confirmar contraseña</label>
+            <input type="password" id="nuevaClave2" placeholder="Repite la contraseña" autocomplete="new-password">
+          </div>
+          <div>
+            <button type="button" class="btn-verde" onclick="cambiarClave()">Actualizar clave</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="secCfgSitio" class="tarjeta-cfg sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Páginas del sitio (Google Sites)</h3>
+        <p class="ayuda-cfg">
+          Esto es solo para quien arma el proyecto. En la escuela ya están las páginas: alumnos en <strong>lec90/alumno</strong> y docentes en <strong>lec90/docente</strong>. No hace falta guardar nada en el día a día.
+        </p>
+        <div class="fila-form" style="margin:0;flex-direction:column;align-items:stretch;gap:12px;">
+          <div>
+            <label>Página de alumnos</label>
+            <input type="text" id="cfgUrlSitioAlumno" placeholder="https://sites.google.com/view/lec90/alumno" style="width:100%;box-sizing:border-box;font-size:13px;word-break:break-all;" autocomplete="off">
+          </div>
+          <div>
+            <label>Página de docentes</label>
+            <input type="text" id="cfgUrlSitioDocente" placeholder="https://sites.google.com/view/lec90/docente" style="width:100%;box-sizing:border-box;font-size:13px;word-break:break-all;" autocomplete="off">
+          </div>
+          <div><button type="button" class="btn-verde" onclick="guardarUrlsSitioClick()">Guardar enlaces</button></div>
+        </div>
+      </section>
+
+      <section id="secCfgIdentidad" class="tarjeta-cfg sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Identidad de la escuela</h3>
+        <p class="ayuda-cfg">
+          Estos datos salen en <strong>cada lectura</strong>: el nombre y el logotipo en la cabecera, el texto que indiques en el pie. También se usa el nombre en la página del alumno.
+        </p>
+        <div class="fila-form" style="margin:0;flex-direction:column;align-items:stretch;gap:12px;">
+          <div>
+            <label>Nombre de la escuela (cabecera)</label>
+            <input type="text" id="cfgNombreEscuela" maxlength="80" placeholder="Secundaria Técnica 90" style="width:100%;box-sizing:border-box;">
+          </div>
+          <div>
+            <label>Pie de página de la lectura</label>
+            <input type="text" id="cfgPieLectura" maxlength="140" placeholder="Plan de Estudio NEM" style="width:100%;box-sizing:border-box;">
+          </div>
+          <div>
+            <label>Logotipo institucional</label>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px;">
+              <div id="cajaPrevLogoIdentidad" style="width:72px;height:72px;border:1px dashed var(--st90-borde);border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden;">
+                <img id="prevLogoIdentidad" alt="Logotipo" class="oculto" style="max-width:100%;max-height:100%;object-fit:contain;">
+                <span id="prevLogoVacio" style="font-size:11px;color:#94a3b8;">Sin logo</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <input type="file" id="cfgLogoEscuela" accept="image/png,image/jpeg,image/webp" onchange="elegirLogoIdentidad(this)">
+                <button type="button" class="btn-secundario" onclick="quitarLogoIdentidad()" style="padding:6px 12px;font-size:12px;">Quitar logotipo</button>
+              </div>
+            </div>
+          </div>
+          <div><button type="button" class="btn-verde" onclick="guardarIdentidadClick()">Guardar identidad</button></div>
+        </div>
+      </section>
+
+      <section id="secCfgGraf" class="tarjeta-cfg opcional sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Opcional · Llenar gráficas de ejemplo</h3>
+        <p class="ayuda-cfg">
+          Úsalo solo si quieres ver las gráficas con números de prueba. Genera lecturas simuladas; no borra a los alumnos reales. Puedes volver a pulsar el botón si quieres otros números.
+        </p>
+        <button class="btn-verde" onclick="cargarDatosPrueba()">Generar lecturas de ejemplo</button>
+      </section>
+
+      <section id="secCfgPda" class="tarjeta-cfg opcional sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Consulta · Qué se espera en cada grado</h3>
+        <p class="ayuda-cfg">Solo lectura: extensión de los textos y tipo de lectura recomendados. La velocidad se configura en Velocidad lectora.</p>
+        <div id="specs" style="background:#fff;padding:12px;border-radius:8px;border:1px solid var(--st90-borde);"></div>
+      </section>
+
+      <section id="secCfgHoja" class="tarjeta-cfg sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Base de datos en Google Sheets</h3>
+        <p class="ayuda-cfg">
+          Esta aplicación lee y guarda los alumnos, lecturas y resultados directamente en tu hoja de cálculo de Google.
+        </p>
+        <div class="fila-form" style="margin:0;align-items:center;">
+          <div style="flex:1;min-width:280px;">
+            <label style="font-size:12px;color:#475569;">URL o ID de la hoja de Google Sheets:</label>
+            <input type="text" id="cfgUrlHoja" placeholder="https://docs.google.com/spreadsheets/d/..." style="width:100%;font-size:13px;">
+          </div>
+          <div style="display:flex;gap:6px;align-self:flex-end;flex-wrap:wrap;">
+            <button type="button" class="btn-verde" onclick="guardarVinculoHoja()">Vincular hoja</button>
+            <a id="btnAbrirHojaDirecto" href="#" target="_blank" rel="noopener" class="btn-secundario" style="text-decoration:none;display:inline-flex;align-items:center;">Abrir hoja</a>
+            <button type="button" class="btn-secundario" onclick="crearRespaldoClick()" title="Crear una copia completa de respaldo en Google Drive">Crear respaldo en Drive</button>
+            <button type="button" class="btn-secundario" onclick="repararResultadosClick()" title="Alinear columnas y sincronizar datos reales con simulados">Reparar resultados</button>
+          </div>
+        </div>
+        <p id="msgHojaEstado" style="font-size:12px;color:#0369a1;margin:8px 0 0;font-weight:600;"></p>
+      </section>
+
+      <section id="secCfgIa" class="tarjeta-cfg sec-cfg oculto">
+        <h3 class="titulo-con-ayuda">Inteligencia Artificial (DeepSeek)</h3>
+        <p class="ayuda-cfg">
+          Configura la clave de API de DeepSeek para generar automáticamente nuevas lecturas por grado, diseñar reactivos clasificados por niveles cognitivos (Literal, Inferencial, Crítico) y emitir recomendaciones pedagógicas a los estudiantes. La clave se resguarda de manera segura en las propiedades del servidor.
+        </p>
+        <div class="fila-form" style="margin:0;flex-direction:column;align-items:stretch;gap:12px;">
+          <div style="background:#f8fafc;padding:12px 14px;border-radius:8px;border:1px solid var(--st90-borde);">
+            <label style="font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Estado de la clave:</label>
+            <div id="lblEstadoIa" style="font-size:15px;font-weight:700;color:var(--st90-azul);margin-top:4px;">Consultando...</div>
+          </div>
+          <div>
+            <label>Ingresar nueva clave API (DeepSeek):</label>
+            <input type="password" id="cfgDeepSeekKey" placeholder="sk-..." style="width:100%;box-sizing:border-box;font-family:monospace;font-size:14px;" autocomplete="off">
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+            <button type="button" class="btn-verde" onclick="guardarClaveIaClick()">Guardar clave</button>
+            <button type="button" class="btn-secundario" onclick="probarConexionIaClick()">Probar conexión</button>
+            <button type="button" class="btn-secundario" onclick="eliminarClaveIaClick()" style="color:#c0392b;">Borrar clave</button>
+          </div>
+          <div id="msgEstadoIa" style="font-size:13px;font-weight:600;min-height:18px;"></div>
+        </div>
+      </section>
+          </div>
+          <div class="acciones" style="margin-top:16px;flex-shrink:0;">
+            <button type="button" class="btn-secundario" onclick="cerrarModalCfg()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>

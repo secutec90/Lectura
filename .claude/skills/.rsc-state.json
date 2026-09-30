@@ -1,0 +1,225 @@
+{
+  "skills": {
+    "analyze": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\analyze"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\analyze"
+    },
+    "automation-strategy": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\automation-strategy"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\automation-strategy"
+    },
+    "bro": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\bro"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\bro"
+    },
+    "clarify": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\clarify"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\clarify"
+    },
+    "constitution": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\constitution"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\constitution"
+    },
+    "debug": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\debug"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\debug"
+    },
+    "decision-challenge": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\decision-challenge"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\decision-challenge"
+    },
+    "deprecation": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\deprecation"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\deprecation"
+    },
+    "eli5": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\eli5"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\eli5"
+    },
+    "fable-operator": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\fable-operator"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\fable-operator"
+    },
+    "ftd": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\ftd"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\ftd"
+    },
+    "harness": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\harness"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\harness"
+    },
+    "idea-refinement": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\idea-refinement"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\idea-refinement"
+    },
+    "implement": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\implement"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\implement"
+    },
+    "init": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\init"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\init"
+    },
+    "orient": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\orient"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\orient"
+    },
+    "parallel": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\parallel"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\parallel"
+    },
+    "plan": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\plan"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\plan"
+    },
+    "review": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\review"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\review"
+    },
+    "sdd": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\sdd"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\sdd"
+    },
+    "sdd-init": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\sdd-init"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\sdd-init"
+    },
+    "ship": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\ship"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\ship"
+    },
+    "show-me": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\show-me"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\show-me"
+    },
+    "simplify-code": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\simplify-code"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\simplify-code"
+    },
+    "source-grounded-development": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\source-grounded-development"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\source-grounded-development"
+    },
+    "specify": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\specify"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\specify"
+    },
+    "suggest": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\suggest"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\suggest"
+    },
+    "tasks": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\tasks"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\tasks"
+    },
+    "ui-engineering": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\ui-engineering"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\ui-engineering"
+    },
+    "unslop": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\unslop"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\unslop"
+    },
+    "verify": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\verify"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\verify"
+    },
+    "worktrees": {
+      "files": [
+        "C:\\Users\\40B\\Documents\\Lectura\\.claude\\skills\\worktrees"
+      ],
+      "base": "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\skills\\worktrees"
+    }
+  },
+  "agents": [],
+  "agentCollisions": [],
+  "explicitAgents": [],
+  "memory": {
+    "mode": "full",
+    "reason": "wired",
+    "paths": [
+      "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\session-memory-core.mjs",
+      "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\session-memory-adapter.mjs",
+      "C:\\Users\\40B\\Documents\\Lectura\\.rsc\\session-memory.mjs",
+      "C:\\Users\\40B\\Documents\\Lectura\\.claude\\settings.local.json"
+    ]
+  },
+  "policy": {
+    "baseAgents": false,
+    "alwaysOn": true,
+    "codeHooks": false,
+    "gitmojiGuard": false,
+    "memory": true,
+    "context7": false
+  },
+  "commands": [
+    "checkpoint",
+    "learn",
+    "resume-session",
+    "save-session"
+  ],
+  "commandCollisions": [],
+  "version": "2.0.15"
+}

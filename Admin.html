@@ -6667,16 +6667,7 @@
     }
 
     function actualizarEtqMatFiltros() {
-      const bus = ((document.getElementById('filtroMatBusqueda') || {}).value || '').trim();
-      const g = textoOpcionSelect_('filtroMatGrado');
-      const gp = textoOpcionSelect_('filtroMatGrupo');
-      const es = textoOpcionSelect_('filtroMatEstado');
-      const etqBus = document.getElementById('etqMatBuscar');
-      if (etqBus) etqBus.textContent = bus ? (bus.length > 8 ? bus.slice(0, 8) + '…' : bus) : 'Buscar';
-      setBtn('btnMatBuscar', !!bus);
-      setBtn('btnMatGrado', !!(document.getElementById('filtroMatGrado') || {}).value, (document.getElementById('filtroMatGrado') || {}).value ? g : 'Grado');
-      setBtn('btnMatGrupo', !!(document.getElementById('filtroMatGrupo') || {}).value, (document.getElementById('filtroMatGrupo') || {}).value ? gp : 'Grupo');
-      setBtn('btnMatEstado', !!(document.getElementById('filtroMatEstado') || {}).value, (document.getElementById('filtroMatEstado') || {}).value ? es : 'Estado');
+      marcarFiltrosMatActivos();
     }
 
     function abrirModalFiltroMat(cual) {

@@ -2213,6 +2213,12 @@
 
           // Si es alumno, redirigir a su examen/panel
           if (res.rol === 'alumno') {
+            try {
+              sessionStorage.setItem('st90_sesion_alumno', JSON.stringify({
+                token: res.token || '',
+                matricula: res.matricula || ''
+              }));
+            } catch (eSes) {}
             if (errEl) errEl.innerHTML = '✅ Bienvenido(a) ' + escaparHtml(res.nombre) + '. Cargando tu panel…';
             const dest = res.urlDestino || urlAlumno;
             setTimeout(function () {
@@ -4947,7 +4953,7 @@
 
     function sembrarAsistenciaDemoAsi() {
       toast('Inventando asistencia de prueba…', 'info');
-      gsRun('sembrarAsistenciaDemo').then(function (res) {
+      gsRun('sembrarAsistenciaDemo', token).then(function (res) {
         toast((res && res.mensaje) || 'Datos de prueba listos.', 'exito');
       }).catch(function (e) {
         toast((e && e.message) || String(e), 'error');

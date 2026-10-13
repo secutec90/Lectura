@@ -295,22 +295,15 @@
           </button>
         </h2>
         <div id="cajaSelectoresAlumno">
-          <p class="meta" style="text-align:left;margin-top:0;">Elige tu grado, grupo y nombre para iniciar la prueba o ver tu historial.</p>
-          <label>1. Selecciona tu grado</label>
-          <select id="gradoEscolar" onchange="cargarGrupos()">
-            <option value="">-- Elige tu grado --</option>
-            <option value="1">1°</option>
-            <option value="2">2°</option>
-            <option value="3">3°</option>
-          </select>
-          <label>2. Selecciona tu grupo</label>
-          <select id="grupoEscolar" onchange="cargarAlumnos()" disabled>
-            <option value="">-- Primero elige el grado --</option>
-          </select>
-          <label>3. Selecciona tu nombre</label>
-          <select id="nombreEstudiante" disabled onchange="consultarCupo()">
-            <option value="">-- Primero elige el grupo --</option>
-          </select>
+          <p class="meta" style="text-align:left;margin-top:0;">Entra con tu usuario y contraseña para ver solo tus datos.</p>
+          <label for="usuarioAlumno">Usuario o matrícula</label>
+          <input id="usuarioAlumno" type="text" autocomplete="username">
+          <label for="claveAlumno">Contraseña</label>
+          <input id="claveAlumno" type="password" autocomplete="current-password">
+          <div class="fila-centrada">
+            <button type="button" id="btnEntrarAlumno" onclick="entrarAlumno()">Entrar</button>
+          </div>
+          <p id="errorLoginAlumno" class="meta"></p>
         </div>
         <div id="cajaAlumnoAutenticado" class="caja-alumno-autenticado oculto">
           <div class="alumno-card-header">
@@ -347,7 +340,7 @@
             </div>
             <p class="sub" id="panelFicha"></p>
           </div>
-          <button type="button" class="btn-secundario" onclick="cambiarAlumno()">Cambiar de alumno</button>
+          <button type="button" class="btn-secundario" onclick="cambiarAlumno()">Salir</button>
         </div>
         <div class="panel-kpis" id="panelKpis"></div>
         <div class="caja-panel" id="cajaEvolucion" hidden>
@@ -530,6 +523,68 @@
     let tReactivos0 = null;
     let ultimoInforme = null;
     let matriculaActual = '';
+    let tokenAlumno = '';
+
+    function guardarSesionAlumno_(token, matricula) {
+      tokenAlumno = token || '';
+      matriculaActual = matricula || '';
+      try {
+        sessionStorage.setItem('st90_sesion_alumno', JSON.stringify({
+          token: tokenAlumno,
+          matricula: matriculaActual
+        }));
+      } catch (e) {}
+    }
+
+    function leerSesionAlumno_() {
+      try {
+        const raw = sessionStorage.getItem('st90_sesion_alumno');
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        if (!s || !s.token || !s.matricula) return null;
+        return s;
+      } catch (e) { return null; }
+    }
+
+    function olvidarSesionAlumno_() {
+      tokenAlumno = '';
+      try { sessionStorage.removeItem('st90_sesion_alumno'); } catch (e) {}
+    }
+
+    function entrarAlumno() {
+      const usuario = ((document.getElementById('usuarioAlumno') || {}).value || '').trim();
+      const clave = ((document.getElementById('claveAlumno') || {}).value || '').trim();
+      const err = document.getElementById('errorLoginAlumno');
+      if (!usuario || !clave) {
+        if (err) err.textContent = 'Escribe tu usuario y tu contraseña.';
+        return;
+      }
+      if (err) err.textContent = 'Verificando…';
+      const btn = document.getElementById('btnEntrarAlumno');
+      if (btn) btn.disabled = true;
+      gsRun('iniciarSesionUnificada', usuario, clave, 'alumno')
+        .then(function (res) {
+          if (btn) btn.disabled = false;
+          if (!res || !res.ok || res.rol !== 'alumno' || !res.token || !res.matricula) {
+            if (err) err.textContent = (res && res.mensaje) || 'Esta entrada es solo para alumnos.';
+            return;
+          }
+          if (err) err.textContent = '';
+          const claveEl = document.getElementById('claveAlumno');
+          if (claveEl) claveEl.value = '';
+          guardarSesionAlumno_(res.token, res.matricula);
+          aplicarAlumnoAutenticado({
+            matricula: res.matricula,
+            nombre: res.nombre,
+            grado: res.grado,
+            grupo: res.grupo
+          }, null);
+        })
+        .catch(function (e) {
+          if (btn) btn.disabled = false;
+          if (err) err.textContent = (e && e.message) || 'No se pudo entrar.';
+        });
+    }
     let panelDatos = null;
     let infoTrimestre = <?!= trimestreJson || 'null' ?>;
     let cupoActual = null;
@@ -721,7 +776,12 @@
         caja.textContent = 'Consultando tus intentos…';
       }
       setBotonesInicio(false, false);
-      gsRun('consultarCupoAlumno', mat)
+      if (!tokenAlumno) {
+        if (caja) caja.textContent = 'Entra con tu usuario y contraseña.';
+        setBotonesInicio(false, false);
+        return;
+      }
+      gsRun('consultarCupoAlumno', tokenAlumno, mat)
         .then(function (res) {
           cupoActual = res || null;
           if (caja) caja.textContent = (res && res.mensaje) || 'No se pudo consultar.';
@@ -782,7 +842,9 @@
     }
 
     function cargarGrupos() {
-      const grado = document.getElementById('gradoEscolar').value;
+      const gradoEl = document.getElementById('gradoEscolar');
+      if (!gradoEl || !tokenAlumno) return;
+      const grado = gradoEl.value;
       const sg = document.getElementById('grupoEscolar');
       const sn = document.getElementById('nombreEstudiante');
       catalogoLogin = { grado: grado, grupos: [], alumnos: [] };
@@ -795,7 +857,7 @@
       }
       sg.disabled = true;
       sg.innerHTML = '<option value="">Cargando…</option>';
-      gsRun('catalogoLoginPorGrado', grado)
+      gsRun('catalogoLoginPorGrado', tokenAlumno, grado)
         .then(function (cat) {
           catalogoLogin = cat || { grupos: [], alumnos: [] };
           catalogoLogin.grado = grado;
@@ -815,7 +877,9 @@
     }
 
     function cargarAlumnos() {
-      const grupo = document.getElementById('grupoEscolar').value;
+      const grupoEl = document.getElementById('grupoEscolar');
+      if (!grupoEl || !tokenAlumno) return;
+      const grupo = grupoEl.value;
       const sn = document.getElementById('nombreEstudiante');
       sn.disabled = true;
       if (!grupo) { sn.innerHTML = '<option value="">-- Primero elige el grupo --</option>'; limpiarCupo(); return; }
@@ -825,7 +889,7 @@
         return;
       }
       sn.innerHTML = '<option value="">Cargando…</option>';
-      gsRun('obtenerAlumnosPorGrupo', grupo)
+      gsRun('obtenerAlumnosPorGrupo', tokenAlumno, grupo)
         .then(function (lista) {
           if (!lista || !lista.length) { sn.innerHTML = '<option value="">No hay alumnos en este grupo</option>'; return; }
           sn.innerHTML = '<option value="">-- Busca tu nombre --</option>' +
@@ -841,7 +905,7 @@
 
     function entrarPanel() {
       const mat = (document.getElementById('nombreEstudiante') && document.getElementById('nombreEstudiante').value) || matriculaActual;
-      if (!mat) return toast('Selecciona grado, grupo y nombre.', 'error');
+      if (!tokenAlumno || !mat) return toast('Entra con tu usuario y contraseña.', 'error');
       const ya = cupoActual && cupoActual.panel && cupoActual.panel.ok &&
         cupoActual.panel.alumno && String(cupoActual.panel.alumno.matricula) === String(mat);
       if (ya) {
@@ -853,7 +917,7 @@
       const btn = document.getElementById('btnComenzar');
       btn.disabled = true;
       document.getElementById('avisoInicio').textContent = 'Abriendo tu panel…';
-      gsRun('panelAlumno', mat)
+      gsRun('panelAlumno', tokenAlumno, mat)
         .then(function (res) {
           btn.disabled = false;
           document.getElementById('avisoInicio').textContent = '';
@@ -885,11 +949,11 @@
     }
 
     function arrancarEvaluacion(mat, modo, btn) {
-      if (!mat) return toast('Selecciona grado, grupo y nombre.', 'error');
+      if (!tokenAlumno || !mat) return toast('Entra con tu usuario y contraseña.', 'error');
       if (btn) btn.disabled = true;
       const aviso = document.getElementById('avisoInicio');
       if (aviso) aviso.textContent = modo === 'trimestral' ? 'Cargando la lectura trimestral…' : 'Preparando sorteo…';
-      gsRun('iniciarEvaluacionAlumno', mat, modo || '')
+      gsRun('iniciarEvaluacionAlumno', tokenAlumno, mat, modo || '')
         .then(function (res) {
           if (!res.ok) {
             if (btn) btn.disabled = false;
@@ -1028,6 +1092,9 @@
       clearInterval(idLecturaReloj);
       clearInterval(idExamenReloj);
       clearInterval(idPreguntaReloj);
+      const tokenCerrar = tokenAlumno;
+      olvidarSesionAlumno_();
+      if (tokenCerrar) gsRun('cerrarSesionAdmin', tokenCerrar).catch(function () {});
       matriculaActual = '';
       panelDatos = null;
       paquete = {};
@@ -1051,7 +1118,8 @@
     function recargarPanel(mat) {
       const id = mat || matriculaActual;
       if (!id) { mostrar('secRegistro'); return; }
-      gsRun('panelAlumno', id)
+      if (!tokenAlumno) { mostrar('secRegistro'); return; }
+      gsRun('panelAlumno', tokenAlumno, id)
         .then(function (res) {
           if (!res.ok) {
             toast(res.mensaje || 'No se pudo cargar el panel.', 'error');
@@ -1086,8 +1154,12 @@
     }
 
     function arrancarEvaluacionDesdePanel(mat, modo, btn) {
+      if (!tokenAlumno || !mat) {
+        if (btn) btn.disabled = false;
+        return toast('Entra con tu usuario y contraseña.', 'error');
+      }
       if (btn) btn.disabled = true;
-      gsRun('iniciarEvaluacionAlumno', mat, modo || '')
+      gsRun('iniciarEvaluacionAlumno', tokenAlumno, mat, modo || '')
         .then(function (res) {
           if (!res.ok) {
             if (btn) btn.disabled = false;
@@ -1320,7 +1392,11 @@
         trimestre: (paquete.trimestre && (paquete.trimestre.trimestre || paquete.trimestre.num)) || ''
       };
       document.getElementById('btnSiguiente').disabled = true;
-      gsRun('guardarResultadosExamen', payload)
+      if (!tokenAlumno) {
+        document.getElementById('btnSiguiente').disabled = false;
+        return toast('Entra con tu usuario y contraseña.', 'error');
+      }
+      gsRun('guardarResultadosExamen', tokenAlumno, payload)
         .then(function (res) {
           if (!res.ok) {
             toast(res.mensaje || 'No se pudo guardar. Intenta de nuevo.', 'error');
@@ -1689,18 +1765,20 @@
     }
 
     if (infoTrimestre) aplicarEstadoTrimestral(cupoActual);
-    if (ALUMNO_AUTO) {
-      aplicarAlumnoAutenticado(ALUMNO_AUTO, CUPO_AUTO);
-    } else if (MAT_AUTO) {
-      matriculaActual = MAT_AUTO;
-      gsRun('consultarCupoAlumno', MAT_AUTO).then(function (res) {
+    const sesionGuardada = leerSesionAlumno_();
+    if (sesionGuardada) {
+      tokenAlumno = sesionGuardada.token;
+      matriculaActual = sesionGuardada.matricula;
+      gsRun('consultarCupoAlumno', tokenAlumno, sesionGuardada.matricula).then(function (res) {
         if (res && res.ok && res.panel && res.panel.alumno) {
           aplicarAlumnoAutenticado(res.panel.alumno, res);
         } else {
-          consultarCupoPorMat(MAT_AUTO);
+          olvidarSesionAlumno_();
+          matriculaActual = '';
         }
-      }).catch(function (e) {
-        console.warn('No se pudo inicializar alumno automático:', e);
+      }).catch(function () {
+        olvidarSesionAlumno_();
+        matriculaActual = '';
       });
     }
   </script>

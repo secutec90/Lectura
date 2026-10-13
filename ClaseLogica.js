@@ -1536,7 +1536,8 @@ function textoPruebaAsignaturaClase_(asig, indiceDia, maestro, fecha, bloque) {
   return { titulo: base.titulo, texto: t };
 }
 
-function sembrarContenidoPrueba1C() {
+function sembrarContenidoPrueba1C(token) {
+  exigirSesionAdminReal_(token);
   verificarYCrearPestanas();
   const fechasPorDia = {
     lunes: "2026-09-21",

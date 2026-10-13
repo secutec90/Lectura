@@ -1569,7 +1569,8 @@ function catalogoPrefectasDemo_() {
  * Crea 5 prefectas de prueba y les asigna 3 grupos a cada una.
  * Clave de entrada mientras se desarrolla: memo2
  */
-function sembrarPrefectasDemo() {
+function sembrarPrefectasDemo(token) {
+  exigirSesionAdminReal_(token);
   verificarYCrearPestanas();
   const libro = obtenerLibro();
   if (!libro) throw new Error("No se pudo abrir la hoja.");
@@ -1704,7 +1705,8 @@ function obsMaeDemo_(est, maestro, fecha) {
  * Inventa asistencia de alumnos y maestros (1–24 sep 2026, lunes a viernes)
  * para poder ver reportes con datos y gráficas.
  */
-function sembrarAsistenciaDemo() {
+function sembrarAsistenciaDemo(token) {
+  exigirSesionAdminReal_(token);
   verificarYCrearPestanas();
   asegurarColumnaObservacionAsi_();
   const libro = obtenerLibro();

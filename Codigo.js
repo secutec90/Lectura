@@ -341,28 +341,9 @@ function doGet(e) {
     tInterfaz.escuela = identidad.nombre;
     tInterfaz.pieLectura = identidad.pie;
     tInterfaz.logoEscuela = identidad.logo;
-    const matAuto = String(p.mat || p.matricula || p.u || p.usuario || "").trim();
-    tInterfaz.matAuto = matAuto;
-    let alumnoAuto = null;
-    let cupoAuto = null;
-    if (matAuto) {
-      try {
-        const alu = buscarAlumno(matAuto);
-        if (alu) {
-          alumnoAuto = {
-            matricula: String(alu["Matrícula"]),
-            nombre: String(alu["Nombre Completo"]),
-            grado: String(alu["Grado"]),
-            grupo: String(alu["Grupo"])
-          };
-          try {
-            cupoAuto = consultarCupoAlumno(String(alu["Matrícula"]));
-          } catch (eCupo) {}
-        }
-      } catch (eAlu) {}
-    }
-    tInterfaz.alumnoAutoJson = JSON.stringify(alumnoAuto);
-    tInterfaz.cupoAutoJson = JSON.stringify(cupoAuto);
+    tInterfaz.matAuto = "";
+    tInterfaz.alumnoAutoJson = "null";
+    tInterfaz.cupoAutoJson = "null";
     let trimestreJson = "null";
     try { trimestreJson = JSON.stringify(infoTrimestreActual()); } catch (eT) {}
     tInterfaz.trimestreJson = trimestreJson;
@@ -1188,6 +1169,42 @@ function exigirSesionAdminReal_(token) {
   }
   cache.put("admin_" + t, "1", 21600);
   cache.put("sesion_" + t, raw, 21600);
+  return sesion;
+}
+
+/**
+ * Sesión real de alumno. Usa la sesión unificada (sesion_) o la de clase (clase_).
+ * La matrícula sale de esa sesión. Una marca suelta o el rol admin no bastan.
+ */
+function exigirAlumnoDeSesion_(token) {
+  const t = typeof token === "string" ? token.trim() : "";
+  if (!t) throw new Error("Sesión de alumno no válida. Vuelve a entrar.");
+  const cache = CacheService.getScriptCache();
+  let raw = cache.get("sesion_" + t);
+  let claveCache = raw ? ("sesion_" + t) : "";
+  if (!raw) {
+    raw = cache.get("clase_" + t);
+    if (raw) claveCache = "clase_" + t;
+  }
+  let sesion = null;
+  if (raw) {
+    try { sesion = JSON.parse(raw); } catch (eSes) { sesion = null; }
+  }
+  const mat = sesion ? String(sesion.matricula || "").trim() : "";
+  if (!sesion || sesion.rol !== "alumno" || !mat) {
+    throw new Error("Sesión de alumno no válida. Vuelve a entrar.");
+  }
+  cache.put(claveCache, raw, 21600);
+  return sesion;
+}
+
+function matriculaAutorizada_(token, matriculaEnviada) {
+  const sesion = exigirAlumnoDeSesion_(token);
+  const enviada = String(matriculaEnviada == null ? "" : matriculaEnviada).trim();
+  if (!enviada) throw new Error("Matrícula no válida.");
+  if (enviada.toLowerCase() !== String(sesion.matricula).trim().toLowerCase()) {
+    throw new Error("No puedes consultar datos de otro alumno.");
+  }
   return sesion;
 }
 
@@ -2317,55 +2334,36 @@ function obtenerGruposPorGrado(grado) {
   return res;
 }
 
-function obtenerAlumnosPorGrupo(grupo) {
+function obtenerAlumnosPorGrupo(token, grupo) {
+  const sesion = exigirAlumnoDeSesion_(token);
   const g = String(grupo || "").trim().toLowerCase();
-  let todos = [];
-  try { todos = leerAlumnosResumen(); } catch (e) { return []; }
-  return todos
-    .filter(function (a) {
-      return String(a.grupo).trim().toLowerCase() === g && String(a.activo).toUpperCase() !== "NO";
-    })
-    .map(function (a) {
-      return {
-        matricula: String(a.matricula),
-        nombre: String(a.nombre),
-        grupo: String(a.grupo),
-        grado: String(a.grado)
-      };
-    })
-    .sort(function (a, b) { return a.nombre.localeCompare(b.nombre, "es"); });
+  const propio = String(sesion.grupo || "").trim().toLowerCase();
+  if (!g || g !== propio) throw new Error("No puedes consultar datos de otro alumno.");
+  return [{
+    matricula: String(sesion.matricula),
+    nombre: String(sesion.nombre || ""),
+    grupo: propio,
+    grado: String(sesion.grado || "")
+  }];
 }
 
-function catalogoLoginPorGrado(grado) {
+function catalogoLoginPorGrado(token, grado) {
+  const sesion = exigirAlumnoDeSesion_(token);
   const g = normalizarGradoServer(grado);
-  let todos = [];
-  try { todos = leerAlumnosResumen(); } catch (e) { todos = []; }
-  const activos = todos.filter(function (a) {
-    const ga = normalizarGradoServer(a.grado) || normalizarGradoServer(a.grupo);
-    return (!g || ga === g) && String(a.activo).toUpperCase() !== "NO";
-  });
-  const grupos = uniq(activos.map(function (a) {
-    return String(a.grupo || "").toLowerCase();
-  }).filter(Boolean)).sort();
-  const alumnos = activos.map(function (a) {
-    return {
-      matricula: String(a.matricula),
-      nombre: String(a.nombre),
-      grupo: String(a.grupo).toLowerCase(),
-      grado: String(a.grado)
-    };
-  }).sort(function (a, b) { return a.nombre.localeCompare(b.nombre, "es"); });
-  if (!grupos.length && g) {
-    return {
-      grupos: ["a", "b", "c", "d", "e"].map(function (l) { return g + l; }),
-      alumnos: [],
-      trimestre: (function () { try { return infoTrimestreActual(); } catch (e) { return null; } })()
-    };
-  }
+  const propio = normalizarGradoServer(sesion.grado) || normalizarGradoServer(sesion.grupo);
+  if (!g || g !== propio) throw new Error("No puedes consultar datos de otro alumno.");
+  const grupo = String(sesion.grupo || "").trim().toLowerCase();
+  let trimestre = null;
+  try { trimestre = infoTrimestreActual(); } catch (eTri) { trimestre = null; }
   return {
-    grupos: grupos,
-    alumnos: alumnos,
-    trimestre: (function () { try { return infoTrimestreActual(); } catch (e) { return null; } })()
+    grupos: grupo ? [grupo] : [],
+    alumnos: [{
+      matricula: String(sesion.matricula),
+      nombre: String(sesion.nombre || ""),
+      grupo: grupo,
+      grado: String(sesion.grado || "")
+    }],
+    trimestre: trimestre
   };
 }
 
@@ -2465,8 +2463,9 @@ function mensajeCupoAgotado(usados, permitidos) {
   return "Ya agotaste tus " + permitidos + " intentos (" + usados + " usados). Pide a un docente una oportunidad extra.";
 }
 
-function consultarCupoAlumno(matricula) {
-  const panel = construirPanelAlumno_(matricula, { incluirInactivos: false, voz: "alumno" });
+function consultarCupoAlumno(token, matricula) {
+  const sesion = matriculaAutorizada_(token, matricula);
+  const panel = construirPanelAlumno_(sesion.matricula, { incluirInactivos: false, voz: "alumno" });
   if (!panel || !panel.ok) return panel || { ok: false, mensaje: "No se encontró al alumno." };
   const nombre = panel.alumno && panel.alumno.nombre ? panel.alumno.nombre : "";
   return {
@@ -3843,8 +3842,9 @@ function sembrarBancoTrimestral(token, reemplazar) {
   } finally { lock.releaseLock(); }
 }
 
-function panelAlumno(matricula) {
-  return construirPanelAlumno_(matricula, { incluirInactivos: false, voz: "alumno" });
+function panelAlumno(token, matricula) {
+  const sesion = matriculaAutorizada_(token, matricula);
+  return construirPanelAlumno_(sesion.matricula, { incluirInactivos: false, voz: "alumno" });
 }
 
 function fichaAlumnoAdmin(token, matricula) {
@@ -3852,7 +3852,9 @@ function fichaAlumnoAdmin(token, matricula) {
   return construirPanelAlumno_(matricula, { incluirInactivos: true, voz: "docente" });
 }
 
-function iniciarEvaluacionAlumno(matricula, modo) {
+function iniciarEvaluacionAlumno(token, matricula, modo) {
+  const sesion = matriculaAutorizada_(token, matricula);
+  matricula = sesion.matricula;
   const alumno = buscarAlumno(matricula);
   if (!alumno) return { ok: false, mensaje: "No se encontró al alumno." };
   if (String(alumno["Activo"]).toUpperCase() === "NO") return { ok: false, mensaje: "Este alumno no está activo." };
@@ -4359,7 +4361,11 @@ function calcularCalificaciones(palabras, tiempoLectura, aciertos, totalPregunta
   };
 }
 
-function guardarResultadosExamen(datos) {
+function guardarResultadosExamen(token, datos) {
+  const cuerpo = datos && typeof datos === "object" ? datos : {};
+  const sesion = matriculaAutorizada_(token, cuerpo.matricula);
+  datos = cuerpo;
+  datos.matricula = sesion.matricula;
   asegurarSetup();
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);

@@ -4947,7 +4947,7 @@
 
     function sembrarAsistenciaDemoAsi() {
       toast('Inventando asistencia de prueba…', 'info');
-      gsRun('sembrarAsistenciaDemo').then(function (res) {
+      gsRun('sembrarAsistenciaDemo', token).then(function (res) {
         toast((res && res.mensaje) || 'Datos de prueba listos.', 'exito');
       }).catch(function (e) {
         toast((e && e.message) || String(e), 'error');

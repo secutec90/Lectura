@@ -274,116 +274,6 @@ function obtenerPestana(nombre) {
  **********************************************************************/
 function doGet(e) {
   const p = (e && e.parameter) || {};
-  if (String(p.accion || "") === "sembrarPrefectas" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = sembrarPrefectasDemo();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "sembrarContenido1C" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = sembrarContenidoPrueba1C();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "sembrarAsistencia" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = sembrarAsistenciaDemo();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "inspeccionarNiveles" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = inspeccionarNivelesPreguntas();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "sincronizarNiveles" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = sincronizarNivelesHojaDesdeJson();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "clasificarNiveles" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = clasificarNivelesTodasLasPreguntas();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "ajustarLecturas" && String(p.clave || "") === "st90sim") {
-    try {
-      const r = ajustarLecturasAEspecificaciones();
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "cargarSimulados" && String(p.clave || "") === "st90sim") {
-    try {
-      PropertiesService.getScriptProperties().deleteProperty("SIMULADOS_CARGADOS");
-      const r = cargarResultadosSimulados();
-      PropertiesService.getScriptProperties().setProperty("SIMULADOS_CARGADOS", "1");
-      return ContentService
-        .createTextOutput(JSON.stringify(r))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  if (String(p.accion || "") === "repararResultados" && String(p.clave || "") === "st90sim") {
-    try {
-      repararResultadosSiEsNecesario();
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: true, mensaje: "Resultados normalizados y reparados correctamente." }))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: String(err.message || err) }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-  }
   try { asegurarSetup(); } catch (eSetup) {}
   
   const urlApp = ScriptApp.getService().getUrl();
@@ -1274,6 +1164,31 @@ function exigirAdmin(token) {
   cache.put("admin_" + token, "1", 21600);
   const ses = cache.get("sesion_" + token);
   if (ses) cache.put("sesion_" + token, ses, 21600);
+}
+
+/**
+ * Sesión real de administrador: hace falta la marca del servidor y el rol admin.
+ * La marca admin_=1 sola no alcanza: prefectura, docencia y apoyo también la reciben.
+ * Rechaza token vacío, ausente, vencido o de otro rol antes de cualquier escritura.
+ */
+function exigirSesionAdminReal_(token) {
+  const t = typeof token === "string" ? token.trim() : "";
+  if (!t) {
+    throw new Error("Sesión de administrador no válida. Vuelve a entrar.");
+  }
+  const cache = CacheService.getScriptCache();
+  const raw = cache.get("sesion_" + t);
+  const marca = cache.get("admin_" + t);
+  let sesion = null;
+  if (raw) {
+    try { sesion = JSON.parse(raw); } catch (eSes) { sesion = null; }
+  }
+  if (!sesion || sesion.rol !== "admin" || marca !== "1") {
+    throw new Error("Sesión de administrador no válida. Vuelve a entrar.");
+  }
+  cache.put("admin_" + t, "1", 21600);
+  cache.put("sesion_" + t, raw, 21600);
+  return sesion;
 }
 
 const AREAS_APOYO = [
@@ -4212,7 +4127,7 @@ function pedirNivelesLoteDeepSeek(clave, lote) {
 }
 
 function clasificarNivelesTodasLasPreguntas(token) {
-  if (token) exigirAdmin(token);
+  exigirSesionAdminReal_(token);
   asegurarSetup();
   asegurarColumnaNivelPreguntas();
 
@@ -5783,7 +5698,7 @@ function ponerValorEnc_(fila, enc, nombres, valor) {
 }
 
 function cargarResultadosSimulados(token) {
-  if (arguments.length > 0) exigirAdmin(token);
+  exigirSesionAdminReal_(token);
   const libro = obtenerLibro();
   if (!libro) throw new Error("No se pudo abrir la hoja de cálculo.");
 

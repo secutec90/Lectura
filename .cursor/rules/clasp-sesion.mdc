@@ -1,0 +1,13 @@
+---
+description: Usar la sesión clasp ya guardada al comparar o publicar este proyecto de Apps Script
+alwaysApply: true
+---
+
+# Clasp ya autenticado
+
+La sesión de Google queda en `%USERPROFILE%\.clasprc.json`. No pidas `clasp login` otra vez salvo que clasp responda que la sesión caducó o fue revocada.
+
+- Ejecutable: `C:\Users\Administrador\AppData\Local\nodejs-portable\node-v24.21.0-win-x64\clasp.cmd`
+- El proyecto es el `scriptId` de `.clasp.json`.
+- Para comparar la carpeta con el editor, baja el remoto a una carpeta temporal y compara. No sobrescribas los archivos de esta carpeta.
+- No hagas `clasp push` ni `clasp deploy` salvo que el usuario lo pida.

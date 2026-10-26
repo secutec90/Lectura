@@ -1,0 +1,330 @@
+﻿{
+    "exito":  true,
+    "config":  {
+                   "escuela":  "Secundaria Técnica No. 90",
+                   "subtitulo":  "Don José Calderón Ayala",
+                   "titulo":  "Censo de Traslado y Movilidad Escolar",
+                   "introduccion":  "Toma menos de 2 minutos. Los datos se usan únicamente para organizar la entrada y salida de la escuela.",
+                   "boton":  "Enviar Encuesta",
+                   "nota":  "Todos los campos son obligatorios, excepto las observaciones.",
+                   "exitoTitulo":  "Registro guardado",
+                   "exitoTexto":  "La encuesta de {nombre} quedó registrada.",
+                   "otroBoton":  "Registrar otro estudiante",
+                   "gruposPorTurno":  "{\"Matutino\":[\"1A\",\"1B\",\"1C\",\"1D\",\"1E\",\"2A\",\"2B\",\"2C\",\"2D\",\"2E\",\"3A\",\"3B\",\"3C\",\"3D\",\"3E\"],\"Vespertino\":[\"1F\",\"1G\",\"2F\",\"2G\",\"2H\",\"3F\",\"3G\"]}",
+                   "categorias":  "[]"
+               },
+    "preguntas":  [
+                      {
+                          "id":  "nombre",
+                          "tipo":  "texto",
+                          "etiqueta":  "Nombre completo del estudiante",
+                          "ayuda":  "",
+                          "placeholder":  "Nombre(s) y apellidos",
+                          "obligatoria":  true,
+                          "opciones":  [
+
+                                       ],
+                          "orden":  1,
+                          "activa":  true,
+                          "columna":  3,
+                          "extra":  {
+                                        "maxLongitud":  120,
+                                        "esDimension":  false
+                                    }
+                      },
+                      {
+                          "id":  "turno",
+                          "tipo":  "unica",
+                          "etiqueta":  "Turno",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  true,
+                          "opciones":  [
+                                           "Matutino",
+                                           "Vespertino"
+                                       ],
+                          "orden":  2,
+                          "activa":  true,
+                          "columna":  4,
+                          "extra":  {
+                                        "esDimension":  true
+                                    }
+                      },
+                      {
+                          "id":  "grupo",
+                          "tipo":  "unica",
+                          "etiqueta":  "Grupo",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  true,
+                          "opciones":  [
+                                           "1A",
+                                           "1B",
+                                           "1C",
+                                           "1D",
+                                           "1E",
+                                           "2A",
+                                           "2B",
+                                           "2C",
+                                           "2D",
+                                           "2E",
+                                           "3A",
+                                           "3B",
+                                           "3C",
+                                           "3D",
+                                           "3E",
+                                           "1F",
+                                           "1G",
+                                           "2F",
+                                           "2G",
+                                           "2H",
+                                           "3F",
+                                           "3G"
+                                       ],
+                          "orden":  3,
+                          "activa":  true,
+                          "columna":  5,
+                          "extra":  {
+                                        "esDimension":  true,
+                                        "padre":  "turno",
+                                        "opcionesPorPadre":  {
+                                                                 "Matutino":  [
+                                                                                  "1A",
+                                                                                  "1B",
+                                                                                  "1C",
+                                                                                  "1D",
+                                                                                  "1E",
+                                                                                  "2A",
+                                                                                  "2B",
+                                                                                  "2C",
+                                                                                  "2D",
+                                                                                  "2E",
+                                                                                  "3A",
+                                                                                  "3B",
+                                                                                  "3C",
+                                                                                  "3D",
+                                                                                  "3E"
+                                                                              ],
+                                                                 "Vespertino":  [
+                                                                                    "1F",
+                                                                                    "1G",
+                                                                                    "2F",
+                                                                                    "2G",
+                                                                                    "2H",
+                                                                                    "3F",
+                                                                                    "3G"
+                                                                                ]
+                                                             }
+                                    }
+                      },
+                      {
+                          "id":  "movilidad",
+                          "tipo":  "unica",
+                          "etiqueta":  "¿Cuál es el medio principal de traslado a la escuela?",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  true,
+                          "opciones":  [
+                                           "Caminando",
+                                           "Transporte Escolar de la escuela",
+                                           "Transporte Escolar contratado por familias",
+                                           "Transporte Público",
+                                           "Auto Compartido",
+                                           "Aplicación Carpool",
+                                           "Vehículos no motorizados",
+                                           "Otros"
+                                       ],
+                          "orden":  4,
+                          "activa":  true,
+                          "columna":  6,
+                          "extra":  {
+                                        "esDimension":  false
+                                    }
+                      },
+                      {
+                          "id":  "tiempoTraslado",
+                          "tipo":  "unica",
+                          "etiqueta":  "Tiempo aproximado de traslado de la casa a la escuela",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  true,
+                          "opciones":  [
+                                           "Menos de 10 minutos",
+                                           "10 a 20 minutos",
+                                           "20 a 30 minutos",
+                                           "30 a 45 minutos",
+                                           "Más de 45 minutos"
+                                       ],
+                          "orden":  5,
+                          "activa":  true,
+                          "columna":  7,
+                          "extra":  {
+                                        "esDimension":  false
+                                    }
+                      },
+                      {
+                          "id":  "tiempoDescenso",
+                          "tipo":  "unica",
+                          "etiqueta":  "¿Cuánto tarda en descender del vehículo?",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  false,
+                          "opciones":  [
+                                           "Menos de 1 minuto (Inmediato)",
+                                           "1 a 2 minutos",
+                                           "2 a 3 minutos",
+                                           "Más de 3 minutos",
+                                           "No aplica (camina)"
+                                       ],
+                          "orden":  6,
+                          "activa":  true,
+                          "columna":  8,
+                          "extra":  {
+                                        "condicion":  {
+                                                          "pregunta":  "movilidad",
+                                                          "operador":  "distinto",
+                                                          "valor":  "Caminando"
+                                                      },
+                                        "esDimension":  false
+                                    }
+                      },
+                      {
+                          "id":  "tiempoPuerta",
+                          "tipo":  "unica",
+                          "etiqueta":  "¿Cuánto tarda en llegar a la puerta una vez que bajó?",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  false,
+                          "opciones":  [
+                                           "Menos de 1 minuto (Frente a la puerta)",
+                                           "1 a 2 minutos",
+                                           "2 a 5 minutos",
+                                           "Más de 5 minutos",
+                                           "No aplica (camina)"
+                                       ],
+                          "orden":  7,
+                          "activa":  true,
+                          "columna":  9,
+                          "extra":  {
+                                        "condicion":  {
+                                                          "pregunta":  "movilidad",
+                                                          "operador":  "distinto",
+                                                          "valor":  "Caminando"
+                                                      },
+                                        "esDimension":  false
+                                    }
+                      },
+                      {
+                          "id":  "comentarios",
+                          "tipo":  "parrafo",
+                          "etiqueta":  "Observaciones sobre la logística (opcional)",
+                          "ayuda":  "",
+                          "placeholder":  "Comentarios sobre el tráfico, puntos de ascenso o descenso...",
+                          "obligatoria":  false,
+                          "opciones":  [
+
+                                       ],
+                          "orden":  8,
+                          "activa":  true,
+                          "columna":  10,
+                          "extra":  {
+                                        "maxLongitud":  500,
+                                        "esDimension":  false
+                                    }
+                      },
+                      {
+                          "id":  "demo_sede",
+                          "tipo":  "unica",
+                          "etiqueta":  "Ejemplo · Sede",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  false,
+                          "opciones":  [
+                                           "Norte",
+                                           "Sur"
+                                       ],
+                          "orden":  9,
+                          "activa":  true,
+                          "columna":  11,
+                          "extra":  {
+                                        "esDimension":  true
+                                    }
+                      },
+                      {
+                          "id":  "demo_area",
+                          "tipo":  "unica",
+                          "etiqueta":  "Ejemplo · Área",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  false,
+                          "opciones":  [
+                                           "Operaciones",
+                                           "Ventas",
+                                           "Administración"
+                                       ],
+                          "orden":  10,
+                          "activa":  true,
+                          "columna":  12,
+                          "extra":  {
+                                        "esDimension":  true,
+                                        "padre":  "demo_sede",
+                                        "opcionesPorPadre":  {
+                                                                 "Norte":  [
+                                                                               "Operaciones",
+                                                                               "Ventas"
+                                                                           ],
+                                                                 "Sur":  [
+                                                                             "Operaciones",
+                                                                             "Administración"
+                                                                         ]
+                                                             }
+                                    }
+                      },
+                      {
+                          "id":  "demo_puesto",
+                          "tipo":  "unica",
+                          "etiqueta":  "Ejemplo · Puesto",
+                          "ayuda":  "",
+                          "placeholder":  "",
+                          "obligatoria":  false,
+                          "opciones":  [
+                                           "Operador",
+                                           "Supervisor",
+                                           "Asesor",
+                                           "Analista"
+                                       ],
+                          "orden":  11,
+                          "activa":  true,
+                          "columna":  13,
+                          "extra":  {
+                                        "esDimension":  true,
+                                        "padre":  "demo_area",
+                                        "opcionesPorPadre":  {
+                                                                 "Operaciones":  [
+                                                                                     "Operador",
+                                                                                     "Supervisor"
+                                                                                 ],
+                                                                 "Ventas":  [
+                                                                                "Asesor",
+                                                                                "Supervisor"
+                                                                            ],
+                                                                 "Administración":  [
+                                                                                        "Analista",
+                                                                                        "Supervisor"
+                                                                                    ]
+                                                             }
+                                    }
+                      }
+                  ],
+    "filas":  {
+                  "total":  50,
+                  "real":  0,
+                  "sim":  50,
+                  "vacias":  0
+              },
+    "libro":  {
+                  "id":  "1ow8LiEHOAZq00QUdrlFonPDVekJGuaukia0bdGVII4A",
+                  "nombre":  "constructor1",
+                  "origen":  "propiedad HOJA_ID"
+              }
+}

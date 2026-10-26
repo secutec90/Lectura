@@ -1239,7 +1239,9 @@
     }
     #selGradoRepAsi { width: 78px; flex: 0 0 78px; }
     .asi-rep-sel-persona { min-width: 140px; max-width: 220px; flex: 1 1 140px; }
-    .asi-dd { position: relative; flex: 0 0 auto; z-index: 40; }
+    .asi-dd { position: relative; flex: 0 0 auto; z-index: 1000 !important; overflow: visible !important; }
+    #tarjetaRepAsi { min-height: 360px !important; overflow: visible !important; }
+    #tab-asi, #tab-asi.bloque, #subAsiRep, #subAsiAlu, #panel, .envoltorio { overflow: visible !important; }
     .asi-dd-btn {
       position: relative; display: inline-flex; align-items: center; gap: 6px;
       height: 42px; padding: 0 12px; min-width: 118px;
@@ -1250,10 +1252,11 @@
     .asi-dd-btn:hover { background: #f8fafc; }
     .asi-dd-btn svg { flex: 0 0 auto; }
     .asi-dd-panel {
-      position: absolute; top: calc(100% + 4px); left: 0; z-index: 120;
-      background: #fff; border: 1px solid var(--st90-borde); border-radius: 10px;
-      min-width: 200px; max-height: 70vh; overflow: auto; padding: 8px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, .16);
+      position: absolute !important; top: calc(100% + 4px) !important; left: 0 !important; z-index: 999999 !important;
+      background: #fff !important; border: 1px solid var(--st90-borde) !important; border-radius: 10px !important;
+      min-width: 220px !important; max-width: 320px !important; max-height: 60vh !important;
+      overflow-y: auto !important; overflow-x: hidden !important; padding: 8px !important;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, .28) !important;
     }
     .asi-dd-acc { display: flex; gap: 6px; margin-bottom: 6px; }
     .asi-dd-acc button {
@@ -1854,7 +1857,7 @@
     <div class="barra-sup ribbon-main-nav" role="banner" aria-label="Panel ST90">
       <div class="tabs" id="menuTabsPanel">
         <!-- Pestaña Usuarios: Alumnos, Docentes, Prefectas, Apoyo -->
-        <button type="button" data-tab="mat" id="btnTabMat" class="ribbon-tab" onclick="tab('mat', this)" aria-label="Usuarios">
+        <button type="button" data-tab="mat" id="btnTabMat" class="ribbon-tab ribbon-ico-azul" onclick="tab('mat', this)" aria-label="Usuarios">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
@@ -1863,7 +1866,7 @@
           </svg>
           <span class="ribbon-label">Usuarios</span>
         </button>
-        <button type="button" data-tab="asi" id="btnTabAsi" class="ribbon-tab" onclick="tab('asi', this)" aria-label="Asistencia">
+        <button type="button" data-tab="asi" id="btnTabAsi" class="ribbon-tab ribbon-ico-verde" onclick="tab('asi', this)" aria-label="Asistencia">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="3" y="4" width="18" height="18" rx="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -1874,12 +1877,33 @@
           <span class="ribbon-label">Asistencia</span>
         </button>
         <!-- Pestaña Lecturas (disponible para Docente y Admin) -->
-        <button type="button" data-tab="lec" id="btnTabLec" class="ribbon-tab" onclick="tab('lec', this)" aria-label="Lecturas">
+        <button type="button" data-tab="lec" id="btnTabLec" class="ribbon-tab ribbon-ico-morado" onclick="tab('lec', this)" aria-label="Lecturas">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
           </svg>
           <span class="ribbon-label">Lecturas</span>
+        </button>
+        <!-- Pestaña 4: Planeación Didáctica NEM -->
+        <button type="button" data-tab="plan" id="btnTabPlan" class="ribbon-tab ribbon-ico-celeste" onclick="tab('plan', this)" aria-label="Planeación Didáctica">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="9" y1="7" x2="15" y2="7"></line>
+            <line x1="9" y1="11" x2="15" y2="11"></line>
+          </svg>
+          <span class="ribbon-label">Planeación</span>
+        </button>
+        <!-- Pestaña 5: Diagnóstico y Encuestas -->
+        <button type="button" data-tab="enc" id="btnTabEnc" class="ribbon-tab ribbon-ico-teal" onclick="tab('enc', this)" aria-label="Diagnóstico y Encuestas" title="Diagnóstico y Constructor de Encuestas">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 3h6a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1z"></path>
+            <path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+            <line x1="9" y1="12" x2="9" y2="17"></line>
+            <line x1="12" y1="10" x2="12" y2="17"></line>
+            <line x1="15" y1="13" x2="15" y2="17"></line>
+          </svg>
+          <span class="ribbon-label">Encuestas</span>
         </button>
       </div>
       <div id="cintaMat" class="cinta-mat oculto">
@@ -1990,6 +2014,49 @@
         </div>
         <div class="cinta-n3 oculto"></div>
       </div>
+      <div id="cintaEnc" class="cinta-mat oculto" style="display:none!important;">
+        <div class="cinta-n2">
+          <div id="menuEncTabs" class="tabs-sub" role="tablist" aria-label="Submenú de encuestas">
+            <button type="button" id="btnSubEncGraficas" class="ribbon-btn ribbon-ico-azul activo" onclick="conmutarSubEncuestas('graficas', this)" aria-label="Gráficas y Totales">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span class="ribbon-label">Gráficas</span>
+            </button>
+            <button type="button" id="btnSubEncDatos" class="ribbon-btn ribbon-ico-celeste" onclick="conmutarSubEncuestas('datos', this)" aria-label="Hoja de Datos">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="3" y1="15" x2="21" y2="15"></line>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+                <line x1="15" y1="3" x2="15" y2="21"></line>
+              </svg>
+              <span class="ribbon-label">Hoja de Datos</span>
+            </button>
+            <button type="button" id="btnSubEncEditor" class="ribbon-btn ribbon-ico-morado" onclick="conmutarSubEncuestas('formulario', this)" aria-label="Editor de Preguntas">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span class="ribbon-label">Editor</span>
+            </button>
+            <button type="button" id="btnSubEncEnlace" class="ribbon-btn ribbon-ico-verde" onclick="abrirVistaPreviaEncuesta_()" aria-label="Vista previa">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              <span class="ribbon-label">Vista previa</span>
+            </button>
+          </div>
+          <button type="button" class="btn-ayuda ribbon-btn ribbon-ico-ambar" id="btnAyudaEnc" onclick="abrirAyudaModalEncuestas_()" aria-label="Ayuda">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+            <span class="ribbon-label">Ayuda</span>
+          </button>
+        </div>
+        <div class="cinta-n3 oculto"></div>
+      </div>
       <div id="cintaLec" class="cinta-lec oculto">
         <div class="cinta-n2">
         <div id="menuLecTabs" class="tabs-sub" role="tablist" aria-label="Submenú de lecturas">
@@ -2019,7 +2086,7 @@
             <span class="ribbon-label">Resultados</span>
           </button>
           <div class="wrap-tab-cfg" id="wrapTabCfg">
-            <button type="button" data-tab="cfg" id="btnTabCfg" class="ribbon-btn" onclick="tab('cfg', this)" aria-label="Configuración">
+            <button type="button" data-tab="cfg" id="btnTabCfg" class="ribbon-btn ribbon-ico-indigo" onclick="tab('cfg', this)" aria-label="Configuración">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="3"></circle>
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -2030,18 +2097,12 @@
               <button type="button" id="btnTabCfgLectora" onclick="cambiarTabCfg('Lectora')">Velocidad lectora</button>
               <button type="button" id="btnTabCfgCupo" onclick="cambiarTabCfg('Cupo')">Intentos</button>
               <button type="button" id="btnTabCfgPda" onclick="cambiarTabCfg('Pda')">PDA por Grado</button>
-              <button type="button" id="btnTabCfgPass" class="oculto" onclick="cambiarTabCfg('Pass')">Contraseña</button>
-              <button type="button" id="btnTabCfgSitio" class="oculto" onclick="cambiarTabCfg('Sitio')">Sitio web</button>
-              <button type="button" id="btnTabCfgIdentidad" class="oculto" onclick="cambiarTabCfg('Identidad')">Identidad</button>
-              <button type="button" id="btnTabCfgGraf" class="oculto" onclick="cambiarTabCfg('Graf')">Datos de prueba</button>
-              <button type="button" id="btnTabCfgIa" class="oculto" onclick="cambiarTabCfg('Ia')">Inteligencia Artificial</button>
-              <button type="button" id="btnTabCfgHoja" class="oculto" onclick="cambiarTabCfg('Hoja')">Hoja de datos</button>
-              <button type="button" id="btnDesbloquearHoja" onclick="pedirDesbloqueoHoja()" aria-label="Opciones avanzadas" title="Avanzado">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <rect x="5" y="11" width="14" height="10" rx="2"></rect>
-                  <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
-                </svg>
-              </button>
+              <button type="button" id="btnTabCfgPass" onclick="cambiarTabCfg('Pass')">Contraseña</button>
+              <button type="button" id="btnTabCfgSitio" onclick="cambiarTabCfg('Sitio')">Sitio web</button>
+              <button type="button" id="btnTabCfgIdentidad" onclick="cambiarTabCfg('Identidad')">Identidad</button>
+              <button type="button" id="btnTabCfgGraf" onclick="cambiarTabCfg('Graf')">Datos de prueba</button>
+              <button type="button" id="btnTabCfgIa" onclick="cambiarTabCfg('Ia')">Inteligencia Artificial</button>
+              <button type="button" id="btnTabCfgHoja" onclick="cambiarTabCfg('Hoja')">Hoja de datos</button>
             </nav>
           </div>
         </div>
@@ -2049,6 +2110,51 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
           <span class="ribbon-label">Ayuda</span>
         </button>
+        </div>
+        <div class="cinta-n3 oculto"></div>
+      </div>
+
+      <!-- CINTA N2: PLANEACIÓN DIDÁCTICA -->
+      <div id="cintaPlan" class="cinta-plan oculto">
+        <div class="cinta-n2">
+          <div id="menuPlanTabs" class="tabs-sub" role="tablist" aria-label="Planeación Didáctica" style="display:flex;gap:2px;align-items:stretch;flex-shrink:0;">
+            <button type="button" id="btnSubPlanHorario" class="ribbon-btn ribbon-ico-azul" onclick="conmutarVistaPlaneacion_('horario', this)" aria-label="Horario Oficial">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span class="ribbon-label">Horario Oficial</span>
+            </button>
+            <button type="button" id="btnSubPlanBancoPersonal" class="ribbon-btn ribbon-ico-morado" onclick="conmutarVistaPlaneacion_('personal', this)" aria-label="Mi Banco Personal">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span class="ribbon-label">Mi Banco Personal</span>
+            </button>
+            <button type="button" id="btnSubPlanBancoGlobal" class="ribbon-btn ribbon-ico-celeste" onclick="conmutarVistaPlaneacion_('global', this)" aria-label="Repositorio Global">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <span class="ribbon-label">Repositorio Global</span>
+            </button>
+            <button type="button" id="btnSubPlanNueva" class="ribbon-btn ribbon-ico-verde" onclick="abrirFormNuevaPlaneacionNEM()" aria-label="Nueva Planeación">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span class="ribbon-label">+ Nueva Planeación</span>
+            </button>
+          </div>
+          <button type="button" class="btn-ayuda ribbon-btn ribbon-ico-ambar" id="btnAyudaPlan" onclick="abrirAyuda('planeacionNEM')" aria-label="Ayuda">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+            <span class="ribbon-label">Ayuda</span>
+          </button>
         </div>
         <div class="cinta-n3 oculto"></div>
       </div>
@@ -2067,6 +2173,7 @@
         </button>
       </div>
     </div>
+    <div id="st90BarraCarga" class="st90-barra-carga" aria-hidden="true"><div class="st90-barra-carga-fill"></div></div>
 
     <div id="avisoClaveDefault" class="aviso oculto">
       ⚠️ Estás usando la contraseña por defecto. Te recomendamos cambiarla en la pestaña <strong>Configuración</strong>.
@@ -2077,15 +2184,20 @@
     <?!= include('AdminUsuarios') ?>
     <?!= include('AdminAsistencia') ?>
     <?!= include('AdminLecturas') ?>
+    <?!= include('AdminPlaneacion') ?>
+    <?!= include('AdminEncuestas') ?>
   </div>
 
   <script>
-    const URL_BASE_APP = <?= JSON.stringify(urlBase || '') ?>;
-    const URL_SITIO_ALUMNO = <?= JSON.stringify(typeof urlSitioAlumno !== 'undefined' ? urlSitioAlumno : '') ?>;
-    const URL_SITIO_DOCENTE = <?= JSON.stringify(typeof urlSitioDocente !== 'undefined' ? urlSitioDocente : '') ?>;
-    const URL_ADMIN = <?= JSON.stringify(typeof urlAdmin !== 'undefined' ? urlAdmin : '') ?>;
-    const URL_DOCENTE = <?= JSON.stringify(typeof urlDocente !== 'undefined' ? urlDocente : '') ?>;
-    const MODO_VISTA = <?= JSON.stringify(typeof modoVista !== 'undefined' ? modoVista : (soloAsistencia ? 'asistencia' : 'admin')) ?>;
+    function limpiarComillasScriptlet_(v) {
+      return String(v == null ? '' : v).replace(/^[\s"']+|[\s"']+$/g, '');
+    }
+    const URL_BASE_APP = limpiarComillasScriptlet_(<?= JSON.stringify(urlBase || '') ?>);
+    const URL_SITIO_ALUMNO = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlSitioAlumno !== 'undefined' ? urlSitioAlumno : '') ?>);
+    const URL_SITIO_DOCENTE = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlSitioDocente !== 'undefined' ? urlSitioDocente : '') ?>);
+    const URL_ADMIN = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlAdmin !== 'undefined' ? urlAdmin : '') ?>);
+    const URL_DOCENTE = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlDocente !== 'undefined' ? urlDocente : '') ?>);
+    const MODO_VISTA = limpiarComillasScriptlet_(<?= JSON.stringify(typeof modoVista !== 'undefined' ? modoVista : (soloAsistencia ? 'asistencia' : 'admin')) ?>);
   </script>
   <?!= include('ComunJS') ?>
   <script>
@@ -2120,12 +2232,12 @@
     let filtroGpAlcanceSel = [];
     let resultadosAdminListos = false;
     let resultadosAdminPendiente = null;
-    let urlAlumno = <?= JSON.stringify(urlAlumno || '') ?>;
-    const URL_ASISTENCIA = <?= JSON.stringify(typeof urlAsistencia !== 'undefined' ? urlAsistencia : '') ?>;
+    let urlAlumno = limpiarComillasScriptlet_(<?= JSON.stringify(urlAlumno || '') ?>);
+    const URL_ASISTENCIA = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlAsistencia !== 'undefined' ? urlAsistencia : '') ?>);
     const SOLO_ASISTENCIA = <?= (typeof soloAsistencia !== 'undefined' && soloAsistencia) ? 'true' : 'false' ?>;
-    let hojaDatosDesbloqueada = false;
+    let hojaDatosDesbloqueada = true;
     let asistenciaDesbloqueada = SOLO_ASISTENCIA || (MODO_VISTA === 'admin');
-    const CLAVE_HOJA_DATOS = 'memo2';
+    /* Contraseña de la hoja retirada: acceso permanente. */
     let seleccionAlumnosMat = {};
     let editorPreguntasDatos = [];
     let editorIdActual = '';
@@ -2160,10 +2272,18 @@
     window.addEventListener('resize', ajustarModoEstrecho);
     if (window.visualViewport) window.visualViewport.addEventListener('resize', ajustarModoEstrecho);
 
+    /* ============================================================
+       ENCUESTAS: se abren DENTRO del panel, con la sesión ya iniciada
+       ============================================================ */
+    function abrirEncuestasEmbebidas() {
+      tab('enc', document.getElementById('btnTabEnc'));
+    }
+
     function entrar() {
       const uEl = document.getElementById('usuarioLogin') || document.getElementById('usuarioAsiLogin');
       const usuario = (uEl ? uEl.value : '').trim();
       const clave = ((document.getElementById('clave') || {}).value || '').trim();
+      window.__st90ClaveAdmin = clave;
       const btnEntrar = document.getElementById('btnEntrar') || document.querySelector('#login button');
       const errEl = document.getElementById('errorLogin');
 
@@ -2179,6 +2299,14 @@
         if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = 'Entrar al Sistema'; }
         return;
       }
+
+      const timeoutLogin = setTimeout(function () {
+        if (btnEntrar && btnEntrar.disabled) {
+          btnEntrar.disabled = false;
+          btnEntrar.textContent = 'Entrar al Sistema';
+          if (errEl) errEl.textContent = 'El servidor está tardando. Verifica tu conexión o intenta nuevamente.';
+        }
+      }, 20000);
 
       gsRun('iniciarSesionUnificada', usuario, clave, MODO_VISTA)
         .then(function (res) {
@@ -2275,6 +2403,7 @@
           if (errEl) errEl.textContent = (e && e.message) || String(e);
         })
         .finally(function () {
+          clearTimeout(timeoutLogin);
           if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = 'Entrar al Sistema'; }
         });
     }
@@ -2331,12 +2460,13 @@
         return Promise.reject(new Error('Sin sesión'));
       }
 
-      toast('🔄 Consultando Google Sheets...', 'info');
+      if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('cargando');
 
       return gsRun('panelResumen', token).then(function (res) {
         resultadosAdminListos = false;
         resultadosAdminPendiente = null;
         if (!res) {
+          if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('error');
           toast('No se pudieron leer los datos de la hoja.', 'error');
           datos = {
             alumnos: [], grupos: [], lecturas: [], resultados: [],
@@ -2359,18 +2489,14 @@
           document.getElementById('enlaceHoja').href = res.urlHoja;
         }
         if (res.ok === false && res.mensaje) {
+          if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('error');
           toast(res.mensaje, 'error');
         } else {
-          const nAlus = (datos.alumnos || []).length;
-          const nomL = (datos.diagnostico && datos.diagnostico.libro) || 'Google Sheets';
-          if (nAlus > 0) {
-            toast('✅ ' + nAlus + ' alumnos sincronizados desde ' + nomL, 'exito');
-          } else {
-            toast('✅ Conectado a: ' + nomL, 'exito');
-          }
+          if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('exito');
         }
         pintarTodo();
       }).catch(function (e) {
+        if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('error');
         const msg = (e && e.message) || String(e);
         if (msg.indexOf('Sesión') >= 0 || msg.indexOf('sesión') >= 0 || msg.indexOf('expirada') >= 0) {
           document.getElementById('panel').classList.add('oculto');
@@ -2447,25 +2573,43 @@
           const el = document.getElementById(x);
           if (el) el.classList.add('oculto');
         });
+        return;
+      }
+      if (modulo === 'plan') {
+        subPlanActual = '';
+        window.subPlanActual = '';
+        limpiarActivoBotones_('#menuPlanTabs .ribbon-btn');
+        mostrarCintaN3_('cintaPlan', false);
+        const tabClases = document.getElementById('tabClases');
+        const tabPlan = document.getElementById('tabPlaneacion');
+        if (tabClases) tabClases.classList.add('oculto');
+        if (tabPlan) tabPlan.classList.add('oculto');
+        const t = document.getElementById('tab-plan');
+        if (t) t.classList.add('oculto');
+        return;
       }
     }
 
+    var subPlanActual = '';
+
     function iniciarCintaSinSeleccion_() {
       if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
-      ['mat', 'asi', 'lec', 'mae'].forEach(function (t) {
+      ['mat', 'asi', 'lec', 'plan', 'mae', 'enc'].forEach(function (t) {
         const el = document.getElementById('tab-' + t);
         if (el) el.classList.add('oculto');
       });
-      ['cintaMat', 'cintaAsi', 'cintaLec'].forEach(function (id) {
+      ['cintaMat', 'cintaAsi', 'cintaLec', 'cintaPlan'].forEach(function (id) {
         const el = document.getElementById(id);
         if (el) el.classList.add('oculto');
         mostrarCintaN3_(id, false);
       });
       limpiarActivoBotones_('.tabs > button, .wrap-tab-cfg > button');
-      limpiarActivoBotones_('#menuUsuTabs button, #menuAsiTabs button, #menuLecTabs > button, #menuLecTabs .ribbon-btn');
+      limpiarActivoBotones_('#menuUsuTabs button, #menuAsiTabs button, #menuLecTabs > button, #menuLecTabs .ribbon-btn, #menuPlanTabs .ribbon-btn');
       subUsuActual = '';
       subAsiActual = '';
       subLecActual = '';
+      subPlanActual = '';
+      window.subPlanActual = '';
       tabN1Actual = '';
       ocultarCuerposModulo_();
       if (typeof cerrarPanelesAccionMat_ === 'function') cerrarPanelesAccionMat_();
@@ -2477,6 +2621,7 @@
       if (id === 'mat') return !!subUsuActual;
       if (id === 'asi') return !!subAsiActual;
       if (id === 'lec') return !!subLecActual;
+      if (id === 'plan') return !!(window.subPlanActual || subPlanActual);
       return false;
     }
 
@@ -2494,6 +2639,10 @@
           sub.classList.toggle('oculto');
           if (boton) boton.classList.toggle('activa', !estaAbierto);
         }
+        return;
+      }
+      if (id === 'enc') {
+        aplicarTab('enc', boton);
         return;
       }
       if (id === tabN1Actual) {
@@ -2524,7 +2673,7 @@
       const btnCfg = document.getElementById('btnTabCfg');
       if (btnCfg) btnCfg.classList.remove('activa');
 
-      ['mat', 'asi', 'lec', 'mae'].forEach(function (t) {
+      ['mat', 'asi', 'lec', 'plan', 'enc', 'mae'].forEach(function (t) {
         const el = document.getElementById('tab-' + t);
         if (el) el.classList.add('oculto');
       });
@@ -2540,13 +2689,35 @@
       if (cintaMat) cintaMat.classList.toggle('oculto', id !== 'mat');
       const cintaLec = document.getElementById('cintaLec');
       if (cintaLec) cintaLec.classList.toggle('oculto', id !== 'lec');
+      const cintaPlan = document.getElementById('cintaPlan');
+      if (cintaPlan) cintaPlan.classList.toggle('oculto', id !== 'plan');
+      const cintaEnc = document.getElementById('cintaEnc');
+      if (cintaEnc) cintaEnc.classList.toggle('oculto', id !== 'enc');
 
       mostrarCintaN3_('cintaMat', false);
       mostrarCintaN3_('cintaAsi', false);
       mostrarCintaN3_('cintaLec', false);
+      mostrarCintaN3_('cintaPlan', false);
+      mostrarCintaN3_('cintaEnc', false);
       if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
 
-      if (id === 'mat') {
+      const tabActivo = document.getElementById('tab-' + id);
+      if (tabActivo) tabActivo.classList.remove('oculto');
+
+      if (id === 'enc') {
+        if (typeof inicializarModuloEncuestas_ === 'function') inicializarModuloEncuestas_();
+        return;
+      } else if (id === 'plan') {
+        subPlanActual = '';
+        window.subPlanActual = '';
+        limpiarActivoBotones_('#menuPlanTabs .ribbon-btn');
+        const tabClases = document.getElementById('tabClases');
+        const tabPlan = document.getElementById('tabPlaneacion');
+        if (tabClases) tabClases.classList.add('oculto');
+        if (tabPlan) tabPlan.classList.add('oculto');
+        if (typeof inicializarModuloPlaneacion_ === 'function') inicializarModuloPlaneacion_();
+        return;
+      } else if (id === 'mat') {
         subUsuActual = '';
         limpiarActivoBotones_('#menuUsuTabs button');
         ocultarCuerposModulo_('mat');
@@ -4932,12 +5103,17 @@
     }
 
     function abrirModalAsistenciaDemo() {
+      const badgeDev = document.getElementById('badgeEntornoDev');
+      const esDev = badgeDev && !badgeDev.classList.contains('oculto');
+      const aviso = esDev ? '' : '<div style="margin-top:10px;padding:8px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;font-size:12px;color:#c2410c;"><strong>Ambiente protegido:</strong> Esta función está restringida exclusivamente a entornos de pruebas/desarrollo para proteger la integridad de los datos reales.</div>';
       modal({
         titulo: 'Asistencia de prueba',
-        html: '<div class="form-modal-usu"><p>Genera asistencia de ejemplo (1–24 sep 2026) para ver reportes con números y gráficas. No borra alumnos ni horarios.</p></div>',
-        botones: [
+        html: '<div class="form-modal-usu"><p>Genera asistencia de ejemplo (1–24 sep 2026) para ver reportes con números y gráficas. No borra alumnos ni horarios.</p>' + aviso + '</div>',
+        botones: esDev ? [
           { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
           { texto: 'Generar', valor: 'ok', clase: 'btn-verde' }
+        ] : [
+          { texto: 'Entendido', valor: null, clase: 'btn-secundario' }
         ]
       }).then(function (ok) {
         if (!ok) return;
@@ -4946,11 +5122,22 @@
     }
 
     function sembrarAsistenciaDemoAsi() {
+      const badgeDev = document.getElementById('badgeEntornoDev');
+      const esDev = badgeDev && !badgeDev.classList.contains('oculto');
+      if (!esDev && (!VERSION_APP || String(VERSION_APP).indexOf('dev') === -1)) {
+        toast('Acción protegida: la siembra demo está restringida al entorno de desarrollo/pruebas.', 'info');
+        return;
+      }
       toast('Inventando asistencia de prueba…', 'info');
       gsRun('sembrarAsistenciaDemo').then(function (res) {
         toast((res && res.mensaje) || 'Datos de prueba listos.', 'exito');
       }).catch(function (e) {
-        toast((e && e.message) || String(e), 'error');
+        const msg = (e && e.message) || String(e);
+        if (msg.indexOf('ENTORNO=PRUEBAS') !== -1 || msg.indexOf('Acceso denegado') !== -1) {
+          toast('Ambiente protegido: siembra demo disponible únicamente en entorno de pruebas.', 'info');
+        } else {
+          toast(msg, 'error');
+        }
       });
     }
 
@@ -9860,20 +10047,8 @@
     }
 
     function cerrarMenuAvanzadoCfg() {
-      hojaDatosDesbloqueada = false;
-      ['btnTabCfgHoja', 'btnTabCfgSitio', 'btnTabCfgGraf', 'btnTabCfgPass', 'btnTabCfgIdentidad', 'btnTabCfgIa'].forEach(function (id) {
-        const btn = document.getElementById(id);
-        if (btn) {
-          btn.classList.add('oculto');
-          btn.classList.remove('activa');
-        }
-      });
-      const btnLock = document.getElementById('btnDesbloquearHoja');
-      if (btnLock) btnLock.classList.remove('oculto');
-      ['secCfgHoja', 'secCfgSitio', 'secCfgGraf', 'secCfgPass', 'secCfgIdentidad', 'secCfgIa'].forEach(function (id) {
-        const sec = document.getElementById(id);
-        if (sec) sec.classList.add('oculto');
-      });
+      /* Las opciones de Ajustes quedan siempre disponibles: ya no se ocultan. */
+      hojaDatosDesbloqueada = true;
     }
 
     function cambiarTabCfg(tabId) {
@@ -9897,6 +10072,8 @@
       const btn = document.getElementById('btnTabCfg' + tabId);
       if (btn) btn.classList.add('activa');
       if (tabId === 'Ia') consultarEstadoIa();
+      if (tabId === 'Lectora' && typeof pintarGridPpm === 'function') pintarGridPpm();
+      if (tabId === 'Identidad' && typeof pintarCamposIdentidad === 'function') pintarCamposIdentidad();
       if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
       abrirModalCfg(tabId);
     }
@@ -9938,7 +10115,14 @@
       if (tit) tit.textContent = titulos[tabId] || 'Configuración';
       claveAyudaCfgActual = ayudas[tabId] || 'cfgLectora';
       const fondo = document.getElementById('modalCfg');
-      if (fondo) fondo.classList.add('visible');
+      if (fondo) {
+        if (fondo.parentElement !== document.body) document.body.appendChild(fondo);
+        fondo.style.display = 'flex';
+        fondo.style.zIndex = '10000';
+        fondo.classList.add('visible');
+      }
+      const sec = document.getElementById('secCfg' + tabId);
+      if (sec) { sec.classList.remove('oculto'); sec.style.display = 'block'; }
     }
 
     function cerrarModalCfg() {
@@ -9960,22 +10144,8 @@
     }
 
     function pedirDesbloqueoHoja(tabId) {
-      if (hojaDatosDesbloqueada) {
-        cambiarTabCfg(tabId || 'Hoja');
-        return;
-      }
-      pedirTexto({
-        titulo: 'Opciones avanzadas',
-        mensaje: 'Ingresa la contraseña para ver esta sección.',
-        tipo: 'password'
-      }).then(function (clave) {
-        if (clave === null) return;
-        if (String(clave) !== CLAVE_HOJA_DATOS) {
-          toast('Contraseña incorrecta.', 'error');
-          return;
-        }
-        mostrarSeccionHojaDatos(tabId || 'Hoja');
-      });
+      /* Sin contraseña: abre la sección directamente. */
+      cambiarTabCfg(tabId || 'Hoja');
     }
 
     function consultarEstadoIa() {

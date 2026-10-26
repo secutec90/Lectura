@@ -1,0 +1,6 @@
+﻿# Artefactos de Windows y de la sincronización de Google Drive
+desktop.ini
+Desktop.ini
+*.gsheet/
+*.gsheet
+*.tmpdir/

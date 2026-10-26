@@ -1,0 +1,25 @@
+---
+description: Regla obligatoria de UI ST90 — cinta N1/N2/N3 sin tooltips ni preselección. Leer ESTILO_UI_ST90.md.
+alwaysApply: true
+---
+
+# UI ST90 — cinta obligatoria (estilo actualizado)
+
+Al trabajar en Lectura / ST90 aplica **siempre** `ESTILO_UI_ST90.md`. Prompt: `PROMPT_UI_ST90.md`. Copia en GAS: `EstiloUiSt90.html` (`?pagina=estilo`). `REGLA_UI_CINTA.md` está obsoleto.
+
+## Prompt obligatorio
+
+REGLA OBLIGATORIA DE UI ST90 v292. La cinta tiene TRES niveles. Cada vez que un icono abre contenido distinto al de su fila, ese contenido va a un subribbon INFERIOR.
+
+- N1 = módulos (Usuarios / Asistencia / Lecturas, o Clases / Alumnos / Docentes en Clase) + Salir
+- N2 = pestañas de la sección + Ayuda
+- N3 = contexto centrado (acciones y filtros; en listas, dentro de la tarjeta)
+
+Al entrar solo N1, sin recuadro. Clic N1 encierra ese módulo en rectángulo blanco redondeado y muestra N2 sin preselección. Clic N2 marca ese icono, abre N3 + cuerpo y **colapsa el subribbon** (`body.subribbon-collapsed`). Clic otra vez en N1 reabre N2 sin borrar el contenido. Clic N3 Alta/CSV/Grupo oculta el catálogo y solo muestra el formulario. Sin activo de fábrica en Fecha/Lista/Gráficas. Prohibido tooltip en iconos con `ribbon-label`. Filtros = select overlay o `showPicker()`. Catálogo en el **cuerpo**. Sin encabezado de rol (Administrador—Administrador). Español MX.
+
+## Al crear o rediseñar una sección
+
+1. Replica `#cintaMat` / `#cintaAsi` / `#cintaLec` / `#cintaClase` (`cinta-n2` + `cinta-n3 oculto`).
+2. No auto-llames `aplicarSubUsu('alu')` al abrir N1.
+3. Tras elegir un ítem N2 llama `ribbonColapsarTrasN2()`.
+4. Pasa el checklist de `ESTILO_UI_ST90.md`.

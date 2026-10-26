@@ -141,8 +141,8 @@
           </div>
         </div>
 
-        <div id="tarjetaRepAsi" class="caja-tabla-mat asi-tarjeta-lista oculto">
-        <div id="asiFiltroRep" class="asi-rep-fila cinta-n3" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto;background:transparent;box-shadow:none;border:none;">
+        <div id="tarjetaRepAsi" class="caja-tabla-mat asi-tarjeta-lista oculto" style="overflow:visible !important;min-height:360px;position:relative;z-index:80;">
+        <div id="asiFiltroRep" class="asi-rep-fila cinta-n3" style="display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0 auto;background:transparent;box-shadow:none;border:none;overflow:visible !important;position:relative;z-index:900;">
           <div class="asi-dd asi-periodo-nav" id="ddPeriodoRepAsi">
             <button type="button" class="ribbon-btn asi-periodo-paso" id="btnPeriodoPrev" onclick="desplazarPeriodoRepAsi(-1, event)" aria-label="Periodo anterior">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -174,7 +174,7 @@
           </div>
           <input type="hidden" id="fechaIniRepAsi">
           <input type="hidden" id="fechaFinRepAsi">
-          <div class="asi-dd" id="ddGruposRepAsi">
+          <div class="asi-dd" id="ddGruposRepAsi" style="position:relative;z-index:1000;overflow:visible !important;">
             <button type="button" class="ribbon-btn" id="btnDdGruposRep" aria-label="Grupos" onclick="toggleDdGruposRep(event)">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="7" rx="1"></rect>
@@ -184,7 +184,7 @@
               </svg>
               <span class="ribbon-label" id="etqGruposRepAsi">Grupos</span>
             </button>
-            <div id="panelGruposRepAsi" class="asi-dd-panel oculto" role="listbox" aria-multiselectable="true" onclick="event.stopPropagation()"></div>
+            <div id="panelGruposRepAsi" class="asi-dd-panel oculto" role="listbox" aria-multiselectable="true" onclick="event.stopPropagation()" style="position:absolute !important;top:calc(100% + 4px) !important;left:0 !important;z-index:999999 !important;max-height:60vh !important;overflow-y:auto !important;overflow-x:hidden !important;box-shadow:0 16px 40px rgba(15,23,42,0.28) !important;"></div>
           </div>
           <div class="ribbon-btn ribbon-btn-select-wrap" id="btnAluRepAsi" aria-label="Alumno">
             <select id="selAluRepAsi" class="filtro-select-overlay" onchange="actualizarEtqAluRepAsi();" aria-label="Alumno">

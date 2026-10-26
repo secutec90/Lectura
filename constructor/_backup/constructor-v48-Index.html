@@ -1,0 +1,2949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Censo y Constructor de Formularios</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <!-- Chart.js y ECharts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+  <style>
+    body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .header-banner { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; border-radius: 12px; }
+    .subtitulo-escuela { font-size: 1.15rem; font-weight: 300; letter-spacing: 0.5px; opacity: 0.95; }
+    .nav-pills .nav-link.active { background-color: #2563eb; }
+    .chart-container { position: relative; height: 320px; width: 100%; }
+    .table-responsive { max-height: 520px; }
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { background-color: #dbeafe; }
+    .seccion-condicional { background-color: #f1f5f9; border-radius: 8px; border-left: 4px solid #2563eb; }
+    .pregunta { border: 1px solid #e2e8f0; border-radius: 8px; }
+    .pregunta:hover { border-color: #93c5fd; }
+    .tipo-badge { font-size: 0.7rem; }
+    #tablaResumen.sin-desglose .col-turno { display: none; }
+
+    /* Estado que no es una de las opciones (p. ej. eje = pregunta) */
+    .chip-estado {
+      font-size: .72rem;
+      line-height: 1.3;
+      color: var(--app-muted);
+      padding: .15rem 0 .4rem;
+    }
+
+    /* Etiqueta de pregunta dentro del menú: máximo dos líneas, texto completo en el tooltip */
+    .pregunta-etiqueta {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.25;
+      max-height: 2.5em;
+    }
+
+    /* Chips de dimensión (eje y división) */
+    .chip-dim { font-size: .78rem; line-height: 1.2; border-radius: 999px; }
+
+    /* Texto de ayuda bajo la cabecera de un menú */
+    .filtro-ayuda {
+      font-size: .7rem;
+      line-height: 1.25;
+      color: #94a3b8;
+      padding: 0 .6rem .35rem;
+    }
+
+    /* Menú de preguntas: rejilla de dos columnas para no hacer una lista kilométrica */
+    .menu-preguntas { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .5rem; padding: .25rem .6rem .6rem; }
+    @media (max-width: 767.98px) {
+      #menuFiltrosDinamicos { width: auto !important; min-width: 17.5rem; }
+      .menu-preguntas { grid-template-columns: 1fr; }
+    }
+    /* ============================================================
+       SISTEMA DE MENÚS Y CONTROLES  (especificado en SKILL.md)
+       Regla: el estado activo tiñe, nunca rellena.
+       ============================================================ */
+    :root {
+      --app-primary: #2563eb;
+      --app-primary-dark: #1d4ed8;
+      --app-primary-soft: #eff6ff;
+      --app-primary-tint: #dbeafe;
+      --app-border: #e2e8f0;
+      --app-border-strong: #cbd5e1;
+      --app-text: #334155;
+      --app-muted: #64748b;
+      --app-hover: #f1f5f9;
+      --app-radius: 8px;
+      --app-radius-lg: 12px;
+    }
+
+    /* Botones de barra: fondo blanco, borde suave; hover tenue, activo con tinte */
+    .btn-outline-secondary, .btn-outline-primary, .btn-outline-danger {
+      --bs-btn-bg: #fff;
+      --bs-btn-border-color: var(--app-border);
+      --bs-btn-color: #475569;
+      --bs-btn-hover-bg: var(--app-hover);
+      --bs-btn-hover-border-color: var(--app-border-strong);
+      --bs-btn-hover-color: var(--app-text);
+      --bs-btn-active-bg: var(--app-primary-soft);
+      --bs-btn-active-border-color: #bfdbfe;
+      --bs-btn-active-color: var(--app-primary-dark);
+      --bs-btn-focus-shadow-rgb: 37, 99, 235;
+    }
+    .btn-outline-primary {
+      --bs-btn-color: var(--app-primary-dark);
+      --bs-btn-border-color: #bfdbfe;
+      --bs-btn-bg: var(--app-primary-soft);
+      --bs-btn-hover-bg: var(--app-primary-tint);
+      --bs-btn-hover-border-color: #93c5fd;
+      --bs-btn-hover-color: var(--app-primary-dark);
+    }
+    .btn-outline-danger {
+      --bs-btn-color: #b91c1c;
+      --bs-btn-hover-bg: #fef2f2;
+      --bs-btn-hover-border-color: #fecaca;
+      --bs-btn-hover-color: #991b1b;
+    }
+
+    /* Menús desplegables */
+    .dropdown-menu {
+      --bs-dropdown-border-color: var(--app-border);
+      --bs-dropdown-border-radius: var(--app-radius-lg);
+      --bs-dropdown-link-color: var(--app-text);
+      --bs-dropdown-link-hover-color: var(--app-text);
+      --bs-dropdown-link-hover-bg: var(--app-hover);
+      --bs-dropdown-link-active-bg: var(--app-primary-soft);
+      --bs-dropdown-link-active-color: var(--app-primary-dark);
+      --bs-dropdown-font-size: .85rem;
+      --bs-dropdown-item-padding-x: .6rem;
+      --bs-dropdown-item-padding-y: .4rem;
+      padding: .4rem;
+      max-height: 60vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, .08);
+    }
+    .dropdown-menu .dropdown-item { border-radius: var(--app-radius); }
+    .dropdown-menu .dropdown-item.active,
+    .dropdown-menu .dropdown-item:active {
+      background-color: var(--app-primary-soft);
+      color: var(--app-primary-dark);
+      font-weight: 600;
+    }
+    .dropdown-menu .dropdown-item.text-danger.active { background-color: #fef2f2; color: #b91c1c; }
+    .dropdown-menu .dropdown-header {
+      font-size: .7rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-weight: 600;
+      padding: .5rem .6rem .25rem;
+    }
+    .dropdown-menu .dropdown-divider { border-color: var(--app-border); opacity: 1; margin: .35rem 0; }
+
+    /* Fila de filtro dentro de un menú */
+    .filtro-fila { padding: .1rem .15rem .45rem; }
+    .filtro-fila > label {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--app-muted);
+      margin-bottom: .2rem;
+      line-height: 1.25;
+    }
+    .filtro-fila .form-select {
+      font-size: .82rem;
+      padding: .25rem 1.75rem .25rem .5rem;
+      min-height: 32px;
+      border-color: var(--app-border);
+      border-radius: var(--app-radius);
+      color: var(--app-text);
+      background-color: #fff;
+    }
+    .filtro-fila .form-select:focus {
+      border-color: var(--app-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+    }
+    @media print {
+      body { background: #fff !important; }
+      #btnCabecera, .header-banner, #mainTab, #loginCard, #barraContextual, #controlVistaGraficas, .no-print, .btn { display: none !important; }
+      .card { box-shadow: none !important; border: 1px solid #dee2e6 !important; }
+      .table-responsive { max-height: none !important; overflow: visible !important; }
+      #printHeader { display: block !important; }
+      #tablaRespuestas { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body class="p-2 p-md-3">
+
+<!-- Botón flotante para ocultar/mostrar cabecera -->
+<button type="button" id="btnCabecera" class="btn btn-sm btn-light border shadow-sm" style="position: fixed; top: .5rem; right: .5rem; z-index: 1030;" title="Ocultar cabecera" aria-label="Ocultar cabecera" onclick="alternarCabecera()">
+  <i class="bi bi-chevron-double-up" id="iconoCabecera"></i>
+</button>
+
+<div class="container-fluid" style="max-width: 1250px;">
+  <!-- Cabecera Institucional -->
+  <div class="header-banner p-3 mb-3 text-center shadow-sm">
+    <h2 class="fw-bold mb-0"><i class="bi bi-ui-checks"></i> <span id="tituloEscuela">Encuesta</span></h2>
+    <div class="subtitulo-escuela mt-1 fw-bold" id="subtituloEscuela"></div>
+    <hr class="my-2 opacity-25 w-50 mx-auto">
+    <p class="mb-0 fs-6 opacity-90" id="tituloFormulario"></p>
+  </div>
+
+  <!-- Pestañas Principales -->
+  <ul class="nav nav-pills justify-content-center mb-3 gap-1" id="mainTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active px-3 py-1 fw-semibold" id="tabEncuesta" data-bs-toggle="pill" data-bs-target="#paneEncuesta" type="button">
+        <i class="bi bi-pencil-square"></i> Encuesta Estudiantes
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link px-3 py-1 fw-semibold" id="tabAdmin" data-bs-toggle="pill" data-bs-target="#paneAdmin" type="button">
+        <i class="bi bi-shield-lock"></i> Panel Administrador
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="mainTabContent">
+    <!-- PESTAÑA 1: FORMULARIO ALUMNOS -->
+    <div class="tab-pane fade show active" id="paneEncuesta" role="tabpanel">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-7">
+          <div class="card p-4 shadow-sm">
+            <p class="text-muted small" id="introduccion"></p>
+            <form id="formDinamico" onsubmit="enviar(event)">
+              <div id="campos"></div>
+              <div id="errorForm" class="alert alert-danger py-2 small d-none" role="alert"></div>
+              <p class="text-muted small mb-2" id="nota"></p>
+              <button type="submit" id="btnEnviar" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">
+                <i class="bi bi-send-fill"></i> <span id="textoBoton">Enviar Encuesta</span>
+              </button>
+            </form>
+            <div id="panelExito" class="d-none text-center py-4">
+              <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+              <h4 class="fw-bold mt-3 mb-1" id="exitoTitulo">Registro guardado</h4>
+              <p class="text-muted mb-3" id="exitoTexto"></p>
+              <button type="button" class="btn btn-primary" onclick="otraRespuesta()">
+                <i class="bi bi-plus-circle"></i> <span id="textoOtro">Registrar otra respuesta</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 2: PANEL DE ADMINISTRACIÓN -->
+    <div class="tab-pane fade" id="paneAdmin" role="tabpanel">
+      <!-- Login -->
+      <div id="loginCard" class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card p-4 text-center shadow-sm">
+            <i class="bi bi-shield-lock-fill text-primary" style="font-size: 2.5rem;"></i>
+            <h5 class="fw-bold mt-2">Acceso Administrativo</h5>
+            <p class="text-muted small">Ingresa las credenciales autorizadas</p>
+            <form onsubmit="entrar(event)">
+              <div class="mb-3 text-start">
+                <label class="form-label small fw-semibold" for="adminUser">Usuario:</label>
+                <input type="text" id="adminUser" class="form-control" required>
+              </div>
+              <div class="mb-3 text-start">
+                <label class="form-label small fw-semibold" for="adminPass">Contraseña:</label>
+                <input type="password" id="adminPass" class="form-control" required>
+              </div>
+              <div id="errorLogin" class="alert alert-danger py-2 small d-none"></div>
+              <button type="submit" id="btnLogin" class="btn btn-primary w-100 fw-semibold">Ingresar al Panel</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Administrador -->
+      <div id="constructor" class="d-none">
+        <div id="printHeader" class="d-none mb-2"></div>
+
+        <!-- Barra Contextual de Herramientas -->
+        <div class="card p-2 mb-2 shadow-sm" id="barraContextual">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <ul class="nav nav-pills gap-1 mb-0 flex-nowrap" id="adminSubTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active px-2 py-1" id="subtab-graficas" data-bs-toggle="tab" data-bs-target="#paneResumen" type="button" title="Gráficas y Totales" aria-label="Gráficas">
+                  <i class="bi bi-bar-chart-line-fill"></i>
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link px-2 py-1" id="subtab-datos" data-bs-toggle="tab" data-bs-target="#paneRespuestas" type="button" title="Hoja de Datos" aria-label="Hoja de Datos">
+                  <i class="bi bi-table"></i>
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link px-2 py-1" id="subtab-formulario" data-bs-toggle="tab" data-bs-target="#paneFormulario" type="button" title="Editor de Preguntas" aria-label="Editor">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              </li>
+            </ul>
+
+            <!-- Filtros de la Barra de Gráficas -->
+            <div id="barraGraficas" class="d-flex flex-wrap justify-content-evenly align-items-center gap-1 flex-grow-1">
+
+
+              <!-- Dimensiones de segmentación: se generan desde el esquema -->
+              <div id="filtrosDimensiones" class="d-flex flex-wrap align-items-center gap-1"></div>
+
+
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" id="btn-ajustesGrafica" data-bs-toggle="dropdown" aria-expanded="false" title="Ajustes de gráfica" aria-label="Ajustes de gráfica">
+                  <i class="bi bi-sliders"></i>
+                </button>
+                <ul class="dropdown-menu" id="menuAjustesGrafica" style="min-width: 16rem; max-height: 72vh; overflow-y: auto;"></ul>
+              </div>
+
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" id="btn-filtroOrden" data-bs-toggle="dropdown" aria-expanded="false" title="Orden: Mayor a menor" aria-label="Orden: Mayor a menor">
+                  <i class="bi bi-sort-down"></i>
+                </button>
+                <ul class="dropdown-menu" id="menuOrden"></ul>
+              </div>
+
+              <button class="btn btn-sm btn-outline-primary" type="button" title="Recargar datos" aria-label="Recargar datos" onclick="cargarRespuestas()">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" type="button" title="Restablecer filtros" aria-label="Restablecer filtros" onclick="limpiarFiltros()">
+                <i class="bi bi-x-circle"></i>
+              </button>
+
+              <!-- Selects ocultos que gestionan los estados -->
+              <!-- Estado de controles ocultos -->
+              <select id="ordenGrafica" class="d-none" onchange="aplicarFiltrosYGraficar()"><option value="desc">Mayor a menor</option><option value="asc">Menor a mayor</option><option value="none">Por categoría</option></select>
+              <select id="dimensionGrafica" class="d-none" onchange="aplicarFiltrosYGraficar()"></select>
+              <select id="valoresGrafica" class="d-none" onchange="aplicarFiltrosYGraficar()"><option value="cantidad">Cantidad</option><option value="porcentaje">Porcentaje</option></select>
+              <select id="modoPorcentaje" class="d-none" onchange="aplicarFiltrosYGraficar()"><option value="categoria" selected>Total de la categoría (100%)</option><option value="total">Total general</option></select>
+              <select id="tipoGrafica" class="d-none" onchange="aplicarFiltrosYGraficar()">
+                <option value="bar">Barras horizontales</option>
+                <option value="barVertical">Barras verticales</option>
+                <option value="pie">Pastel</option>
+                <option value="doughnut">Dona</option>
+                <option value="line">Líneas</option>
+                <option value="stacked">Barras apiladas horizontales</option>
+                <option value="stackedVertical">Barras apiladas verticales</option>
+                <option value="sunburst">Rayos solares (jerarquía)</option>
+              </select>
+              <select id="segmentoGrafica" class="d-none" onchange="aplicarFiltrosYGraficar()"></select>
+            </div>
+
+            <!-- Filtros de la Barra de Hoja de Datos -->
+            <div id="barraDatos" class="d-none d-flex flex-wrap justify-content-evenly align-items-center gap-1 flex-grow-1">
+              <button class="btn btn-sm btn-outline-secondary" id="btn-buscarTabla" type="button" title="Buscar en registros" aria-label="Buscar en registros" onclick="alternarBuscador()">
+                <i class="bi bi-search"></i>
+              </button>
+              <input type="text" id="buscadorTexto" class="form-control form-control-sm d-none" style="width: 200px;" placeholder="Buscar..." oninput="pintarTablaRespuestas()">
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" id="btn-tablaCampo" data-bs-toggle="dropdown" aria-expanded="false" title="Ordenar por campo" aria-label="Ordenar por campo"><i class="bi bi-funnel"></i></button>
+                <ul class="dropdown-menu" id="menuTablaCampo"></ul>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" id="btn-tablaDireccion" data-bs-toggle="dropdown" aria-expanded="false" title="Dirección" aria-label="Dirección"><i class="bi bi-sort-down"></i></button>
+                <ul class="dropdown-menu" id="menuTablaDireccion"></ul>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" id="btn-tablaTop" data-bs-toggle="dropdown" aria-expanded="false" title="Mostrar Top" aria-label="Mostrar Top"><i class="bi bi-list-ol"></i></button>
+                <ul class="dropdown-menu" id="menuTablaTop"></ul>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary" type="button" title="Restablecer filtros" aria-label="Restablecer filtros" onclick="restablecerFiltrosTabla()"><i class="bi bi-arrow-counterclockwise"></i></button>
+              <select id="tablaCampoOrden" class="d-none" onchange="pintarTablaRespuestas()"><option value="fecha">Fecha / Hora</option></select>
+              <select id="tablaDireccionOrden" class="d-none" onchange="pintarTablaRespuestas()"><option value="asc">Menor a Mayor (A - Z)</option><option value="desc">Mayor a Menor (Z - A)</option></select>
+              <select id="tablaLimiteTop" class="d-none" onchange="pintarTablaRespuestas()"><option value="TODOS">Todos</option><option value="5">Top 5</option><option value="10">Top 10</option><option value="15">Top 15</option><option value="25">Top 25</option><option value="50">Top 50</option><option value="100">Top 100</option></select>
+            </div>
+
+            <!-- Botones finales de exportación y mantenimiento -->
+            <div class="d-flex align-items-center gap-1">
+              <button class="btn btn-sm btn-outline-secondary" type="button" id="btnExportarCSV" title="Descargar CSV" aria-label="Descargar CSV" onclick="descargarCSVRespuestas()"><i class="bi bi-file-earmark-spreadsheet"></i></button>
+              <button class="btn btn-sm btn-outline-secondary" type="button" id="btnExportarPDF" title="Imprimir o guardar como PDF" aria-label="Imprimir o guardar como PDF" onclick="imprimirRespuestas()"><i class="bi bi-file-earmark-pdf"></i></button>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Mantenimiento" aria-label="Mantenimiento"><i class="bi bi-tools"></i></button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                  <li><button class="dropdown-item" type="button" onclick="abrirSimulacion()"><i class="bi bi-dice-5"></i> Simular respuestas</button></li>
+                  <li><button class="dropdown-item" type="button" onclick="quitarPreguntasEjemplo()"><i class="bi bi-eraser"></i> Quitar preguntas de ejemplo</button></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><button class="dropdown-item text-danger" type="button" onclick="limpiarSimulados()"><i class="bi bi-trash"></i> Limpiar simulados</button></li>
+                </ul>
+              </div>
+              <button class="btn btn-sm btn-outline-danger" type="button" title="Cerrar sesión" aria-label="Cerrar sesión" onclick="salirAdmin()"><i class="bi bi-box-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content">
+          <!-- SUBPESTAÑA 1: GRÁFICAS Y RESUMEN (con Toolbar de UX inyectada) -->
+          <div class="tab-pane fade show active" id="paneResumen">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+              <div class="small text-muted" id="resumenFiltros"></div>
+
+              <!-- BARRA DE CONTROLES VISUALES RESCATADA -->
+              <div class="d-flex gap-1 align-items-center" id="controlVistaGraficas">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnVistaGrafica" onclick="cambiarVista('grafica')" title="Solo gráfica" aria-label="Solo gráfica"><i class="bi bi-bar-chart-fill"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnVistaLista" onclick="cambiarVista('lista')" title="Solo lista" aria-label="Solo lista"><i class="bi bi-list-ul"></i></button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnVistaAmbos" onclick="cambiarVista('ambos')" title="Gráfica y lista" aria-label="Gráfica y lista"><i class="bi bi-columns-gap"></i></button>
+                <span class="vr mx-1"></span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cambiarTamanoGrafica(-1)" title="Reducir fuente de gráficas" aria-label="Reducir fuente de gráficas"><i class="bi bi-dash-lg"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cambiarTamanoGrafica(1)" title="Aumentar fuente de gráficas" aria-label="Aumentar fuente de gráficas"><i class="bi bi-plus-lg"></i></button>
+                <span class="vr mx-1"></span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cambiarTamanoLista(-1)" title="Reducir fuente de lista" aria-label="Reducir fuente de lista"><i class="bi bi-dash-lg"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cambiarTamanoLista(1)" title="Aumentar fuente de lista" aria-label="Aumentar fuente de lista"><i class="bi bi-plus-lg"></i></button>
+                <span class="vr mx-1"></span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cambiarAltura(-30)" title="Reducir altura" aria-label="Reducir altura"><i class="bi bi-arrows-collapse"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cambiarAltura(30)" title="Aumentar altura" aria-label="Aumentar altura"><i class="bi bi-arrows-expand"></i></button>
+                <span class="vr mx-1"></span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalAyudaCalculos" title="Cómo se calculan las gráficas" aria-label="Cómo se calculan las gráficas"><i class="bi bi-question-circle"></i></button>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <!-- Gráfica Principal -->
+              <div class="col-12 col-lg-6" id="colGraficaPrincipal">
+                <div class="card p-3 h-100 shadow-sm" id="cardGraficaPrincipal" style="cursor: zoom-in;" onclick="ampliarGrafica(event, 'grafica1')">
+                  <div class="d-flex justify-content-between align-items-center mb-2 gap-2 flex-wrap">
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-outline-primary fw-bold d-flex align-items-center gap-2" type="button" id="btnPreguntaGrafica" data-bs-toggle="dropdown" aria-expanded="false" title="Elegir la pregunta que se grafica">
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                        <span id="tituloGrafica1">Resultados</span>
+                        <i class="bi bi-chevron-down small"></i>
+                      </button>
+                      <ul class="dropdown-menu" id="menuPreguntaGrafica" style="min-width: 20rem; max-height: 62vh; overflow-y: auto;"></ul>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary" id="btnFiltrosDinamicos" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Filtros por pregunta" aria-label="Filtros por pregunta">
+                          <i class="bi bi-funnel"></i><span class="badge bg-primary ms-1 d-none" id="badgeFiltrosDinamicos">0</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-0 shadow-sm" id="menuFiltrosDinamicos" style="width: 30rem; max-height: 60vh; overflow-y: auto;">
+                          <div class="px-3 pt-2 pb-1">
+                            <h6 class="dropdown-header px-0">Filtros por pregunta</h6>
+                            <div class="filtro-ayuda px-0">Filtran la muestra y la gráfica</div>
+                          </div>
+                          <div id="filtrosPreguntas" class="menu-preguntas"></div>
+                        </div>
+                      </div>
+                      <span class="badge bg-primary" id="badgeGrafica1">0 respuestas</span>
+                    </div>
+                  </div>
+
+                  <div class="chart-container" style="height: 320px;">
+                    <canvas id="grafica1"></canvas>
+                    <div id="graficaSunburst" class="d-none" style="position: absolute; inset: 0;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lista de Totales / Resumen -->
+              <div class="col-12 col-lg-6" id="colTotales">
+                <div class="card p-3 shadow-sm h-100">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-list-ol"></i> <span id="tituloTotales">Totales</span></h6>
+                  </div>
+                  <div id="cuerpoTotales">
+                    <div class="table-responsive" style="max-height: 320px;">
+                      <table class="table table-sm table-hover align-middle small mb-0" id="tablaTotales">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Categoría</th>
+                            <th class="text-end col-turno">Matutino</th>
+                            <th class="text-end col-turno">Vespertino</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-end">%</th>
+                            <th class="text-end">Acum.</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBPESTAÑA 2: HOJA DE DATOS -->
+          <div class="tab-pane fade" id="paneRespuestas">
+            <div class="card p-3 shadow-sm">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 no-print">
+                <h6 class="fw-bold mb-0"><i class="bi bi-table"></i> Hoja de Registros</h6>
+                <span class="small text-muted" id="contadorRespuestas"></span>
+              </div>
+              <div id="printRespuestas" class="d-none d-print-block mb-2"></div>
+              <div class="table-responsive" style="max-height: 520px;">
+                <table class="table table-sm table-striped table-bordered align-middle mb-0" id="tablaRespuestas">
+                  <thead class="table-light"></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBPESTAÑA 3: EDITOR DE PREGUNTAS (CONSTRUCTOR) -->
+          <div class="tab-pane fade" id="paneFormulario">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="fw-bold mb-0"><i class="bi bi-pencil-square"></i> Constructor Dinámico de Preguntas</h6>
+              <div class="d-flex align-items-center gap-2">
+                <span id="estado" class="small text-muted"></span>
+                <button class="btn btn-sm btn-primary" type="button" id="btnGuardar" onclick="guardarTodo()"><i class="bi bi-save"></i> Guardar cambios</button>
+              </div>
+            </div>
+                        <div class="card p-3 mb-3">
+              <h6 class="fw-bold mb-2"><i class="bi bi-hdd-network"></i> Origen de datos</h6>
+              <p class="text-muted small mb-2">Hoja donde viven el esquema y las respuestas. Conectada a: <strong id="hojaActual">—</strong></p>
+              <div class="row g-2 align-items-end">
+                <div class="col-12 col-md-8">
+                  <label class="form-label small" for="cfgHojaId">URL o ID de Google Spreadsheet</label>
+                  <input class="form-control form-control-sm" id="cfgHojaId" placeholder="https://docs.google.com/spreadsheets/d/.../edit" autocomplete="off">
+                </div>
+                <div class="col-12 col-md-4">
+                  <button type="button" class="btn btn-primary btn-sm w-100" id="btnVincularHoja" onclick="vincularHoja()">
+                    <i class="bi bi-link-45deg"></i> Probar y vincular
+                  </button>
+                </div>
+              </div>
+              <div id="estadoHoja" class="small mt-2 text-muted">Sin cambios.</div>
+            </div>
+
+            <div class="card p-3 mb-3">
+              <h6 class="fw-bold mb-3"><i class="bi bi-card-heading"></i> Configuración de Cabecera</h6>
+              <div class="row g-2">
+                <div class="col-12 col-md-6"><label class="form-label small">Escuela</label><input class="form-control form-control-sm" id="cfg_escuela"></div>
+                <div class="col-12 col-md-6"><label class="form-label small">Subtítulo</label><input class="form-control form-control-sm" id="cfg_subtitulo"></div>
+                <div class="col-12"><label class="form-label small">Título del formulario</label><input class="form-control form-control-sm" id="cfg_titulo"></div>
+                <div class="col-12"><label class="form-label small">Introducción</label><textarea class="form-control form-control-sm" id="cfg_introduccion" rows="2"></textarea></div>
+                <div class="col-12 col-md-4"><label class="form-label small">Texto del botón</label><input class="form-control form-control-sm" id="cfg_boton"></div>
+                <div class="col-12 col-md-4"><label class="form-label small">Texto de éxito (título)</label><input class="form-control form-control-sm" id="cfg_exitoTitulo"></div>
+                <div class="col-12 col-md-4"><label class="form-label small">Texto «otra respuesta»</label><input class="form-control form-control-sm" id="cfg_otroBoton"></div>
+                <div class="col-12"><label class="form-label small">Mensaje de éxito (usa {nombre})</label><input class="form-control form-control-sm" id="cfg_exitoTexto"></div>
+                <div class="col-12"><label class="form-label small">Nota al pie</label><input class="form-control form-control-sm" id="cfg_nota"></div>
+              </div>
+            </div>
+            <div class="card p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0"><i class="bi bi-list-check"></i> Esquema de Preguntas</h6>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-outline-secondary" onclick="abrirCategorias()"><i class="bi bi-tags"></i> Categorías Jerárquicas</button>
+                  <button class="btn btn-sm btn-primary" onclick="abrirModal(-1)"><i class="bi bi-plus-lg"></i> Agregar pregunta</button>
+                </div>
+              </div>
+              <div id="listaPreguntas" class="d-flex flex-column gap-2"></div>
+              <p class="text-muted small mb-0 mt-3">Al eliminar una pregunta sus respuestas históricas se conservan protegidas en la hoja de cálculo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES DEL SISTEMA -->
+
+<!-- Modal Categorías Jerárquicas -->
+<div class="modal fade" id="modalCategorias" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title fw-bold"><i class="bi bi-tags"></i> Categorías Jerárquicas de Segmentación</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="guardarCategoria(event)" class="row g-2 align-items-end">
+          <div class="col-12 col-md-6">
+            <label class="form-label small fw-semibold" for="catNombre">Nombre de la Categoría</label>
+            <input class="form-control form-control-sm" id="catNombre" placeholder="Ej. Grado, Turno, Especialidad" required>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label small fw-semibold" for="catPadre">Categoría Padre (Jerarquía)</label>
+            <select class="form-select form-select-sm" id="catPadre"></select>
+          </div>
+          <div class="col-12 col-md-2">
+            <button class="btn btn-primary btn-sm w-100" type="submit" id="btnCat">Agregar</button>
+          </div>
+        </form>
+        <ul class="list-group list-group-flush mt-3" id="listaCategorias"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edición de Preguntas -->
+<div class="modal fade" id="modalPregunta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title fw-bold" id="tituloModal">Configurar Pregunta</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <label class="form-label small fw-semibold" for="p_tipo">Tipo de Pregunta</label>
+            <select class="form-select form-select-sm" id="p_tipo" onchange="actualizarCamposTipo()">
+              <option value="texto">Texto corto</option>
+              <option value="parrafo">Párrafo</option>
+              <option value="unica">Opción única (Radio / Select)</option>
+              <option value="multiple">Opción múltiple (Casillas)</option>
+              <option value="numero">Número</option>
+              <option value="fecha">Fecha</option>
+              <option value="sino">Sí / No</option>
+              <option value="escala">Escala numérica</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2 d-flex align-items-end">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="p_obligatoria">
+              <label class="form-check-label small" for="p_obligatoria">Obligatoria</label>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label small fw-semibold" for="p_categoria">Categoría Asignada</label>
+            <input class="form-control form-control-sm" id="p_categoria" list="datalistCategorias" placeholder="Ninguna" oninput="actualizarCategoriaUI()">
+            <datalist id="datalistCategorias"></datalist>
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label small fw-semibold" for="p_categoriaPadre">Categoría Padre</label>
+            <select class="form-select form-select-sm" id="p_categoriaPadre"></select>
+          </div>
+          <!-- Propiedades analíticas y visualización -->
+          <div class="col-12">
+            <div class="border rounded-2 p-2 bg-body-tertiary">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-graph-up-arrow text-primary"></i>
+                <span class="small fw-semibold">Propiedades analíticas y visualización</span>
+              </div>
+              <div class="row g-2">
+                <div class="col-12 col-md-7">
+                  <label class="form-label small fw-semibold" for="p_rolAnalitico">Rol analítico</label>
+                  <select class="form-select form-select-sm" id="p_rolAnalitico" onchange="actualizarRolAnalitico()">
+                    <option value="identidad">Informativa / Identidad (Texto libre, folio, no graficable)</option>
+                    <option value="dimension">Dimensión de Segmentación / Filtro (Eje X: agrupa y filtra)</option>
+                    <option value="metrica">Evaluación / Métrica Sustantiva (Eje Y: graficable por conteo o %)</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-5 d-flex align-items-end">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="p_graficable">
+                    <label class="form-check-label small" for="p_graficable">¿Permitir graficar en el panel?</label>
+                  </div>
+                </div>
+                <div class="col-12 d-none" id="grupoJerarquia">
+                  <div class="row g-2">
+                    <div class="col-12 col-md-4">
+                      <label class="form-label small fw-semibold" for="p_preguntaPadre">Depende de la dimensión</label>
+                      <select class="form-select form-select-sm" id="p_preguntaPadre" onchange="actualizarCamposDimension()">
+                        <option value="">Ninguna (independiente)</option>
+                      </select>
+                    </div>
+                    <div class="col-12 col-md-8 d-none" id="grupoDimOpciones">
+                      <label class="form-label small fw-semibold" for="p_opcionesPorPadre">Opciones por valor del padre</label>
+                      <textarea class="form-control form-control-sm" id="p_opcionesPorPadre" rows="3" placeholder="Matutino: 1A, 1B, 1C&#10;Vespertino: 1F, 1G"></textarea>
+                      <div class="form-text small">Una línea por valor del padre: <code>Valor: opción1, opción2</code>. Si se deja vacío se usan las opciones de la pregunta.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-semibold" for="p_etiqueta">Texto de la pregunta</label>
+            <input class="form-control form-control-sm" id="p_etiqueta">
+          </div>
+          <div class="col-12">
+            <label class="form-label small" for="p_ayuda">Texto de ayuda o instrucción (opcional)</label>
+            <input class="form-control form-control-sm" id="p_ayuda">
+          </div>
+          <div class="col-12" id="grupoPlaceholder">
+            <label class="form-label small" for="p_placeholder">Texto sugerido (Placeholder)</label>
+            <input class="form-control form-control-sm" id="p_placeholder">
+          </div>
+          <div class="col-12" id="grupoOpciones">
+            <label class="form-label small fw-semibold" for="p_opciones">Opciones de respuesta (una por renglón)</label>
+            <textarea class="form-control form-control-sm" id="p_opciones" rows="5"></textarea>
+          </div>
+          <div class="col-6" id="grupoEscalaMin">
+            <label class="form-label small" for="p_escalaMin">Escala mínima</label>
+            <input type="number" class="form-control form-control-sm" id="p_escalaMin" value="1">
+          </div>
+          <div class="col-6" id="grupoEscalaMax">
+            <label class="form-label small" for="p_escalaMax">Escala máxima</label>
+            <input type="number" class="form-control form-control-sm" id="p_escalaMax" value="5">
+          </div>
+          <div class="col-6" id="grupoLongitud">
+            <label class="form-label small" for="p_maxLongitud">Longitud máxima permitida</label>
+            <input type="number" class="form-control form-control-sm" id="p_maxLongitud" placeholder="500">
+          </div>
+          <div class="col-12"><hr class="my-1"></div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="p_condActiva" onchange="actualizarCondicionUI()">
+              <label class="form-check-label small fw-semibold" for="p_condActiva">Mostrar únicamente si se cumple una regla condicional</label>
+            </div>
+          </div>
+          <div class="col-12 d-none" id="grupoCondicion">
+            <div class="row g-2">
+              <div class="col-12 col-md-5">
+                <label class="form-label small" for="p_condPregunta">Pregunta de referencia</label>
+                <select class="form-select form-select-sm" id="p_condPregunta" onchange="actualizarValoresCondicion()"></select>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label small" for="p_condOperador">Operador</label>
+                <select class="form-select form-select-sm" id="p_condOperador" onchange="actualizarValoresCondicion()">
+                  <option value="igual">es igual a</option>
+                  <option value="distinto">es distinto de</option>
+                  <option value="contiene">contiene</option>
+                  <option value="vacio">está vacía</option>
+                  <option value="no_vacio">tiene respuesta</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-4" id="grupoCondValor">
+                <label class="form-label small" for="p_condValor">Valor esperado</label>
+                <select class="form-select form-select-sm" id="p_condValor"></select>
+                <input class="form-control form-control-sm d-none" id="p_condValorTexto" placeholder="Escribe el valor">
+              </div>
+            </div>
+          </div>
+          <div class="col-12 d-none" id="grupoGruposPorTurno">
+            <label class="form-label small fw-semibold" for="p_gruposPorTurno">Mapeo de Grupos por Turno</label>
+            <textarea class="form-control form-control-sm" id="p_gruposPorTurno" rows="3" placeholder="Matutino: 1A, 1B&#10;Vespertino: 1F, 1G"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm fw-semibold" onclick="guardarPregunta()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Simulación -->
+<div class="modal fade" id="modalSimulacion" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h6 class="modal-title fw-bold"><i class="bi bi-dice-5"></i> Simular Respuestas</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form onsubmit="ejecutarSimulacion(event)">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold" for="simCantidad">Cantidad de respuestas (1 a 500)</label>
+            <input type="number" class="form-control" id="simCantidad" min="1" max="500" value="20" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold" for="simPerfil">Distribución</label>
+            <select class="form-select" id="simPerfil">
+              <option value="variada" selected>Variada (Realista)</option>
+              <option value="uniforme">Uniforme</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold" for="simClave">Clave especial de autorización</label>
+            <input type="password" class="form-control" id="simClave" required>
+          </div>
+          <div id="simEstado" class="alert alert-info py-2 small d-none"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btnSimular"><i class="bi bi-play-fill"></i> Iniciar Generación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Visualización Ampliada -->
+<div class="modal fade" id="modalGrafica" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 96vw;">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h6 class="modal-title fw-bold" id="modalGraficaTitulo">Gráfica Detallada</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="chart-container" id="modalGraficaCanvasWrap" style="height: 72vh;"><canvas id="modalGraficaCanvas"></canvas></div>
+        <div id="modalGraficaSunburst" class="d-none" style="height: 72vh; width: 100%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Explicativo de Cálculos Estadísticos -->
+<div class="modal fade" id="modalAyudaCalculos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="bi bi-question-circle"></i> Metodología de Cálculo en Gráficas y Resumen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body small">
+        <p class="mb-2">Sea <strong>N</strong> el número total de registros tras aplicar los filtros de segmentación activos.</p>
+        <h6 class="fw-bold mt-3">1. Frecuencia Absoluta (Cantidad)</h6>
+        <p class="mb-1">Conteo directo de respuestas para cada valor: <code>n</code>.</p>
+        <h6 class="fw-bold mt-3">2. Porcentaje General</h6>
+        <p class="mb-1">Proporción respecto al total de la muestra: <code>(n / N) × 100</code>.</p>
+        <h6 class="fw-bold mt-3">3. Barras Apiladas por Categoría (100%)</h6>
+        <p class="mb-1">Divide el conteo de cada turno entre el total de su respectiva opción: <code>Matutino / (Matutino + Vespertino) × 100</code>.</p>
+        <h6 class="fw-bold mt-3">4. Rayos Solares (Sunburst)</h6>
+        <p class="mb-1">Muestra jerarquías concéntricas proporcionales (Nivel 1 › Nivel 2 › Nivel 3) sin distorsión de escala.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Entendido</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // ESTADO GLOBAL Y VARIABLES
+  let FORM = { config: {}, preguntas: [] };
+  let FILTROS = {};            // dimId -> valor elegido ("TODOS" implícito)
+  let RESPUESTAS = null;
+  let creds = null;
+  let editando = -1;
+  let modal = null;
+  let simulacionModal = null;
+  let modalGrafica = null;
+  let modalCategorias = null;
+  let editandoCategoria = null;
+  let chartsResumen = [];
+  let CONFIGS_GRAFICA = {};
+  let FILTROS_DINAMICOS = [];
+  let graficaModal = null;
+  let pendienteGrafica = null;
+  let sunburstInstancia = null;
+
+  // AJUSTES VISUALES CON PERSISTENCIA
+  let vistaPaneles = "ambos";
+  function leerNumero(clave, defecto) {
+    try {
+      const v = Number(localStorage.getItem(clave));
+      return isFinite(v) && v > 0 ? v : defecto;
+    } catch (e) { return defecto; }
+  }
+  let tamanoGrafica = leerNumero("tamanoGrafica", 11);
+  let tamanoLista = leerNumero("tamanoLista", 12);
+  let alturaGrafica = leerNumero("alturaGrafica", 320);
+
+  const TIPOS = {
+    texto: "Texto corto", parrafo: "Párrafo", unica: "Opción única", multiple: "Opción múltiple",
+    numero: "Número", fecha: "Fecha", sino: "Sí / No", escala: "Escala"
+  };
+
+  // SISTEMA DE ASIGNACIÓN ESTABLE DE COLORES
+  const PALETA_ESTABLE = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#64748b"];
+  const COLORES_ASIGNADOS = {};
+
+  function colorDimension(dimId, etiqueta) {
+    if (!COLORES_ASIGNADOS[dimId]) COLORES_ASIGNADOS[dimId] = {};
+    const mapa = COLORES_ASIGNADOS[dimId];
+    if (!mapa[etiqueta]) {
+      const idx = Object.keys(mapa).length;
+      mapa[etiqueta] = PALETA_ESTABLE[idx % PALETA_ESTABLE.length];
+    }
+    return mapa[etiqueta];
+  }
+
+  function sembrarColores(filas, preguntas) {
+    (preguntas || []).forEach(p => {
+      const valores = [];
+      filas.forEach(f => {
+        const v = (f.respuestas || {})[p.id];
+        if (v && valores.indexOf(v) === -1) valores.push(v);
+      });
+      valores.sort().forEach(val => colorDimension(p.id, val));
+    });
+    colorDimension("turno", "Matutino");
+    colorDimension("turno", "Vespertino");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    modal = new bootstrap.Modal(document.getElementById("modalPregunta"));
+    modalGrafica = new bootstrap.Modal(document.getElementById("modalGrafica"));
+    modalCategorias = new bootstrap.Modal(document.getElementById("modalCategorias"));
+    simulacionModal = new bootstrap.Modal(document.getElementById("modalSimulacion"));
+
+    document.getElementById("formDinamico").addEventListener("change", aplicarCondiciones);
+
+    document.getElementById("modalGrafica").addEventListener("shown.bs.modal", () => {
+      if (!pendienteGrafica) return;
+      const estado = pendienteGrafica;
+      pendienteGrafica = null;
+      renderGraficaModal(estado);
+    });
+
+    document.getElementById("modalGrafica").addEventListener("hidden.bs.modal", () => {
+      if (!graficaModal) return;
+      if (typeof graficaModal.destroy === "function") graficaModal.destroy();
+      else if (typeof graficaModal.dispose === "function") graficaModal.dispose();
+      graficaModal = null;
+    });
+
+    try {
+      if (localStorage.getItem("cabeceraOculta") === "1") aplicarCabecera(true);
+    } catch (e) {}
+
+    window.addEventListener("resize", () => { if (sunburstInstancia) sunburstInstancia.resize(); });
+
+    document.addEventListener("shown.bs.tab", e => {
+      const destino = e.target.getAttribute("data-bs-target");
+      const esDatos = destino === "#paneRespuestas";
+      const esForm = destino === "#paneFormulario";
+      document.getElementById("barraGraficas").classList.toggle("d-none", esDatos || esForm);
+      document.getElementById("barraDatos").classList.toggle("d-none", !esDatos);
+      if (destino === "#paneResumen") {
+        if (!RESPUESTAS) cargarRespuestas();
+        else pintarResumenPanel();
+      }
+      if (destino === "#paneRespuestas" && RESPUESTAS) pintarTablaRespuestas();
+      if (esForm) {
+        pintarConfig();
+        pintarPreguntas();
+        pintarCategorias();
+      }
+    });
+
+    const menuAjustes = document.getElementById("menuAjustesGrafica");
+    if (menuAjustes) {
+      menuAjustes.parentElement.addEventListener("show.bs.dropdown", renderMenuAjustes);
+    }
+
+
+    cargarFormulario();
+  });
+
+  // GESTIÓN DE LAYOUT, ALTURA Y ZOOM
+  function alternarCabecera() {
+    const cabecera = document.querySelector(".header-banner");
+    if (!cabecera) return;
+    aplicarCabecera(!cabecera.classList.contains("d-none"));
+  }
+
+  function aplicarCabecera(ocultar) {
+    const cabecera = document.querySelector(".header-banner");
+    if (cabecera) cabecera.classList.toggle("d-none", ocultar);
+    const icono = document.getElementById("iconoCabecera");
+    const btn = document.getElementById("btnCabecera");
+    if (icono) icono.className = ocultar ? "bi bi-chevron-double-down" : "bi bi-chevron-double-up";
+    if (btn) {
+      btn.title = ocultar ? "Mostrar cabecera" : "Ocultar cabecera";
+      btn.setAttribute("aria-label", btn.title);
+    }
+    try { localStorage.setItem("cabeceraOculta", ocultar ? "1" : "0"); } catch (e) {}
+  }
+
+  function cambiarVista(modo) {
+    vistaPaneles = modo;
+    const colG = document.getElementById("colGraficaPrincipal");
+    const colT = document.getElementById("colTotales");
+    if (!colG || !colT) return;
+    const verG = modo !== "lista";
+    const verT = modo !== "grafica";
+    colG.className = (verG && verT) ? "col-12 col-lg-6" : "col-12";
+    colT.className = (verG && verT) ? "col-12 col-lg-6" : "col-12";
+    colG.classList.toggle("d-none", !verG);
+    colT.classList.toggle("d-none", !verT);
+
+    [["btnVistaGrafica", "grafica"], ["btnVistaLista", "lista"], ["btnVistaAmbos", "ambos"]].forEach(([id, m]) => {
+      const b = document.getElementById(id);
+      if (b) b.className = "btn btn-sm " + (vistaPaneles === m ? "btn-primary" : "btn-outline-secondary");
+    });
+  }
+
+  function cambiarAltura(delta) {
+    alturaGrafica = Math.max(220, Math.min(580, alturaGrafica + delta));
+    try { localStorage.setItem("alturaGrafica", String(alturaGrafica)); } catch (err) {}
+    aplicarAltura();
+  }
+
+  function aplicarAltura() {
+    const cont = document.querySelector("#colGraficaPrincipal .chart-container");
+    if (cont) cont.style.height = alturaGrafica + "px";
+    const lista = document.querySelector("#colTotales .table-responsive");
+    if (lista) lista.style.maxHeight = alturaGrafica + "px";
+    if (chartsResumen.length) chartsResumen.forEach(c => c.resize());
+    if (sunburstInstancia) sunburstInstancia.resize();
+  }
+
+  function cambiarTamanoGrafica(delta) {
+    tamanoGrafica = Math.max(8, Math.min(18, tamanoGrafica + delta));
+    try { localStorage.setItem("tamanoGrafica", String(tamanoGrafica)); } catch (err) {}
+    pintarResumenPanel();
+  }
+
+  function cambiarTamanoLista(delta) {
+    tamanoLista = Math.max(9, Math.min(18, tamanoLista + delta));
+    try { localStorage.setItem("tamanoLista", String(tamanoLista)); } catch (err) {}
+    const tabla = document.getElementById("tablaTotales");
+    if (tabla) tabla.style.fontSize = tamanoLista + "px";
+  }
+
+  // Elige blanco o gris oscuro segun el fondo de la rebanada
+  function colorTextoContraste(fondo) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(String(fondo || ""));
+    if (!m) return "#ffffff";
+    const n = parseInt(m[1], 16);
+    const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    const luz = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luz > 0.62 ? "#1f2937" : "#ffffff";
+  }
+
+  // Dibuja el valor de cada barra, rebanada o punto (incluidas las apiladas)
+  const pluginValores = {
+    id: "valores",
+    afterDatasetsDraw(chart) {
+      const tipo = chart.config.type;
+      if (["bar", "pie", "doughnut", "line"].indexOf(tipo) === -1) return;
+      const ctx = chart.ctx;
+      const pct = !!(chart.data.datasets[0] && chart.data.datasets[0]._pct);
+      const formato = v => pct ? Number(v).toFixed(1) + "%" : String(v);
+      const horizontal = chart.options.indexAxis === "y";
+      const sc = chart.options.scales || {};
+      const apilada = !!((sc.x && sc.x.stacked) || (sc.y && sc.y.stacked));
+      ctx.save();
+      ctx.font = "600 " + Math.max(9, tamanoGrafica - 1) + "px 'Segoe UI', sans-serif";
+
+      chart.data.datasets.forEach((ds, di) => {
+        const meta = chart.getDatasetMeta(di);
+        if (!meta || !meta.data) return;
+        meta.data.forEach((el, i) => {
+          const valor = ds.data[i];
+          if (valor == null || Number(valor) === 0) return;
+
+          if (tipo === "pie" || tipo === "doughnut") {
+            const ang = (el.endAngle || 0) - (el.startAngle || 0);
+            if (ang < 0.18) return;
+            const radio = tipo === "doughnut" ? ((el.innerRadius + el.outerRadius) / 2) : el.outerRadius * 0.62;
+            const medio = (el.startAngle + el.endAngle) / 2;
+            const color = Array.isArray(ds.backgroundColor) ? ds.backgroundColor[i] : ds.backgroundColor;
+            ctx.fillStyle = colorTextoContraste(color);
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(formato(valor), el.x + Math.cos(medio) * radio, el.y + Math.sin(medio) * radio);
+            return;
+          }
+
+          if (tipo === "line") {
+            ctx.fillStyle = "#334155";
+            ctx.textAlign = i === 0 ? "left" : (i === meta.data.length - 1 ? "right" : "center");
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formato(valor), el.x, el.y - 8);
+            return;
+          }
+
+          if (apilada) {
+            const alto = Math.abs((el.base || 0) - (el.y || 0));
+            const ancho = Math.abs((el.base || 0) - (el.x || 0));
+            if (horizontal && ancho < 18) return;
+            if (!horizontal && alto < 14) return;
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            if (horizontal) ctx.fillText(formato(valor), ((el.base || 0) + el.x) / 2, el.y);
+            else ctx.fillText(formato(valor), el.x, ((el.base || 0) + el.y) / 2);
+            return;
+          }
+
+          ctx.fillStyle = "#334155";
+          if (horizontal) {
+            ctx.textAlign = "left";
+            ctx.textBaseline = "middle";
+            ctx.fillText(formato(valor), el.x + 6, el.y);
+          } else {
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formato(valor), el.x, el.y - 6);
+          }
+        });
+      });
+      ctx.restore();
+    }
+  };
+
+  function dimensionDe(id) {
+    const dim = dimensionesDisponibles().filter(d => d.id === id)[0];
+    if (dim) {
+      return {
+        id: dim.id,
+        etiqueta: dim.etiqueta,
+        opciones: dim.opciones || [],
+        padre: dim.padre || "",
+        opcionesPorPadre: dim.opcionesPorPadre || null
+      };
+    }
+    return preguntasVisibles().find(p => p.id === id);
+  }
+
+  function valorDe(fila, id) {
+    const r = fila.respuestas || {};
+    if (id === "origen") return fila.origen || "Real";
+    if (id === "turno") return r.turno || "";
+    if (id === "grado") return String(r.grupo || "").charAt(0);
+    if (id === "grupo") return r.grupo || "";
+    return r[id];
+  }
+
+  // Datasets de una barra apilada: una serie por cada valor de "Segmentar por"
+  function construirApilada(filas, labels, dimId, segId, usarPct, baseTotal, totalN) {
+    const dim = dimensionDe(dimId);
+    const esMultiple = !!(dim && dim.tipo === "multiple");
+    const matriz = {};
+    labels.forEach(l => { matriz[l] = {}; });
+
+    filas.forEach(f => {
+      const bruto = valorDe(f, dimId);
+      if (bruto == null || bruto === "") return;
+      const cats = esMultiple ? String(bruto).split(";").map(s => s.trim()).filter(Boolean) : [String(bruto)];
+      const seg = String(valorDe(f, segId) || "");
+      if (!seg) return;
+      cats.forEach(cat => {
+        if (!matriz[cat]) return;
+        matriz[cat][seg] = (matriz[cat][seg] || 0) + 1;
+      });
+    });
+
+    const segDim = dimensionDe(segId);
+    const presentes = [];
+    ((segDim && segDim.opciones) || []).forEach(s => {
+      if (labels.some(l => matriz[l][s])) presentes.push(s);
+    });
+    Object.keys(matriz).forEach(l => Object.keys(matriz[l]).forEach(s => {
+      if (presentes.indexOf(s) === -1) presentes.push(s);
+    }));
+
+    const totalPorCat = {};
+    labels.forEach(l => {
+      totalPorCat[l] = Object.keys(matriz[l]).reduce((a, k) => a + matriz[l][k], 0);
+    });
+
+    const datasets = presentes.map(seg => ({
+      label: seg,
+      data: labels.map(l => {
+        const n = matriz[l][seg] || 0;
+        if (!usarPct) return n;
+        const base = baseTotal === "total" ? (totalN || 1) : (totalPorCat[l] || 1);
+        return Number(((n / base) * 100).toFixed(1));
+      }),
+      backgroundColor: colorDimension(segId, seg),
+      borderColor: "#ffffff",
+      borderWidth: 1,
+      _pct: usarPct
+    }));
+
+    return { labels: labels, datasets: datasets };
+  }
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  // FORMULARIO PÚBLICO
+  function cargarFormulario() {
+    google.script.run
+      .withSuccessHandler(f => {
+        FORM = f || { config: {}, preguntas: [] };
+        const c = FORM.config || {};
+        document.getElementById("tituloEscuela").textContent = c.escuela || "Encuesta";
+        document.getElementById("subtituloEscuela").textContent = c.subtitulo || "";
+        document.getElementById("tituloFormulario").textContent = c.titulo || "";
+        renderFormulario();
+      })
+      .withFailureHandler(err => alert("Error al cargar formulario: " + err.message))
+      .obtenerFormulario();
+  }
+
+  function renderFormulario() {
+    const c = FORM.config || {};
+    document.getElementById("introduccion").textContent = c.introduccion || "";
+    document.getElementById("nota").textContent = c.nota || "";
+    document.getElementById("textoBoton").textContent = c.boton || "Enviar Encuesta";
+    document.getElementById("exitoTitulo").textContent = c.exitoTitulo || "Registro guardado";
+    document.getElementById("textoOtro").textContent = c.otroBoton || "Registrar otra respuesta";
+
+    const cont = document.getElementById("campos");
+    if (!cont) return;
+    cont.innerHTML = "";
+    (FORM.preguntas || []).forEach(p => cont.appendChild(crearCampo(p)));
+    aplicarDependenciasFormulario();
+  }
+
+  function crearCampo(p) {
+    const wrap = document.createElement("div");
+    wrap.className = "mb-3";
+    wrap.setAttribute("data-id", p.id);
+    const label = document.createElement("label");
+    label.className = "form-label fw-semibold";
+    label.setAttribute("for", "campo_" + p.id);
+    label.textContent = p.etiqueta + (p.obligatoria ? " *" : "");
+    wrap.appendChild(label);
+
+    if (p.ayuda) {
+      const ayuda = document.createElement("div");
+      ayuda.className = "form-text mb-1";
+      ayuda.textContent = p.ayuda;
+      wrap.appendChild(ayuda);
+    }
+
+    const extra = p.extra || {};
+    let control;
+
+    if (p.tipo === "parrafo") {
+      control = document.createElement("textarea");
+      control.className = "form-control";
+      control.id = "campo_" + p.id;
+      control.rows = 3;
+      control.placeholder = p.placeholder || "";
+      if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
+    } else if (p.tipo === "unica" || p.tipo === "sino") {
+      control = document.createElement("select");
+      control.className = "form-select";
+      control.id = "campo_" + p.id;
+      const vacia = document.createElement("option");
+      vacia.value = "";
+      vacia.disabled = true;
+      vacia.selected = true;
+      vacia.textContent = "-- Selecciona una opción --";
+      control.appendChild(vacia);
+      const opciones = p.tipo === "sino" ? ["Sí", "No"] : (p.opciones || []);
+      opciones.forEach(o => {
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        control.appendChild(op);
+      });
+    } else if (p.tipo === "multiple") {
+      control = document.createElement("div");
+      control.className = "d-flex flex-column gap-1";
+      control.id = "campo_" + p.id;
+      (p.opciones || []).forEach((o, i) => {
+        const id = "campo_" + p.id + "_" + i;
+        const div = document.createElement("div");
+        div.className = "form-check";
+        const input = document.createElement("input");
+        input.className = "form-check-input";
+        input.type = "checkbox";
+        input.id = id;
+        input.value = o;
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.setAttribute("for", id);
+        lab.textContent = o;
+        div.appendChild(input);
+        div.appendChild(lab);
+        control.appendChild(div);
+      });
+    } else if (p.tipo === "escala") {
+      control = document.createElement("div");
+      control.className = "d-flex flex-wrap gap-3 align-items-center";
+      control.id = "campo_" + p.id;
+      const min = Number(extra.escalaMin || 1);
+      const max = Number(extra.escalaMax || 5);
+      for (let n = min; n <= max; n++) {
+        const div = document.createElement("div");
+        div.className = "form-check";
+        const input = document.createElement("input");
+        input.className = "form-check-input";
+        input.type = "radio";
+        input.name = "campo_" + p.id;
+        input.id = "campo_" + p.id + "_" + n;
+        input.value = String(n);
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.setAttribute("for", input.id);
+        lab.textContent = String(n);
+        div.appendChild(input);
+        div.appendChild(lab);
+        control.appendChild(div);
+      }
+    } else {
+      control = document.createElement("input");
+      control.type = p.tipo === "numero" ? "number" : (p.tipo === "fecha" ? "date" : "text");
+      control.className = "form-control";
+      control.id = "campo_" + p.id;
+      control.placeholder = p.placeholder || "";
+      if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
+    }
+    wrap.appendChild(control);
+    return wrap;
+  }
+
+  // Cascada genérica del formulario público: cualquier pregunta con extra.padre
+  function aplicarDependenciasFormulario() {
+    (FORM.preguntas || []).forEach(p => {
+      // Compatibilidad: si es `grupo` sin padre declarado, depende de `turno`
+      const padre = (p.extra && p.extra.padre) || (p.id === "grupo" ? "turno" : "");
+      if (!padre) return;
+      const selPadre = document.getElementById("campo_" + padre);
+      const selHijo = document.getElementById("campo_" + p.id);
+      if (!selPadre || !selHijo) return;
+
+      const actualizar = () => {
+        const valor = selPadre.value;
+        const opciones = opcionesDependientes(p, valor);
+        selHijo.innerHTML = '<option value="" disabled selected>-- Selecciona --</option>';
+        opciones.forEach(op => {
+          const o = document.createElement("option");
+          o.value = op;
+          o.textContent = op;
+          selHijo.appendChild(o);
+        });
+        selHijo.disabled = !valor || !opciones.length;
+      };
+
+      selPadre.addEventListener("change", actualizar);
+      actualizar();
+    });
+    aplicarCondiciones();
+  }
+
+  function aplicarCondiciones() {
+    (FORM.preguntas || []).forEach(p => {
+      const c = p.extra && p.extra.condicion;
+      if (!c || !c.pregunta) return;
+      const wrap = document.querySelector('[data-id="' + p.id + '"]');
+      if (!wrap) return;
+      const ref = document.getElementById("campo_" + c.pregunta);
+      const val = ref ? ref.value : "";
+      let visible = true;
+      if (c.operador === "igual") visible = String(val) === String(c.valor);
+      else if (c.operador === "distinto") visible = String(val) !== String(c.valor);
+      else if (c.operador === "vacio") visible = val === "";
+      else if (c.operador === "no_vacio") visible = val !== "";
+      wrap.classList.toggle("d-none", !visible);
+      const control = wrap.querySelector("select, input, textarea");
+      if (control) {
+        control.required = visible && !!p.obligatoria;
+        if (!visible) control.value = "";
+      }
+    });
+  }
+
+  function enviar(e) {
+    e.preventDefault();
+    const respuestas = {};
+    const faltan = [];
+    (FORM.preguntas || []).forEach(p => {
+      const wrap = document.querySelector('[data-id="' + p.id + '"]');
+      const oculto = wrap && wrap.classList.contains("d-none");
+      let valor = "";
+      if (p.tipo === "multiple") {
+        valor = Array.from(document.querySelectorAll("#campo_" + p.id + " input:checked")).map(i => i.value);
+      } else if (p.tipo === "escala") {
+        const check = document.querySelector("#campo_" + p.id + " input:checked");
+        valor = check ? check.value : "";
+      } else {
+        const el = document.getElementById("campo_" + p.id);
+        valor = el ? el.value : "";
+      }
+      respuestas[p.id] = valor;
+      const vacio = p.tipo === "multiple" ? valor.length === 0 : String(valor).trim() === "";
+      if (p.obligatoria && vacio && !oculto) faltan.push(p.etiqueta);
+    });
+
+    if (faltan.length) {
+      const caja = document.getElementById("errorForm");
+      caja.textContent = "Falta responder: " + faltan.join(", ") + ".";
+      caja.classList.remove("d-none");
+      return;
+    }
+
+    const btn = document.getElementById("btnEnviar");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill"></i> ' + (FORM.config.boton || "Enviar");
+        if (res && res.exito) {
+          const pNombre = preguntaCategoria("nombre");
+          let nombre = pNombre ? String(respuestas[pNombre.id] || "").trim() : "";
+          if (!nombre) nombre = Object.keys(respuestas).map(k => respuestas[k]).find(v => typeof v === "string" && v.trim() !== "") || "";
+          document.getElementById("exitoTexto").textContent = (FORM.config.exitoTexto || "").replace("{nombre}", nombre);
+          document.getElementById("formDinamico").classList.add("d-none");
+          document.getElementById("panelExito").classList.remove("d-none");
+        } else {
+          alert("Error: " + (res.mensaje || "No se pudo guardar"));
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error de conexión: " + err.message);
+      })
+      .guardarRespuestaFormulario({ respuestas: respuestas });
+  }
+
+  function otraRespuesta() {
+    document.getElementById("formDinamico").reset();
+    aplicarDependenciasFormulario();
+    document.getElementById("formDinamico").classList.remove("d-none");
+    document.getElementById("panelExito").classList.add("d-none");
+    document.getElementById("errorForm").classList.add("d-none");
+  }
+
+  // AUTENTICACIÓN Y DASHBOARD
+  function entrar(e) {
+    e.preventDefault();
+    const usuario = document.getElementById("adminUser").value.trim();
+    const pass = document.getElementById("adminPass").value.trim();
+    const btn = document.getElementById("btnLogin");
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.autenticado) {
+          creds = { usuario: usuario, pass: pass };
+          document.getElementById("loginCard").classList.add("d-none");
+          document.getElementById("constructor").classList.remove("d-none");
+          cargarRespuestas();
+        } else {
+          document.getElementById("errorLogin").textContent = "Usuario o contraseña incorrectos.";
+          document.getElementById("errorLogin").classList.remove("d-none");
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error: " + err.message);
+      })
+      .verificarAdmin({ usuario: usuario, pass: pass });
+  }
+
+  function salirAdmin() {
+    creds = null;
+    RESPUESTAS = null;
+    document.getElementById("constructor").classList.add("d-none");
+    document.getElementById("loginCard").classList.remove("d-none");
+  }
+
+  function cargarRespuestas() {
+    if (!creds) return;
+    google.script.run
+      .withSuccessHandler(res => {
+        if (res && res.autenticado) {
+          RESPUESTAS = res;
+          sembrarColores(res.filas, res.preguntas);
+          pintarMenusFiltro();
+          pintarResumenPanel();
+          pintarTablaRespuestas();
+          aplicarAltura();
+        }
+      })
+      .obtenerRespuestasFormulario(creds);
+  }
+
+  // GESTIÓN DE FILTROS Y DIMENSIONES
+  function pintarMenusFiltro() {
+    renderMenuDesdeSelect("ordenGrafica", "menuOrden");
+    pintarDimensiones();
+    pintarSelectorPregunta();
+    refrescarSegmentos();
+    pintarFiltrosDinamicos();
+    actualizarBotonesFiltro();
+  }
+
+  function renderMenuDesdeSelect(idSelect, idMenu) {
+    const sel = document.getElementById(idSelect);
+    const menu = document.getElementById(idMenu);
+    if (!sel || !menu) return;
+    menu.innerHTML = "";
+    Array.from(sel.options).forEach(op => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "dropdown-item" + (op.value === sel.value ? " active" : "");
+      btn.textContent = op.textContent;
+      btn.addEventListener("click", () => {
+        sel.value = op.value;
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+        renderMenuDesdeSelect(idSelect, idMenu);
+        actualizarBotonesFiltro();
+      });
+      li.appendChild(btn);
+      menu.appendChild(li);
+    });
+  }
+
+  function actualizarBotonesFiltro() {
+    const selOrden = document.getElementById("ordenGrafica");
+    const btnOrden = document.getElementById("btn-filtroOrden");
+    if (selOrden && btnOrden) {
+      const texto = selOrden.options[selOrden.selectedIndex] ? selOrden.options[selOrden.selectedIndex].textContent : selOrden.value;
+      btnOrden.title = "Orden: " + texto;
+      btnOrden.setAttribute("aria-label", btnOrden.title);
+      const activo = selOrden.value !== "none";
+      btnOrden.classList.toggle("btn-outline-primary", activo);
+      btnOrden.classList.toggle("btn-outline-secondary", !activo);
+    }
+
+    // Contador de filtros activos en el botón único
+    let filtrosActivos = 0;
+    (FILTROS_DINAMICOS || []).forEach(f => {
+      const s = document.getElementById("filtro_" + f.id);
+      if (s && s.value !== "TODOS") filtrosActivos++;
+    });
+    const badgeF = document.getElementById("badgeFiltrosDinamicos");
+    const btnF = document.getElementById("btnFiltrosDinamicos");
+    if (badgeF) {
+      badgeF.textContent = String(filtrosActivos);
+      badgeF.classList.toggle("d-none", filtrosActivos === 0);
+    }
+    if (btnF) {
+      btnF.classList.toggle("btn-outline-primary", filtrosActivos > 0);
+      btnF.classList.toggle("btn-outline-secondary", filtrosActivos === 0);
+      btnF.title = filtrosActivos > 0 ? "Filtros por pregunta: " + filtrosActivos + " activo(s)" : "Filtros por pregunta";
+      btnF.setAttribute("aria-label", btnF.title);
+    }
+  }
+
+  // ========================================================
+  // Dimensiones de segmentación (jerarquía universal)
+  // ========================================================
+  const IDS_DIMENSION_LEGADO = ["turno", "grupo"];
+
+  function esDimensionPregunta(p) {
+    if (!p) return false;
+    if (p.extra && p.extra.esDimension === true) return true;
+    return IDS_DIMENSION_LEGADO.indexOf(p.id) !== -1;
+  }
+
+  function mapaGruposLegado() {
+    const crudo = (RESPUESTAS && RESPUESTAS.config && RESPUESTAS.config.gruposPorTurno) ||
+                  (FORM.config && FORM.config.gruposPorTurno) || "{}";
+    try {
+      const mapa = JSON.parse(crudo);
+      return (mapa && typeof mapa === "object") ? mapa : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Lista de dimensiones disponibles: preguntas marcadas + derivadas + origen
+  function dimensionesDisponibles() {
+    const preguntas = preguntasVisibles();
+    const lista = [];
+    preguntas.forEach(p => {
+      if (!esDimensionPregunta(p)) return;
+      const extra = p.extra || {};
+      // Compatibilidad: encuestas antiguas no tienen extra.padre en `grupo`
+      const padre = extra.padre || (p.id === "grupo" ? "turno" : "");
+      lista.push({
+        id: p.id,
+        etiqueta: p.etiqueta,
+        opciones: p.opciones || [],
+        padre: padre,
+        opcionesPorPadre: extra.opcionesPorPadre || null
+      });
+    });
+    // Grado derivado: solo para encuestas que siguen usando `grupo`
+    if (preguntas.some(p => p.id === "grupo") && !lista.some(d => d.id === "grado")) {
+      lista.push({ id: "grado", etiqueta: "Grado", opciones: ["1", "2", "3"], padre: "", opcionesPorPadre: null, derivada: true });
+    }
+    if (!lista.some(d => d.id === "origen")) {
+      lista.push({ id: "origen", etiqueta: "Origen", opciones: ["Real", "Simulado"], padre: "", opcionesPorPadre: null, virtual: true });
+    }
+    return lista;
+  }
+
+  // Filtros fijos de la barra, en este orden: Turno, Grado, Grupo
+  const ORDEN_BARRA = ["turno", "grado", "grupo"];
+  function dimensionesBarra() {
+    const todas = dimensionesDisponibles();
+    return ORDEN_BARRA.map(id => todas.filter(d => d.id === id)[0]).filter(Boolean);
+  }
+
+  // Opciones de una dimensión según el valor del padre
+  function opcionesDeDimension(dim, valorPadre) {
+    if (!dim) return [];
+    if (dim.opcionesPorPadre && valorPadre && dim.opcionesPorPadre[valorPadre]) {
+      return dim.opcionesPorPadre[valorPadre].slice();
+    }
+    if (dim.id === "grupo" && valorPadre) {
+      const mapa = mapaGruposLegado();
+      if (mapa[valorPadre]) return mapa[valorPadre].slice();
+    }
+    return (dim.opciones || []).slice();
+  }
+
+  // Si el padre cambia, los hijos con valor inválido vuelven a "Todos"
+  function ajustarCascada() {
+    dimensionesBarra().forEach(d => {
+      if (!d.padre) return;
+      const valorPadre = FILTROS[d.padre] || "TODOS";
+      if (valorPadre === "TODOS") { FILTROS[d.id] = "TODOS"; return; }
+      const opciones = opcionesDeDimension(d, valorPadre);
+      const actual = FILTROS[d.id];
+      if (actual && actual !== "TODOS" && opciones.indexOf(actual) === -1) FILTROS[d.id] = "TODOS";
+    });
+  }
+
+  const ICONOS_DIMENSION = { turno: "bi-people", grado: "bi-123", grupo: "bi-grid-3x3-gap", origen: "bi-database" };
+
+  // Barra: un botón por dimensión, con su menú de valores
+  function pintarDimensiones() {
+    const cont = document.getElementById("filtrosDimensiones");
+    if (!cont) return;
+    cont.innerHTML = "";
+    ajustarCascada();
+
+    dimensionesBarra().forEach(d => {
+      const valor = FILTROS[d.id] || "TODOS";
+      const valorPadre = d.padre ? (FILTROS[d.padre] || "TODOS") : null;
+      const bloqueado = !!(d.padre && valorPadre === "TODOS");
+      const opciones = bloqueado ? [] : opcionesDeDimension(d, valorPadre);
+      const activo = valor !== "TODOS";
+
+      const wrap = document.createElement("div");
+      wrap.className = "dropdown";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-sm " + (activo ? "btn-outline-primary" : "btn-outline-secondary");
+      btn.setAttribute("data-bs-toggle", "dropdown");
+      btn.setAttribute("aria-expanded", "false");
+      const icono = ICONOS_DIMENSION[d.id] || "bi-funnel";
+      btn.innerHTML = '<i class="bi ' + icono + '"></i>';
+      btn.title = d.etiqueta + ": " + (activo ? valor : "Todos");
+      btn.setAttribute("aria-label", btn.title);
+
+      const menu = document.createElement("ul");
+      menu.className = "dropdown-menu";
+
+      const liTodos = document.createElement("li");
+      const bTodos = document.createElement("button");
+      bTodos.type = "button";
+      bTodos.className = "dropdown-item" + (valor === "TODOS" ? " active" : "");
+      bTodos.textContent = "Todos";
+      bTodos.addEventListener("click", () => {
+        FILTROS[d.id] = "TODOS";
+        pintarMenusFiltro();
+        aplicarFiltrosYGraficar();
+      });
+      liTodos.appendChild(bTodos);
+      menu.appendChild(liTodos);
+
+      if (bloqueado) {
+        const aviso = document.createElement("li");
+        aviso.className = "dropdown-header";
+        aviso.textContent = "Elige antes otra dimensión";
+        menu.appendChild(aviso);
+      } else {
+        opciones.forEach(op => {
+          const li = document.createElement("li");
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "dropdown-item" + (valor === op ? " active" : "");
+          b.textContent = op;
+          b.addEventListener("click", () => {
+            FILTROS[d.id] = op;
+            pintarMenusFiltro();
+            aplicarFiltrosYGraficar();
+          });
+          li.appendChild(b);
+          menu.appendChild(li);
+        });
+      }
+
+      wrap.appendChild(btn);
+      wrap.appendChild(menu);
+      cont.appendChild(wrap);
+    });
+  }
+
+  // Dimensiones con las que se puede dividir una gráfica apilada
+  function opcionesDivision() {
+    return dimensionesBarra().map(d => ({ id: d.id, etiqueta: d.etiqueta }));
+  }
+
+  // Rol analítico efectivo: usa extra.rol y, si no existe, lo infiere (datos previos a la v48)
+  function rolAnalitico(p) {
+    const e = (p && p.extra) || {};
+    if (e.rol) return e.rol;
+    if (e.padre || e.esDimension === true) return "dimension";
+    if (p.tipo === "texto" || p.tipo === "parrafo") return "identidad";
+    return "metrica";
+  }
+
+  // Una pregunta se ofrece para graficar si su rol no es identidad y no está desmarcada
+  function esGraficable(p) {
+    if (!p) return false;
+    if (rolAnalitico(p) === "identidad") return false;
+    const g = p.extra && p.extra.graficable;
+    return typeof g === "boolean" ? g : true;
+  }
+
+  // Preguntas del esquema que el panel puede graficar, en su orden
+  function preguntasGraficables() {
+    return preguntasVisibles()
+      .filter(esGraficable)
+      .sort((a, b) => (a.orden || 0) - (b.orden || 0));
+  }
+
+  // El título de la tarjeta es el selector: al elegir una pregunta se grafican sus opciones
+  function pintarSelectorPregunta() {
+    const sel = document.getElementById("dimensionGrafica");
+    const menu = document.getElementById("menuPreguntaGrafica");
+    if (!sel) return;
+    const preguntas = preguntasGraficables();
+    const actual = (sel.value && preguntas.some(p => p.id === sel.value)) ? sel.value : (preguntas[0] ? preguntas[0].id : "");
+    sel.innerHTML = preguntas.map(p => '<option value="' + p.id + '">' + esc(p.etiqueta) + '</option>').join("");
+    if (actual) sel.value = actual;
+    if (!menu) return;
+
+    if (!preguntas.length) {
+      menu.innerHTML = '<li><div class="px-3 py-2 small text-muted">No hay preguntas graficables. Marca «¿Permitir graficar en el panel?» al editar una pregunta.</div></li>';
+      return;
+    }
+
+    const item = (p) => {
+      const activo = p.id === actual;
+      return '<li><button type="button" class="dropdown-item d-flex justify-content-between align-items-center gap-2' + (activo ? ' active' : '') + '" data-pregunta="' + esc(p.id) + '">' +
+        '<span class="text-truncate">' + esc(p.etiqueta) + '</span>' +
+        (activo ? '<i class="bi bi-check2"></i>' : '') + '</button></li>';
+    };
+    const dims = preguntas.filter(p => rolAnalitico(p) === "dimension");
+    const mets = preguntas.filter(p => rolAnalitico(p) !== "dimension");
+    const partes = [];
+    if (dims.length) partes.push('<li><h6 class="dropdown-header">Dimensiones (Eje X)</h6></li>' + dims.map(item).join(""));
+    if (mets.length) partes.push('<li><h6 class="dropdown-header">Métricas (Eje Y)</h6></li>' + mets.map(item).join(""));
+    menu.innerHTML = partes.join('<li><hr class="dropdown-divider"></li>');
+
+    menu.querySelectorAll("button[data-pregunta]").forEach(b => {
+      b.addEventListener("click", () => {
+        sel.value = b.dataset.pregunta;
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+        pintarSelectorPregunta();
+        aplicarFiltrosYGraficar();
+      });
+    });
+  }
+
+  // "División": solo se usa en barras apiladas y rayos solares
+  function refrescarSegmentos() {
+    const selSeg = document.getElementById("segmentoGrafica");
+    if (!selSeg) return;
+    const prev = selSeg.value;
+    const lista = opcionesDivision();
+    selSeg.innerHTML = lista.map(o => '<option value="' + o.id + '">' + esc(o.etiqueta) + '</option>').join("");
+    if (prev && lista.some(o => o.id === prev)) selSeg.value = prev;
+    else if (lista.length) selSeg.value = lista[0].id;
+  }
+
+  // Un solo botón "Filtros": el menú contiene los 4 filtros base y una fila por pregunta de opción
+  // Menú de preguntas: solo filtros (los base tienen su propio icono en la barra)
+  function pintarFiltrosDinamicos() {
+    const cont = document.getElementById("filtrosPreguntas");
+    if (!cont) return;
+
+    const previos = {};
+    (FILTROS_DINAMICOS || []).forEach(f => {
+      const s = document.getElementById("filtro_" + f.id);
+      if (s) previos[f.id] = s.value;
+    });
+
+    cont.innerHTML = "";
+
+    // Las preguntas marcadas como dimensión viven en la barra, no en este menú
+    FILTROS_DINAMICOS = preguntasVisibles().filter(p =>
+      ["unica", "multiple", "sino", "escala"].includes(p.tipo) &&
+      !esDimensionPregunta(p) && p.id !== "grado"
+    );
+
+    if (!FILTROS_DINAMICOS.length) {
+      cont.innerHTML = '<div class="text-muted small p-2">Este formulario no tiene preguntas de opción.</div>';
+      actualizarBotonesFiltro();
+      return;
+    }
+
+    FILTROS_DINAMICOS.forEach(f => {
+      const fila = document.createElement("div");
+      fila.className = "filtro-fila";
+
+      const lbl = document.createElement("label");
+      lbl.className = "form-label small fw-semibold text-secondary mb-1 flex-grow-1 pregunta-etiqueta";
+      lbl.setAttribute("for", "filtro_" + f.id);
+      lbl.textContent = f.etiqueta;
+      lbl.title = f.etiqueta;
+
+      const sel = document.createElement("select");
+      sel.className = "form-select form-select-sm";
+      sel.id = "filtro_" + f.id;
+      const todas = document.createElement("option");
+      todas.value = "TODOS";
+      todas.textContent = "Todos (sin filtro)";
+      sel.appendChild(todas);
+      (f.opciones || []).forEach(o => {
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        sel.appendChild(op);
+      });
+      if (previos[f.id] && Array.prototype.some.call(sel.options, o => o.value === previos[f.id])) {
+        sel.value = previos[f.id];
+      }
+      sel.addEventListener("change", () => { aplicarFiltrosYGraficar(); });
+
+      fila.appendChild(lbl);
+      fila.appendChild(sel);
+      cont.appendChild(fila);
+    });
+
+    actualizarBotonesFiltro();
+  }
+
+  function renderMenuAjustes() {
+    const menu = document.getElementById("menuAjustesGrafica");
+    if (!menu) return;
+    refrescarSegmentos();
+    const grupos = [
+      { titulo: "Tipo de gráfica", icono: "bi-bar-chart", sel: document.getElementById("tipoGrafica") },
+      { titulo: "Valores", icono: "bi-123", sel: document.getElementById("valoresGrafica") },
+      { titulo: "Base porcentual", icono: "bi-percent", sel: document.getElementById("modoPorcentaje") }
+    ];
+    menu.innerHTML = grupos.map(g => {
+      if (!g.sel) return "";
+      const items = Array.from(g.sel.options).map(op => {
+        const activo = op.value === g.sel.value;
+        return `<li><button type="button" class="dropdown-item d-flex justify-content-between align-items-center ${activo ? "active" : ""}" data-sel="${g.sel.id}" data-val="${op.value}">
+          ${esc(op.textContent)} ${activo ? '<i class="bi bi-check2 ms-2"></i>' : ""}
+        </button></li>`;
+      }).join("");
+      return `<li><h6 class="dropdown-header"><i class="bi ${g.icono} me-1"></i>${g.titulo}</h6></li>${items}<li><hr class="dropdown-divider"></li>`;
+    }).join("");
+
+    menu.querySelectorAll("button[data-sel]").forEach(b => {
+      b.addEventListener("click", () => {
+        const s = document.getElementById(b.dataset.sel);
+        s.value = b.dataset.val;
+        s.dispatchEvent(new Event("change", { bubbles: true }));
+        renderMenuAjustes();
+      });
+    });
+
+    // División: solo aparece en barras apiladas y rayos solares
+    const tipoSel = document.getElementById("tipoGrafica");
+    const sSel = document.getElementById("segmentoGrafica");
+    const requiereDivision = !!(tipoSel && sSel && ["stacked", "stackedVertical"].indexOf(tipoSel.value) !== -1);
+    if (requiereDivision) {
+      const li = document.createElement("li");
+      const cab = document.createElement("h6");
+      cab.className = "dropdown-header";
+      cab.innerHTML = '<i class="bi bi-pie-chart me-1"></i>División de las barras';
+      const cont = document.createElement("div");
+      cont.className = "px-2 pb-2";
+      const sel = document.createElement("select");
+      sel.className = "form-select form-select-sm";
+      opcionesDivision().forEach(o => {
+        const op = document.createElement("option");
+        op.value = o.id;
+        op.textContent = o.etiqueta;
+        if (o.id === sSel.value) op.selected = true;
+        sel.appendChild(op);
+      });
+      sel.addEventListener("change", () => {
+        sSel.value = sel.value;
+        sSel.dispatchEvent(new Event("change", { bubbles: true }));
+        renderMenuAjustes();
+      });
+      cont.appendChild(sel);
+      li.appendChild(cab);
+      li.appendChild(cont);
+      menu.appendChild(li);
+    }
+  }
+
+  function limpiarFiltros() {
+    FILTROS = {};
+    (FILTROS_DINAMICOS || []).forEach(f => {
+      const s = document.getElementById("filtro_" + f.id);
+      if (s) s.value = "TODOS";
+    });
+    pintarMenusFiltro();
+    aplicarFiltrosYGraficar();
+  }
+
+  function aplicarFiltrosYGraficar() {
+    renderMenuAjustes();
+    pintarResumenPanel();
+    pintarTablaRespuestas();
+    actualizarBotonesFiltro();
+  }
+
+  function filasFiltradas() {
+    const activas = dimensionesBarra().filter(d => FILTROS[d.id] && FILTROS[d.id] !== "TODOS");
+    return ((RESPUESTAS && RESPUESTAS.filas) || []).filter(f => {
+      for (const d of activas) {
+        if (String(valorDe(f, d.id) || "") !== FILTROS[d.id]) return false;
+      }
+      for (const fld of FILTROS_DINAMICOS) {
+        const s = document.getElementById("filtro_" + fld.id);
+        if (s && s.value !== "TODOS" && String((f.respuestas || {})[fld.id] || "") !== s.value) return false;
+      }
+      return true;
+    });
+  }
+
+  // RENDERIZADO DE GRÁFICAS Y RESUMEN
+
+  // Barras horizontales (bar, stacked) usan el eje Y como eje de categorías
+  function ejeCartesiano(tipoGrafica) {
+    return (tipoGrafica === "bar" || tipoGrafica === "stacked") ? "y" : "x";
+  }
+
+  function pintarResumenPanel() {
+    chartsResumen.forEach(c => c.destroy());
+    chartsResumen = [];
+    if (sunburstInstancia) { sunburstInstancia.dispose(); sunburstInstancia = null; }
+
+    const filas = filasFiltradas();
+    const totalN = filas.length;
+    document.getElementById("badgeGrafica1").textContent = `${totalN} respuestas`;
+    document.getElementById("resumenFiltros").textContent = `Mostrando ${totalN} de ${((RESPUESTAS && RESPUESTAS.filas) || []).length} registros`;
+
+    const barra = dimensionesBarra().map(d => d.id);
+    const graficables = preguntasGraficables();
+    const dimId = document.getElementById("dimensionGrafica").value
+      || (graficables[0] ? graficables[0].id : "")
+      || barra[0]
+      || "origen";
+    const dim = dimensionDe(dimId);
+
+    if (!dim) return;
+
+    document.getElementById("tituloGrafica1").textContent = dim.etiqueta;
+    document.getElementById("tituloTotales").textContent = "Totales por " + dim.etiqueta;
+
+    const tipo = document.getElementById("tipoGrafica").value;
+    const modoVal = document.getElementById("valoresGrafica").value;
+    const modoPct = document.getElementById("modoPorcentaje").value;
+    const orden = document.getElementById("ordenGrafica").value;
+
+    // Resumen estadístico
+    // Segmentación de la tabla y de la gráfica apilada (la misma)
+    const selSegTabla = document.getElementById("segmentoGrafica");
+    let segId = selSegTabla ? selSegTabla.value : "turno";
+    if (barra.indexOf(segId) === -1) segId = barra[0] || "turno";
+    if (segId === dim.id) segId = barra.filter(id => id !== dim.id)[0] || "origen";
+
+    const conteo = {};
+    const matriz = {};
+    const esMultiple = !!(dim.tipo === "multiple");
+    filas.forEach(f => {
+      const bruto = valorDe(f, dim.id);
+      if (bruto == null || bruto === "") return;
+      const valores = esMultiple ? String(bruto).split(";").map(s => s.trim()).filter(Boolean) : [String(bruto)];
+      valores.forEach(v => {
+        conteo[v] = (conteo[v] || 0) + 1;
+        if (!matriz[v]) matriz[v] = {};
+        const seg = String(valorDe(f, segId) || "Sin dato");
+        matriz[v][seg] = (matriz[v][seg] || 0) + 1;
+      });
+    });
+    // En opción múltiple un registro cuenta varias veces: el 100 % es la suma de conteos
+    const sumaConteos = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0);
+    const basePct = (esMultiple && sumaConteos > 0) ? sumaConteos : totalN;
+
+    let pares = Object.keys(conteo).map(k => ({
+      label: k, cantidad: conteo[k], segmentos: matriz[k] || {}
+    }));
+
+    if (orden === "desc") pares.sort((a, b) => b.cantidad - a.cantidad);
+    else if (orden === "asc") pares.sort((a, b) => a.cantidad - b.cantidad);
+
+    // Segmentos de la tabla: los mismos que los de la gráfica
+    const segDim = dimensionDe(segId);
+    const segmentos = [];
+    ((segDim && segDim.opciones) || []).forEach(s => {
+      if (Object.keys(matriz).some(k => matriz[k][s])) segmentos.push(s);
+    });
+    Object.keys(matriz).forEach(k => Object.keys(matriz[k]).forEach(s => {
+      if (segmentos.indexOf(s) === -1) segmentos.push(s);
+    }));
+
+    // Tabla de Totales (una columna por segmento, más Total, % y Acum.)
+    const theadFila = document.querySelector("#tablaTotales thead tr");
+    if (theadFila) {
+      theadFila.innerHTML = '<th>Categoría</th>' +
+        segmentos.map(s => '<th class="text-end">' + esc(s) + '</th>').join("") +
+        '<th class="text-end">Total</th>' +
+        '<th class="text-end">%</th>' +
+        '<th class="text-end">Acum.</th>';
+    }
+
+    const tbody = document.querySelector("#tablaTotales tbody");
+    tbody.innerHTML = "";
+    let acum = 0;
+    pares.forEach(p => {
+      const pct = basePct > 0 ? (p.cantidad / basePct) * 100 : 0;
+      acum += pct;
+      tbody.innerHTML += `
+        <tr>
+          <td><span class="d-inline-block rounded-circle me-2" style="width:.55rem;height:.55rem;background:${colorDimension(dim.id, p.label)}"></span>${esc(p.label)}</td>
+          ${segmentos.map(s => '<td class="text-end text-muted">' + ((p.segmentos && p.segmentos[s]) || 0) + '</td>').join("")}
+          <td class="text-end fw-bold">${p.cantidad}</td>
+          <td class="text-end text-muted">${pct.toFixed(1)}%</td>
+          <td class="text-end text-muted">${acum.toFixed(1)}%</td>
+        </tr>
+      `;
+    });
+
+    const canvas = document.getElementById("grafica1");
+    const contSun = document.getElementById("graficaSunburst");
+
+    if (tipo === "sunburst") {
+      canvas.classList.add("d-none");
+      contSun.classList.remove("d-none");
+      renderSunburstDirecto(filas, dim);
+      return;
+    }
+
+    canvas.classList.remove("d-none");
+    contSun.classList.add("d-none");
+
+    const ctx = canvas.getContext("2d");
+    const esApilada = tipo === "stacked" || tipo === "stackedVertical";
+    const esVert = tipo === "stackedVertical" || tipo === "barVertical";
+
+    if (esApilada) {
+      const usarPct = modoVal === "porcentaje";
+      const selSeg = document.getElementById("segmentoGrafica");
+      let segId = selSeg ? selSeg.value : "turno";
+      if (!segId || segId === dim.id) segId = (dim.id === "turno") ? "origen" : "turno";
+      const apilada = construirApilada(filas, pares.map(p => p.label), dim.id, segId, usarPct, modoPct, basePct);
+      const ejeValor = {
+        stacked: true, beginAtZero: true, max: usarPct ? 100 : undefined,
+        ticks: { precision: usarPct ? 1 : 0, callback: v => usarPct ? v + "%" : v }
+      };
+      const ejeCat = { stacked: true, grid: { display: false }, ticks: { autoSkip: false, font: { size: tamanoGrafica } } };
+      chartsResumen.push(new Chart(ctx, {
+        type: "bar",
+        data: { labels: apilada.labels, datasets: apilada.datasets },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: tamanoGrafica } } } },
+          scales: esVert ? { x: ejeCat, y: ejeValor } : { x: ejeValor, y: ejeCat }
+        }
+      }));
+    } else {
+      const datos = pares.map(p => modoVal === "porcentaje" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);
+      const colores = pares.map(p => colorDimension(dim.id, p.label));
+      chartsResumen.push(new Chart(ctx, {
+        type: tipo === "barVertical" ? "bar" : tipo,
+        data: {
+          labels: pares.map(p => p.label),
+          datasets: [{ data: datos, backgroundColor: colores, borderRadius: 5, _pct: modoVal === "porcentaje" }]
+        },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: tipo === "bar" ? { right: 40 } : { top: 20 } },
+          plugins: { legend: { display: tipo === "pie" || tipo === "doughnut" } }
+        }
+      }));
+    }
+  }
+
+  function renderSunburstDirecto(filas, dim) {
+    const cont = document.getElementById("graficaSunburst");
+    sunburstInstancia = echarts.init(cont);
+    const raiz = { name: "Total", children: [] };
+    filas.forEach(f => {
+      const ruta = [String(valorDe(f, "turno")), String(valorDe(f, dim.id))].filter(Boolean);
+      let act = raiz;
+      ruta.forEach(nodo => {
+        let n = act.children.find(c => c.name === nodo);
+        if (!n) { n = { name: nodo, value: 0, children: [] }; act.children.push(n); }
+        n.value++;
+        act = n;
+      });
+    });
+    sunburstInstancia.setOption({
+      series: [{
+        type: "sunburst",
+        data: raiz.children,
+        radius: ["12%", "92%"],
+        label: { rotate: "radial", fontSize: tamanoGrafica }
+      }]
+    });
+  }
+
+  // TABLA DE DATOS RESPONSIVA Y ORDENABLE AL VUELO
+  // "dd/MM/yyyy HH:mm" -> milisegundos (ordena cronologicamente, no como texto)
+  function valorFecha(texto) {
+    const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/.exec(String(texto || ""));
+    if (!m) return 0;
+    return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4]), Number(m[5])).getTime();
+  }
+
+  function pintarTablaRespuestas() {
+    const thead = document.querySelector("#tablaRespuestas thead");
+    const tbody = document.querySelector("#tablaRespuestas tbody");
+    if (!thead || !tbody) return;
+    const preguntas = preguntasVisibles();
+    const busqueda = (document.getElementById("buscadorTexto").value || "").toLowerCase().trim();
+    const campo = document.getElementById("tablaCampoOrden").value;
+    const dir = document.getElementById("tablaDireccionOrden").value;
+
+    thead.innerHTML = `<tr>
+      <th class="sortable" onclick="cambiarOrdenDesdeColumna('fecha')">Fecha / Hora ⬍</th>
+      <th class="sortable" onclick="cambiarOrdenDesdeColumna('origen')">Origen ⬍</th>
+      ${preguntas.map(p => `<th class="sortable" onclick="cambiarOrdenDesdeColumna('${p.id}')">${esc(p.etiqueta)} ⬍</th>`).join("")}
+    </tr>`;
+
+    let filas = filasFiltradas().filter(f => {
+      if (!busqueda) return true;
+      const texto = [f.fecha, f.origen].concat(preguntas.map(p => (f.respuestas || {})[p.id])).join(" ").toLowerCase();
+      return texto.includes(busqueda);
+    });
+
+    if (campo === "fecha") {
+      filas.sort((a, b) => {
+        const fa = valorFecha(a.fecha), fb = valorFecha(b.fecha);
+        return dir === "asc" ? fa - fb : fb - fa;
+      });
+    } else {
+      const dato = (f) => campo === "origen" ? f.origen : (f.respuestas || {})[campo];
+      filas.sort((a, b) => {
+        const va = dato(a), vb = dato(b);
+        const na = Number(va), nb = Number(vb);
+        const numericos = String(va).trim() !== "" && String(vb).trim() !== "" && !isNaN(na) && !isNaN(nb);
+        if (numericos) return dir === "asc" ? na - nb : nb - na;
+        return dir === "asc" ? String(va).localeCompare(String(vb), "es") : String(vb).localeCompare(String(va), "es");
+      });
+    }
+
+    tbody.innerHTML = filas.map(f => `
+      <tr>
+        <td>${esc(f.fecha)}</td>
+        <td><span class="badge ${f.origen === 'Simulado' ? 'bg-secondary' : 'bg-success'}">${esc(f.origen || 'Real')}</span></td>
+        ${preguntas.map(p => {
+          const val = (f.respuestas || {})[p.id] || "";
+          if (p.id === "turno") {
+            return `<td><span class="badge ${val === 'Matutino' ? 'bg-primary' : 'bg-warning text-dark'}">${esc(val)}</span></td>`;
+          }
+          return `<td>${esc(val)}</td>`;
+        }).join("")}
+      </tr>
+    `).join("");
+
+    document.getElementById("contadorRespuestas").textContent = `Mostrando ${filas.length} registros`;
+  }
+
+  function cambiarOrdenDesdeColumna(col) {
+    const selCampo = document.getElementById("tablaCampoOrden");
+    const selDir = document.getElementById("tablaDireccionOrden");
+    if (selCampo.value === col) {
+      selDir.value = selDir.value === "asc" ? "desc" : "asc";
+    } else {
+      selCampo.value = col;
+      selDir.value = "asc";
+    }
+    pintarTablaRespuestas();
+  }
+
+  function alternarBuscador() {
+    const input = document.getElementById("buscadorTexto");
+    input.classList.toggle("d-none");
+    if (!input.classList.contains("d-none")) input.focus();
+    else { input.value = ""; pintarTablaRespuestas(); }
+  }
+
+  function restablecerFiltrosTabla() {
+    document.getElementById("buscadorTexto").value = "";
+    document.getElementById("tablaCampoOrden").value = "fecha";
+    document.getElementById("tablaDireccionOrden").value = "asc";
+    pintarTablaRespuestas();
+  }
+
+  // EXPORTACIONES CSV Y PDF
+  // Escapa una celda de CSV y neutraliza formulas al abrir el archivo en Excel
+  function celdaCSV(valor) {
+    let s = String(valor == null ? "" : valor);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    if (/[";\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function descargarCSVRespuestas() {
+    const filas = filasFiltradas();
+    if (!filas.length) { alert("No hay datos para exportar."); return; }
+    const preguntas = preguntasVisibles();
+    const cabecera = ["Fecha", "Origen"].concat(preguntas.map(p => p.etiqueta));
+    const lineas = [cabecera.map(celdaCSV).join(";")];
+    filas.forEach(f => {
+      lineas.push([f.fecha, f.origen || "Real"].concat(preguntas.map(p => (f.respuestas || {})[p.id] || "")).map(celdaCSV).join(";"));
+    });
+    const blob = new Blob(["\uFEFF" + lineas.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `censo_export_${Date.now()}.csv`;
+    a.click();
+  }
+
+  function imprimirRespuestas() {
+    const cont = document.getElementById("printHeader");
+    cont.innerHTML = `<strong>${FORM.config.escuela || "Reporte"}</strong> - Generado: ${new Date().toLocaleString()}`;
+    window.print();
+  }
+
+  // AUXILIARES DEL ESQUEMA
+  function preguntasVisibles() {
+    return ((RESPUESTAS && RESPUESTAS.preguntas) || FORM.preguntas || []).filter(p => p.activa !== false);
+  }
+
+  function preguntaCategoria(tipo) {
+    return preguntasVisibles().find(p => (p.extra?.categoria || p.id).toLowerCase() === tipo.toLowerCase());
+  }
+
+  // Opciones dependientes de una pregunta según el valor de su padre.
+  // Usa extra.opcionesPorPadre; si no existe, hereda el mapa legado de grupos por turno.
+  function opcionesDependientes(pregunta, valorPadre) {
+    if (!pregunta || !valorPadre) return [];
+    const extra = pregunta.extra || {};
+    if (extra.opcionesPorPadre && extra.opcionesPorPadre[valorPadre]) {
+      return extra.opcionesPorPadre[valorPadre].slice();
+    }
+    if (pregunta.id === "grupo") {
+      const mapa = mapaGruposLegado();
+      if (mapa[valorPadre]) return mapa[valorPadre].slice();
+    }
+    return (pregunta.opciones || []).slice();
+  }
+  // ZOOM Y MODAL DE GRÁFICA AMPLIADA
+  function ampliarGrafica(e, id) {
+    // Solo amplía el lienzo: los controles de la cabecera (selector, filtros,
+    // ajustes) no deben abrir el modal. Y si el botón pulsado ya se repintó,
+    // queda suelto del DOM y closest() no lo reconoce: por eso isConnected.
+    const t = e && e.target;
+    if (t && (t.isConnected === false || (t.closest && t.closest(".dropdown, button, select, input, label, a")))) return;
+    if (e) e.stopPropagation();
+    const tipo = document.getElementById("tipoGrafica").value;
+    const dimId = document.getElementById("dimensionGrafica").value || "turno";
+    pendienteGrafica = { tipo: tipo, dimId: dimId };
+    const titulo = document.getElementById("tituloGrafica1")?.textContent || "Resultados";
+    document.getElementById("modalGraficaTitulo").textContent = "Gráfica Detallada — " + titulo;
+    if (modalGrafica) modalGrafica.show();
+  }
+
+  function renderGraficaModal(estado) {
+    const filas = filasFiltradas();
+    const dimId = estado.dimId || document.getElementById("dimensionGrafica").value || "turno";
+    const dim = dimensionDe(dimId);
+    if (!dim) return;
+
+    const tipo = estado.tipo || document.getElementById("tipoGrafica").value;
+    const canvasWrap = document.getElementById("modalGraficaCanvasWrap");
+    const canvas = document.getElementById("modalGraficaCanvas");
+    const contSun = document.getElementById("modalGraficaSunburst");
+
+    if (tipo === "sunburst") {
+      canvasWrap.classList.add("d-none");
+      contSun.classList.remove("d-none");
+      if (graficaModal && typeof graficaModal.dispose === "function") graficaModal.dispose();
+      graficaModal = echarts.init(contSun);
+      const raiz = { name: "Total", children: [] };
+      filas.forEach(f => {
+        const ruta = [String(valorDe(f, "turno")), String(valorDe(f, dim.id))].filter(Boolean);
+        let act = raiz;
+        ruta.forEach(nodo => {
+          let n = act.children.find(c => c.name === nodo);
+          if (!n) { n = { name: nodo, value: 0, children: [] }; act.children.push(n); }
+          n.value++;
+          act = n;
+        });
+      });
+      graficaModal.setOption({
+        series: [{
+          type: "sunburst",
+          data: raiz.children,
+          radius: ["15%", "90%"],
+          label: { rotate: "radial", fontSize: tamanoGrafica + 2 }
+        }]
+      });
+      return;
+    }
+
+    canvasWrap.classList.remove("d-none");
+    contSun.classList.add("d-none");
+
+    const conteo = {};
+    const porTurno = {};
+    filas.forEach(f => {
+      const v = valorDe(f, dim.id);
+      if (v == null || v === "") return;
+      const valores = (dim.tipo === "multiple") ? String(v).split(";").map(s => s.trim()).filter(Boolean) : [String(v)];
+      valores.forEach(item => {
+        conteo[item] = (conteo[item] || 0) + 1;
+        if (!porTurno[item]) porTurno[item] = { Matutino: 0, Vespertino: 0 };
+        const turnoFila = (f.respuestas || {}).turno === "Vespertino" ? "Vespertino" : "Matutino";
+        porTurno[item][turnoFila]++;
+      });
+    });
+    const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0);
+    const basePct = (dim.tipo === "multiple" && sumaConteosModal > 0) ? sumaConteosModal : filas.length;
+
+    let pares = Object.keys(conteo).map(k => ({
+      label: k, cantidad: conteo[k], matutino: porTurno[k].Matutino, vespertino: porTurno[k].Vespertino
+    }));
+    const orden = document.getElementById("ordenGrafica").value;
+    if (orden === "desc") pares.sort((a, b) => b.cantidad - a.cantidad);
+    else if (orden === "asc") pares.sort((a, b) => a.cantidad - b.cantidad);
+
+    const modoVal = document.getElementById("valoresGrafica").value;
+    const modoPct = document.getElementById("modoPorcentaje").value;
+    const totalN = filas.length;
+    const esApilada = tipo === "stacked" || tipo === "stackedVertical";
+    const esVert = tipo === "stackedVertical" || tipo === "barVertical";
+
+    const ctx = canvas.getContext("2d");
+    if (graficaModal && typeof graficaModal.destroy === "function") graficaModal.destroy();
+
+    if (esApilada) {
+      const usarPct = modoVal === "porcentaje";
+      const selSeg = document.getElementById("segmentoGrafica");
+      let segId = selSeg ? selSeg.value : "turno";
+      if (!segId || segId === dim.id) segId = (dim.id === "turno") ? "origen" : "turno";
+      const apilada = construirApilada(filas, pares.map(p => p.label), dim.id, segId, usarPct, modoPct, basePct);
+      const ejeValor = {
+        stacked: true, beginAtZero: true, max: usarPct ? 100 : undefined,
+        ticks: { precision: usarPct ? 1 : 0, callback: v => usarPct ? v + "%" : v, font: { size: tamanoGrafica + 1 } }
+      };
+      const ejeCat = { stacked: true, grid: { display: false }, ticks: { autoSkip: false, font: { size: tamanoGrafica + 1 } } };
+      graficaModal = new Chart(ctx, {
+        type: "bar",
+        data: { labels: apilada.labels, datasets: apilada.datasets },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: tamanoGrafica + 1 } } } },
+          scales: esVert ? { x: ejeCat, y: ejeValor } : { x: ejeValor, y: ejeCat }
+        }
+      });
+    } else {
+      const datos = pares.map(p => modoVal === "porcentaje" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);
+      const colores = pares.map(p => colorDimension(dim.id, p.label));
+      graficaModal = new Chart(ctx, {
+        type: tipo === "barVertical" ? "bar" : tipo,
+        data: {
+          labels: pares.map(p => p.label),
+          datasets: [{ data: datos, backgroundColor: colores, borderRadius: 6, _pct: modoVal === "porcentaje" }]
+        },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: tipo === "bar" ? { right: 46 } : { top: 24 } },
+          plugins: {
+            legend: { display: tipo === "pie" || tipo === "doughnut", labels: { font: { size: tamanoGrafica + 1 } } }
+          },
+          scales: (tipo === "pie" || tipo === "doughnut") ? {} : {
+            x: { ticks: { font: { size: tamanoGrafica + 1 } } },
+            y: { ticks: { font: { size: tamanoGrafica + 1 } } }
+          }
+        }
+      });
+    }
+  }
+
+  // SIMULACIÓN Y MANTENIMIENTO
+  function abrirSimulacion() {
+    if (simulacionModal) simulacionModal.show();
+  }
+
+  function ejecutarSimulacion(e) {
+    e.preventDefault();
+    const cant = Number(document.getElementById("simCantidad").value);
+    const perfil = document.getElementById("simPerfil").value;
+    const clave = document.getElementById("simClave").value.trim();
+    const estado = document.getElementById("simEstado");
+    const btn = document.getElementById("btnSimular");
+
+    estado.textContent = "Generando " + cant + " respuestas...";
+    estado.className = "alert alert-info py-2 small";
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.exito) {
+          estado.textContent = "¡Éxito! Se generaron " + res.total + " respuestas.";
+          estado.className = "alert alert-success py-2 small";
+          setTimeout(() => {
+            if (simulacionModal) simulacionModal.hide();
+            cargarRespuestas();
+          }, 1200);
+        } else {
+          estado.textContent = "Error: " + ((res && res.mensaje) || "No se pudo simular.");
+          estado.className = "alert alert-danger py-2 small";
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        estado.textContent = "Error de red: " + err.message;
+        estado.className = "alert alert-danger py-2 small";
+      })
+      .simularRespuestasFormulario(creds, cant, clave, perfil);
+  }
+
+  function limpiarSimulados() {
+    const clave = prompt("Ingresa la clave de autorización para limpiar datos simulados:");
+    if (!clave) return;
+    if (!confirm("¿Deseas eliminar permanentemente todas las filas de origen 'Simulado'?")) return;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (res && res.exito) {
+          alert("Se eliminaron " + res.total + " registros simulados.");
+          cargarRespuestas();
+        } else {
+          alert("Error: " + ((res && res.mensaje) || "No se pudo limpiar."));
+        }
+      })
+      .withFailureHandler(err => alert("Error de conexión: " + err.message))
+      .limpiarSimuladosFormulario(creds, clave);
+  }
+
+  // CONSTRUCTOR Y EDITOR DE PREGUNTAS
+  // Desactiva las preguntas del ejemplo (Sede → Área → Puesto) si siguen activas
+  function quitarPreguntasEjemplo() {
+    if (!creds) { alert("Inicia sesión de administrador."); return; }
+    if (!confirm("¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan en la hoja.")) return;
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!res || !res.exito) { alert("No se pudo: " + ((res && res.mensaje) || "error")); return; }
+        const form = res.formulario || { config: {}, preguntas: [] };
+        FORM = { config: form.config || {}, preguntas: form.preguntas || [] };
+        pintarPreguntas();
+        if (typeof cargarRespuestas === "function") cargarRespuestas();
+        alert("Listo: las preguntas de ejemplo quedaron desactivadas.");
+      })
+      .withFailureHandler(err => alert("Error de conexión: " + (err && err.message ? err.message : err)))
+      .quitarJerarquiaDemo(creds);
+  }
+  // Vincula la encuesta a otra hoja de cálculo: valida acceso, prepara pestañas y recarga
+  function vincularHoja() {
+    const input = document.getElementById("cfgHojaId");
+    const estado = document.getElementById("estadoHoja");
+    const btn = document.getElementById("btnVincularHoja");
+    const valor = input ? String(input.value || "").trim() : "";
+
+    const aviso = (texto, clase) => {
+      if (!estado) return;
+      estado.className = "small mt-2 " + clase;
+      estado.textContent = texto;
+    };
+
+    if (!creds) { aviso("Inicia sesión de administrador para vincular una hoja.", "text-danger"); return; }
+    if (!valor) { aviso("Escribe la URL o el ID de la hoja.", "text-danger"); return; }
+
+    if (btn) btn.disabled = true;
+    aviso("Comprobando acceso y preparando pestañas...", "text-muted");
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (btn) btn.disabled = false;
+        if (!res || !res.exito) {
+          aviso((res && res.mensaje) || "No se pudo vincular la hoja.", "text-danger");
+          return;
+        }
+        FORM = { config: res.config || {}, preguntas: res.preguntas || [] };
+        RESPUESTAS = Object.assign({}, RESPUESTAS || {}, { hoja: res.hoja || null });
+        if (input) input.value = "";
+        aviso("Vinculada: «" + res.nombre + "»" +
+          (res.hojasCreadas && res.hojasCreadas.length
+            ? " · pestañas creadas: " + res.hojasCreadas.join(", ")
+            : " · pestañas ya existentes"), "text-success");
+        pintarConfig();
+        pintarPreguntas();
+        pintarCategorias();
+        if (typeof cargarRespuestas === "function") cargarRespuestas();
+        if (typeof cargarFormulario === "function") cargarFormulario();
+      })
+      .withFailureHandler(err => {
+        if (btn) btn.disabled = false;
+        aviso("Error de conexión: " + (err && err.message ? err.message : err), "text-danger");
+      })
+      .vincularYPrepararHoja(creds, valor);
+  }
+  function pintarConfig() {
+    const c = FORM.config || {};
+    const campos = ["escuela", "subtitulo", "titulo", "introduccion", "boton", "exitoTitulo", "otroBoton", "exitoTexto", "nota"];
+    campos.forEach(k => {
+      const el = document.getElementById("cfg_" + k);
+      if (el) el.value = c[k] || "";
+    });
+
+    const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null;
+    const elHoja = document.getElementById("hojaActual");
+    if (elHoja) elHoja.textContent = info ? (info.nombre + " · " + info.origen) : "sin información";
+  }
+
+  function leerConfigFormulario() {
+    const c = Object.assign({}, FORM.config);
+    const campos = ["escuela", "subtitulo", "titulo", "introduccion", "boton", "exitoTitulo", "otroBoton", "exitoTexto", "nota"];
+    campos.forEach(k => {
+      const el = document.getElementById("cfg_" + k);
+      if (el) c[k] = el.value.trim();
+    });
+    return c;
+  }
+
+  function pintarPreguntas() {
+    const cont = document.getElementById("listaPreguntas");
+    if (!cont) return;
+    cont.innerHTML = "";
+    (FORM.preguntas || []).forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "pregunta p-2 d-flex justify-content-between align-items-start gap-2 bg-white";
+      const info = document.createElement("div");
+      info.className = "flex-grow-1";
+      info.innerHTML = `
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span class="badge bg-secondary tipo-badge">${esc(TIPOS[p.tipo] || p.tipo)}</span>
+          ${p.obligatoria ? '<span class="badge bg-warning text-dark tipo-badge">Obligatoria</span>' : ''}
+          ${p.extra?.categoria ? `<span class="badge bg-info text-dark tipo-badge">${esc(p.extra.categoria)}</span>` : ''}
+          ${p.extra?.condicion?.pregunta ? '<span class="badge bg-light text-secondary border tipo-badge"><i class="bi bi-diagram-3"></i> Condicional</span>' : ''}
+        </div>
+        <div class="fw-semibold small mt-1">${esc(p.etiqueta)}</div>
+        ${p.ayuda ? `<div class="text-muted small">${esc(p.ayuda)}</div>` : ''}
+        ${p.opciones?.length ? `<div class="text-muted small">${esc(p.opciones.join(" · "))}</div>` : ''}
+      `;
+
+      const acciones = document.createElement("div");
+      acciones.className = "d-flex gap-1";
+      acciones.innerHTML = `
+        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" title="Subir" aria-label="Subir" onclick="mover(${i}, -1)"><i class="bi bi-arrow-up"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" title="Bajar" aria-label="Bajar" onclick="mover(${i}, 1)"><i class="bi bi-arrow-down"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-1" title="Editar" aria-label="Editar" onclick="abrirModal(${i})"><i class="bi bi-pencil"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1" title="Eliminar" aria-label="Eliminar" onclick="eliminar(${i})"><i class="bi bi-trash"></i></button>
+      `;
+      div.appendChild(info);
+      div.appendChild(acciones);
+      cont.appendChild(div);
+    });
+  }
+
+  function mover(indice, delta) {
+    const destino = indice + delta;
+    if (destino < 0 || destino >= FORM.preguntas.length) return;
+    const temp = FORM.preguntas[indice];
+    FORM.preguntas[indice] = FORM.preguntas[destino];
+    FORM.preguntas[destino] = temp;
+    pintarPreguntas();
+  }
+
+  function eliminar(indice) {
+    const p = FORM.preguntas[indice];
+    if (!confirm("¿Deseas eliminar la pregunta «" + p.etiqueta + "»? Las respuestas históricas seguirán en la hoja.")) return;
+    FORM.preguntas.splice(indice, 1);
+    pintarPreguntas();
+  }
+
+  function abrirModal(indice) {
+    editando = indice;
+    const p = indice >= 0 ? FORM.preguntas[indice] : {
+      tipo: "texto", etiqueta: "", ayuda: "", placeholder: "", obligatoria: false, opciones: [], extra: {}
+    };
+    document.getElementById("tituloModal").textContent = indice >= 0 ? "Configurar Pregunta" : "Nueva Pregunta";
+    document.getElementById("p_tipo").value = p.tipo || "texto";
+    document.getElementById("p_obligatoria").checked = !!p.obligatoria;
+    document.getElementById("p_categoria").value = p.extra?.categoria || "";
+    document.getElementById("p_etiqueta").value = p.etiqueta || "";
+    document.getElementById("p_ayuda").value = p.ayuda || "";
+    document.getElementById("p_placeholder").value = p.placeholder || "";
+    document.getElementById("p_opciones").value = (p.opciones || []).join("\n");
+    const extra = p.extra || {};
+    document.getElementById("p_escalaMin").value = extra.escalaMin || 1;
+    document.getElementById("p_escalaMax").value = extra.escalaMax || 5;
+    document.getElementById("p_maxLongitud").value = extra.maxLongitud || "";
+
+    // Rol analítico y graficable (inferencia para datos anteriores a la v48)
+    const esTexto = (p.tipo === "texto" || p.tipo === "parrafo");
+    const rol = extra.rol || ((extra.padre || extra.esDimension === true) ? "dimension" : (esTexto ? "identidad" : "metrica"));
+    const graficable = (typeof extra.graficable === "boolean") ? extra.graficable : !esTexto;
+
+    const selRol = document.getElementById("p_rolAnalitico");
+    const chkGraf = document.getElementById("p_graficable");
+    if (selRol) selRol.value = esTexto ? "identidad" : rol;
+    if (chkGraf) chkGraf.checked = esTexto ? false : graficable;
+    poblarPadresDimension(indice);
+    const selPadreDim = document.getElementById("p_preguntaPadre");
+    if (selPadreDim) selPadreDim.value = extra.padre || "";
+    const txtPorPadre = document.getElementById("p_opcionesPorPadre");
+    if (txtPorPadre) txtPorPadre.value = serializarOpcionesPorPadre(extra.opcionesPorPadre);
+
+    const c = extra.condicion;
+    document.getElementById("p_condActiva").checked = !!c;
+    actualizarCamposTipo(false);
+    actualizarValoresCondicion();
+    if (c) {
+      document.getElementById("p_condPregunta").value = c.pregunta || "";
+      document.getElementById("p_condOperador").value = c.operador || "igual";
+      const selVal = document.getElementById("p_condValor");
+      const txtVal = document.getElementById("p_condValorTexto");
+      if (selVal) selVal.value = c.valor || "";
+      if (txtVal) txtVal.value = c.valor || "";
+    }
+    actualizarCondicionUI();
+    modal.show();
+  }
+
+  function serializarOpcionesPorPadre(mapa) {
+    if (!mapa || typeof mapa !== "object") return "";
+    return Object.keys(mapa).map(k => k + ": " + (mapa[k] || []).join(", ")).join("\n");
+  }
+
+  function parsearOpcionesPorPadre(texto) {
+    const mapa = {};
+    String(texto || "").split("\n").forEach(linea => {
+      const corte = linea.indexOf(":");
+      if (corte === -1) return;
+      const clave = linea.slice(0, corte).trim();
+      const valores = linea.slice(corte + 1).split(",").map(s => s.trim()).filter(Boolean);
+      if (clave && valores.length) mapa[clave] = valores;
+    });
+    return mapa;
+  }
+
+  // --- Rol analítico y jerarquía (modelo v48) ---
+
+  // Preguntas que pueden actuar como padre: dimensiones declaradas o heredadas
+  function rolesDimension() {
+    return (FORM.preguntas || []).filter(q => esDimensionPregunta(q) || (q.extra && q.extra.rol === "dimension"));
+  }
+
+  function poblarPadresDimension(indice) {
+    const sel = document.getElementById("p_preguntaPadre");
+    if (!sel) return;
+    const previo = sel.value;
+    sel.innerHTML = '<option value="">Ninguna (independiente)</option>';
+    rolesDimension().forEach(q => {
+      if (!q.id) return;
+      if (indice >= 0 && FORM.preguntas[indice] && q.id === FORM.preguntas[indice].id) return;
+      const op = document.createElement("option");
+      op.value = q.id;
+      op.textContent = q.etiqueta || q.id;
+      sel.appendChild(op);
+    });
+    if (previo && Array.prototype.some.call(sel.options, o => o.value === previo)) sel.value = previo;
+  }
+
+  function actualizarCamposDimension() {
+    const selPadre = document.getElementById("p_preguntaPadre");
+    const grupoOpc = document.getElementById("grupoDimOpciones");
+    const conPadre = !!(selPadre && selPadre.value);
+    if (grupoOpc) grupoOpc.classList.toggle("d-none", !conPadre);
+  }
+
+  // La sección de jerarquía solo existe para el rol "dimension"
+  function actualizarJerarquiaUI() {
+    const selRol = document.getElementById("p_rolAnalitico");
+    const bloque = document.getElementById("grupoJerarquia");
+    const esDim = !!(selRol && selRol.value === "dimension");
+    if (bloque) bloque.classList.toggle("d-none", !esDim);
+    if (esDim) poblarPadresDimension(editando);
+    actualizarCamposDimension();
+  }
+
+  // Cambio manual de rol: identidad apaga el gráfico; dimensión y métrica lo encienden
+  function actualizarRolAnalitico() {
+    const tipo = document.getElementById("p_tipo").value;
+    const esTexto = tipo === "texto" || tipo === "parrafo";
+    const selRol = document.getElementById("p_rolAnalitico");
+    const chkGraf = document.getElementById("p_graficable");
+    if (!selRol || !chkGraf) return;
+    if (esTexto) selRol.value = "identidad";
+    const identidad = selRol.value === "identidad";
+    chkGraf.disabled = esTexto || identidad;
+    chkGraf.checked = !identidad;
+    actualizarJerarquiaUI();
+  }
+
+  // Regla reactiva al cambiar el tipo de pregunta
+  function actualizarCamposTipo(aplicarDefaults) {
+    if (aplicarDefaults === undefined) aplicarDefaults = true;
+    const tipo = document.getElementById("p_tipo").value;
+    const esTexto = tipo === "texto" || tipo === "parrafo";
+    const conOpciones = tipo === "unica" || tipo === "multiple";
+    document.getElementById("grupoOpciones").classList.toggle("d-none", !conOpciones);
+    document.getElementById("grupoEscalaMin").classList.toggle("d-none", tipo !== "escala");
+    document.getElementById("grupoEscalaMax").classList.toggle("d-none", tipo !== "escala");
+    document.getElementById("grupoLongitud").classList.toggle("d-none", !esTexto);
+    document.getElementById("grupoPlaceholder").classList.toggle("d-none", !(esTexto || tipo === "numero"));
+
+    const selRol = document.getElementById("p_rolAnalitico");
+    const chkGraf = document.getElementById("p_graficable");
+    if (selRol && chkGraf) {
+      if (esTexto) {
+        selRol.value = "identidad";
+        chkGraf.checked = false;
+        chkGraf.disabled = true;
+      } else {
+        chkGraf.disabled = false;
+        if (aplicarDefaults) {
+          if (selRol.value === "identidad") selRol.value = "metrica";
+          chkGraf.checked = true;
+        }
+      }
+    }
+    actualizarJerarquiaUI();
+  }
+
+  // ¿La cadena de padres de padreId vuelve a la pregunta en edición?
+  function cadenaPadresRepite(padreId) {
+    const propio = (editando >= 0 && FORM.preguntas[editando]) ? FORM.preguntas[editando].id : "";
+    const vistos = {};
+    let actual = (FORM.preguntas || []).find(q => q.id === padreId);
+    while (actual) {
+      if (vistos[actual.id] || (propio && actual.id === propio)) return actual.etiqueta || actual.id;
+      vistos[actual.id] = true;
+      actual = (actual.extra && actual.extra.padre) ? (FORM.preguntas || []).find(q => q.id === actual.extra.padre) : null;
+    }
+    return "";
+  }
+
+  function actualizarCondicionUI() {
+    const activa = document.getElementById("p_condActiva").checked;
+    document.getElementById("grupoCondicion").classList.toggle("d-none", !activa);
+    if (activa) {
+      const selPregunta = document.getElementById("p_condPregunta");
+      const valorPrev = selPregunta.value;
+      selPregunta.innerHTML = '<option value="">-- Selecciona una pregunta --</option>';
+      (FORM.preguntas || []).forEach((p, idx) => {
+        if (idx === editando) return;
+        const op = document.createElement("option");
+        op.value = p.id;
+        op.textContent = p.etiqueta;
+        selPregunta.appendChild(op);
+      });
+      if (valorPrev) selPregunta.value = valorPrev;
+    }
+  }
+
+  function actualizarValoresCondicion() {
+    const refId = document.getElementById("p_condPregunta").value;
+    const op = document.getElementById("p_condOperador").value;
+    const refPregunta = (FORM.preguntas || []).find(p => p.id === refId);
+    const selVal = document.getElementById("p_condValor");
+    const txtVal = document.getElementById("p_condValorTexto");
+    const ocultarValores = op === "vacio" || op === "no_vacio";
+    document.getElementById("grupoCondValor").classList.toggle("d-none", ocultarValores);
+    if (ocultarValores) return;
+
+    if (refPregunta && (refPregunta.tipo === "unica" || refPregunta.tipo === "multiple" || refPregunta.tipo === "sino")) {
+      selVal.classList.remove("d-none");
+      txtVal.classList.add("d-none");
+      selVal.innerHTML = '<option value="">-- Selecciona un valor --</option>';
+      const opciones = refPregunta.tipo === "sino" ? ["Sí", "No"] : (refPregunta.opciones || []);
+      opciones.forEach(o => {
+        const opt = document.createElement("option");
+        opt.value = o;
+        opt.textContent = o;
+        selVal.appendChild(opt);
+      });
+    } else {
+      selVal.classList.add("d-none");
+      txtVal.classList.remove("d-none");
+    }
+  }
+
+  function guardarPregunta() {
+    const etiqueta = document.getElementById("p_etiqueta").value.trim();
+    if (!etiqueta) { alert("Escribe el texto de la pregunta."); return; }
+    const tipo = document.getElementById("p_tipo").value;
+    const opciones = document.getElementById("p_opciones").value.split("\n").map(s => s.trim()).filter(Boolean);
+    if ((tipo === "unica" || tipo === "multiple") && opciones.length < 2) {
+      alert("Agrega al menos dos opciones.");
+      return;
+    }
+
+    const extra = {
+      categoria: document.getElementById("p_categoria").value.trim(),
+      escalaMin: Number(document.getElementById("p_escalaMin").value) || 1,
+      escalaMax: Number(document.getElementById("p_escalaMax").value) || 5,
+      maxLongitud: Number(document.getElementById("p_maxLongitud").value) || ""
+    };
+
+    if (document.getElementById("p_condActiva").checked) {
+      const refId = document.getElementById("p_condPregunta").value;
+      const op = document.getElementById("p_condOperador").value;
+      const refPregunta = (FORM.preguntas || []).find(p => p.id === refId);
+      const val = (refPregunta && ["unica", "multiple", "sino"].includes(refPregunta.tipo)) ?
+                  document.getElementById("p_condValor").value : document.getElementById("p_condValorTexto").value;
+      if (refId) {
+        extra.condicion = { pregunta: refId, operador: op, valor: val };
+      }
+    }
+
+    // Rol analítico, graficable y jerarquía (modelo v48)
+    const esTexto = tipo === "texto" || tipo === "parrafo";
+    const selRol = document.getElementById("p_rolAnalitico");
+    const chkGraf = document.getElementById("p_graficable");
+    const rol = esTexto ? "identidad" : ((selRol && selRol.value) || "metrica");
+    extra.rol = rol;
+    extra.graficable = esTexto ? false : !!(chkGraf && chkGraf.checked);
+    extra.esDimension = (rol === "dimension");
+
+    if (extra.esDimension) {
+      const selPadre = document.getElementById("p_preguntaPadre");
+      const padreId = selPadre ? selPadre.value : "";
+      if (padreId) {
+        const ciclo = cadenaPadresRepite(padreId);
+        if (ciclo) { alert("La jerarquía forma un ciclo con «" + ciclo + "»."); return; }
+        extra.padre = padreId;
+        const mapa = parsearOpcionesPorPadre(document.getElementById("p_opcionesPorPadre").value);
+        if (Object.keys(mapa).length) extra.opcionesPorPadre = mapa;
+      }
+    } else {
+      delete extra.padre;
+      delete extra.opcionesPorPadre;
+    }
+
+    const nueva = {
+      id: editando >= 0 ? FORM.preguntas[editando].id : "",
+      tipo: tipo,
+      etiqueta: etiqueta,
+      ayuda: document.getElementById("p_ayuda").value.trim(),
+      placeholder: document.getElementById("p_placeholder").value.trim(),
+      obligatoria: document.getElementById("p_obligatoria").checked,
+      opciones: opciones,
+      extra: extra,
+      orden: editando >= 0 ? FORM.preguntas[editando].orden : (FORM.preguntas.length + 1)
+    };
+
+    if (editando >= 0) FORM.preguntas[editando] = nueva;
+    else FORM.preguntas.push(nueva);
+
+    pintarPreguntas();
+    modal.hide();
+  }
+
+  function guardarTodo() {
+    const btn = document.getElementById("btnGuardar");
+    btn.disabled = true;
+    const estado = document.getElementById("estado");
+    estado.textContent = "Guardando cambios...";
+    const config = leerConfigFormulario();
+    const preguntas = FORM.preguntas.map((p, i) => ({
+      id: p.id || "",
+      tipo: p.tipo,
+      etiqueta: p.etiqueta,
+      ayuda: p.ayuda || "",
+      placeholder: p.placeholder || "",
+      obligatoria: !!p.obligatoria,
+      opciones: p.opciones || [],
+      extra: p.extra || {},
+      orden: i + 1
+    }));
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.exito) {
+          FORM = res.formulario;
+          pintarConfig();
+          pintarPreguntas();
+          estado.textContent = "Guardado a las " + new Date().toLocaleTimeString();
+          if (RESPUESTAS) cargarRespuestas();
+        } else {
+          estado.textContent = "";
+          alert("Error: " + ((res && res.mensaje) || "No se pudo guardar."));
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        estado.textContent = "";
+        alert("Error de conexión: " + err.message);
+      })
+      .guardarFormulario(creds, config, preguntas);
+  }
+
+  // CATEGORÍAS JERÁRQUICAS
+  function abrirCategorias() {
+    pintarCategorias();
+    if (modalCategorias) modalCategorias.show();
+  }
+
+  function getCategorias() {
+    try { return JSON.parse(FORM.config.categorias || "[]"); } catch (e) { return []; }
+  }
+
+  function pintarCategorias() {
+    const cats = getCategorias();
+    const lista = document.getElementById("listaCategorias");
+    const selPadre = document.getElementById("catPadre");
+    if (lista) {
+      lista.innerHTML = cats.length ? "" : '<li class="list-group-item text-muted small text-center">No hay categorías definidas.</li>';
+      cats.forEach((c, i) => {
+        lista.innerHTML += `
+          <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+            <div>
+              <span class="fw-semibold">${esc(c.nombre)}</span>
+              ${c.padre ? `<small class="text-muted ms-2">(Hija de: ${esc(c.padre)})</small>` : ''}
+            </div>
+            <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="eliminarCategoria(${i})"><i class="bi bi-trash"></i></button>
+          </li>
+        `;
+      });
+    }
+    if (selPadre) {
+      selPadre.innerHTML = '<option value="">(Ninguna - Nivel Principal)</option>';
+      cats.forEach(c => {
+        selPadre.innerHTML += `<option value="${esc(c.nombre)}">${esc(c.nombre)}</option>`;
+      });
+    }
+    const dl = document.getElementById("datalistCategorias");
+    if (dl) {
+      dl.innerHTML = cats.map(c => `<option value="${esc(c.nombre)}"></option>`).join("");
+    }
+  }
+
+  function guardarCategoria(e) {
+    e.preventDefault();
+    const nombre = document.getElementById("catNombre").value.trim();
+    const padre = document.getElementById("catPadre").value;
+    if (!nombre) return;
+    const cats = getCategorias();
+    if (cats.some(c => c.nombre.toLowerCase() === nombre.toLowerCase())) {
+      alert("Ya existe una categoría con ese nombre.");
+      return;
+    }
+    cats.push({ nombre: nombre, padre: padre || "" });
+    FORM.config.categorias = JSON.stringify(cats);
+    document.getElementById("catNombre").value = "";
+    pintarCategorias();
+  }
+
+  function eliminarCategoria(idx) {
+    const cats = getCategorias();
+    cats.splice(idx, 1);
+    FORM.config.categorias = JSON.stringify(cats);
+    pintarCategorias();
+  }
+
+  function actualizarCategoriaUI() {
+    const catNombre = document.getElementById("p_categoria").value.trim();
+    const cats = getCategorias();
+    const cat = cats.find(c => c.nombre.toLowerCase() === catNombre.toLowerCase());
+    const selPadre = document.getElementById("p_categoriaPadre");
+    if (selPadre && cat && cat.padre) {
+      selPadre.innerHTML = `<option value="${esc(cat.padre)}">${esc(cat.padre)}</option>`;
+    }
+  }
+
+</script>
+</body>
+</html>

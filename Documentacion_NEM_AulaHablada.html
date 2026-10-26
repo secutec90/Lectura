@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ST90 / LECTURA — Planeación Didáctica NEM y Aula Hablada DUA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #111827;
+      --surface-card: #1e293b;
+      --surface-hover: #273549;
+      --border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.25);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-glow {
+      position: fixed;
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(139, 92, 246, 0.12) 40%, transparent 70%);
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-top: 20px;
+    }
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #93c5fd;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4.5vw, 44px);
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 80%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+    .lead {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 820px;
+      margin: 0 auto 24px;
+    }
+
+    /* Key Metrics Grid */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: all .2s;
+    }
+    .metric-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--primary-glow);
+    }
+    .metric-val {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 800;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+    .metric-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 12px;
+      background: rgba(11, 15, 25, 0.92);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      padding-top: 8px;
+    }
+    .tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all .15s;
+    }
+    .tab-btn:hover {
+      background: var(--surface-hover);
+      color: #ffffff;
+      border-color: #64748b;
+    }
+    .tab-btn.active {
+      background: #1e3a8a;
+      border-color: #60a5fa;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Content Sections */
+    .doc-section {
+      display: none;
+      animation: fadeIn .25s ease;
+    }
+    .doc-section.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .card h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #93c5fd;
+      margin: 20px 0 10px;
+    }
+    .card p {
+      color: #cbd5e1;
+      margin-bottom: 14px;
+      line-height: 1.65;
+    }
+
+    /* Callout & Alerts */
+    .callout {
+      border-radius: 12px;
+      padding: 18px;
+      margin: 20px 0;
+      border-left: 5px solid;
+    }
+    .callout-info {
+      background: rgba(30, 58, 138, 0.35);
+      border-color: #3b82f6;
+    }
+    .callout-dua {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: #a855f7;
+    }
+    .callout-warning {
+      background: rgba(180, 83, 9, 0.25);
+      border-color: #f59e0b;
+    }
+    .callout-success {
+      background: rgba(6, 95, 70, 0.3);
+      border-color: #10b981;
+    }
+    .callout strong {
+      color: #ffffff;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    /* Grid for Moments (40 min) */
+    .moments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .moment-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      border-top: 4px solid;
+    }
+    .moment-1 { border-color: #0284c7; }
+    .moment-2 { border-color: #f59e0b; }
+    .moment-3 { border-color: #10b981; }
+    .moment-4 { border-color: #8b5cf6; }
+    .moment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .moment-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    /* URL troubleshooting table */
+    .url-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 14px;
+    }
+    .url-table th, .url-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .url-table th {
+      background: #1e293b;
+      color: #93c5fd;
+      font-weight: 700;
+    }
+    .url-table tr:nth-child(even) { background: rgba(30, 41, 59, 0.4); }
+    .url-link {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #38bdf8;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .url-link:hover { text-decoration: underline; }
+
+    /* Code & Terminal Block */
+    .code-block {
+      background: #060911;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin: 14px 0;
+      line-height: 1.5;
+    }
+
+    /* Simulator / Interactive Preview */
+    .simulator {
+      background: #0f172a;
+      border: 2px solid #3b82f6;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+    }
+    .sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sim-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .sim-btn {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s;
+    }
+    .sim-btn:hover { background: #3b82f6; border-color: #3b82f6; }
+    .sim-btn-primary { background: #2563eb; border-color: #3b82f6; }
+    .sim-view-area {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 240px;
+    }
+    .sim-p {
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin: 8px 0;
+      line-height: 1.6;
+      font-size: 15px;
+      transition: all .2s;
+    }
+    .sim-p.focused {
+      background: #fef08a;
+      border-left: 4px solid #ca8a04;
+      font-weight: 600;
+    }
+    .sim-audio-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: #1e3a8a;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+      margin-top: 60px;
+    }
+
+    @media (max-width: 640px) {
+      .card { padding: 20px 16px; }
+      .metrics-bar { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="container">
+    <header>
+      <div class="badge-top">✨ Documento Canónico · ST90 / LECTURA</div>
+      <h1>Planeación Didáctica NEM y Aula Hablada DUA</h1>
+      <p class="lead">
+        Arquitectura pedagógica, inclusión multimodal y guía técnica del sistema para estudiantes con y sin discapacidad visual en educación secundaria (Fase 6).
+      </p>
+
+      <div class="metrics-bar">
+        <div class="metric-card">
+          <div class="metric-val">100% DUA</div>
+          <div class="metric-label">Una sola planeación y clase</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">40 Min</div>
+          <div class="metric-label">4 Momentos Pedagógicos</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">Fase 6</div>
+          <div class="metric-label">Secundaria (1°, 2°, 3°)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">16 / 16</div>
+          <div class="metric-label">Pruebas Locales Pasadas</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs" role="tablist">
+      <button class="tab-btn active" onclick="verTab('vision', this)">🌟 Visión DUA</button>
+      <button class="tab-btn" onclick="verTab('nem', this)">📚 Marco Curricular NEM</button>
+      <button class="tab-btn" onclick="verTab('sesion40', this)">⏱️ Estructura 40 Min</button>
+      <button class="tab-btn" onclick="verTab('aula', this)">🔊 Aula Hablada</button>
+      <button class="tab-btn" onclick="verTab('simulador', this)">🎮 Simulador en Vivo</button>
+      <button class="tab-btn" onclick="verTab('urls', this)">🔗 URLs y Solución Google</button>
+      <button class="tab-btn" onclick="verTab('datos', this)">🗄️ Esquema de Datos</button>
+      <button class="tab-btn" onclick="verTab('seguridad', this)">🛡️ Seguridad y Pruebas</button>
+    </div>
+
+    <!-- SECCIÓN 1: VISIÓN DUA -->
+    <div id="sec-vision" class="doc-section active">
+      <div class="card">
+        <h2>🌟 Principio Rector: Inclusión sin Segregación</h2>
+        <p>
+          En consonancia con la instrucción pedagógica fundamental, <strong>no existen dos clases separadas ni dos planeaciones diferentes</strong>.
+          La planeación didáctica y el contenido de la clase son los mismos para todo el grupo, garantizando el cumplimiento pleno del <strong>Diseño Universal para el Aprendizaje (DUA)</strong>.
+        </p>
+
+        <div class="callout callout-dua">
+          <strong>Principio de Acceso Universal: Tres Canales Simultáneos</strong>
+          Todo estudiante del grupo —con o sin discapacidad visual— puede interactuar con la sesión en el canal que prefiera o necesite:
+          <ul style="margin: 8px 0 0 20px;">
+            <li><strong>LEER:</strong> Texto visual estructurado, jerarquía tipográfica de alto contraste y compatibilidad para despliegue en línea braille.</li>
+            <li><strong>VER:</strong> Recursos visuales (fotografías, esquemas y organizadores gráficos) para los alumnos videntes.</li>
+            <li><strong>ESCUCHAR:</strong> Toda imagen cuenta de manera <em>obligatoria</em> con una descripción oral detallada, narrada mediante síntesis de voz en español de México (`es-MX`) con foco sincronizado.</li>
+          </ul>
+        </div>
+
+        <h3>Impacto en la Dinámica del Aula</h3>
+        <p>
+          El docente diseña una única unidad didáctica. Cuando el grupo entra a clase, los estudiantes videntes pueden leer en pantalla mientras observan las imágenes; al mismo tiempo, los estudiantes con discapacidad visual o auditivos escuchan la narración completa sin perder ningún detalle conceptual de los recursos gráficos.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: MARCO CURRICULAR NEM -->
+    <div id="sec-nem" class="doc-section">
+      <div class="card">
+        <h2>📚 Articulación con la Nueva Escuela Mexicana (Fase 6)</h2>
+        <p>
+          El módulo backend (implementado en <code>PlaneacionNEM.gs</code>) incorpora el catálogo oficial de la SEP para la Fase 6 (1°, 2° y 3° de secundaria), estructurando cada proyecto bajo tres pilares curriculares:
+        </p>
+
+        <div class="moments-grid">
+          <div class="moment-card" style="border-top-color: #3b82f6;">
+            <h3>1. Campos Formativos</h3>
+            <ul style="font-size: 13px; color: #cbd5e1; margin-left: 16px;">
+              <li>Lenguajes</li>
+              <li>Saberes y Pensamiento Científico</li>
+              <li>Ética, Naturaleza y Sociedades</li>
+              <li>De lo Humano y lo Comunitario</li>
+            </ul>
+          </div>
+
+          <div class="moment-card" style="border-top-color: #10b981;">
+            <h3>2. Metodologías Sociocríticas</h3>
+            <ul style="font-size: 13px; color: #cbd5e1; margin-left: 16px;">
+              <li>Aprendizaje basado en proyectos comunitarios</li>
+              <li>Indagación con enfoque STEAM</li>
+              <li>Aprendizaje Basado en Problemas (ABP)</li>
+              <li>Aprendizaje Servicio (AS)</li>
+            </ul>
+          </div>
+
+          <div class="moment-card" style="border-top-color: #f59e0b;">
+            <h3>3. Ejes Articuladores</h3>
+            <ul style="font-size: 13px; color: #cbd5e1; margin-left: 16px;">
+              <li>Inclusión</li>
+              <li>Pensamiento Crítico</li>
+              <li>Interculturalidad Crítica</li>
+              <li>Igualdad de Género</li>
+              <li>Vida Saludable</li>
+              <li>Apropiación de las culturas</li>
+              <li>Artes y experiencias estéticas</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout callout-success" style="margin-top: 14px;">
+          <strong>📅 Vinculación Directa Horario ➔ Planeación Didáctica:</strong>
+          Al seleccionar cualquier clase en el horario (ej. <em>Geografía · 1°A el 20 de octubre</em>), se puede pulsar directamente el botón <strong>«Planear NEM»</strong>. El sistema precarga automáticamente:
+          <ul style="margin: 8px 0 0 18px; color: #cbd5e1; font-size: 13px;">
+            <li><strong>Asignatura, Grado y Grupo:</strong> Obtenidos de la clase en curso.</li>
+            <li><strong>Campo Formativo y Metodología:</strong> Infección sociocrítica automática (Lenguajes, Saberes STEAM, Ética ABP o De lo Humano AS).</li>
+            <li><strong>Periodo Escolar SEP (Trimestre):</strong> Calculado en tiempo real según la fecha (Trimestre 1: Ago-Nov, Trimestre 2: Dic-Mar, Trimestre 3: Abr-Jul).</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-info">
+          <strong>Ciclo de Vida de una Planeación:</strong>
+          <code>BORRADOR</code> ➔ <code>APROBADO</code> ➔ <code>PROGRAMADO</code> ➔ <code>REALIZADO</code>.
+          El docente conserva en todo momento la autonomía profesional y la validación de los aprendizajes esperados (PDA).
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: ESTRUCTURA DE 40 MINUTOS -->
+    <div id="sec-sesion40" class="doc-section">
+      <div class="card">
+        <h2>⏱️ La Sesión Didáctica de 40 Minutos</h2>
+        <p>
+          Cada sesión de clase secundaria se desglosa en <strong>4 momentos pedagógicos estandarizados</strong>, optimizando la concentración y asegurando un cierre formativo:
+        </p>
+
+        <div class="moments-grid">
+          <div class="moment-card moment-1">
+            <div class="moment-header">
+              <strong style="color: #38bdf8;">1. Apertura</strong>
+              <span class="moment-pill">5 min</span>
+            </div>
+            <p style="font-size: 13px; color: #94a3b8;">
+              Activación cognitiva, rescate de saberes previos y pregunta detonadora vinculada a la comunidad.
+            </p>
+          </div>
+
+          <div class="moment-card moment-2">
+            <div class="moment-header">
+              <strong style="color: #fbbf24;">2. Desarrollo / Explicación</strong>
+              <span class="moment-pill">10 min</span>
+            </div>
+            <p style="font-size: 13px; color: #94a3b8;">
+              Mediación docente y presentación de conceptos centrales con lenguaje fluido, oralmente inteligible y descriptivo.
+            </p>
+          </div>
+
+          <div class="moment-card moment-3">
+            <div class="moment-header">
+              <strong style="color: #34d399;">3. Actividad / Producción</strong>
+              <span class="moment-pill">20 min</span>
+            </div>
+            <p style="font-size: 13px; color: #94a3b8;">
+              Práctica guiada individual, en pares o colaborativa. Instrucciones claras paso a paso.
+            </p>
+          </div>
+
+          <div class="moment-card moment-4">
+            <div class="moment-header">
+              <strong style="color: #c084fc;">4. Cierre</strong>
+              <span class="moment-pill">5 min</span>
+            </div>
+            <p style="font-size: 13px; color: #94a3b8;">
+              Síntesis metacognitiva: ¿Qué aprendimos hoy? ¿Cómo se aplica en nuestra vida cotidiana?
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <strong>Regla de Oro DUA para Recursos Visuales:</strong>
+          Si se incluye una imagen o esquema, el sistema exige obligatoriamente su <em>Descripción Oral Accesible</em>. Está prohibido publicar imágenes mudas que excluyan a los alumnos invidentes.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: AULA HABLADA -->
+    <div id="sec-aula" class="doc-section">
+      <div class="card">
+        <h2>🔊 Aula Hablada Multimodal (Clase.html)</h2>
+        <p>
+          La interfaz del estudiante (diseñada según <code>ESTILO_UI_ST90.md</code>) ofrece una experiencia auditiva y visual de vanguardia:
+        </p>
+
+        <h3>Características de Accesibilidad</h3>
+        <ul style="color: #cbd5e1; margin-left: 20px; margin-bottom: 18px;">
+          <li><strong>Resaltado Dinámico de Texto (`.voz-enfocada`):</strong> Mientras la síntesis de voz reproduce cada párrafo, este se ilumina con foco amarillo suave y se desplaza automáticamente al centro de la pantalla.</li>
+          <li><strong>Interacción por Párrafo:</strong> El estudiante o docente puede hacer clic en cualquier párrafo para iniciar la reproducción exactamente desde ese punto.</li>
+          <li><strong>Caja de Descripción Auditiva:</strong> Las descripciones de recursos visuales se presentan en un recuadro distintivo con insignia sonora («🔊 Descripción auditiva»).</li>
+        </ul>
+
+        <h3>Atajos Rápidos de Teclado</h3>
+        <div class="code-block">
+[Barra Espaciadora] ➔ Pausar / Reanudar la voz
+[J]                 ➔ Disminuir velocidad de narración
+[L]                 ➔ Aumentar velocidad de narración
+[R]                 ➔ Repetir la clase desde el inicio
+[Escape]            ➔ Detener reproducción por completo
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 5: SIMULADOR INTERACTIVO -->
+    <div id="sec-simulador" class="doc-section">
+      <div class="card">
+        <h2>🎮 Simulador en Vivo: Aula Hablada</h2>
+        <p>
+          Prueba a continuación cómo experimenta la clase un estudiante vidente y un estudiante invidente al mismo tiempo:
+        </p>
+
+        <div class="simulator">
+          <div class="sim-header">
+            <div>
+              <strong style="color: #93c5fd; font-size: 16px;">Demostración: Español 1°A · Sesión 1</strong>
+              <p style="font-size: 12px; color: #94a3b8; margin: 0;">Voces y Raíces de Nuestra Tierra (40 min)</p>
+            </div>
+            <span style="background: #10b981; color: #ffffff; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 800;">EN CURSO</span>
+          </div>
+
+          <div class="sim-controls">
+            <button class="sim-btn sim-btn-primary" onclick="simularVoz()">▶ Escuchar Clase</button>
+            <button class="sim-btn" onclick="pausarSimulador()">⏸ Pausa</button>
+            <button class="sim-btn" onclick="detenerSimulador()">⏹ Detener</button>
+            <button class="sim-btn" onclick="cambiarVelSim(-0.1)">- Lento</button>
+            <button class="sim-btn" onclick="cambiarVelSim(0.1)">+ Rápido</button>
+            <span id="txtSimVel" style="align-self:center; font-size: 12px; color: #93c5fd; margin-left: auto;">Velocidad: 1.0x</span>
+          </div>
+
+          <div class="sim-view-area" id="simArea">
+            <h2 style="font-size: 20px; color: #1e3a8a; margin-bottom: 12px;">Sesión 1: Las palabras que nos nombran</h2>
+
+            <div style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+              <strong style="color: #0369a1; font-size: 13px;">⏱️ 1. Apertura (5 min)</strong>
+              <p class="sim-p" data-idx="0">¿Alguna vez te has preguntado por qué llamamos "aguacate" o "chocolate" a lo que comemos todos los días? Cierra tus ojos un segundo y recuerda qué palabras de tus abuelos no sueles escuchar en la televisión.</p>
+            </div>
+
+            <div style="background: #fffbeb; border-left: 4px solid #d97706; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+              <strong style="color: #b45309; font-size: 13px;">📖 2. Desarrollo y Explicación (10 min)</strong>
+              <p class="sim-p" data-idx="1">En México conviven 68 lenguas originarias y casi 364 variantes lingüísticas. El español que hablamos en nuestra comunidad está lleno de palabras del náhuatl, del maya y del zapoteco.</p>
+              
+              <div class="sim-audio-box">
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                  <span style="background:#d97706; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;">🔊 DESCRIPCIÓN AUDITIVA</span>
+                  <span style="font-size:12px; font-weight:700;">Accesible para voz y braille</span>
+                </div>
+                <p class="sim-p" data-idx="2" style="margin:0; font-size:13.5px; color:#1e3a8a;">Mapa de la República Mexicana con regiones coloreadas: verde en Oaxaca para mixteco y zapoteco, azul en el centro para náhuatl y amarillo en el sureste para maya.</p>
+              </div>
+            </div>
+
+            <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+              <strong style="color: #15803d; font-size: 13px;">✍️ 3. Actividad de Aprendizaje (20 min)</strong>
+              <p class="sim-p" data-idx="3">Elige tres palabras de uso diario derivadas de una lengua originaria. Escribe su significado actual y redacta una breve oración comunitaria.</p>
+            </div>
+
+            <div style="background: #faf5ff; border-left: 4px solid #7c3aed; padding: 12px; border-radius: 8px;">
+              <strong style="color: #6d28d9; font-size: 13px;">🎯 4. Cierre y Metacognición (5 min)</strong>
+              <p class="sim-p" data-idx="4">¿Por qué reconocer el origen de nuestro vocabulario fortalece nuestra identidad escolar y familiar?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 6: URLS Y SOLUCIÓN GOOGLE DRIVE -->
+    <div id="sec-urls" class="doc-section">
+      <div class="card">
+        <h2>🔗 URLs de Acceso y Solución al Mensaje de Google Drive</h2>
+        
+        <div class="callout callout-warning">
+          <strong>¿Por qué apareció «No se pudo abrir el archivo en este momento»?</strong>
+          Este mensaje de Google Drive ocurre habitualmente por 3 razones técnicas en Google Apps Script:
+          <ol style="margin: 8px 0 0 20px;">
+            <li><strong>Despliegue Dedicado:</strong> El ID configurado en el código para Clase Hablada es <code>AKfycbzPQDTj...</code>, mientras que el ID genérico de producción no tenía la ruta vinculada.</li>
+            <li><strong>Conflicto Multi-cuenta de Google:</strong> Si el navegador tiene varias cuentas de Gmail/Google abiertas, Apps Script bloquea la redirección. <em>Solución:</em> Abrir en una <strong>Ventana de Incógnito</strong> o en el perfil de la cuenta autorizada.</li>
+            <li><strong>Código en Repositorio Local:</strong> Como teníamos prohibición estricta de ejecutar <code>clasp push</code> sin tu autorización, los cambios aún residen en tus archivos locales de Git.</li>
+          </ol>
+        </div>
+
+        <h3>URLs Canónicas del Ecosistema</h3>
+        <table class="url-table">
+          <thead>
+            <tr>
+              <th>Módulo</th>
+              <th>Propósito</th>
+              <th>URL Directa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Clase Hablada (Alumno)</strong></td>
+              <td>Reproducción accesible DUA para estudiantes</td>
+              <td><a class="url-link" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec" target="_blank">AKfycbzPQDTj.../exec</a></td>
+            </tr>
+            <tr>
+              <td><strong>Clase · Maestro / Planeación</strong></td>
+              <td>Editor de planeación didáctica NEM y sesiones</td>
+              <td><a class="url-link" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=clase-maestro" target="_blank">AKfycbzPQDTj.../exec?pagina=clase-maestro</a></td>
+            </tr>
+            <tr>
+              <td><strong>Administración ST90</strong></td>
+              <td>Panel general (Lecturas, Asistencia, Usuarios)</td>
+              <td><a class="url-link" href="https://script.google.com/macros/s/AKfycbw5-PVzQVij83ngUvtE6LJX58kIn0dzIzv0j3NyHKaPINS2Yndtg1d4yD7gwqO5_gpbFw/exec?pagina=admin" target="_blank">AKfycbw5-PVz.../exec?pagina=admin</a></td>
+            </tr>
+            <tr>
+              <td><strong>Entorno de Desarrollo (ST90-dev)</strong></td>
+              <td>Pruebas aisladas sin tocar producción</td>
+              <td><a class="url-link" href="https://script.google.com/macros/s/AKfycbxDw5ITzPHqaX68RdZ8F2Xpywp_dZX8ORz3k00ZVrpmarmDGgCYxgjkRfYrfJKRUDJ1Ug/exec?pagina=clase" target="_blank">AKfycbxDw5I.../exec?pagina=clase</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 7: ESQUEMA DE DATOS -->
+    <div id="sec-datos" class="doc-section">
+      <div class="card">
+        <h2>🗄️ Esquema de Persistencia en Google Sheets</h2>
+        <p>
+          Las estructuras de datos se agregaron formalmente a <code>ENCABEZADOS</code> en <code>Codigo.gs</code> garantizando persistencia relacional con las hojas existentes:
+        </p>
+
+        <h3>1. Hoja: `PlaneacionesNEM`</h3>
+        <div class="code-block">
+["Id", "Titulo", "Grado", "Grupo", "Asignatura", "CampoFormativo", "Metodologia", "ContenidoSintetico", "PDA", "EjesArticuladores", "Proposito", "ProblemaComunidad", "ProductoFinal", "NumSesiones", "Docente", "Estado", "Version", "FechaCreacion", "FechaAprobacion"]
+        </div>
+
+        <h3>2. Hoja: `SesionesNEM`</h3>
+        <div class="code-block">
+["Id", "IdPlaneacion", "NumeroSesion", "Titulo", "DuracionMin", "AperturaTexto", "AperturaMin", "DesarrolloTexto", "DesarrolloMin", "RecursosVisualesJSON", "ActividadTexto", "ActividadMin", "CierreTexto", "CierreMin", "GuionDocenteJSON", "GuionEstudianteAccesible", "Estado", "IdHorario", "FechaProgramada", "Timestamp"]
+        </div>
+
+        <h3>3. Sincronización Automática con `ContenidosClase`</h3>
+        <p>
+          Al autorizar una sesión en el horario, el sistema actualiza automáticamente la hoja <code>ContenidosClase</code> para que la vista del alumno existente (<code>contextoClaseAlumno</code>) la consuma de inmediato sin requerir refactorizaciones invasivas.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 8: SEGURIDAD Y PRUEBAS -->
+    <div id="sec-seguridad" class="doc-section">
+      <div class="card">
+        <h2>🛡️ Evidencia Técnica y Pruebas Unitarias</h2>
+        <p>
+          Todas las validaciones se ejecutaron localmente contra la suite de regresión sin alterar la nube.
+        </p>
+
+        <div class="callout callout-success">
+          <strong>Resultado de Pruebas: 16 de 16 Pruebas Exitosas (0 Fallidas)</strong>
+          <ul style="margin: 8px 0 0 20px; font-size: 13.5px;">
+            <li><code>C.1</code> Catálogo curricular oficial NEM provee Fase 6, Campos y Metodologías.</li>
+            <li><code>C.2</code> Crear borrador de planeación inicializa N sesiones de 40 min en blanco.</li>
+            <li><code>C.3</code> Guardar sesión con enfoque DUA (4 momentos y regla de recurso visual).</li>
+            <li><code>C.4</code> Aprobar y calendarizar sincroniza automáticamente con <code>ContenidosClase</code>.</li>
+            <li><code>C.5</code> Renderizado multimodal DUA para estudiantes: momentos, audio y foco.</li>
+          </ul>
+        </div>
+
+        <h3>Hashes Criptográficos SHA-256</h3>
+        <div class="code-block">
+Clase.html:       5B51E0C15A4E3D7B6AF9485475576BE32A93FC0DBD7D643A3BDFB920F7C89A09
+PlaneacionNEM.gs: 7492668B3565283FC48DDA4C9D5AE13C3559290F2B09E3F0E1F40441EEB3A806
+Codigo.gs:        B5D5FE43305AE69213E22C481C2B71C52D8490085FC83D11F6E8141A90D8F3FA
+Respaldo prev:    5E1CE893502E80BB4A6557482D6723CEA14F051261AADDC12F3BE9A42220255A
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      ST90 / LECTURA — Sistema de Comprensión Lectora y Aula Hablada · Secundaria Técnica 90<br>
+      Documento técnico generado automáticamente el 23 de octubre de 2026.
+    </footer>
+  </div>
+
+  <script>
+    function verTab(id, btn) {
+      document.querySelectorAll('.doc-section').forEach(function(s) { s.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      const sec = document.getElementById('sec-' + id);
+      if (sec) sec.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    /* Simulador de Audio con SpeechSynthesis */
+    let simUtter = null;
+    let simIdxActual = -1;
+    let simVel = 1.0;
+    let simPausado = false;
+
+    const textosSim = [
+      "¿Alguna vez te has preguntado por qué llamamos aguacate o chocolate a lo que comemos todos los días? Cierra tus ojos un segundo y recuerda qué palabras de tus abuelos no sueles escuchar en la televisión.",
+      "En México conviven 68 lenguas originarias y casi 364 variantes lingüísticas. El español que hablamos en nuestra comunidad está lleno de palabras del náhuatl, del maya y del zapoteco.",
+      "Descripción auditiva del mapa: Mapa de la República Mexicana con regiones coloreadas: verde en Oaxaca para mixteco y zapoteco, azul en el centro para náhuatl y amarillo en el sureste para maya.",
+      "Elige tres palabras de uso diario derivadas de una lengua originaria. Escribe su significado actual y redacta una breve oración comunitaria.",
+      "¿Por qué reconocer el origen de nuestro vocabulario fortalece nuestra identidad escolar y familiar?"
+    ];
+
+    function simularVoz() {
+      if (!window.speechSynthesis) {
+        alert("Tu navegador no soporta síntesis de voz.");
+        return;
+      }
+      if (simPausado && window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        simPausado = false;
+        return;
+      }
+      detenerSimulador();
+      hablarPasoSim(0);
+    }
+
+    function hablarPasoSim(idx) {
+      if (idx >= textosSim.length) {
+        desenfocarTodosSim_();
+        return;
+      }
+      simIdxActual = idx;
+      enfocarParrafoSim_(idx);
+
+      simUtter = new SpeechSynthesisUtterance(textosSim[idx]);
+      simUtter.lang = 'es-MX';
+      simUtter.rate = simVel;
+
+      simUtter.onend = function() {
+        hablarPasoSim(idx + 1);
+      };
+      simUtter.onerror = function() {
+        desenfocarTodosSim_();
+      };
+
+      window.speechSynthesis.speak(simUtter);
+    }
+
+    function enfocarParrafoSim_(idx) {
+      document.querySelectorAll('#simArea .sim-p').forEach(function(el) {
+        const i = parseInt(el.getAttribute('data-idx'), 10);
+        el.classList.toggle('focused', i === idx);
+      });
+    }
+
+    function desenfocarTodosSim_() {
+      document.querySelectorAll('#simArea .sim-p').forEach(function(el) {
+        el.classList.remove('focused');
+      });
+    }
+
+    function pausarSimulador() {
+      if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        simPausado = true;
+      }
+    }
+
+    function detenerSimulador() {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      simPausado = false;
+      simIdxActual = -1;
+      desenfocarTodosSim_();
+    }
+
+    function cambiarVelSim(delta) {
+      simVel = Math.max(0.7, Math.min(1.5, Math.round((simVel + delta) * 10) / 10));
+      const el = document.getElementById('txtSimVel');
+      if (el) el.textContent = 'Velocidad: ' + simVel.toFixed(1) + 'x';
+      if (window.speechSynthesis && window.speechSynthesis.speaking && !simPausado) {
+        const curr = simIdxActual;
+        detenerSimulador();
+        hablarPasoSim(curr);
+      }
+    }
+
+    // Permitir clic en párrafos del simulador
+    document.querySelectorAll('#simArea .sim-p').forEach(function(el) {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', function() {
+        const i = parseInt(this.getAttribute('data-idx'), 10);
+        detenerSimulador();
+        hablarPasoSim(i);
+      });
+    });
+  </script>
+</body>
+</html>

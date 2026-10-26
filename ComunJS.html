@@ -40,6 +40,30 @@
     t._timer = setTimeout(function () { t.classList.remove('visible'); }, 3200);
   }
 
+  function barraProgresoSt90(estado) {
+    const el = document.getElementById('st90BarraCarga');
+    if (!el) return;
+    clearTimeout(el._timer);
+    if (estado === 'cargando') {
+      el.classList.remove('completada', 'error');
+      el.classList.add('activa');
+    } else if (estado === 'exito') {
+      el.classList.remove('activa', 'error');
+      el.classList.add('completada');
+      el._timer = setTimeout(function () {
+        el.classList.remove('completada', 'activa', 'error');
+      }, 450);
+    } else if (estado === 'error') {
+      el.classList.remove('activa', 'completada');
+      el.classList.add('error');
+      el._timer = setTimeout(function () {
+        el.classList.remove('completada', 'activa', 'error');
+      }, 800);
+    } else {
+      el.classList.remove('activa', 'completada', 'error');
+    }
+  }
+
   function modal(opciones) {
     // opciones: {titulo, mensaje, html, botones: [{texto, clase, valor}], capturar}
     return new Promise(function (resolve) {
@@ -159,8 +183,9 @@
   }
 
   function urlBaseWebApp() {
-    if (typeof URL_BASE_APP === 'string' && URL_BASE_APP.indexOf('http') === 0) {
-      return URL_BASE_APP.replace(/\/+$/, '');
+    if (typeof URL_BASE_APP === 'string') {
+      const limpia = URL_BASE_APP.replace(/^[\s"']+|[\s"']+$/g, '').replace(/\/+$/, '');
+      if (limpia.indexOf('http') === 0) return limpia;
     }
     try {
       const href = window.parent && window.parent.location && window.parent.location.href;
@@ -423,6 +448,25 @@
   }
 
   var AYUDAS_ST90 = {
+    planeacionNEM: {
+      titulo: 'Planeación Didáctica NEM y Horario Oficial',
+      html:
+        '<h4>Malla Horaria Oficial y Stepper NEM</h4>' +
+        '<p>La suite de Planeación integra la asignación de horarios oficiales de la secundaria con el modelo por proyectos de la Nueva Escuela Mexicana (NEM, Fase 6).</p>' +
+        '<h4>Accesos del Menú</h4>' +
+        '<dl>' +
+        '<dt>Horario Oficial</dt><dd>Visualiza la cuadrícula de clases semanales de los docentes, grupos y asignaturas. Desde cualquier clase puedes pulsar «Planear NEM» para autocompletar grado, grupo y fechas.</dd>' +
+        '<dt>Mi Banco Personal</dt><dd>Tus proyectos curriculares organizados por momentos DUA de 40 minutos, con objetivos pedagógicos, ejes articuladores y campos formativos.</dd>' +
+        '<dt>Repositorio Global</dt><dd>Banco institucional compartido de la secundaria para intercambiar y clonar proyectos entre academias docentes.</dd>' +
+        '<dt>+ Nueva Planeación</dt><dd>Abre directamente el Stepper de 4 etapas NEM (Diagnóstico CTE, Contenidos y PDA, Proyecto Comunitario y Sesiones DUA con eXeLearning y Aula Hablada).</dd>' +
+        '</dl>'
+    },
+    encuestas: {
+      titulo: 'Diagnóstico Comunitario y Encuestas',
+      html:
+        '<h4>Censo Socioeducativo y Vinculación CTE</h4>' +
+        '<p>Panel de analítica y constructor de encuestas diagnósticas para la detección de barreras de aprendizaje (BAP), problemáticas comunitarias y vinculación directa con las planeaciones didácticas.</p>'
+    },
     resKpis: {
       titulo: 'Resultados · indicadores',
       html:

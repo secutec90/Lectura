@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Constructor de formulario</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .header-banner { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; border-radius: 12px; }
+    .pregunta { border: 1px solid #e2e8f0; border-radius: 8px; }
+    .pregunta:hover { border-color: #93c5fd; }
+    .tipo-badge { font-size: .7rem; }
+    #tablaRespuestas { font-size: .85rem; }
+    @media print {
+      body { background: #fff !important; }
+      .header-banner, #loginCard, #barraConstructor, .nav-tabs, #paneFormulario, .no-print { display: none !important; }
+      #paneRespuestas { display: block !important; opacity: 1 !important; }
+      .card { box-shadow: none !important; border: 1px solid #dee2e6 !important; }
+      .table-responsive { max-height: none !important; overflow: visible !important; }
+      #tablaRespuestas { font-size: .75rem; }
+    }
+  </style>
+</head>
+<body class="p-2 p-md-3">
+<div class="container-fluid" style="max-width: 1100px;">
+
+  <div class="header-banner p-3 mb-3 text-center shadow-sm">
+    <h3 class="fw-bold mb-0"><i class="bi bi-ui-checks"></i> Constructor de formulario</h3>
+    <div class="subtitulo-escuela mt-1">Constructor de encuestas</div>
+  </div>
+
+  <!-- Acceso -->
+  <div id="loginCard" class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-4 text-center shadow-sm">
+        <i class="bi bi-shield-lock-fill text-primary" style="font-size: 2.5rem;"></i>
+        <h5 class="fw-bold mt-2">Acceso administrativo</h5>
+        <p class="text-muted small">Solo el administrador puede cambiar el formulario</p>
+        <form onsubmit="entrar(event)">
+          <div class="mb-3 text-start">
+            <label class="form-label small fw-semibold" for="adminUser">Usuario:</label>
+            <input type="text" id="adminUser" class="form-control" required>
+          </div>
+          <div class="mb-3 text-start">
+            <label class="form-label small fw-semibold" for="adminPass">Contraseña:</label>
+            <input type="password" id="adminPass" class="form-control" required>
+          </div>
+          <div id="errorLogin" class="alert alert-danger py-2 small d-none"></div>
+          <button type="submit" id="btnLogin" class="btn btn-primary w-100 fw-semibold">Ingresar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Constructor -->
+  <div id="constructor" class="d-none">
+    <div id="barraConstructor" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+      <div>
+        <button class="btn btn-sm btn-outline-secondary" onclick="abrirFormulario()"><i class="bi bi-box-arrow-up-right"></i> Abrir formulario</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="cargar()"><i class="bi bi-arrow-clockwise"></i> Recargar</button>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span id="estado" class="small text-muted"></span>
+        <button class="btn btn-sm btn-primary fw-semibold" onclick="guardarTodo()" id="btnGuardar"><i class="bi bi-save"></i> Guardar cambios</button>
+      </div>
+    </div>
+
+    <ul class="nav nav-tabs mb-3" id="tabsAdmin">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#paneFormulario" type="button"><i class="bi bi-list-check"></i> Formulario</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#paneRespuestas" type="button" onclick="cargarRespuestas()"><i class="bi bi-table"></i> Respuestas</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#paneResumen" type="button"><i class="bi bi-bar-chart-line"></i> Resumen</button></li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- Formulario -->
+      <div class="tab-pane fade show active" id="paneFormulario">
+        <div class="card p-3 mb-3">
+          <h6 class="fw-bold mb-3"><i class="bi bi-card-heading"></i> Cabecera</h6>
+          <div class="row g-2">
+            <div class="col-12 col-md-6"><label class="form-label small">Escuela</label><input class="form-control form-control-sm" id="cfg_escuela"></div>
+            <div class="col-12 col-md-6"><label class="form-label small">Subtítulo</label><input class="form-control form-control-sm" id="cfg_subtitulo"></div>
+            <div class="col-12"><label class="form-label small">Título del formulario</label><input class="form-control form-control-sm" id="cfg_titulo"></div>
+            <div class="col-12"><label class="form-label small">Introducción</label><textarea class="form-control form-control-sm" id="cfg_introduccion" rows="2"></textarea></div>
+            <div class="col-12 col-md-4"><label class="form-label small">Texto del botón</label><input class="form-control form-control-sm" id="cfg_boton"></div>
+            <div class="col-12 col-md-4"><label class="form-label small">Texto de éxito (título)</label><input class="form-control form-control-sm" id="cfg_exitoTitulo"></div>
+            <div class="col-12 col-md-4"><label class="form-label small">Texto «otra respuesta»</label><input class="form-control form-control-sm" id="cfg_otroBoton"></div>
+            <div class="col-12"><label class="form-label small">Mensaje de éxito (usa {nombre})</label><input class="form-control form-control-sm" id="cfg_exitoTexto"></div>
+            <div class="col-12"><label class="form-label small">Nota bajo el formulario</label><input class="form-control form-control-sm" id="cfg_nota"></div>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0"><i class="bi bi-list-check"></i> Preguntas</h6>
+            <button class="btn btn-sm btn-primary" onclick="abrirModal(-1)"><i class="bi bi-plus-lg"></i> Agregar pregunta</button>
+          </div>
+          <div id="listaPreguntas" class="d-flex flex-column gap-2"></div>
+          <p class="text-muted small mb-0 mt-3">Los cambios se aplican al guardar. Al eliminar una pregunta, sus datos anteriores se conservan en la hoja.</p>
+        </div>
+      </div>
+
+      <!-- Respuestas -->
+      <div class="tab-pane fade" id="paneRespuestas">
+        <div class="card p-3">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 no-print">
+            <div class="d-flex align-items-center gap-2">
+              <input type="search" class="form-control form-control-sm" id="buscarRespuestas" placeholder="Buscar…" style="width: 220px;" oninput="pintarTablaRespuestas()">
+              <button class="btn btn-sm btn-outline-secondary" onclick="cargarRespuestas()" title="Recargar"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="small text-muted" id="contadorRespuestas"></span>
+              <button class="btn btn-sm btn-outline-secondary" onclick="descargarCSVRespuestas()" title="Descargar CSV"><i class="bi bi-file-earmark-spreadsheet"></i></button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="imprimirRespuestas()" title="Imprimir o guardar como PDF"><i class="bi bi-file-earmark-pdf"></i></button>
+            </div>
+          </div>
+          <div id="printRespuestas" class="d-none d-print-block mb-2"></div>
+          <div class="table-responsive" style="max-height: 520px;">
+            <table class="table table-sm table-striped table-bordered align-middle mb-0" id="tablaRespuestas">
+              <thead class="table-light"></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen -->
+      <div class="tab-pane fade" id="paneResumen">
+        <div class="row g-3" id="graficasResumen"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pregunta -->
+<div class="modal fade" id="modalPregunta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title fw-bold" id="tituloModal">Pregunta</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12 col-md-5">
+            <label class="form-label small fw-semibold" for="p_tipo">Tipo</label>
+            <select class="form-select form-select-sm" id="p_tipo" onchange="actualizarCamposTipo()">
+              <option value="texto">Texto corto</option>
+              <option value="parrafo">Párrafo</option>
+              <option value="unica">Opción única</option>
+              <option value="multiple">Opción múltiple</option>
+              <option value="numero">Número</option>
+              <option value="fecha">Fecha</option>
+              <option value="sino">Sí / No</option>
+              <option value="escala">Escala</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-7 d-flex align-items-end">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="p_obligatoria">
+              <label class="form-check-label small" for="p_obligatoria">Obligatoria</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-semibold" for="p_etiqueta">Texto de la pregunta</label>
+            <input class="form-control form-control-sm" id="p_etiqueta">
+          </div>
+          <div class="col-12">
+            <label class="form-label small" for="p_ayuda">Texto de ayuda (opcional)</label>
+            <input class="form-control form-control-sm" id="p_ayuda">
+          </div>
+          <div class="col-12" id="grupoPlaceholder">
+            <label class="form-label small" for="p_placeholder">Placeholder (texto y párrafo)</label>
+            <input class="form-control form-control-sm" id="p_placeholder">
+          </div>
+          <div class="col-12" id="grupoOpciones">
+            <label class="form-label small fw-semibold" for="p_opciones">Opciones (una por línea)</label>
+            <textarea class="form-control form-control-sm" id="p_opciones" rows="5"></textarea>
+          </div>
+          <div class="col-6" id="grupoEscalaMin">
+            <label class="form-label small" for="p_escalaMin">Escala mínima</label>
+            <input type="number" class="form-control form-control-sm" id="p_escalaMin" value="1">
+          </div>
+          <div class="col-6" id="grupoEscalaMax">
+            <label class="form-label small" for="p_escalaMax">Escala máxima</label>
+            <input type="number" class="form-control form-control-sm" id="p_escalaMax" value="5">
+          </div>
+          <div class="col-6" id="grupoLongitud">
+            <label class="form-label small" for="p_maxLongitud">Longitud máxima</label>
+            <input type="number" class="form-control form-control-sm" id="p_maxLongitud" placeholder="500">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm fw-semibold" onclick="guardarPregunta()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let FORM = { config: {}, preguntas: [] };
+  let RESPUESTAS = null;
+  let creds = null;
+  let editando = -1;
+  let modal = null;
+
+  const TIPOS = {
+    texto: "Texto corto", parrafo: "Párrafo", unica: "Opción única", multiple: "Opción múltiple",
+    numero: "Número", fecha: "Fecha", sino: "Sí / No", escala: "Escala"
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    modal = new bootstrap.Modal(document.getElementById("modalPregunta"));
+    document.addEventListener("shown.bs.tab", e => {
+      const destino = e.target.getAttribute("data-bs-target");
+      if (destino === "#paneResumen") {
+        if (!RESPUESTAS) cargarRespuestas();
+        else pintarResumen();
+      }
+    });
+  });
+
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  function entrar(e) {
+    e.preventDefault();
+    const usuario = document.getElementById("adminUser").value.trim();
+    const pass = document.getElementById("adminPass").value.trim();
+    const btn = document.getElementById("btnLogin");
+    btn.disabled = true;
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.autenticado) {
+          creds = { usuario: usuario, pass: pass };
+          document.getElementById("loginCard").classList.add("d-none");
+          document.getElementById("constructor").classList.remove("d-none");
+          cargar();
+        } else {
+          const err = document.getElementById("errorLogin");
+          err.textContent = "Usuario o contraseña incorrectos.";
+          err.classList.remove("d-none");
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error de conexión: " + err.message);
+      })
+      .verificarAdmin({ usuario: usuario, pass: pass });
+  }
+
+  function cargar() {
+    estado("Cargando…");
+    google.script.run
+      .withSuccessHandler(formulario => {
+        FORM = formulario || { config: {}, preguntas: [] };
+        pintarConfig();
+        pintarPreguntas();
+        estado("");
+        if (RESPUESTAS) cargarRespuestas();
+      })
+      .withFailureHandler(err => estado("Error: " + err.message))
+      .obtenerFormulario();
+  }
+
+  function estado(texto) {
+    document.getElementById("estado").textContent = texto;
+  }
+
+  function pintarConfig() {
+    const c = FORM.config || {};
+    ["escuela", "subtitulo", "titulo", "introduccion", "boton", "nota", "exitoTitulo", "exitoTexto", "otroBoton"]
+      .forEach(k => { document.getElementById("cfg_" + k).value = c[k] || ""; });
+  }
+
+  function leerConfig() {
+    const c = {};
+    ["escuela", "subtitulo", "titulo", "introduccion", "boton", "nota", "exitoTitulo", "exitoTexto", "otroBoton"]
+      .forEach(k => { c[k] = document.getElementById("cfg_" + k).value; });
+    return c;
+  }
+
+  function pintarPreguntas() {
+    const cont = document.getElementById("listaPreguntas");
+    cont.innerHTML = "";
+    (FORM.preguntas || []).forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "pregunta p-2 d-flex justify-content-between align-items-start gap-2";
+
+      const info = document.createElement("div");
+      const cabecera = document.createElement("div");
+      cabecera.className = "d-flex align-items-center gap-2 flex-wrap";
+      const badge = document.createElement("span");
+      badge.className = "badge bg-secondary tipo-badge";
+      badge.textContent = TIPOS[p.tipo] || p.tipo;
+      cabecera.appendChild(badge);
+      if (p.obligatoria) {
+        const req = document.createElement("span");
+        req.className = "badge bg-warning text-dark tipo-badge";
+        req.textContent = "Obligatoria";
+        cabecera.appendChild(req);
+      }
+      info.appendChild(cabecera);
+
+      const titulo = document.createElement("div");
+      titulo.className = "fw-semibold small mt-1";
+      titulo.textContent = p.etiqueta;
+      info.appendChild(titulo);
+
+      if (p.ayuda) {
+        const ayuda = document.createElement("div");
+        ayuda.className = "text-muted small";
+        ayuda.textContent = p.ayuda;
+        info.appendChild(ayuda);
+      }
+      if (p.opciones && p.opciones.length) {
+        const ops = document.createElement("div");
+        ops.className = "text-muted small";
+        ops.textContent = p.opciones.join(" · ");
+        info.appendChild(ops);
+      }
+      div.appendChild(info);
+
+      const acciones = document.createElement("div");
+      acciones.className = "d-flex gap-1";
+      acciones.innerHTML =
+        '<button class="btn btn-sm btn-outline-secondary" title="Subir" onclick="mover(' + i + ',-1)"><i class="bi bi-arrow-up"></i></button>' +
+        '<button class="btn btn-sm btn-outline-secondary" title="Bajar" onclick="mover(' + i + ',1)"><i class="bi bi-arrow-down"></i></button>' +
+        '<button class="btn btn-sm btn-outline-primary" title="Editar" onclick="abrirModal(' + i + ')"><i class="bi bi-pencil"></i></button>' +
+        '<button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="eliminar(' + i + ')"><i class="bi bi-trash"></i></button>';
+      div.appendChild(acciones);
+      cont.appendChild(div);
+    });
+  }
+
+  function abrirModal(indice) {
+    editando = indice;
+    const p = indice >= 0 ? FORM.preguntas[indice] : {
+      tipo: "texto", etiqueta: "", ayuda: "", placeholder: "", obligatoria: false, opciones: [], extra: {}
+    };
+    document.getElementById("tituloModal").textContent = indice >= 0 ? "Editar pregunta" : "Nueva pregunta";
+    document.getElementById("p_tipo").value = p.tipo || "texto";
+    document.getElementById("p_etiqueta").value = p.etiqueta || "";
+    document.getElementById("p_ayuda").value = p.ayuda || "";
+    document.getElementById("p_placeholder").value = p.placeholder || "";
+    document.getElementById("p_obligatoria").checked = !!p.obligatoria;
+    document.getElementById("p_opciones").value = (p.opciones || []).join("\n");
+    const extra = p.extra || {};
+    document.getElementById("p_escalaMin").value = extra.escalaMin || 1;
+    document.getElementById("p_escalaMax").value = extra.escalaMax || 5;
+    document.getElementById("p_maxLongitud").value = extra.maxLongitud || "";
+    actualizarCamposTipo();
+    modal.show();
+  }
+
+  function actualizarCamposTipo() {
+    const tipo = document.getElementById("p_tipo").value;
+    const conOpciones = tipo === "unica" || tipo === "multiple";
+    document.getElementById("grupoOpciones").classList.toggle("d-none", !conOpciones);
+    document.getElementById("grupoEscalaMin").classList.toggle("d-none", tipo !== "escala");
+    document.getElementById("grupoEscalaMax").classList.toggle("d-none", tipo !== "escala");
+    document.getElementById("grupoLongitud").classList.toggle("d-none", !(tipo === "texto" || tipo === "parrafo"));
+    document.getElementById("grupoPlaceholder").classList.toggle("d-none", !(tipo === "texto" || tipo === "parrafo" || tipo === "numero"));
+  }
+
+  function guardarPregunta() {
+    const tipo = document.getElementById("p_tipo").value;
+    const etiqueta = document.getElementById("p_etiqueta").value.trim();
+    if (!etiqueta) { alert("Escribe el texto de la pregunta."); return; }
+    const opciones = document.getElementById("p_opciones").value.split("\n").map(s => s.trim()).filter(s => s);
+    if ((tipo === "unica" || tipo === "multiple") && opciones.length < 2) {
+      alert("Agrega al menos dos opciones.");
+      return;
+    }
+    const extra = {
+      escalaMin: Number(document.getElementById("p_escalaMin").value) || 1,
+      escalaMax: Number(document.getElementById("p_escalaMax").value) || 5,
+      maxLongitud: Number(document.getElementById("p_maxLongitud").value) || ""
+    };
+    const nueva = {
+      id: editando >= 0 ? FORM.preguntas[editando].id : "",
+      tipo: tipo,
+      etiqueta: etiqueta,
+      ayuda: document.getElementById("p_ayuda").value.trim(),
+      placeholder: document.getElementById("p_placeholder").value.trim(),
+      obligatoria: document.getElementById("p_obligatoria").checked,
+      opciones: opciones,
+      extra: extra
+    };
+    if (editando >= 0) FORM.preguntas[editando] = nueva;
+    else FORM.preguntas.push(nueva);
+    pintarPreguntas();
+    modal.hide();
+  }
+
+  function mover(indice, delta) {
+    const destino = indice + delta;
+    if (destino < 0 || destino >= FORM.preguntas.length) return;
+    const tmp = FORM.preguntas[indice];
+    FORM.preguntas[indice] = FORM.preguntas[destino];
+    FORM.preguntas[destino] = tmp;
+    pintarPreguntas();
+  }
+
+  function eliminar(indice) {
+    const p = FORM.preguntas[indice];
+    if (!confirm("¿Eliminar «" + p.etiqueta + "»? Los datos ya capturados se conservan.")) return;
+    FORM.preguntas.splice(indice, 1);
+    pintarPreguntas();
+  }
+
+  function guardarTodo() {
+    const btn = document.getElementById("btnGuardar");
+    btn.disabled = true;
+    estado("Guardando…");
+    const config = leerConfig();
+    const preguntas = FORM.preguntas.map((p, i) => ({
+      id: p.id || "",
+      tipo: p.tipo,
+      etiqueta: p.etiqueta,
+      ayuda: p.ayuda || "",
+      placeholder: p.placeholder || "",
+      obligatoria: !!p.obligatoria,
+      opciones: p.opciones || [],
+      extra: p.extra || {},
+      orden: i + 1
+    }));
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.exito) {
+          FORM = res.formulario;
+          pintarConfig();
+          pintarPreguntas();
+          estado("Guardado a las " + new Date().toLocaleTimeString());
+          if (RESPUESTAS) cargarRespuestas();
+        } else {
+          estado("");
+          alert((res && res.mensaje) || "No se pudo guardar.");
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        estado("");
+        alert("Error de conexión: " + err.message);
+      })
+      .guardarFormulario(creds, config, preguntas);
+  }
+
+  function abrirFormulario() {
+    const base = window.location.href.split("?")[0];
+    window.open(base + "?vista=formulario", "_blank");
+  }
+
+  // ---------- Respuestas ----------
+  function cargarRespuestas() {
+    if (!creds) return;
+    estado("Cargando respuestas…");
+    google.script.run
+      .withSuccessHandler(res => {
+        estado("");
+        if (res && res.autenticado) {
+          RESPUESTAS = res;
+          pintarTablaRespuestas();
+          if (document.getElementById("paneResumen").classList.contains("active")) pintarResumen();
+        } else {
+          estado("Sesión no válida.");
+        }
+      })
+      .withFailureHandler(err => { estado(""); alert("Error al cargar respuestas: " + err.message); })
+      .obtenerRespuestasFormulario(creds);
+  }
+
+  function preguntasVisibles() {
+    const lista = (RESPUESTAS && RESPUESTAS.preguntas) || FORM.preguntas || [];
+    return lista.filter(p => p.activa !== false);
+  }
+
+  function pintarTablaRespuestas() {
+    const thead = document.querySelector("#tablaRespuestas thead");
+    const tbody = document.querySelector("#tablaRespuestas tbody");
+    const preguntas = preguntasVisibles();
+    const busqueda = (document.getElementById("buscarRespuestas").value || "").toLowerCase().trim();
+    const filas = ((RESPUESTAS && RESPUESTAS.filas) || []).filter(f => {
+      if (!busqueda) return true;
+      const texto = [f.fecha, f.origen].concat(preguntas.map(p => f.respuestas[p.id])).join(" ").toLowerCase();
+      return texto.indexOf(busqueda) !== -1;
+    });
+
+    thead.innerHTML = "<tr><th>Fecha</th><th>Origen</th>" +
+      preguntas.map(p => "<th>" + esc(p.etiqueta) + "</th>").join("") + "</tr>";
+
+    if (!filas.length) {
+      tbody.innerHTML = '<tr><td colspan="' + (preguntas.length + 2) + '" class="text-center text-muted py-3">Sin respuestas</td></tr>';
+    } else {
+      tbody.innerHTML = filas.map(f =>
+        "<tr><td>" + esc(f.fecha) + "</td><td>" + esc(f.origen) + "</td>" +
+        preguntas.map(p => "<td>" + esc(f.respuestas[p.id]) + "</td>").join("") + "</tr>"
+      ).join("");
+    }
+    document.getElementById("contadorRespuestas").textContent =
+      "Mostrando " + filas.length + " de " + ((RESPUESTAS && RESPUESTAS.filas.length) || 0);
+  }
+
+  const PALETA_RESUMEN = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#64748b"];
+  let chartsResumen = [];
+
+  const pluginCuentas = {
+    id: "cuentas",
+    afterDatasetsDraw(chart) {
+      if (chart.config.type !== "bar") return;
+      const ctx = chart.ctx;
+      const meta = chart.getDatasetMeta(0);
+      const datos = chart.data.datasets[0].data;
+      const horizontal = chart.options.indexAxis === "y";
+      ctx.save();
+      ctx.fillStyle = "#334155";
+      ctx.font = "600 11px 'Segoe UI', sans-serif";
+      meta.data.forEach((barra, i) => {
+        if (datos[i] === null || datos[i] === undefined) return;
+        if (horizontal) {
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(datos[i], barra.x + 6, barra.y);
+        } else {
+          ctx.textAlign = "center";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(datos[i], barra.x, barra.y - 4);
+        }
+      });
+      ctx.restore();
+    }
+  };
+
+  function pintarResumen() {
+    const cont = document.getElementById("graficasResumen");
+    chartsResumen.forEach(c => c.destroy());
+    chartsResumen = [];
+    cont.innerHTML = "";
+    if (!RESPUESTAS) return;
+
+    const preguntas = preguntasVisibles().filter(p =>
+      ["unica", "multiple", "sino", "escala"].indexOf(p.tipo) !== -1
+    );
+    if (!preguntas.length) {
+      cont.innerHTML = '<div class="col-12"><p class="text-muted">Aún no hay preguntas con opciones para graficar.</p></div>';
+      return;
+    }
+    const filas = RESPUESTAS.filas || [];
+
+    preguntas.forEach(p => {
+      const conteo = {};
+      filas.forEach(f => {
+        const valor = f.respuestas ? f.respuestas[p.id] : "";
+        if (valor == null || valor === "") return;
+        if (p.tipo === "multiple") {
+          String(valor).split(";").map(s => s.trim()).filter(s => s).forEach(v => {
+            conteo[v] = (conteo[v] || 0) + 1;
+          });
+        } else {
+          conteo[String(valor)] = (conteo[String(valor)] || 0) + 1;
+        }
+      });
+
+      let etiquetas = [];
+      if (p.tipo === "escala") {
+        const min = Number((p.extra || {}).escalaMin || 1);
+        const max = Number((p.extra || {}).escalaMax || 5);
+        for (let n = min; n <= max; n++) etiquetas.push(String(n));
+      } else if (p.tipo === "sino") {
+        etiquetas = ["Sí", "No"];
+      } else {
+        etiquetas = (p.opciones || []).slice();
+      }
+      Object.keys(conteo).forEach(k => { if (etiquetas.indexOf(k) === -1) etiquetas.push(k); });
+
+      const col = document.createElement("div");
+      col.className = "col-12 col-lg-6";
+      const card = document.createElement("div");
+      card.className = "card p-3 h-100";
+      const titulo = document.createElement("h6");
+      titulo.className = "fw-bold small mb-2";
+      titulo.textContent = p.etiqueta;
+      const caja = document.createElement("div");
+      caja.style.position = "relative";
+      caja.style.height = Math.max(180, etiquetas.length * 34) + "px";
+      const canvas = document.createElement("canvas");
+      caja.appendChild(canvas);
+      card.appendChild(titulo);
+      card.appendChild(caja);
+      col.appendChild(card);
+      cont.appendChild(col);
+
+      if (etiquetas.length === 0) return;
+      const datos = etiquetas.map(e => conteo[e] || 0);
+      const colores = etiquetas.map((_, i) => PALETA_RESUMEN[i % PALETA_RESUMEN.length]);
+      chartsResumen.push(new Chart(canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: etiquetas,
+          datasets: [{ label: "Respuestas", data: datos, backgroundColor: colores, borderRadius: 5 }]
+        },
+        plugins: [pluginCuentas],
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { right: 28 } },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, ticks: { precision: 0 } },
+            y: { grid: { display: false }, ticks: { autoSkip: false, font: { size: 10 } } }
+          }
+        }
+      }));
+    });
+  }
+
+  function celdaCSV(valor) {
+    let s = String(valor == null ? "" : valor);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    if (/[";\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function descargarCSVRespuestas() {
+    if (!RESPUESTAS || !RESPUESTAS.filas || !RESPUESTAS.filas.length) {
+      alert("No hay respuestas para exportar.");
+      return;
+    }
+    const preguntas = preguntasVisibles();
+    const cabecera = ["Fecha", "Origen"].concat(preguntas.map(p => p.etiqueta));
+    const lineas = [cabecera.map(celdaCSV).join(";")];
+    RESPUESTAS.filas.forEach(f => {
+      lineas.push([f.fecha, f.origen].concat(preguntas.map(p => f.respuestas[p.id])).map(celdaCSV).join(";"));
+    });
+    const contenido = "\uFEFF" + lineas.join("\r\n");
+    const blob = new Blob([contenido], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const d = new Date();
+    const p = n => String(n).padStart(2, "0");
+    a.href = url;
+    a.download = "respuestas_" + d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+  }
+
+  function imprimirRespuestas() {
+    const cont = document.getElementById("printRespuestas");
+    const preguntas = preguntasVisibles();
+    const total = (RESPUESTAS && RESPUESTAS.filas.length) || 0;
+    cont.className = "mb-2";
+    cont.innerHTML = '<div class="fw-bold">' + esc(FORM.config.escuela || "") + " — " + esc(FORM.config.titulo || "") + "</div>" +
+      '<div class="small">Respuestas: ' + total + " · Generado el " + new Date().toLocaleString() + "</div><hr class='my-2'>";
+    window.print();
+  }
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@
   <base target="_self">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
   <?!= include('ComunCSS') ?>
   <style>
     .envoltorio { max-width: 1152px; width: 95%; margin: 0 auto; padding: 24px 18px 48px; }
@@ -504,6 +505,7 @@
     const URL_ADMIN_APP = <?= JSON.stringify(urlAdmin || '') ?>;
     const URL_DOCENTE_APP = <?= JSON.stringify(typeof urlDocente !== 'undefined' ? urlDocente : '') ?>;
     const MAT_AUTO = <?= JSON.stringify(typeof matAuto !== 'undefined' ? matAuto : '') ?>;
+    const TOKEN_AUTO = <?= JSON.stringify(typeof tokenAuto !== 'undefined' ? tokenAuto : '') ?>;
     const ALUMNO_AUTO = <?!= typeof alumnoAutoJson !== 'undefined' ? alumnoAutoJson : 'null' ?>;
     const CUPO_AUTO = <?!= typeof cupoAutoJson !== 'undefined' ? cupoAutoJson : 'null' ?>;
 
@@ -530,6 +532,17 @@
     let tReactivos0 = null;
     let ultimoInforme = null;
     let matriculaActual = '';
+    let tokenSesionActual = TOKEN_AUTO || '';
+    if (window.history && window.history.replaceState) {
+      try {
+        const u = new URL(window.location.href);
+        if (u.searchParams.has('token') || u.searchParams.has('t')) {
+          u.searchParams.delete('token');
+          u.searchParams.delete('t');
+          window.history.replaceState({}, document.title, u.pathname + (u.search ? u.search : ''));
+        }
+      } catch (eEarly) {}
+    }
     let panelDatos = null;
     let infoTrimestre = <?!= trimestreJson || 'null' ?>;
     let cupoActual = null;
@@ -853,7 +866,7 @@
       const btn = document.getElementById('btnComenzar');
       btn.disabled = true;
       document.getElementById('avisoInicio').textContent = 'Abriendo tu panel…';
-      gsRun('panelAlumno', mat)
+      gsRun('panelAlumno', mat, tokenSesionActual)
         .then(function (res) {
           btn.disabled = false;
           document.getElementById('avisoInicio').textContent = '';
@@ -876,7 +889,7 @@
 
     function iniciarPrueba() {
       const mat = matriculaActual || (document.getElementById('nombreEstudiante') && document.getElementById('nombreEstudiante').value);
-      arrancarEvaluacion(mat, '', document.getElementById('btnIniciarPrueba'));
+      arrancarEvaluacion(mat, 'sorteo', document.getElementById('btnIniciarPrueba'));
     }
 
     function iniciarTrimestral() {
@@ -886,10 +899,19 @@
 
     function arrancarEvaluacion(mat, modo, btn) {
       if (!mat) return toast('Selecciona grado, grupo y nombre.', 'error');
+      const modoLimpio = String(modo || '').trim().toLowerCase();
+      if (!modoLimpio || (modoLimpio !== 'sorteo' && modoLimpio !== 'trimestral')) {
+        if (btn) btn.disabled = false;
+        return toast('Modalidad de evaluación no válida.', 'error');
+      }
+      if (!tokenSesionActual) {
+        if (btn) btn.disabled = false;
+        return toast('Debes iniciar sesión con tus credenciales para presentar el examen.', 'error');
+      }
       if (btn) btn.disabled = true;
       const aviso = document.getElementById('avisoInicio');
-      if (aviso) aviso.textContent = modo === 'trimestral' ? 'Cargando la lectura trimestral…' : 'Preparando sorteo…';
-      gsRun('iniciarEvaluacionAlumno', mat, modo || '')
+      if (aviso) aviso.textContent = modoLimpio === 'trimestral' ? 'Cargando la lectura trimestral…' : 'Preparando sorteo…';
+      gsRun('iniciarEvaluacionAlumno', mat, modoLimpio, tokenSesionActual)
         .then(function (res) {
           if (!res.ok) {
             if (btn) btn.disabled = false;
@@ -1028,10 +1050,86 @@
       clearInterval(idLecturaReloj);
       clearInterval(idExamenReloj);
       clearInterval(idPreguntaReloj);
+      const tokenViejo = tokenSesionActual;
+      tokenSesionActual = '';
       matriculaActual = '';
       panelDatos = null;
       paquete = {};
+      cupoActual = null;
+      indicePregunta = 0;
+      respuestas = [];
+      tiemposPregunta = [];
+      tiempoLecturaFinal = 0;
+      ppmCalculado = 0;
+      nivelPpm = '';
+      enRevisionLectura = false;
+      relecturas = 0;
+      tiempoReactivosAcumulado = 0;
+      tReactivos0 = null;
+      ultimoInforme = null;
+
+      // Revocar sesión en el servidor (asíncrono; la limpieza local es inmediata e incondicional)
+      if (tokenViejo) {
+        gsRun('revocarTokenSesion', tokenViejo).catch(function (eRev) {
+          console.warn('Fallo de red al revocar sesión en servidor; el estado local del navegador ha sido purgado.', eRev);
+        });
+      }
+
+      // Limpiar parámetros de la URL e historial visible
+      if (window.history && window.history.replaceState) {
+        try {
+          const u = new URL(window.location.href);
+          u.searchParams.delete('token');
+          u.searchParams.delete('t');
+          u.searchParams.delete('mat');
+          u.searchParams.delete('matricula');
+          u.searchParams.delete('u');
+          u.searchParams.delete('usuario');
+          window.history.replaceState({}, document.title, u.pathname + (u.search ? u.search : ''));
+        } catch (eClean) {}
+      }
+
+      // Limpiar datos personales y panel de la interfaz
       document.getElementById('avisoInicio').textContent = '';
+      const lblNom = document.getElementById('lblAlumnoNombre');
+      if (lblNom) lblNom.textContent = 'Alumno';
+      const lblDet = document.getElementById('lblAlumnoDetalle');
+      if (lblDet) lblDet.textContent = '';
+      const pNom = document.getElementById('panelNombre');
+      if (pNom) pNom.textContent = 'Mi panel';
+      const pFicha = document.getElementById('panelFicha');
+      if (pFicha) pFicha.textContent = '';
+      const pKpis = document.getElementById('panelKpis');
+      if (pKpis) pKpis.innerHTML = '';
+      const pSpark = document.getElementById('panelSpark');
+      if (pSpark) pSpark.innerHTML = '';
+      const pHist = document.getElementById('panelHistorial');
+      if (pHist) pHist.innerHTML = '';
+      const pChips = document.getElementById('panelChips');
+      if (pChips) pChips.innerHTML = '';
+      const pAviso = document.getElementById('panelAviso');
+      if (pAviso) { pAviso.textContent = ''; pAviso.className = 'aviso-panel'; }
+
+      // Limpiar contenidos del examen del DOM para prevenir fugas visuales entre alumnos
+      const cTexto = document.getElementById('cajaTexto');
+      if (cTexto) cTexto.innerHTML = '';
+      const cPreguntas = document.getElementById('cajaPreguntas');
+      if (cPreguntas) cPreguntas.innerHTML = '';
+      const cLectura = document.getElementById('cajaLectura');
+      if (cLectura) cLectura.textContent = 'Cargando…';
+      const bPreg = document.getElementById('bloquePregunta');
+      if (bPreg) bPreg.innerHTML = '';
+      const numPpm = document.getElementById('ppmNumero');
+      if (numPpm) numPpm.textContent = '—';
+      const detPpm = document.getElementById('ppmDetalle');
+      if (detPpm) detPpm.textContent = '';
+      const msgPpm = document.getElementById('ppmMensaje');
+      if (msgPpm) msgPpm.textContent = '';
+      const ficLec = document.getElementById('fichaLectura');
+      if (ficLec) ficLec.textContent = '';
+      const datoPal = document.getElementById('datoPalabras');
+      if (datoPal) datoPal.textContent = '';
+
       const cajaSel = document.getElementById('cajaSelectoresAlumno');
       const cajaAuto = document.getElementById('cajaAlumnoAutenticado');
       if (cajaSel) cajaSel.style.display = '';
@@ -1051,7 +1149,7 @@
     function recargarPanel(mat) {
       const id = mat || matriculaActual;
       if (!id) { mostrar('secRegistro'); return; }
-      gsRun('panelAlumno', id)
+      gsRun('panelAlumno', id, tokenSesionActual)
         .then(function (res) {
           if (!res.ok) {
             toast(res.mensaje || 'No se pudo cargar el panel.', 'error');
@@ -1075,7 +1173,7 @@
         return toast(panelDatos.mensaje || 'No puedes presentar ahora.', 'error');
       }
       const btn = document.getElementById('btnNuevaEval');
-      arrancarEvaluacionDesdePanel(mat, '', btn);
+      arrancarEvaluacionDesdePanel(mat, 'sorteo', btn);
     }
 
     function iniciarTrimestralDesdePanel() {
@@ -1086,8 +1184,17 @@
     }
 
     function arrancarEvaluacionDesdePanel(mat, modo, btn) {
+      const modoLimpio = String(modo || '').trim().toLowerCase();
+      if (!modoLimpio || (modoLimpio !== 'sorteo' && modoLimpio !== 'trimestral')) {
+        if (btn) btn.disabled = false;
+        return toast('Modalidad de evaluación no válida.', 'error');
+      }
+      if (!tokenSesionActual) {
+        if (btn) btn.disabled = false;
+        return toast('Debes iniciar sesión con tus credenciales para presentar el examen.', 'error');
+      }
       if (btn) btn.disabled = true;
-      gsRun('iniciarEvaluacionAlumno', mat, modo || '')
+      gsRun('iniciarEvaluacionAlumno', mat, modoLimpio, tokenSesionActual)
         .then(function (res) {
           if (!res.ok) {
             if (btn) btn.disabled = false;
@@ -1306,6 +1413,12 @@
       clearInterval(idExamenReloj);
       clearInterval(idPreguntaReloj);
       const tiempoReactivos = Math.max(1, Math.round(tiempoReactivosMs() / 1000));
+      const tokenEx = (paquete && paquete.tokenExamen) || '';
+      if (!tokenEx) {
+        toast('No se encontró el token de examen. Reinicia la prueba.', 'error');
+        document.getElementById('btnSiguiente').disabled = false;
+        return;
+      }
       const payload = {
         matricula: paquete.alumno.matricula,
         idLectura: paquete.lectura.idLectura,
@@ -1317,7 +1430,8 @@
         relecturas: relecturas,
         respuestas: respuestas,
         modo: paquete.modo || '',
-        trimestre: (paquete.trimestre && (paquete.trimestre.trimestre || paquete.trimestre.num)) || ''
+        trimestre: (paquete.trimestre && (paquete.trimestre.trimestre || paquete.trimestre.num)) || '',
+        tokenExamen: tokenEx
       };
       document.getElementById('btnSiguiente').disabled = true;
       gsRun('guardarResultadosExamen', payload)
@@ -1691,17 +1805,9 @@
     if (infoTrimestre) aplicarEstadoTrimestral(cupoActual);
     if (ALUMNO_AUTO) {
       aplicarAlumnoAutenticado(ALUMNO_AUTO, CUPO_AUTO);
-    } else if (MAT_AUTO) {
+    } else if (MAT_AUTO && TOKEN_AUTO) {
       matriculaActual = MAT_AUTO;
-      gsRun('consultarCupoAlumno', MAT_AUTO).then(function (res) {
-        if (res && res.ok && res.panel && res.panel.alumno) {
-          aplicarAlumnoAutenticado(res.panel.alumno, res);
-        } else {
-          consultarCupoPorMat(MAT_AUTO);
-        }
-      }).catch(function (e) {
-        console.warn('No se pudo inicializar alumno automático:', e);
-      });
+      consultarCupoPorMat(MAT_AUTO);
     }
   </script>
 </body>

@@ -1,0 +1,7 @@
+# Archivos que NO se suben al proyecto de Apps Script
+# (clasp sube cualquier .html/.js/.json de la carpeta, incluidos los respaldos)
+_backup/**
+_revision/**
+_constructor/**
+-backup/**
+*.md

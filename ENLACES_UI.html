@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directorio de Enlaces UI — Secundaria Técnica 90</title>
+  <style>
+    :root {
+      --st90-azul: #1e40af;
+      --st90-azul-claro: #eff6ff;
+      --st90-borde: #e2e8f0;
+      --st90-texto: #0f172a;
+      --st90-gris: #475569;
+      --st90-fondo: #f8fafc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--st90-fondo);
+      color: var(--st90-texto);
+      line-height: 1.5;
+      padding: 32px 16px;
+    }
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      background: #ffffff;
+      border: 1px solid var(--st90-borde);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 {
+      font-size: 1.35rem;
+      color: var(--st90-azul);
+      margin-bottom: 4px;
+    }
+    header p {
+      font-size: 0.9rem;
+      color: var(--st90-gris);
+    }
+    .badge-version {
+      background: var(--st90-azul-claro);
+      color: var(--st90-azul);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .tarjeta {
+      background: #ffffff;
+      border: 1px solid var(--st90-borde);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .tarjeta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.07);
+      border-color: #93c5fd;
+    }
+    .tarjeta-cabecera {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .icono {
+      font-size: 1.5rem;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--st90-azul-claro);
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .tarjeta h2 {
+      font-size: 1.05rem;
+      color: var(--st90-texto);
+    }
+    .tarjeta p {
+      font-size: 0.875rem;
+      color: var(--st90-gris);
+    }
+    .url-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.75rem;
+      background: #f1f5f9;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: #334155;
+      word-break: break-all;
+      border: 1px solid #e2e8f0;
+    }
+    .acciones {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.15s ease;
+    }
+    .btn-primario {
+      background: var(--st90-azul);
+      color: #ffffff;
+    }
+    .btn-primario:hover {
+      background: #1d4ed8;
+    }
+    .btn-secundario {
+      background: #ffffff;
+      color: var(--st90-gris);
+      border-color: #cbd5e1;
+    }
+    .btn-secundario:hover {
+      background: #f1f5f9;
+      color: var(--st90-texto);
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div>
+        <h1>Enlaces de Verificación de Interfaz (UI) — Secundaria Técnica 90</h1>
+        <p>Suite Escolar ST90 · Comprensión Lectora, Planeación NEM, Asistencia, Aula Hablada y Encuestas</p>
+      </div>
+      <span class="badge-version">Producción @409</span>
+    </header>
+
+    <div class="grid">
+      <!-- 1. Admin -->
+      <div class="tarjeta">
+        <div>
+          <div class="tarjeta-cabecera">
+            <div class="icono">⚙️</div>
+            <h2>Panel Administrador</h2>
+          </div>
+          <p style="margin-top:10px;">Acceso a las 5 pestañas maestras: Usuarios, Asistencia, Lecturas, Planeación Didáctica y Diagnóstico / Encuestas.</p>
+        </div>
+        <div class="url-box">?pagina=admin</div>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin" target="_blank" rel="noopener">Abrir Vista ↗</a>
+          <button class="btn btn-secundario" onclick="copiarUrl('https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin', this)">Copiar URL</button>
+        </div>
+      </div>
+
+      <!-- 2. Docente -->
+      <div class="tarjeta">
+        <div>
+          <div class="tarjeta-cabecera">
+            <div class="icono">👨‍🏫</div>
+            <h2>Vista Docente</h2>
+          </div>
+          <p style="margin-top:10px;">Horario Oficial (600 clases), Banco Personal y Global de Planeaciones NEM Fase 6, Sesiones DUA y Aula Hablada.</p>
+        </div>
+        <div class="url-box">?pagina=docente</div>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=docente" target="_blank" rel="noopener">Abrir Vista ↗</a>
+          <button class="btn btn-secundario" onclick="copiarUrl('https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=docente', this)">Copiar URL</button>
+        </div>
+      </div>
+
+      <!-- 3. Censo / Encuesta -->
+      <div class="tarjeta">
+        <div>
+          <div class="tarjeta-cabecera">
+            <div class="icono">📊</div>
+            <h2>Encuesta / Censo (Alumnos)</h2>
+          </div>
+          <p style="margin-top:10px;">Formulario público interactivo para captura diagnóstica y censo estudiantil.</p>
+        </div>
+        <div class="url-box">?pagina=censo</div>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=censo" target="_blank" rel="noopener">Abrir Vista ↗</a>
+          <button class="btn btn-secundario" onclick="copiarUrl('https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=censo', this)">Copiar URL</button>
+        </div>
+      </div>
+
+      <!-- 4. Alumno Lectura -->
+      <div class="tarjeta">
+        <div>
+          <div class="tarjeta-cabecera">
+            <div class="icono">🎓</div>
+            <h2>Vista Alumno (Lectura)</h2>
+          </div>
+          <p style="margin-top:10px;">Evaluación de comprensión lectora, velocidad PPM, niveles cognitivos e historial personal.</p>
+        </div>
+        <div class="url-box">?pagina=alumno</div>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=alumno" target="_blank" rel="noopener">Abrir Vista ↗</a>
+          <button class="btn btn-secundario" onclick="copiarUrl('https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=alumno', this)">Copiar URL</button>
+        </div>
+      </div>
+
+      <!-- 5. Prefectura / Asistencia -->
+      <div class="tarjeta">
+        <div>
+          <div class="tarjeta-cabecera">
+            <div class="icono">🧑‍🏫</div>
+            <h2>Prefectura y Asistencia</h2>
+          </div>
+          <p style="margin-top:10px;">Pase de lista de alumnos por turno/grado/grupo asignado, asistencia docente y reportes.</p>
+        </div>
+        <div class="url-box">?pagina=asistencia</div>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=asistencia" target="_blank" rel="noopener">Abrir Vista ↗</a>
+          <button class="btn btn-secundario" onclick="copiarUrl('https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=asistencia', this)">Copiar URL</button>
+        </div>
+      </div>
+
+      <!-- 6. Aula Hablada -->
+      <div class="tarjeta">
+        <div>
+          <div class="tarjeta-cabecera">
+            <div class="icono">🔊</div>
+            <h2>Aula Hablada (Audio DUA)</h2>
+          </div>
+          <p style="margin-top:10px;">Reproductor accesible con síntesis de voz y atajos de teclado para estudiantes invidentes o débiles visuales.</p>
+        </div>
+        <div class="url-box">?modo=alumno</div>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?modo=alumno" target="_blank" rel="noopener">Abrir Vista ↗</a>
+          <button class="btn btn-secundario" onclick="copiarUrl('https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?modo=alumno', this)">Copiar URL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copiarUrl(url, btn) {
+      navigator.clipboard.writeText(url).then(function() {
+        var original = btn.textContent;
+        btn.textContent = "¡Copiado!";
+        setTimeout(function() { btn.textContent = original; }, 1600);
+      });
+    }
+  </script>
+</body>
+</html>

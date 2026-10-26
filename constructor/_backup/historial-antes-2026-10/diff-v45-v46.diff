@@ -1,0 +1,458 @@
+﻿diff --git "a/_backup\\constructor-v45-Index.html" b/Index.html
+index d0864c0..7f51bf7 100644
+--- "a/_backup\\constructor-v45-Index.html"
++++ b/Index.html
+@@ -290,19 +290,6 @@
+               <!-- Dimensiones de segmentación: se generan desde el esquema -->
+               <div id="filtrosDimensiones" class="d-flex flex-wrap align-items-center gap-1"></div>
+ 
+-              <!-- Filtros por pregunta: un desplegable -->
+-              <div class="dropdown">
+-                <button class="btn btn-sm btn-outline-secondary" id="btnFiltrosDinamicos" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Filtros por pregunta" aria-label="Filtros por pregunta">
+-                  <i class="bi bi-funnel"></i><span class="badge bg-primary ms-1 d-none" id="badgeFiltrosDinamicos">0</span>
+-                </button>
+-                <div class="dropdown-menu p-0 shadow-sm" id="menuFiltrosDinamicos" style="width: 34rem; max-height: 64vh; overflow-y: auto;">
+-                  <div class="px-3 pt-2 pb-1">
+-                    <h6 class="dropdown-header px-0">Preguntas</h6>
+-                    <div class="filtro-ayuda px-0">Filtran la muestra; no cambian la gráfica</div>
+-                  </div>
+-                  <div id="filtrosPreguntas" class="menu-preguntas"></div>
+-                </div>
+-              </div>
+ 
+               <div class="dropdown">
+                 <button class="btn btn-sm btn-outline-secondary" id="btn-ajustesGrafica" data-bs-toggle="dropdown" aria-expanded="false" title="Ajustes de gráfica" aria-label="Ajustes de gráfica">
+@@ -342,7 +329,6 @@
+                 <option value="sunburst">Rayos solares (jerarquía)</option>
+               </select>
+               <select id="segmentoGrafica" class="d-none" onchange="aplicarFiltrosYGraficar()"></select>
+-              <select id="nivel3Grafica" class="d-none" onchange="aplicarFiltrosYGraficar()"></select>
+             </div>
+ 
+             <!-- Filtros de la Barra de Hoja de Datos -->
+@@ -377,6 +363,7 @@
+                 <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Mantenimiento" aria-label="Mantenimiento"><i class="bi bi-tools"></i></button>
+                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                   <li><button class="dropdown-item" type="button" onclick="abrirSimulacion()"><i class="bi bi-dice-5"></i> Simular respuestas</button></li>
++                  <li><button class="dropdown-item" type="button" onclick="quitarPreguntasEjemplo()"><i class="bi bi-eraser"></i> Quitar preguntas de ejemplo</button></li>
+                   <li><hr class="dropdown-divider"></li>
+                   <li><button class="dropdown-item text-danger" type="button" onclick="limpiarSimulados()"><i class="bi bi-trash"></i> Limpiar simulados</button></li>
+                 </ul>
+@@ -416,8 +403,29 @@
+               <div class="col-12 col-lg-6" id="colGraficaPrincipal">
+                 <div class="card p-3 h-100 shadow-sm" id="cardGraficaPrincipal" style="cursor: zoom-in;" onclick="ampliarGrafica(event, 'grafica1')">
+                   <div class="d-flex justify-content-between align-items-center mb-2 gap-2 flex-wrap">
+-                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart-fill"></i> <span id="tituloGrafica1">Resultados</span></h6>
+-                    <span class="badge bg-primary" id="badgeGrafica1">0 respuestas</span>
++                    <div class="dropdown">
++                      <button class="btn btn-sm btn-outline-primary fw-bold d-flex align-items-center gap-2" type="button" id="btnPreguntaGrafica" data-bs-toggle="dropdown" aria-expanded="false" title="Elegir la pregunta que se grafica">
++                        <i class="bi bi-bar-chart-line-fill"></i>
++                        <span id="tituloGrafica1">Resultados</span>
++                        <i class="bi bi-chevron-down small"></i>
++                      </button>
++                      <ul class="dropdown-menu" id="menuPreguntaGrafica" style="min-width: 20rem; max-height: 62vh; overflow-y: auto;"></ul>
++                    </div>
++                    <div class="d-flex align-items-center gap-2">
++                      <div class="dropdown">
++                        <button class="btn btn-sm btn-outline-secondary" id="btnFiltrosDinamicos" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Filtros por pregunta" aria-label="Filtros por pregunta">
++                          <i class="bi bi-funnel"></i><span class="badge bg-primary ms-1 d-none" id="badgeFiltrosDinamicos">0</span>
++                        </button>
++                        <div class="dropdown-menu dropdown-menu-end p-0 shadow-sm" id="menuFiltrosDinamicos" style="width: 30rem; max-height: 60vh; overflow-y: auto;">
++                          <div class="px-3 pt-2 pb-1">
++                            <h6 class="dropdown-header px-0">Filtros por pregunta</h6>
++                            <div class="filtro-ayuda px-0">Filtran la muestra y la gráfica</div>
++                          </div>
++                          <div id="filtrosPreguntas" class="menu-preguntas"></div>
++                        </div>
++                      </div>
++                      <span class="badge bg-primary" id="badgeGrafica1">0 respuestas</span>
++                    </div>
+                   </div>
+ 
+                   <div class="chart-container" style="height: 320px;">
+@@ -499,18 +507,6 @@
+             </div>
+ 
+             <div class="card p-3 mb-3">
+-              <h6 class="fw-bold mb-2"><i class="bi bi-diagram-3"></i> Ejemplo de jerarquía</h6>
+-              <p class="text-muted small mb-2">Marca <strong>Turno → Grupo</strong> como jerarquía real y añade tres dimensiones encadenadas de ejemplo (<strong>Sede → Área → Puesto</strong>) para ver la cascada en la barra y en el formulario.</p>
+-              <div class="d-flex flex-wrap gap-2">
+-                <button type="button" class="btn btn-outline-primary btn-sm" id="btnDemoJerarquia" onclick="instalarDemoJerarquia()">
+-                  <i class="bi bi-plus-circle"></i> Cargar ejemplo
+-                </button>
+-                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnQuitarDemo" onclick="quitarDemoJerarquia()">
+-                  <i class="bi bi-dash-circle"></i> Quitar ejemplo
+-                </button>
+-              </div>
+-              <div id="estadoDemo" class="small mt-2 text-muted">Sin cambios.</div>
+-            </div><div class="card p-3 mb-3">
+               <h6 class="fw-bold mb-3"><i class="bi bi-card-heading"></i> Configuración de Cabecera</h6>
+               <div class="row g-2">
+                 <div class="col-12 col-md-6"><label class="form-label small">Escuela</label><input class="form-control form-control-sm" id="cfg_escuela"></div>
+@@ -1421,7 +1417,8 @@
+   function pintarMenusFiltro() {
+     renderMenuDesdeSelect("ordenGrafica", "menuOrden");
+     pintarDimensiones();
+-    pintarSelectDimensiones();
++    pintarSelectorPregunta();
++    refrescarSegmentos();
+     pintarFiltrosDinamicos();
+     actualizarBotonesFiltro();
+   }
+@@ -1529,6 +1526,13 @@
+     return lista;
+   }
+ 
++  // Filtros fijos de la barra, en este orden: Turno, Grado, Grupo
++  const ORDEN_BARRA = ["turno", "grado", "grupo"];
++  function dimensionesBarra() {
++    const todas = dimensionesDisponibles();
++    return ORDEN_BARRA.map(id => todas.filter(d => d.id === id)[0]).filter(Boolean);
++  }
++
+   // Opciones de una dimensión según el valor del padre
+   function opcionesDeDimension(dim, valorPadre) {
+     if (!dim) return [];
+@@ -1544,7 +1548,7 @@
+ 
+   // Si el padre cambia, los hijos con valor inválido vuelven a "Todos"
+   function ajustarCascada() {
+-    dimensionesDisponibles().forEach(d => {
++    dimensionesBarra().forEach(d => {
+       if (!d.padre) return;
+       const valorPadre = FILTROS[d.padre] || "TODOS";
+       if (valorPadre === "TODOS") { FILTROS[d.id] = "TODOS"; return; }
+@@ -1563,7 +1567,7 @@
+     cont.innerHTML = "";
+     ajustarCascada();
+ 
+-    dimensionesDisponibles().forEach(d => {
++    dimensionesBarra().forEach(d => {
+       const valor = FILTROS[d.id] || "TODOS";
+       const valorPadre = d.padre ? (FILTROS[d.padre] || "TODOS") : null;
+       const bloqueado = !!(d.padre && valorPadre === "TODOS");
+@@ -1627,43 +1631,60 @@
+     });
+   }
+ 
+-  // El eje y la división solo ofrecen las dimensiones de segmentación.
+-  // Las preguntas se filtran y, si se quieren graficar, se usa su botón de barras.
+-  function opcionesDimension(excluir) {
+-    return dimensionesDisponibles()
+-      .filter(d => d.id !== excluir)
+-      .map(d => ({ id: d.id, etiqueta: d.etiqueta }));
++  // Dimensiones con las que se puede dividir una gráfica apilada
++  function opcionesDivision() {
++    return dimensionesBarra().map(d => ({ id: d.id, etiqueta: d.etiqueta }));
+   }
+ 
+-  function pintarSelectDimensiones() {
++  // Preguntas del esquema, en su orden, para el selector de la gráfica
++  function preguntasGraficables() {
++    return preguntasVisibles().slice().sort((a, b) => (a.orden || 0) - (b.orden || 0));
++  }
++
++  // El título de la tarjeta es el selector: al elegir una pregunta se grafican sus opciones
++  function pintarSelectorPregunta() {
+     const sel = document.getElementById("dimensionGrafica");
++    const menu = document.getElementById("menuPreguntaGrafica");
+     if (!sel) return;
+-    const prev = sel.value;
+-    const lista = opcionesDimension(null);
+-    // Eje inicial: la pregunta de movilidad si existe; si no, Turno.
+-    const actual = prev || "movilidad";
+-    if (actual && !lista.some(o => o.id === actual)) {
+-      const p = preguntasVisibles().find(x => x.id === actual);
+-      if (p) lista.unshift({ id: p.id, etiqueta: p.etiqueta });
+-    }
+-    const html = lista.map(o => '<option value="' + o.id + '">' + esc(o.etiqueta) + '</option>').join("");
+-    sel.innerHTML = html;
+-    if (actual && lista.some(o => o.id === actual)) sel.value = actual;
++    const preguntas = preguntasGraficables();
++    const actual = (sel.value && preguntas.some(p => p.id === sel.value)) ? sel.value : (preguntas[0] ? preguntas[0].id : "");
++    sel.innerHTML = preguntas.map(p => '<option value="' + p.id + '">' + esc(p.etiqueta) + '</option>').join("");
++    if (actual) sel.value = actual;
++    if (!menu) return;
+ 
+-    const selNiv3 = document.getElementById("nivel3Grafica");
+-    if (selNiv3) selNiv3.innerHTML = '<option value="">Sin tercer nivel</option>' + html;
+-    refrescarSegmentos();
++    const CON_OPCIONES = ["unica", "multiple", "sino", "escala"];
++    const item = (p) => {
++      const activo = p.id === actual;
++      const libre = CON_OPCIONES.indexOf(p.tipo) === -1;
++      return '<li><button type="button" class="dropdown-item d-flex justify-content-between align-items-center gap-2' + (activo ? ' active' : '') + '" data-pregunta="' + esc(p.id) + '">' +
++        '<span class="text-truncate">' + esc(p.etiqueta) + (libre ? ' <span class="badge bg-light text-secondary fw-normal">texto</span>' : '') + '</span>' +
++        (activo ? '<i class="bi bi-check2"></i>' : '') + '</button></li>';
++    };
++    const deOpcion = preguntas.filter(p => CON_OPCIONES.indexOf(p.tipo) !== -1);
++    const libres = preguntas.filter(p => CON_OPCIONES.indexOf(p.tipo) === -1);
++    menu.innerHTML =
++      '<li><h6 class="dropdown-header">Preguntas de opción</h6></li>' + deOpcion.map(item).join("") +
++      (libres.length ? '<li><hr class="dropdown-divider"></li><li><h6 class="dropdown-header">Texto libre y otros</h6></li>' + libres.map(item).join("") : "");
++
++    menu.querySelectorAll("button[data-pregunta]").forEach(b => {
++      b.addEventListener("click", () => {
++        sel.value = b.dataset.pregunta;
++        sel.dispatchEvent(new Event("change", { bubbles: true }));
++        pintarSelectorPregunta();
++        aplicarFiltrosYGraficar();
++      });
++    });
+   }
+ 
+-  // "Segmentar por" nunca ofrece la misma dimensión que el eje X
++  // "División": solo se usa en barras apiladas y rayos solares
+   function refrescarSegmentos() {
+     const selSeg = document.getElementById("segmentoGrafica");
+-    const sel = document.getElementById("dimensionGrafica");
+-    if (!selSeg || !sel) return;
++    if (!selSeg) return;
+     const prev = selSeg.value;
+-    const lista = opcionesDimension(sel.value);
++    const lista = opcionesDivision();
+     selSeg.innerHTML = lista.map(o => '<option value="' + o.id + '">' + esc(o.etiqueta) + '</option>').join("");
+     if (prev && lista.some(o => o.id === prev)) selSeg.value = prev;
++    else if (lista.length) selSeg.value = lista[0].id;
+   }
+ 
+   // Un solo botón "Filtros": el menú contiene los 4 filtros base y una fila por pregunta de opción
+@@ -1720,33 +1741,7 @@
+       }
+       sel.addEventListener("change", () => { aplicarFiltrosYGraficar(); });
+ 
+-      const cabeceraFila = document.createElement("div");
+-      cabeceraFila.className = "d-flex justify-content-between align-items-start gap-1";
+-
+-      const btnGraficar = document.createElement("button");
+-      btnGraficar.type = "button";
+-      btnGraficar.className = "btn btn-sm btn-outline-secondary py-0 px-1 flex-shrink-0";
+-      btnGraficar.title = "Graficar esta pregunta";
+-      btnGraficar.setAttribute("aria-label", "Graficar esta pregunta");
+-      btnGraficar.innerHTML = '<i class="bi bi-bar-chart-line"></i>';
+-      btnGraficar.addEventListener("click", () => {
+-        const d = document.getElementById("dimensionGrafica");
+-        if (!d) return;
+-        if (!Array.prototype.some.call(d.options, o => o.value === f.id)) {
+-          const op = document.createElement("option");
+-          op.value = f.id;
+-          op.textContent = f.etiqueta;
+-          d.appendChild(op);
+-        }
+-        d.value = f.id;
+-        d.dispatchEvent(new Event("change", { bubbles: true }));
+-        pintarSelectDimensiones();
+-        pintarFiltrosDinamicos();
+-      });
+-
+-      cabeceraFila.appendChild(lbl);
+-      cabeceraFila.appendChild(btnGraficar);
+-      fila.appendChild(cabeceraFila);
++      fila.appendChild(lbl);
+       fila.appendChild(sel);
+       cont.appendChild(fila);
+     });
+@@ -1754,33 +1749,6 @@
+     actualizarBotonesFiltro();
+   }
+ 
+-  const recorta = (t, max) => {
+-    const x = String(t || "");
+-    return x.length > max ? x.slice(0, max - 1) + "…" : x;
+-  };
+-
+-  // Chips de una dimensión dentro del menú de Ajustes
+-  function crearChipsLi(titulo, actual, opciones, alElegir) {
+-    const li = document.createElement("li");
+-    const lbl = document.createElement("h6");
+-    lbl.className = "dropdown-header";
+-    lbl.textContent = titulo;
+-    const fila = document.createElement("div");
+-    fila.className = "d-flex flex-wrap gap-1 px-2 pb-2";
+-    opciones.forEach(op => {
+-      const b = document.createElement("button");
+-      b.type = "button";
+-      b.className = "btn btn-sm py-0 px-2 chip-dim " + (op.id === actual ? "btn-outline-primary" : "btn-outline-secondary");
+-      b.textContent = recorta(op.etiqueta, 18);
+-      b.title = op.etiqueta;
+-      b.setAttribute("aria-label", titulo + ": " + op.etiqueta);
+-      b.addEventListener("click", () => alElegir(op.id));
+-      fila.appendChild(b);
+-    });
+-    li.appendChild(lbl);
+-    li.appendChild(fila);
+-    return li;
+-  }
+   function renderMenuAjustes() {
+     const menu = document.getElementById("menuAjustesGrafica");
+     if (!menu) return;
+@@ -1810,44 +1778,35 @@
+       });
+     });
+ 
+-    // Eje X y División: chips, no listas (solo 4 dimensiones)
+-    const dSel = document.getElementById("dimensionGrafica");
++    // División: solo aparece en barras apiladas y rayos solares
++    const tipoSel = document.getElementById("tipoGrafica");
+     const sSel = document.getElementById("segmentoGrafica");
+-    if (dSel) {
+-      menu.appendChild(crearChipsLi("Eje X", dSel.value, opcionesDimension(null), id => {
+-        dSel.value = id;
+-        dSel.dispatchEvent(new Event("change", { bubbles: true }));
+-        refrescarSegmentos();
+-        renderMenuAjustes();
+-      }));
+-      const esBase = ["turno", "grado", "grupo", "origen"].indexOf(dSel.value) !== -1;
+-      const pEje = esBase ? null : preguntasVisibles().find(x => x.id === dSel.value);
+-      if (pEje) {
+-        const li = document.createElement("li");
+-        li.className = "chip-estado px-2 pb-2";
+-        li.textContent = "Graficando la pregunta: «" + pEje.etiqueta + "» ";
+-        const salir = document.createElement("button");
+-        salir.type = "button";
+-        salir.className = "btn btn-sm btn-outline-secondary py-0 px-1 ms-1";
+-        salir.title = "Volver a agrupar por Turno";
+-        salir.setAttribute("aria-label", "Volver a agrupar por Turno");
+-        salir.innerHTML = '<i class="bi bi-x-lg"></i>';
+-        salir.addEventListener("click", () => {
+-          dSel.value = "turno";
+-          dSel.dispatchEvent(new Event("change", { bubbles: true }));
+-          pintarSelectDimensiones();
+-          renderMenuAjustes();
+-        });
+-        li.appendChild(salir);
+-        menu.appendChild(li);
+-      }
+-    }
+-    if (sSel) {
+-      menu.appendChild(crearChipsLi("División", sSel.value, opcionesDimension(dSel ? dSel.value : null), id => {
+-        sSel.value = id;
++    const requiereDivision = !!(tipoSel && sSel && ["stacked", "stackedVertical"].indexOf(tipoSel.value) !== -1);
++    if (requiereDivision) {
++      const li = document.createElement("li");
++      const cab = document.createElement("h6");
++      cab.className = "dropdown-header";
++      cab.innerHTML = '<i class="bi bi-pie-chart me-1"></i>División de las barras';
++      const cont = document.createElement("div");
++      cont.className = "px-2 pb-2";
++      const sel = document.createElement("select");
++      sel.className = "form-select form-select-sm";
++      opcionesDivision().forEach(o => {
++        const op = document.createElement("option");
++        op.value = o.id;
++        op.textContent = o.etiqueta;
++        if (o.id === sSel.value) op.selected = true;
++        sel.appendChild(op);
++      });
++      sel.addEventListener("change", () => {
++        sSel.value = sel.value;
+         sSel.dispatchEvent(new Event("change", { bubbles: true }));
+         renderMenuAjustes();
+-      }));
++      });
++      cont.appendChild(sel);
++      li.appendChild(cab);
++      li.appendChild(cont);
++      menu.appendChild(li);
+     }
+   }
+ 
+@@ -1869,7 +1828,7 @@
+   }
+ 
+   function filasFiltradas() {
+-    const activas = dimensionesDisponibles().filter(d => FILTROS[d.id] && FILTROS[d.id] !== "TODOS");
++    const activas = dimensionesBarra().filter(d => FILTROS[d.id] && FILTROS[d.id] !== "TODOS");
+     return ((RESPUESTAS && RESPUESTAS.filas) || []).filter(f => {
+       for (const d of activas) {
+         if (String(valorDe(f, d.id) || "") !== FILTROS[d.id]) return false;
+@@ -1893,12 +1852,13 @@
+     document.getElementById("badgeGrafica1").textContent = `${totalN} respuestas`;
+     document.getElementById("resumenFiltros").textContent = `Mostrando ${totalN} de ${((RESPUESTAS && RESPUESTAS.filas) || []).length} registros`;
+ 
+-    const dimId = document.getElementById("dimensionGrafica").value || "turno";
++    const barra = dimensionesBarra().map(d => d.id);
++    const dimId = document.getElementById("dimensionGrafica").value || (preguntasGraficables()[0] || {}).id || "turno";
+     const dim = dimensionDe(dimId);
+ 
+     if (!dim) return;
+ 
+-    document.getElementById("tituloGrafica1").textContent = "Resultados de " + dim.etiqueta;
++    document.getElementById("tituloGrafica1").textContent = dim.etiqueta;
+     document.getElementById("tituloTotales").textContent = "Totales por " + dim.etiqueta;
+ 
+     const tipo = document.getElementById("tipoGrafica").value;
+@@ -1910,7 +1870,8 @@
+     // Segmentación de la tabla y de la gráfica apilada (la misma)
+     const selSegTabla = document.getElementById("segmentoGrafica");
+     let segId = selSegTabla ? selSegTabla.value : "turno";
+-    if (!segId || segId === dim.id) segId = (dim.id === "turno") ? "origen" : "turno";
++    if (barra.indexOf(segId) === -1) segId = barra[0] || "turno";
++    if (segId === dim.id) segId = barra.filter(id => id !== dim.id)[0] || "origen";
+ 
+     const conteo = {};
+     const matriz = {};
+@@ -2396,54 +2357,21 @@
+   }
+ 
+   // CONSTRUCTOR Y EDITOR DE PREGUNTAS
+-  // Instala o retira el ejemplo de jerarquía (Sede → Área → Puesto)
+-  function instalarDemoJerarquia() { ejecutarDemoJerarquia(true); }
+-  function quitarDemoJerarquia() { ejecutarDemoJerarquia(false); }
+-
+-  function ejecutarDemoJerarquia(instalar) {
+-    const estado = document.getElementById("estadoDemo");
+-    const btnA = document.getElementById("btnDemoJerarquia");
+-    const btnB = document.getElementById("btnQuitarDemo");
+-
+-    const aviso = (texto, clase) => {
+-      if (!estado) return;
+-      estado.className = "small mt-2 " + clase;
+-      estado.textContent = texto;
+-    };
+-
+-    if (!creds) { aviso("Inicia sesión de administrador para aplicar el ejemplo.", "text-danger"); return; }
+-
+-    if (btnA) btnA.disabled = true;
+-    if (btnB) btnB.disabled = true;
+-    aviso(instalar ? "Creando el ejemplo de jerarquía..." : "Quitando el ejemplo...", "text-muted");
+-
+-    const runner = google.script.run
++  // Desactiva las preguntas del ejemplo (Sede → Área → Puesto) si siguen activas
++  function quitarPreguntasEjemplo() {
++    if (!creds) { alert("Inicia sesión de administrador."); return; }
++    if (!confirm("¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan en la hoja.")) return;
++    google.script.run
+       .withSuccessHandler(res => {
+-        if (btnA) btnA.disabled = false;
+-        if (btnB) btnB.disabled = false;
+-        if (!res || !res.exito) {
+-          aviso((res && res.mensaje) || "No se pudo aplicar el ejemplo.", "text-danger");
+-          return;
+-        }
++        if (!res || !res.exito) { alert("No se pudo: " + ((res && res.mensaje) || "error")); return; }
+         const form = res.formulario || { config: {}, preguntas: [] };
+         FORM = { config: form.config || {}, preguntas: form.preguntas || [] };
+-        aviso(instalar
+-          ? "Ejemplo cargado. En la barra verás Sede, Área y Puesto encadenados, y Turno → Grupo."
+-          : "Ejemplo retirado: las preguntas de ejemplo quedaron desactivadas.", "text-success");
+-        pintarConfig();
+         pintarPreguntas();
+-        pintarCategorias();
+         if (typeof cargarRespuestas === "function") cargarRespuestas();
+-        if (typeof cargarFormulario === "function") cargarFormulario();
++        alert("Listo: las preguntas de ejemplo quedaron desactivadas.");
+       })
+-      .withFailureHandler(err => {
+-        if (btnA) btnA.disabled = false;
+-        if (btnB) btnB.disabled = false;
+-        aviso("Error de conexión: " + (err && err.message ? err.message : err), "text-danger");
+-      });
+-
+-    if (instalar) runner.instalarJerarquiaDemo(creds);
+-    else runner.quitarJerarquiaDemo(creds);
++      .withFailureHandler(err => alert("Error de conexión: " + (err && err.message ? err.message : err)))
++      .quitarJerarquiaDemo(creds);
+   }
+   // Vincula la encuesta a otra hoja de cálculo: valida acceso, prepara pestañas y recarga
+   function vincularHoja() {

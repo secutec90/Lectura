@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <?!= include('ComunCSS') ?>
+  <style>
+    .envoltorio { max-width: 1152px; width: 95%; margin: 0 auto; padding: 24px 18px 48px; }
+    .logo-escuela-cab {
+      height: 40px; width: auto; max-width: 72px; object-fit: contain; display: block;
+    }
+    .marca-escuela {
+      display: flex; align-items: center; gap: 10px; min-width: 0;
+    }
+    .acciones-encabezado #btnComenzar {
+      padding: 8px 14px; font-size: 13px; border-radius: 8px;
+    }
+    .acciones-encabezado #btnTopDocentes {
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px;
+      border: 1px solid #cbd5e1; background: #f8fafc; color: var(--st90-azul); cursor: pointer;
+    }
+    .seccion { display: none; }
+    .seccion.activa { display: block !important; }
+    .encabezado { text-align: center; color: var(--st90-azul); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--st90-borde); }
+    .bloque { background: #fff; padding: 26px 30px; border-radius: 10px; border: 1px solid var(--st90-borde); box-shadow: var(--st90-sombra); }
+    .fila-centrada { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .btn-trimestral {
+      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; line-height: 1.15; min-width: 180px; padding: 10px 16px;
+    }
+    .btn-trimestral small {
+      font-size: 11px; font-weight: 600; opacity: .92; letter-spacing: .2px;
+    }
+    .btn-trimestral:disabled small { opacity: .7; }
+    label { display: block; margin: 12px 0 6px; }
+    select, input { width: 100%; padding: 10px; }
+
+    .reloj { text-align: center; font-size: 32px; font-variant-numeric: tabular-nums; letter-spacing: 1px; color: var(--st90-azul); margin: 8px 0 4px; }
+    .reloj-ayuda { text-align: center; color: var(--st90-gris); font-size: 13px; }
+
+    .caja-cupo { margin-top: 16px; padding: 14px 16px; border-radius: 8px; text-align: center; background: #eaf4fb; border: 1px solid #b9d7ea; color: var(--st90-azul); font-weight: 600; }
+    .caja-cupo.agotado { background: #fdecea; border-color: #e6b0aa; color: #922b21; }
+
+    /* Panel del alumno */
+    .panel-saludo { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .panel-saludo h2 { margin: 0 0 4px; }
+    .panel-saludo .sub { margin: 0; color: var(--st90-gris); font-size: 14px; }
+    .panel-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 16px 0; }
+    .panel-kpi { background: #f8fafc; border: 1px solid var(--st90-borde); border-radius: 10px; padding: 12px 10px; text-align: center; }
+    .panel-kpi .n { font-size: 26px; font-weight: 800; color: var(--st90-azul); line-height: 1.1; }
+    .panel-kpi .l { font-size: 11px; font-weight: 700; color: var(--st90-gris); text-transform: uppercase; letter-spacing: .4px; margin-top: 4px; }
+    .panel-kpi.naranja .n { color: var(--st90-naranja); }
+    .caja-panel { background: #fff; border: 1px solid var(--st90-borde); border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
+    .caja-panel h3 { margin: 0 0 10px; font-size: 15px; color: var(--st90-azul); }
+    .spark-panel { width: 100%; max-width: 420px; height: 68px; display: block; }
+    .chips-lecturas { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip-lectura { font-size: 12px; font-weight: 600; background: #eaf4fb; color: var(--st90-azul); border-radius: 999px; padding: 4px 10px; }
+    .tabla-panel-wrap { overflow-x: auto; margin-top: 4px; }
+    .tabla-panel { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tabla-panel th, .tabla-panel td { border-bottom: 1px solid #eef2f6; padding: 8px 8px; text-align: left; white-space: nowrap; }
+    .tabla-panel th { background: #f8fafc; color: #334155; font-size: 11px; text-transform: uppercase; letter-spacing: .3px; }
+    .tabla-panel td.num { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .tabla-panel tr.fila-informe { cursor: pointer; }
+    .tabla-panel tr.fila-informe:hover { background: #eaf4fb; }
+    .btn-ver-informe {
+      background: #eaf4fb; color: var(--st90-azul); border: 1px solid #b9d7ea;
+      padding: 4px 10px; font-size: 12px; border-radius: 6px;
+    }
+    .btn-ver-informe:hover { background: #d6eaf7; }
+    .aviso-panel { margin-top: 12px; padding: 12px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; }
+    .aviso-panel.ok { background: #eaf4fb; border: 1px solid #b9d7ea; color: var(--st90-azul); }
+    .aviso-panel.warn { background: #fdecea; border: 1px solid #e6b0aa; color: #922b21; }
+
+    .ruleta { height: 54px; overflow: hidden; border: 2px solid var(--st90-azul); border-radius: 8px; margin: 16px auto; max-width: 420px; position: relative; background: #fff; }
+    .ruleta::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid var(--st90-naranja); pointer-events: none; }
+    .cinta { transition: transform 2.4s cubic-bezier(.15,.8,.1,1); }
+    .item-ruleta { height: 54px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+    /* Resultado de lectura */
+    .tarjeta-ppm { text-align: center; padding: 26px 22px; border-radius: 12px; background: linear-gradient(135deg, #eaf4fb 0%, #d6eaf7 100%); border: 1px solid #b9d7ea; margin: 12px 0; }
+    .tarjeta-ppm .numero { font-size: 56px; font-weight: 800; color: var(--st90-azul); line-height: 1; }
+    .tarjeta-ppm .unidad { font-size: 18px; color: var(--st90-gris); margin-left: 6px; }
+    .tarjeta-ppm .etiqueta { font-size: 14px; color: var(--st90-gris); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+    .tarjeta-ppm .detalle { margin-top: 14px; font-size: 14px; color: var(--st90-texto); }
+
+    /* Resultado final */
+    .grid-resultado { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0; }
+    .tarjeta-nota { background: #fff; border: 1px solid var(--st90-borde); border-radius: 12px; padding: 20px; text-align: center; box-shadow: var(--st90-sombra); }
+    .tarjeta-nota .titulo { font-size: 13px; color: var(--st90-gris); text-transform: uppercase; letter-spacing: 1px; }
+    .tarjeta-nota .valor { font-size: 42px; font-weight: 800; color: var(--st90-azul); margin: 6px 0 4px; }
+    .tarjeta-nota .pct { font-size: 20px; color: var(--st90-gris); }
+    .tarjeta-nota.global .valor { color: var(--st90-naranja); }
+    .tarjeta-nota .sub { font-size: 13px; color: var(--st90-gris); }
+    .extra-resultado { margin-top: 18px; display: grid; gap: 12px; }
+    .caja-extra { background: #fff; border: 1px solid var(--st90-borde); border-radius: 12px; padding: 16px 18px; box-shadow: var(--st90-sombra); }
+    .caja-extra h3 { margin: 0 0 8px; font-size: 15px; color: var(--st90-azul); }
+    .caja-extra p { margin: 0; font-size: 14px; color: var(--st90-texto); line-height: 1.45; }
+    .desglose-niveles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
+    .desglose-item { text-align: center; background: #f8fafc; border-radius: 8px; padding: 10px 8px; }
+    .desglose-item .n { font-size: 22px; font-weight: 800; color: var(--st90-azul); }
+    .desglose-item.vacio .n { font-size: 15px; font-weight: 700; color: #94a3b8; }
+    .aviso-impulso { margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: #fef9e7; color: #7d6608; font-size: 13px; }
+    .caja-recomienda { background: #eaf4fb; border-color: #b9d7ea; }
+
+    .cabecera-informe {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    }
+    .cabecera-informe h2 { margin: 0; }
+    .ficha-resultado {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px;
+      background: #f8fafc; border: 1px solid var(--st90-borde); border-radius: 12px;
+      padding: 16px 18px; margin: 14px 0 4px;
+    }
+    .ficha-escuela { grid-column: 1 / -1; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #e2e8f0; }
+    .ficha-dato .k, .ficha-escuela .k {
+      font-size: 11px; font-weight: 700; color: var(--st90-gris); text-transform: uppercase; letter-spacing: .4px;
+    }
+    .ficha-dato .v, .ficha-escuela .v {
+      font-size: 15px; font-weight: 700; color: var(--st90-texto); margin-top: 2px;
+    }
+    .ficha-escuela .v { font-size: 17px; color: var(--st90-azul); }
+
+    @media print {
+      .pasos-examen, .pie, .encabezado a, .acciones-encabezado, .no-imprimir, .fila-centrada, .btn-ayuda { display: none !important; }
+      .seccion { display: none !important; }
+      #secFinal, #secFinal.activa { display: block !important; }
+      .envoltorio { max-width: none; width: auto; margin: 0; padding: 0; }
+      .bloque { box-shadow: none; border: none; padding: 0; }
+      .encabezado { border: none; margin-bottom: 8px; }
+    }
+
+    .barra-progreso { display: flex; gap: 6px; margin: 8px 0 18px; }
+    .barra-progreso .punto { flex: 1; height: 6px; border-radius: 3px; background: #dfe8ef; }
+    .barra-progreso .punto.hecho { background: var(--st90-azul); }
+    .barra-progreso .punto.actual { background: var(--st90-naranja); }
+
+    .pie { text-align: center; margin-top: 26px; font-size: 13px; color: var(--st90-gris); }
+    .pie a { color: var(--st90-azul); }
+    .meta { text-align: center; color: #5d6d7e; }
+
+    body.leyendo .encabezado,
+    body.leyendo .pasos-examen,
+    body.leyendo .distractor-lectura { display: none !important; }
+    body.leyendo .envoltorio {
+      max-width: none; width: 100%; padding: 18px 12px 96px;
+    }
+    body.leyendo #secLectura .bloque-lectura {
+      background: transparent; border: none; box-shadow: none; padding: 0;
+    }
+    body.leyendo .hoja-libro-wrapper {
+      background: transparent; padding: 8px 0 16px; box-shadow: none; border-radius: 0;
+    }
+    body.leyendo .hoja-libro {
+      max-width: var(--hoja-max, 860px);
+      margin: 0 auto;
+      box-shadow: 0 18px 50px rgba(28, 36, 48, 0.16), 0 2px 8px rgba(28, 36, 48, 0.06);
+    }
+    body.leyendo .hoja-libro-cuerpo { font-size: var(--hoja-fs, 18.5px); }
+    body.leyendo .hoja-libro-titulo { font-size: calc(var(--hoja-fs, 18.5px) * 1.42); }
+    .controles-lectura {
+      display: none;
+      position: sticky; top: 10px; z-index: 20;
+      justify-content: center; align-items: center; gap: 10px; margin: 0 0 12px;
+    }
+    body.leyendo .controles-lectura { display: flex; }
+    .grupo-tam {
+      display: inline-flex; gap: 4px;
+      background: #fff; border-radius: 10px;
+      padding: 4px; box-shadow: 0 2px 10px rgba(28,36,48,.12);
+    }
+    .controles-lectura button {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; padding: 0; margin: 0;
+      border-radius: 8px; font-size: 15px; line-height: 1;
+      box-shadow: none;
+    }
+    .controles-lectura button svg { display: block; }
+    .reloj-compacto {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      min-width: 86px; height: 46px; padding: 0 12px;
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(28,36,48,.12);
+      font-size: 16px; font-variant-numeric: tabular-nums; font-weight: 600;
+      letter-spacing: .4px; color: var(--st90-azul); line-height: 1;
+    }
+    .reloj-compacto svg { flex-shrink: 0; opacity: .75; }
+    body.leyendo .fila-terminar-lectura {
+      position: sticky; bottom: 12px; margin-top: 18px;
+    }
+    body.leyendo .fila-terminar-lectura button {
+      box-shadow: 0 6px 18px rgba(31,111,159,.28);
+    }
+
+    @media (max-width: 640px) {
+      .envoltorio { width: 100%; padding: 12px 10px 32px; }
+      .bloque { padding: 16px 14px; }
+      .encabezado { flex-direction: column; text-align: center; }
+      .encabezado h1 { font-size: 20px !important; }
+      .acciones-encabezado { width: 100%; justify-content: center; }
+      .acciones-encabezado #btnComenzar,
+      .acciones-encabezado #btnTopDocentes { flex: 1; justify-content: center; }
+      .fila-centrada { flex-direction: column; }
+      .fila-centrada button { width: 100%; }
+      .tarjeta-ppm .numero { font-size: 40px; }
+      .pasos-examen { flex-wrap: wrap; }
+      .pasos-examen span { font-size: 11px; padding: 5px 6px; flex: 1 1 40%; text-align: center; }
+      .ficha-resultado { grid-template-columns: 1fr; }
+      .panel-kpi .n { font-size: 22px; }
+      .panel-saludo { flex-direction: column; }
+      select, input { max-width: 100%; }
+    .caja-alumno-autenticado {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .alumno-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .alumno-card-avatar {
+      font-size: 24px;
+      background: #dcfce7;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .alumno-card-info {
+      flex: 1;
+      text-align: left;
+    }
+    .alumno-card-saludo {
+      font-size: 16px;
+      font-weight: 700;
+      color: #166534;
+    }
+    .alumno-card-meta {
+      font-size: 13px;
+      color: #15803d;
+      margin-top: 2px;
+    }
+    .btn-cambiar-usuario {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #475569;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-cambiar-usuario:hover {
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+  </style>
+</head>
+<body>
+  <div class="envoltorio">
+    <div class="encabezado" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;text-align:left;">
+      <div class="marca-escuela">
+        <img id="logoEscuelaCab" class="logo-escuela-cab oculto" alt="">
+        <div>
+          <h1 id="titEscuela" style="margin:0;font-size:24px;"><?= typeof escuela !== 'undefined' ? escuela : 'Secundaria Técnica 90' ?></h1>
+          <p style="margin:2px 0 0;color:var(--st90-gris);font-size:14px;">Examen de comprensión lectora</p>
+        </div>
+      </div>
+      <div id="accionesEncabezado" class="acciones-encabezado">
+        <button type="button" id="btnComenzar" onclick="entrarPanel()">Entrar a mi panel</button>
+      </div>
+    </div>
+
+    <div id="pasosExamen" class="pasos-examen" aria-label="Pasos del examen">
+      <span data-paso="registro" class="actual">1. Comenzar</span>
+      <span data-paso="lectura">2. Leer</span>
+      <span data-paso="preguntas">3. Responder</span>
+      <span data-paso="final">4. Resultado</span>
+    </div>
+
+    <!-- 1. REGISTRO -->
+    <div id="secRegistro" class="seccion activa">
+      <div class="bloque">
+        <h2 class="titulo-con-ayuda">Comenzar
+          <button type="button" class="btn-ayuda" onclick="abrirAyuda('aluComenzar')" aria-label="Ayuda" data-tip="Ayuda">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+          </button>
+        </h2>
+        <div id="cajaSelectoresAlumno">
+          <p class="meta" style="text-align:left;margin-top:0;">Elige tu grado, grupo y nombre para iniciar la prueba o ver tu historial.</p>
+          <label>1. Selecciona tu grado</label>
+          <select id="gradoEscolar" onchange="cargarGrupos()">
+            <option value="">-- Elige tu grado --</option>
+            <option value="1">1°</option>
+            <option value="2">2°</option>
+            <option value="3">3°</option>
+          </select>
+          <label>2. Selecciona tu grupo</label>
+          <select id="grupoEscolar" onchange="cargarAlumnos()" disabled>
+            <option value="">-- Primero elige el grado --</option>
+          </select>
+          <label>3. Selecciona tu nombre</label>
+          <select id="nombreEstudiante" disabled onchange="consultarCupo()">
+            <option value="">-- Primero elige el grupo --</option>
+          </select>
+        </div>
+        <div id="cajaAlumnoAutenticado" class="caja-alumno-autenticado oculto">
+          <div class="alumno-card-header">
+            <div class="alumno-card-avatar">👤</div>
+            <div class="alumno-card-info">
+              <div class="alumno-card-saludo">¡Hola, <span id="lblAlumnoNombre">Alumno</span>!</div>
+              <div class="alumno-card-meta" id="lblAlumnoDetalle"></div>
+            </div>
+            <button type="button" class="btn-cambiar-usuario" onclick="cambiarAlumno()" title="Cambiar de usuario o salir">Cambiar usuario</button>
+          </div>
+        </div>
+        <div id="cajaCupo" class="caja-cupo" hidden></div>
+        <div class="fila-centrada">
+          <button id="btnIniciarPrueba" onclick="iniciarPrueba()">Iniciar la prueba</button>
+          <button id="btnTrimestral" class="btn-trimestral" onclick="iniciarTrimestral()" disabled>
+            <span>Lectura trimestral</span>
+            <small id="lblFechaTrimestral">—</small>
+          </button>
+        </div>
+        <p id="avisoInicio" class="meta"></p>
+      </div>
+    </div>
+
+    <!-- 1b. PANEL DEL ALUMNO -->
+    <div id="secPanel" class="seccion">
+      <div class="bloque">
+        <div class="panel-saludo">
+          <div>
+            <div class="titulo-con-ayuda">
+              <h2 id="panelNombre">Mi panel</h2>
+              <button type="button" class="btn-ayuda" onclick="abrirAyuda('aluPanel')" aria-label="Ayuda" data-tip="Ayuda">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+              </button>
+            </div>
+            <p class="sub" id="panelFicha"></p>
+          </div>
+          <button type="button" class="btn-secundario" onclick="cambiarAlumno()">Cambiar de alumno</button>
+        </div>
+        <div class="panel-kpis" id="panelKpis"></div>
+        <div class="caja-panel" id="cajaEvolucion" hidden>
+          <h3>Tu evolución</h3>
+          <div id="panelSpark"></div>
+        </div>
+        <div class="caja-panel">
+          <h3>Historial de evaluaciones</h3>
+          <div id="panelHistorial"></div>
+        </div>
+        <div class="caja-panel" id="cajaLecturasHechas" hidden>
+          <h3>Lecturas que ya presentaste</h3>
+          <p class="meta" style="text-align:left;margin:0 0 8px;">La ruleta no te volverá a asignar estas lecturas.</p>
+          <div class="chips-lecturas" id="panelChips"></div>
+        </div>
+        <div id="panelAviso" class="aviso-panel ok"></div>
+        <div class="fila-centrada">
+          <button id="btnNuevaEval" onclick="comenzarDesdePanel()">Nueva evaluación</button>
+          <button id="btnTrimestralPanel" class="btn-trimestral" onclick="iniciarTrimestralDesdePanel()" disabled>
+            <span>Lectura trimestral</span>
+            <small id="lblFechaTrimestralPanel">—</small>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. SORTEO -->
+    <div id="secSorteo" class="seccion">
+      <div class="bloque">
+        <h2>Sorteo de lectura</h2>
+        <p class="meta" id="textoRuleta">Girando asignatura…</p>
+        <p class="meta" style="margin-top:0;">No se repetirá una lectura que ya hayas presentado.</p>
+        <div class="ruleta"><div class="cinta" id="cintaRuleta"></div></div>
+        <p class="meta" id="resultadoRuleta"></p>
+      </div>
+    </div>
+
+    <!-- 3. LECTURA -->
+    <div id="secLectura" class="seccion">
+      <div class="bloque bloque-lectura">
+        <div class="controles-lectura no-imprimir" id="controlesLectura">
+          <div class="grupo-tam" role="group" aria-label="Tamaño de la hoja">
+            <button type="button" id="btnHojaMenos" class="btn-secundario" onclick="cambiarTamHoja(-1)" title="Reducir hoja" aria-label="Reducir hoja">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="5" y="4" width="14" height="16" rx="1.5"></rect>
+                <path d="M9 12h6"></path>
+              </svg>
+            </button>
+            <button type="button" id="btnHojaMas" class="btn-secundario" onclick="cambiarTamHoja(1)" title="Agrandar hoja" aria-label="Agrandar hoja">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="5" y="4" width="14" height="16" rx="1.5"></rect>
+                <path d="M12 8v8M8 12h8"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="grupo-tam" role="group" aria-label="Tamaño del texto">
+            <button type="button" id="btnTextoMenos" class="btn-secundario" onclick="cambiarTamTexto(-1)" title="Reducir texto" aria-label="Reducir texto">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M3 18L8 6h1.8L15 18h-2.2l-1.1-2.8H6.3L5.2 18H3z"></path>
+                <path d="M6.8 13h5.4"></path>
+                <path d="M17 12h5"></path>
+              </svg>
+            </button>
+            <button type="button" id="btnTextoMas" class="btn-secundario" onclick="cambiarTamTexto(1)" title="Agrandar texto" aria-label="Agrandar texto">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M2 18L8 4h2l6 14h-2.4l-1.3-3.2H5.7L4.4 18H2z"></path>
+                <path d="M6.3 12.2h7.4"></path>
+                <path d="M19 8v8M15 12h8"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="reloj-compacto" id="relojLectura" title="Tiempo de lectura" aria-live="off">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="13" r="8"></circle>
+              <path d="M12 9v4l2.5 1.5M9 3h6"></path>
+            </svg>
+            <span id="relojLecturaTexto">00:00</span>
+          </div>
+        </div>
+        <h2 class="distractor-lectura">Lee con atención</h2>
+        <div class="reloj distractor-lectura">00:00</div>
+        <p class="reloj-ayuda distractor-lectura">Lectura esperada: 3 a 5 minutos · <span id="datoPalabras"></span></p>
+        <p class="meta distractor-lectura" id="fichaLectura"></p>
+        <div id="cajaLectura">Cargando…</div>
+        <div class="fila-centrada fila-terminar-lectura no-imprimir">
+          <button id="btnTerminarLectura" onclick="terminarDeLeer()">He terminado de leer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. RESULTADO DE LECTURA (PPM) -->
+    <div id="secPpm" class="seccion">
+      <div class="bloque">
+        <h2>Tu velocidad lectora</h2>
+        <div class="tarjeta-ppm">
+          <div class="etiqueta">Palabras por minuto</div>
+          <div class="numero" id="ppmNumero">—</div>
+          <span class="unidad">PPM</span>
+          <div class="detalle" id="ppmDetalle"></div>
+        </div>
+        <p class="meta" id="ppmMensaje"></p>
+        <div class="fila-centrada">
+          <button onclick="irACuestionario()">Continuar al cuestionario</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. PREGUNTAS -->
+    <div id="secPreguntas" class="seccion">
+      <div class="bloque">
+        <h2>Responder</h2>
+        <div class="reloj" id="relojExamen">00:00</div>
+        <p class="reloj-ayuda">Tiempo del cuestionario · pregunta actual: <span id="relojPregunta">00:00</span></p>
+        <div class="barra-progreso" id="barraProgreso"></div>
+        <div id="bloquePregunta"></div>
+        <div class="fila-centrada">
+          <button id="btnVerLectura" class="btn-secundario" onclick="verLecturaDesdePreguntas()">Ver lectura</button>
+          <button id="btnAnterior" class="btn-secundario" onclick="preguntaAnterior()">Anterior</button>
+          <button id="btnSiguiente" onclick="siguientePregunta()">Siguiente</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. RESULTADO FINAL -->
+    <div id="secFinal" class="seccion">
+      <div class="bloque" id="bloqueInforme">
+        <div class="cabecera-informe">
+          <div>
+            <h2 class="titulo-con-ayuda">Evaluación concluida
+              <button type="button" class="btn-ayuda no-imprimir" onclick="abrirAyuda('aluFinal')" aria-label="Ayuda" data-tip="Ayuda">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+              </button>
+            </h2>
+            <p class="meta" style="text-align:left;margin:4px 0 0;">Informe de comprensión lectora</p>
+          </div>
+          <button type="button" class="btn-secundario no-imprimir" id="btnPdfResultado" onclick="descargarPdfResultado()">Descargar PDF</button>
+        </div>
+        <div id="fichaResultado"></div>
+        <div class="grid-resultado" id="gridResultado"></div>
+        <div class="extra-resultado" id="extraResultado"></div>
+        <p class="meta" id="resumenFinal"></p>
+        <div class="fila-centrada no-imprimir">
+          <button class="btn-verde" onclick="volverAlPanel()">Ver mi panel</button>
+          <button class="btn-secundario" onclick="cambiarAlumno()">Salir</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>const URL_BASE_APP = <?= JSON.stringify(urlBase || '') ?>;</script>
+  <?!= include('ComunJS') ?>
+  <script>
+    const URL_ADMIN_APP = <?= JSON.stringify(urlAdmin || '') ?>;
+    const URL_DOCENTE_APP = <?= JSON.stringify(typeof urlDocente !== 'undefined' ? urlDocente : '') ?>;
+    const MAT_AUTO = <?= JSON.stringify(typeof matAuto !== 'undefined' ? matAuto : '') ?>;
+    const TOKEN_AUTO = <?= JSON.stringify(typeof tokenAuto !== 'undefined' ? tokenAuto : '') ?>;
+    const ALUMNO_AUTO = <?!= typeof alumnoAutoJson !== 'undefined' ? alumnoAutoJson : 'null' ?>;
+    const CUPO_AUTO = <?!= typeof cupoAutoJson !== 'undefined' ? cupoAutoJson : 'null' ?>;
+
+    function irAdmin(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const url = (URL_ADMIN_APP && String(URL_ADMIN_APP).indexOf('http') === 0)
+        ? URL_ADMIN_APP
+        : urlWebApp('admin');
+      irWebApp(url);
+    }
+
+    let paquete = {};
+    let tLectura0, tPregunta0;
+    let idLecturaReloj, idExamenReloj, idPreguntaReloj;
+    let indicePregunta = 0;
+    let respuestas = [];
+    let tiemposPregunta = [];
+    let tiempoLecturaFinal = 0;
+    let ppmCalculado = 0;
+    let nivelPpm = '';
+    let enRevisionLectura = false;
+    let relecturas = 0;
+    let tiempoReactivosAcumulado = 0;
+    let tReactivos0 = null;
+    let ultimoInforme = null;
+    let matriculaActual = '';
+    let tokenSesionActual = TOKEN_AUTO || '';
+    if (window.history && window.history.replaceState) {
+      try {
+        const u = new URL(window.location.href);
+        if (u.searchParams.has('token') || u.searchParams.has('t')) {
+          u.searchParams.delete('token');
+          u.searchParams.delete('t');
+          window.history.replaceState({}, document.title, u.pathname + (u.search ? u.search : ''));
+        }
+      } catch (eEarly) {}
+    }
+    let panelDatos = null;
+    let infoTrimestre = <?!= trimestreJson || 'null' ?>;
+    let cupoActual = null;
+    const TAM_HOJA = [560, 640, 720, 860, 1020, 1200, 1440, 1680];
+    const TAM_TEXTO = [14, 15.5, 17, 18.5, 20, 22, 24, 27, 30, 34, 38];
+    let idxTamHoja = 3;
+    let idxTamTexto = 3;
+    let catalogoLogin = { grado: '', grupos: [], alumnos: [] };
+    const NOMBRE_ESCUELA_UI = <?!= JSON.stringify(escuela || 'Secundaria Técnica 90') ?>;
+    aplicarIdentidad({
+      nombre: NOMBRE_ESCUELA_UI,
+      pie: <?!= JSON.stringify(typeof pieLectura !== 'undefined' ? pieLectura : 'Plan de Estudio NEM') ?>,
+      logo: <?!= JSON.stringify(typeof logoEscuela !== 'undefined' ? logoEscuela : '') ?>
+    });
+    (function pintarMarcaAlumno() {
+      const h = document.getElementById('titEscuela');
+      if (h) h.textContent = IDENTIDAD_ST90.nombre;
+      const img = document.getElementById('logoEscuelaCab');
+      if (img && IDENTIDAD_ST90.logo) {
+        img.src = IDENTIDAD_ST90.logo;
+        img.classList.remove('oculto');
+      }
+    })();
+
+    function aplicarTamLectura() {
+      const root = document.getElementById('secLectura');
+      if (!root) return;
+      root.style.setProperty('--hoja-max', TAM_HOJA[idxTamHoja] + 'px');
+      root.style.setProperty('--hoja-fs', TAM_TEXTO[idxTamTexto] + 'px');
+    }
+
+    function cambiarTamHoja(dir) {
+      idxTamHoja = Math.min(TAM_HOJA.length - 1, Math.max(0, idxTamHoja + (dir || 0)));
+      aplicarTamLectura();
+    }
+
+    function cambiarTamTexto(dir) {
+      idxTamTexto = Math.min(TAM_TEXTO.length - 1, Math.max(0, idxTamTexto + (dir || 0)));
+      aplicarTamLectura();
+    }
+
+    function mostrar(id) {
+      document.querySelectorAll('.seccion').forEach(function (n) { n.classList.remove('activa'); });
+      document.getElementById(id).classList.add('activa');
+      actualizarPasos(id);
+      const enExamen = (id !== 'secRegistro' && id !== 'secFinal' && id !== 'secPanel');
+      const leyendo = (id === 'secLectura');
+      document.body.classList.toggle('leyendo', leyendo);
+      const encabezado = document.querySelector('.encabezado');
+      const top = document.getElementById('btnTopDocentes');
+      const pie = document.getElementById('pieDocentes');
+      const pasos = document.getElementById('pasosExamen');
+      const btnPanel = document.getElementById('btnComenzar');
+      if (encabezado) encabezado.classList.toggle('oculto', leyendo);
+      if (top) top.classList.toggle('oculto', enExamen);
+      if (pie) pie.classList.toggle('oculto', enExamen);
+      if (pasos) pasos.classList.toggle('oculto', id === 'secPanel' || leyendo);
+      if (btnPanel) btnPanel.classList.toggle('oculto', id !== 'secRegistro');
+      if (leyendo) aplicarTamLectura();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function actualizarPasos(id) {
+      const mapa = {
+        secRegistro: 'registro',
+        secPanel: 'registro',
+        secSorteo: 'lectura',
+        secLectura: 'lectura',
+        secPpm: 'lectura',
+        secPreguntas: 'preguntas',
+        secFinal: 'final'
+      };
+      const orden = ['registro', 'lectura', 'preguntas', 'final'];
+      const actual = mapa[id] || 'registro';
+      const idx = orden.indexOf(actual);
+      document.querySelectorAll('.pasos-examen span').forEach(function (el) {
+        const i = orden.indexOf(el.getAttribute('data-paso'));
+        el.classList.remove('hecho', 'actual');
+        if (i === idx) el.classList.add('actual');
+        else if (i >= 0 && i < idx) el.classList.add('hecho');
+      });
+    }
+
+    function tiempoReactivosMs() {
+      return tiempoReactivosAcumulado + (tReactivos0 ? (Date.now() - tReactivos0) : 0);
+    }
+
+    function iniciarRelojExamen() {
+      tReactivos0 = Date.now();
+      clearInterval(idExamenReloj);
+      idExamenReloj = setInterval(function () {
+        const reloj = document.getElementById('relojExamen');
+        if (reloj) reloj.textContent = fmtTiempo(tiempoReactivosMs() / 1000);
+      }, 250);
+    }
+
+    function pausarRelojExamen() {
+      if (tReactivos0) {
+        tiempoReactivosAcumulado += Date.now() - tReactivos0;
+        tReactivos0 = null;
+      }
+      clearInterval(idExamenReloj);
+    }
+
+    function setBotonesInicio(panelOk, pruebaOk) {
+      const p = document.getElementById('btnComenzar');
+      const t = document.getElementById('btnIniciarPrueba');
+      if (p) p.disabled = !panelOk;
+      if (t) t.disabled = !pruebaOk;
+      aplicarEstadoTrimestral(cupoActual);
+    }
+
+    function fechaTrimestreTexto(src) {
+      if (src && src.fechaTexto) return src.fechaTexto;
+      if (infoTrimestre && infoTrimestre.fechaTexto) return infoTrimestre.fechaTexto;
+      return '—';
+    }
+
+    function aplicarEstadoTrimestral(resCupo) {
+      const tri = (resCupo && resCupo.trimestral) || infoTrimestre || {};
+      const fecha = fechaTrimestreTexto(tri);
+      let extra = '';
+      if (tri.intentosRestantes != null && tri.intentosPermitidos) {
+        extra = ' · ' + tri.intentosRestantes + (Number(tri.intentosRestantes) === 1 ? ' intento' : ' intentos');
+      }
+      const lbl1 = document.getElementById('lblFechaTrimestral');
+      const lbl2 = document.getElementById('lblFechaTrimestralPanel');
+      if (lbl1) lbl1.textContent = extra ? (fecha + extra) : fecha;
+      if (lbl2) lbl2.textContent = extra ? (fecha + extra) : fecha;
+      const puede = !!(tri.puedePresentar);
+      const tip = tri.mensaje || (puede ? 'Lectura unificada del trimestre' : 'Selecciona tu nombre para ver si ya está asignada');
+      const btn1 = document.getElementById('btnTrimestral');
+      const btn2 = document.getElementById('btnTrimestralPanel');
+      [btn1, btn2].forEach(function (b) {
+        if (!b) return;
+        b.disabled = !puede;
+        b.title = tip;
+      });
+    }
+
+    function limpiarCupo() {
+      const c = document.getElementById('cajaCupo');
+      c.hidden = true; c.textContent = ''; c.classList.remove('agotado');
+      cupoActual = null;
+      setBotonesInicio(true, true);
+    }
+
+    function aplicarAlumnoAutenticado(alu, cupo) {
+      if (!alu || !alu.matricula) return;
+      matriculaActual = alu.matricula;
+      const cajaSel = document.getElementById('cajaSelectoresAlumno');
+      const cajaAuto = document.getElementById('cajaAlumnoAutenticado');
+      const lblNom = document.getElementById('lblAlumnoNombre');
+      const lblDet = document.getElementById('lblAlumnoDetalle');
+      if (cajaSel) cajaSel.style.display = 'none';
+      if (cajaAuto) cajaAuto.classList.remove('oculto');
+      if (lblNom) lblNom.textContent = alu.nombre || 'Alumno';
+      if (lblDet) {
+        const partes = [];
+        if (alu.grado) partes.push(alu.grado + '°');
+        if (alu.grupo) partes.push('"' + String(alu.grupo).toUpperCase() + '"');
+        if (alu.matricula) partes.push('Matrícula: ' + alu.matricula);
+        lblDet.textContent = partes.join(' · ');
+      }
+      const selNom = document.getElementById('nombreEstudiante');
+      if (selNom) {
+        selNom.innerHTML = '<option value="' + escaparHtml(alu.matricula) + '" selected>' + escaparHtml(alu.nombre || alu.matricula) + '</option>';
+        selNom.disabled = false;
+      }
+      if (cupo) {
+        cupoActual = cupo;
+        const caja = document.getElementById('cajaCupo');
+        if (caja) {
+          caja.hidden = false;
+          caja.textContent = cupo.mensaje || '';
+          if (cupo.agotado || !cupo.ok) caja.classList.add('agotado');
+          else caja.classList.remove('agotado');
+        }
+        setBotonesInicio(true, !cupo.agotado && cupo.ok);
+      } else {
+        consultarCupoPorMat(alu.matricula);
+      }
+    }
+
+    function consultarCupoPorMat(mat) {
+      const caja = document.getElementById('cajaCupo');
+      if (caja) {
+        caja.hidden = false; caja.classList.remove('agotado');
+        caja.textContent = 'Consultando tus intentos…';
+      }
+      setBotonesInicio(false, false);
+      gsRun('consultarCupoAlumno', mat)
+        .then(function (res) {
+          cupoActual = res || null;
+          if (caja) caja.textContent = (res && res.mensaje) || 'No se pudo consultar.';
+          if (!res || !res.ok) {
+            if (caja) caja.classList.add('agotado');
+            setBotonesInicio(false, false);
+            return;
+          }
+          if (res.agotado) {
+            if (caja) caja.classList.add('agotado');
+            setBotonesInicio(true, false);
+            return;
+          }
+          if (caja) caja.classList.remove('agotado');
+          setBotonesInicio(true, true);
+        })
+        .catch(function (err) {
+          cupoActual = null;
+          if (caja) {
+            caja.classList.add('agotado');
+            caja.textContent = (err && err.message) || 'No se pudo consultar. Revisa tu conexión e intenta de nuevo.';
+          }
+          setBotonesInicio(true, true);
+        });
+    }
+
+    function consultarCupo() {
+      const mat = (document.getElementById('nombreEstudiante') && document.getElementById('nombreEstudiante').value) || matriculaActual;
+      if (!mat) { limpiarCupo(); return; }
+      consultarCupoPorMat(mat);
+    }
+
+    function renderizarTextoLectura(texto) {
+      if (typeof paquete !== 'undefined' && paquete && paquete.identidad) aplicarIdentidad(paquete.identidad);
+      const tema = (typeof paquete !== 'undefined' && paquete.tema) || '';
+      const asig = (typeof paquete !== 'undefined' && paquete.asignatura) || '';
+      const grado = (typeof paquete !== 'undefined' && paquete.alumno && paquete.alumno.grado) || '';
+      const pal = (typeof paquete !== 'undefined' && paquete.lectura && paquete.lectura.palabras) || 0;
+      return renderizarHojaLibro(texto, tema, asig, grado, pal);
+    }
+
+    function pintarNombresDeGrupo(grupo) {
+      const sn = document.getElementById('nombreEstudiante');
+      const g = String(grupo || '').toLowerCase();
+      const lista = (catalogoLogin.alumnos || []).filter(function (a) {
+        return String(a.grupo || '').toLowerCase() === g;
+      });
+      if (!lista.length) {
+        sn.innerHTML = '<option value="">No hay alumnos en este grupo</option>';
+        sn.disabled = true;
+        return;
+      }
+      sn.innerHTML = '<option value="">-- Busca tu nombre --</option>' +
+        lista.map(function (a) {
+          return '<option value="' + escaparHtml(a.matricula) + '">' + escaparHtml(a.nombre) + '</option>';
+        }).join('');
+      sn.disabled = false;
+    }
+
+    function cargarGrupos() {
+      const grado = document.getElementById('gradoEscolar').value;
+      const sg = document.getElementById('grupoEscolar');
+      const sn = document.getElementById('nombreEstudiante');
+      catalogoLogin = { grado: grado, grupos: [], alumnos: [] };
+      sn.innerHTML = '<option value="">-- Primero elige el grupo --</option>';
+      sn.disabled = true;
+      limpiarCupo();
+      if (!grado) {
+        sg.innerHTML = '<option value="">-- Primero elige el grado --</option>';
+        sg.disabled = true; return;
+      }
+      sg.disabled = true;
+      sg.innerHTML = '<option value="">Cargando…</option>';
+      gsRun('catalogoLoginPorGrado', grado)
+        .then(function (cat) {
+          catalogoLogin = cat || { grupos: [], alumnos: [] };
+          catalogoLogin.grado = grado;
+          if (cat && cat.trimestre) infoTrimestre = cat.trimestre;
+          aplicarEstadoTrimestral(cupoActual);
+          const lista = catalogoLogin.grupos || [];
+          if (!lista.length) { sg.innerHTML = '<option value="">No hay grupos de ' + grado + '°</option>'; return; }
+          sg.innerHTML = '<option value="">-- Elige tu grupo --</option>' +
+            lista.map(function (g) { return '<option value="' + escaparHtml(g) + '">' + escaparHtml(g) + '</option>'; }).join('');
+          sg.disabled = false;
+        })
+        .catch(function (e) {
+          sg.innerHTML = '<option value="">No se pudo cargar. Cambia el grado e intenta de nuevo.</option>';
+          sg.disabled = false;
+          toast((e && e.message) || 'Error de red', 'error');
+        });
+    }
+
+    function cargarAlumnos() {
+      const grupo = document.getElementById('grupoEscolar').value;
+      const sn = document.getElementById('nombreEstudiante');
+      sn.disabled = true;
+      if (!grupo) { sn.innerHTML = '<option value="">-- Primero elige el grupo --</option>'; limpiarCupo(); return; }
+      limpiarCupo();
+      if (catalogoLogin && catalogoLogin.alumnos && catalogoLogin.alumnos.length) {
+        pintarNombresDeGrupo(grupo);
+        return;
+      }
+      sn.innerHTML = '<option value="">Cargando…</option>';
+      gsRun('obtenerAlumnosPorGrupo', grupo)
+        .then(function (lista) {
+          if (!lista || !lista.length) { sn.innerHTML = '<option value="">No hay alumnos en este grupo</option>'; return; }
+          sn.innerHTML = '<option value="">-- Busca tu nombre --</option>' +
+            lista.map(function (a) { return '<option value="' + escaparHtml(a.matricula) + '">' + escaparHtml(a.nombre) + '</option>'; }).join('');
+          sn.disabled = false;
+        })
+        .catch(function (e) {
+          sn.innerHTML = '<option value="">No se pudo cargar. Cambia el grupo e intenta de nuevo.</option>';
+          sn.disabled = false;
+          toast((e && e.message) || 'Error de red', 'error');
+        });
+    }
+
+    function entrarPanel() {
+      const mat = (document.getElementById('nombreEstudiante') && document.getElementById('nombreEstudiante').value) || matriculaActual;
+      if (!mat) return toast('Selecciona grado, grupo y nombre.', 'error');
+      const ya = cupoActual && cupoActual.panel && cupoActual.panel.ok &&
+        cupoActual.panel.alumno && String(cupoActual.panel.alumno.matricula) === String(mat);
+      if (ya) {
+        matriculaActual = mat;
+        pintarPanel(cupoActual.panel);
+        mostrar('secPanel');
+        return;
+      }
+      const btn = document.getElementById('btnComenzar');
+      btn.disabled = true;
+      document.getElementById('avisoInicio').textContent = 'Abriendo tu panel…';
+      gsRun('panelAlumno', mat, tokenSesionActual)
+        .then(function (res) {
+          btn.disabled = false;
+          document.getElementById('avisoInicio').textContent = '';
+          if (!res.ok) {
+            const caja = document.getElementById('cajaCupo');
+            caja.hidden = false; caja.textContent = res.mensaje; caja.classList.add('agotado');
+            toast(res.mensaje, 'error');
+            return;
+          }
+          matriculaActual = mat;
+          pintarPanel(res);
+          mostrar('secPanel');
+        })
+        .catch(function (e) {
+          btn.disabled = false;
+          document.getElementById('avisoInicio').textContent = 'No se pudo abrir el panel. Revisa tu conexión e intenta de nuevo.';
+          toast((e && e.message) || 'Error de red', 'error');
+        });
+    }
+
+    function iniciarPrueba() {
+      const mat = matriculaActual || (document.getElementById('nombreEstudiante') && document.getElementById('nombreEstudiante').value);
+      arrancarEvaluacion(mat, '', document.getElementById('btnIniciarPrueba'));
+    }
+
+    function iniciarTrimestral() {
+      const mat = matriculaActual || (document.getElementById('nombreEstudiante') && document.getElementById('nombreEstudiante').value);
+      arrancarEvaluacion(mat, 'trimestral', document.getElementById('btnTrimestral'));
+    }
+
+    function arrancarEvaluacion(mat, modo, btn) {
+      if (!mat) return toast('Selecciona grado, grupo y nombre.', 'error');
+      if (!tokenSesionActual) {
+        if (btn) btn.disabled = false;
+        return toast('Debes iniciar sesión con tus credenciales para presentar el examen.', 'error');
+      }
+      if (btn) btn.disabled = true;
+      const aviso = document.getElementById('avisoInicio');
+      if (aviso) aviso.textContent = modo === 'trimestral' ? 'Cargando la lectura trimestral…' : 'Preparando sorteo…';
+      gsRun('iniciarEvaluacionAlumno', mat, modo || '', tokenSesionActual)
+        .then(function (res) {
+          if (!res.ok) {
+            if (btn) btn.disabled = false;
+            aplicarEstadoTrimestral(cupoActual);
+            if (aviso) aviso.textContent = res.mensaje || '';
+            const caja = document.getElementById('cajaCupo');
+            if (caja) {
+              caja.hidden = false; caja.textContent = res.mensaje; caja.classList.add('agotado');
+            }
+            toast(res.mensaje, 'error');
+            return;
+          }
+          if (aviso) aviso.textContent = '';
+          matriculaActual = mat;
+          paquete = res;
+          if (res.modo === 'trimestral') mostrarLectura();
+          else animarRuletas();
+        })
+        .catch(function (e) {
+          if (btn) btn.disabled = false;
+          aplicarEstadoTrimestral(cupoActual);
+          if (aviso) aviso.textContent = 'No se pudo comenzar. Revisa tu conexión e intenta de nuevo.';
+          toast((e && e.message) || 'Error de red', 'error');
+        });
+    }
+
+    function pintarPanel(res) {
+      panelDatos = res;
+      const al = res.alumno || {};
+      document.getElementById('panelNombre').textContent = al.nombre || 'Mi panel';
+      document.getElementById('panelFicha').textContent =
+        (al.grado ? al.grado + '° ' : '') + String(al.grupo || '').toUpperCase() +
+        (al.matricula ? ' · Matrícula ' + al.matricula : '');
+
+      const r = res.resumen || {};
+      function kpi(valor, label, extraClass) {
+        return '<div class="panel-kpi' + (extraClass ? ' ' + extraClass : '') + '"><div class="n">' +
+          (valor == null || valor === '' ? '—' : valor) + '</div><div class="l">' + label + '</div></div>';
+      }
+      document.getElementById('panelKpis').innerHTML =
+        kpi(r.n || 0, 'Evaluaciones') +
+        kpi(r.promedioComprension != null ? r.promedioComprension + '%' : '—', 'Comprensión') +
+        kpi(r.promedioPpm != null ? r.promedioPpm : '—', 'PPM promedio') +
+        kpi(r.promedioGlobal != null ? r.promedioGlobal + '%' : '—', 'Global', 'naranja') +
+        kpi((res.restantes != null ? res.restantes : '—') + ' / ' + (res.permitidos || '—'), 'Intentos') +
+        kpi((res.lecturasDisponibles != null ? res.lecturasDisponibles : '—') + ' / ' + (res.lecturasTotales || '—'), 'Lecturas nuevas');
+
+      const cajaEvo = document.getElementById('cajaEvolucion');
+      const spark = document.getElementById('panelSpark');
+      if (res.evolucion && res.evolucion.length >= 2) {
+        cajaEvo.hidden = false;
+        spark.innerHTML = svgEvolucion(res.evolucion);
+      } else {
+        cajaEvo.hidden = true;
+        spark.innerHTML = '';
+      }
+
+      const hist = document.getElementById('panelHistorial');
+      const evals = res.evaluaciones || [];
+      if (!evals.length) {
+        hist.innerHTML = '<p class="meta" style="text-align:left;margin:0;">Aún no tienes evaluaciones registradas. Cuando presentes la primera, aquí verás fechas, lecturas y calificaciones.</p>';
+      } else {
+        let html = '<p class="meta" style="text-align:left;margin:0 0 8px;">Toca una fila para ver el informe completo, igual que al terminar el examen.</p>' +
+          '<div class="tabla-panel-wrap"><table class="tabla-panel"><thead><tr>' +
+          '<th>Fecha</th><th>Lectura</th><th>Comprensión</th><th>PPM</th><th>Global</th><th>Intento</th><th></th>' +
+          '</tr></thead><tbody>';
+        evals.forEach(function (e, i) {
+          const lec = [e.asignatura, e.tema].filter(Boolean).join(' · ') || '—';
+          html += '<tr class="fila-informe" onclick="verInformeGuardado(' + i + ')">' +
+            '<td>' + escaparHtml(e.fecha || '—') + '</td>' +
+            '<td>' + escaparHtml(lec) + '</td>' +
+            '<td class="num">' + (e.comprension != null ? e.comprension + '%' : '—') + '</td>' +
+            '<td class="num">' + (e.ppm != null ? e.ppm : '—') + '</td>' +
+            '<td class="num">' + (e.global != null ? e.global + '%' : '—') + '</td>' +
+            '<td class="num">' + (e.intento || '—') + '</td>' +
+            '<td><button type="button" class="btn-ver-informe" onclick="event.stopPropagation();verInformeGuardado(' + i + ')">Ver informe</button></td>' +
+          '</tr>';
+        });
+        html += '</tbody></table></div>';
+        hist.innerHTML = html;
+      }
+
+      const cajaHechas = document.getElementById('cajaLecturasHechas');
+      const chips = document.getElementById('panelChips');
+      const hechas = res.lecturasHechas || [];
+      if (hechas.length) {
+        cajaHechas.hidden = false;
+        chips.innerHTML = hechas.map(function (l) {
+          const t = [l.asignatura, l.tema].filter(Boolean).join(' · ') || 'Lectura';
+          return '<span class="chip-lectura">' + escaparHtml(t) + '</span>';
+        }).join('');
+      } else {
+        cajaHechas.hidden = true;
+        chips.innerHTML = '';
+      }
+
+      const aviso = document.getElementById('panelAviso');
+      aviso.textContent = res.mensaje || '';
+      aviso.className = 'aviso-panel ' + (res.puedePresentar ? 'ok' : 'warn');
+      const btn = document.getElementById('btnNuevaEval');
+      btn.disabled = !res.puedePresentar;
+      btn.textContent = res.puedePresentar ? 'Nueva evaluación' : 'No puedes presentar ahora';
+      cupoActual = res;
+      aplicarEstadoTrimestral(res);
+    }
+
+    function verInformeGuardado(idx) {
+      const evals = (panelDatos && panelDatos.evaluaciones) || [];
+      const e = evals[idx];
+      if (!e || !e.informe) return toast('No hay un informe guardado de esta evaluación.', 'error');
+      pintarResultadoFinal(e.informe, e.informe.tiempoReactivos, { desdePanel: true });
+    }
+
+    function svgEvolucion(puntos) {
+      const w = 420, h = 68, pad = 8;
+      const vals = puntos.map(function (p) { return Number(p.global) || 0; });
+      const min = Math.min.apply(null, vals.concat([0]));
+      const max = Math.max.apply(null, vals.concat([100]));
+      const span = Math.max(1, max - min);
+      const coords = vals.map(function (v, i) {
+        const x = pad + (i * (w - pad * 2) / Math.max(1, vals.length - 1));
+        const y = h - pad - ((v - min) / span) * (h - pad * 2);
+        return { x: x, y: y, v: v, fecha: puntos[i].fecha || '' };
+      });
+      const poly = coords.map(function (c) { return c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+      const dots = coords.map(function (c) {
+        return '<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) +
+          '" r="3.2" fill="#1f6f9f"><title>' + escaparHtml(c.fecha) + ': ' + c.v + '%</title></circle>';
+      }).join('');
+      return '<svg class="spark-panel" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Evolución de la calificación global">' +
+        '<polyline points="' + poly + '" fill="none" stroke="#1f6f9f" stroke-width="2.5" stroke-linejoin="round"/>' +
+        dots + '</svg>';
+    }
+
+    function cambiarAlumno() {
+      clearInterval(idLecturaReloj);
+      clearInterval(idExamenReloj);
+      clearInterval(idPreguntaReloj);
+      const tokenViejo = tokenSesionActual;
+      tokenSesionActual = '';
+      matriculaActual = '';
+      panelDatos = null;
+      paquete = {};
+      cupoActual = null;
+      indicePregunta = 0;
+      respuestas = [];
+      tiemposPregunta = [];
+      tiempoLecturaFinal = 0;
+      ppmCalculado = 0;
+      nivelPpm = '';
+      enRevisionLectura = false;
+      relecturas = 0;
+      tiempoReactivosAcumulado = 0;
+      tReactivos0 = null;
+      ultimoInforme = null;
+
+      // Revocar sesión en el servidor
+      if (tokenViejo) {
+        gsRun('revocarTokenSesion', tokenViejo).catch(function () {});
+      }
+
+      // Limpiar parámetros de la URL e historial visible
+      if (window.history && window.history.replaceState) {
+        try {
+          const u = new URL(window.location.href);
+          u.searchParams.delete('token');
+          u.searchParams.delete('t');
+          u.searchParams.delete('mat');
+          u.searchParams.delete('matricula');
+          u.searchParams.delete('u');
+          u.searchParams.delete('usuario');
+          window.history.replaceState({}, document.title, u.pathname + (u.search ? u.search : ''));
+        } catch (eClean) {}
+      }
+
+      // Limpiar datos personales y panel de la interfaz
+      document.getElementById('avisoInicio').textContent = '';
+      const lblNom = document.getElementById('lblAlumnoNombre');
+      if (lblNom) lblNom.textContent = 'Alumno';
+      const lblDet = document.getElementById('lblAlumnoDetalle');
+      if (lblDet) lblDet.textContent = '';
+      const pNom = document.getElementById('panelNombre');
+      if (pNom) pNom.textContent = 'Mi panel';
+      const pFicha = document.getElementById('panelFicha');
+      if (pFicha) pFicha.textContent = '';
+      const pKpis = document.getElementById('panelKpis');
+      if (pKpis) pKpis.innerHTML = '';
+      const pSpark = document.getElementById('panelSpark');
+      if (pSpark) pSpark.innerHTML = '';
+      const pHist = document.getElementById('panelHistorial');
+      if (pHist) pHist.innerHTML = '';
+      const pChips = document.getElementById('panelChips');
+      if (pChips) pChips.innerHTML = '';
+      const pAviso = document.getElementById('panelAviso');
+      if (pAviso) { pAviso.textContent = ''; pAviso.className = 'aviso-panel'; }
+
+      // Limpiar contenidos del examen del DOM para prevenir fugas visuales entre alumnos
+      const cTexto = document.getElementById('cajaTexto');
+      if (cTexto) cTexto.innerHTML = '';
+      const cPreguntas = document.getElementById('cajaPreguntas');
+      if (cPreguntas) cPreguntas.innerHTML = '';
+
+      const cajaSel = document.getElementById('cajaSelectoresAlumno');
+      const cajaAuto = document.getElementById('cajaAlumnoAutenticado');
+      if (cajaSel) cajaSel.style.display = '';
+      if (cajaAuto) cajaAuto.classList.add('oculto');
+      const selG = document.getElementById('gradoEscolar');
+      const selGr = document.getElementById('grupoEscolar');
+      const selN = document.getElementById('nombreEstudiante');
+      if (selG) selG.value = '';
+      if (selGr) { selGr.innerHTML = '<option value="">-- Primero elige el grado --</option>'; selGr.disabled = true; }
+      if (selN) { selN.innerHTML = '<option value="">-- Primero elige el grupo --</option>'; selN.disabled = true; }
+      setBotonesInicio(true, true);
+      document.getElementById('btnSiguiente').disabled = false;
+      mostrar('secRegistro');
+      limpiarCupo();
+    }
+
+    function recargarPanel(mat) {
+      const id = mat || matriculaActual;
+      if (!id) { mostrar('secRegistro'); return; }
+      gsRun('panelAlumno', id, tokenSesionActual)
+        .then(function (res) {
+          if (!res.ok) {
+            toast(res.mensaje || 'No se pudo cargar el panel.', 'error');
+            mostrar('secRegistro');
+            return;
+          }
+          matriculaActual = id;
+          pintarPanel(res);
+          mostrar('secPanel');
+        })
+        .catch(function (e) {
+          toast((e && e.message) || 'Error de red', 'error');
+          mostrar('secRegistro');
+        });
+    }
+
+    function comenzarDesdePanel() {
+      const mat = (panelDatos && panelDatos.alumno && panelDatos.alumno.matricula) || matriculaActual;
+      if (!mat) return toast('Selecciona un alumno.', 'error');
+      if (panelDatos && !panelDatos.puedePresentar) {
+        return toast(panelDatos.mensaje || 'No puedes presentar ahora.', 'error');
+      }
+      const btn = document.getElementById('btnNuevaEval');
+      arrancarEvaluacionDesdePanel(mat, '', btn);
+    }
+
+    function iniciarTrimestralDesdePanel() {
+      const mat = (panelDatos && panelDatos.alumno && panelDatos.alumno.matricula) || matriculaActual;
+      if (!mat) return toast('Selecciona un alumno.', 'error');
+      const btn = document.getElementById('btnTrimestralPanel');
+      arrancarEvaluacionDesdePanel(mat, 'trimestral', btn);
+    }
+
+    function arrancarEvaluacionDesdePanel(mat, modo, btn) {
+      if (!tokenSesionActual) {
+        if (btn) btn.disabled = false;
+        return toast('Debes iniciar sesión con tus credenciales para presentar el examen.', 'error');
+      }
+      if (btn) btn.disabled = true;
+      gsRun('iniciarEvaluacionAlumno', mat, modo || '', tokenSesionActual)
+        .then(function (res) {
+          if (!res.ok) {
+            if (btn) btn.disabled = false;
+            aplicarEstadoTrimestral(panelDatos);
+            toast(res.mensaje, 'error');
+            recargarPanel(mat);
+            return;
+          }
+          paquete = res;
+          if (res.modo === 'trimestral') mostrarLectura();
+          else animarRuletas();
+        })
+        .catch(function (e) {
+          if (btn) btn.disabled = false;
+          aplicarEstadoTrimestral(panelDatos);
+          toast((e && e.message) || 'Error de red', 'error');
+        });
+    }
+
+    function comenzar() {
+      entrarPanel();
+    }
+
+    function llenarCinta(items, ganador) {
+      const lista = items.concat(items).concat(items);
+      lista.push(ganador);
+      const cinta = document.getElementById('cintaRuleta');
+      cinta.style.transition = 'none';
+      cinta.style.transform = 'translateY(0)';
+      cinta.innerHTML = lista.map(function (t) { return '<div class="item-ruleta">' + escaparHtml(t) + '</div>'; }).join('');
+      const destino = (lista.length - 1) * 54;
+      requestAnimationFrame(function () {
+        cinta.style.transition = 'transform 2.4s cubic-bezier(.15,.8,.1,1)';
+        cinta.style.transform = 'translateY(-' + destino + 'px)';
+      });
+    }
+
+    function animarRuletas() {
+      mostrar('secSorteo');
+      const asigs = paquete.asignaturasRuleta || [paquete.asignatura];
+      const excluidas = Number(paquete.lecturasExcluidas) || 0;
+      document.getElementById('textoRuleta').textContent = excluidas > 0
+        ? 'Sorteo entre lecturas que aún no has presentado…'
+        : 'Girando asignatura…';
+      document.getElementById('resultadoRuleta').textContent = '';
+      llenarCinta(asigs, paquete.asignatura);
+      setTimeout(function () {
+        document.getElementById('resultadoRuleta').textContent = 'Asignatura: ' + paquete.asignatura;
+        document.getElementById('textoRuleta').textContent = 'Girando tema…';
+        const temas = paquete.temasRuleta || [paquete.tema];
+        llenarCinta(temas, paquete.tema);
+        setTimeout(function () {
+          document.getElementById('resultadoRuleta').textContent = paquete.asignatura + ' · ' + paquete.tema;
+          setTimeout(mostrarLectura, 600);
+        }, 2600);
+      }, 2600);
+    }
+
+    function mostrarLectura() {
+      const lec = paquete.lectura;
+      document.getElementById('cajaLectura').innerHTML = renderizarTextoLectura(lec.texto);
+      const nPreg = (lec.preguntas && lec.preguntas.length) ? lec.preguntas.length : 0;
+      document.getElementById('datoPalabras').textContent =
+        lec.palabras + ' palabras · ' + nPreg + ' preguntas';
+      let ficha = paquete.alumno.nombre + ' · ' + paquete.alumno.grado + '° ' + paquete.alumno.grupo +
+        ' · ' + paquete.asignatura + ' / ' + paquete.tema +
+        ' · intento ' + paquete.intento + ' de ' + paquete.permitidos;
+      if (paquete.modo === 'trimestral' && paquete.trimestre && paquete.trimestre.etiqueta) {
+        ficha = paquete.trimestre.etiqueta +
+          (paquete.trimestre.fechaTexto ? ' · ' + paquete.trimestre.fechaTexto : '') +
+          ' · ' + ficha;
+      }
+      document.getElementById('fichaLectura').textContent = ficha;
+      mostrar('secLectura');
+      tLectura0 = Date.now();
+      clearInterval(idLecturaReloj);
+      idLecturaReloj = setInterval(function () {
+        var relojTxt = document.getElementById('relojLecturaTexto') || document.getElementById('relojLectura');
+        if (relojTxt) relojTxt.textContent = fmtTiempo((Date.now() - tLectura0) / 1000);
+      }, 250);
+    }
+
+    function terminarDeLeer() {
+      if (enRevisionLectura) {
+        enRevisionLectura = false;
+        document.getElementById('btnTerminarLectura').textContent = 'He terminado de leer';
+        mostrar('secPreguntas');
+        iniciarRelojExamen();
+        tPregunta0 = Date.now();
+        clearInterval(idPreguntaReloj);
+        idPreguntaReloj = setInterval(function () {
+          document.getElementById('relojPregunta').textContent = fmtTiempo((Date.now() - tPregunta0) / 1000);
+        }, 250);
+        return;
+      }
+      clearInterval(idLecturaReloj);
+      tiempoLecturaFinal = Math.max(1, Math.round((Date.now() - tLectura0) / 1000));
+
+      // Calcular PPM localmente para mostrarlos de inmediato
+      const palabras = paquete.lectura.palabras;
+      ppmCalculado = Math.round((palabras / tiempoLecturaFinal) * 60 * 10) / 10;
+      const spec = paquete.especificaciones || {};
+      const min = Number(spec.ppmMin) || 0;
+      const max = Number(spec.ppmMax) || 0;
+      const obj = Number(spec.ppmObjetivo) || ((min + max) / 2);
+      let nivel = 'dentro';
+      if (ppmCalculado < min) nivel = 'bajo';
+      else if (ppmCalculado > max) nivel = 'alto';
+      nivelPpm = nivel;
+
+      document.getElementById('ppmNumero').textContent = ppmCalculado;
+      let detalle = 'Leíste ' + palabras + ' palabras en ' + fmtTiempo(tiempoLecturaFinal) + '.';
+      detalle += '<br>Rango esperado para ' + paquete.alumno.grado + '°: <strong>' + min + '–' + max + ' PPM</strong> (objetivo ' + obj + ').';
+      document.getElementById('ppmDetalle').innerHTML = detalle;
+
+      let mensaje = '';
+      if (nivel === 'bajo') mensaje = 'Vas un poco por debajo del rango esperado. Con práctica diaria lo alcanzarás.';
+      else if (nivel === 'alto') mensaje = '¡Vas por encima del rango esperado! Excelente velocidad.';
+      else mensaje = '¡Vas dentro del rango esperado para tu grado! Buen trabajo.';
+      document.getElementById('ppmMensaje').textContent = mensaje;
+
+      mostrar('secPpm');
+    }
+
+    function irACuestionario() {
+      indicePregunta = 0;
+      respuestas = [];
+      tiemposPregunta = [];
+      tiempoReactivosAcumulado = 0;
+      relecturas = 0;
+      mostrar('secPreguntas');
+      iniciarRelojExamen();
+      pintarPregunta();
+    }
+
+    function pintarBarraProgreso() {
+      const total = paquete.lectura.preguntas.length;
+      let html = '';
+      for (let i = 0; i < total; i++) {
+        const clase = i < indicePregunta ? 'hecho' : (i === indicePregunta ? 'actual' : '');
+        html += '<div class="punto ' + clase + '"></div>';
+      }
+      document.getElementById('barraProgreso').innerHTML = html;
+    }
+
+    function pintarPregunta() {
+      const preguntas = paquete.lectura.preguntas;
+      const actual = preguntas[indicePregunta];
+      pintarBarraProgreso();
+      let html = '<p><strong>Pregunta ' + (indicePregunta + 1) + ' de ' + preguntas.length + '</strong></p>';
+      html += '<p>' + escaparHtml(actual.p) + '</p>';
+      actual.opciones.forEach(function (op, i) {
+        const elegido = respuestas[indicePregunta] === op ? ' checked' : '';
+        const selClass = respuestas[indicePregunta] === op ? ' seleccionada' : '';
+        html += '<label class="opcion clic' + selClass + '">' +
+          '<input type="radio" name="opcion" value="' + escaparHtml(op) + '"' + elegido + ' onchange="marcarOpcion(this)">' +
+          '<span>' + escaparHtml(op) + '</span></label>';
+      });
+      document.getElementById('bloquePregunta').innerHTML = html;
+      document.getElementById('btnSiguiente').textContent =
+        indicePregunta === preguntas.length - 1 ? 'Enviar examen' : 'Siguiente';
+      document.getElementById('btnAnterior').style.visibility = indicePregunta === 0 ? 'hidden' : 'visible';
+
+      tPregunta0 = Date.now();
+      clearInterval(idPreguntaReloj);
+      idPreguntaReloj = setInterval(function () {
+        document.getElementById('relojPregunta').textContent = fmtTiempo((Date.now() - tPregunta0) / 1000);
+      }, 250);
+    }
+
+    function verLecturaDesdePreguntas() {
+      guardarTiempoPreguntaActual();
+      clearInterval(idPreguntaReloj);
+      pausarRelojExamen();
+      enRevisionLectura = true;
+      relecturas += 1;
+      document.getElementById('btnTerminarLectura').textContent = 'Volver a las preguntas';
+      mostrar('secLectura');
+    }
+
+    function marcarOpcion(input) {
+      respuestas[indicePregunta] = input.value;
+      document.querySelectorAll('.opcion').forEach(function (l) { l.classList.remove('seleccionada'); });
+      input.closest('.opcion').classList.add('seleccionada');
+    }
+
+    function guardarTiempoPreguntaActual() {
+      if (tPregunta0) {
+        tiemposPregunta[indicePregunta] = Math.round((Date.now() - tPregunta0) / 1000);
+      }
+    }
+
+    function preguntaAnterior() {
+      if (indicePregunta === 0) return;
+      guardarTiempoPreguntaActual();
+      indicePregunta--;
+      pintarPregunta();
+    }
+
+    function siguientePregunta() {
+      const preguntas = paquete.lectura.preguntas;
+      const elegido = document.querySelector('input[name="opcion"]:checked');
+      if (!elegido) return toast('Selecciona una respuesta.', 'error');
+      respuestas[indicePregunta] = elegido.value;
+      guardarTiempoPreguntaActual();
+
+      if (indicePregunta < preguntas.length - 1) {
+        indicePregunta++;
+        pintarPregunta();
+        return;
+      }
+      enviar();
+    }
+
+    function enviar() {
+      clearInterval(idExamenReloj);
+      clearInterval(idPreguntaReloj);
+      const tiempoReactivos = Math.max(1, Math.round(tiempoReactivosMs() / 1000));
+      const tokenEx = (paquete && paquete.tokenExamen) || '';
+      if (!tokenEx) {
+        toast('No se encontró el token de examen. Reinicia la prueba.', 'error');
+        document.getElementById('btnSiguiente').disabled = false;
+        return;
+      }
+      const payload = {
+        matricula: paquete.alumno.matricula,
+        idLectura: paquete.lectura.idLectura,
+        asignatura: paquete.asignatura,
+        tema: paquete.tema,
+        tiempoLectura: tiempoLecturaFinal,
+        tiempoReactivos: tiempoReactivos,
+        tiemposPregunta: tiemposPregunta,
+        relecturas: relecturas,
+        respuestas: respuestas,
+        modo: paquete.modo || '',
+        trimestre: (paquete.trimestre && (paquete.trimestre.trimestre || paquete.trimestre.num)) || '',
+        tokenExamen: tokenEx
+      };
+      document.getElementById('btnSiguiente').disabled = true;
+      gsRun('guardarResultadosExamen', payload)
+        .then(function (res) {
+          if (!res.ok) {
+            toast(res.mensaje || 'No se pudo guardar. Intenta de nuevo.', 'error');
+            document.getElementById('btnSiguiente').disabled = false;
+            return;
+          }
+          pintarResultadoFinal(res.resultado, tiempoReactivos);
+        })
+        .catch(function (e) {
+          toast((e && e.message) || 'Error de red. Intenta de nuevo.', 'error');
+          document.getElementById('btnSiguiente').disabled = false;
+        });
+    }
+
+    function pintarResultadoFinal(r, tiempoReactivos, opts) {
+      opts = opts || {};
+      const spec = r.spec || {};
+      const clasePpm = claseNivelPpm(r.nivelPpm);
+      const etiquetaPpm = etiquetaNivelPpm(r.nivelPpm);
+      const tiempos = r.tiemposPregunta || {};
+      const hist = r.historial || {};
+      const desglose = r.desglose || null;
+      const tReactivos = (tiempoReactivos != null && tiempoReactivos !== '') ? tiempoReactivos : (r.tiempoReactivos || 0);
+      ultimoInforme = { r: r, tiempoReactivos: tReactivos, etiquetaPpm: etiquetaPpm, datos: r.datos || null };
+      if (!ultimoInforme.datos) ultimoInforme.datos = datosInformeDesdePaquete();
+
+      const tit = document.querySelector('#secFinal h2');
+      if (tit) tit.textContent = opts.desdePanel ? 'Informe de evaluación' : 'Evaluación concluida';
+
+      const ficha = document.getElementById('fichaResultado');
+      if (ficha) ficha.innerHTML = htmlFichaResultado();
+
+      const html = '' +
+        '<div class="tarjeta-nota">' +
+          '<div class="titulo">Comprensión lectora</div>' +
+          '<div class="valor">' + r.comprension + '<span class="pct">%</span></div>' +
+          '<div class="sub">' + r.aciertos + ' de ' + r.total + ' respuestas correctas</div>' +
+        '</div>' +
+        '<div class="tarjeta-nota">' +
+          '<div class="titulo">Velocidad lectora</div>' +
+          '<div class="valor">' + r.ppm + '</div>' +
+          '<div class="sub">PPM · <span class="st90-semaforo ' + clasePpm + '">' + etiquetaPpm + '</span></div>' +
+        '</div>' +
+        '<div class="tarjeta-nota global">' +
+          '<div class="titulo">Resultado global</div>' +
+          '<div class="valor">' + r.global + '<span class="pct">%</span></div>' +
+          '<div class="sub">70% comprensión + 30% velocidad</div>' +
+        '</div>' +
+        '<div class="tarjeta-nota">' +
+          '<div class="titulo">PME</div>' +
+          '<div class="valor">' + (r.pme != null ? r.pme : '—') + '</div>' +
+          '<div class="sub">PPM × comprensión</div>' +
+        '</div>';
+
+      document.getElementById('gridResultado').innerHTML = html;
+
+      let extra = '';
+      extra += '<div class="caja-extra"><h3>Tiempo por pregunta</h3>';
+      if (tiempos.n) {
+        extra += '<p>Promedio ' + tiempos.promedio + ' s · más rápida ' + tiempos.minimo + ' s · más lenta ' + tiempos.maximo + ' s.</p>';
+        if (tiempos.impulsivo) {
+          extra += '<div class="aviso-impulso">Respondiste muy rápido en promedio. Conviene leer otra vez el enunciado antes de elegir.</div>';
+        }
+      } else {
+        extra += '<p>No se registró el tiempo de cada pregunta.</p>';
+      }
+      extra += '</div>';
+
+      extra += '<div class="caja-extra"><h3>Relecturas</h3><p>' +
+        (Number(r.relecturas) === 1
+          ? 'Volviste a la lectura 1 vez durante el cuestionario.'
+          : 'Volviste a la lectura ' + Number(r.relecturas || 0) + ' veces durante el cuestionario.') +
+        '</p></div>';
+
+      extra += '<div class="caja-extra"><h3>Niveles de comprensión</h3>';
+      if (desglose) {
+        extra += '<div class="desglose-niveles">';
+        [['literal', 'Literal'], ['inferencial', 'Inferencial'], ['critica', 'Crítica']].forEach(function (par) {
+          const d = desglose[par[0]];
+          const hay = d && d.total;
+          extra += '<div class="desglose-item' + (hay ? '' : ' vacio') + '"><div class="n">' +
+            (hay ? d.pct + '%' : '0 preguntas') + '</div>' +
+            '<div class="l">' + par[1] + '</div>' +
+            '<div class="l">' + (hay ? (d.aciertos + ' / ' + d.total) : 'Esta lectura no tuvo este nivel') + '</div></div>';
+        });
+        extra += '</div>';
+      } else {
+        extra += '<p>Se mostrará cuando las preguntas tengan nivel (literal, inferencial o crítica).</p>';
+      }
+      extra += '</div>';
+
+      extra += '<div class="caja-extra"><h3>Tu historial</h3>';
+      if (hist.n) {
+        const delta = hist.deltaGlobal;
+        let fraseDelta = '';
+        if (delta != null) {
+          if (delta > 0) fraseDelta = ' Esta vez subiste ' + delta + ' puntos respecto a tu promedio.';
+          else if (delta < 0) fraseDelta = ' Esta vez bajaste ' + Math.abs(delta) + ' puntos respecto a tu promedio.';
+          else fraseDelta = ' Quedaste igual que tu promedio previo.';
+        }
+        extra += '<p>Llevas ' + hist.n + ' evaluación' + (hist.n === 1 ? '' : 'es') +
+          ' anterior' + (hist.n === 1 ? '' : 'es') +
+          '. Promedio global previo: ' + hist.promedioGlobal + '%.' + fraseDelta + '</p>';
+      } else {
+        extra += '<p>Esta es tu primera evaluación registrada.</p>';
+      }
+      extra += '</div>';
+
+      if (r.recomendacion) {
+        extra += '<div class="caja-extra caja-recomienda"><h3>Recomendación</h3><p>' +
+          escaparHtml(r.recomendacion) + '</p></div>';
+      }
+
+      document.getElementById('extraResultado').innerHTML = extra;
+      let pieTiempos = 'Tiempo de lectura: ' + fmtTiempo(r.tiempoLectura) +
+        ' · Tiempo de preguntas: ' + fmtTiempo(tReactivos);
+      if (spec.ppmMin) {
+        pieTiempos += '<br>Rango PPM para tu grado: ' + spec.ppmMin + '–' + spec.ppmMax + ' (objetivo ' + spec.ppmObjetivo + ')';
+      }
+      document.getElementById('resumenFinal').innerHTML = pieTiempos;
+      mostrar('secFinal');
+    }
+
+    function datosInformeDesdePaquete() {
+      const al = (paquete && paquete.alumno) || {};
+      const ahora = new Date();
+      const fecha = ('0' + ahora.getDate()).slice(-2) + '/' +
+        ('0' + (ahora.getMonth() + 1)).slice(-2) + '/' + ahora.getFullYear();
+      const hora = ('0' + ahora.getHours()).slice(-2) + ':' + ('0' + ahora.getMinutes()).slice(-2);
+      return {
+        escuela: (paquete && paquete.escuela) || NOMBRE_ESCUELA_UI,
+        nombre: al.nombre || '',
+        matricula: al.matricula || '',
+        grado: al.grado || '',
+        grupo: String(al.grupo || '').toUpperCase(),
+        asignatura: (paquete && paquete.asignatura) || '',
+        tema: (paquete && paquete.tema) || '',
+        intento: (paquete && paquete.intento) || '',
+        permitidos: (paquete && paquete.permitidos) || '',
+        fecha: fecha,
+        hora: hora
+      };
+    }
+
+    function datosInforme() {
+      if (ultimoInforme && ultimoInforme.datos) return ultimoInforme.datos;
+      return datosInformeDesdePaquete();
+    }
+
+    function htmlFichaResultado() {
+      const d = datosInforme();
+      function celda(k, v) {
+        return '<div class="ficha-dato"><div class="k">' + k + '</div><div class="v">' +
+          escaparHtml(String(v || '—')) + '</div></div>';
+      }
+      return '<div class="ficha-resultado">' +
+        '<div class="ficha-escuela">' +
+          '<div class="k">Escuela</div>' +
+          '<div class="v">' + escaparHtml(d.escuela) + '</div>' +
+        '</div>' +
+        celda('Alumno', d.nombre) +
+        celda('Matrícula', d.matricula) +
+        celda('Grupo', d.grupo) +
+        celda('Fecha', d.fecha + (d.hora ? ' · ' + d.hora : '')) +
+        celda('Lectura', (d.asignatura && d.tema) ? (d.asignatura + ' · ' + d.tema) : (d.asignatura || d.tema)) +
+        celda('Intento', d.intento ? (d.intento + (d.permitidos ? ' de ' + d.permitidos : '')) : '') +
+      '</div>';
+    }
+
+    function asegurarJsPdf(ok, fail) {
+      if (window.jspdf && window.jspdf.jsPDF) return ok();
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+      s.onload = function () { ok(); };
+      s.onerror = function () { fail(); };
+      document.head.appendChild(s);
+    }
+
+    function descargarPdfResultado() {
+      if (!ultimoInforme || !ultimoInforme.r) return toast('Aún no hay un resultado para descargar.', 'error');
+      const btn = document.getElementById('btnPdfResultado');
+      if (btn) { btn.disabled = true; btn.textContent = 'Preparando PDF…'; }
+      asegurarJsPdf(function () {
+        try {
+          generarPdfJs(ultimoInforme);
+          toast('PDF descargado.', 'exito');
+        } catch (e) {
+          generarPdfPorImpresion();
+        }
+        if (btn) { btn.disabled = false; btn.textContent = 'Descargar PDF'; }
+      }, function () {
+        generarPdfPorImpresion();
+        if (btn) { btn.disabled = false; btn.textContent = 'Descargar PDF'; }
+      });
+    }
+
+    function generarPdfJs(info) {
+      const JsPDF = window.jspdf.jsPDF;
+      const doc = new JsPDF({ unit: 'mm', format: 'a4' });
+      const r = info.r;
+      const d = datosInforme();
+      const spec = r.spec || {};
+      const tiempos = r.tiemposPregunta || {};
+      const hist = r.historial || {};
+      const desglose = r.desglose || null;
+      let y = 18;
+      const margen = 18;
+      const ancho = 174;
+
+      function asegurarEspacio(h) {
+        if (y + h > 280) { doc.addPage(); y = 18; }
+      }
+      function titulo(t) {
+        asegurarEspacio(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(31, 111, 159);
+        doc.text(t, margen, y);
+        y += 7;
+      }
+      function parrafo(t) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(40);
+        const lines = doc.splitTextToSize(String(t || ''), ancho);
+        asegurarEspacio(lines.length * 5 + 2);
+        doc.text(lines, margen, y);
+        y += lines.length * 5 + 2;
+      }
+      function fila(k, v) {
+        const val = String(v == null || v === '' ? '—' : v);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(90);
+        doc.text(k, margen, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(20);
+        const lines = doc.splitTextToSize(val, 118);
+        asegurarEspacio(lines.length * 5 + 1);
+        doc.text(lines, 72, y);
+        y += Math.max(6, lines.length * 5);
+      }
+
+      doc.setFillColor(31, 111, 159);
+      doc.rect(0, 0, 210, 12, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(255);
+      doc.text('Comprensión lectora · Informe de evaluación', margen, 8);
+
+      y = 22;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(31, 111, 159);
+      doc.text(d.escuela, margen, y);
+      y += 7;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(80);
+      doc.text('Informe de comprensión lectora', margen, y);
+      y += 8;
+      doc.setDrawColor(203, 213, 225);
+      doc.line(margen, y, 192, y);
+      y += 8;
+
+      titulo('Datos del alumno y de la escuela');
+      fila('Escuela', d.escuela);
+      fila('Alumno', d.nombre);
+      fila('Matrícula', d.matricula);
+      fila('Grupo', d.grupo);
+      fila('Fecha', d.fecha + (d.hora ? '  ' + d.hora : ''));
+      fila('Lectura', (d.asignatura && d.tema) ? (d.asignatura + ' · ' + d.tema) : (d.asignatura || d.tema || '—'));
+      fila('Intento', d.intento ? (d.intento + (d.permitidos ? ' de ' + d.permitidos : '')) : '—');
+      y += 2;
+
+      titulo('Resultados');
+      fila('Comprensión', r.comprension + '%  (' + r.aciertos + ' de ' + r.total + ' correctas)');
+      fila('Velocidad', r.ppm + ' PPM  (' + (info.etiquetaPpm || r.nivelPpm || '') + ')');
+      fila('Resultado global', r.global + '%  (70% comprensión + 30% velocidad)');
+      fila('PME', (r.pme != null ? r.pme : '—') + '  (PPM × comprensión)');
+      fila('Tiempo de lectura', fmtTiempo(r.tiempoLectura));
+      fila('Tiempo de preguntas', fmtTiempo(info.tiempoReactivos));
+      if (spec.ppmMin) fila('Rango PPM del grado', spec.ppmMin + '–' + spec.ppmMax + ' (objetivo ' + spec.ppmObjetivo + ')');
+      y += 2;
+
+      titulo('Tiempo por pregunta');
+      if (tiempos.n) {
+        parrafo('Promedio ' + tiempos.promedio + ' s · más rápida ' + tiempos.minimo + ' s · más lenta ' + tiempos.maximo + ' s.');
+        if (tiempos.impulsivo) parrafo('Respondió muy rápido en promedio. Conviene leer otra vez el enunciado antes de elegir.');
+      } else {
+        parrafo('No se registró el tiempo de cada pregunta.');
+      }
+
+      titulo('Relecturas');
+      parrafo(Number(r.relecturas) === 1
+        ? 'Volvió a la lectura 1 vez durante el cuestionario.'
+        : 'Volvió a la lectura ' + Number(r.relecturas || 0) + ' veces durante el cuestionario.');
+
+      titulo('Niveles de comprensión');
+      if (desglose) {
+        [['literal', 'Literal'], ['inferencial', 'Inferencial'], ['critica', 'Crítica']].forEach(function (par) {
+          const x = desglose[par[0]];
+          if (x && x.total) fila(par[1], x.pct + '%  (' + x.aciertos + ' / ' + x.total + ')');
+          else fila(par[1], 'Ninguna pregunta de este tipo');
+        });
+      } else {
+        parrafo('Sin desglose: las preguntas de esta lectura no tenían nivel clasificado.');
+      }
+
+      titulo('Historial');
+      if (hist.n) {
+        parrafo('Evaluaciones anteriores: ' + hist.n + '. Promedio global previo: ' + hist.promedioGlobal + '%.');
+      } else {
+        parrafo('Esta es la primera evaluación registrada.');
+      }
+
+      if (r.recomendacion) {
+        titulo('Recomendación');
+        parrafo(r.recomendacion);
+      }
+
+      y = 287;
+      doc.setFontSize(8);
+      doc.setTextColor(130);
+      doc.text(d.escuela + ' · Documento generado automáticamente · ' + d.fecha, margen, y);
+
+      const nom = String(d.nombre || 'alumno').replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_').substring(0, 40);
+      doc.save('ST90_resultado_' + (d.matricula || nom) + '.pdf');
+    }
+
+    function generarPdfPorImpresion() {
+      toast('Abre la ventana de impresión y elige Guardar como PDF.', 'info');
+      try { window.print(); } catch (e) {
+        toast('No se pudo abrir la impresión. Prueba de nuevo.', 'error');
+      }
+    }
+
+    function hacerOtra() {
+      volverAlPanel();
+    }
+
+    function volverAlPanel() {
+      clearInterval(idLecturaReloj);
+      clearInterval(idExamenReloj);
+      clearInterval(idPreguntaReloj);
+      const mat = matriculaActual || (paquete && paquete.alumno && paquete.alumno.matricula);
+      paquete = {};
+      enRevisionLectura = false;
+      relecturas = 0;
+      tiempoReactivosAcumulado = 0;
+      tReactivos0 = null;
+      ultimoInforme = null;
+      document.getElementById('avisoInicio').textContent = '';
+      setBotonesInicio(true, true);
+      document.getElementById('btnSiguiente').disabled = false;
+      document.getElementById('btnTerminarLectura').textContent = 'He terminado de leer';
+      if (!mat) {
+        mostrar('secRegistro');
+        return;
+      }
+      recargarPanel(mat);
+    }
+
+    function salirExamen() {
+      cambiarAlumno();
+    }
+
+    if (infoTrimestre) aplicarEstadoTrimestral(cupoActual);
+    if (ALUMNO_AUTO) {
+      aplicarAlumnoAutenticado(ALUMNO_AUTO, CUPO_AUTO);
+    } else if (MAT_AUTO && TOKEN_AUTO) {
+      matriculaActual = MAT_AUTO;
+      consultarCupoPorMat(MAT_AUTO);
+    }
+  </script>
+</body>
+</html>

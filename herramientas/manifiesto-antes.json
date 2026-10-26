@@ -1,12 +1,12 @@
 {
-  "generado": "2026-10-26T19:28:44.931Z",
+  "generado": "2026-10-26T19:31:08.346Z",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
-    "archivos": 71,
-    "documentos": 61,
-    "simbolos": 1722,
-    "sentencias_superiores": 147,
-    "duplicados": 237
+    "archivos": 76,
+    "documentos": 65,
+    "simbolos": 1746,
+    "sentencias_superiores": 132,
+    "duplicados": 238
   },
   "duplicados": {
     "normalizarNombrePref_": [
@@ -15,7 +15,7 @@
     ],
     "modal": [
       "ComunJS.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "URL_BASE_APP": [
       "Clase.html#script0",
@@ -25,371 +25,367 @@
     "enviar": [
       "Interfaz.html#script1",
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "FORM": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "FILTROS": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "RESPUESTAS": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "creds": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "editando": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "simulacionModal": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "modalGrafica": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "modalCategorias": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "modalAyuda": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "editandoCategoria": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "chartsResumen": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "CONFIGS_GRAFICA": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "FILTROS_DINAMICOS": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "graficaModal": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "pendienteGrafica": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "sunburstInstancia": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "vistaPaneles": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "leerNumero": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "tamanoGrafica": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "tamanoLista": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "alturaGrafica": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "TIPOS": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "PALETA_ESTABLE": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "COLORES_ASIGNADOS": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "colorDimension": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "sembrarColores": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "alternarCabecera": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "aplicarCabecera": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "cambiarVista": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "cambiarAltura": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "aplicarAltura": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "cambiarTamanoGrafica": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "cambiarTamanoLista": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "colorTextoContraste": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "pluginValores": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "dimensionDe": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "valorDe": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "construirApilada": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "esc": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "cargarFormulario": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "renderFormulario": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "crearCampo": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "aplicarDependenciasFormulario": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "aplicarCondiciones": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "otraRespuesta": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_01.html#script0"
     ],
     "salirAdmin": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "avisoPanel": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "cargarRespuestas": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "pintarMenusFiltro": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "renderMenuDesdeSelect": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "cerrarMenuFiltros": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "actualizarBotonesFiltro": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "IDS_DIMENSION_LEGADO": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "esDimensionPregunta": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "mapaGruposLegado": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "dimensionesDisponibles": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "ORDEN_BARRA": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "dimensionesBarra": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "opcionesDeDimension": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "ajustarCascada": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "ICONOS_DIMENSION": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "pintarDimensiones": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "opcionesDivision": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "rolAnalitico": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "esGraficable": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "preguntasGraficables": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "pintarSelectorPregunta": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "refrescarSegmentos": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "pintarFiltrosDinamicos": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "renderMenuAjustes": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "aplicarFiltrosYGraficar": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "filasFiltradas": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "modoEtiquetas": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "recortarEtiqueta": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "partirEtiqueta": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "ejeCategoriaConfig": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "escalasCartesianas": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "ejeCartesiano": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "pintarResumenPanel": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_02.html#script0"
     ],
     "renderSunburstDirecto": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "valorFecha": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "pintarTablaRespuestas": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "raiz": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "selSeg": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "segId": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "apilada": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "ejeValor": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "ejeCat": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
     "colores": [
       "AdminEncuestas.html#script0",
-      "FormularioEncuesta.html#script0"
+      "FormEncJS_03.html#script0"
     ],
-    "entrar": [
-      "FormularioEncuesta.html#script0",
-      "AdminJS_01.html#script0"
-    ],
-    "limpiarFiltros": [
-      "FormularioEncuesta.html#script0",
-      "AdminJS_06.html#script0"
+    "guardarEnBanco": [
+      "Encuestas.gs",
+      "FormEncJS_04.html#script0"
     ],
     "restaurarPpmRecomendados": [
       "06_Alumnos.gs",
@@ -960,6 +956,14 @@
     "probarAudioIDevice_": [
       "ClaseJS_08.html#script0",
       "AdminPlanJS_06.html#script0"
+    ],
+    "entrar": [
+      "AdminJS_01.html#script0",
+      "FormEncJS_01.html#script0"
+    ],
+    "limpiarFiltros": [
+      "AdminJS_06.html#script0",
+      "FormEncJS_02.html#script0"
     ]
   },
   "archivos": {
@@ -3650,736 +3654,8 @@
       ]
     },
     "FormularioEncuesta.html": {
-      "sha256": "6fbed3732cd9b509f52b1be58fed8b8243bcd9baae1799e8819c05581489e240",
-      "documentos": [
-        {
-          "id": "FormularioEncuesta.html#script0",
-          "simbolos": {
-            "FORM": {
-              "tipo": "let",
-              "linea": 803,
-              "hash": "9fc18ebda0d59f1321f847ad6a5f067ed33bb3120f9ed7e988e5983f5231bee4"
-            },
-            "FILTROS": {
-              "tipo": "let",
-              "linea": 804,
-              "hash": "ac6be8cc2b6a4069ff244aa21d9b84a7f2254def5cbb88a7449b286c9f935472"
-            },
-            "RESPUESTAS": {
-              "tipo": "let",
-              "linea": 805,
-              "hash": "f7944a9cb85d07390f46f50665fc0a1d2ee1d964fd0fa013aa6f5c62b7e82098"
-            },
-            "creds": {
-              "tipo": "let",
-              "linea": 806,
-              "hash": "2f34d5b6252bad1e2a52c6198849995eef64d53d7bcb4e258794cd1c66b43267"
-            },
-            "editando": {
-              "tipo": "let",
-              "linea": 807,
-              "hash": "3eacb6227bef9991fa350ff5ba57d9276e20ce28128040c8a95baa7edcd39039"
-            },
-            "modal": {
-              "tipo": "let",
-              "linea": 808,
-              "hash": "2a2f31a3fd32100efc47efdc75e3d17aa523571dcadcfef8b93816b67d6c463f"
-            },
-            "simulacionModal": {
-              "tipo": "let",
-              "linea": 809,
-              "hash": "fd29526bb380438f97fd83514220f44a761c9aeb916751c631fef6321e13928e"
-            },
-            "modalGrafica": {
-              "tipo": "let",
-              "linea": 810,
-              "hash": "ac0f1f1aedf57c3a2bf8dae5cbc71567d82c9c4df08f418f6172c7fc12b40312"
-            },
-            "modalCategorias": {
-              "tipo": "let",
-              "linea": 811,
-              "hash": "9b1bc8f5db00b2aaad1fd29f49d8f383775fbf6a8e71f288a19c8b4e065bf9fd"
-            },
-            "modalAyuda": {
-              "tipo": "let",
-              "linea": 812,
-              "hash": "a5e0505a137a4bcf3711543ddb62afbd7b204afe6ac650a2d3d1c2d8e5018a56"
-            },
-            "editandoCategoria": {
-              "tipo": "let",
-              "linea": 813,
-              "hash": "5b2d608c277c2f9d2f7ce636f94d4571b226881e4f3f3867e63c1ab1806d004d"
-            },
-            "chartsResumen": {
-              "tipo": "let",
-              "linea": 814,
-              "hash": "3e964883c58368b3893cc46b32f0bac3ca07901ad4f2516b51a89d9444960a5d"
-            },
-            "CONFIGS_GRAFICA": {
-              "tipo": "let",
-              "linea": 815,
-              "hash": "de82b5f5eb81176ebad1b869184e99b7c9546b827d1a3c976f11402b6eae892b"
-            },
-            "FILTROS_DINAMICOS": {
-              "tipo": "let",
-              "linea": 816,
-              "hash": "4e6686291cc941734893e63928bc21a1a53b0f07bc79fd3213550e26de5ad1c8"
-            },
-            "graficaModal": {
-              "tipo": "let",
-              "linea": 817,
-              "hash": "7581908f3935e053c5b09a16127607abce315a7cf82a5da4135070c961589145"
-            },
-            "pendienteGrafica": {
-              "tipo": "let",
-              "linea": 818,
-              "hash": "8a3ce6115510403192d46dac530fdabde6ad3a6b05e442b533a929aed0aae497"
-            },
-            "sunburstInstancia": {
-              "tipo": "let",
-              "linea": 819,
-              "hash": "9b0d0884fc817421695959653531eb1f1e51e4506816b5ab4c216127b7ff69a0"
-            },
-            "vistaPaneles": {
-              "tipo": "let",
-              "linea": 822,
-              "hash": "e16d4c21e22fc41fc0e73348c4b01c773def3a41598468e6c430b6a035bc9f16"
-            },
-            "leerNumero": {
-              "tipo": "function",
-              "linea": 823,
-              "hash": "e9db273979481ecf5a0cf5cff2560fc3499ac214083914369bbbfe221e9d8ba8"
-            },
-            "tamanoGrafica": {
-              "tipo": "let",
-              "linea": 829,
-              "hash": "09a29ccab602b440842b1b4706bfdde3a271a1d7e30c829039f19992ef7fca6d"
-            },
-            "tamanoLista": {
-              "tipo": "let",
-              "linea": 830,
-              "hash": "f037ae7fbf50ea9e2e12d4a030fff31474378027595a250d4457b8833fb41a0a"
-            },
-            "alturaGrafica": {
-              "tipo": "let",
-              "linea": 831,
-              "hash": "71ae5a866a30f7d7881056305330ef14dce4b6c38fa056a7640c334a4b75eb51"
-            },
-            "TIPOS": {
-              "tipo": "const",
-              "linea": 833,
-              "hash": "5a9bddf7e161eff8641bee93453bf3e49a963bb84d143e7ecb4a95836cdff172"
-            },
-            "PALETA_ESTABLE": {
-              "tipo": "const",
-              "linea": 839,
-              "hash": "f1d5ae5e5c62b659c7403d7f858371017d3c0ab62ca0691372bb6db4ab9504e1"
-            },
-            "COLORES_ASIGNADOS": {
-              "tipo": "const",
-              "linea": 840,
-              "hash": "4614accdbd586944ae7a562165df6a2ba17962ee3e69e55a8503eac60a91601c"
-            },
-            "colorDimension": {
-              "tipo": "function",
-              "linea": 842,
-              "hash": "b29c48c61c774e395f621581ea988c00a7e6ac304b7d601b116f9f1d3d34cf35"
-            },
-            "sembrarColores": {
-              "tipo": "function",
-              "linea": 852,
-              "hash": "7f9c77774563732b6114f1f7081e74e5ac35e4314c8f86c0deb27b5ec1a76e2a"
-            },
-            "alternarCabecera": {
-              "tipo": "function",
-              "linea": 942,
-              "hash": "a3b140266a2cf4e4c95628fa51943ecef23c21aa9c77852ec968b8317c14d17e"
-            },
-            "aplicarCabecera": {
-              "tipo": "function",
-              "linea": 948,
-              "hash": "46b6cc5edf7a3890ad0c82ca4df26fc557f4ebe6b65534b05ea0d4192a965e3c"
-            },
-            "cambiarVista": {
-              "tipo": "function",
-              "linea": 961,
-              "hash": "1f06916818fbd5aabad066952c959e75c040f83f02a38856b4a20a71275308e4"
-            },
-            "cambiarAltura": {
-              "tipo": "function",
-              "linea": 979,
-              "hash": "8f5f3bfa03854ad6c98daf7a634f7e7d0ad016edd8a58fb6f84aea3eb577fd38"
-            },
-            "aplicarAltura": {
-              "tipo": "function",
-              "linea": 985,
-              "hash": "ad6761ac1f7a9812c020cd8260f8aff943101a2317cbfa55c0c7c31e68baf6cc"
-            },
-            "cambiarTamanoGrafica": {
-              "tipo": "function",
-              "linea": 994,
-              "hash": "0f66a2d7ef5f0f296b89bfeb5536ad3ca084aaebf97b11e4e98f5e1cf275c4c2"
-            },
-            "cambiarTamanoLista": {
-              "tipo": "function",
-              "linea": 1000,
-              "hash": "8cae7525ae46521a73fa29287cb983ae4d002a4e949aabcb6334c48db4f2ac0e"
-            },
-            "colorTextoContraste": {
-              "tipo": "function",
-              "linea": 1008,
-              "hash": "5b47f864320de2269c49319cba903522241c916a6568b8892460c14274059d16"
-            },
-            "pluginValores": {
-              "tipo": "const",
-              "linea": 1018,
-              "hash": "bb59e296eba6e33cbacd4f02e1b3c3b39153d66a1f89094a7a36801da3b2d64c"
-            },
-            "dimensionDe": {
-              "tipo": "function",
-              "linea": 1089,
-              "hash": "21b29d6cbca4305e6251f6c33e82cd87b22451d3a232d256bb937aa0787eb8b8"
-            },
-            "valorDe": {
-              "tipo": "function",
-              "linea": 1103,
-              "hash": "357ae9cb3a3aca0d0a8106228bd4e2461e6c51b9f068cec1afb632c3d263f521"
-            },
-            "construirApilada": {
-              "tipo": "function",
-              "linea": 1113,
-              "hash": "821259293e2fd955aa8387e94a6b99475528b913630a0942f18afb9681510ec9"
-            },
-            "esc": {
-              "tipo": "function",
-              "linea": 1161,
-              "hash": "36bd23222f0a581ef06c9973e4fae25d8688b4ba0dde863a445831539cd0540e"
-            },
-            "cargarFormulario": {
-              "tipo": "function",
-              "linea": 1166,
-              "hash": "a2d3106e46250a920867c42628e50dcb9949391023b2cdab50513435a53c5270"
-            },
-            "renderFormulario": {
-              "tipo": "function",
-              "linea": 1180,
-              "hash": "90dda9a49b31cfdb3421d84c94bdd1977c2ada171573fe208b8ba2d8fbb3b379"
-            },
-            "crearCampo": {
-              "tipo": "function",
-              "linea": 1195,
-              "hash": "ea5fc9f535fd99343dfa0e6d2ca94c1c35abf80e8c3c887762524af06395d35c"
-            },
-            "aplicarDependenciasFormulario": {
-              "tipo": "function",
-              "linea": 1296,
-              "hash": "c9093c6b2c426ab14bc5a6dab297b5d3961f0684f7058493d2071ce3bf4413a8"
-            },
-            "aplicarCondiciones": {
-              "tipo": "function",
-              "linea": 1324,
-              "hash": "21fb94bda98ade65a8de14d3ac471a929cf44c296c4428f5e1dfdc4e49f93578"
-            },
-            "enviar": {
-              "tipo": "function",
-              "linea": 1346,
-              "hash": "09ed0a4143d63235654477fef03d1409af6bb6c4e2ebf2b080bf00ad32ea7564"
-            },
-            "otraRespuesta": {
-              "tipo": "function",
-              "linea": 1401,
-              "hash": "7a7a4f2d9013e6720cfa47ec40c97c482bda1e47a6039377caff13a1a919179a"
-            },
-            "entrar": {
-              "tipo": "function",
-              "linea": 1410,
-              "hash": "c8a7e704da8dc2fdf6ad23623039f75693f8f6c8d147fa8d08fc55cd832ea73b"
-            },
-            "salirAdmin": {
-              "tipo": "function",
-              "linea": 1437,
-              "hash": "e3aafdc7c8e5a4fd23af4aee0dc57496613f1a000d9a6209d195e3e660b9c21f"
-            },
-            "avisoPanel": {
-              "tipo": "function",
-              "linea": 1445,
-              "hash": "0bd3a19edcbc9e9219a18060612bf1c6727dcca29da75ee3501f0896cd716448"
-            },
-            "cargarRespuestas": {
-              "tipo": "function",
-              "linea": 1450,
-              "hash": "edc069af58a3af3beb8ab247d8fcc4ded61ffa1503a06e0e3ea5609da92a8d54"
-            },
-            "pintarMenusFiltro": {
-              "tipo": "function",
-              "linea": 1477,
-              "hash": "03c3ea0cbb2a5ea99788d711a2402567182f77f94b3bbc1bc202a56489ec06f2"
-            },
-            "renderMenuDesdeSelect": {
-              "tipo": "function",
-              "linea": 1486,
-              "hash": "7a0db00cd735b2e4017da1c56e7cd224d838f9f20e1ad97291a74b7de4cc5f8a"
-            },
-            "cerrarMenuFiltros": {
-              "tipo": "function",
-              "linea": 1509,
-              "hash": "1a88abf4843bf28b1ac28c11817c11c9b47a374c1d32a6cada91e4ad1f64cc4f"
-            },
-            "actualizarBotonesFiltro": {
-              "tipo": "function",
-              "linea": 1516,
-              "hash": "8b020662b432cdfa700a7cab08e780e15e5d3ef8ab24bae75d939558ba649da2"
-            },
-            "IDS_DIMENSION_LEGADO": {
-              "tipo": "const",
-              "linea": 1551,
-              "hash": "98b3317fe4c91579ddc53e489f3c2f40f906b3ad610a19eb41e1a3d560762626"
-            },
-            "esDimensionPregunta": {
-              "tipo": "function",
-              "linea": 1553,
-              "hash": "1095a607b5fff469500f319dad890ea64afdde3e3a2fd62fb3735cefa43d8631"
-            },
-            "mapaGruposLegado": {
-              "tipo": "function",
-              "linea": 1559,
-              "hash": "39ebd351269289baffc79848032d400ace818574f27ce0ff2e02fa9263a5992c"
-            },
-            "dimensionesDisponibles": {
-              "tipo": "function",
-              "linea": 1571,
-              "hash": "311866f5b1a7646e5c0a8467d86f1852f2edf10bcadf12722bdd9a8bdc587860"
-            },
-            "ORDEN_BARRA": {
-              "tipo": "const",
-              "linea": 1598,
-              "hash": "55680031af8d6ec18ff7d690716f002e4a37bc512d481b31ea0304e892d1e4e8"
-            },
-            "dimensionesBarra": {
-              "tipo": "function",
-              "linea": 1599,
-              "hash": "7d4f8897f4558344c49c9faffbe1e4026f7710c384e47bd626a80a40b297169b"
-            },
-            "opcionesDeDimension": {
-              "tipo": "function",
-              "linea": 1605,
-              "hash": "7e838d234979de6962195da30e4d770d4638559ba0f7b3a8f673256edc391834"
-            },
-            "ajustarCascada": {
-              "tipo": "function",
-              "linea": 1618,
-              "hash": "ae601945edac299fcb048fcb467bd2dab140542aeebf036aaf0b0869e0855df7"
-            },
-            "ICONOS_DIMENSION": {
-              "tipo": "const",
-              "linea": 1629,
-              "hash": "d2baaff6582f11a5ecbe1daf6c9fac22e90b1d1f71a972e90fb0969f133d6c55"
-            },
-            "pintarDimensiones": {
-              "tipo": "function",
-              "linea": 1632,
-              "hash": "85ca5f39aa4c31609c053a438992d2bbc608d8f8ce5f8f387f48151016384638"
-            },
-            "opcionesDivision": {
-              "tipo": "function",
-              "linea": 1703,
-              "hash": "2a57c0e6c545d5223af0aa6fea0e5015cce2f397d4f3e4d2f1d72dfc2adb43ef"
-            },
-            "rolAnalitico": {
-              "tipo": "function",
-              "linea": 1708,
-              "hash": "97baabb2dad56a35f0b6ab66180c4ad333b5a81680974083627bfa9c5cd55ad2"
-            },
-            "esGraficable": {
-              "tipo": "function",
-              "linea": 1717,
-              "hash": "26de258619fa306653fd4b35d946d5113669429925350e1a99d4830e604e254f"
-            },
-            "preguntasGraficables": {
-              "tipo": "function",
-              "linea": 1725,
-              "hash": "402f59992e12d898d183c2595c18b426171b8d2ca8bdb59574ea673252c2fe87"
-            },
-            "pintarSelectorPregunta": {
-              "tipo": "function",
-              "linea": 1732,
-              "hash": "f76652d13b2dc558771a1ee8e6c5fe57586918edb3ac7685b7a22a49bd141382"
-            },
-            "refrescarSegmentos": {
-              "tipo": "function",
-              "linea": 1771,
-              "hash": "1f292d4b78aeb1ccaf9464e4ee24200d8e6207da17f79b20fa9b7b1ac7c7cf72"
-            },
-            "pintarFiltrosDinamicos": {
-              "tipo": "function",
-              "linea": 1783,
-              "hash": "d7103dd1178fc38a89ce3f0be7143ff8b485ff43198903f764f5ad35b582ffa1"
-            },
-            "renderMenuAjustes": {
-              "tipo": "function",
-              "linea": 1846,
-              "hash": "384ecd9d448af28ced5aa26da28e825faf3b8dbb6e4c7bf6660af447776438a1"
-            },
-            "limpiarFiltros": {
-              "tipo": "function",
-              "linea": 1908,
-              "hash": "f16e7f7ef565d6729c587e968fbf37bb30fb366f013df1937f5053299555f434"
-            },
-            "aplicarFiltrosYGraficar": {
-              "tipo": "function",
-              "linea": 1918,
-              "hash": "98d1e3aa52427f22635b75272163dba40521288b76ee5d99fe29a5e08a3e8786"
-            },
-            "filasFiltradas": {
-              "tipo": "function",
-              "linea": 1925,
-              "hash": "d27f3221997e51e66d4ee7013f2190ae0fdc2440593aeb54a4b2830c7dbd798f"
-            },
-            "modoEtiquetas": {
-              "tipo": "function",
-              "linea": 1942,
-              "hash": "a99e799495939ccfc21131073ef0bfbb4e82644c7f1a84abf203000fbf1b0c63"
-            },
-            "recortarEtiqueta": {
-              "tipo": "function",
-              "linea": 1947,
-              "hash": "a988d1c869c726d91966826abe1af48b1efc937cc9568a829ea9ac69b1542983"
-            },
-            "partirEtiqueta": {
-              "tipo": "function",
-              "linea": 1953,
-              "hash": "83bc1fbec253fdb7b50344f29ac6197e88b2dfa17be31ecc389b62bca6a3dd72"
-            },
-            "ejeCategoriaConfig": {
-              "tipo": "function",
-              "linea": 1966,
-              "hash": "afe46b38b77bd558232deeb2d8570cdc09321d9a86d482cb8c038d4e405e28e4"
-            },
-            "escalasCartesianas": {
-              "tipo": "function",
-              "linea": 1979,
-              "hash": "bc8b4621e50bb1dc1f69bb002793522072340ca18c4b9c43b2af5991936499dc"
-            },
-            "ejeCartesiano": {
-              "tipo": "function",
-              "linea": 1986,
-              "hash": "a4dbf27784dc1a3378248a67e3d3b16adbda462ab2573fc52df7be14a94b5299"
-            },
-            "pintarResumenPanel": {
-              "tipo": "function",
-              "linea": 1990,
-              "hash": "2a1fbf53ee138ec37194f1e6258ce1c3eeb13a288d02a45a06fb249c3323c364"
-            },
-            "renderSunburstDirecto": {
-              "tipo": "function",
-              "linea": 2156,
-              "hash": "3d03f380c75cdb4997ec7bb95ce4967bee8c2b6af27e8fbe0cb017feb366056c"
-            },
-            "valorFecha": {
-              "tipo": "function",
-              "linea": 2182,
-              "hash": "7a3b9a652452f56e5f681bd3ad01b02a152457dfb782ff89c4bc4084fbe03c15"
-            },
-            "pintarTablaRespuestas": {
-              "tipo": "function",
-              "linea": 2188,
-              "hash": "108f04b11368dfc157822c842709877492bb3d227da29a4169edcfd7e2e258fa"
-            },
-            "raiz": {
-              "tipo": "const",
-              "linea": 2355,
-              "hash": "e0e93352c4a0b0a824b434bde02d9355987e9569bade9feb3174982dec702e46"
-            },
-            "selSeg": {
-              "tipo": "const",
-              "linea": 2414,
-              "hash": "da21aa4e883ac4bcc97f1420cf4f5bfa6704cacecd9ec5903ee078b128f8b71f"
-            },
-            "segId": {
-              "tipo": "let",
-              "linea": 2415,
-              "hash": "1b9a7fddaa759fa7b48ccfbdb41bd72f106112dcac2bc5264aba2cc5f9afbd92"
-            },
-            "apilada": {
-              "tipo": "const",
-              "linea": 2417,
-              "hash": "7b4f5c3dcac6464aa035535e0f18be5eadd1899e40c068b18de9d3e45cfd0f52"
-            },
-            "ejeValor": {
-              "tipo": "const",
-              "linea": 2418,
-              "hash": "9d4ee1ccde62494cbebc378af3e3f61fab03d7e944f8eb2599215ce8ad1646b0"
-            },
-            "ejeCat": {
-              "tipo": "const",
-              "linea": 2422,
-              "hash": "e55e2930492404921e9affcc56c4b24ac32e9b1bd5530d8662d35c9452d1f28b"
-            },
-            "colores": {
-              "tipo": "const",
-              "linea": 2437,
-              "hash": "26eb8aff879cafc50fce0add20f0be3133d421ec5cdf6bd992e96aa4537a0466"
-            }
-          },
-          "sentencias": [
-            {
-              "linea": 865,
-              "texto": "document.addEventListener(\"DOMContentLoaded\", () => { modal = new bootstrap.Modal(document.getElementById(\"modalPregunta\")); modalGrafica = ",
-              "hash": "986e9c7742723974a5e5851a094efdb9885aaca3a583f10a82543958295d4b19"
-            },
-            {
-              "linea": 922,
-              "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
-              "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"
-            },
-            {
-              "linea": 2316,
-              "texto": "} if (pregunta.id === \"grupo\") { const mapa = mapaGruposLegado();",
-              "hash": "60ae9bff5af39c065a0968109772b0b7015e8c89b8d8f533f8454f7a70ad3ad2"
-            },
-            {
-              "linea": 2319,
-              "texto": "if (mapa[valorPadre]) return mapa[valorPadre].slice();",
-              "hash": "20f49ea6fc2f2b1288dcfa398c76b6f0861a17d6ce61d6e9d3ea1f0b691a5ffb"
-            },
-            {
-              "linea": 2320,
-              "texto": "} return (pregunta.opciones || []).slice(); } // ZOOM Y MODAL DE GRÁFICA AMPLIADA function ampliarGrafica(e, id) { // Solo amplía el lienzo:",
-              "hash": "3a4a947309525db7b82a21c11c24362e30bb725c331473991e31822a84f1b112"
-            },
-            {
-              "linea": 2352,
-              "texto": "contSun.classList.remove(\"d-none\");",
-              "hash": "dc7e8425c2568eb51a9f53ca89d378ef26b460f0a439fcc1f6ccdd93e789bcba"
-            },
-            {
-              "linea": 2353,
-              "texto": "if (graficaModal && typeof graficaModal.dispose === \"function\") graficaModal.dispose();",
-              "hash": "d71bb890de1ce6a0c64e8fa5382ae1638492f846bd10c140bca854709057264c"
-            },
-            {
-              "linea": 2354,
-              "texto": "graficaModal = echarts.init(contSun);",
-              "hash": "cf1963ed0fd14d1abe86aa12369b49d94b7220e18cb1c7a622a037388add9f8a"
-            },
-            {
-              "linea": 2356,
-              "texto": "filas.forEach(f => { const ruta = [String(valorDe(f, \"turno\")), String(valorDe(f, dim.id))].filter(Boolean); let act = raiz; ruta.forEach(no",
-              "hash": "222ced0730376e50025a03c48587fc87bdac412eeed969973983d0f4e1f4d471"
-            },
-            {
-              "linea": 2366,
-              "texto": "graficaModal.setOption({ series: [{ type: \"sunburst\", data: raiz.children, radius: [\"15%\", \"90%\"], label: { rotate: \"radial\", fontSize: tama",
-              "hash": "e27833389610d94204a8ad20c2527e1f13a7a704c7464b5e63230d2ab15f2d66"
-            },
-            {
-              "linea": 2374,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2375,
-              "texto": "} canvasWrap.classList.remove(\"d-none\"); contSun.classList.add(\"d-none\"); const conteo = {}; const porTurno = {}; filas.forEach(f => { const",
-              "hash": "23efa4b9416d8bea967c505da4858461ad48ca40e261f4eeff1c54128bced488"
-            },
-            {
-              "linea": 2392,
-              "texto": "); const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0); const basePct = (dim.tipo === \"multiple\" && sumaConteosM",
-              "hash": "2653bb4b9adc10e5578f5797b7d4588939214ab6603f11794ead11c1db92bdcc"
-            },
-            {
-              "linea": 2416,
-              "texto": "if (!segId || segId === dim.id) segId = (dim.id === \"turno\") ? \"origen\" : \"turno\";",
-              "hash": "22e20ff37042a3343420b8f021034087bc8c17c75ad6530f7cd9165de0bcceea"
-            },
-            {
-              "linea": 2423,
-              "texto": "graficaModal = new Chart(ctx, { type: \"bar\", data: { labels: apilada.labels, datasets: apilada.datasets }, plugins: [pluginValores], options",
-              "hash": "afb50a3ed244571c877e14972db5f1a0b9b499e8fa90bc82aff0da44b9bd6f85"
-            },
-            {
-              "linea": 2435,
-              "texto": "} else { const datos = pares.map(p => modoVal === \"porcentaje\" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);",
-              "hash": "e68b0e82ae30acfd6e591ded57dd5a4156af9fbe64ab9359f0d4d64567d19da0"
-            },
-            {
-              "linea": 2438,
-              "texto": "graficaModal = new Chart(ctx, { type: tipo === \"barVertical\" ? \"bar\" : tipo, data: { labels: pares.map(p => p.label), datasets: [{ data: dat",
-              "hash": "8f83afb201d708768306143d28d1193479a869b64e9f3d71084d8cf16aba326b"
-            },
-            {
-              "linea": 2456,
-              "texto": "} } // SIMULACIÓN Y MANTENIMIENTO function abrirSimulacion() { if (simulacionModal) simulacionModal.show(); } function ejecutarSimulacion(e)",
-              "hash": "94d5a2f7da5e0b372c682fae520a81fb4a1761c483bf7b83778975bc24aab880"
-            },
-            {
-              "linea": 2490,
-              "texto": ") .withFailureHandler(err => { btn.disabled = false; estado.textContent = \"Error de red: \" + err.message; estado.className = \"alert alert-da",
-              "hash": "364bf44c44caba10ff78d2cc1bd10428354372a650c6c7c8971b2552607408dd"
-            },
-            {
-              "linea": 2495,
-              "texto": ") .simularRespuestasFormulario(creds, cant, clave, perfil); } function limpiarSimulados() { const clave = prompt(\"Ingresa la clave de autori",
-              "hash": "78846e5f1d5aba008f6bef70a30f22604264ced3ab2fbb15e2a2e153d014d683"
-            },
-            {
-              "linea": 2512,
-              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + err.message)) .limpiarSimuladosFormulario(creds, clave); } // CONSTRUCTOR Y EDITO",
-              "hash": "6b96bb6be379b43c04e3dce1dffad4996ed60165786341cb0bdbc2f0b810e7c3"
-            },
-            {
-              "linea": 2520,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2520,
-              "texto": "} if (!confirm(\"¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan",
-              "hash": "1634ac3df046d4db0bf4840c8d168c99ffcc51828a7491aaf698405f5931fa44"
-            },
-            {
-              "linea": 2530,
-              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + (err && err.message ? err.message : err))) .quitarJerarquiaDemo(creds); } // Vinc",
-              "hash": "05d950862ee16c58b0d126079348630144a09110d0dd9a83109ce356b17c0148"
-            },
-            {
-              "linea": 2543,
-              "texto": "estado.className = \"small mt-2 \" + clase;",
-              "hash": "a98b3fd560b83c0a7f4b71cee4ecfaf33a2dd3581da374c1eab587bdecc10031"
-            },
-            {
-              "linea": 2544,
-              "texto": "estado.textContent = texto;",
-              "hash": "33b318c6769b92491b2071ccccd19b24b87ff81ede9bd94f354947089bf45f62"
-            },
-            {
-              "linea": 2545,
-              "texto": "}; if (!creds) { aviso(\"Inicia sesión de administrador para vincular una hoja.\", \"text-danger\");",
-              "hash": "bc04b721d907f0531fd2423dcc7e6c9b4a3edfa3fe6071adc1ac267ae3b3f294"
-            },
-            {
-              "linea": 2547,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2547,
-              "texto": "} if (!valor) { aviso(\"Escribe la URL o el ID de la hoja.\", \"text-danger\");",
-              "hash": "2135e32d9ba13298bc9f270061a43f20da1ce153fd59af4ee2c20dfeae5ee248"
-            },
-            {
-              "linea": 2548,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2548,
-              "texto": "} if (btn) btn.disabled = true; aviso(\"Comprobando acceso y preparando pestañas...\", \"text-muted\"); google.script.run .withSuccessHandler(re",
-              "hash": "82faaa5861c683e70ba9bebdb6b14a5f4bda467b8ed542dc7407803102f43c31"
-            },
-            {
-              "linea": 2572,
-              "texto": ") .withFailureHandler(err => { if (btn) btn.disabled = false; aviso(\"Error de conexión: \" + (err && err.message ? err.message : err), \"text-",
-              "hash": "cda3718241aa15a5b951262048489af5056ccdbca1affc6e8c3fc44e695f32e6"
-            },
-            {
-              "linea": 2576,
-              "texto": ") .vincularYPrepararHoja(creds, valor); } function pintarConfig() { const c = FORM.config || {}; const campos = [\"escuela\", \"subtitulo\", \"ti",
-              "hash": "b8ab75c13b951c34a694ad3e592d4ddd44dbe001337319677ff200448b899e40"
-            },
-            {
-              "linea": 2585,
-              "texto": "); const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null; const elHoja = document.getElementById(\"hojaActual\"); if (elHoja) ",
-              "hash": "8e66275955f4d5f9a67d22e50c8a7104d7d3c969c802b841c1717d9b90c1a55f"
-            },
-            {
-              "linea": 2593,
-              "texto": ", FORM.config); const campos = [\"escuela\", \"subtitulo\", \"titulo\", \"introduccion\", \"boton\", \"exitoTitulo\", \"otroBoton\", \"exitoTexto\", \"nota\"]",
-              "hash": "099c4d8a8fdc7be4e7ab8cc48ba6bb895a12403a75b452a88a17f3e0b30eb151"
-            },
-            {
-              "linea": 2598,
-              "texto": "); return c; } function pintarPreguntas() { const cont = document.getElementById(\"listaPreguntas\"); if (!cont) return; cont.innerHTML = \"\"; ",
-              "hash": "9022e7e89e137cfe897475c8d24af541f4cf1f8ed3d49b7e3739cb3cac0a7024"
-            },
-            {
-              "linea": 3028,
-              "texto": ") .withFailureHandler(err => { cont.innerHTML = '<div class=\"text-danger small p-2\">Error: ' + esc(err.message) + '</div>'; }",
-              "hash": "bc28221f14ac4f5ae5c82ff217a066b4079759856dc6828423f6249b69d5dab4"
-            },
-            {
-              "linea": 3031,
-              "texto": ") .listarBanco(creds); } function guardarEnBanco() { if (!creds) { alert(\"Inicia sesión de administrador.\");",
-              "hash": "7b79bfeca5cb329dbf488e08fe0a0ad6252b1c3faf1ac3173820801eff77a959"
-            },
-            {
-              "linea": 3036,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 3036,
-              "texto": "} const n = ((RESPUESTAS && RESPUESTAS.filas) || []).length; if (!confirm(\"¿Guardar en el banco la encuesta actual con \" + n + \" respuestas?",
-              "hash": "b83961926c407fa8250081bfd2d3c855c24882770ffe779ea3053bb3f7576d79"
-            },
-            {
-              "linea": 3044,
-              "texto": ") .withFailureHandler(err => alert(\"Error: \" + err.message)) .guardarEnBanco(creds); } function verEncuestaDelBanco(id) { google.script.run ",
-              "hash": "e60fd24f61c215932d25a0c06fb14f96e7850b05c3ed6735eb70013999c7e4b9"
-            },
-            {
-              "linea": 3067,
-              "texto": ") .withFailureHandler(err => alert(\"Error: \" + err.message)) .obtenerDelBanco(creds, id); } function volverEncuestaActual() { if (bancoModal",
-              "hash": "9939af1bde8456ad08356d883e92629be99d05477f6a204a34cffe19c4c8591c"
-            },
-            {
-              "linea": 3084,
-              "texto": "} catch (e) { return [];",
-              "hash": "2d0fdb17268f87d243c7c8151324d82996bf8e9eb83fc5dcb4658cfd5f51719c"
-            },
-            {
-              "linea": 3084,
-              "texto": "} } function pintarCategorias() { const cats = getCategorias(); const lista = document.getElementById(\"listaCategorias\"); const selPadre = d",
-              "hash": "82d7624aaa80593809926b815c9bf5485e1238fa09b6c4df277e458d056de38b"
-            },
-            {
-              "linea": 3093,
-              "texto": "cats.forEach((c, i) => { lista.innerHTML += ` <li class=\"list-group-item d-flex justify-content-between align-items-center py-2\"> <div> <spa",
-              "hash": "bea8774a3c272a97c6fbafcf8c41c7acb7efcfc0a0d7da2082b727feb42deced"
-            },
-            {
-              "linea": 3110,
-              "texto": "} const dl = document.getElementById(\"datalistCategorias\"); if (dl) { dl.innerHTML = cats.map(c => `<option value=\"${esc(c.nombre)}\"></optio",
-              "hash": "a9abd9c50b5a46bde19b619506099b470d8ed24648beab75e2fcef994c6285c3"
-            },
-            {
-              "linea": 3114,
-              "texto": "} } function guardarCategoria(e) { e.preventDefault(); const nombre = document.getElementById(\"catNombre\").value.trim(); const padre = docum",
-              "hash": "9ed4e64d76eadd019c8726de8ae287a6a1e0a0d4df82b522b4d618641876b20c"
-            },
-            {
-              "linea": 3125,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 3126,
-              "texto": "} cats.push({ nombre: nombre, padre: padre || \"\" }",
-              "hash": "2cc488460d1a779abbf22b9c72645260b88dd63baa42e3fde9c3c66dba8bffa4"
-            },
-            {
-              "linea": 3127,
-              "texto": "); FORM.config.categorias = JSON.stringify(cats); document.getElementById(\"catNombre\").value = \"\"; pintarCategorias(); } function eliminarCa",
-              "hash": "7ffaa89c0f4320cc485855e7d0172531ca106387cab61230a98734770ef55467"
-            },
-            {
-              "linea": 3147,
-              "texto": "} }",
-              "hash": "e4249f92d4fa6771d2b4568e9e1363f6e32b9e9eb54a558736108c9a40fab84e"
-            }
-          ]
-        }
-      ]
+      "sha256": "43ac80e54fdddd09b6c4d6e24a1d298ff23c2b6192223974aef2fb11f4793b0e",
+      "documentos": []
     },
     "ENLACES_UI.html": {
       "sha256": "2bd7e39177a1f393bfd3d60f9c86b6ded09bfb9732b429292ee19369b8dc3740",
@@ -11017,6 +10293,827 @@
               "linea": 56,
               "texto": "document.addEventListener('change', function(e) { if (e.target && e.target.type === 'checkbox' && e.target.closest && e.target.closest('#wra",
               "hash": "3986d205cb4ce26de0d4f7d05487282c36b9b07e7fcb46a4b4377323a2201b1f"
+            }
+          ]
+        }
+      ]
+    },
+    "FormEncJS_01.html": {
+      "sha256": "8532504cc9d7f9ca22b0947270f2ef9275c308c77120773363840e5c5aa93e93",
+      "documentos": [
+        {
+          "id": "FormEncJS_01.html#script0",
+          "simbolos": {
+            "FORM": {
+              "tipo": "let",
+              "linea": 5,
+              "hash": "9fc18ebda0d59f1321f847ad6a5f067ed33bb3120f9ed7e988e5983f5231bee4"
+            },
+            "FILTROS": {
+              "tipo": "let",
+              "linea": 6,
+              "hash": "ac6be8cc2b6a4069ff244aa21d9b84a7f2254def5cbb88a7449b286c9f935472"
+            },
+            "RESPUESTAS": {
+              "tipo": "let",
+              "linea": 7,
+              "hash": "f7944a9cb85d07390f46f50665fc0a1d2ee1d964fd0fa013aa6f5c62b7e82098"
+            },
+            "creds": {
+              "tipo": "let",
+              "linea": 8,
+              "hash": "2f34d5b6252bad1e2a52c6198849995eef64d53d7bcb4e258794cd1c66b43267"
+            },
+            "editando": {
+              "tipo": "let",
+              "linea": 9,
+              "hash": "3eacb6227bef9991fa350ff5ba57d9276e20ce28128040c8a95baa7edcd39039"
+            },
+            "modal": {
+              "tipo": "let",
+              "linea": 10,
+              "hash": "2a2f31a3fd32100efc47efdc75e3d17aa523571dcadcfef8b93816b67d6c463f"
+            },
+            "simulacionModal": {
+              "tipo": "let",
+              "linea": 11,
+              "hash": "fd29526bb380438f97fd83514220f44a761c9aeb916751c631fef6321e13928e"
+            },
+            "modalGrafica": {
+              "tipo": "let",
+              "linea": 12,
+              "hash": "ac0f1f1aedf57c3a2bf8dae5cbc71567d82c9c4df08f418f6172c7fc12b40312"
+            },
+            "modalCategorias": {
+              "tipo": "let",
+              "linea": 13,
+              "hash": "9b1bc8f5db00b2aaad1fd29f49d8f383775fbf6a8e71f288a19c8b4e065bf9fd"
+            },
+            "modalAyuda": {
+              "tipo": "let",
+              "linea": 14,
+              "hash": "a5e0505a137a4bcf3711543ddb62afbd7b204afe6ac650a2d3d1c2d8e5018a56"
+            },
+            "editandoCategoria": {
+              "tipo": "let",
+              "linea": 15,
+              "hash": "5b2d608c277c2f9d2f7ce636f94d4571b226881e4f3f3867e63c1ab1806d004d"
+            },
+            "chartsResumen": {
+              "tipo": "let",
+              "linea": 16,
+              "hash": "3e964883c58368b3893cc46b32f0bac3ca07901ad4f2516b51a89d9444960a5d"
+            },
+            "CONFIGS_GRAFICA": {
+              "tipo": "let",
+              "linea": 17,
+              "hash": "de82b5f5eb81176ebad1b869184e99b7c9546b827d1a3c976f11402b6eae892b"
+            },
+            "FILTROS_DINAMICOS": {
+              "tipo": "let",
+              "linea": 18,
+              "hash": "4e6686291cc941734893e63928bc21a1a53b0f07bc79fd3213550e26de5ad1c8"
+            },
+            "graficaModal": {
+              "tipo": "let",
+              "linea": 19,
+              "hash": "7581908f3935e053c5b09a16127607abce315a7cf82a5da4135070c961589145"
+            },
+            "pendienteGrafica": {
+              "tipo": "let",
+              "linea": 20,
+              "hash": "8a3ce6115510403192d46dac530fdabde6ad3a6b05e442b533a929aed0aae497"
+            },
+            "sunburstInstancia": {
+              "tipo": "let",
+              "linea": 21,
+              "hash": "9b0d0884fc817421695959653531eb1f1e51e4506816b5ab4c216127b7ff69a0"
+            },
+            "vistaPaneles": {
+              "tipo": "let",
+              "linea": 24,
+              "hash": "e16d4c21e22fc41fc0e73348c4b01c773def3a41598468e6c430b6a035bc9f16"
+            },
+            "leerNumero": {
+              "tipo": "function",
+              "linea": 25,
+              "hash": "e9db273979481ecf5a0cf5cff2560fc3499ac214083914369bbbfe221e9d8ba8"
+            },
+            "tamanoGrafica": {
+              "tipo": "let",
+              "linea": 31,
+              "hash": "09a29ccab602b440842b1b4706bfdde3a271a1d7e30c829039f19992ef7fca6d"
+            },
+            "tamanoLista": {
+              "tipo": "let",
+              "linea": 32,
+              "hash": "f037ae7fbf50ea9e2e12d4a030fff31474378027595a250d4457b8833fb41a0a"
+            },
+            "alturaGrafica": {
+              "tipo": "let",
+              "linea": 33,
+              "hash": "71ae5a866a30f7d7881056305330ef14dce4b6c38fa056a7640c334a4b75eb51"
+            },
+            "TIPOS": {
+              "tipo": "const",
+              "linea": 35,
+              "hash": "5a9bddf7e161eff8641bee93453bf3e49a963bb84d143e7ecb4a95836cdff172"
+            },
+            "PALETA_ESTABLE": {
+              "tipo": "const",
+              "linea": 41,
+              "hash": "f1d5ae5e5c62b659c7403d7f858371017d3c0ab62ca0691372bb6db4ab9504e1"
+            },
+            "COLORES_ASIGNADOS": {
+              "tipo": "const",
+              "linea": 42,
+              "hash": "4614accdbd586944ae7a562165df6a2ba17962ee3e69e55a8503eac60a91601c"
+            },
+            "colorDimension": {
+              "tipo": "function",
+              "linea": 44,
+              "hash": "b29c48c61c774e395f621581ea988c00a7e6ac304b7d601b116f9f1d3d34cf35"
+            },
+            "sembrarColores": {
+              "tipo": "function",
+              "linea": 54,
+              "hash": "7f9c77774563732b6114f1f7081e74e5ac35e4314c8f86c0deb27b5ec1a76e2a"
+            },
+            "alternarCabecera": {
+              "tipo": "function",
+              "linea": 68,
+              "hash": "a3b140266a2cf4e4c95628fa51943ecef23c21aa9c77852ec968b8317c14d17e"
+            },
+            "aplicarCabecera": {
+              "tipo": "function",
+              "linea": 74,
+              "hash": "46b6cc5edf7a3890ad0c82ca4df26fc557f4ebe6b65534b05ea0d4192a965e3c"
+            },
+            "cambiarVista": {
+              "tipo": "function",
+              "linea": 87,
+              "hash": "1f06916818fbd5aabad066952c959e75c040f83f02a38856b4a20a71275308e4"
+            },
+            "cambiarAltura": {
+              "tipo": "function",
+              "linea": 105,
+              "hash": "8f5f3bfa03854ad6c98daf7a634f7e7d0ad016edd8a58fb6f84aea3eb577fd38"
+            },
+            "aplicarAltura": {
+              "tipo": "function",
+              "linea": 111,
+              "hash": "ad6761ac1f7a9812c020cd8260f8aff943101a2317cbfa55c0c7c31e68baf6cc"
+            },
+            "cambiarTamanoGrafica": {
+              "tipo": "function",
+              "linea": 120,
+              "hash": "0f66a2d7ef5f0f296b89bfeb5536ad3ca084aaebf97b11e4e98f5e1cf275c4c2"
+            },
+            "cambiarTamanoLista": {
+              "tipo": "function",
+              "linea": 126,
+              "hash": "8cae7525ae46521a73fa29287cb983ae4d002a4e949aabcb6334c48db4f2ac0e"
+            },
+            "colorTextoContraste": {
+              "tipo": "function",
+              "linea": 134,
+              "hash": "5b47f864320de2269c49319cba903522241c916a6568b8892460c14274059d16"
+            },
+            "pluginValores": {
+              "tipo": "const",
+              "linea": 144,
+              "hash": "bb59e296eba6e33cbacd4f02e1b3c3b39153d66a1f89094a7a36801da3b2d64c"
+            },
+            "dimensionDe": {
+              "tipo": "function",
+              "linea": 215,
+              "hash": "21b29d6cbca4305e6251f6c33e82cd87b22451d3a232d256bb937aa0787eb8b8"
+            },
+            "valorDe": {
+              "tipo": "function",
+              "linea": 229,
+              "hash": "357ae9cb3a3aca0d0a8106228bd4e2461e6c51b9f068cec1afb632c3d263f521"
+            },
+            "construirApilada": {
+              "tipo": "function",
+              "linea": 239,
+              "hash": "821259293e2fd955aa8387e94a6b99475528b913630a0942f18afb9681510ec9"
+            },
+            "esc": {
+              "tipo": "function",
+              "linea": 287,
+              "hash": "36bd23222f0a581ef06c9973e4fae25d8688b4ba0dde863a445831539cd0540e"
+            },
+            "cargarFormulario": {
+              "tipo": "function",
+              "linea": 292,
+              "hash": "a2d3106e46250a920867c42628e50dcb9949391023b2cdab50513435a53c5270"
+            },
+            "renderFormulario": {
+              "tipo": "function",
+              "linea": 306,
+              "hash": "90dda9a49b31cfdb3421d84c94bdd1977c2ada171573fe208b8ba2d8fbb3b379"
+            },
+            "crearCampo": {
+              "tipo": "function",
+              "linea": 321,
+              "hash": "ea5fc9f535fd99343dfa0e6d2ca94c1c35abf80e8c3c887762524af06395d35c"
+            },
+            "aplicarDependenciasFormulario": {
+              "tipo": "function",
+              "linea": 422,
+              "hash": "c9093c6b2c426ab14bc5a6dab297b5d3961f0684f7058493d2071ce3bf4413a8"
+            },
+            "aplicarCondiciones": {
+              "tipo": "function",
+              "linea": 450,
+              "hash": "21fb94bda98ade65a8de14d3ac471a929cf44c296c4428f5e1dfdc4e49f93578"
+            },
+            "enviar": {
+              "tipo": "function",
+              "linea": 472,
+              "hash": "09ed0a4143d63235654477fef03d1409af6bb6c4e2ebf2b080bf00ad32ea7564"
+            },
+            "otraRespuesta": {
+              "tipo": "function",
+              "linea": 527,
+              "hash": "7a7a4f2d9013e6720cfa47ec40c97c482bda1e47a6039377caff13a1a919179a"
+            },
+            "entrar": {
+              "tipo": "function",
+              "linea": 536,
+              "hash": "c8a7e704da8dc2fdf6ad23623039f75693f8f6c8d147fa8d08fc55cd832ea73b"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "FormEncJS_02.html": {
+      "sha256": "8bd1de09940e58c3f8844d5e9a6cf0d98726c34a7f5640ef530a2134ad4e73fc",
+      "documentos": [
+        {
+          "id": "FormEncJS_02.html#script0",
+          "simbolos": {
+            "salirAdmin": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "e3aafdc7c8e5a4fd23af4aee0dc57496613f1a000d9a6209d195e3e660b9c21f"
+            },
+            "avisoPanel": {
+              "tipo": "function",
+              "linea": 13,
+              "hash": "0bd3a19edcbc9e9219a18060612bf1c6727dcca29da75ee3501f0896cd716448"
+            },
+            "cargarRespuestas": {
+              "tipo": "function",
+              "linea": 18,
+              "hash": "edc069af58a3af3beb8ab247d8fcc4ded61ffa1503a06e0e3ea5609da92a8d54"
+            },
+            "pintarMenusFiltro": {
+              "tipo": "function",
+              "linea": 45,
+              "hash": "03c3ea0cbb2a5ea99788d711a2402567182f77f94b3bbc1bc202a56489ec06f2"
+            },
+            "renderMenuDesdeSelect": {
+              "tipo": "function",
+              "linea": 54,
+              "hash": "7a0db00cd735b2e4017da1c56e7cd224d838f9f20e1ad97291a74b7de4cc5f8a"
+            },
+            "cerrarMenuFiltros": {
+              "tipo": "function",
+              "linea": 77,
+              "hash": "1a88abf4843bf28b1ac28c11817c11c9b47a374c1d32a6cada91e4ad1f64cc4f"
+            },
+            "actualizarBotonesFiltro": {
+              "tipo": "function",
+              "linea": 84,
+              "hash": "8b020662b432cdfa700a7cab08e780e15e5d3ef8ab24bae75d939558ba649da2"
+            },
+            "IDS_DIMENSION_LEGADO": {
+              "tipo": "const",
+              "linea": 119,
+              "hash": "98b3317fe4c91579ddc53e489f3c2f40f906b3ad610a19eb41e1a3d560762626"
+            },
+            "esDimensionPregunta": {
+              "tipo": "function",
+              "linea": 121,
+              "hash": "1095a607b5fff469500f319dad890ea64afdde3e3a2fd62fb3735cefa43d8631"
+            },
+            "mapaGruposLegado": {
+              "tipo": "function",
+              "linea": 127,
+              "hash": "39ebd351269289baffc79848032d400ace818574f27ce0ff2e02fa9263a5992c"
+            },
+            "dimensionesDisponibles": {
+              "tipo": "function",
+              "linea": 139,
+              "hash": "311866f5b1a7646e5c0a8467d86f1852f2edf10bcadf12722bdd9a8bdc587860"
+            },
+            "ORDEN_BARRA": {
+              "tipo": "const",
+              "linea": 166,
+              "hash": "55680031af8d6ec18ff7d690716f002e4a37bc512d481b31ea0304e892d1e4e8"
+            },
+            "dimensionesBarra": {
+              "tipo": "function",
+              "linea": 167,
+              "hash": "7d4f8897f4558344c49c9faffbe1e4026f7710c384e47bd626a80a40b297169b"
+            },
+            "opcionesDeDimension": {
+              "tipo": "function",
+              "linea": 173,
+              "hash": "7e838d234979de6962195da30e4d770d4638559ba0f7b3a8f673256edc391834"
+            },
+            "ajustarCascada": {
+              "tipo": "function",
+              "linea": 186,
+              "hash": "ae601945edac299fcb048fcb467bd2dab140542aeebf036aaf0b0869e0855df7"
+            },
+            "ICONOS_DIMENSION": {
+              "tipo": "const",
+              "linea": 197,
+              "hash": "d2baaff6582f11a5ecbe1daf6c9fac22e90b1d1f71a972e90fb0969f133d6c55"
+            },
+            "pintarDimensiones": {
+              "tipo": "function",
+              "linea": 200,
+              "hash": "85ca5f39aa4c31609c053a438992d2bbc608d8f8ce5f8f387f48151016384638"
+            },
+            "opcionesDivision": {
+              "tipo": "function",
+              "linea": 271,
+              "hash": "2a57c0e6c545d5223af0aa6fea0e5015cce2f397d4f3e4d2f1d72dfc2adb43ef"
+            },
+            "rolAnalitico": {
+              "tipo": "function",
+              "linea": 276,
+              "hash": "97baabb2dad56a35f0b6ab66180c4ad333b5a81680974083627bfa9c5cd55ad2"
+            },
+            "esGraficable": {
+              "tipo": "function",
+              "linea": 285,
+              "hash": "26de258619fa306653fd4b35d946d5113669429925350e1a99d4830e604e254f"
+            },
+            "preguntasGraficables": {
+              "tipo": "function",
+              "linea": 293,
+              "hash": "402f59992e12d898d183c2595c18b426171b8d2ca8bdb59574ea673252c2fe87"
+            },
+            "pintarSelectorPregunta": {
+              "tipo": "function",
+              "linea": 300,
+              "hash": "f76652d13b2dc558771a1ee8e6c5fe57586918edb3ac7685b7a22a49bd141382"
+            },
+            "refrescarSegmentos": {
+              "tipo": "function",
+              "linea": 339,
+              "hash": "1f292d4b78aeb1ccaf9464e4ee24200d8e6207da17f79b20fa9b7b1ac7c7cf72"
+            },
+            "pintarFiltrosDinamicos": {
+              "tipo": "function",
+              "linea": 351,
+              "hash": "d7103dd1178fc38a89ce3f0be7143ff8b485ff43198903f764f5ad35b582ffa1"
+            },
+            "renderMenuAjustes": {
+              "tipo": "function",
+              "linea": 414,
+              "hash": "384ecd9d448af28ced5aa26da28e825faf3b8dbb6e4c7bf6660af447776438a1"
+            },
+            "limpiarFiltros": {
+              "tipo": "function",
+              "linea": 476,
+              "hash": "f16e7f7ef565d6729c587e968fbf37bb30fb366f013df1937f5053299555f434"
+            },
+            "aplicarFiltrosYGraficar": {
+              "tipo": "function",
+              "linea": 486,
+              "hash": "98d1e3aa52427f22635b75272163dba40521288b76ee5d99fe29a5e08a3e8786"
+            },
+            "filasFiltradas": {
+              "tipo": "function",
+              "linea": 493,
+              "hash": "d27f3221997e51e66d4ee7013f2190ae0fdc2440593aeb54a4b2830c7dbd798f"
+            },
+            "modoEtiquetas": {
+              "tipo": "function",
+              "linea": 510,
+              "hash": "a99e799495939ccfc21131073ef0bfbb4e82644c7f1a84abf203000fbf1b0c63"
+            },
+            "recortarEtiqueta": {
+              "tipo": "function",
+              "linea": 515,
+              "hash": "a988d1c869c726d91966826abe1af48b1efc937cc9568a829ea9ac69b1542983"
+            },
+            "partirEtiqueta": {
+              "tipo": "function",
+              "linea": 521,
+              "hash": "83bc1fbec253fdb7b50344f29ac6197e88b2dfa17be31ecc389b62bca6a3dd72"
+            },
+            "ejeCategoriaConfig": {
+              "tipo": "function",
+              "linea": 534,
+              "hash": "afe46b38b77bd558232deeb2d8570cdc09321d9a86d482cb8c038d4e405e28e4"
+            },
+            "escalasCartesianas": {
+              "tipo": "function",
+              "linea": 547,
+              "hash": "bc8b4621e50bb1dc1f69bb002793522072340ca18c4b9c43b2af5991936499dc"
+            },
+            "ejeCartesiano": {
+              "tipo": "function",
+              "linea": 554,
+              "hash": "a4dbf27784dc1a3378248a67e3d3b16adbda462ab2573fc52df7be14a94b5299"
+            },
+            "pintarResumenPanel": {
+              "tipo": "function",
+              "linea": 558,
+              "hash": "2a1fbf53ee138ec37194f1e6258ce1c3eeb13a288d02a45a06fb249c3323c364"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "FormEncJS_03.html": {
+      "sha256": "1f0fd13ccd229afec1c451e2a4a272946ac5097b844dbc8b1e752a147e2e2213",
+      "documentos": [
+        {
+          "id": "FormEncJS_03.html#script0",
+          "simbolos": {
+            "renderSunburstDirecto": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "3d03f380c75cdb4997ec7bb95ce4967bee8c2b6af27e8fbe0cb017feb366056c"
+            },
+            "valorFecha": {
+              "tipo": "function",
+              "linea": 31,
+              "hash": "7a3b9a652452f56e5f681bd3ad01b02a152457dfb782ff89c4bc4084fbe03c15"
+            },
+            "pintarTablaRespuestas": {
+              "tipo": "function",
+              "linea": 37,
+              "hash": "108f04b11368dfc157822c842709877492bb3d227da29a4169edcfd7e2e258fa"
+            },
+            "raiz": {
+              "tipo": "const",
+              "linea": 204,
+              "hash": "e0e93352c4a0b0a824b434bde02d9355987e9569bade9feb3174982dec702e46"
+            },
+            "selSeg": {
+              "tipo": "const",
+              "linea": 263,
+              "hash": "da21aa4e883ac4bcc97f1420cf4f5bfa6704cacecd9ec5903ee078b128f8b71f"
+            },
+            "segId": {
+              "tipo": "let",
+              "linea": 264,
+              "hash": "1b9a7fddaa759fa7b48ccfbdb41bd72f106112dcac2bc5264aba2cc5f9afbd92"
+            },
+            "apilada": {
+              "tipo": "const",
+              "linea": 266,
+              "hash": "7b4f5c3dcac6464aa035535e0f18be5eadd1899e40c068b18de9d3e45cfd0f52"
+            },
+            "ejeValor": {
+              "tipo": "const",
+              "linea": 267,
+              "hash": "9d4ee1ccde62494cbebc378af3e3f61fab03d7e944f8eb2599215ce8ad1646b0"
+            },
+            "ejeCat": {
+              "tipo": "const",
+              "linea": 271,
+              "hash": "e55e2930492404921e9affcc56c4b24ac32e9b1bd5530d8662d35c9452d1f28b"
+            },
+            "colores": {
+              "tipo": "const",
+              "linea": 286,
+              "hash": "26eb8aff879cafc50fce0add20f0be3133d421ec5cdf6bd992e96aa4537a0466"
+            }
+          },
+          "sentencias": [
+            {
+              "linea": 165,
+              "texto": "} if (pregunta.id === \"grupo\") { const mapa = mapaGruposLegado();",
+              "hash": "60ae9bff5af39c065a0968109772b0b7015e8c89b8d8f533f8454f7a70ad3ad2"
+            },
+            {
+              "linea": 168,
+              "texto": "if (mapa[valorPadre]) return mapa[valorPadre].slice();",
+              "hash": "20f49ea6fc2f2b1288dcfa398c76b6f0861a17d6ce61d6e9d3ea1f0b691a5ffb"
+            },
+            {
+              "linea": 169,
+              "texto": "} return (pregunta.opciones || []).slice(); } // ZOOM Y MODAL DE GRÁFICA AMPLIADA function ampliarGrafica(e, id) { // Solo amplía el lienzo:",
+              "hash": "3a4a947309525db7b82a21c11c24362e30bb725c331473991e31822a84f1b112"
+            },
+            {
+              "linea": 201,
+              "texto": "contSun.classList.remove(\"d-none\");",
+              "hash": "dc7e8425c2568eb51a9f53ca89d378ef26b460f0a439fcc1f6ccdd93e789bcba"
+            },
+            {
+              "linea": 202,
+              "texto": "if (graficaModal && typeof graficaModal.dispose === \"function\") graficaModal.dispose();",
+              "hash": "d71bb890de1ce6a0c64e8fa5382ae1638492f846bd10c140bca854709057264c"
+            },
+            {
+              "linea": 203,
+              "texto": "graficaModal = echarts.init(contSun);",
+              "hash": "cf1963ed0fd14d1abe86aa12369b49d94b7220e18cb1c7a622a037388add9f8a"
+            },
+            {
+              "linea": 205,
+              "texto": "filas.forEach(f => { const ruta = [String(valorDe(f, \"turno\")), String(valorDe(f, dim.id))].filter(Boolean); let act = raiz; ruta.forEach(no",
+              "hash": "222ced0730376e50025a03c48587fc87bdac412eeed969973983d0f4e1f4d471"
+            },
+            {
+              "linea": 215,
+              "texto": "graficaModal.setOption({ series: [{ type: \"sunburst\", data: raiz.children, radius: [\"15%\", \"90%\"], label: { rotate: \"radial\", fontSize: tama",
+              "hash": "e27833389610d94204a8ad20c2527e1f13a7a704c7464b5e63230d2ab15f2d66"
+            },
+            {
+              "linea": 223,
+              "texto": "return;",
+              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
+            },
+            {
+              "linea": 224,
+              "texto": "} canvasWrap.classList.remove(\"d-none\"); contSun.classList.add(\"d-none\"); const conteo = {}; const porTurno = {}; filas.forEach(f => { const",
+              "hash": "23efa4b9416d8bea967c505da4858461ad48ca40e261f4eeff1c54128bced488"
+            },
+            {
+              "linea": 241,
+              "texto": "); const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0); const basePct = (dim.tipo === \"multiple\" && sumaConteosM",
+              "hash": "2653bb4b9adc10e5578f5797b7d4588939214ab6603f11794ead11c1db92bdcc"
+            },
+            {
+              "linea": 265,
+              "texto": "if (!segId || segId === dim.id) segId = (dim.id === \"turno\") ? \"origen\" : \"turno\";",
+              "hash": "22e20ff37042a3343420b8f021034087bc8c17c75ad6530f7cd9165de0bcceea"
+            },
+            {
+              "linea": 272,
+              "texto": "graficaModal = new Chart(ctx, { type: \"bar\", data: { labels: apilada.labels, datasets: apilada.datasets }, plugins: [pluginValores], options",
+              "hash": "afb50a3ed244571c877e14972db5f1a0b9b499e8fa90bc82aff0da44b9bd6f85"
+            },
+            {
+              "linea": 284,
+              "texto": "} else { const datos = pares.map(p => modoVal === \"porcentaje\" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);",
+              "hash": "e68b0e82ae30acfd6e591ded57dd5a4156af9fbe64ab9359f0d4d64567d19da0"
+            },
+            {
+              "linea": 287,
+              "texto": "graficaModal = new Chart(ctx, { type: tipo === \"barVertical\" ? \"bar\" : tipo, data: { labels: pares.map(p => p.label), datasets: [{ data: dat",
+              "hash": "8f83afb201d708768306143d28d1193479a869b64e9f3d71084d8cf16aba326b"
+            },
+            {
+              "linea": 305,
+              "texto": "} } // SIMULACIÓN Y MANTENIMIENTO function abrirSimulacion() { if (simulacionModal) simulacionModal.show(); } function ejecutarSimulacion(e)",
+              "hash": "94d5a2f7da5e0b372c682fae520a81fb4a1761c483bf7b83778975bc24aab880"
+            },
+            {
+              "linea": 339,
+              "texto": ") .withFailureHandler(err => { btn.disabled = false; estado.textContent = \"Error de red: \" + err.message; estado.className = \"alert alert-da",
+              "hash": "364bf44c44caba10ff78d2cc1bd10428354372a650c6c7c8971b2552607408dd"
+            },
+            {
+              "linea": 344,
+              "texto": ") .simularRespuestasFormulario(creds, cant, clave, perfil); } function limpiarSimulados() { const clave = prompt(\"Ingresa la clave de autori",
+              "hash": "78846e5f1d5aba008f6bef70a30f22604264ced3ab2fbb15e2a2e153d014d683"
+            },
+            {
+              "linea": 361,
+              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + err.message)) .limpiarSimuladosFormulario(creds, clave); } // CONSTRUCTOR Y EDITO",
+              "hash": "6b96bb6be379b43c04e3dce1dffad4996ed60165786341cb0bdbc2f0b810e7c3"
+            },
+            {
+              "linea": 369,
+              "texto": "return;",
+              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
+            },
+            {
+              "linea": 369,
+              "texto": "} if (!confirm(\"¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan",
+              "hash": "1634ac3df046d4db0bf4840c8d168c99ffcc51828a7491aaf698405f5931fa44"
+            },
+            {
+              "linea": 379,
+              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + (err && err.message ? err.message : err))) .quitarJerarquiaDemo(creds); } // Vinc",
+              "hash": "05d950862ee16c58b0d126079348630144a09110d0dd9a83109ce356b17c0148"
+            },
+            {
+              "linea": 392,
+              "texto": "estado.className = \"small mt-2 \" + clase;",
+              "hash": "a98b3fd560b83c0a7f4b71cee4ecfaf33a2dd3581da374c1eab587bdecc10031"
+            },
+            {
+              "linea": 393,
+              "texto": "estado.textContent = texto;",
+              "hash": "33b318c6769b92491b2071ccccd19b24b87ff81ede9bd94f354947089bf45f62"
+            },
+            {
+              "linea": 394,
+              "texto": "}; if (!creds) { aviso(\"Inicia sesión de administrador para vincular una hoja.\", \"text-danger\");",
+              "hash": "bc04b721d907f0531fd2423dcc7e6c9b4a3edfa3fe6071adc1ac267ae3b3f294"
+            },
+            {
+              "linea": 396,
+              "texto": "return;",
+              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
+            },
+            {
+              "linea": 396,
+              "texto": "} if (!valor) { aviso(\"Escribe la URL o el ID de la hoja.\", \"text-danger\");",
+              "hash": "2135e32d9ba13298bc9f270061a43f20da1ce153fd59af4ee2c20dfeae5ee248"
+            },
+            {
+              "linea": 397,
+              "texto": "return;",
+              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
+            },
+            {
+              "linea": 397,
+              "texto": "} if (btn) btn.disabled = true; aviso(\"Comprobando acceso y preparando pestañas...\", \"text-muted\"); google.script.run .withSuccessHandler(re",
+              "hash": "82faaa5861c683e70ba9bebdb6b14a5f4bda467b8ed542dc7407803102f43c31"
+            },
+            {
+              "linea": 421,
+              "texto": ") .withFailureHandler(err => { if (btn) btn.disabled = false; aviso(\"Error de conexión: \" + (err && err.message ? err.message : err), \"text-",
+              "hash": "cda3718241aa15a5b951262048489af5056ccdbca1affc6e8c3fc44e695f32e6"
+            },
+            {
+              "linea": 425,
+              "texto": ") .vincularYPrepararHoja(creds, valor); } function pintarConfig() { const c = FORM.config || {}; const campos = [\"escuela\", \"subtitulo\", \"ti",
+              "hash": "b8ab75c13b951c34a694ad3e592d4ddd44dbe001337319677ff200448b899e40"
+            },
+            {
+              "linea": 434,
+              "texto": "); const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null; const elHoja = document.getElementById(\"hojaActual\"); if (elHoja) ",
+              "hash": "8e66275955f4d5f9a67d22e50c8a7104d7d3c969c802b841c1717d9b90c1a55f"
+            },
+            {
+              "linea": 442,
+              "texto": ", FORM.config); const campos = [\"escuela\", \"subtitulo\", \"titulo\", \"introduccion\", \"boton\", \"exitoTitulo\", \"otroBoton\", \"exitoTexto\", \"nota\"]",
+              "hash": "099c4d8a8fdc7be4e7ab8cc48ba6bb895a12403a75b452a88a17f3e0b30eb151"
+            },
+            {
+              "linea": 447,
+              "texto": "); return c; } function pintarPreguntas() { const cont = document.getElementById(\"listaPreguntas\"); if (!cont) return; cont.innerHTML = \"\"; ",
+              "hash": "6d948c20792119b3c53fca0340077ea8f405f5b5205747e56f55055651cab76b"
+            }
+          ]
+        }
+      ]
+    },
+    "FormEncJS_04.html": {
+      "sha256": "a94db6b4b859cdd3746f743350974c249f9c888379d18be2424f0c71207b252d",
+      "documentos": [
+        {
+          "id": "FormEncJS_04.html#script0",
+          "simbolos": {
+            "parsearOpcionesPorPadre": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "c1ace3c6aa6b83e22285824dddbce7df00a2bc2f03d31532bc423841f80980c0"
+            },
+            "rolesDimension": {
+              "tipo": "function",
+              "linea": 20,
+              "hash": "fc789039e6d424a4b4890a1849b35bc92300a601ed394badc90763d19fe61f38"
+            },
+            "poblarPadresDimension": {
+              "tipo": "function",
+              "linea": 24,
+              "hash": "d3ba2639195e187fe4a890a191ea5a9b1a0ff04fddf22244a429985713dd6c84"
+            },
+            "actualizarCamposDimension": {
+              "tipo": "function",
+              "linea": 40,
+              "hash": "43b45e9b97306ddc9206d8464e77fddc4c84715de23e181c8d7c8e7eb9869155"
+            },
+            "actualizarJerarquiaUI": {
+              "tipo": "function",
+              "linea": 48,
+              "hash": "fb91578d4660237c2aa8079f3b018f84f1ce5ac93048ecec645c29e26a5b1477"
+            },
+            "actualizarRolAnalitico": {
+              "tipo": "function",
+              "linea": 58,
+              "hash": "b04cf3b4ca222784b02bc78cceb2677497d4ffb5b6b82bdc18437ac975fd2961"
+            },
+            "actualizarCamposTipo": {
+              "tipo": "function",
+              "linea": 72,
+              "hash": "8ed5eac615914650c0a1115e0e0ec2a80ae60c5b052ec1dc3765e77e7cea60af"
+            },
+            "cadenaPadresRepite": {
+              "tipo": "function",
+              "linea": 102,
+              "hash": "930fb9de56cdf88c4f57d4ee50660ba8991ce1b86dbf59a0816e80f6ca61a061"
+            },
+            "actualizarCondicionUI": {
+              "tipo": "function",
+              "linea": 114,
+              "hash": "fea00fcbe87e0a769e70873446ceec73fad4c32aa8cd1941ff951af6ffd35f64"
+            },
+            "actualizarValoresCondicion": {
+              "tipo": "function",
+              "linea": 132,
+              "hash": "6e409b4c83b7d1ae97e17ff3e200b3fbbec682fcf0e5d361b85867595583baab"
+            },
+            "guardarPregunta": {
+              "tipo": "function",
+              "linea": 159,
+              "hash": "f0471a8d741ae4226931388b808fb2c07913c688b8f71bfb85e60985ef73dc1f"
+            },
+            "guardarTodo": {
+              "tipo": "function",
+              "linea": 230,
+              "hash": "b8b5dc13eeb3362708001e17958afcfaecd0d5e36e1cdfd489bce3f0311d219b"
+            },
+            "bancoModal": {
+              "tipo": "let",
+              "linea": 271,
+              "hash": "0ff33d9679719a6c744f1e68320a4cd6f940f551e837c772bd0d531160576552"
+            },
+            "abrirBanco": {
+              "tipo": "function",
+              "linea": 273,
+              "hash": "55d8fa52edf12dc1161397aacecaae81a8bac69bd9d3ae723e8fe14a37ab1302"
+            },
+            "cargarListaBanco": {
+              "tipo": "function",
+              "linea": 280,
+              "hash": "5c6a9598683ff7822e895ac61a83f3650acd88708544f5dc1fbfb565f20f98be"
+            },
+            "guardarEnBanco": {
+              "tipo": "function",
+              "linea": 312,
+              "hash": "a5f6352754606b1361d506085052a1851114527ed4a4b46050628286e38b4a18"
+            },
+            "verEncuestaDelBanco": {
+              "tipo": "function",
+              "linea": 326,
+              "hash": "b0010756c549d6640c250e3104fef3d4fefe3741836a99ec3f491991476572f3"
+            },
+            "volverEncuestaActual": {
+              "tipo": "function",
+              "linea": 349,
+              "hash": "25ddf95dd49a2ef9647e0763cf6820f847715999691c2465327715583684c4fa"
+            },
+            "abrirCategorias": {
+              "tipo": "function",
+              "linea": 355,
+              "hash": "633d320b79bf7db45b7631a5a19ee33155b06875943e864f0c370a1aace184e7"
+            },
+            "getCategorias": {
+              "tipo": "function",
+              "linea": 360,
+              "hash": "089d884467be3d72f7820ec6d17b35b9ae4af0be6b932ad4b4e32f108a610c9e"
+            },
+            "pintarCategorias": {
+              "tipo": "function",
+              "linea": 364,
+              "hash": "40e8835c2ab3f8fd3500c88608eaf79c355e75b25b14f338c216ab59e084ebf2"
+            },
+            "guardarCategoria": {
+              "tipo": "function",
+              "linea": 394,
+              "hash": "7441cc9bd2ff92f039cd824bab09ecd1a9b57427be491fe164d3e39df2cdf5aa"
+            },
+            "eliminarCategoria": {
+              "tipo": "function",
+              "linea": 410,
+              "hash": "06852f37ad940e3a9ec7a191fc9393019ac8181f16068b9d01b608b5bedb460b"
+            },
+            "actualizarCategoriaUI": {
+              "tipo": "function",
+              "linea": 417,
+              "hash": "edbad75a6aa74a8e597cbb1e5c0c9328059b1609ea8b1a03ec3a9eabaa1df5e1"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "FormEncJS_Arranque.html": {
+      "sha256": "f2b22ebe7336616c7189ee6151897e90a36719c9596d4766c9a8167db6cb92e3",
+      "documentos": [
+        {
+          "id": "FormEncJS_Arranque.html#script0",
+          "simbolos": {},
+          "sentencias": [
+            {
+              "linea": 5,
+              "texto": "document.addEventListener(\"DOMContentLoaded\", () => { modal = new bootstrap.Modal(document.getElementById(\"modalPregunta\")); modalGrafica = ",
+              "hash": "986e9c7742723974a5e5851a094efdb9885aaca3a583f10a82543958295d4b19"
+            },
+            {
+              "linea": 62,
+              "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
+              "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"
             }
           ]
         }

@@ -1,0 +1,561 @@
+<script>
+/* FormEncJS_01 — leerNumero, colorDimension, sembrarColores, alternarCabecera, aplicarCabecera, cambiarVista, cambiarAltura, aplicarAltura */
+
+  // ESTADO GLOBAL Y VARIABLES
+  let FORM = { config: {}, preguntas: [] };
+  let FILTROS = {};            // dimId -> valor elegido ("TODOS" implícito)
+  let RESPUESTAS = null;
+  let creds = null;
+  let editando = -1;
+  let modal = null;
+  let simulacionModal = null;
+  let modalGrafica = null;
+  let modalCategorias = null;
+  let modalAyuda = null;
+  let editandoCategoria = null;
+  let chartsResumen = [];
+  let CONFIGS_GRAFICA = {};
+  let FILTROS_DINAMICOS = [];
+  let graficaModal = null;
+  let pendienteGrafica = null;
+  let sunburstInstancia = null;
+
+  // AJUSTES VISUALES CON PERSISTENCIA
+  let vistaPaneles = "ambos";
+  function leerNumero(clave, defecto) {
+    try {
+      const v = Number(localStorage.getItem(clave));
+      return isFinite(v) && v > 0 ? v : defecto;
+    } catch (e) { return defecto; }
+  }
+  let tamanoGrafica = leerNumero("tamanoGrafica", 11);
+  let tamanoLista = leerNumero("tamanoLista", 12);
+  let alturaGrafica = leerNumero("alturaGrafica", 320);
+
+  const TIPOS = {
+    texto: "Texto corto", parrafo: "Párrafo", unica: "Opción única", multiple: "Opción múltiple",
+    numero: "Número", fecha: "Fecha", sino: "Sí / No", escala: "Escala"
+  };
+
+  // SISTEMA DE ASIGNACIÓN ESTABLE DE COLORES
+  const PALETA_ESTABLE = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#64748b"];
+  const COLORES_ASIGNADOS = {};
+
+  function colorDimension(dimId, etiqueta) {
+    if (!COLORES_ASIGNADOS[dimId]) COLORES_ASIGNADOS[dimId] = {};
+    const mapa = COLORES_ASIGNADOS[dimId];
+    if (!mapa[etiqueta]) {
+      const idx = Object.keys(mapa).length;
+      mapa[etiqueta] = PALETA_ESTABLE[idx % PALETA_ESTABLE.length];
+    }
+    return mapa[etiqueta];
+  }
+
+  function sembrarColores(filas, preguntas) {
+    (preguntas || []).forEach(p => {
+      const valores = [];
+      filas.forEach(f => {
+        const v = (f.respuestas || {})[p.id];
+        if (v && valores.indexOf(v) === -1) valores.push(v);
+      });
+      valores.sort().forEach(val => colorDimension(p.id, val));
+    });
+    colorDimension("turno", "Matutino");
+    colorDimension("turno", "Vespertino");
+  }
+
+  // GESTIÓN DE LAYOUT, ALTURA Y ZOOM
+  function alternarCabecera() {
+    const cabecera = document.querySelector(".header-banner");
+    if (!cabecera) return;
+    aplicarCabecera(!cabecera.classList.contains("d-none"));
+  }
+
+  function aplicarCabecera(ocultar) {
+    const cabecera = document.querySelector(".header-banner");
+    if (cabecera) cabecera.classList.toggle("d-none", ocultar);
+    const icono = document.getElementById("iconoCabecera");
+    const btn = document.getElementById("btnCabecera");
+    if (icono) icono.className = ocultar ? "bi bi-chevron-double-down" : "bi bi-chevron-double-up";
+    if (btn) {
+      btn.title = ocultar ? "Mostrar cabecera" : "Ocultar cabecera";
+      btn.setAttribute("aria-label", btn.title);
+    }
+    try { localStorage.setItem("cabeceraOculta", ocultar ? "1" : "0"); } catch (e) {}
+  }
+
+  function cambiarVista(modo) {
+    vistaPaneles = modo;
+    const colG = document.getElementById("colGraficaPrincipal");
+    const colT = document.getElementById("colTotales");
+    if (!colG || !colT) return;
+    const verG = modo !== "lista";
+    const verT = modo !== "grafica";
+    colG.className = (verG && verT) ? "col-12 col-lg-6" : "col-12";
+    colT.className = (verG && verT) ? "col-12 col-lg-6" : "col-12";
+    colG.classList.toggle("d-none", !verG);
+    colT.classList.toggle("d-none", !verT);
+
+    [["btnVistaGrafica", "grafica"], ["btnVistaLista", "lista"], ["btnVistaAmbos", "ambos"]].forEach(([id, m]) => {
+      const b = document.getElementById(id);
+      if (b) b.className = "btn btn-sm " + (vistaPaneles === m ? "btn-primary" : "btn-outline-secondary");
+    });
+  }
+
+  function cambiarAltura(delta) {
+    alturaGrafica = Math.max(220, Math.min(580, alturaGrafica + delta));
+    try { localStorage.setItem("alturaGrafica", String(alturaGrafica)); } catch (err) {}
+    aplicarAltura();
+  }
+
+  function aplicarAltura() {
+    const cont = document.querySelector("#colGraficaPrincipal .chart-container");
+    if (cont) cont.style.height = alturaGrafica + "px";
+    const lista = document.querySelector("#colTotales .table-responsive");
+    if (lista) lista.style.maxHeight = alturaGrafica + "px";
+    if (chartsResumen.length) chartsResumen.forEach(c => c.resize());
+    if (sunburstInstancia) sunburstInstancia.resize();
+  }
+
+  function cambiarTamanoGrafica(delta) {
+    tamanoGrafica = Math.max(8, Math.min(18, tamanoGrafica + delta));
+    try { localStorage.setItem("tamanoGrafica", String(tamanoGrafica)); } catch (err) {}
+    pintarResumenPanel();
+  }
+
+  function cambiarTamanoLista(delta) {
+    tamanoLista = Math.max(9, Math.min(18, tamanoLista + delta));
+    try { localStorage.setItem("tamanoLista", String(tamanoLista)); } catch (err) {}
+    const tabla = document.getElementById("tablaTotales");
+    if (tabla) tabla.style.fontSize = tamanoLista + "px";
+  }
+
+  // Elige blanco o gris oscuro segun el fondo de la rebanada
+  function colorTextoContraste(fondo) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(String(fondo || ""));
+    if (!m) return "#ffffff";
+    const n = parseInt(m[1], 16);
+    const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    const luz = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luz > 0.62 ? "#1f2937" : "#ffffff";
+  }
+
+  // Dibuja el valor de cada barra, rebanada o punto (incluidas las apiladas)
+  const pluginValores = {
+    id: "valores",
+    afterDatasetsDraw(chart) {
+      const tipo = chart.config.type;
+      if (["bar", "pie", "doughnut", "line"].indexOf(tipo) === -1) return;
+      const ctx = chart.ctx;
+      const pct = !!(chart.data.datasets[0] && chart.data.datasets[0]._pct);
+      const formato = v => pct ? Number(v).toFixed(1) + "%" : String(v);
+      const horizontal = chart.options.indexAxis === "y";
+      const sc = chart.options.scales || {};
+      const apilada = !!((sc.x && sc.x.stacked) || (sc.y && sc.y.stacked));
+      ctx.save();
+      ctx.font = "600 " + Math.max(9, tamanoGrafica - 1) + "px 'Segoe UI', sans-serif";
+
+      chart.data.datasets.forEach((ds, di) => {
+        const meta = chart.getDatasetMeta(di);
+        if (!meta || !meta.data) return;
+        meta.data.forEach((el, i) => {
+          const valor = ds.data[i];
+          if (valor == null || Number(valor) === 0) return;
+
+          if (tipo === "pie" || tipo === "doughnut") {
+            const ang = (el.endAngle || 0) - (el.startAngle || 0);
+            if (ang < 0.18) return;
+            const radio = tipo === "doughnut" ? ((el.innerRadius + el.outerRadius) / 2) : el.outerRadius * 0.62;
+            const medio = (el.startAngle + el.endAngle) / 2;
+            const color = Array.isArray(ds.backgroundColor) ? ds.backgroundColor[i] : ds.backgroundColor;
+            ctx.fillStyle = colorTextoContraste(color);
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(formato(valor), el.x + Math.cos(medio) * radio, el.y + Math.sin(medio) * radio);
+            return;
+          }
+
+          if (tipo === "line") {
+            ctx.fillStyle = "#334155";
+            ctx.textAlign = i === 0 ? "left" : (i === meta.data.length - 1 ? "right" : "center");
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formato(valor), el.x, el.y - 8);
+            return;
+          }
+
+          if (apilada) {
+            const alto = Math.abs((el.base || 0) - (el.y || 0));
+            const ancho = Math.abs((el.base || 0) - (el.x || 0));
+            if (horizontal && ancho < 18) return;
+            if (!horizontal && alto < 14) return;
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            if (horizontal) ctx.fillText(formato(valor), ((el.base || 0) + el.x) / 2, el.y);
+            else ctx.fillText(formato(valor), el.x, ((el.base || 0) + el.y) / 2);
+            return;
+          }
+
+          ctx.fillStyle = "#334155";
+          if (horizontal) {
+            ctx.textAlign = "left";
+            ctx.textBaseline = "middle";
+            ctx.fillText(formato(valor), el.x + 6, el.y);
+          } else {
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formato(valor), el.x, el.y - 6);
+          }
+        });
+      });
+      ctx.restore();
+    }
+  };
+
+  function dimensionDe(id) {
+    const dim = dimensionesDisponibles().filter(d => d.id === id)[0];
+    if (dim) {
+      return {
+        id: dim.id,
+        etiqueta: dim.etiqueta,
+        opciones: dim.opciones || [],
+        padre: dim.padre || "",
+        opcionesPorPadre: dim.opcionesPorPadre || null
+      };
+    }
+    return preguntasVisibles().find(p => p.id === id);
+  }
+
+  function valorDe(fila, id) {
+    const r = fila.respuestas || {};
+    if (id === "origen") return fila.origen || "Real";
+    if (id === "turno") return r.turno || "";
+    if (id === "grado") return String(r.grupo || "").charAt(0);
+    if (id === "grupo") return r.grupo || "";
+    return r[id];
+  }
+
+  // Datasets de una barra apilada: una serie por cada valor de "Segmentar por"
+  function construirApilada(filas, labels, dimId, segId, usarPct, baseTotal, totalN) {
+    const dim = dimensionDe(dimId);
+    const esMultiple = !!(dim && dim.tipo === "multiple");
+    const matriz = {};
+    labels.forEach(l => { matriz[l] = {}; });
+
+    filas.forEach(f => {
+      const bruto = valorDe(f, dimId);
+      if (bruto == null || bruto === "") return;
+      const cats = esMultiple ? String(bruto).split(";").map(s => s.trim()).filter(Boolean) : [String(bruto)];
+      const seg = String(valorDe(f, segId) || "");
+      if (!seg) return;
+      cats.forEach(cat => {
+        if (!matriz[cat]) return;
+        matriz[cat][seg] = (matriz[cat][seg] || 0) + 1;
+      });
+    });
+
+    const segDim = dimensionDe(segId);
+    const presentes = [];
+    ((segDim && segDim.opciones) || []).forEach(s => {
+      if (labels.some(l => matriz[l][s])) presentes.push(s);
+    });
+    Object.keys(matriz).forEach(l => Object.keys(matriz[l]).forEach(s => {
+      if (presentes.indexOf(s) === -1) presentes.push(s);
+    }));
+
+    const totalPorCat = {};
+    labels.forEach(l => {
+      totalPorCat[l] = Object.keys(matriz[l]).reduce((a, k) => a + matriz[l][k], 0);
+    });
+
+    const datasets = presentes.map(seg => ({
+      label: seg,
+      data: labels.map(l => {
+        const n = matriz[l][seg] || 0;
+        if (!usarPct) return n;
+        const base = baseTotal === "total" ? (totalN || 1) : (totalPorCat[l] || 1);
+        return Number(((n / base) * 100).toFixed(1));
+      }),
+      backgroundColor: colorDimension(segId, seg),
+      borderColor: "#ffffff",
+      borderWidth: 1,
+      _pct: usarPct
+    }));
+
+    return { labels: labels, datasets: datasets };
+  }
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  // FORMULARIO PÚBLICO
+  function cargarFormulario() {
+    google.script.run
+      .withSuccessHandler(f => {
+        FORM = f || { config: {}, preguntas: [] };
+        const c = FORM.config || {};
+        document.getElementById("tituloEscuela").textContent = c.escuela || "Encuesta";
+        document.getElementById("subtituloEscuela").textContent = c.subtitulo || "";
+        document.getElementById("tituloFormulario").textContent = c.titulo || "";
+        renderFormulario();
+      })
+      .withFailureHandler(err => alert("Error al cargar formulario: " + err.message))
+      .obtenerFormulario();
+  }
+
+  function renderFormulario() {
+    const c = FORM.config || {};
+    document.getElementById("introduccion").textContent = c.introduccion || "";
+    document.getElementById("nota").textContent = c.nota || "";
+    document.getElementById("textoBoton").textContent = c.boton || "Enviar Encuesta";
+    document.getElementById("exitoTitulo").textContent = c.exitoTitulo || "Registro guardado";
+    document.getElementById("textoOtro").textContent = c.otroBoton || "Registrar otra respuesta";
+
+    const cont = document.getElementById("campos");
+    if (!cont) return;
+    cont.innerHTML = "";
+    (FORM.preguntas || []).forEach(p => cont.appendChild(crearCampo(p)));
+    aplicarDependenciasFormulario();
+  }
+
+  function crearCampo(p) {
+    const wrap = document.createElement("div");
+    wrap.className = "mb-3";
+    wrap.setAttribute("data-id", p.id);
+    const label = document.createElement("label");
+    label.className = "form-label fw-semibold";
+    label.setAttribute("for", "campo_" + p.id);
+    label.textContent = p.etiqueta + (p.obligatoria ? " *" : "");
+    wrap.appendChild(label);
+
+    if (p.ayuda) {
+      const ayuda = document.createElement("div");
+      ayuda.className = "form-text mb-1";
+      ayuda.textContent = p.ayuda;
+      wrap.appendChild(ayuda);
+    }
+
+    const extra = p.extra || {};
+    let control;
+
+    if (p.tipo === "parrafo") {
+      control = document.createElement("textarea");
+      control.className = "form-control";
+      control.id = "campo_" + p.id;
+      control.rows = 3;
+      control.placeholder = p.placeholder || "";
+      if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
+    } else if (p.tipo === "unica" || p.tipo === "sino") {
+      control = document.createElement("select");
+      control.className = "form-select";
+      control.id = "campo_" + p.id;
+      const vacia = document.createElement("option");
+      vacia.value = "";
+      vacia.disabled = true;
+      vacia.selected = true;
+      vacia.textContent = "-- Selecciona una opción --";
+      control.appendChild(vacia);
+      const opciones = p.tipo === "sino" ? ["Sí", "No"] : (p.opciones || []);
+      opciones.forEach(o => {
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        control.appendChild(op);
+      });
+    } else if (p.tipo === "multiple") {
+      control = document.createElement("div");
+      control.className = "d-flex flex-column gap-1";
+      control.id = "campo_" + p.id;
+      (p.opciones || []).forEach((o, i) => {
+        const id = "campo_" + p.id + "_" + i;
+        const div = document.createElement("div");
+        div.className = "form-check";
+        const input = document.createElement("input");
+        input.className = "form-check-input";
+        input.type = "checkbox";
+        input.id = id;
+        input.value = o;
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.setAttribute("for", id);
+        lab.textContent = o;
+        div.appendChild(input);
+        div.appendChild(lab);
+        control.appendChild(div);
+      });
+    } else if (p.tipo === "escala") {
+      control = document.createElement("div");
+      control.className = "d-flex flex-wrap gap-3 align-items-center";
+      control.id = "campo_" + p.id;
+      const min = Number(extra.escalaMin || 1);
+      const max = Number(extra.escalaMax || 5);
+      for (let n = min; n <= max; n++) {
+        const div = document.createElement("div");
+        div.className = "form-check";
+        const input = document.createElement("input");
+        input.className = "form-check-input";
+        input.type = "radio";
+        input.name = "campo_" + p.id;
+        input.id = "campo_" + p.id + "_" + n;
+        input.value = String(n);
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.setAttribute("for", input.id);
+        lab.textContent = String(n);
+        div.appendChild(input);
+        div.appendChild(lab);
+        control.appendChild(div);
+      }
+    } else {
+      control = document.createElement("input");
+      control.type = p.tipo === "numero" ? "number" : (p.tipo === "fecha" ? "date" : "text");
+      control.className = "form-control";
+      control.id = "campo_" + p.id;
+      control.placeholder = p.placeholder || "";
+      if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
+    }
+    wrap.appendChild(control);
+    return wrap;
+  }
+
+  // Cascada genérica del formulario público: cualquier pregunta con extra.padre
+  function aplicarDependenciasFormulario() {
+    (FORM.preguntas || []).forEach(p => {
+      // Compatibilidad: si es `grupo` sin padre declarado, depende de `turno`
+      const padre = (p.extra && p.extra.padre) || (p.id === "grupo" ? "turno" : "");
+      if (!padre) return;
+      const selPadre = document.getElementById("campo_" + padre);
+      const selHijo = document.getElementById("campo_" + p.id);
+      if (!selPadre || !selHijo) return;
+
+      const actualizar = () => {
+        const valor = selPadre.value;
+        const opciones = opcionesDependientes(p, valor);
+        selHijo.innerHTML = '<option value="" disabled selected>-- Selecciona --</option>';
+        opciones.forEach(op => {
+          const o = document.createElement("option");
+          o.value = op;
+          o.textContent = op;
+          selHijo.appendChild(o);
+        });
+        selHijo.disabled = !valor || !opciones.length;
+      };
+
+      selPadre.addEventListener("change", actualizar);
+      actualizar();
+    });
+    aplicarCondiciones();
+  }
+
+  function aplicarCondiciones() {
+    (FORM.preguntas || []).forEach(p => {
+      const c = p.extra && p.extra.condicion;
+      if (!c || !c.pregunta) return;
+      const wrap = document.querySelector('[data-id="' + p.id + '"]');
+      if (!wrap) return;
+      const ref = document.getElementById("campo_" + c.pregunta);
+      const val = ref ? ref.value : "";
+      let visible = true;
+      if (c.operador === "igual") visible = String(val) === String(c.valor);
+      else if (c.operador === "distinto") visible = String(val) !== String(c.valor);
+      else if (c.operador === "vacio") visible = val === "";
+      else if (c.operador === "no_vacio") visible = val !== "";
+      wrap.classList.toggle("d-none", !visible);
+      const control = wrap.querySelector("select, input, textarea");
+      if (control) {
+        control.required = visible && !!p.obligatoria;
+        if (!visible) control.value = "";
+      }
+    });
+  }
+
+  function enviar(e) {
+    e.preventDefault();
+    const respuestas = {};
+    const faltan = [];
+    (FORM.preguntas || []).forEach(p => {
+      const wrap = document.querySelector('[data-id="' + p.id + '"]');
+      const oculto = wrap && wrap.classList.contains("d-none");
+      let valor = "";
+      if (p.tipo === "multiple") {
+        valor = Array.from(document.querySelectorAll("#campo_" + p.id + " input:checked")).map(i => i.value);
+      } else if (p.tipo === "escala") {
+        const check = document.querySelector("#campo_" + p.id + " input:checked");
+        valor = check ? check.value : "";
+      } else {
+        const el = document.getElementById("campo_" + p.id);
+        valor = el ? el.value : "";
+      }
+      respuestas[p.id] = valor;
+      const vacio = p.tipo === "multiple" ? valor.length === 0 : String(valor).trim() === "";
+      if (p.obligatoria && vacio && !oculto) faltan.push(p.etiqueta);
+    });
+
+    if (faltan.length) {
+      const caja = document.getElementById("errorForm");
+      caja.textContent = "Falta responder: " + faltan.join(", ") + ".";
+      caja.classList.remove("d-none");
+      return;
+    }
+
+    const btn = document.getElementById("btnEnviar");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill"></i> ' + (FORM.config.boton || "Enviar");
+        if (res && res.exito) {
+          const pNombre = preguntaCategoria("nombre");
+          let nombre = pNombre ? String(respuestas[pNombre.id] || "").trim() : "";
+          if (!nombre) nombre = Object.keys(respuestas).map(k => respuestas[k]).find(v => typeof v === "string" && v.trim() !== "") || "";
+          document.getElementById("exitoTexto").textContent = (FORM.config.exitoTexto || "").replace("{nombre}", nombre);
+          document.getElementById("formDinamico").classList.add("d-none");
+          document.getElementById("panelExito").classList.remove("d-none");
+        } else {
+          alert("Error: " + (res.mensaje || "No se pudo guardar"));
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error de conexión: " + err.message);
+      })
+      .guardarRespuestaFormulario({ respuestas: respuestas });
+  }
+
+  function otraRespuesta() {
+    document.getElementById("formDinamico").reset();
+    aplicarDependenciasFormulario();
+    document.getElementById("formDinamico").classList.remove("d-none");
+    document.getElementById("panelExito").classList.add("d-none");
+    document.getElementById("errorForm").classList.add("d-none");
+  }
+
+  // AUTENTICACIÓN Y DASHBOARD
+  function entrar(e) {
+    e.preventDefault();
+    const usuario = document.getElementById("adminUser").value.trim();
+    const pass = document.getElementById("adminPass").value.trim();
+    const btn = document.getElementById("btnLogin");
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.autenticado) {
+          creds = { usuario: usuario, pass: pass };
+          document.getElementById("loginCard").classList.add("d-none");
+          document.getElementById("constructor").classList.remove("d-none");
+          cargarRespuestas();
+        } else {
+          document.getElementById("errorLogin").textContent = "Usuario o contraseña incorrectos.";
+          document.getElementById("errorLogin").classList.remove("d-none");
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error: " + err.message);
+      })
+      .verificarAdmin({ usuario: usuario, pass: pass });
+  }</script>

@@ -1,0 +1,575 @@
+<script>
+/* FormEncJS_03 — renderSunburstDirecto, valorFecha, pintarTablaRespuestas, cambiarOrdenDesdeColumna, alternarBuscador, restablecerFiltrosTabla, celdaCSV, descargarCSVRespuestas */
+
+
+  function renderSunburstDirecto(filas, dim) {
+    const cont = document.getElementById("graficaSunburst");
+    sunburstInstancia = echarts.init(cont);
+    const raiz = { name: "Total", children: [] };
+    filas.forEach(f => {
+      const ruta = [String(valorDe(f, "turno")), String(valorDe(f, dim.id))].filter(Boolean);
+      let act = raiz;
+      ruta.forEach(nodo => {
+        let n = act.children.find(c => c.name === nodo);
+        if (!n) { n = { name: nodo, value: 0, children: [] }; act.children.push(n); }
+        n.value++;
+        act = n;
+      });
+    });
+    sunburstInstancia.setOption({
+      series: [{
+        type: "sunburst",
+        data: raiz.children,
+        radius: ["12%", "92%"],
+        label: { rotate: "radial", fontSize: tamanoGrafica }
+      }]
+    });
+  }
+
+  // TABLA DE DATOS RESPONSIVA Y ORDENABLE AL VUELO
+  // "dd/MM/yyyy HH:mm" -> milisegundos (ordena cronologicamente, no como texto)
+  function valorFecha(texto) {
+    const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/.exec(String(texto || ""));
+    if (!m) return 0;
+    return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4]), Number(m[5])).getTime();
+  }
+
+  function pintarTablaRespuestas() {
+    const thead = document.querySelector("#tablaRespuestas thead");
+    const tbody = document.querySelector("#tablaRespuestas tbody");
+    if (!thead || !tbody) return;
+    const preguntas = preguntasVisibles();
+    const busqueda = (document.getElementById("buscadorTexto").value || "").toLowerCase().trim();
+    const campo = document.getElementById("tablaCampoOrden").value;
+    const dir = document.getElementById("tablaDireccionOrden").value;
+
+    thead.innerHTML = `<tr>
+      <th class="sortable" onclick="cambiarOrdenDesdeColumna('fecha')">Fecha / Hora ⬍</th>
+      <th class="sortable" onclick="cambiarOrdenDesdeColumna('origen')">Origen ⬍</th>
+      ${preguntas.map(p => `<th class="sortable" onclick="cambiarOrdenDesdeColumna('${p.id}')">${esc(p.etiqueta)} ⬍</th>`).join("")}
+    </tr>`;
+
+    let filas = filasFiltradas().filter(f => {
+      if (!busqueda) return true;
+      const texto = [f.fecha, f.origen].concat(preguntas.map(p => (f.respuestas || {})[p.id])).join(" ").toLowerCase();
+      return texto.includes(busqueda);
+    });
+
+    if (campo === "fecha") {
+      filas.sort((a, b) => {
+        const fa = valorFecha(a.fecha), fb = valorFecha(b.fecha);
+        return dir === "asc" ? fa - fb : fb - fa;
+      });
+    } else {
+      const dato = (f) => campo === "origen" ? f.origen : (f.respuestas || {})[campo];
+      filas.sort((a, b) => {
+        const va = dato(a), vb = dato(b);
+        const na = Number(va), nb = Number(vb);
+        const numericos = String(va).trim() !== "" && String(vb).trim() !== "" && !isNaN(na) && !isNaN(nb);
+        if (numericos) return dir === "asc" ? na - nb : nb - na;
+        return dir === "asc" ? String(va).localeCompare(String(vb), "es") : String(vb).localeCompare(String(va), "es");
+      });
+    }
+
+    tbody.innerHTML = filas.map(f => `
+      <tr>
+        <td>${esc(f.fecha)}</td>
+        <td><span class="badge ${f.origen === 'Simulado' ? 'bg-secondary' : 'bg-success'}">${esc(f.origen || 'Real')}</span></td>
+        ${preguntas.map(p => {
+          const val = (f.respuestas || {})[p.id] || "";
+          if (p.id === "turno") {
+            return `<td><span class="badge ${val === 'Matutino' ? 'bg-primary' : 'bg-warning text-dark'}">${esc(val)}</span></td>`;
+          }
+          return `<td>${esc(val)}</td>`;
+        }).join("")}
+      </tr>
+    `).join("");
+
+    document.getElementById("contadorRespuestas").textContent = `Mostrando ${filas.length} registros`;
+  }
+
+  function cambiarOrdenDesdeColumna(col) {
+    const selCampo = document.getElementById("tablaCampoOrden");
+    const selDir = document.getElementById("tablaDireccionOrden");
+    if (selCampo.value === col) {
+      selDir.value = selDir.value === "asc" ? "desc" : "asc";
+    } else {
+      selCampo.value = col;
+      selDir.value = "asc";
+    }
+    pintarTablaRespuestas();
+  }
+
+  function alternarBuscador() {
+    const input = document.getElementById("buscadorTexto");
+    input.classList.toggle("d-none");
+    if (!input.classList.contains("d-none")) input.focus();
+    else { input.value = ""; pintarTablaRespuestas(); }
+  }
+
+  function restablecerFiltrosTabla() {
+    document.getElementById("buscadorTexto").value = "";
+    document.getElementById("tablaCampoOrden").value = "fecha";
+    document.getElementById("tablaDireccionOrden").value = "asc";
+    pintarTablaRespuestas();
+  }
+
+  // EXPORTACIONES CSV Y PDF
+  // Escapa una celda de CSV y neutraliza formulas al abrir el archivo en Excel
+  function celdaCSV(valor) {
+    let s = String(valor == null ? "" : valor);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    if (/[";\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function descargarCSVRespuestas() {
+    const filas = filasFiltradas();
+    if (!filas.length) { alert("No hay datos para exportar."); return; }
+    const preguntas = preguntasVisibles();
+    const cabecera = ["Fecha", "Origen"].concat(preguntas.map(p => p.etiqueta));
+    const lineas = [cabecera.map(celdaCSV).join(";")];
+    filas.forEach(f => {
+      lineas.push([f.fecha, f.origen || "Real"].concat(preguntas.map(p => (f.respuestas || {})[p.id] || "")).map(celdaCSV).join(";"));
+    });
+    const blob = new Blob(["\uFEFF" + lineas.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `censo_export_${Date.now()}.csv`;
+    a.click();
+  }
+
+  function imprimirRespuestas() {
+    const cont = document.getElementById("printHeader");
+    cont.innerHTML = `<strong>${FORM.config.escuela || "Reporte"}</strong> - Generado: ${new Date().toLocaleString()}`;
+    window.print();
+  }
+
+  // AUXILIARES DEL ESQUEMA
+  function preguntasVisibles() {
+    return ((RESPUESTAS && RESPUESTAS.preguntas) || FORM.preguntas || []).filter(p => p.activa !== false);
+  }
+
+  function preguntaCategoria(tipo) {
+    return preguntasVisibles().find(p => (p.extra?.categoria || p.id).toLowerCase() === tipo.toLowerCase());
+  }
+
+  // Opciones dependientes de una pregunta según el valor de su padre.
+  // Usa extra.opcionesPorPadre; si no existe, hereda el mapa legado de grupos por turno.
+  function opcionesDependientes(pregunta, valorPadre) {
+    if (!pregunta || !valorPadre) return [];
+    const extra = pregunta.extra || {};
+    if (extra.opcionesPorPadre && extra.opcionesPorPadre[valorPadre]) {
+      return extra.opcionesPorPadre[valorPadre].slice();
+    }
+    if (pregunta.id === "grupo") {
+      const mapa = mapaGruposLegado();
+      if (mapa[valorPadre]) return mapa[valorPadre].slice();
+    }
+    return (pregunta.opciones || []).slice();
+  }
+  // ZOOM Y MODAL DE GRÁFICA AMPLIADA
+  function ampliarGrafica(e, id) {
+    // Solo amplía el lienzo: los controles de la cabecera (selector, filtros,
+    // ajustes) no deben abrir el modal. Y si el botón pulsado ya se repintó,
+    // queda suelto del DOM y closest() no lo reconoce: por eso isConnected.
+    const t = e && e.target;
+    if (t && (t.isConnected === false || (t.closest && t.closest(".dropdown, button, select, input, label, a")))) return;
+    if (e) e.stopPropagation();
+    const tipo = document.getElementById("tipoGrafica").value;
+    const dimId = document.getElementById("dimensionGrafica").value || "turno";
+    pendienteGrafica = { tipo: tipo, dimId: dimId };
+    const titulo = document.getElementById("tituloGrafica1")?.textContent || "Resultados";
+    document.getElementById("modalGraficaTitulo").textContent = "Gráfica Detallada — " + titulo;
+    if (modalGrafica) modalGrafica.show();
+  }
+
+  function renderGraficaModal(estado) {
+    const filas = filasFiltradas();
+    const dimId = estado.dimId || document.getElementById("dimensionGrafica").value || "turno";
+    const dim = dimensionDe(dimId);
+    if (!dim) return;
+
+    const tipo = estado.tipo || document.getElementById("tipoGrafica").value;
+    const canvasWrap = document.getElementById("modalGraficaCanvasWrap");
+    const canvas = document.getElementById("modalGraficaCanvas");
+    const contSun = document.getElementById("modalGraficaSunburst");
+
+    if (tipo === "sunburst") {
+      canvasWrap.classList.add("d-none");
+      contSun.classList.remove("d-none");
+      if (graficaModal && typeof graficaModal.dispose === "function") graficaModal.dispose();
+      graficaModal = echarts.init(contSun);
+      const raiz = { name: "Total", children: [] };
+      filas.forEach(f => {
+        const ruta = [String(valorDe(f, "turno")), String(valorDe(f, dim.id))].filter(Boolean);
+        let act = raiz;
+        ruta.forEach(nodo => {
+          let n = act.children.find(c => c.name === nodo);
+          if (!n) { n = { name: nodo, value: 0, children: [] }; act.children.push(n); }
+          n.value++;
+          act = n;
+        });
+      });
+      graficaModal.setOption({
+        series: [{
+          type: "sunburst",
+          data: raiz.children,
+          radius: ["15%", "90%"],
+          label: { rotate: "radial", fontSize: tamanoGrafica + 2 }
+        }]
+      });
+      return;
+    }
+
+    canvasWrap.classList.remove("d-none");
+    contSun.classList.add("d-none");
+
+    const conteo = {};
+    const porTurno = {};
+    filas.forEach(f => {
+      const v = valorDe(f, dim.id);
+      if (v == null || v === "") return;
+      const valores = (dim.tipo === "multiple") ? String(v).split(";").map(s => s.trim()).filter(Boolean) : [String(v)];
+      valores.forEach(item => {
+        conteo[item] = (conteo[item] || 0) + 1;
+        if (!porTurno[item]) porTurno[item] = { Matutino: 0, Vespertino: 0 };
+        const turnoFila = (f.respuestas || {}).turno === "Vespertino" ? "Vespertino" : "Matutino";
+        porTurno[item][turnoFila]++;
+      });
+    });
+    const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0);
+    const basePct = (dim.tipo === "multiple" && sumaConteosModal > 0) ? sumaConteosModal : filas.length;
+
+    let pares = Object.keys(conteo).map(k => ({
+      label: k, cantidad: conteo[k], matutino: porTurno[k].Matutino, vespertino: porTurno[k].Vespertino
+    }));
+    const orden = document.getElementById("ordenGrafica").value;
+    if (orden === "desc") pares.sort((a, b) => b.cantidad - a.cantidad);
+    else if (orden === "asc") pares.sort((a, b) => a.cantidad - b.cantidad);
+
+    const modoVal = document.getElementById("valoresGrafica").value;
+    const modoPct = document.getElementById("modoPorcentaje").value;
+    const totalN = filas.length;
+    const esApilada = tipo === "stacked" || tipo === "stackedVertical";
+    const esVert = tipo === "stackedVertical" || tipo === "barVertical";
+
+    const ctx = canvas.getContext("2d");
+    if (graficaModal && typeof graficaModal.destroy === "function") graficaModal.destroy();
+
+    if (esApilada) {
+      const usarPct = modoVal === "porcentaje";
+      const selSeg = document.getElementById("segmentoGrafica");
+      let segId = selSeg ? selSeg.value : "turno";
+      if (!segId || segId === dim.id) segId = (dim.id === "turno") ? "origen" : "turno";
+      const apilada = construirApilada(filas, pares.map(p => p.label), dim.id, segId, usarPct, modoPct, basePct);
+      const ejeValor = {
+        stacked: true, beginAtZero: true, max: usarPct ? 100 : undefined,
+        ticks: { precision: usarPct ? 1 : 0, callback: v => usarPct ? v + "%" : v, font: { size: tamanoGrafica + 1 } }
+      };
+      const ejeCat = Object.assign({ stacked: true }, ejeCategoriaConfig(apilada.labels, tamanoGrafica + 1));
+      graficaModal = new Chart(ctx, {
+        type: "bar",
+        data: { labels: apilada.labels, datasets: apilada.datasets },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: tamanoGrafica + 1 } } } },
+          scales: esVert ? { x: ejeCat, y: ejeValor } : { x: ejeValor, y: ejeCat }
+        }
+      });
+    } else {
+      const datos = pares.map(p => modoVal === "porcentaje" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);
+      const colores = pares.map(p => colorDimension(dim.id, p.label));
+      graficaModal = new Chart(ctx, {
+        type: tipo === "barVertical" ? "bar" : tipo,
+        data: {
+          labels: pares.map(p => p.label),
+          datasets: [{ data: datos, backgroundColor: colores, borderRadius: 6, _pct: modoVal === "porcentaje" }]
+        },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: tipo === "bar" ? { right: 46 } : { top: 24 } },
+          plugins: {
+            legend: { display: tipo === "pie" || tipo === "doughnut", labels: { font: { size: tamanoGrafica + 1 } } }
+          },
+          scales: (tipo === "pie" || tipo === "doughnut") ? {} : escalasCartesianas(pares.map(p => p.label), tamanoGrafica + 1, tipo)
+        }
+      });
+    }
+  }
+
+  // SIMULACIÓN Y MANTENIMIENTO
+  function abrirSimulacion() {
+    if (simulacionModal) simulacionModal.show();
+  }
+
+  function ejecutarSimulacion(e) {
+    e.preventDefault();
+    const cant = Number(document.getElementById("simCantidad").value);
+    const perfil = document.getElementById("simPerfil").value;
+    const clave = document.getElementById("simClave").value.trim();
+    const estado = document.getElementById("simEstado");
+    const btn = document.getElementById("btnSimular");
+
+    estado.textContent = "Generando " + cant + " respuestas...";
+    estado.className = "alert alert-info py-2 small";
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.exito) {
+          estado.textContent = "¡Éxito! Se generaron " + res.total + " respuestas.";
+          estado.className = "alert alert-success py-2 small";
+          setTimeout(() => {
+            if (simulacionModal) simulacionModal.hide();
+            cargarRespuestas();
+          }, 1200);
+        } else {
+          estado.textContent = "Error: " + ((res && res.mensaje) || "No se pudo simular.");
+          estado.className = "alert alert-danger py-2 small";
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        estado.textContent = "Error de red: " + err.message;
+        estado.className = "alert alert-danger py-2 small";
+      })
+      .simularRespuestasFormulario(creds, cant, clave, perfil);
+  }
+
+  function limpiarSimulados() {
+    const clave = prompt("Ingresa la clave de autorización para limpiar datos simulados:");
+    if (!clave) return;
+    if (!confirm("¿Deseas eliminar permanentemente todas las filas de origen 'Simulado'?")) return;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (res && res.exito) {
+          alert("Se eliminaron " + res.total + " registros simulados.");
+          cargarRespuestas();
+        } else {
+          alert("Error: " + ((res && res.mensaje) || "No se pudo limpiar."));
+        }
+      })
+      .withFailureHandler(err => alert("Error de conexión: " + err.message))
+      .limpiarSimuladosFormulario(creds, clave);
+  }
+
+  // CONSTRUCTOR Y EDITOR DE PREGUNTAS
+  // Desactiva las preguntas del ejemplo (Sede → Área → Puesto) si siguen activas
+  function quitarPreguntasEjemplo() {
+    if (!creds) { alert("Inicia sesión de administrador."); return; }
+    if (!confirm("¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan en la hoja.")) return;
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!res || !res.exito) { alert("No se pudo: " + ((res && res.mensaje) || "error")); return; }
+        const form = res.formulario || { config: {}, preguntas: [] };
+        FORM = { config: form.config || {}, preguntas: form.preguntas || [] };
+        pintarPreguntas();
+        if (typeof cargarRespuestas === "function") cargarRespuestas();
+        alert("Listo: las preguntas de ejemplo quedaron desactivadas.");
+      })
+      .withFailureHandler(err => alert("Error de conexión: " + (err && err.message ? err.message : err)))
+      .quitarJerarquiaDemo(creds);
+  }
+  // Vincula la encuesta a otra hoja de cálculo: valida acceso, prepara pestañas y recarga
+  function vincularHoja() {
+    const input = document.getElementById("cfgHojaId");
+    const estado = document.getElementById("estadoHoja");
+    const btn = document.getElementById("btnVincularHoja");
+    const valor = input ? String(input.value || "").trim() : "";
+
+    const aviso = (texto, clase) => {
+      if (!estado) return;
+      estado.className = "small mt-2 " + clase;
+      estado.textContent = texto;
+    };
+
+    if (!creds) { aviso("Inicia sesión de administrador para vincular una hoja.", "text-danger"); return; }
+    if (!valor) { aviso("Escribe la URL o el ID de la hoja.", "text-danger"); return; }
+
+    if (btn) btn.disabled = true;
+    aviso("Comprobando acceso y preparando pestañas...", "text-muted");
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (btn) btn.disabled = false;
+        if (!res || !res.exito) {
+          aviso((res && res.mensaje) || "No se pudo vincular la hoja.", "text-danger");
+          return;
+        }
+        FORM = { config: res.config || {}, preguntas: res.preguntas || [] };
+        RESPUESTAS = Object.assign({}, RESPUESTAS || {}, { hoja: res.hoja || null });
+        if (input) input.value = "";
+        aviso("Vinculada: «" + res.nombre + "»" +
+          (res.hojasCreadas && res.hojasCreadas.length
+            ? " · pestañas creadas: " + res.hojasCreadas.join(", ")
+            : " · pestañas ya existentes"), "text-success");
+        pintarConfig();
+        pintarPreguntas();
+        pintarCategorias();
+        if (typeof cargarRespuestas === "function") cargarRespuestas();
+        if (typeof cargarFormulario === "function") cargarFormulario();
+      })
+      .withFailureHandler(err => {
+        if (btn) btn.disabled = false;
+        aviso("Error de conexión: " + (err && err.message ? err.message : err), "text-danger");
+      })
+      .vincularYPrepararHoja(creds, valor);
+  }
+  function pintarConfig() {
+    const c = FORM.config || {};
+    const campos = ["escuela", "subtitulo", "titulo", "introduccion", "boton", "exitoTitulo", "otroBoton", "exitoTexto", "nota"];
+    campos.forEach(k => {
+      const el = document.getElementById("cfg_" + k);
+      if (el) el.value = c[k] || "";
+    });
+
+    const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null;
+    const elHoja = document.getElementById("hojaActual");
+    if (elHoja) elHoja.textContent = info ? (info.nombre + " · " + info.origen) : "sin información";
+  }
+
+  function leerConfigFormulario() {
+    const c = Object.assign({}, FORM.config);
+    const campos = ["escuela", "subtitulo", "titulo", "introduccion", "boton", "exitoTitulo", "otroBoton", "exitoTexto", "nota"];
+    campos.forEach(k => {
+      const el = document.getElementById("cfg_" + k);
+      if (el) c[k] = el.value.trim();
+    });
+    return c;
+  }
+
+  function pintarPreguntas() {
+    const cont = document.getElementById("listaPreguntas");
+    if (!cont) return;
+    cont.innerHTML = "";
+    (FORM.preguntas || []).forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "pregunta p-2 d-flex justify-content-between align-items-start gap-2 bg-white";
+      const info = document.createElement("div");
+      info.className = "flex-grow-1";
+      info.innerHTML = `
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span class="badge bg-secondary tipo-badge">${esc(TIPOS[p.tipo] || p.tipo)}</span>
+          ${p.obligatoria ? '<span class="badge bg-warning text-dark tipo-badge">Obligatoria</span>' : ''}
+          ${p.extra?.categoria ? `<span class="badge bg-info text-dark tipo-badge">${esc(p.extra.categoria)}</span>` : ''}
+          ${p.extra?.condicion?.pregunta ? '<span class="badge bg-light text-secondary border tipo-badge"><i class="bi bi-diagram-3"></i> Condicional</span>' : ''}
+        </div>
+        <div class="fw-semibold small mt-1">${esc(p.etiqueta)}</div>
+        ${p.ayuda ? `<div class="text-muted small">${esc(p.ayuda)}</div>` : ''}
+        ${p.opciones?.length ? `<div class="text-muted small">${esc(p.opciones.join(" · "))}</div>` : ''}
+      `;
+
+      const acciones = document.createElement("div");
+      acciones.className = "d-flex gap-1";
+      acciones.innerHTML = `
+        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" title="Subir" aria-label="Subir" onclick="mover(${i}, -1)"><i class="bi bi-arrow-up"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" title="Bajar" aria-label="Bajar" onclick="mover(${i}, 1)"><i class="bi bi-arrow-down"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-1" title="Editar" aria-label="Editar" onclick="abrirModal(${i})"><i class="bi bi-pencil"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1" title="Eliminar" aria-label="Eliminar" onclick="eliminar(${i})"><i class="bi bi-trash"></i></button>
+      `;
+      div.appendChild(info);
+      div.appendChild(acciones);
+      cont.appendChild(div);
+    });
+  }
+
+  function mover(indice, delta) {
+    const destino = indice + delta;
+    if (destino < 0 || destino >= FORM.preguntas.length) return;
+    const temp = FORM.preguntas[indice];
+    FORM.preguntas[indice] = FORM.preguntas[destino];
+    FORM.preguntas[destino] = temp;
+    pintarPreguntas();
+  }
+
+  function eliminar(indice) {
+    const p = FORM.preguntas[indice];
+    if (!confirm("¿Deseas eliminar la pregunta «" + p.etiqueta + "»? Las respuestas históricas seguirán en la hoja.")) return;
+    FORM.preguntas.splice(indice, 1);
+    pintarPreguntas();
+  }
+
+  function abrirModal(indice) {
+    editando = indice;
+    const ayudaPrevia = document.getElementById("ayudaPreguntaPanel");
+    if (ayudaPrevia) ayudaPrevia.classList.add("d-none");
+    const p = indice >= 0 ? FORM.preguntas[indice] : {
+      tipo: "texto", etiqueta: "", ayuda: "", placeholder: "", obligatoria: false, opciones: [], extra: {}
+    };
+    document.getElementById("tituloModal").textContent = indice >= 0 ? "Configurar Pregunta" : "Nueva Pregunta";
+    document.getElementById("p_tipo").value = p.tipo || "texto";
+    document.getElementById("p_obligatoria").checked = !!p.obligatoria;
+    document.getElementById("p_categoria").value = p.extra?.categoria || "";
+    document.getElementById("p_etiqueta").value = p.etiqueta || "";
+    document.getElementById("p_ayuda").value = p.ayuda || "";
+    document.getElementById("p_placeholder").value = p.placeholder || "";
+    document.getElementById("p_opciones").value = (p.opciones || []).join("\n");
+    const extra = p.extra || {};
+    document.getElementById("p_escalaMin").value = extra.escalaMin || 1;
+    document.getElementById("p_escalaMax").value = extra.escalaMax || 5;
+    document.getElementById("p_maxLongitud").value = extra.maxLongitud || "";
+
+    // Rol analítico y graficable (inferencia para datos anteriores a la v48)
+    const esTexto = (p.tipo === "texto" || p.tipo === "parrafo");
+    const rol = extra.rol || ((extra.padre || extra.esDimension === true) ? "dimension" : (esTexto ? "identidad" : "metrica"));
+    const graficable = (typeof extra.graficable === "boolean") ? extra.graficable : !esTexto;
+
+    const selRol = document.getElementById("p_rolAnalitico");
+    const chkGraf = document.getElementById("p_graficable");
+    if (selRol) selRol.value = esTexto ? "identidad" : rol;
+    if (chkGraf) chkGraf.checked = esTexto ? false : graficable;
+    poblarPadresDimension(indice);
+    const selPadreDim = document.getElementById("p_preguntaPadre");
+    if (selPadreDim) selPadreDim.value = extra.padre || "";
+    const txtPorPadre = document.getElementById("p_opcionesPorPadre");
+    if (txtPorPadre) txtPorPadre.value = serializarOpcionesPorPadre(extra.opcionesPorPadre);
+
+    const c = extra.condicion;
+    document.getElementById("p_condActiva").checked = !!c;
+    actualizarCamposTipo(false);
+    actualizarValoresCondicion();
+    if (c) {
+      document.getElementById("p_condPregunta").value = c.pregunta || "";
+      document.getElementById("p_condOperador").value = c.operador || "igual";
+      const selVal = document.getElementById("p_condValor");
+      const txtVal = document.getElementById("p_condValorTexto");
+      if (selVal) selVal.value = c.valor || "";
+      if (txtVal) txtVal.value = c.valor || "";
+    }
+    actualizarCondicionUI();
+    modal.show();
+  }
+
+  function abrirAyuda(pestana) {
+    const cont = document.getElementById("modalAyuda");
+    if (!cont) return;
+    if (!modalAyuda) modalAyuda = new bootstrap.Modal(cont);
+    const boton = document.getElementById(pestana === "preguntas" ? "tabAyudaPreguntas" : "tabAyudaBarra");
+    if (boton && bootstrap.Tab) bootstrap.Tab.getOrCreateInstance(boton).show();
+    modalAyuda.show();
+  }
+
+  function alternarAyudaPregunta() {
+    const panel = document.getElementById("ayudaPreguntaPanel");
+    if (!panel) return;
+    panel.classList.toggle("d-none");
+    if (!panel.classList.contains("d-none")) {
+      const cuerpo = panel.closest(".modal-body");
+      if (cuerpo) cuerpo.scrollTop = 0;
+    }
+  }
+
+  function serializarOpcionesPorPadre(mapa) {
+    if (!mapa || typeof mapa !== "object") return "";
+    return Object.keys(mapa).map(k => k + ": " + (mapa[k] || []).join(", ")).join("\n");
+  }</script>

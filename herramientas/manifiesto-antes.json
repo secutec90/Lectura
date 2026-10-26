@@ -1,9 +1,9 @@
 {
-  "generado": "2026-10-26T19:27:52.102Z",
+  "generado": "2026-10-26T19:28:44.931Z",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
-    "archivos": 64,
-    "documentos": 55,
+    "archivos": 71,
+    "documentos": 61,
     "simbolos": 1722,
     "sentencias_superiores": 147,
     "duplicados": 237
@@ -383,572 +383,6 @@
       "AdminEncuestas.html#script0",
       "FormularioEncuesta.html#script0"
     ],
-    "tokenClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "ctxPlanNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "listaPlanNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "planActualNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "sesionesActualesNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "sesionActivaIdx": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "slotMaeSel": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "panelMaeUlt": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "aluClaseSel": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "fechaClaseEtiquetaManual": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "fechaLocalDesde_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "fechaLocalClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "fmtFechaCortaClase_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "recortarEtq_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "textoOpcionClase_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "pintarEtqFiltroClase_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "pintarEtqFiltroPass_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "detenerVoz": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "hablarTexto": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_01.html#script0"
-    ],
-    "tabN1Clase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "toggleHorarioMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "valorSel_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "llenarOpciones_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "nombreAluSel_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "formatearRangoDdMmAa_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "actualizarHintMae_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "pintarAlumnosAcceso_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "abrirCalendarioFechaClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "alCambiarFechaClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_02.html#script0"
-    ],
-    "cambiarAsignaturaClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cambiarGrupoClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cambiarAlumnoClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cargarHorarioMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "claveCeldaCal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "modoCalMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "orientacionCalMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cambiarModoCal": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cambiarOrientacionCal": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "actualizarBotonesOriCal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "formatearFechaCorta_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "actualizarBotonesModoCal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "moverCalClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "moverSemanaClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "irHoyClase": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "pintarCalendarioMae_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "abrirCeldaCal": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "abrirCeldaVaciaCal": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "abrirSlotMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "guardarContenidoMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "probarVozMae": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "listaAlumnosPassCache": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cargarAlumnosPass": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "actualizarGruposPassDropdown_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cambiarGradoPassAlu": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "cambiarGrupoPassAlu": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "coincideGrupoLocal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "filtrarTablaPassLocal": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "renderTablaPassAlu_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0"
-    ],
-    "generarClaveUnicaAlu": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0",
-      "AdminJS_12.html#script0"
-    ],
-    "generarClavesMasivasAlu": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_03.html#script0",
-      "AdminJS_12.html#script0"
-    ],
-    "copiarCredencialAlu": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "copiarFallback_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "ponerClaveAlu": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "cargarContextoPlaneacionNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "poblarFiltrosPlan_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "alCambiarFiltroPlan": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "bancoPlanActual": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "conmutarBancoPlaneacion_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "cargarListaPlaneacionesNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "pintarGridPlaneaciones": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "copiarProyectoGlobalAMiBanco_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "publicarProyectoEnGlobal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "eliminarProyectoPersonal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "abrirModalImportarCensoCTE_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "seleccionarHallazgoCensoModal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "determinarTrimestreSEP": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "calcularPeriodoSegunFecha_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "inferirCampoYMetodologia_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "alCambiarFechaInicioPlan": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "alSeleccionarClaseHorarioEnPlan": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "CATALOGO_PROGRAMA_ANALITICO_CTE_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "PADRON_INCLUSION_UDEI_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_04.html#script0"
-    ],
-    "evaluarInclusionGrupo_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "obtenerCatalogoCTE_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "guardarCatalogoCTE_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "abrirModalGestionCTE_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "eliminarProblemaCTEModal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "agregarNuevoItemCTEModal_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "poblarSelectorProblemasCTE_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "alSeleccionarProblemaCTE": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "CATALOGO_SEP_FASE6_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "matrizCurricularActivaNEM_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "actualizarCatalogoPDAParaClase_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_05.html#script0"
-    ],
-    "alSeleccionarContenidoSinteticoNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "obtenerPDAsDeContenidoYGrado_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "poblarSelectorPDASegunContenido_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "alCambiarCheckboxPDANEM_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "marcarTodosPDAsGrado_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "filtrarListaPDAsDOM_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "alternarArticulacionOtrosGrados_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "actualizarCajaArticulacionOtrosGrados_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "alSeleccionarPDANEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "solicitarSugerenciaProyectoIA": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "solicitarDesgloseSesionesIA": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "actualizarEncabezadoClaseNEM_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "abrirPlaneacionDesdeSlotActual": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "abrirPlaneacionDesdeGrupoActual": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "poblarSelectorHorarioPlan_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "abrirFormNuevaPlaneacion": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "actualizarGruposFormPlan": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "editarPlaneacionGeneral": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_06.html#script0"
-    ],
-    "cargarDatosEnFormPlan_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "cerrarFormPlaneacion": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "guardarPlaneacionForm": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "abrirGestorSesiones": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "cerrarGestorSesiones": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "pintarTabsSesiones": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "seleccionarSesionNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "generarGuionDesdeMomentos": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "guardarSesionActiva": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "probarVozGuionSesion": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "aprobarPlaneacionActual": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "abrirModalCalendarizarSesion": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "renderizarTextoClaseDUA": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "hablarDesdeParrafo": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "actualizarParrafoVozEnfocado_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "MAPA_MODULOS_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "MAPA_NAV_ITEMS_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "moduloActivoShell_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "resolverClaveModulo_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "conmutarModuloShell": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_07.html#script0"
-    ],
-    "toggleSidebarShell": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "etapaPlanActual_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "irAPasoPlanNEM": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "CATALOGO_LIBROS_SEP_FASE6_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "abrirModalLibrosSEP_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "insertarReferenciaLibroSesion_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "eliminarIDeviceCard_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "eliminarLegoCard_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "insertariDeviceSesion_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
-    "probarAudioIDevice_": [
-      "AdminPlaneacion.html#script0",
-      "ClaseJS_08.html#script0"
-    ],
     "entrar": [
       "FormularioEncuesta.html#script0",
       "AdminJS_01.html#script0"
@@ -960,6 +394,572 @@
     "restaurarPpmRecomendados": [
       "06_Alumnos.gs",
       "AdminJS_05.html#script0"
+    ],
+    "tokenClase": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "slotMaeSel": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "aluClaseSel": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "panelMaeUlt": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "fechaLocalClase": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "hablarTexto": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "detenerVoz": [
+      "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "fechaClaseEtiquetaManual": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "tabN1Clase": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "textoOpcionClase_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "recortarEtq_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "pintarEtqFiltroClase_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "pintarEtqFiltroPass_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "fmtFechaCortaClase_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "toggleHorarioMae": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "valorSel_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "llenarOpciones_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "nombreAluSel_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "formatearRangoDdMmAa_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "actualizarHintMae_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "pintarAlumnosAcceso_": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "abrirCalendarioFechaClase": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "alCambiarFechaClase": [
+      "ClaseJS_02.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cambiarAsignaturaClase": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cambiarGrupoClase": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cambiarAlumnoClase": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cargarHorarioMae": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "claveCeldaCal_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "modoCalMae": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "orientacionCalMae": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cambiarModoCal": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cambiarOrientacionCal": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "actualizarBotonesOriCal_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "formatearFechaCorta_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "actualizarBotonesModoCal_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "moverCalClase": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "moverSemanaClase": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "irHoyClase": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "fechaLocalDesde_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "pintarCalendarioMae_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "abrirCeldaCal": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "abrirCeldaVaciaCal": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "abrirSlotMae": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "guardarContenidoMae": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "probarVozMae": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "listaAlumnosPassCache": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cargarAlumnosPass": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "actualizarGruposPassDropdown_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cambiarGradoPassAlu": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "cambiarGrupoPassAlu": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "coincideGrupoLocal_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "filtrarTablaPassLocal": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "renderTablaPassAlu_": [
+      "ClaseJS_03.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "generarClaveUnicaAlu": [
+      "ClaseJS_03.html#script0",
+      "AdminJS_12.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "generarClavesMasivasAlu": [
+      "ClaseJS_03.html#script0",
+      "AdminJS_12.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "copiarCredencialAlu": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "copiarFallback_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "ponerClaveAlu": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "ctxPlanNEM": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "listaPlanNEM": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "planActualNEM": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "sesionesActualesNEM": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "sesionActivaIdx": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_01.html#script0"
+    ],
+    "cargarContextoPlaneacionNEM": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "poblarFiltrosPlan_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "alCambiarFiltroPlan": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "bancoPlanActual": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "conmutarBancoPlaneacion_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "cargarListaPlaneacionesNEM": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "pintarGridPlaneaciones": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "copiarProyectoGlobalAMiBanco_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "publicarProyectoEnGlobal_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "eliminarProyectoPersonal_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "abrirModalImportarCensoCTE_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "seleccionarHallazgoCensoModal_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "determinarTrimestreSEP": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "calcularPeriodoSegunFecha_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_02.html#script0"
+    ],
+    "inferirCampoYMetodologia_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "alCambiarFechaInicioPlan": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "alSeleccionarClaseHorarioEnPlan": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "CATALOGO_PROGRAMA_ANALITICO_CTE_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "PADRON_INCLUSION_UDEI_": [
+      "ClaseJS_04.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "evaluarInclusionGrupo_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "obtenerCatalogoCTE_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "guardarCatalogoCTE_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "abrirModalGestionCTE_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "eliminarProblemaCTEModal_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "agregarNuevoItemCTEModal_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "poblarSelectorProblemasCTE_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "alSeleccionarProblemaCTE": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "CATALOGO_SEP_FASE6_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_03.html#script0"
+    ],
+    "matrizCurricularActivaNEM_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "actualizarCatalogoPDAParaClase_": [
+      "ClaseJS_05.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "alSeleccionarContenidoSinteticoNEM": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "obtenerPDAsDeContenidoYGrado_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "poblarSelectorPDASegunContenido_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "alCambiarCheckboxPDANEM_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "marcarTodosPDAsGrado_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "filtrarListaPDAsDOM_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "alternarArticulacionOtrosGrados_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "actualizarCajaArticulacionOtrosGrados_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "alSeleccionarPDANEM": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "solicitarSugerenciaProyectoIA": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "solicitarDesgloseSesionesIA": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "actualizarEncabezadoClaseNEM_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "abrirPlaneacionDesdeSlotActual": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "abrirPlaneacionDesdeGrupoActual": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "poblarSelectorHorarioPlan_": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "abrirFormNuevaPlaneacion": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_04.html#script0"
+    ],
+    "actualizarGruposFormPlan": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "editarPlaneacionGeneral": [
+      "ClaseJS_06.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "cargarDatosEnFormPlan_": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "cerrarFormPlaneacion": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "guardarPlaneacionForm": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "abrirGestorSesiones": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "cerrarGestorSesiones": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "pintarTabsSesiones": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "seleccionarSesionNEM": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "generarGuionDesdeMomentos": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "guardarSesionActiva": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "probarVozGuionSesion": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "aprobarPlaneacionActual": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "abrirModalCalendarizarSesion": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "renderizarTextoClaseDUA": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "hablarDesdeParrafo": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "actualizarParrafoVozEnfocado_": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "MAPA_MODULOS_": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "MAPA_NAV_ITEMS_": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "moduloActivoShell_": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "resolverClaveModulo_": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_05.html#script0"
+    ],
+    "conmutarModuloShell": [
+      "ClaseJS_07.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "toggleSidebarShell": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "etapaPlanActual_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "irAPasoPlanNEM": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "CATALOGO_LIBROS_SEP_FASE6_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "abrirModalLibrosSEP_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "insertarReferenciaLibroSesion_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "eliminarIDeviceCard_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "eliminarLegoCard_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "insertariDeviceSesion_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
+    ],
+    "probarAudioIDevice_": [
+      "ClaseJS_08.html#script0",
+      "AdminPlanJS_06.html#script0"
     ]
   },
   "archivos": {
@@ -3310,831 +3310,8 @@
       ]
     },
     "AdminPlaneacion.html": {
-      "sha256": "a009f1bcad1935f0fc84bb113aa41f756ddd68dc16ba27725fd474176764fdb7",
-      "documentos": [
-        {
-          "id": "AdminPlaneacion.html#script0",
-          "simbolos": {
-            "tokenClase": {
-              "tipo": "var",
-              "linea": 832,
-              "hash": "b4be5fa31546246eba77954c33b95078d04998ae87a48c2cfd9ab9770bee06dd"
-            },
-            "ctxPlanNEM": {
-              "tipo": "var",
-              "linea": 833,
-              "hash": "e27ca700d33e227fcc41c809f376c91d2454d5ae8716d4061b5d9cd0f962c7c8"
-            },
-            "listaPlanNEM": {
-              "tipo": "var",
-              "linea": 834,
-              "hash": "bfdf9f502efcf42f69ec0935d539e4ec62e08d9be330f42c48b9f10dd4dc333b"
-            },
-            "planActualNEM": {
-              "tipo": "var",
-              "linea": 835,
-              "hash": "250730de621397ac544f85d3a4273bb08048aac54a5367a81e51c5c5cca88d86"
-            },
-            "sesionesActualesNEM": {
-              "tipo": "var",
-              "linea": 836,
-              "hash": "56582c2264e0892feec4f8f94ae4979ed2f8fe9d31dd1e1d24a97e89312128f3"
-            },
-            "sesionActivaIdx": {
-              "tipo": "var",
-              "linea": 837,
-              "hash": "6fcfe0d4da30bd995ebe59980b5dc4e1ff2eea004c49d09845c8f2ec99f1a07c"
-            },
-            "slotMaeSel": {
-              "tipo": "var",
-              "linea": 843,
-              "hash": "b9ab27de824002e517eb947c1a58cc9b59c4470e0c52d80031b327e754a6b700"
-            },
-            "panelMaeUlt": {
-              "tipo": "var",
-              "linea": 841,
-              "hash": "52c610b2fe3a8aa79faeaf109e01b950bad241c75ed604b22d9c8359e912192d"
-            },
-            "aluClaseSel": {
-              "tipo": "var",
-              "linea": 842,
-              "hash": "08b8fa8625c9d85ff940b3cd3695f56ed287f5764c16e90f90d1fd77b851e1ea"
-            },
-            "fechaClaseEtiquetaManual": {
-              "tipo": "var",
-              "linea": 844,
-              "hash": "98bd62ea632dde035f4d3991fab6747f2549db6c20098b2d7ef1318524fb00bf"
-            },
-            "getTokenPlan_": {
-              "tipo": "function",
-              "linea": 846,
-              "hash": "40ed4fcda7a2967e4279822d4b04a5020fba9af861dcfb97286e5853f06c0c87"
-            },
-            "fechaLocalDesde_": {
-              "tipo": "function",
-              "linea": 1209,
-              "hash": "a3d70fa23b761132a3ab16ffd4208ea76b2ee26544494330814bec4476a772a5"
-            },
-            "fechaLocalClase": {
-              "tipo": "function",
-              "linea": 859,
-              "hash": "25ac4c79dd92a4fdbb0882ddf52bcaf22bb89fca1109916f3dffddb97ed5f51d"
-            },
-            "fmtFechaCortaClase_": {
-              "tipo": "function",
-              "linea": 863,
-              "hash": "687548898c88f5713139f0e8d55d4b82036a210a7f3aee52edc29fe13020b2c5"
-            },
-            "recortarEtq_": {
-              "tipo": "function",
-              "linea": 869,
-              "hash": "8013c46cafc62164867a2b0e44a454cc84cc4ab8183cb15240f6c7e108da95df"
-            },
-            "textoOpcionClase_": {
-              "tipo": "function",
-              "linea": 875,
-              "hash": "a19cd1c941eae3ac6029f4d3cd9b85f3afb56addd6f54c8fde9fb97f0d89627a"
-            },
-            "pintarEtqFiltroClase_": {
-              "tipo": "function",
-              "linea": 881,
-              "hash": "cb0464e3ecf525e4beeb0edcd219f1594820b6265cc1fcffad029eb3abadec02"
-            },
-            "pintarEtqFiltroPass_": {
-              "tipo": "function",
-              "linea": 899,
-              "hash": "72057a1eed283b9c249dd150343ad51b34247510bccda23da065dc340640eacf"
-            },
-            "detenerVoz": {
-              "tipo": "function",
-              "linea": 917,
-              "hash": "b07ef5f03f1d3576c21cd52dbd22064fd6c95f71f947cbba7660798d66d1080a"
-            },
-            "hablarTexto": {
-              "tipo": "function",
-              "linea": 921,
-              "hash": "fd1cbcac7c8709db6728d722f4da434459eb912e759b492f76d86d26ab7fc853"
-            },
-            "tabN1Clase": {
-              "tipo": "function",
-              "linea": 930,
-              "hash": "1bbd360a81525d5fa95b828e1e9402d684dca85a54f0cfeadb586db313dfc608"
-            },
-            "renderizarTabsSesiones": {
-              "tipo": "function",
-              "linea": 938,
-              "hash": "9fd42ce010c4a3a8394d2cbf45ef4b12a38c3aa34902f5ccd2478c769a42f30a"
-            },
-            "cargarSesionActivaEnEditor": {
-              "tipo": "function",
-              "linea": 942,
-              "hash": "3a8ffe16b5465e32050c376612943371b070932a9e4108a8e59442636ed3cf0f"
-            },
-            "toggleHorarioMae": {
-              "tipo": "function",
-              "linea": 946,
-              "hash": "5cbfc02174b7bad3f4b2370616ae3a6bb46a32fbcccb2934b7771cd98e2345da"
-            },
-            "valorSel_": {
-              "tipo": "function",
-              "linea": 962,
-              "hash": "fa78ae6e0131781d1d6fcfb4c50e221fe2e29f18893840241d0f9e1fa4aa9666"
-            },
-            "llenarOpciones_": {
-              "tipo": "function",
-              "linea": 966,
-              "hash": "99e3f3129a67e473ef74c9d853a37b969f4ab008145e512bb6af2ec87261bd0d"
-            },
-            "nombreAluSel_": {
-              "tipo": "function",
-              "linea": 974,
-              "hash": "060bb4e25c8168aa9dddab3324fac6175422054991a2535ab8c6876cf6979a7f"
-            },
-            "formatearRangoDdMmAa_": {
-              "tipo": "function",
-              "linea": 980,
-              "hash": "af67fc8e4d5e6a450bfe4930f480cf710d3d8bb741265b7f11a8b79fe9b59f8d"
-            },
-            "actualizarHintMae_": {
-              "tipo": "function",
-              "linea": 996,
-              "hash": "a489908ef28ad6079c3a9fe8245e89386163327b1121be1ac87ce0873e5e334c"
-            },
-            "pintarAlumnosAcceso_": {
-              "tipo": "function",
-              "linea": 1004,
-              "hash": "a10b9c24dfb87880b59857db4814cf9ea1242061efa51f4a7d9a8552032a5a8b"
-            },
-            "abrirCalendarioFechaClase": {
-              "tipo": "function",
-              "linea": 1008,
-              "hash": "87b75bd332168bb7727f079c6e27acd6e3ef4c392952c50830b3018067d26583"
-            },
-            "alCambiarFechaClase": {
-              "tipo": "function",
-              "linea": 1021,
-              "hash": "cc4d6188bae86035a6c01eb77ca9e40fd2f8819ac44681fda242dafc2a5cfaa3"
-            },
-            "cambiarAsignaturaClase": {
-              "tipo": "function",
-              "linea": 1027,
-              "hash": "e78ab4cd309d9bfaf52b338fa81c04b4a0bf99a24f838bbfc85a2afcec3aac18"
-            },
-            "cambiarGrupoClase": {
-              "tipo": "function",
-              "linea": 1032,
-              "hash": "8fb96b895b9a70b363fc7e11f6a5802a1e50fd8352d799911abf9e655393fdd5"
-            },
-            "cambiarAlumnoClase": {
-              "tipo": "function",
-              "linea": 1046,
-              "hash": "6accd3825bf4ea56c245a84116bbbc2c09e70fc8deefe392db9becfa023a8e84"
-            },
-            "cargarHorarioMae": {
-              "tipo": "function",
-              "linea": 1061,
-              "hash": "0fdf9c045ddde9c6151643c5336ae59728acdd1ecef62fad30ec000ffa77df24"
-            },
-            "claveCeldaCal_": {
-              "tipo": "function",
-              "linea": 1133,
-              "hash": "dc2b60ab9d3bd6ca2fc01fc8dc12351258eaf177dfe67fcf886f55903689fd72"
-            },
-            "modoCalMae": {
-              "tipo": "var",
-              "linea": 1137,
-              "hash": "39cf33056ecd4166f6214265a42b967a005532dc69926b46728567e8a2237571"
-            },
-            "orientacionCalMae": {
-              "tipo": "var",
-              "linea": 1138,
-              "hash": "4f3563d7aae2c18a2cd7569ed4319d54178f71662efc67fd38633f58dcdf0b1e"
-            },
-            "cambiarModoCal": {
-              "tipo": "function",
-              "linea": 1140,
-              "hash": "f2c943f131701fe84044a756fa93eed9635e42e1d82b74164ac2788113f415e7"
-            },
-            "cambiarOrientacionCal": {
-              "tipo": "function",
-              "linea": 1150,
-              "hash": "920628a7e911519e765e5535801ef77930bc08561a32e7734dee0698fb539f62"
-            },
-            "actualizarBotonesOriCal_": {
-              "tipo": "function",
-              "linea": 1162,
-              "hash": "c7e13b947c97b2fe9083d960877b81284574494e71250d446324dbcfa559a087"
-            },
-            "formatearFechaCorta_": {
-              "tipo": "function",
-              "linea": 1169,
-              "hash": "59629361f647e8e21fc8a3e9c8eae8c1cfd26af004ecfa6b631084f82dd69dd9"
-            },
-            "actualizarBotonesModoCal_": {
-              "tipo": "function",
-              "linea": 1174,
-              "hash": "799c0fff6b0fdfd43ffb9fc28b7c91255346a81937c777c01bc80cc7b98b79d6"
-            },
-            "moverCalClase": {
-              "tipo": "function",
-              "linea": 1183,
-              "hash": "da3ecb11ae9660b3787fff34fc8fb8eab4239238b42f9a8440ca816eca65eb46"
-            },
-            "moverSemanaClase": {
-              "tipo": "function",
-              "linea": 1199,
-              "hash": "eebdbd0c481717f5bff07b191dacfd1d4b96913d86e44a7d0ebdbb170140918b"
-            },
-            "irHoyClase": {
-              "tipo": "function",
-              "linea": 1203,
-              "hash": "9a954253f0092562382763d413bb0bb0f606992f38b3c15e795cf1c0e61ae0f8"
-            },
-            "pintarCalendarioMae_": {
-              "tipo": "function",
-              "linea": 1215,
-              "hash": "57fe3662b3659c893054763a369b91b56258acb5a737a3a6d6f071bdeff8f83d"
-            },
-            "abrirCeldaCal": {
-              "tipo": "function",
-              "linea": 1325,
-              "hash": "f701a928450fc510a3cd47df7ed16859bb73dd0ef5f8b150e1a79aca2652d4e8"
-            },
-            "abrirCeldaVaciaCal": {
-              "tipo": "function",
-              "linea": 1346,
-              "hash": "6f6e73f17ec083f6ca9380e452a64407929c0c8582b0b70d646f6a17b6e5edf3"
-            },
-            "abrirSlotMae": {
-              "tipo": "function",
-              "linea": 1363,
-              "hash": "851c49ca1fa000d172a209037e408f14c642870870b1e802b4a4fd98022afe4c"
-            },
-            "guardarContenidoMae": {
-              "tipo": "function",
-              "linea": 1371,
-              "hash": "a918d600ec97a802f6e91d613318c49f2a0ea9004669009f01444d07001d218f"
-            },
-            "probarVozMae": {
-              "tipo": "function",
-              "linea": 1388,
-              "hash": "01bbd5120446944d35544ce61af0d14223e7e8563a25cc8f0f9ec2cee7cd87b6"
-            },
-            "listaAlumnosPassCache": {
-              "tipo": "let",
-              "linea": 1394,
-              "hash": "7af1e06a447e9de95736bc26319745963e259cb6c85276609ca7e8daaea20296"
-            },
-            "cargarAlumnosPass": {
-              "tipo": "function",
-              "linea": 1396,
-              "hash": "eb7b48220c9c608ff89188cfb1bc15cc4b4858650ff9b63e98054377a700de95"
-            },
-            "actualizarGruposPassDropdown_": {
-              "tipo": "function",
-              "linea": 1414,
-              "hash": "042b097c6ceebc405c793fb204f6cf513edb88de06afa0a767a587cf4a51e604"
-            },
-            "cambiarGradoPassAlu": {
-              "tipo": "function",
-              "linea": 1465,
-              "hash": "7491a64a588c26759692f9c24c55f1aa88de92f4ed910e068f26aed18a8d94e5"
-            },
-            "cambiarGrupoPassAlu": {
-              "tipo": "function",
-              "linea": 1470,
-              "hash": "a16faba5bb70605d9e4b378083506a0fe8b27f829a0d6327a9f5a1339b304338"
-            },
-            "coincideGrupoLocal_": {
-              "tipo": "function",
-              "linea": 1474,
-              "hash": "acd061378b519eb5853704ab55dd1f94d44781dd87a1b6a468ab7a1dd85fdbed"
-            },
-            "filtrarTablaPassLocal": {
-              "tipo": "function",
-              "linea": 1501,
-              "hash": "989a7dde550885b4511edece9d0cff114772c27202ba6687f942995423daa922"
-            },
-            "renderTablaPassAlu_": {
-              "tipo": "function",
-              "linea": 1523,
-              "hash": "5ca7676cfcd9a0819da597b77626eb6a5bed48ba6a30d895cddbedc3d4204def"
-            },
-            "generarClaveUnicaAlu": {
-              "tipo": "function",
-              "linea": 1571,
-              "hash": "ba03a682ca0c35966693bc74d21b49c25948cccce7016df9db36b6e26e46dd4d"
-            },
-            "generarClavesMasivasAlu": {
-              "tipo": "function",
-              "linea": 1581,
-              "hash": "5b7fe76fe98db820d16ab2601b5050e61f5145b1fa220ccb238c50bf9e8d3d61"
-            },
-            "copiarCredencialAlu": {
-              "tipo": "function",
-              "linea": 1617,
-              "hash": "87abba929790cef6e5a5623ccb31c1a2f3297ae30eb525dcbf47c7a0fc6bf6b3"
-            },
-            "copiarFallback_": {
-              "tipo": "function",
-              "linea": 1630,
-              "hash": "191460d96fe804231e51bcae0b4bfbf38278fbbc96bba6aedebf24031a63fd6d"
-            },
-            "ponerClaveAlu": {
-              "tipo": "function",
-              "linea": 1646,
-              "hash": "bfb72bd6a34877780b4874750577c2143013d7f6f032c3bb4a435e21d2d29376"
-            },
-            "cargarContextoPlaneacionNEM": {
-              "tipo": "function",
-              "linea": 1678,
-              "hash": "7c86527b63d4f1fb717bf6d2839f4b2fa7613e7d6f4c26c4c239b5bc9a3ce7bf"
-            },
-            "poblarFiltrosPlan_": {
-              "tipo": "function",
-              "linea": 1688,
-              "hash": "08f638d653a41957a48c9154b84e98cc3759240bc335501533249a7657c3fd03"
-            },
-            "alCambiarFiltroPlan": {
-              "tipo": "function",
-              "linea": 1699,
-              "hash": "8c70f67145aef796b3f36a22c6a573d80fbc3b13bbf07fa802d814a66178a0f0"
-            },
-            "bancoPlanActual": {
-              "tipo": "let",
-              "linea": 1709,
-              "hash": "a97fcd2f9e09b1ae15a7f8a90e6e1f2a04fb7865e0f30d3545dd3139c5bb82cf"
-            },
-            "conmutarBancoPlaneacion_": {
-              "tipo": "function",
-              "linea": 1711,
-              "hash": "9e2cb2de5d2a0b0d8ea5aa7ae22877d400e985dddf76b77206cedeaeb23ece91"
-            },
-            "cargarListaPlaneacionesNEM": {
-              "tipo": "function",
-              "linea": 1735,
-              "hash": "698ade9f09fd4e03c3fc85400403d2f41caec802b5bd48af5943fb4c3f97dfb1"
-            },
-            "pintarGridPlaneaciones": {
-              "tipo": "function",
-              "linea": 1762,
-              "hash": "e85c750ffcb72413bff0560d6a02006dcd4bfcb18e44e3044dad9635a9e99f19"
-            },
-            "copiarProyectoGlobalAMiBanco_": {
-              "tipo": "function",
-              "linea": 1871,
-              "hash": "710f59c8083dd3e81c1de6b67e0f25bcc81ae35476dc6c9d6a3b4ae31261f2c8"
-            },
-            "publicarProyectoEnGlobal_": {
-              "tipo": "function",
-              "linea": 1896,
-              "hash": "dec67813c9a6226f8e4d82afb45fb70a8980cd2ee4496269872f550a7b1c5cc0"
-            },
-            "eliminarProyectoPersonal_": {
-              "tipo": "function",
-              "linea": 1928,
-              "hash": "ea1d8f13c202f9ac4523e703871b37a353cf2df61f66b5b81fc18432b1422ba0"
-            },
-            "abrirModalImportarCensoCTE_": {
-              "tipo": "function",
-              "linea": 1951,
-              "hash": "5ef48de225038f606dd822e120db3e5c3cd120339b835258ba30d1477f096d7b"
-            },
-            "seleccionarHallazgoCensoModal_": {
-              "tipo": "function",
-              "linea": 1996,
-              "hash": "da5d8811c62d3eb96b5e35394152859b607ea30a07e69f49bb2337468b9a0039"
-            },
-            "abrirBancoEncuestas_": {
-              "tipo": "function",
-              "linea": 2014,
-              "hash": "1872355021cdafd9ac5e128693b972aa3ffe7cfd5a64d3099dcc73a717f86c72"
-            },
-            "insertarResumenBanco_": {
-              "tipo": "function",
-              "linea": 2043,
-              "hash": "900f1afbedc770f86eed632a0881975830dacbb3222421f020956913a1a72a9c"
-            },
-            "determinarTrimestreSEP": {
-              "tipo": "function",
-              "linea": 2058,
-              "hash": "cb888ab43fe8a0d7fe10475842baf58ec084659b36e0d583649ba73835d25637"
-            },
-            "calcularPeriodoSegunFecha_": {
-              "tipo": "function",
-              "linea": 2086,
-              "hash": "8c1ff7eff51f52849f55b0ede4c319b00e21ceaeb75fdb3e9f3bd9eb80a05c12"
-            },
-            "inferirCampoYMetodologia_": {
-              "tipo": "function",
-              "linea": 2105,
-              "hash": "a54e591de3861e777eca681e4275ebff5ffcfb95434b482919edb4a5bef53306"
-            },
-            "alCambiarFechaInicioPlan": {
-              "tipo": "function",
-              "linea": 2122,
-              "hash": "27742856797547f0157556fd7ab31c8a9d08e7545889443cf9aff8eb5f21e4ba"
-            },
-            "alSeleccionarClaseHorarioEnPlan": {
-              "tipo": "function",
-              "linea": 2135,
-              "hash": "b819623a7836bac56fe336f26eca5ac8f0e17b98eb81ecfac222877ab9e26d53"
-            },
-            "CATALOGO_PROGRAMA_ANALITICO_CTE_": {
-              "tipo": "const",
-              "linea": 2191,
-              "hash": "c1d0b39f96a41197528ef591424e8dede9d2797281f09a545963d84c2ba4b6a8"
-            },
-            "PADRON_INCLUSION_UDEI_": {
-              "tipo": "const",
-              "linea": 2225,
-              "hash": "05420c39ad89f49a11af2fc6524806219317ddb2ad85ecfae58e7e45dfbce590"
-            },
-            "evaluarInclusionGrupo_": {
-              "tipo": "function",
-              "linea": 2260,
-              "hash": "1107b2c6fe6924284c0c7b5298c19661f36980a3e807cfb19a3f44de151d9e45"
-            },
-            "obtenerCatalogoCTE_": {
-              "tipo": "function",
-              "linea": 2288,
-              "hash": "e622d66d09c2267fc0437521806f53c10bbcd5ad1e86cfb4d6d7edb8479d06e5"
-            },
-            "guardarCatalogoCTE_": {
-              "tipo": "function",
-              "linea": 2299,
-              "hash": "85bc17bd78332d8f5be1ef8a24ac3d44ae53403bf7a2e5f63c0b8bb95101a8dc"
-            },
-            "abrirModalGestionCTE_": {
-              "tipo": "function",
-              "linea": 2305,
-              "hash": "3c2d1bd6ae5750df0914981567706e235644d02fb4d08ea2a51a67d84b524482"
-            },
-            "eliminarProblemaCTEModal_": {
-              "tipo": "function",
-              "linea": 2409,
-              "hash": "6292e7cea2a8463eda6b294d0f85d763039f92b7efc5c8d569fa6aa8ea7f1256"
-            },
-            "agregarNuevoItemCTEModal_": {
-              "tipo": "function",
-              "linea": 2417,
-              "hash": "eacded5149d41ee32bc6deb19760056e3261331cf3a02b46f2c22588d8d55588"
-            },
-            "poblarSelectorProblemasCTE_": {
-              "tipo": "function",
-              "linea": 2438,
-              "hash": "bd8996e47665ac5f3d9cc00958b30a627a2fa48813b945676fd2ea093170013d"
-            },
-            "alSeleccionarProblemaCTE": {
-              "tipo": "function",
-              "linea": 2447,
-              "hash": "a5eb1dd48045fd7180bc09fcc6eb0a8df7ddc01a7973684df05895cb4bd55622"
-            },
-            "CATALOGO_SEP_FASE6_": {
-              "tipo": "const",
-              "linea": 2463,
-              "hash": "b9ab1b511d3b103829f9021b79c1c471118ef7aaab1022dfbcd342045b6967fd"
-            },
-            "matrizCurricularActivaNEM_": {
-              "tipo": "let",
-              "linea": 2828,
-              "hash": "360c1d85ee06bc6b6e2cf3e92f1d580bd2c3c260445aceebb6accf7f77dc830f"
-            },
-            "actualizarCatalogoPDAParaClase_": {
-              "tipo": "function",
-              "linea": 2830,
-              "hash": "2386858cd2640668bf6efa2c174a353f8e39c80656ae3c3329a2a39cc46a5027"
-            },
-            "alSeleccionarContenidoSinteticoNEM": {
-              "tipo": "function",
-              "linea": 2902,
-              "hash": "f9111ee1982260349017e37ecdf92c00d6f76095952291b4f33a681d944650e3"
-            },
-            "obtenerPDAsDeContenidoYGrado_": {
-              "tipo": "function",
-              "linea": 2912,
-              "hash": "8ae6b7887d8b05485931b50b9e38d7355846df260c9e273dd4bc223f9cfcf249"
-            },
-            "poblarSelectorPDASegunContenido_": {
-              "tipo": "function",
-              "linea": 2920,
-              "hash": "8b04d43f52c4d3ce371381929036e729e3361b243df3488161dca0502fac2f0d"
-            },
-            "alCambiarCheckboxPDANEM_": {
-              "tipo": "function",
-              "linea": 2976,
-              "hash": "bfe1c822f6e70e722c880937b2f7b5eba007f9515d724009e831454516eb1816"
-            },
-            "marcarTodosPDAsGrado_": {
-              "tipo": "function",
-              "linea": 3002,
-              "hash": "9af3ca71a8b3f4c048f1398f07919ac91106cfebe789d660e5c3202dca48283d"
-            },
-            "filtrarListaPDAsDOM_": {
-              "tipo": "function",
-              "linea": 3010,
-              "hash": "4a8f8fe048ea90c8d227189219d21f472ce4dda6bc9c38a18bf47d0e481dea5d"
-            },
-            "alternarArticulacionOtrosGrados_": {
-              "tipo": "function",
-              "linea": 3019,
-              "hash": "d8e81aa097c7825929322606edb40a952794aaba5e7ec4f079d38f0eb5bee8ac"
-            },
-            "actualizarCajaArticulacionOtrosGrados_": {
-              "tipo": "function",
-              "linea": 3024,
-              "hash": "5e042f8aab38a562cdad42f45298d1c9f47b630e0219c57a5a753148216bfdec"
-            },
-            "alSeleccionarPDANEM": {
-              "tipo": "function",
-              "linea": 3058,
-              "hash": "404bb6540573f7d894643604ad4a1b913f23d7ee4efed5f02dc262d7677b4284"
-            },
-            "solicitarSugerenciaProyectoIA": {
-              "tipo": "function",
-              "linea": 3064,
-              "hash": "44de627285728b69751d18fecbbda3256c2a16b99927ff589a4cd2033efff814"
-            },
-            "solicitarDesgloseSesionesIA": {
-              "tipo": "function",
-              "linea": 3168,
-              "hash": "30e7e62851855345eba2e44bd5748cb3bedd5a5d7835ed80ad7363535ae09573"
-            },
-            "actualizarEncabezadoClaseNEM_": {
-              "tipo": "function",
-              "linea": 3229,
-              "hash": "77f93677fa05d00c0f26e18018f8d78458114e20d4504b831e1029b40cf91ada"
-            },
-            "abrirPlaneacionDesdeSlotActual": {
-              "tipo": "function",
-              "linea": 3272,
-              "hash": "b0b40df444654d00c61532d447306f713fd297ed0f74cf84fdada5a6f82d7367"
-            },
-            "abrirPlaneacionDesdeGrupoActual": {
-              "tipo": "function",
-              "linea": 3320,
-              "hash": "7c08d05ddf12da6c7011f52c1944f2dec223ca62ef56b84bf99babc6ac2bf912"
-            },
-            "poblarSelectorHorarioPlan_": {
-              "tipo": "function",
-              "linea": 3338,
-              "hash": "38a931ceee9c277b328802f8275ccd11464c708c20b8ef75f92dc218afff3e1d"
-            },
-            "origenFormPlan": {
-              "tipo": "var",
-              "linea": 3377,
-              "hash": "59faa77f5f681d22ed2fa801bff7ffa9570692328a29f026d1c5b4a4a74718ad"
-            },
-            "abrirFormNuevaPlaneacion": {
-              "tipo": "function",
-              "linea": 3379,
-              "hash": "53965d308618741c169970f83a2dbf44d3385199d0c0ae43e1f5116cb9fa7a2b"
-            },
-            "actualizarGruposFormPlan": {
-              "tipo": "function",
-              "linea": 3468,
-              "hash": "e457682bb04f5ec7a59a034c7fa0f7dfcb839eb4dbac19dd6bc776dda5049897"
-            },
-            "editarPlaneacionGeneral": {
-              "tipo": "function",
-              "linea": 3509,
-              "hash": "7b8d10e9cff56c6832c28d8e1cba0892408c0b23236d53faee64d851cac0fe38"
-            },
-            "cargarDatosEnFormPlan_": {
-              "tipo": "function",
-              "linea": 3520,
-              "hash": "94cba93db982ae7aaa27f603650958ca1e91f37e63e7c568a03a04166e186254"
-            },
-            "cerrarFormPlaneacion": {
-              "tipo": "function",
-              "linea": 3576,
-              "hash": "07a0b42b212d8d36bca10e90763c894349ff2b1a8ac208ff89ee6fe550da0ae9"
-            },
-            "guardarPlaneacionForm": {
-              "tipo": "function",
-              "linea": 3594,
-              "hash": "c5fc97ee4b5c138ba138dba9556a90a8fbda8fdb539ea1ece4fb539d3bace28a"
-            },
-            "abrirGestorSesiones": {
-              "tipo": "function",
-              "linea": 3654,
-              "hash": "3e2caf9835a111ca02e75e1bebc9af3ed6a2dc641e9b33166df7a336a00230bb"
-            },
-            "cerrarGestorSesiones": {
-              "tipo": "function",
-              "linea": 3700,
-              "hash": "f85051644c05e575f8eba2638a09702f4bf448d94990b19d559d0c1412bc63ce"
-            },
-            "pintarTabsSesiones": {
-              "tipo": "function",
-              "linea": 3706,
-              "hash": "0d79ca3b1b29380216bb0f517f9f41acd498e209ebbbd4b998336a0d2cc468be"
-            },
-            "seleccionarSesionNEM": {
-              "tipo": "function",
-              "linea": 3721,
-              "hash": "888d6e0c4bd7be48929efdf00c2f8f97576039d7db957f5990bafb5fe4e797c4"
-            },
-            "generarGuionDesdeMomentos": {
-              "tipo": "function",
-              "linea": 3759,
-              "hash": "30228da0e4cc63772bcb0e7d0e9f0e77d04b9e8ae525c0b42c95547086a52565"
-            },
-            "guardarSesionActiva": {
-              "tipo": "function",
-              "linea": 3794,
-              "hash": "1afa6f40aa0a3f81fb0561519741fbb91f7c3f3c4c7604a9e333a65db8f30cda"
-            },
-            "probarVozGuionSesion": {
-              "tipo": "function",
-              "linea": 3868,
-              "hash": "475d3073d6e27a83c257ac557fec9d6cbfead40cfea1968021ee2ae3707cffb3"
-            },
-            "aprobarPlaneacionActual": {
-              "tipo": "function",
-              "linea": 3888,
-              "hash": "e60de1ef94f31969cb61e08404f0947fcca5477304a6f7ddcb222e4eeb868863"
-            },
-            "abrirModalCalendarizarSesion": {
-              "tipo": "function",
-              "linea": 3914,
-              "hash": "200bdd6e692d0ff080d35863ea69db11896efbe13a6437010ff852ae363ad448"
-            },
-            "renderizarTextoClaseDUA": {
-              "tipo": "function",
-              "linea": 3955,
-              "hash": "d9dbbdc3e5425c79a1ba25fcda53e6fc403415c66c8c51646edb3859a5db31af"
-            },
-            "hablarDesdeParrafo": {
-              "tipo": "function",
-              "linea": 4036,
-              "hash": "185a282679bf3cc62d684374a0cd9f4bb5022f1da071a602ff191f5f113d090e"
-            },
-            "actualizarParrafoVozEnfocado_": {
-              "tipo": "function",
-              "linea": 4046,
-              "hash": "734a2d56d01ceb92738c57a498f9e5bfef78e841c4393497bf4612329afe6ad6"
-            },
-            "campoClaveClase": {
-              "tipo": "const",
-              "linea": 4077,
-              "hash": "3bdba30dc8645b4ae60e614ca754e992214b05fd31a65f41f6615448c2bbdae8"
-            },
-            "campoUsuarioClase": {
-              "tipo": "const",
-              "linea": 4078,
-              "hash": "fb3217d364b2fb4ebb949c6934820a3666c72c7f3a3d36f513b266fce3c9f06e"
-            },
-            "MAPA_MODULOS_": {
-              "tipo": "const",
-              "linea": 4101,
-              "hash": "567a8a5e86c68566612145e0b858da620e6ee2ad5f40e77fb04d44353c4927e2"
-            },
-            "MAPA_NAV_ITEMS_": {
-              "tipo": "const",
-              "linea": 4111,
-              "hash": "43025166c1055e1d38608eab7107e679d872dc24126c1518870d4ef03a260e37"
-            },
-            "moduloActivoShell_": {
-              "tipo": "let",
-              "linea": 4121,
-              "hash": "d83d2d7b40bb92f6357d22cdf33b0341162cf635938e4450b69b6f00ee3775ef"
-            },
-            "resolverClaveModulo_": {
-              "tipo": "function",
-              "linea": 4123,
-              "hash": "d13521aeb062f662d0b2a288123fbc0adc962caa04fa45544bb4968b387b2e1b"
-            },
-            "conmutarModuloShell": {
-              "tipo": "function",
-              "linea": 4133,
-              "hash": "f2ab4953e8b171ee554e73200268d19865e41be48065e5a66876c11d2b5b9fd2"
-            },
-            "toggleSidebarShell": {
-              "tipo": "function",
-              "linea": 4183,
-              "hash": "8e4ac72eadf82f232ddcb63005e42b01096d57dd42d1cd3ed6a6ab97067d55b1"
-            },
-            "etapaPlanActual_": {
-              "tipo": "var",
-              "linea": 4204,
-              "hash": "ff127e10e06f8d7104a06bc6c33690686bff42acef6c8d0d4685fe2233b680a0"
-            },
-            "irAPasoPlanNEM": {
-              "tipo": "function",
-              "linea": 4206,
-              "hash": "c7f2a638a5ff3affef845f4a0158f5f1dad5330313ed84ce65840968854e4a9f"
-            },
-            "CATALOGO_LIBROS_SEP_FASE6_": {
-              "tipo": "const",
-              "linea": 4259,
-              "hash": "61666375a663659b8787f3f2ec53e96d65cc4d80a14b7edbf6e81abc7ffc5fa8"
-            },
-            "abrirModalLibrosSEP_": {
-              "tipo": "function",
-              "linea": 4370,
-              "hash": "51593297414546195b8ca872131bf9051379963e176a84242ebc80fbca469640"
-            },
-            "insertarReferenciaLibroSesion_": {
-              "tipo": "function",
-              "linea": 4409,
-              "hash": "1ffc75744031425a5de3102b3c265ddb33a467726162b387d9e8301b1a74007e"
-            },
-            "eliminarIDeviceCard_": {
-              "tipo": "function",
-              "linea": 4430,
-              "hash": "349622140b4e5ffece7a29c48f7acbdf5c7b9ac1cfdb9f0c4602048f23588793"
-            },
-            "eliminarLegoCard_": {
-              "tipo": "function",
-              "linea": 4436,
-              "hash": "68f7e105c4ce9b165f5ce5df760b8ad61466a7c088154edb3da3058f4ad73fa5"
-            },
-            "insertariDeviceSesion_": {
-              "tipo": "function",
-              "linea": 4442,
-              "hash": "e3133ffab59b48be5af1578a503fea1dd4dc0a6b4d7df1f0417884f1bbbe099f"
-            },
-            "probarAudioIDevice_": {
-              "tipo": "function",
-              "linea": 4494,
-              "hash": "afec500aac360d9a4dee52eed3d512df3565d47818415742009679db5ca2e4c0"
-            },
-            "conmutarVistaPlaneacion_": {
-              "tipo": "function",
-              "linea": 4513,
-              "hash": "b45bb0b0ad4b538ce2619ef8c769344d542e823b478a5a6377482bf87f2a9fc8"
-            },
-            "abrirFormNuevaPlaneacionNEM": {
-              "tipo": "function",
-              "linea": 4565,
-              "hash": "348f9d1381645bd1741e2784788c58fb845147683a507c6bd96421917292a3a2"
-            },
-            "inicializarModuloPlaneacion_": {
-              "tipo": "function",
-              "linea": 4596,
-              "hash": "7f59d3d205e470091ac8613679b2f031c10fddf3f272af0216debeb48fac1598"
-            }
-          },
-          "sentencias": [
-            {
-              "linea": 3592,
-              "texto": "window.cerrarFormPlaneacion = cerrarFormPlaneacion;",
-              "hash": "58b1cfbe87703acb579920cfb259491f43a32eadc7f7b993dd7d1e25517dc23a"
-            },
-            {
-              "linea": 4058,
-              "texto": "document.addEventListener('keydown', function (ev) { const vistaAlu = document.getElementById('vistaAlu'); if (!vistaAlu || vistaAlu.classLi",
-              "hash": "c03973a6fa842b97569a413c018b8404ac2d880091246efe810c0cd7cc83bdd4"
-            },
-            {
-              "linea": 4079,
-              "texto": "if (campoClaveClase) campoClaveClase.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') entrarClase(); });",
-              "hash": "925efd7bc1bdd45cc18e267f1856fbbd7739e14a1e6b62c129e9b42a9010b9b7"
-            },
-            {
-              "linea": 4082,
-              "texto": "if (campoUsuarioClase) campoUsuarioClase.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && campoClaveClase) campoClaveCl",
-              "hash": "c8695cb328c437aa91b4a966a8c41aba22ac397140f56c079ee32bd985969f38"
-            },
-            {
-              "linea": 4085,
-              "texto": "window.addEventListener('click', function (ev) { /* asi-dd-panel-global-closer */ if (!ev.target.closest('.asi-dd')) { document.querySelecto",
-              "hash": "8b64ebd721862469ed4a36e788c793d98a06fb7cfa53c3aeeb2e7f9661e05fd2"
-            },
-            {
-              "linea": 4091,
-              "texto": "if (typeof prepararVocesClase_ === 'function') { prepararVocesClase_(); if (window.speechSynthesis && typeof window.speechSynthesis.addEvent",
-              "hash": "3610e00dc20c754f113af4fb20c3379ae525b980223f0d6d9d6f8e5cda5948cf"
-            },
-            {
-              "linea": 4181,
-              "texto": "window.conmutarModuloShell = conmutarModuloShell;",
-              "hash": "bf6a97e0c32ae70f3533427d5cedb28e56fcb81e92285a306d41d68649f4a621"
-            },
-            {
-              "linea": 4192,
-              "texto": "try { if (localStorage.getItem('ST90_SIDEBAR_COLAPSADO') === '1') { setTimeout(function () { const s = document.getElementById('appShellSide",
-              "hash": "a8dd6c3be3fb66a662bda448ace47361c378f3bba6ac88d621a68f37d38d7fde"
-            },
-            {
-              "linea": 4199,
-              "texto": "catch (e) {}",
-              "hash": "fb901db9a38fd735ea88083ff1225628c48d817b635e63d421f8841305de09d6"
-            },
-            {
-              "linea": 4246,
-              "texto": "window.irAPasoPlanNEM = irAPasoPlanNEM;",
-              "hash": "17369a9038b717420e8e0422fe80f5382a34ecbe6eb3a7cb303d579f8bde42b1"
-            },
-            {
-              "linea": 4249,
-              "texto": "document.addEventListener('change', function(e) { if (e.target && e.target.type === 'checkbox' && e.target.closest && e.target.closest('#wra",
-              "hash": "3986d205cb4ce26de0d4f7d05487282c36b9b07e7fcb46a4b4377323a2201b1f"
-            }
-          ]
-        }
-      ]
+      "sha256": "b1217753ab18f27ef807359c4fb509cd1f13cf4d70204331a3c0073fffbede80",
+      "documentos": []
     },
     "Encuestas.gs": {
       "sha256": "bb5c942eec32d498d140cfb206457b84722d3782c070ccb4fa01a52ee6be401c",
@@ -10948,6 +10125,898 @@
               "linea": 51,
               "texto": "window.addEventListener('click', function (ev) { /* asi-dd-panel-global-closer */ if (!ev.target.closest('.asi-dd')) { document.querySelecto",
               "hash": "8b64ebd721862469ed4a36e788c793d98a06fb7cfa53c3aeeb2e7f9661e05fd2"
+            }
+          ]
+        }
+      ]
+    },
+    "AdminPlanJS_01.html": {
+      "sha256": "c977ad65d1e876285069f6711952b487ca53c790ba47b97eab6e6db21c644cc8",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_01.html#script0",
+          "simbolos": {
+            "tokenClase": {
+              "tipo": "var",
+              "linea": 5,
+              "hash": "b4be5fa31546246eba77954c33b95078d04998ae87a48c2cfd9ab9770bee06dd"
+            },
+            "ctxPlanNEM": {
+              "tipo": "var",
+              "linea": 6,
+              "hash": "e27ca700d33e227fcc41c809f376c91d2454d5ae8716d4061b5d9cd0f962c7c8"
+            },
+            "listaPlanNEM": {
+              "tipo": "var",
+              "linea": 7,
+              "hash": "bfdf9f502efcf42f69ec0935d539e4ec62e08d9be330f42c48b9f10dd4dc333b"
+            },
+            "planActualNEM": {
+              "tipo": "var",
+              "linea": 8,
+              "hash": "250730de621397ac544f85d3a4273bb08048aac54a5367a81e51c5c5cca88d86"
+            },
+            "sesionesActualesNEM": {
+              "tipo": "var",
+              "linea": 9,
+              "hash": "56582c2264e0892feec4f8f94ae4979ed2f8fe9d31dd1e1d24a97e89312128f3"
+            },
+            "sesionActivaIdx": {
+              "tipo": "var",
+              "linea": 10,
+              "hash": "6fcfe0d4da30bd995ebe59980b5dc4e1ff2eea004c49d09845c8f2ec99f1a07c"
+            },
+            "slotMaeSel": {
+              "tipo": "var",
+              "linea": 16,
+              "hash": "b9ab27de824002e517eb947c1a58cc9b59c4470e0c52d80031b327e754a6b700"
+            },
+            "panelMaeUlt": {
+              "tipo": "var",
+              "linea": 14,
+              "hash": "52c610b2fe3a8aa79faeaf109e01b950bad241c75ed604b22d9c8359e912192d"
+            },
+            "aluClaseSel": {
+              "tipo": "var",
+              "linea": 15,
+              "hash": "08b8fa8625c9d85ff940b3cd3695f56ed287f5764c16e90f90d1fd77b851e1ea"
+            },
+            "fechaClaseEtiquetaManual": {
+              "tipo": "var",
+              "linea": 17,
+              "hash": "98bd62ea632dde035f4d3991fab6747f2549db6c20098b2d7ef1318524fb00bf"
+            },
+            "getTokenPlan_": {
+              "tipo": "function",
+              "linea": 19,
+              "hash": "40ed4fcda7a2967e4279822d4b04a5020fba9af861dcfb97286e5853f06c0c87"
+            },
+            "fechaLocalDesde_": {
+              "tipo": "function",
+              "linea": 382,
+              "hash": "a3d70fa23b761132a3ab16ffd4208ea76b2ee26544494330814bec4476a772a5"
+            },
+            "fechaLocalClase": {
+              "tipo": "function",
+              "linea": 32,
+              "hash": "25ac4c79dd92a4fdbb0882ddf52bcaf22bb89fca1109916f3dffddb97ed5f51d"
+            },
+            "fmtFechaCortaClase_": {
+              "tipo": "function",
+              "linea": 36,
+              "hash": "687548898c88f5713139f0e8d55d4b82036a210a7f3aee52edc29fe13020b2c5"
+            },
+            "recortarEtq_": {
+              "tipo": "function",
+              "linea": 42,
+              "hash": "8013c46cafc62164867a2b0e44a454cc84cc4ab8183cb15240f6c7e108da95df"
+            },
+            "textoOpcionClase_": {
+              "tipo": "function",
+              "linea": 48,
+              "hash": "a19cd1c941eae3ac6029f4d3cd9b85f3afb56addd6f54c8fde9fb97f0d89627a"
+            },
+            "pintarEtqFiltroClase_": {
+              "tipo": "function",
+              "linea": 54,
+              "hash": "cb0464e3ecf525e4beeb0edcd219f1594820b6265cc1fcffad029eb3abadec02"
+            },
+            "pintarEtqFiltroPass_": {
+              "tipo": "function",
+              "linea": 72,
+              "hash": "72057a1eed283b9c249dd150343ad51b34247510bccda23da065dc340640eacf"
+            },
+            "detenerVoz": {
+              "tipo": "function",
+              "linea": 90,
+              "hash": "b07ef5f03f1d3576c21cd52dbd22064fd6c95f71f947cbba7660798d66d1080a"
+            },
+            "hablarTexto": {
+              "tipo": "function",
+              "linea": 94,
+              "hash": "fd1cbcac7c8709db6728d722f4da434459eb912e759b492f76d86d26ab7fc853"
+            },
+            "tabN1Clase": {
+              "tipo": "function",
+              "linea": 103,
+              "hash": "1bbd360a81525d5fa95b828e1e9402d684dca85a54f0cfeadb586db313dfc608"
+            },
+            "renderizarTabsSesiones": {
+              "tipo": "function",
+              "linea": 111,
+              "hash": "9fd42ce010c4a3a8394d2cbf45ef4b12a38c3aa34902f5ccd2478c769a42f30a"
+            },
+            "cargarSesionActivaEnEditor": {
+              "tipo": "function",
+              "linea": 115,
+              "hash": "3a8ffe16b5465e32050c376612943371b070932a9e4108a8e59442636ed3cf0f"
+            },
+            "toggleHorarioMae": {
+              "tipo": "function",
+              "linea": 119,
+              "hash": "5cbfc02174b7bad3f4b2370616ae3a6bb46a32fbcccb2934b7771cd98e2345da"
+            },
+            "valorSel_": {
+              "tipo": "function",
+              "linea": 135,
+              "hash": "fa78ae6e0131781d1d6fcfb4c50e221fe2e29f18893840241d0f9e1fa4aa9666"
+            },
+            "llenarOpciones_": {
+              "tipo": "function",
+              "linea": 139,
+              "hash": "99e3f3129a67e473ef74c9d853a37b969f4ab008145e512bb6af2ec87261bd0d"
+            },
+            "nombreAluSel_": {
+              "tipo": "function",
+              "linea": 147,
+              "hash": "060bb4e25c8168aa9dddab3324fac6175422054991a2535ab8c6876cf6979a7f"
+            },
+            "formatearRangoDdMmAa_": {
+              "tipo": "function",
+              "linea": 153,
+              "hash": "af67fc8e4d5e6a450bfe4930f480cf710d3d8bb741265b7f11a8b79fe9b59f8d"
+            },
+            "actualizarHintMae_": {
+              "tipo": "function",
+              "linea": 169,
+              "hash": "a489908ef28ad6079c3a9fe8245e89386163327b1121be1ac87ce0873e5e334c"
+            },
+            "pintarAlumnosAcceso_": {
+              "tipo": "function",
+              "linea": 177,
+              "hash": "a10b9c24dfb87880b59857db4814cf9ea1242061efa51f4a7d9a8552032a5a8b"
+            },
+            "abrirCalendarioFechaClase": {
+              "tipo": "function",
+              "linea": 181,
+              "hash": "87b75bd332168bb7727f079c6e27acd6e3ef4c392952c50830b3018067d26583"
+            },
+            "alCambiarFechaClase": {
+              "tipo": "function",
+              "linea": 194,
+              "hash": "cc4d6188bae86035a6c01eb77ca9e40fd2f8819ac44681fda242dafc2a5cfaa3"
+            },
+            "cambiarAsignaturaClase": {
+              "tipo": "function",
+              "linea": 200,
+              "hash": "e78ab4cd309d9bfaf52b338fa81c04b4a0bf99a24f838bbfc85a2afcec3aac18"
+            },
+            "cambiarGrupoClase": {
+              "tipo": "function",
+              "linea": 205,
+              "hash": "8fb96b895b9a70b363fc7e11f6a5802a1e50fd8352d799911abf9e655393fdd5"
+            },
+            "cambiarAlumnoClase": {
+              "tipo": "function",
+              "linea": 219,
+              "hash": "6accd3825bf4ea56c245a84116bbbc2c09e70fc8deefe392db9becfa023a8e84"
+            },
+            "cargarHorarioMae": {
+              "tipo": "function",
+              "linea": 234,
+              "hash": "0fdf9c045ddde9c6151643c5336ae59728acdd1ecef62fad30ec000ffa77df24"
+            },
+            "claveCeldaCal_": {
+              "tipo": "function",
+              "linea": 306,
+              "hash": "dc2b60ab9d3bd6ca2fc01fc8dc12351258eaf177dfe67fcf886f55903689fd72"
+            },
+            "modoCalMae": {
+              "tipo": "var",
+              "linea": 310,
+              "hash": "39cf33056ecd4166f6214265a42b967a005532dc69926b46728567e8a2237571"
+            },
+            "orientacionCalMae": {
+              "tipo": "var",
+              "linea": 311,
+              "hash": "4f3563d7aae2c18a2cd7569ed4319d54178f71662efc67fd38633f58dcdf0b1e"
+            },
+            "cambiarModoCal": {
+              "tipo": "function",
+              "linea": 313,
+              "hash": "f2c943f131701fe84044a756fa93eed9635e42e1d82b74164ac2788113f415e7"
+            },
+            "cambiarOrientacionCal": {
+              "tipo": "function",
+              "linea": 323,
+              "hash": "920628a7e911519e765e5535801ef77930bc08561a32e7734dee0698fb539f62"
+            },
+            "actualizarBotonesOriCal_": {
+              "tipo": "function",
+              "linea": 335,
+              "hash": "c7e13b947c97b2fe9083d960877b81284574494e71250d446324dbcfa559a087"
+            },
+            "formatearFechaCorta_": {
+              "tipo": "function",
+              "linea": 342,
+              "hash": "59629361f647e8e21fc8a3e9c8eae8c1cfd26af004ecfa6b631084f82dd69dd9"
+            },
+            "actualizarBotonesModoCal_": {
+              "tipo": "function",
+              "linea": 347,
+              "hash": "799c0fff6b0fdfd43ffb9fc28b7c91255346a81937c777c01bc80cc7b98b79d6"
+            },
+            "moverCalClase": {
+              "tipo": "function",
+              "linea": 356,
+              "hash": "da3ecb11ae9660b3787fff34fc8fb8eab4239238b42f9a8440ca816eca65eb46"
+            },
+            "moverSemanaClase": {
+              "tipo": "function",
+              "linea": 372,
+              "hash": "eebdbd0c481717f5bff07b191dacfd1d4b96913d86e44a7d0ebdbb170140918b"
+            },
+            "irHoyClase": {
+              "tipo": "function",
+              "linea": 376,
+              "hash": "9a954253f0092562382763d413bb0bb0f606992f38b3c15e795cf1c0e61ae0f8"
+            },
+            "pintarCalendarioMae_": {
+              "tipo": "function",
+              "linea": 388,
+              "hash": "57fe3662b3659c893054763a369b91b56258acb5a737a3a6d6f071bdeff8f83d"
+            },
+            "abrirCeldaCal": {
+              "tipo": "function",
+              "linea": 498,
+              "hash": "f701a928450fc510a3cd47df7ed16859bb73dd0ef5f8b150e1a79aca2652d4e8"
+            },
+            "abrirCeldaVaciaCal": {
+              "tipo": "function",
+              "linea": 519,
+              "hash": "6f6e73f17ec083f6ca9380e452a64407929c0c8582b0b70d646f6a17b6e5edf3"
+            },
+            "abrirSlotMae": {
+              "tipo": "function",
+              "linea": 536,
+              "hash": "851c49ca1fa000d172a209037e408f14c642870870b1e802b4a4fd98022afe4c"
+            },
+            "guardarContenidoMae": {
+              "tipo": "function",
+              "linea": 544,
+              "hash": "a918d600ec97a802f6e91d613318c49f2a0ea9004669009f01444d07001d218f"
+            },
+            "probarVozMae": {
+              "tipo": "function",
+              "linea": 561,
+              "hash": "01bbd5120446944d35544ce61af0d14223e7e8563a25cc8f0f9ec2cee7cd87b6"
+            },
+            "listaAlumnosPassCache": {
+              "tipo": "let",
+              "linea": 567,
+              "hash": "7af1e06a447e9de95736bc26319745963e259cb6c85276609ca7e8daaea20296"
+            },
+            "cargarAlumnosPass": {
+              "tipo": "function",
+              "linea": 569,
+              "hash": "eb7b48220c9c608ff89188cfb1bc15cc4b4858650ff9b63e98054377a700de95"
+            },
+            "actualizarGruposPassDropdown_": {
+              "tipo": "function",
+              "linea": 587,
+              "hash": "042b097c6ceebc405c793fb204f6cf513edb88de06afa0a767a587cf4a51e604"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminPlanJS_02.html": {
+      "sha256": "549b3cea76096e44c908c2d973ad90349f07fea5c29a93f0b354cfb299b2e780",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_02.html#script0",
+          "simbolos": {
+            "cambiarGradoPassAlu": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "7491a64a588c26759692f9c24c55f1aa88de92f4ed910e068f26aed18a8d94e5"
+            },
+            "cambiarGrupoPassAlu": {
+              "tipo": "function",
+              "linea": 10,
+              "hash": "a16faba5bb70605d9e4b378083506a0fe8b27f829a0d6327a9f5a1339b304338"
+            },
+            "coincideGrupoLocal_": {
+              "tipo": "function",
+              "linea": 14,
+              "hash": "acd061378b519eb5853704ab55dd1f94d44781dd87a1b6a468ab7a1dd85fdbed"
+            },
+            "filtrarTablaPassLocal": {
+              "tipo": "function",
+              "linea": 41,
+              "hash": "989a7dde550885b4511edece9d0cff114772c27202ba6687f942995423daa922"
+            },
+            "renderTablaPassAlu_": {
+              "tipo": "function",
+              "linea": 63,
+              "hash": "5ca7676cfcd9a0819da597b77626eb6a5bed48ba6a30d895cddbedc3d4204def"
+            },
+            "generarClaveUnicaAlu": {
+              "tipo": "function",
+              "linea": 111,
+              "hash": "ba03a682ca0c35966693bc74d21b49c25948cccce7016df9db36b6e26e46dd4d"
+            },
+            "generarClavesMasivasAlu": {
+              "tipo": "function",
+              "linea": 121,
+              "hash": "5b7fe76fe98db820d16ab2601b5050e61f5145b1fa220ccb238c50bf9e8d3d61"
+            },
+            "copiarCredencialAlu": {
+              "tipo": "function",
+              "linea": 157,
+              "hash": "87abba929790cef6e5a5623ccb31c1a2f3297ae30eb525dcbf47c7a0fc6bf6b3"
+            },
+            "copiarFallback_": {
+              "tipo": "function",
+              "linea": 170,
+              "hash": "191460d96fe804231e51bcae0b4bfbf38278fbbc96bba6aedebf24031a63fd6d"
+            },
+            "ponerClaveAlu": {
+              "tipo": "function",
+              "linea": 186,
+              "hash": "bfb72bd6a34877780b4874750577c2143013d7f6f032c3bb4a435e21d2d29376"
+            },
+            "cargarContextoPlaneacionNEM": {
+              "tipo": "function",
+              "linea": 218,
+              "hash": "7c86527b63d4f1fb717bf6d2839f4b2fa7613e7d6f4c26c4c239b5bc9a3ce7bf"
+            },
+            "poblarFiltrosPlan_": {
+              "tipo": "function",
+              "linea": 228,
+              "hash": "08f638d653a41957a48c9154b84e98cc3759240bc335501533249a7657c3fd03"
+            },
+            "alCambiarFiltroPlan": {
+              "tipo": "function",
+              "linea": 239,
+              "hash": "8c70f67145aef796b3f36a22c6a573d80fbc3b13bbf07fa802d814a66178a0f0"
+            },
+            "bancoPlanActual": {
+              "tipo": "let",
+              "linea": 249,
+              "hash": "a97fcd2f9e09b1ae15a7f8a90e6e1f2a04fb7865e0f30d3545dd3139c5bb82cf"
+            },
+            "conmutarBancoPlaneacion_": {
+              "tipo": "function",
+              "linea": 251,
+              "hash": "9e2cb2de5d2a0b0d8ea5aa7ae22877d400e985dddf76b77206cedeaeb23ece91"
+            },
+            "cargarListaPlaneacionesNEM": {
+              "tipo": "function",
+              "linea": 275,
+              "hash": "698ade9f09fd4e03c3fc85400403d2f41caec802b5bd48af5943fb4c3f97dfb1"
+            },
+            "pintarGridPlaneaciones": {
+              "tipo": "function",
+              "linea": 302,
+              "hash": "e85c750ffcb72413bff0560d6a02006dcd4bfcb18e44e3044dad9635a9e99f19"
+            },
+            "copiarProyectoGlobalAMiBanco_": {
+              "tipo": "function",
+              "linea": 411,
+              "hash": "710f59c8083dd3e81c1de6b67e0f25bcc81ae35476dc6c9d6a3b4ae31261f2c8"
+            },
+            "publicarProyectoEnGlobal_": {
+              "tipo": "function",
+              "linea": 436,
+              "hash": "dec67813c9a6226f8e4d82afb45fb70a8980cd2ee4496269872f550a7b1c5cc0"
+            },
+            "eliminarProyectoPersonal_": {
+              "tipo": "function",
+              "linea": 468,
+              "hash": "ea1d8f13c202f9ac4523e703871b37a353cf2df61f66b5b81fc18432b1422ba0"
+            },
+            "abrirModalImportarCensoCTE_": {
+              "tipo": "function",
+              "linea": 491,
+              "hash": "5ef48de225038f606dd822e120db3e5c3cd120339b835258ba30d1477f096d7b"
+            },
+            "seleccionarHallazgoCensoModal_": {
+              "tipo": "function",
+              "linea": 536,
+              "hash": "da5d8811c62d3eb96b5e35394152859b607ea30a07e69f49bb2337468b9a0039"
+            },
+            "abrirBancoEncuestas_": {
+              "tipo": "function",
+              "linea": 554,
+              "hash": "1872355021cdafd9ac5e128693b972aa3ffe7cfd5a64d3099dcc73a717f86c72"
+            },
+            "insertarResumenBanco_": {
+              "tipo": "function",
+              "linea": 583,
+              "hash": "900f1afbedc770f86eed632a0881975830dacbb3222421f020956913a1a72a9c"
+            },
+            "determinarTrimestreSEP": {
+              "tipo": "function",
+              "linea": 598,
+              "hash": "cb888ab43fe8a0d7fe10475842baf58ec084659b36e0d583649ba73835d25637"
+            },
+            "calcularPeriodoSegunFecha_": {
+              "tipo": "function",
+              "linea": 626,
+              "hash": "8c1ff7eff51f52849f55b0ede4c319b00e21ceaeb75fdb3e9f3bd9eb80a05c12"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminPlanJS_03.html": {
+      "sha256": "646a7552a25c2279e84cb10178c1b074317cc7084ac3588480ae6ce37f8ef387",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_03.html#script0",
+          "simbolos": {
+            "inferirCampoYMetodologia_": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "a54e591de3861e777eca681e4275ebff5ffcfb95434b482919edb4a5bef53306"
+            },
+            "alCambiarFechaInicioPlan": {
+              "tipo": "function",
+              "linea": 22,
+              "hash": "27742856797547f0157556fd7ab31c8a9d08e7545889443cf9aff8eb5f21e4ba"
+            },
+            "alSeleccionarClaseHorarioEnPlan": {
+              "tipo": "function",
+              "linea": 35,
+              "hash": "b819623a7836bac56fe336f26eca5ac8f0e17b98eb81ecfac222877ab9e26d53"
+            },
+            "CATALOGO_PROGRAMA_ANALITICO_CTE_": {
+              "tipo": "const",
+              "linea": 91,
+              "hash": "c1d0b39f96a41197528ef591424e8dede9d2797281f09a545963d84c2ba4b6a8"
+            },
+            "PADRON_INCLUSION_UDEI_": {
+              "tipo": "const",
+              "linea": 125,
+              "hash": "05420c39ad89f49a11af2fc6524806219317ddb2ad85ecfae58e7e45dfbce590"
+            },
+            "evaluarInclusionGrupo_": {
+              "tipo": "function",
+              "linea": 160,
+              "hash": "1107b2c6fe6924284c0c7b5298c19661f36980a3e807cfb19a3f44de151d9e45"
+            },
+            "obtenerCatalogoCTE_": {
+              "tipo": "function",
+              "linea": 188,
+              "hash": "e622d66d09c2267fc0437521806f53c10bbcd5ad1e86cfb4d6d7edb8479d06e5"
+            },
+            "guardarCatalogoCTE_": {
+              "tipo": "function",
+              "linea": 199,
+              "hash": "85bc17bd78332d8f5be1ef8a24ac3d44ae53403bf7a2e5f63c0b8bb95101a8dc"
+            },
+            "abrirModalGestionCTE_": {
+              "tipo": "function",
+              "linea": 205,
+              "hash": "3c2d1bd6ae5750df0914981567706e235644d02fb4d08ea2a51a67d84b524482"
+            },
+            "eliminarProblemaCTEModal_": {
+              "tipo": "function",
+              "linea": 309,
+              "hash": "6292e7cea2a8463eda6b294d0f85d763039f92b7efc5c8d569fa6aa8ea7f1256"
+            },
+            "agregarNuevoItemCTEModal_": {
+              "tipo": "function",
+              "linea": 317,
+              "hash": "eacded5149d41ee32bc6deb19760056e3261331cf3a02b46f2c22588d8d55588"
+            },
+            "poblarSelectorProblemasCTE_": {
+              "tipo": "function",
+              "linea": 338,
+              "hash": "bd8996e47665ac5f3d9cc00958b30a627a2fa48813b945676fd2ea093170013d"
+            },
+            "alSeleccionarProblemaCTE": {
+              "tipo": "function",
+              "linea": 347,
+              "hash": "a5eb1dd48045fd7180bc09fcc6eb0a8df7ddc01a7973684df05895cb4bd55622"
+            },
+            "CATALOGO_SEP_FASE6_": {
+              "tipo": "const",
+              "linea": 363,
+              "hash": "b9ab1b511d3b103829f9021b79c1c471118ef7aaab1022dfbcd342045b6967fd"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminPlanJS_04.html": {
+      "sha256": "6e6f8ba781b489566aa127f47d4558004c2ba2200ba5db405288fab9949e0faa",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_04.html#script0",
+          "simbolos": {
+            "matrizCurricularActivaNEM_": {
+              "tipo": "let",
+              "linea": 5,
+              "hash": "360c1d85ee06bc6b6e2cf3e92f1d580bd2c3c260445aceebb6accf7f77dc830f"
+            },
+            "actualizarCatalogoPDAParaClase_": {
+              "tipo": "function",
+              "linea": 7,
+              "hash": "2386858cd2640668bf6efa2c174a353f8e39c80656ae3c3329a2a39cc46a5027"
+            },
+            "alSeleccionarContenidoSinteticoNEM": {
+              "tipo": "function",
+              "linea": 79,
+              "hash": "f9111ee1982260349017e37ecdf92c00d6f76095952291b4f33a681d944650e3"
+            },
+            "obtenerPDAsDeContenidoYGrado_": {
+              "tipo": "function",
+              "linea": 89,
+              "hash": "8ae6b7887d8b05485931b50b9e38d7355846df260c9e273dd4bc223f9cfcf249"
+            },
+            "poblarSelectorPDASegunContenido_": {
+              "tipo": "function",
+              "linea": 97,
+              "hash": "8b04d43f52c4d3ce371381929036e729e3361b243df3488161dca0502fac2f0d"
+            },
+            "alCambiarCheckboxPDANEM_": {
+              "tipo": "function",
+              "linea": 153,
+              "hash": "bfe1c822f6e70e722c880937b2f7b5eba007f9515d724009e831454516eb1816"
+            },
+            "marcarTodosPDAsGrado_": {
+              "tipo": "function",
+              "linea": 179,
+              "hash": "9af3ca71a8b3f4c048f1398f07919ac91106cfebe789d660e5c3202dca48283d"
+            },
+            "filtrarListaPDAsDOM_": {
+              "tipo": "function",
+              "linea": 187,
+              "hash": "4a8f8fe048ea90c8d227189219d21f472ce4dda6bc9c38a18bf47d0e481dea5d"
+            },
+            "alternarArticulacionOtrosGrados_": {
+              "tipo": "function",
+              "linea": 196,
+              "hash": "d8e81aa097c7825929322606edb40a952794aaba5e7ec4f079d38f0eb5bee8ac"
+            },
+            "actualizarCajaArticulacionOtrosGrados_": {
+              "tipo": "function",
+              "linea": 201,
+              "hash": "5e042f8aab38a562cdad42f45298d1c9f47b630e0219c57a5a753148216bfdec"
+            },
+            "alSeleccionarPDANEM": {
+              "tipo": "function",
+              "linea": 235,
+              "hash": "404bb6540573f7d894643604ad4a1b913f23d7ee4efed5f02dc262d7677b4284"
+            },
+            "solicitarSugerenciaProyectoIA": {
+              "tipo": "function",
+              "linea": 241,
+              "hash": "44de627285728b69751d18fecbbda3256c2a16b99927ff589a4cd2033efff814"
+            },
+            "solicitarDesgloseSesionesIA": {
+              "tipo": "function",
+              "linea": 345,
+              "hash": "30e7e62851855345eba2e44bd5748cb3bedd5a5d7835ed80ad7363535ae09573"
+            },
+            "actualizarEncabezadoClaseNEM_": {
+              "tipo": "function",
+              "linea": 406,
+              "hash": "77f93677fa05d00c0f26e18018f8d78458114e20d4504b831e1029b40cf91ada"
+            },
+            "abrirPlaneacionDesdeSlotActual": {
+              "tipo": "function",
+              "linea": 449,
+              "hash": "b0b40df444654d00c61532d447306f713fd297ed0f74cf84fdada5a6f82d7367"
+            },
+            "abrirPlaneacionDesdeGrupoActual": {
+              "tipo": "function",
+              "linea": 497,
+              "hash": "7c08d05ddf12da6c7011f52c1944f2dec223ca62ef56b84bf99babc6ac2bf912"
+            },
+            "poblarSelectorHorarioPlan_": {
+              "tipo": "function",
+              "linea": 515,
+              "hash": "38a931ceee9c277b328802f8275ccd11464c708c20b8ef75f92dc218afff3e1d"
+            },
+            "origenFormPlan": {
+              "tipo": "var",
+              "linea": 554,
+              "hash": "59faa77f5f681d22ed2fa801bff7ffa9570692328a29f026d1c5b4a4a74718ad"
+            },
+            "abrirFormNuevaPlaneacion": {
+              "tipo": "function",
+              "linea": 556,
+              "hash": "53965d308618741c169970f83a2dbf44d3385199d0c0ae43e1f5116cb9fa7a2b"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminPlanJS_05.html": {
+      "sha256": "d4f3f44a62741d433ec779cf50fd9439d23a0a45cd5586d6ef35cedaea254f75",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_05.html#script0",
+          "simbolos": {
+            "actualizarGruposFormPlan": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "e457682bb04f5ec7a59a034c7fa0f7dfcb839eb4dbac19dd6bc776dda5049897"
+            },
+            "editarPlaneacionGeneral": {
+              "tipo": "function",
+              "linea": 46,
+              "hash": "7b8d10e9cff56c6832c28d8e1cba0892408c0b23236d53faee64d851cac0fe38"
+            },
+            "cargarDatosEnFormPlan_": {
+              "tipo": "function",
+              "linea": 57,
+              "hash": "94cba93db982ae7aaa27f603650958ca1e91f37e63e7c568a03a04166e186254"
+            },
+            "cerrarFormPlaneacion": {
+              "tipo": "function",
+              "linea": 113,
+              "hash": "07a0b42b212d8d36bca10e90763c894349ff2b1a8ac208ff89ee6fe550da0ae9"
+            },
+            "guardarPlaneacionForm": {
+              "tipo": "function",
+              "linea": 130,
+              "hash": "c5fc97ee4b5c138ba138dba9556a90a8fbda8fdb539ea1ece4fb539d3bace28a"
+            },
+            "abrirGestorSesiones": {
+              "tipo": "function",
+              "linea": 190,
+              "hash": "3e2caf9835a111ca02e75e1bebc9af3ed6a2dc641e9b33166df7a336a00230bb"
+            },
+            "cerrarGestorSesiones": {
+              "tipo": "function",
+              "linea": 236,
+              "hash": "f85051644c05e575f8eba2638a09702f4bf448d94990b19d559d0c1412bc63ce"
+            },
+            "pintarTabsSesiones": {
+              "tipo": "function",
+              "linea": 242,
+              "hash": "0d79ca3b1b29380216bb0f517f9f41acd498e209ebbbd4b998336a0d2cc468be"
+            },
+            "seleccionarSesionNEM": {
+              "tipo": "function",
+              "linea": 257,
+              "hash": "888d6e0c4bd7be48929efdf00c2f8f97576039d7db957f5990bafb5fe4e797c4"
+            },
+            "generarGuionDesdeMomentos": {
+              "tipo": "function",
+              "linea": 295,
+              "hash": "30228da0e4cc63772bcb0e7d0e9f0e77d04b9e8ae525c0b42c95547086a52565"
+            },
+            "guardarSesionActiva": {
+              "tipo": "function",
+              "linea": 330,
+              "hash": "1afa6f40aa0a3f81fb0561519741fbb91f7c3f3c4c7604a9e333a65db8f30cda"
+            },
+            "probarVozGuionSesion": {
+              "tipo": "function",
+              "linea": 404,
+              "hash": "475d3073d6e27a83c257ac557fec9d6cbfead40cfea1968021ee2ae3707cffb3"
+            },
+            "aprobarPlaneacionActual": {
+              "tipo": "function",
+              "linea": 424,
+              "hash": "e60de1ef94f31969cb61e08404f0947fcca5477304a6f7ddcb222e4eeb868863"
+            },
+            "abrirModalCalendarizarSesion": {
+              "tipo": "function",
+              "linea": 450,
+              "hash": "200bdd6e692d0ff080d35863ea69db11896efbe13a6437010ff852ae363ad448"
+            },
+            "renderizarTextoClaseDUA": {
+              "tipo": "function",
+              "linea": 491,
+              "hash": "d9dbbdc3e5425c79a1ba25fcda53e6fc403415c66c8c51646edb3859a5db31af"
+            },
+            "hablarDesdeParrafo": {
+              "tipo": "function",
+              "linea": 572,
+              "hash": "185a282679bf3cc62d684374a0cd9f4bb5022f1da071a602ff191f5f113d090e"
+            },
+            "actualizarParrafoVozEnfocado_": {
+              "tipo": "function",
+              "linea": 582,
+              "hash": "734a2d56d01ceb92738c57a498f9e5bfef78e841c4393497bf4612329afe6ad6"
+            },
+            "campoClaveClase": {
+              "tipo": "const",
+              "linea": 593,
+              "hash": "3bdba30dc8645b4ae60e614ca754e992214b05fd31a65f41f6615448c2bbdae8"
+            },
+            "campoUsuarioClase": {
+              "tipo": "const",
+              "linea": 594,
+              "hash": "fb3217d364b2fb4ebb949c6934820a3666c72c7f3a3d36f513b266fce3c9f06e"
+            },
+            "MAPA_MODULOS_": {
+              "tipo": "const",
+              "linea": 599,
+              "hash": "567a8a5e86c68566612145e0b858da620e6ee2ad5f40e77fb04d44353c4927e2"
+            },
+            "MAPA_NAV_ITEMS_": {
+              "tipo": "const",
+              "linea": 609,
+              "hash": "43025166c1055e1d38608eab7107e679d872dc24126c1518870d4ef03a260e37"
+            },
+            "moduloActivoShell_": {
+              "tipo": "let",
+              "linea": 619,
+              "hash": "d83d2d7b40bb92f6357d22cdf33b0341162cf635938e4450b69b6f00ee3775ef"
+            },
+            "resolverClaveModulo_": {
+              "tipo": "function",
+              "linea": 621,
+              "hash": "d13521aeb062f662d0b2a288123fbc0adc962caa04fa45544bb4968b387b2e1b"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminPlanJS_06.html": {
+      "sha256": "ca267df2489adc871fad3f36f9d1d77d35c6a2c1b96779ff5463ad73d16ce7c5",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_06.html#script0",
+          "simbolos": {
+            "conmutarModuloShell": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "f2ab4953e8b171ee554e73200268d19865e41be48065e5a66876c11d2b5b9fd2"
+            },
+            "toggleSidebarShell": {
+              "tipo": "function",
+              "linea": 54,
+              "hash": "8e4ac72eadf82f232ddcb63005e42b01096d57dd42d1cd3ed6a6ab97067d55b1"
+            },
+            "etapaPlanActual_": {
+              "tipo": "var",
+              "linea": 66,
+              "hash": "ff127e10e06f8d7104a06bc6c33690686bff42acef6c8d0d4685fe2233b680a0"
+            },
+            "irAPasoPlanNEM": {
+              "tipo": "function",
+              "linea": 68,
+              "hash": "c7f2a638a5ff3affef845f4a0158f5f1dad5330313ed84ce65840968854e4a9f"
+            },
+            "CATALOGO_LIBROS_SEP_FASE6_": {
+              "tipo": "const",
+              "linea": 112,
+              "hash": "61666375a663659b8787f3f2ec53e96d65cc4d80a14b7edbf6e81abc7ffc5fa8"
+            },
+            "abrirModalLibrosSEP_": {
+              "tipo": "function",
+              "linea": 223,
+              "hash": "51593297414546195b8ca872131bf9051379963e176a84242ebc80fbca469640"
+            },
+            "insertarReferenciaLibroSesion_": {
+              "tipo": "function",
+              "linea": 262,
+              "hash": "1ffc75744031425a5de3102b3c265ddb33a467726162b387d9e8301b1a74007e"
+            },
+            "eliminarIDeviceCard_": {
+              "tipo": "function",
+              "linea": 283,
+              "hash": "349622140b4e5ffece7a29c48f7acbdf5c7b9ac1cfdb9f0c4602048f23588793"
+            },
+            "eliminarLegoCard_": {
+              "tipo": "function",
+              "linea": 289,
+              "hash": "68f7e105c4ce9b165f5ce5df760b8ad61466a7c088154edb3da3058f4ad73fa5"
+            },
+            "insertariDeviceSesion_": {
+              "tipo": "function",
+              "linea": 295,
+              "hash": "e3133ffab59b48be5af1578a503fea1dd4dc0a6b4d7df1f0417884f1bbbe099f"
+            },
+            "probarAudioIDevice_": {
+              "tipo": "function",
+              "linea": 347,
+              "hash": "afec500aac360d9a4dee52eed3d512df3565d47818415742009679db5ca2e4c0"
+            },
+            "conmutarVistaPlaneacion_": {
+              "tipo": "function",
+              "linea": 366,
+              "hash": "b45bb0b0ad4b538ce2619ef8c769344d542e823b478a5a6377482bf87f2a9fc8"
+            },
+            "abrirFormNuevaPlaneacionNEM": {
+              "tipo": "function",
+              "linea": 418,
+              "hash": "348f9d1381645bd1741e2784788c58fb845147683a507c6bd96421917292a3a2"
+            },
+            "inicializarModuloPlaneacion_": {
+              "tipo": "function",
+              "linea": 449,
+              "hash": "7f59d3d205e470091ac8613679b2f031c10fddf3f272af0216debeb48fac1598"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminPlanJS_Arranque.html": {
+      "sha256": "909834fb691d27f3d5132c24adbe301feddb299f764c5e9f8ec1e2320fb5e073",
+      "documentos": [
+        {
+          "id": "AdminPlanJS_Arranque.html#script0",
+          "simbolos": {},
+          "sentencias": [
+            {
+              "linea": 4,
+              "texto": "window.cerrarFormPlaneacion = cerrarFormPlaneacion;",
+              "hash": "58b1cfbe87703acb579920cfb259491f43a32eadc7f7b993dd7d1e25517dc23a"
+            },
+            {
+              "linea": 7,
+              "texto": "document.addEventListener('keydown', function (ev) { const vistaAlu = document.getElementById('vistaAlu'); if (!vistaAlu || vistaAlu.classLi",
+              "hash": "c03973a6fa842b97569a413c018b8404ac2d880091246efe810c0cd7cc83bdd4"
+            },
+            {
+              "linea": 25,
+              "texto": "if (campoClaveClase) campoClaveClase.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') entrarClase(); });",
+              "hash": "925efd7bc1bdd45cc18e267f1856fbbd7739e14a1e6b62c129e9b42a9010b9b7"
+            },
+            {
+              "linea": 28,
+              "texto": "if (campoUsuarioClase) campoUsuarioClase.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && campoClaveClase) campoClaveCl",
+              "hash": "c8695cb328c437aa91b4a966a8c41aba22ac397140f56c079ee32bd985969f38"
+            },
+            {
+              "linea": 31,
+              "texto": "window.addEventListener('click', function (ev) { /* asi-dd-panel-global-closer */ if (!ev.target.closest('.asi-dd')) { document.querySelecto",
+              "hash": "8b64ebd721862469ed4a36e788c793d98a06fb7cfa53c3aeeb2e7f9661e05fd2"
+            },
+            {
+              "linea": 37,
+              "texto": "if (typeof prepararVocesClase_ === 'function') { prepararVocesClase_(); if (window.speechSynthesis && typeof window.speechSynthesis.addEvent",
+              "hash": "3610e00dc20c754f113af4fb20c3379ae525b980223f0d6d9d6f8e5cda5948cf"
+            },
+            {
+              "linea": 43,
+              "texto": "window.conmutarModuloShell = conmutarModuloShell;",
+              "hash": "bf6a97e0c32ae70f3533427d5cedb28e56fcb81e92285a306d41d68649f4a621"
+            },
+            {
+              "linea": 45,
+              "texto": "try { if (localStorage.getItem('ST90_SIDEBAR_COLAPSADO') === '1') { setTimeout(function () { const s = document.getElementById('appShellSide",
+              "hash": "a8dd6c3be3fb66a662bda448ace47361c378f3bba6ac88d621a68f37d38d7fde"
+            },
+            {
+              "linea": 52,
+              "texto": "catch (e) {}",
+              "hash": "fb901db9a38fd735ea88083ff1225628c48d817b635e63d421f8841305de09d6"
+            },
+            {
+              "linea": 53,
+              "texto": "window.irAPasoPlanNEM = irAPasoPlanNEM;",
+              "hash": "17369a9038b717420e8e0422fe80f5382a34ecbe6eb3a7cb303d579f8bde42b1"
+            },
+            {
+              "linea": 56,
+              "texto": "document.addEventListener('change', function(e) { if (e.target && e.target.type === 'checkbox' && e.target.closest && e.target.closest('#wra",
+              "hash": "3986d205cb4ce26de0d4f7d05487282c36b9b07e7fcb46a4b4377323a2201b1f"
             }
           ]
         }

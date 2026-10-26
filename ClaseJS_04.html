@@ -1,0 +1,608 @@
+<script>
+/* ClaseJS_04 — copiarCredencialAlu, copiarFallback_, ponerClaveAlu, ctxPlanNEM, listaPlanNEM, planActualNEM, sesionesActualesNEM, sesionActivaIdx, parrafosVozAlu_, parrafoVozActualIdx_, ... */
+
+
+    function copiarCredencialAlu(usuario, clave) {
+      const texto = 'Usuario: ' + usuario + '\nContraseña: ' + clave;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () {
+          toast('Credenciales copiadas al portapapeles.', 'ok');
+        }).catch(function () {
+          copiarFallback_(texto);
+        });
+      } else {
+        copiarFallback_(texto);
+      }
+    }
+
+    function copiarFallback_(texto) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('Credenciales copiadas al portapapeles.', 'ok');
+      } catch (e) {
+        toast('Credenciales: ' + texto, 'info');
+      }
+    }
+
+    function ponerClaveAlu(mat, usuario, clave) {
+      modal({
+        titulo: 'Cambiar acceso del alumno',
+        html: '<label for="usuClaveAlu">Usuario</label><input id="usuClaveAlu" type="text" value="' + escaparHtml(usuario || '') + '" autocomplete="off">' +
+          '<label for="passClaveAlu">Contraseña (mín. 6)</label><input id="passClaveAlu" type="text" value="' + escaparHtml(clave || '') + '" autocomplete="off">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            usuario: (fondo.querySelector('#usuClaveAlu') || {}).value || '',
+            clave: (fondo.querySelector('#passClaveAlu') || {}).value || ''
+          };
+        }
+      }).then(function (datos) {
+        if (!datos) return;
+        gsRun('asignarClaveAlumnoClase', tokenClase, mat, datos.usuario, datos.clave).then(function (r) {
+          toast((r && r.mensaje) || 'Listo.', 'ok');
+          cargarHorarioMae();
+          if (document.getElementById('tabAluAcc') && !document.getElementById('tabAluAcc').classList.contains('oculto')) {
+            cargarAlumnosPass(true);
+          }
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    /* =========================================================================
+       PLANEACIÓN DIDÁCTICA NEM, SESIONES DUA Y AULA HABLADA MULTIMODAL
+       ========================================================================= */
+    let ctxPlanNEM = null;
+    let listaPlanNEM = [];
+    let planActualNEM = null;
+    let sesionesActualesNEM = [];
+    let sesionActivaIdx = 0;
+    let parrafosVozAlu_ = [];
+    let parrafoVozActualIdx_ = -1;
+
+    function cargarContextoPlaneacionNEM() {
+      gsRun('contextoInicialPlaneacionNEM', tokenClase).then(function (r) {
+        ctxPlanNEM = r || {};
+        poblarFiltrosPlan_();
+        cargarListaPlaneacionesNEM();
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function poblarFiltrosPlan_() {
+      if (!ctxPlanNEM) return;
+      const selG = document.getElementById('selPlanGrupo');
+      if (selG) {
+        const grupos = ctxPlanNEM.grupos || [];
+        selG.innerHTML = '<option value="">Todos los grupos</option>' + grupos.map(function (g) {
+          return '<option value="' + escaparHtml(g) + '">' + escaparHtml(g) + '</option>';
+        }).join('');
+      }
+    }
+
+    function alCambiarFiltroPlan() {
+      const g = (document.getElementById('selPlanGrado') || {}).value || '';
+      const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
+      const lblG = document.getElementById('lblPlanGrado');
+      const lblGrp = document.getElementById('lblPlanGrupo');
+      if (lblG) lblG.textContent = g ? (g + '°') : 'Grado';
+      if (lblGrp) lblGrp.textContent = grp ? grp : 'Grupo';
+      cargarListaPlaneacionesNEM();
+    }
+
+    let bancoPlanActual = 'personal';
+
+    function conmutarBancoPlaneacion_(banco) {
+      bancoPlanActual = banco;
+      const btnPer = document.getElementById('btnBancoPersonal');
+      const btnGlo = document.getElementById('btnBancoGlobal');
+      const bannerGlo = document.getElementById('bannerRepositorioGlobal');
+      const wrapDoc = document.getElementById('wrapPlanFiltroDocente');
+      const titCat = document.getElementById('titCatalogoPlan');
+
+      if (banco === 'global') {
+        if (btnPer) { btnPer.classList.remove('activo'); btnPer.style.background = 'transparent'; btnPer.style.color = '#475569'; }
+        if (btnGlo) { btnGlo.classList.add('activo'); btnGlo.style.background = '#ffffff'; btnGlo.style.color = 'var(--st90-azul)'; }
+        if (bannerGlo) bannerGlo.classList.remove('oculto');
+        if (wrapDoc) wrapDoc.classList.remove('oculto');
+        if (titCat) titCat.textContent = 'Repositorio Escolar Global — Proyectos Colegiados Publicados';
+      } else {
+        if (btnGlo) { btnGlo.classList.remove('activo'); btnGlo.style.background = 'transparent'; btnGlo.style.color = '#475569'; }
+        if (btnPer) { btnPer.classList.add('activo'); btnPer.style.background = '#ffffff'; btnPer.style.color = 'var(--st90-azul)'; }
+        if (bannerGlo) bannerGlo.classList.add('oculto');
+        if (wrapDoc) wrapDoc.classList.add('oculto');
+        if (titCat) titCat.textContent = 'Mi Banco Personal de Proyectos y Planeaciones (NEM Fase 6)';
+      }
+      cargarListaPlaneacionesNEM();
+    }
+
+    function cargarListaPlaneacionesNEM(forzar) {
+      const g = (document.getElementById('selPlanGrado') || {}).value || '';
+      const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
+      const asig = (document.getElementById('selPlanAsignatura') || {}).value || '';
+      const trim = (document.getElementById('selPlanTrimestre') || {}).value || '';
+      const doc = (document.getElementById('inpPlanDocente') || {}).value || '';
+
+      const grid = document.getElementById('gridPlaneaciones');
+      if (grid) grid.innerHTML = '<p class="hint" style="text-align:center;">Cargando planeaciones didácticas…</p>';
+
+      const opciones = {
+        banco: bancoPlanActual,
+        grado: g,
+        grupo: grp,
+        asignatura: asig,
+        trimestre: trim,
+        docente: doc
+      };
+
+      gsRun('listarPlaneacionesNEM', tokenClase, opciones).then(function (res) {
+        listaPlanNEM = (res && res.planeaciones) || [];
+        pintarGridPlaneaciones(listaPlanNEM);
+      }).catch(function (e) {
+        if (grid) grid.innerHTML = '<p class="hint" style="color:var(--st90-rojo);text-align:center;">' + escaparHtml((e && e.message) || String(e)) + '</p>';
+      });
+    }
+
+    function pintarGridPlaneaciones(lista) {
+      const grid = document.getElementById('gridPlaneaciones');
+      const txtConteo = document.getElementById('txtPlanConteo');
+      if (!grid) return;
+      if (txtConteo) txtConteo.textContent = lista.length + (lista.length === 1 ? ' planeación' : ' planeaciones');
+
+      if (!lista || !lista.length) {
+        const esGlobal = (bancoPlanActual === 'global');
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px 16px;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">' +
+          '<p style="font-size:16px;font-weight:700;color:#334155;margin:0 0 6px;">' +
+            (esGlobal ? 'No hay proyectos publicados en el Repositorio Global con estos filtros' : 'No hay planeaciones registradas en tu Banco Personal con estos filtros') +
+          '</p>' +
+          '<p class="hint" style="margin:0 0 14px;">' +
+            (esGlobal ? 'Los proyectos aparecerán aquí cuando los docentes completen sus sesiones didácticas y las publiquen.' : 'Pulsa el botón "Nueva" para crear tu primer proyecto didáctico o clona uno desde el Repositorio Global.') +
+          '</p>' +
+          (esGlobal 
+            ? '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="conmutarBancoPlaneacion_(\'personal\')">← Ir a Mi Banco Personal</button>' 
+            : '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="abrirFormNuevaPlaneacion()">+ Nueva Planeación</button>') +
+        '</div>';
+        return;
+      }
+
+      let html = '';
+      lista.forEach(function (p) {
+        const pId = p.Id || p.id || '';
+        const pTitulo = p.Titulo || p.titulo || 'Sin título';
+        const est = String(p.Estado || p.estado || 'BORRADOR').toUpperCase();
+        const docProp = p.DocentePropietario || p.docentePropietario || p.Docente || p.docente || 'Docente ST90';
+        const esCopia = p.EsCopiaDe || p.esCopiaDe || '';
+        const puedeEditar = !!p.puedeEditar;
+        const numSes = Number(p.NumSesiones || p.numSesiones || '3');
+        const comp = Number(p.sesionesCompletadas || 0);
+
+        let claseBadge = 'badge-borrador';
+        if (est === 'PUBLICADA' || est === 'APROBADO' || est === 'TERMINADA') claseBadge = 'badge-aprobado';
+        else if (est === 'PROGRAMADO') claseBadge = 'badge-programado';
+        else if (est === 'REALIZADO') claseBadge = 'badge-realizado';
+
+        html += '<div class="nem-card" style="display:flex;flex-direction:column;justify-content:space-between;">';
+        html += '<div>';
+        html += '  <div class="nem-card-header">';
+        html += '    <h3 class="nem-card-title">' + escaparHtml(pTitulo) + '</h3>';
+        html += '    <span class="badge-nem ' + claseBadge + '">' + escaparHtml(est) + '</span>';
+        html += '  </div>';
+
+        // Badge de autor y procedencia
+        html += '  <div style="margin:4px 0 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">';
+        html += '    <span class="tipo-badge" style="background:#e0e7ff;color:#3730a3;font-size:11px;">👨‍🏫 ' + escaparHtml(docProp) + '</span>';
+        if (esCopia) {
+          html += '    <span class="tipo-badge" style="background:#fef3c7;color:#92400e;font-size:10.5px;">📋 Copia adaptada</span>';
+        }
+        html += '  </div>';
+
+        html += '  <div class="nem-meta-row">';
+        html += '    <span class="nem-meta-pill">📚 ' + escaparHtml(p.Asignatura || p.asignatura || '') + '</span>';
+        html += '    <span class="nem-meta-pill">👥 ' + escaparHtml((p.Grado || p.grado || '') + '°' + (p.Grupo || p.grupo || '')) + '</span>';
+        html += '    <span class="nem-meta-pill">⏱️ ' + escaparHtml(numSes) + ' sesiones</span>';
+        html += '  </div>';
+
+        html += '  <div class="nem-meta-row">';
+        html += '    <span class="nem-meta-pill" style="color:var(--st90-azul);">🌐 ' + escaparHtml(p.CampoFormativo || p.campoFormativo || 'Campo NEM') + '</span>';
+        const per = p.Periodo || p.periodo;
+        if (per) {
+          html += '    <span class="nem-meta-pill" style="color:#0f766e;background:#ccfbf1;">🗓️ ' + escaparHtml(per) + '</span>';
+        }
+        html += '  </div>';
+
+        const pdaTxt = p.PDA || p.pda || '';
+        if (pdaTxt) {
+          html += '  <p class="nem-card-pda" title="' + escaparHtml(pdaTxt) + '"><strong>PDA:</strong> ' + escaparHtml(pdaTxt) + '</p>';
+        }
+        html += '</div>';
+
+        // Footer con botones según contexto de Banco Personal vs Global
+        html += '<div class="nem-card-footer" style="display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0;">';
+        
+        if (bancoPlanActual === 'global') {
+          // Acciones en Banco Global: Copiar a mi Banco y Ver Sesiones
+          html += '  <button type="button" class="nem-btn-accion nem-btn-primario" style="width:100%;text-align:center;background:#059669;border-color:#059669;" onclick="copiarProyectoGlobalAMiBanco_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\')">📥 Copiar a mi Banco Personal</button>';
+          html += '  <button type="button" class="nem-btn-accion" style="width:100%;text-align:center;" onclick="abrirGestorSesiones(\'' + escaparHtml(pId) + '\')">👁️ Explorar Sesiones (' + escaparHtml(numSes) + ')</button>';
+        } else {
+          // Acciones en Banco Personal del docente creador
+          html += '  <div style="display:flex;gap:6px;width:100%;">';
+          html += '    <button type="button" class="nem-btn-accion nem-btn-primario" style="flex:1;" onclick="abrirGestorSesiones(\'' + escaparHtml(pId) + '\')">Sesiones (' + escaparHtml(numSes) + ')</button>';
+          if (puedeEditar) {
+            html += '    <button type="button" class="nem-btn-accion" style="flex:1;" onclick="editarPlaneacionGeneral(\'' + escaparHtml(pId) + '\')">Editar</button>';
+          }
+          html += '  </div>';
+
+          html += '  <div style="display:flex;gap:6px;width:100%;">';
+          if (puedeEditar && est !== 'PUBLICADA') {
+            html += '    <button type="button" class="nem-btn-accion" style="flex:1;background:#f0fdf4;color:#166534;border-color:#bbf7d0;font-weight:700;" onclick="publicarProyectoEnGlobal_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\', ' + numSes + ', ' + comp + ')" title="Publicar este proyecto didáctico terminado al Repositorio Global Escolar">🚀 Publicar Global</button>';
+          }
+          if (puedeEditar) {
+            html += '    <button type="button" class="nem-btn-accion" style="color:#dc2626;border-color:#fecaca;padding:4px 8px;" onclick="eliminarProyectoPersonal_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\')" title="Eliminar del Banco Personal">🗑️</button>';
+          }
+          html += '  </div>';
+        }
+
+        html += '</div>';
+        html += '</div>';
+      });
+
+      grid.innerHTML = html;
+    }
+
+    /* ============================================================
+       OPERACIONES COLEGIALES: CLONAR, PUBLICAR Y ELIMINAR PLANEACIONES
+       ============================================================ */
+    function copiarProyectoGlobalAMiBanco_(idPlan, titulo) {
+      modal({
+        titulo: '📥 Copiar al Banco Personal',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.6;">' +
+          '<p>¿Deseas clonar el proyecto didáctico <strong>' + escaparHtml(titulo) + '</strong> a tu Banco Personal?</p>' +
+          '<p style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 12px;color:#166534;font-size:12px;">' +
+            '✨ <strong>Reglas Colegiadas:</strong> Se generará una copia 100% independiente con todas sus sesiones y momentos didácticos para que puedas adaptarla a tus alumnos sin alterar el proyecto original del colega.' +
+          '</p>' +
+        '</div>',
+        botones: [
+          { texto: 'Cancelar', clase: 'btn-secundario', valor: false },
+          { texto: 'Copiar a mi Banco', clase: 'btn-primario', valor: true }
+        ]
+      }).then(function (conf) {
+        if (!conf) return;
+        toast('Clonando proyecto didáctico...', 'info');
+        gsRun('clonarPlaneacionAGlobal', tokenClase, idPlan).then(function (res) {
+          toast(res.mensaje || 'Planeación clonada con éxito.', 'ok');
+          conmutarBancoPlaneacion_('personal');
+        }).catch(function (err) {
+          toast((err && err.message) || String(err), 'error');
+        });
+      });
+    }
+
+    function publicarProyectoEnGlobal_(idPlan, titulo, numSes, comp) {
+      modal({
+        titulo: '🚀 Publicar en el Repositorio Global',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.6;">' +
+          '<p>Estás a punto de publicar el proyecto <strong>' + escaparHtml(titulo) + '</strong> en el Repositorio Colegiado de la Secundaria Técnica 90.</p>' +
+          '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 12px;color:#1e40af;font-size:12px;margin-bottom:10px;">' +
+            '📋 <strong>Validación de Calidad Pedagógica:</strong><br>' +
+            '• Todas las sesiones (' + numSes + ') deben tener sus momentos didácticos completos (Apertura, Desarrollo, Actividad, Cierre).<br>' +
+            '• Guion accesible e iDevices para lectura/escucha del estudiante.' +
+          '</div>' +
+          '<p>Al publicar, tus colegas podrán inspirarse en tu diseño didáctico y copiarlo a sus respectivos bancos de planeación.</p>' +
+        '</div>',
+        botones: [
+          { texto: 'Aún no', clase: 'btn-secundario', valor: false },
+          { texto: 'Publicar Ahora', clase: 'btn-primario', valor: true }
+        ]
+      }).then(function (conf) {
+        if (!conf) return;
+        toast('Verificando sesiones y publicando...', 'info');
+        gsRun('publicarPlaneacionEnRepositorio', tokenClase, idPlan).then(function (res) {
+          toast(res.mensaje || '¡Proyecto publicado exitosamente en el Repositorio Global!', 'ok');
+          cargarListaPlaneacionesNEM();
+        }).catch(function (err) {
+          modal({
+            titulo: '⚠️ Sesiones Incompletas',
+            html: '<p style="color:#b91c1c;font-size:13px;line-height:1.5;">' + escaparHtml((err && err.message) || String(err)) + '</p>',
+            botones: [{ texto: 'Entendido', clase: 'btn-primario', valor: true }]
+          });
+        });
+      });
+    }
+
+    function eliminarProyectoPersonal_(idPlan, titulo) {
+      modal({
+        titulo: '🗑️ Eliminar Planeación',
+        html: '<p style="font-size:13px;color:#334155;">¿Estás seguro de que deseas eliminar permanentemente <strong>' + escaparHtml(titulo) + '</strong> y todas sus sesiones de tu Banco Personal?</p>',
+        botones: [
+          { texto: 'Cancelar', clase: 'btn-secundario', valor: false },
+          { texto: 'Eliminar', clase: 'btn-peligro', valor: true }
+        ]
+      }).then(function (conf) {
+        if (!conf) return;
+        toast('Eliminando planeación...', 'info');
+        gsRun('eliminarPlaneacionNEM', tokenClase, idPlan).then(function (res) {
+          toast(res.mensaje || 'Planeación eliminada.', 'ok');
+          cargarListaPlaneacionesNEM();
+        }).catch(function (err) {
+          toast((err && err.message) || String(err), 'error');
+        });
+      });
+    }
+
+    /* ============================================================
+       INYECCIÓN DEL CENSO ESCOLAR AL DIAGNÓSTICO CTE (#planProblema)
+       ============================================================ */
+    function abrirModalImportarCensoCTE_() {
+      const hallazgos = [
+        {
+          id: 'movilidad',
+          titulo: '🚲 Movilidad y Trayecto Seguro (Riesgo Vial)',
+          texto: 'El 68.4% de los alumnos de la comunidad escolar enfrenta factores de riesgo vial en cruces de alta afluencia vehicular (Av. Tláhuac y Calle 11) con tiempos de traslado superiores a 40 minutos, detonando fatiga y necesidad de proyectos comunitarios de seguridad vial y movilidad sustentable.'
+        },
+        {
+          id: 'lectura',
+          titulo: '📖 Hábitos de Lectura y Uso de Pantallas',
+          texto: 'Solo el 18.2% de los estudiantes lee por placer de forma habitual, dedicando un promedio de 4.8 horas diarias a redes sociales y videojuegos en dispositivos móviles, lo cual genera fatiga visual, bajo vocabulario de comprensión profunda y dispersión en la atención sostenida.'
+        },
+        {
+          id: 'convivencia',
+          titulo: '🤝 Convivencia Pacífica y Salud Emocional',
+          texto: 'El 42.1% del alumnado reporta necesidad de fortalecer habilidades de autorregulación emocional y comunicación asertiva para prevenir tensiones en el aula y el patio escolar, demandando proyectos didácticos orientados a la empatía, el diálogo reflexivo y la mediación pacífica.'
+        },
+        {
+          id: 'alimentacion',
+          titulo: '🥗 Alimentación Saludable y Entorno Sustentable',
+          texto: 'El 56.7% de los estudiantes consume alimentos ultraprocesados y bebidas azucaradas en el trayecto escolar, derivando en baja energía matutina y una alta generación de residuos plásticos en el perímetro del plantel, requiriendo proyectos de consumo responsable y nutrición comunitaria.'
+        }
+      ];
+
+      let opcionesHtml = '<div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;">';
+      hallazgos.forEach(function (h, idx) {
+        opcionesHtml += '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;cursor:pointer;transition:all .15s ease;" onmouseover="this.style.borderColor=\'#2563eb\';this.style.background=\'#eff6ff\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.background=\'#f8fafc\'" onclick="seleccionarHallazgoCensoModal_(' + idx + ')">';
+        opcionesHtml += '  <strong style="color:var(--st90-azul);font-size:13px;display:block;margin-bottom:4px;">' + escaparHtml(h.titulo) + '</strong>';
+        opcionesHtml += '  <p style="margin:0;color:#475569;line-height:1.45;">' + escaparHtml(h.texto) + '</p>';
+        opcionesHtml += '</div>';
+      });
+      opcionesHtml += '</div>';
+
+      window.__hallazgosCensoTemp = hallazgos;
+
+      modal({
+        titulo: '📊 Censo Escolar ST90: Hallazgos de Diagnóstico CTE',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.5;margin-bottom:12px;">' +
+          '<p style="margin:0 0 10px;">Selecciona el hallazgo del censo escolar que fundamenta la situación-problema de tu proyecto didáctico para inyectarlo en el campo Problemática de la Comunidad:</p>' +
+          opcionesHtml +
+        '</div>',
+        botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+      });
+    }
+
+    function seleccionarHallazgoCensoModal_(idx) {
+      const lista = window.__hallazgosCensoTemp || [];
+      const item = lista[idx];
+      if (!item) return;
+
+      const txt = document.getElementById('planProblema');
+      if (txt) {
+        const actual = txt.value.trim();
+        txt.value = actual ? (actual + '\n\n' + item.texto) : item.texto;
+        txt.focus();
+      }
+      cerrarModal();
+      toast('Hallazgo del Censo importado exitosamente a la planeación.', 'ok');
+    }
+
+    function determinarTrimestreSEP(fechaString) {
+      if (!fechaString) return 'Trimestre 1 (Ago - Nov)';
+      const s = String(fechaString).trim();
+      let mes = 0;
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+        // Extracción directa sin desfase UTC de zona horaria
+        mes = parseInt(s.substring(5, 7), 10);
+      } else {
+        const d = new Date(s.indexOf('T') === -1 ? (s + 'T12:00:00') : s);
+        if (!isNaN(d.getTime())) {
+          mes = d.getMonth() + 1;
+        }
+      }
+
+      // Calendario Oficial SEP Educación Secundaria:
+      // Trimestre 1: Agosto (8) a Noviembre (11)
+      // Trimestre 2: Diciembre (12) a Marzo (3)
+      // Trimestre 3: Abril (4) a Julio (7)
+      if (mes >= 8 && mes <= 11) {
+        return 'Trimestre 1 (Ago - Nov)';
+      } else if (mes === 12 || (mes >= 1 && mes <= 3)) {
+        return 'Trimestre 2 (Dic - Mar)';
+      } else if (mes >= 4 && mes <= 7) {
+        return 'Trimestre 3 (Abr - Jul)';
+      }
+      return 'Trimestre 1 (Ago - Nov)';
+    }
+
+    function calcularPeriodoSegunFecha_(fechaStr) {
+      const etiqueta = determinarTrimestreSEP(fechaStr);
+      let periodoNum = 1;
+      let rango = 'Ago - Nov';
+      if (etiqueta.indexOf('Trimestre 2') >= 0) {
+        periodoNum = 2;
+        rango = 'Dic - Mar';
+      } else if (etiqueta.indexOf('Trimestre 3') >= 0) {
+        periodoNum = 3;
+        rango = 'Abr - Jul';
+      }
+      return {
+        periodo: periodoNum,
+        etiqueta: etiqueta,
+        rango: rango,
+        badge: '🗓️ ' + etiqueta
+      };
+    }
+
+    function inferirCampoYMetodologia_(asig) {
+      const norm = String(asig || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (norm.indexOf('espanol') >= 0 || norm.indexOf('lengua') >= 0 || norm.indexOf('ingles') >= 0 || norm.indexOf('artes') >= 0) {
+        return { campo: 'Lenguajes', metodologia: 'Aprendizaje basado en proyectos comunitarios' };
+      }
+      if (norm.indexOf('matematica') >= 0 || norm.indexOf('ciencia') >= 0 || norm.indexOf('biologia') >= 0 || norm.indexOf('fisica') >= 0 || norm.indexOf('quimica') >= 0) {
+        return { campo: 'Saberes y Pensamiento Científico', metodologia: 'Aprendizaje basado en indagación (STEAM)' };
+      }
+      if (norm.indexOf('geografia') >= 0 || norm.indexOf('historia') >= 0 || norm.indexOf('civica') >= 0 || norm.indexOf('etica') >= 0 || norm.indexOf('sociedad') >= 0) {
+        return { campo: 'Ética, Naturaleza y Sociedades', metodologia: 'Aprendizaje Basado en Problemas (ABP)' };
+      }
+      if (norm.indexOf('tecnologia') >= 0 || norm.indexOf('educacion fisica') >= 0 || norm.indexOf('tutoria') >= 0 || norm.indexOf('socioemocional') >= 0 || norm.indexOf('vida saludable') >= 0) {
+        return { campo: 'De lo Humano y lo Comunitario', metodologia: 'Aprendizaje Servicio (AS)' };
+      }
+      return { campo: 'Lenguajes', metodologia: 'Aprendizaje basado en proyectos comunitarios' };
+    }
+
+    function alCambiarFechaInicioPlan() {
+      const fe = (document.getElementById('planFechaInicio') || {}).value || '';
+      const periodoTexto = determinarTrimestreSEP(fe);
+      const txtPer = document.getElementById('planPeriodo');
+      const badgePer = document.getElementById('badgePeriodoPlan');
+      const perEl = document.getElementById('txtEncabezadoPeriodo');
+      const feEl = document.getElementById('txtEncabezadoFecha');
+      if (txtPer) txtPer.value = periodoTexto;
+      if (badgePer) badgePer.textContent = '🗓️ ' + periodoTexto;
+      if (perEl) perEl.textContent = periodoTexto;
+      if (feEl && fe) feEl.textContent = fe;
+    }
+
+    function alSeleccionarClaseHorarioEnPlan() {
+      const sel = document.getElementById('selPlanClaseHorario');
+      if (!sel || !sel.value) return;
+      try {
+        const item = JSON.parse(sel.value);
+        if (item.grado) {
+          const gSel = document.getElementById('planGrado');
+          if (gSel) gSel.value = String(item.grado).trim();
+        }
+        const gpLetra = String(item.grupo || 'A').trim().replace(/^\d+/, '').toUpperCase();
+        actualizarGruposFormPlan(gpLetra);
+        const gpSel = document.getElementById('planGrupo');
+        if (gpSel) gpSel.value = gpLetra;
+
+        if (item.asignatura) {
+          const asigInp = document.getElementById('planAsignatura');
+          if (asigInp) asigInp.value = item.asignatura;
+          const inferido = inferirCampoYMetodologia_(item.asignatura);
+          const campoSel = document.getElementById('planCampoFormativo');
+          const metSel = document.getElementById('planMetodologia');
+          if (campoSel) campoSel.value = inferido.campo;
+          if (metSel) metSel.value = inferido.metodologia;
+        }
+        if (item.idHorario) {
+          const idHInp = document.getElementById('planIdHorario');
+          if (idHInp) idHInp.value = item.idHorario;
+        }
+        const feInp = document.getElementById('planFechaInicio');
+        if (feInp && !feInp.value) {
+          feInp.value = fechaLocalClase();
+          alCambiarFechaInicioPlan();
+        }
+        const titInp = document.getElementById('planTitulo');
+        if (titInp && (!titInp.value || titInp.value.indexOf('Ej.') === 0)) {
+          const perInfo = calcularPeriodoSegunFecha_(feInp ? feInp.value : '');
+        titInp.value = item.asignatura + ' ' + (item.grado || '') + '°' + gpLetra + ' - ' + perInfo.etiqueta;
+      }
+      const feValActual = (document.getElementById('planFechaInicio') || {}).value || '';
+      const perInfoUso = calcularPeriodoSegunFecha_(feValActual);
+      actualizarEncabezadoClaseNEM_({
+        asignatura: item.asignatura,
+        grado: item.grado,
+        grupo: gpLetra,
+        fecha: feValActual,
+        periodo: perInfoUso.etiqueta,
+        bloque: item.bloque,
+        horaInicio: item.horaInicio,
+        horaFin: item.horaFin,
+        maestro: item.maestro
+      });
+      actualizarCatalogoPDAParaClase_(item.asignatura, item.grado);
+      toast('Datos vinculados con la clase ' + (item.asignatura || '') + ' (' + (item.grado || '') + '°' + gpLetra + ')', 'ok');
+    } catch (e) {}
+  }
+
+  /* CATÁLOGO DE PROBLEMÁTICAS SOCIOEDUCATIVAS DEL PROGRAMA ANALÍTICO (CONSEJO TÉCNICO ESCOLAR / CTE) */
+  const CATALOGO_PROGRAMA_ANALITICO_CTE_ = [
+    {
+      id: 'PA-01',
+      categoria: 'Sustentabilidad y Recursos Hídricos',
+      titulo: 'Escasez, abastecimiento irregular y uso responsable del agua potable',
+      problemaBase: 'En la comunidad escolar y el entorno barrial se presentan interrupciones recurrentes en el suministro de agua potable, provocando prácticas inadecuadas de almacenamiento, focos de insalubridad y desperdicio en las instalaciones escolares. El proyecto detonará alternativas de captación, diagnóstico de consumo y diseño de campañas de corresponsabilidad hídrica.'
+    },
+    {
+      id: 'PA-02',
+      categoria: 'Convivencia y Derechos Humanos',
+      titulo: 'Convivencia escolar armónica, erradicación del ciberacoso y cultura de paz',
+      problemaBase: 'Se registran tensiones cotidianas en la interacción entre pares, uso desregulado de redes sociales, situaciones de discriminación y resolución violenta de conflictos en el aula y recesos. Se requiere fortalecer habilidades dialógicas, gestión asertiva de emociones y protocolos de mediación comunitaria orientados a una cultura de paz.'
+    },
+    {
+      id: 'PA-03',
+      categoria: 'Salud y Alimentación Integral',
+      titulo: 'Hábitos alimentarios nocivos, consumo excesivo de ultraprocesados y sedentarismo',
+      problemaBase: 'Elevado índice de consumo de alimentos ultraprocesados y bebidas azucaradas durante los horarios escolares y familiares, reflejando bajo rendimiento físico, sobrepeso y malestar gastrointestinal frecuente. Se fomentará el análisis crítico de etiquetas nutrimentales, rescate de alimentos locales nutritivos y diseño de menús escolares accesibles.'
+    },
+    {
+      id: 'PA-04',
+      categoria: 'Medio Ambiente y Territorio',
+      titulo: 'Manejo deficiente de residuos sólidos y contaminación del espacio comunitario',
+      problemaBase: 'Acumulación de plásticos, empaques y desechos en las inmediaciones de la escuela y canales urbanos, deteriorando el entorno y generando riesgos sanitarios. Se impulsará la economía circular, separación en origen, compostaje escolar y proyectos productivos de revalorización de materiales.'
+    },
+    {
+      id: 'PA-05',
+      categoria: 'Identidad y Memoria Histórica',
+      titulo: 'Pérdida de identidad comunitaria, tradiciones locales y lenguas originarias',
+      problemaBase: 'Desarraigo cultural y desconocimiento del patrimonio histórico barrial y la diversidad lingüística de las familias de la escuela, derivando en prejuicios y falta de sentido de pertenencia. Los alumnos recopilarán testimonios orales, crónicas de adultos mayores y exposiciones artísticas identitarias.'
+    }
+  ];
+
+  /* PADRÓN INSTITUCIONAL DE EDUCACIÓN INCLUSIVA (UDEI / BAPyC POR GRUPO) */
+  const PADRON_INCLUSION_UDEI_ = {
+    '1A': [
+      { tipo: 'TDAH', etiqueta: 'Déficit de Atención e Hiperactividad', ajusteSugerido: 'Consignas breves y secuenciadas, cronómetro visible de actividades (bloques de 10 min), pausas activas motrices y tiempo flexible de entrega.' },
+      { tipo: 'Discapacidad Visual Moderada', etiqueta: 'Baja Visión', ajusteSugerido: 'Macrotipos (fuente ampliada 16pt+), alto contraste en pizarrones y pantallas, descripción auditiva obligatoria de esquemas/imágenes y ubicación en la primera fila.' }
+    ],
+    '1B': [
+      { tipo: 'Dislexia / Dificultad de Lectoescritura', etiqueta: 'Dificultad Específica en Lectura', ajusteSugerido: 'Soporte auditivo con lectura en voz alta (Aula Hablada), tipografía legible sin serifa, evaluaciones orales formativas y evitar lectura forzada frente al grupo.' }
+    ],
+    '1C': [],
+    '1D': [
+      { tipo: 'Aptitudes Sobresalientes (Intelectual)', etiqueta: 'Aptitudes Sobresalientes', ajusteSugerido: 'Enriquecimiento curricular con retos de investigación de mayor profundidad, roles de co-mentoría y diversificación de productos finales.' }
+    ],
+    '1E': [],
+    '2A': [
+      { tipo: 'Hipoacusia Leve', etiqueta: 'Discapacidad Auditiva Leve', ajusteSugerido: 'Contacto visual directo del docente al exponer, material impreso o subtitulado para cualquier audio y ubicación frontal libre de interferencia sonora.' }
+    ],
+    '2B': [
+      { tipo: 'TDAH', etiqueta: 'TDAH Predominio Hiperactivo', ajusteSugerido: 'Roles activos en la dinámica de clase (reparto de materiales), organizadores gráficos visuales y retroalimentación positiva inmediata.' }
+    ],
+    '2C': [],
+    '2D': [
+      { tipo: 'Trastorno del Espectro Autista (Nivel 1)', etiqueta: 'TEA Nivel 1', ajusteSugerido: 'Rutinas predecibles de sesión, anticipación verbal de transiciones, consignas directas sin dobles sentidos y regulación de estímulos sonoros intensos.' }
+    ],
+    '2E': [],
+    '3A': [
+      { tipo: 'Baja Visión', etiqueta: 'Discapacidad Visual', ajusteSugerido: 'Archivos digitales con lector de pantalla accesible, iluminación óptima y material concreto en representaciones espaciales o matemáticas.' }
+    ],
+    '3B': [],
+    '3C': [
+      { tipo: 'Aptitudes Sobresalientes (Creativa/Artística)', etiqueta: 'Aptitudes Sobresalientes', ajusteSugerido: 'Opciones de evidenciar aprendizajes mediante proyectos audiovisuales, literarios o artísticos alternativos al texto plano.' }
+    ],
+    '3D': [],
+    '3E': []
+  };</script>

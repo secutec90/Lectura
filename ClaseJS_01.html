@@ -1,0 +1,590 @@
+<script>
+/* ClaseJS_01 — tokenClase, rolClase, slotMaeSel, ctxAlu, velVoz, utterClase, aluClaseSel, panelMaeUlt, fechaAluCal, selAluSlot, ... */
+
+    let tokenClase = '';
+    let rolClase = '';
+    let slotMaeSel = null;
+    let ctxAlu = null;
+    let velVoz = 1;
+    let utterClase = null;
+    let aluClaseSel = '';
+    let panelMaeUlt = null;
+    let fechaAluCal = '';
+    let selAluSlot = null;
+    let modoVistaAlu = 'dia';
+    let reproduciendoAlu = false;
+    let pendingFocoAlu_ = '';
+    let colaVozAlu_ = [];
+
+    function anunciar(msg) {
+      const el = document.getElementById('vivo');
+      if (el) el.textContent = msg || '';
+    }
+
+    function entrarClase() {
+      const usu = (document.getElementById('usuarioClase') || {}).value || '';
+      const clave = (document.getElementById('claveClase') || {}).value || '';
+      const err = document.getElementById('errorLogin');
+      if (err) err.textContent = '';
+      gsRun('iniciarSesionClase', usu, clave).then(function (r) {
+        if (!r || !r.ok) {
+          if (err) err.textContent = (r && r.mensaje) || 'No se pudo entrar.';
+          return;
+        }
+        tokenClase = r.token;
+        rolClase = r.rol;
+        document.getElementById('login').classList.add('oculto');
+        document.getElementById('panel').classList.remove('oculto');
+        if (r.rol === 'alumno') {
+          document.getElementById('vistaAlu').classList.remove('oculto');
+          document.getElementById('vistaMae').classList.add('oculto');
+          const cinta = document.getElementById('cintaClase');
+          if (cinta) cinta.classList.add('oculto');
+          document.querySelectorAll('#tabsMae button').forEach(function (b) { b.classList.add('oculto'); });
+          fechaAluCal = fechaLocalClase();
+          selAluSlot = null;
+          modoVistaAlu = 'dia';
+          reproduciendoAlu = false;
+          pendingFocoAlu_ = '';
+          cargarContextoAlu();
+        } else {
+          document.getElementById('vistaAlu').classList.add('oculto');
+          document.getElementById('vistaMae').classList.remove('oculto');
+          const tabAcc = document.getElementById('btnTabAccesos');
+          if (tabAcc) tabAcc.classList.toggle('oculto', r.rol !== 'admin');
+          const tabAlu = document.getElementById('btnTabAluAcc');
+          if (tabAlu) tabAlu.classList.toggle('oculto', r.rol !== 'admin');
+          const tabPlan = document.getElementById('btnN1Planeacion');
+          if (tabPlan) tabPlan.classList.remove('oculto');
+          const wrapMae = document.getElementById('cajaMaeAccWrap');
+          if (wrapMae) wrapMae.classList.toggle('oculto', r.rol !== 'admin');
+          iniciarCintaClase_();
+          tabN1Clase('clases', document.getElementById('btnN1Clases'));
+        }
+      }).catch(function (e) {
+        if (err) err.textContent = (e && e.message) || String(e);
+      });
+    }
+
+    function salirClase() {
+      detenerVoz();
+      gsRun('cerrarSesionClase', tokenClase).catch(function () {});
+      tokenClase = '';
+      location.reload();
+    }
+
+    function fechaLocalClase() {
+      const d = new Date();
+      const m = ('0' + (d.getMonth() + 1)).slice(-2);
+      const dia = ('0' + d.getDate()).slice(-2);
+      return d.getFullYear() + '-' + m + '-' + dia;
+    }
+
+    function cargarContextoAlu() {
+      gsRun('contextoClaseAlumno', tokenClase, fechaAluCal || fechaLocalClase()).then(function (r) {
+        ctxAlu = r;
+        const hoy = fechaLocalClase();
+        const enCurso = slotEnCursoAlu_(r);
+        if (!selAluSlot) {
+          if ((fechaAluCal || hoy) === hoy) selAluSlot = enCurso;
+        } else {
+          selAluSlot = buscarSlotCalAlu_(r, selAluSlot.fecha, selAluSlot.idHorario) || null;
+          if (!selAluSlot && (fechaAluCal || hoy) === hoy) selAluSlot = enCurso;
+        }
+        pintarAlu(r);
+        pintarHorarioAlu_(r);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function slotEnCursoAlu_(r) {
+      const dias = (r && r.calendario) || [];
+      for (let i = 0; i < dias.length; i++) {
+        const filas = dias[i].horario || [];
+        for (let j = 0; j < filas.length; j++) {
+          if (filas[j].enCurso) return filas[j];
+        }
+      }
+      return (r && r.clase) || null;
+    }
+
+    function buscarSlotCalAlu_(r, fecha, idHorario) {
+      const fe = String(fecha || '').slice(0, 10);
+      const id = String(idHorario == null ? '' : idHorario);
+      const dias = (r && r.calendario) || [];
+      for (let i = 0; i < dias.length; i++) {
+        const filas = dias[i].horario || [];
+        for (let j = 0; j < filas.length; j++) {
+          const h = filas[j];
+          const feH = String(h.fecha || '').slice(0, 10);
+          const idH = String(h.idHorario == null ? '' : h.idHorario);
+          if (idH === id && feH === fe) return h;
+        }
+      }
+      return null;
+    }
+
+    function esHoyFechaAlu_() {
+      return (fechaAluCal || fechaLocalClase()) === fechaLocalClase();
+    }
+
+    function minutosHmAlu_(hm) {
+      const p = String(hm || '').split(':');
+      const h = Number(p[0]);
+      const m = Number(p[1] || 0);
+      if (isNaN(h)) return 0;
+      return (h * 60) + (isNaN(m) ? 0 : m);
+    }
+
+    function hayTextoAlu_(h) {
+      if (!h) return false;
+      if (h.publicado) return true;
+      return !!(h.contenido && String(h.contenido.texto || '').trim());
+    }
+
+    function claseTerminadaAlu_(h, r) {
+      if (!h || !h.fecha) return false;
+      const hoy = fechaLocalClase();
+      if (h.fecha < hoy) return true;
+      if (h.fecha > hoy) return false;
+      const ahora = minutosHmAlu_((r && r.hora) || '');
+      return ahora >= minutosHmAlu_(h.horaFin);
+    }
+
+    function slotReproAlu_(h) {
+      return !!(reproduciendoAlu && selAluSlot && h &&
+        selAluSlot.idHorario === h.idHorario && selAluSlot.fecha === h.fecha);
+    }
+
+    function ordinalHoraAlu_(bloque) {
+      const n = parseInt(String(bloque || '').replace(/\D/g, ''), 10);
+      const nombres = ['', 'primera', 'segunda', 'tercera', 'cuarta', 'quinta', 'sexta', 'séptima', 'octava', 'novena', 'décima'];
+      if (n >= 1 && n <= 10) return nombres[n] + ' hora';
+      if (n) return n + 'ª hora';
+      return 'hora';
+    }
+
+    function fechaLargaEsMx_(iso, capital) {
+      const d = new Date(String(iso || '') + 'T12:00:00');
+      if (isNaN(d.getTime())) return String(iso || '');
+      const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+      const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+      let nom = dias[d.getDay()] || '';
+      if (capital) nom = nom ? (nom.charAt(0).toUpperCase() + nom.slice(1)) : nom;
+      let t = nom + ' ' + d.getDate() + ' de ' + meses[d.getMonth()];
+      if (d.getFullYear() !== (new Date()).getFullYear()) t += ' de ' + d.getFullYear();
+      return t;
+    }
+
+    function etqVelAlu_() {
+      const base = (Math.abs(velVoz - 1) < 0.05) ? 'Velocidad: normal (1.0)' : ('Velocidad: ' + velVoz.toFixed(1));
+      if (esClaseInglesAlu_()) return base + ' · Narrador: español o inglés, según el texto';
+      return base;
+    }
+
+    function esAsignaturaInglesAlu_(nombre) {
+      const n = String(nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return n.indexOf('ingles') >= 0 || n.indexOf('english') >= 0;
+    }
+
+    function esClaseInglesAlu_() {
+      if (rolClase === 'alumno') {
+        const cl = claseUsoAlu_();
+        return esAsignaturaInglesAlu_(cl && cl.asignatura);
+      }
+      return esAsignaturaInglesAlu_(slotMaeSel && slotMaeSel.asignatura);
+    }
+
+    function idiomaVozClase_() {
+      return esClaseInglesAlu_() ? 'en-US' : 'es-MX';
+    }
+
+    function elegirVozClase_(lang) {
+      const voces = (window.speechSynthesis && window.speechSynthesis.getVoices()) || [];
+      if (!voces.length) return null;
+      let mejor = null;
+      let ptsMejor = -1;
+      voces.forEach(function (v) {
+        const l = String(v.lang || '');
+        const nom = String(v.name || '');
+        let pts = 0;
+        if (lang === 'en-US') {
+          if (/^en-US/i.test(l)) pts += 40;
+          else if (/en_US/i.test(l)) pts += 38;
+          else if (/^en/i.test(l) && /US|America|United States/i.test(nom)) pts += 32;
+          else if (/^en/i.test(l) && !/GB|UK|British|Australia|AU|India|IN/i.test(l + nom)) pts += 18;
+          else if (/^en/i.test(l)) pts += 8;
+          if (/Aria|Jenny|Guy|Zira|David|Google US English|Microsoft (Aria|Jenny|Guy|Zira|David)/i.test(nom)) pts += 8;
+        } else {
+          if (/^es-MX/i.test(l)) pts += 40;
+          else if (/^es-419/i.test(l)) pts += 28;
+          else if (/^es-US/i.test(l)) pts += 22;
+          else if (/^es/i.test(l)) pts += 12;
+          if (/Mexico|Sabina|Dalia|Google Español/i.test(nom)) pts += 6;
+        }
+        if (pts > ptsMejor) { ptsMejor = pts; mejor = v; }
+      });
+      return ptsMejor > 0 ? mejor : null;
+    }
+
+    function prepararVocesClase_() {
+      if (!window.speechSynthesis) return;
+      try { window.speechSynthesis.getVoices(); } catch (e) {}
+    }
+
+    function claveSlotAlu_(h) {
+      if (!h) return '';
+      return String(h.fecha || '').slice(0, 10) + '#' + String(h.idHorario == null ? '' : h.idHorario);
+    }
+
+    function enlazarClicksAlu_(raiz) {
+      const caja = (typeof raiz === 'string') ? document.getElementById(raiz) : raiz;
+      if (!caja) return;
+      const nodos = caja.querySelectorAll('[data-alu-pick]');
+      for (let i = 0; i < nodos.length; i++) {
+        nodos[i].addEventListener('click', function () {
+          elegirClaseAlu(this.getAttribute('data-alu-fecha'), this.getAttribute('data-alu-id'));
+        });
+      }
+    }
+
+    function etiquetasEstadoAlu_(h, r) {
+      const out = [];
+      if (!h) return out;
+      if (slotReproAlu_(h)) out.push('Reproduciendo');
+      if (h.enCurso) out.push('Ahora');
+      else if (selAluSlot && claveSlotAlu_(selAluSlot) === claveSlotAlu_(h)) out.push('Seleccionada');
+      if (hayTextoAlu_(h)) out.push('Contenido disponible');
+      else out.push('Contenido no disponible');
+      if (claseTerminadaAlu_(h, r) && !h.enCurso) out.push('Terminada');
+      return out;
+    }
+
+    function fraseSlotAlu_(h, r) {
+      if (!h) return '';
+      let t = (h.asignatura || 'Clase') + '. ' + ordinalHoraAlu_(h.bloque) + '. De ' +
+        (h.horaInicio || '') + ' a ' + (h.horaFin || '') + '.';
+      if (h.maestro) t += ' Docente ' + h.maestro + '.';
+      t += ' ' + etiquetasEstadoAlu_(h, r).join('. ') + '.';
+      return t.replace(/\.\s*\./g, '.');
+    }
+
+    function jsOnclickAlu_(fecha, idHorario) {
+      return 'elegirClaseAlu(' + JSON.stringify(String(fecha || '')) + ',' +
+        JSON.stringify(String(idHorario || '')) + ')';
+    }
+
+    function claseUsoAlu_() {
+      if (selAluSlot) return selAluSlot;
+      if (esHoyFechaAlu_() && ctxAlu && ctxAlu.clase) return ctxAlu.clase;
+      return null;
+    }
+
+    function contenidoUsoAlu_() {
+      const cl = claseUsoAlu_();
+      if (cl && cl.contenido) return cl.contenido;
+      return null;
+    }
+
+    function pintarAlu(r) {
+      const alu = (r && r.alumno) || {};
+      const saludo = document.getElementById('txtSaludoAlu');
+      const grupo = document.getElementById('txtGrupoAlu');
+      const titFe = document.getElementById('titFechaAlu');
+      const nota = document.getElementById('txtFechaNotaAlu');
+      const vel = document.getElementById('txtVelClase');
+      const fe = fechaAluCal || fechaLocalClase();
+      const hoy = fechaLocalClase();
+      if (saludo) saludo.textContent = 'Hola, ' + (alu.nombre || '');
+      if (grupo) grupo.textContent = alu.grupo ? ('Grupo ' + alu.grupo) : '';
+      if (titFe) {
+        titFe.textContent = (modoVistaAlu === 'semana' && r && r.semanaInicio)
+          ? ('Semana ' + formatearRangoDdMmAa_(r.semanaInicio, r.semanaFin))
+          : fechaLargaEsMx_(fe, true);
+      }
+      if (nota) {
+        if (modoVistaAlu === 'semana') {
+          nota.textContent = (r && r.semanaInicio && r.semanaFin && hoy >= r.semanaInicio && hoy <= r.semanaFin)
+            ? 'Esta es la semana actual.'
+            : 'Estás viendo otra semana.';
+        } else {
+          nota.textContent = (fe === hoy) ? 'Hoy' : 'Estás viendo otro día';
+        }
+      }
+      if (vel) vel.textContent = etqVelAlu_();
+      const bDia = document.getElementById('btnVistaDiaAlu');
+      const bSem = document.getElementById('btnVistaSemanaAlu');
+      if (bDia) {
+        bDia.classList.toggle('activo', modoVistaAlu === 'dia');
+        bDia.setAttribute('aria-pressed', modoVistaAlu === 'dia' ? 'true' : 'false');
+      }
+      if (bSem) {
+        bSem.classList.toggle('activo', modoVistaAlu === 'semana');
+        bSem.setAttribute('aria-pressed', modoVistaAlu === 'semana' ? 'true' : 'false');
+      }
+      const ant = document.getElementById('btnAluAnt');
+      const sigBtn = document.getElementById('btnAluSig');
+      if (ant) ant.setAttribute('aria-label', modoVistaAlu === 'dia' ? 'Día anterior' : 'Semana anterior');
+      if (sigBtn) sigBtn.setAttribute('aria-label', modoVistaAlu === 'dia' ? 'Día siguiente' : 'Semana siguiente');
+      pintarHeroAlu_(r);
+    }
+
+    function pintarHeroAlu_(r) {
+      const caja = document.getElementById('cajaHeroAlu');
+      const play = document.getElementById('cajaPlayAlu');
+      const vis = document.getElementById('textoClaseVis');
+      if (!caja) return;
+      const cl = claseUsoAlu_();
+      const sig = r && r.siguiente;
+      const hoy = fechaLocalClase();
+      const viendoHoy = esHoyFechaAlu_();
+      let html = '';
+      if (cl) {
+        html += '<h2 id="titHeroAlu">' + (cl.enCurso ? 'Clase actual' : 'Clase seleccionada') + '</h2>';
+        html += '<div class="alu-hero-fila">';
+        html += '<p class="alu-asig">' + escaparHtml(cl.asignatura || 'Clase') + '</p>';
+        html += '<p>' + escaparHtml((cl.horaInicio || '') + '–' + (cl.horaFin || '') +
+          (cl.maestro ? (' · ' + cl.maestro) : '')) + '</p>';
+        etiquetasEstadoAlu_(cl, r).forEach(function (e) {
+          html += '<span class="alu-etq">' + escaparHtml(e) + '</span>';
+        });
+        html += '</div>';
+      } else if (viendoHoy) {
+        html += '<h2 id="titHeroAlu">Clase actual</h2>';
+        html += '<p>No tienes una clase en este momento.</p>';
+        if (sig) {
+          const sigRico = buscarSlotCalAlu_(r, sig.fecha || hoy, sig.idHorario) || sig;
+          html += '<p>Próxima clase: ' + escaparHtml(sigRico.asignatura || '') + ' · ' +
+            escaparHtml(sigRico.horaInicio || '') + '</p>';
+          if (hayTextoAlu_(sigRico) && sigRico.idHorario) {
+            html += '<p><button type="button" data-alu-pick="1" data-alu-fecha="' +
+              escaparHtml(String(sigRico.fecha || hoy).slice(0, 10)) + '" data-alu-id="' +
+              escaparHtml(String(sigRico.idHorario)) + '">Ver clase</button></p>';
+          }
+        }
+      } else {
+        html += '<h2 id="titHeroAlu">Clase</h2>';
+        html += '<p>Elige una clase del horario de este día.</p>';
+      }
+      caja.innerHTML = html;
+      enlazarClicksAlu_(caja);
+      if (play) play.classList.toggle('oculto', !cl);
+      const vel = document.getElementById('txtVelClase');
+      if (vel) vel.classList.toggle('oculto', !cl);
+      const btnPlay = document.getElementById('btnPlayClase');
+      if (btnPlay) btnPlay.disabled = !(cl && hayTextoAlu_(cl));
+      const cont = contenidoUsoAlu_();
+      renderizarTextoClaseDUA(cont);
+    }
+
+    function textoClaseParaVoz_() {
+      const cont = contenidoUsoAlu_();
+      if (!cont || !String(cont.texto || '').trim()) return '';
+      return ((cont.titulo ? (cont.titulo + '. ') : '') + cont.texto).trim();
+    }
+
+    function puntuarIdiomaTexto_(t) {
+      const s = ' ' + String(t || '').toLowerCase().normalize('NFC') + ' ';
+      let es = 0;
+      let en = 0;
+      if (/[áéíóúñü¿¡]/.test(s)) es += 8;
+      const palEs = [' el ', ' la ', ' los ', ' las ', ' de ', ' que ', ' y ', ' en ', ' un ', ' una ', ' del ', ' con ', ' por ', ' para ', ' es ', ' se ', ' no ', ' su ', ' al ', ' lo ', ' como ', ' mas ', ' más ', ' pero ', ' sus ', ' le ', ' ha ', ' me ', ' si ', ' ya ', ' fue ', ' este ', ' hay ', ' esta ', ' entre ', ' cuando ', ' muy ', ' sin ', ' sobre ', ' tambien ', ' también ', ' hoy ', ' clase ', ' materiales ', ' docente ', ' nosotros ', ' ustedes ', ' también '];
+      const palEn = [' the ', ' a ', ' an ', ' of ', ' to ', ' and ', ' in ', ' is ', ' you ', ' that ', ' it ', ' for ', ' on ', ' are ', ' with ', ' as ', ' this ', ' be ', ' at ', ' or ', ' from ', ' we ', ' they ', ' have ', ' has ', ' not ', ' but ', ' what ', ' when ', ' your ', ' can ', ' will ', ' today ', ' class ', ' hello ', ' there ', ' their ', ' these ', ' those ', ' because ', ' about '];
+      palEs.forEach(function (w) { if (s.indexOf(w) >= 0) es += 2; });
+      palEn.forEach(function (w) { if (s.indexOf(w) >= 0) en += 2; });
+      if (/\b(ción|ciones|mente|ción|ción)\b/.test(s)) es += 4;
+      if (/\b\w+ción\b/.test(s)) es += 3;
+      if (/\b(ing|tion|ness|fully)\b/.test(s)) en += 2;
+      if (en > es) return 'en-US';
+      return 'es-MX';
+    }
+
+    function trozosIdiomaTexto_(texto) {
+      const bruto = String(texto || '').replace(/\r/g, '').trim();
+      if (!bruto) return [];
+      const partes = bruto.replace(/([.!?…])\s+/g, '$1\n').split(/\n+/).map(function (p) {
+        return p.trim();
+      }).filter(Boolean);
+      const out = [];
+      partes.forEach(function (p) {
+        const lang = puntuarIdiomaTexto_(p);
+        if (out.length && out[out.length - 1].lang === lang) {
+          out[out.length - 1].texto += ' ' + p;
+        } else {
+          out.push({ lang: lang, texto: p });
+        }
+      });
+      return out;
+    }
+
+    function hablarTexto(texto) {
+      detenerVoz();
+      if (!window.speechSynthesis) {
+        toast('Este navegador no puede leer en voz alta. Abre Chrome.', 'error');
+        return;
+      }
+      if (esClaseInglesAlu_()) {
+        colaVozAlu_ = trozosIdiomaTexto_(texto);
+        if (!colaVozAlu_.length) colaVozAlu_ = [{ lang: 'en-US', texto: texto }];
+      } else {
+        colaVozAlu_ = [{ lang: 'es-MX', texto: texto }];
+      }
+      function arrancar() {
+        hablarSiguienteTrozosAlu_();
+      }
+      const hayVoces = (window.speechSynthesis.getVoices() || []).length > 0;
+      if (hayVoces) {
+        arrancar();
+        return;
+      }
+      let hecho = false;
+      const go = function () {
+        if (hecho) return;
+        hecho = true;
+        arrancar();
+      };
+      if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+        window.speechSynthesis.onvoiceschanged = function () {
+          window.speechSynthesis.onvoiceschanged = null;
+          go();
+        };
+      }
+      window.setTimeout(go, 500);
+    }
+
+    function hablarSiguienteTrozosAlu_() {
+      if (!colaVozAlu_.length) {
+        reproduciendoAlu = false;
+        if (ctxAlu) pintarHeroAlu_(ctxAlu);
+        return;
+      }
+      const t = colaVozAlu_.shift();
+      reproduciendoAlu = true;
+      utterClase = new SpeechSynthesisUtterance(t.texto);
+      utterClase.lang = t.lang;
+      const voz = elegirVozClase_(t.lang);
+      if (voz) utterClase.voice = voz;
+      utterClase.rate = velVoz;
+      utterClase.onend = function () { hablarSiguienteTrozosAlu_(); };
+      utterClase.onerror = function () {
+        colaVozAlu_ = [];
+        reproduciendoAlu = false;
+      };
+      window.speechSynthesis.speak(utterClase);
+      if (ctxAlu) pintarHeroAlu_(ctxAlu);
+    }
+
+    function hablarClase() {
+      if (!ctxAlu) { cargarContextoAlu(); return; }
+      const t = textoClaseParaVoz_();
+      if (!t) {
+        anunciar('Esta clase no tiene contenido publicado.');
+        return;
+      }
+      anunciar('Reproduciendo la clase.');
+      hablarTexto(t);
+    }
+
+    function pausarClase() {
+      if (!window.speechSynthesis) return;
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        anunciar('Reproducción reanudada.');
+      } else if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        anunciar('Reproducción en pausa.');
+      }
+    }
+
+    function repetirClase() { hablarClase(); }
+
+    function cambiarVelocidadClase(d) {
+      velVoz = Math.max(0.6, Math.min(1.4, Math.round((velVoz + d) * 10) / 10));
+      const el = document.getElementById('txtVelClase');
+      if (el) el.textContent = etqVelAlu_();
+      anunciar(etqVelAlu_());
+      if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) hablarClase();
+    }
+
+    function detenerVoz() {
+      colaVozAlu_ = [];
+      if (utterClase) {
+        utterClase.onend = null;
+        utterClase.onerror = null;
+      }
+      try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+      utterClase = null;
+    }
+
+    function detenerClaseAlu() {
+      detenerVoz();
+      reproduciendoAlu = false;
+      anunciar('Reproducción detenida.');
+      if (ctxAlu) pintarHeroAlu_(ctxAlu);
+    }
+
+    function cambiarVistaAlu(modo) {
+      modoVistaAlu = (modo === 'semana') ? 'semana' : 'dia';
+      if (ctxAlu) {
+        pintarAlu(ctxAlu);
+        pintarHorarioAlu_(ctxAlu);
+      }
+    }
+
+    function moverFechaAlu(delta) {
+      const fe = fechaAluCal || fechaLocalClase();
+      const d = new Date(fe + 'T12:00:00');
+      if (isNaN(d.getTime())) return;
+      d.setDate(d.getDate() + (Number(delta) * (modoVistaAlu === 'semana' ? 7 : 1)));
+      fechaAluCal = fechaLocalDesde_(d);
+      selAluSlot = null;
+      pendingFocoAlu_ = 'fecha';
+      cargarContextoAlu();
+    }
+
+    function moverSemanaAlu(delta) {
+      const fe = fechaAluCal || fechaLocalClase();
+      const d = new Date(fe + 'T12:00:00');
+      if (isNaN(d.getTime())) return;
+      d.setDate(d.getDate() + (Number(delta) * 7));
+      fechaAluCal = fechaLocalDesde_(d);
+      selAluSlot = null;
+      pendingFocoAlu_ = 'fecha';
+      cargarContextoAlu();
+    }
+
+    function irHoyAlu() {
+      fechaAluCal = fechaLocalClase();
+      selAluSlot = null;
+      pendingFocoAlu_ = 'fecha';
+      cargarContextoAlu();
+    }
+
+    function pintarHorarioAlu_(r) {
+      const lista = document.getElementById('horarioAluLista');
+      const cal = document.getElementById('calAlu');
+      const sr = document.getElementById('horarioAluSr');
+      const tit = document.getElementById('titHorarioAlu');
+      const esDia = modoVistaAlu === 'dia';
+      const fe = fechaAluCal || fechaLocalClase();
+      if (tit) {
+        tit.textContent = esDia
+          ? (esHoyFechaAlu_() ? 'Horario de hoy' : ('Horario del ' + fechaLargaEsMx_(fe, false)))
+          : 'Horario de la semana';
+      }
+      if (lista) lista.classList.toggle('oculto', !esDia);
+      if (cal) cal.classList.toggle('oculto', esDia);
+      if (esDia) {
+        pintarListaDiaAlu_(r);
+        if (sr) sr.innerHTML = '';
+      } else {
+        pintarCalendarioAlu_(r);
+        if (sr) sr.innerHTML = listaSrSemanaAlu_(r);
+      }
+      if (pendingFocoAlu_ === 'fecha') {
+        anunciar((esDia ? fechaLargaEsMx_(fe, true) : (tit ? tit.textContent : 'Semana')) +
+          (esHoyFechaAlu_() && esDia ? '. Hoy.' : '.'));
+      }
+      aplicarFocoAlu_();
+    }</script>

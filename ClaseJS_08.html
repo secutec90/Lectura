@@ -1,0 +1,617 @@
+<script>
+/* ClaseJS_08 — toggleSidebarShell, etapaPlanActual_, irAPasoPlanNEM, CATALOGO_LIBROS_SEP_FASE6_, abrirModalLibrosSEP_, insertarReferenciaLibroSesion_, eliminarIDeviceCard_, eliminarLegoCard_, insertariDeviceSesion_, probarAudioIDevice_, ... */
+
+
+    function toggleSidebarShell() {
+      const sidebar = document.getElementById('appShellSidebar');
+      if (!sidebar) return;
+      sidebar.classList.toggle('colapsado');
+      try {
+        localStorage.setItem('ST90_SIDEBAR_COLAPSADO', sidebar.classList.contains('colapsado') ? '1' : '0');
+      } catch (e) {}
+    }
+
+    /* ============================================================
+       STEPPER UX INTERACTIVO EN 4 ETAPAS (PLANEACIÓN NEM)
+       ============================================================ */
+    let etapaPlanActual_ = 1;
+
+    function irAPasoPlanNEM(paso) {
+      const p = Math.max(1, Math.min(4, parseInt(paso, 10) || 1));
+      etapaPlanActual_ = p;
+
+      for (let i = 1; i <= 4; i++) {
+        const tab = document.getElementById('tabPasoPlan' + i);
+        const pane = document.getElementById('etapaPlanNEM_' + i);
+        if (tab) {
+          tab.classList.toggle('activo', i === p);
+          tab.classList.toggle('completado', i < p);
+          tab.setAttribute('aria-selected', i === p ? 'true' : 'false');
+        }
+        if (pane) {
+          pane.classList.toggle('oculto', i !== p);
+        }
+      }
+
+      const stepHeader = document.querySelector('.nem-stepper-header');
+      if (stepHeader) {
+        try { stepHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+      }
+    }
+
+    /* ============================================================
+       CATÁLOGO OFICIAL DE LIBROS DE TEXTO SEP FASE 6 (SECUNDARIA)
+       ============================================================ */
+    const CATALOGO_LIBROS_SEP_FASE6_ = [
+      {
+        id: 'LIB-1-LEN',
+        grado: 1,
+        campo: 'Lenguajes',
+        titulo: 'Lenguajes (Colección Ximhai - 1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Narrativas de la comunidad', 'Códices y expresiones artísticas', 'El periódico escolar comunitario'],
+        paginasRelevantes: 'Págs. 14-38 (Identidad y memoria), Págs. 82-105 (Teatro y palabra)'
+      },
+      {
+        id: 'LIB-1-SAB',
+        grado: 1,
+        campo: 'Saberes y Pensamiento Científico',
+        titulo: 'Saberes y Pensamiento Científico (1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Biología y salud comunitaria', 'Matemáticas en la biodiversidad', 'Ecosistemas locales'],
+        paginasRelevantes: 'Págs. 22-45 (Célula y funciones vitales), Págs. 120-138 (Álgebra y geometría del entorno)'
+      },
+      {
+        id: 'LIB-1-ENS',
+        grado: 1,
+        campo: 'Ética, Naturaleza y Sociedades',
+        titulo: 'Ética, Naturaleza y Sociedades (1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Geografía del entorno escolar', 'Historia comunitaria', 'Pueblos originarios'],
+        paginasRelevantes: 'Págs. 18-42 (Espacio geográfico y riesgos), Págs. 94-118 (Derechos humanos)'
+      },
+      {
+        id: 'LIB-1-DHC',
+        grado: 1,
+        campo: 'De lo Humano y lo Comunitario',
+        titulo: 'De lo Humano y lo Comunitario (1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Tecnología y bienestar', 'Educación física e inclusión', 'Tutoría socioemocional'],
+        paginasRelevantes: 'Págs. 10-34 (Procesos técnicos y artesanales), Págs. 60-85 (Asertividad)'
+      },
+      {
+        id: 'LIB-1-PROY',
+        grado: 1,
+        campo: 'Interdisciplinar',
+        titulo: 'Nuestro Libro de Proyectos (Tomo 1 - 1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Proyectos Comunitarios de Aula y Escuela', 'Indagación STEAM escolar'],
+        paginasRelevantes: 'Págs. 40-75 (Guía metodológica para proyectos integradores)'
+      },
+      {
+        id: 'LIB-2-LEN',
+        grado: 2,
+        campo: 'Lenguajes',
+        titulo: 'Lenguajes (2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Ensayo crítico y argumentación', 'Lectura dramatizada', 'Variantes lingüísticas'],
+        paginasRelevantes: 'Págs. 28-60 (Textos informativos y opinión), Págs. 140-165 (Poesía comunitaria)'
+      },
+      {
+        id: 'LIB-2-SAB',
+        grado: 2,
+        campo: 'Saberes y Pensamiento Científico',
+        titulo: 'Saberes y Pensamiento Científico: Física y Matemáticas (2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Fuerzas y movimiento en el transporte', 'Energía sustentable', 'Sistemas de ecuaciones'],
+        paginasRelevantes: 'Págs. 30-58 (Leyes del movimiento y fricción), Págs. 110-135 (Energía térmica)'
+      },
+      {
+        id: 'LIB-2-ENS',
+        grado: 2,
+        campo: 'Ética, Naturaleza y Sociedades',
+        titulo: 'Ética, Naturaleza y Sociedades: Historia de México (2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Independencia y soberanía', 'Identidades culturales', 'Cultura de paz'],
+        paginasRelevantes: 'Págs. 50-82 (Transformaciones sociales del siglo XIX)'
+      },
+      {
+        id: 'LIB-2-PROY',
+        grado: 2,
+        campo: 'Interdisciplinar',
+        titulo: 'Nuestro Libro de Proyectos (Tomo 2 - 2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Proyectos Comunitarios de Aula', 'Indagación y ABP'],
+        paginasRelevantes: 'Págs. 35-70 (Metodologías activas para segundo grado)'
+      },
+      {
+        id: 'LIB-3-LEN',
+        grado: 3,
+        campo: 'Lenguajes',
+        titulo: 'Lenguajes (3.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Debate y oratoria', 'Literatura latinoamericana', 'Medios de comunicación'],
+        paginasRelevantes: 'Págs. 32-65 (Análisis crítico del discurso mediático)'
+      },
+      {
+        id: 'LIB-3-SAB',
+        grado: 3,
+        campo: 'Saberes y Pensamiento Científico',
+        titulo: 'Saberes y Pensamiento Científico: Química y Matemáticas (3.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Reacciones químicas en el entorno', 'Funciones cuadráticas', 'Salud y consumo'],
+        paginasRelevantes: 'Págs. 40-72 (Tabla periódica y enlaces), Págs. 130-160 (Trigonometría)'
+      },
+      {
+        id: 'LIB-3-PROY',
+        grado: 3,
+        campo: 'Interdisciplinar',
+        titulo: 'Nuestro Libro de Proyectos (Tomo 3 - 3.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Proyectos de impacto comunitario final', 'ABP y Aprendizaje Servicio'],
+        paginasRelevantes: 'Págs. 20-55 (Rúbricas de evaluación formativa y productos comunitarios)'
+      }
+    ];
+
+    function abrirModalLibrosSEP_() {
+      const gradoSel = parseInt((document.getElementById('planGrado') && document.getElementById('planGrado').value) || '1', 10);
+      const campoSel = (document.getElementById('planCampoFormativo') && document.getElementById('planCampoFormativo').value) || '';
+
+      const filtrados = CATALOGO_LIBROS_SEP_FASE6_.filter(function (l) {
+        return l.grado === gradoSel || l.campo === campoSel || l.campo === 'Interdisciplinar';
+      });
+
+      let itemsHtml = '';
+      filtrados.forEach(function (lib, idx) {
+        itemsHtml += '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin-bottom:8px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+            '<div>' +
+              '<span style="font-size:10px;font-weight:800;color:#1e40af;background:#dbeafe;padding:1px 6px;border-radius:4px;">' + escaparHtml(lib.campo) + ' • ' + lib.grado + '°</span>' +
+              '<h4 style="margin:4px 0 2px;font-size:13px;color:#0f172a;">' + escaparHtml(lib.titulo) + '</h4>' +
+              '<p style="font-size:11px;color:#64748b;margin:0 0 4px;">Editorial: ' + escaparHtml(lib.editorial) + ' | ' + escaparHtml(lib.paginasRelevantes) + '</p>' +
+              '<div style="font-size:10.5px;color:#15803d;">💡 Sugerencias: ' + escaparHtml(lib.proyectosSugeridos.join(', ')) + '</div>' +
+            '</div>' +
+            '<button type="button" class="btn-soft-primary" onclick="insertarReferenciaLibroSesion_(' + idx + ')" style="font-size:11px;padding:4px 8px;white-space:nowrap;">' +
+              '📥 Vincular' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      });
+
+      const modalHtml = '<div style="max-height:420px;overflow-y:auto;padding-right:4px;">' +
+        '<p style="font-size:12px;color:#475569;margin:0 0 10px;">' +
+          'Selecciona un libro de texto oficial de la SEP Fase 6 para insertar su vinculación curricular y páginas sugeridas en la sesión activa:' +
+        '</p>' +
+        '<div>' + itemsHtml + '</div>' +
+      '</div>';
+
+      modal({
+        titulo: '📚 Catálogo de Libros de Texto Gratuitos SEP Fase 6',
+        html: modalHtml,
+        botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+      });
+    }
+
+    function insertarReferenciaLibroSesion_(idx) {
+      const gradoSel = parseInt((document.getElementById('planGrado') && document.getElementById('planGrado').value) || '1', 10);
+      const campoSel = (document.getElementById('planCampoFormativo') && document.getElementById('planCampoFormativo').value) || '';
+      const filtrados = CATALOGO_LIBROS_SEP_FASE6_.filter(function (l) {
+        return l.grado === gradoSel || l.campo === campoSel || l.campo === 'Interdisciplinar';
+      });
+      const libro = filtrados[idx];
+      if (!libro) return;
+
+      const refTexto = '\n\n[Referencia SEP Fase 6]: ' + libro.titulo + ' (' + libro.paginasRelevantes + '). Proyectos recomendados: ' + libro.proyectosSugeridos.join('; ') + '.';
+      const sesDesarrollo = document.getElementById('sesDesarrollo');
+      if (sesDesarrollo) {
+        sesDesarrollo.value = (sesDesarrollo.value ? sesDesarrollo.value.trim() : '') + refTexto;
+        sesDesarrollo.focus();
+      }
+      toast('Referencia del libro SEP vinculada a la sesión.', 'ok');
+    }
+
+    /* ============================================================
+       BLOQUES MODULARES IDEVICES TIPO EXELearning
+       ============================================================ */
+    function eliminarIDeviceCard_(btn) {
+      if (!btn) return;
+      const c = btn.closest('.idevice-card');
+      if (c) c.remove();
+    }
+
+    function eliminarLegoCard_(btn) {
+      if (!btn) return;
+      const c = btn.closest('.lego-card');
+      if (c) c.remove();
+    }
+
+    function insertariDeviceSesion_(tipo) {
+      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
+      if (!contenedor) return;
+
+      const idUnico = 'idevice_' + Date.now();
+      const div = document.createElement('div');
+
+      if (tipo === 'lectura') {
+        div.className = 'idevice-card idevice-card-audio';
+        div.id = idUnico;
+        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="tipo-badge" style="background:#0284c7;color:#fff;">iDevice Lectura Guiada (DUA)</span>' +
+            '<strong style="font-size:12px;color:#0369a1;">Texto narrado con audio accesible</strong>' +
+          '</div>' +
+          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
+        '</div>' +
+        '<input type="text" placeholder="Título de la lectura breve..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;">' +
+        '<textarea id="txtLectura_' + idUnico + '" rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Escribe el párrafo que los alumnos leerán y escucharán..."></textarea>' +
+        '<div style="display:flex;gap:6px;margin-top:4px;">' +
+          '<button type="button" class="btn-soft-primary" onclick="probarAudioIDevice_(\'' + idUnico + '\')" style="font-size:11px;padding:3px 8px;">🔊 Escuchar con Web Speech</button>' +
+        '</div>';
+      } else if (tipo === 'pregunta') {
+        div.className = 'idevice-card idevice-card-pregunta';
+        div.id = idUnico;
+        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="tipo-badge" style="background:#7c3aed;color:#fff;">iDevice Pregunta Formativa</span>' +
+            '<strong style="font-size:12px;color:#6d28d9;">Reactivo detonador de reflexión</strong>' +
+          '</div>' +
+          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
+        '</div>' +
+        '<input type="text" placeholder="¿Qué pregunta detonadora plantearás a los estudiantes?..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;">' +
+        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Retroalimentación formativa y criterios esperados de respuesta..."></textarea>';
+      } else if (tipo === 'reto') {
+        div.className = 'idevice-card idevice-card-reto';
+        div.id = idUnico;
+        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="tipo-badge" style="background:#16a34a;color:#fff;">iDevice Desafío Práctico</span>' +
+            '<strong style="font-size:12px;color:#15803d;">Actividad comunitaria situada</strong>' +
+          '</div>' +
+          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
+        '</div>' +
+        '<input type="text" placeholder="Nombre del reto o producto esperado de la sesión..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;">' +
+        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad..."></textarea>';
+      }
+
+      contenedor.appendChild(div);
+      toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
+    }
+
+    function probarAudioIDevice_(btn) {
+      let texto = '';
+      if (btn && btn.closest) {
+        const card = btn.closest('.idevice-card');
+        const txtEl = card ? card.querySelector('textarea') : null;
+        texto = txtEl ? txtEl.value.trim() : '';
+      }
+      if (!texto) texto = 'Por favor escribe un texto en el bloque de lectura para escucharlo.';
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(texto);
+        u.lang = 'es-MX';
+        u.rate = 1.0;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    /* ============================================================
+       PUENTE DE DATOS: ENCUESTAS DE DIAGNÓSTICO -> PROGRAMA ANALÍTICO CTE
+       ============================================================ */
+    function vincularHallazgoActualCTE_() {
+      const textoDiagnostico = 'El 68.4% de los alumnos de la comunidad escolar enfrenta factores de riesgo vial en cruces de alta afluencia vehicular (Av. Tláhuac y Calle 11) con tiempos de traslado superiores a 40 minutos, detonando fatiga y necesidad de proyectos comunitarios de seguridad vial y movilidad sustentable.';
+      
+      conmutarModuloShell('planeacion');
+      if (typeof abrirFormPlaneacion === 'function') {
+        abrirFormPlaneacion();
+      }
+      irAPasoPlanNEM(3);
+
+      const planProblema = document.getElementById('planProblema');
+      if (planProblema) {
+        planProblema.value = textoDiagnostico;
+        planProblema.focus();
+      }
+      toast('Hallazgo del Censo de Movilidad vinculado al Problema Comunitario.', 'ok');
+    }
+
+    function conmutarSubTabEncuestas(subTab) {
+      const pAnalitica = document.getElementById('subPanelEncuestaAnalitica');
+      const pEditor = document.getElementById('subPanelEncuestaEditor');
+      const btnA = document.getElementById('btnSubTabAnalitica');
+      const btnE = document.getElementById('btnSubTabEditor');
+
+      if (subTab === 'analitica') {
+        if (pAnalitica) pAnalitica.classList.remove('oculto');
+        if (pEditor) pEditor.classList.add('oculto');
+        if (btnA) btnA.classList.add('activo');
+        if (btnE) btnE.classList.remove('activo');
+      } else {
+        if (pAnalitica) pAnalitica.classList.add('oculto');
+        if (pEditor) pEditor.classList.remove('oculto');
+        if (btnA) btnA.classList.remove('activo');
+        if (btnE) btnE.classList.add('activo');
+      }
+    }
+
+    let chartMovilidadInstance_ = null;
+    let chartRiesgoInstance_ = null;
+    function iniciarGraficasDiagnostico_() {
+      const cMov = document.getElementById('chartMovilidadEscolar');
+      const cRiesgo = document.getElementById('chartRiesgoDiagnostico');
+      if (!cMov && !cRiesgo) return;
+
+      if (typeof Chart !== 'undefined') {
+        if (cMov) {
+          if (chartMovilidadInstance_) chartMovilidadInstance_.destroy();
+          const ctx = cMov.getContext('2d');
+          chartMovilidadInstance_ = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['Transporte Público', 'Caminando', 'Bicicleta / Patín', 'Auto Particular'],
+              datasets: [{
+                label: '% Alumnos',
+                data: [54.2, 28.5, 9.8, 7.5],
+                backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6'],
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: { y: { beginAtZero: true, max: 60 } }
+            }
+          });
+        }
+        if (cRiesgo) {
+          if (chartRiesgoInstance_) chartRiesgoInstance_.destroy();
+          const ctxR = cRiesgo.getContext('2d');
+          chartRiesgoInstance_ = new Chart(ctxR, {
+            type: 'doughnut',
+            data: {
+              labels: ['Riesgo Vial / Cruces', 'Traslado > 40 min', 'Acceso Digital DUA', 'Sin Factores Críticos'],
+              datasets: [{
+                data: [42.5, 25.5, 18.0, 14.0],
+                backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981']
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10.5 } } } }
+            }
+          });
+        }
+      } else {
+        if (cMov) {
+          const ctx = cMov.getContext('2d');
+          ctx.clearRect(0, 0, cMov.width, cMov.height);
+          ctx.fillStyle = '#2563eb';
+          ctx.fillRect(10, 20, 140, 20);
+          ctx.fillStyle = '#10b981';
+          ctx.fillRect(10, 50, 80, 20);
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillRect(10, 80, 30, 20);
+          ctx.fillStyle = '#334155';
+          ctx.font = '11px sans-serif';
+          ctx.fillText('Transporte: 54.2%', 160, 35);
+          ctx.fillText('Caminando: 28.5%', 100, 65);
+          ctx.fillText('Bici: 9.8%', 50, 95);
+        }
+        if (cRiesgo) {
+          const ctxR = cRiesgo.getContext('2d');
+          ctxR.clearRect(0, 0, cRiesgo.width, cRiesgo.height);
+          ctxR.fillStyle = '#ef4444';
+          ctxR.fillRect(10, 20, 110, 20);
+          ctxR.fillStyle = '#f59e0b';
+          ctxR.fillRect(10, 50, 70, 20);
+          ctxR.fillStyle = '#3b82f6';
+          ctxR.fillRect(10, 80, 50, 20);
+          ctxR.fillStyle = '#334155';
+          ctxR.font = '11px sans-serif';
+          ctxR.fillText('Riesgo Vial: 68.4%', 130, 35);
+          ctxR.fillText('Traslado > 40m: 41.2%', 90, 65);
+          ctxR.fillText('DUA Digital: 76.8%', 70, 95);
+        }
+      }
+    }
+
+    function agregarPreguntaDemo_(tipo) {
+      const cont = document.getElementById('listaPreguntasConstructor');
+      if (!cont) return;
+      const card = document.createElement('div');
+      card.className = 'lego-card';
+      card.style = 'margin:0;padding:12px 14px;border-left:4px solid var(--app-primary);';
+
+      let tipoNombre = 'Opción Múltiple';
+      let ayudaPlaceholder = 'Escribe la pregunta detonadora...';
+      if (tipo === 'escala') {
+        tipoNombre = 'Escala Likert (1 a 5)';
+        card.style.borderLeftColor = '#10b981';
+      } else if (tipo === 'abierta') {
+        tipoNombre = 'Texto Libre / Abierta';
+        card.style.borderLeftColor = '#8b5cf6';
+      } else if (tipo === 'dicotomica') {
+        tipoNombre = 'Sí / No (Dicotómica)';
+        card.style.borderLeftColor = '#f59e0b';
+      }
+
+      card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+        '<span class="tipo-badge" style="background:#eff6ff;color:#1d4ed8;">' + escaparHtml(tipoNombre) + '</span>' +
+        '<button type="button" onclick="eliminarLegoCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:11px;font-weight:700;">🗑️ Quitar</button>' +
+      '</div>' +
+      '<input type="text" placeholder="' + escaparHtml(ayudaPlaceholder) + '" style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid var(--app-border);border-radius:4px;box-sizing:border-box;">';
+      cont.appendChild(card);
+      toast('Reactivo (' + tipoNombre + ') agregado al formulario.', 'ok');
+    }
+
+    function previsualizarEncuestaModal_() {
+      const items = document.querySelectorAll('#listaPreguntasConstructor .lego-card');
+      let previewHtml = '<div style="max-height:400px;overflow-y:auto;padding-right:4px;">';
+      previewHtml += '<div style="background:#eff6ff;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-size:12px;color:#1e40af;">';
+      previewHtml += '<strong>📋 Vista de Alumno (Censo Escolar 2026):</strong> Responde honestamente para ayudarnos a diseñar los proyectos comunitarios del plantel.';
+      previewHtml += '</div>';
+      if (items.length === 0) {
+        previewHtml += '<p style="color:#64748b;text-align:center;">No hay reactivos en el cuestionario aún.</p>';
+      } else {
+        items.forEach(function (card, idx) {
+          const tit = (card.querySelector('p') && card.querySelector('p').textContent) ||
+                      (card.querySelector('input') && card.querySelector('input').value) ||
+                      ('Pregunta ' + (idx + 1));
+          previewHtml += '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:8px;">';
+          previewHtml += '<strong style="font-size:12.5px;color:#1e293b;display:block;margin-bottom:6px;">' + (idx + 1) + '. ' + escaparHtml(tit) + '</strong>';
+          previewHtml += '<input type="text" placeholder="Escribe tu respuesta aquí..." style="width:100%;font-size:12px;padding:5px 8px;border:1px solid #cbd5e1;border-radius:4px;box-sizing:border-box;">';
+          previewHtml += '</div>';
+        });
+      }
+      previewHtml += '</div>';
+
+      modal({
+        titulo: '👁️ Previsualización del Censo Comunitario',
+        html: previewHtml,
+        botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+      });
+    }
+
+    function guardarEncuestaDiagnostico_() {
+      toast('Formulario de diagnóstico guardado y publicado en la Suite Escolar.', 'ok');
+    }
+
+    /* ============================================================
+       COMPRENSIÓN LECTORA & MEDICIÓN DE PPM
+       ============================================================ */
+    const CATALOGO_LECTURAS_DOCENTE_ = [
+      {
+        id: 1,
+        titulo: 'El Enigma de los Códices Prehispánicos',
+        palabras: 280,
+        grado: '1.° Secundaria',
+        texto: 'Los antiguos pueblos mesoamericanos desarrollaron avanzados sistemas de registro en tiras de papel amate y piel de venado plegadas como biombos. En estos documentos, conocidos como códices, los tlacuilos plasmaban conocimientos astronómicos, linajes dinásticos y calendarios rituales. Cada glifo representaba una síntesis visual de ideas complejas que permitían mantener viva la memoria colectiva a través de los siglos...',
+        preguntas: [
+          { nivel: 'Nivel 1: Literal', texto: '¿En qué materiales elaboraban sus códices los antiguos pueblos mesoamericanos?', correcta: 'En tiras de papel amate y piel de venado plegadas como biombos', opciones: ['En tiras de papel amate y piel de venado plegadas como biombos', 'En pergaminos de seda importados de oriente', 'En tablillas de arcilla grabadas con cuneiforme'] },
+          { nivel: 'Nivel 2: Inferencial', texto: '¿Por qué los tlacuilos ocupaban un papel central en la conservación de la memoria comunitaria?', correcta: 'Porque sintetizaban visualmente conocimientos astronómicos y linajes', opciones: ['Porque sintetizaban visualmente conocimientos astronómicos y linajes', 'Porque eran los únicos comerciantes autorizados en los tianguis'] },
+          { nivel: 'Nivel 3: Crítico / Reflexivo', texto: '¿Qué valor tiene para nuestra identidad actual rescatar el testimonio gráfico de los códices?', correcta: 'Reivindicar la raíz pluricultural y científica de los pueblos originarios', opciones: ['Reivindicar la raíz pluricultural y científica de los pueblos originarios', 'Ninguno, son documentos que ya no aplican en la vida moderna'] }
+        ]
+      },
+      {
+        id: 2,
+        titulo: 'El Celular en el Aula: ¿Herramienta o Distractor?',
+        palabras: 210,
+        grado: '2.° Secundaria',
+        texto: 'El uso de teléfonos inteligentes en las aulas de secundaria suscita un debate constante entre docentes, familias y estudiantes. Mientras que para algunos representa una fuente inagotable de acceso inmediato a fuentes bibliográficas y diccionarios multilingües, para otros constituye una fuente permanente de dispersión de la atención y ciberacoso. El desafío actual radica en establecer acuerdos de convivencia digital consensuados...',
+        preguntas: [
+          { nivel: 'Nivel 1: Literal', texto: '¿Cuál es una ventaja del celular en el aula mencionada en la lectura?', correcta: 'Acceso inmediato a fuentes bibliográficas y diccionarios multilingües', opciones: ['Acceso inmediato a fuentes bibliográficas y diccionarios multilingües', 'Eliminar la necesidad de asistir a clases presenciales', 'Sustituir las explicaciones del docente'] },
+          { nivel: 'Nivel 2: Inferencial', texto: '¿Por qué el autor propone acuerdos consensuados en lugar de la prohibición absoluta?', correcta: 'Porque la mediación pedagógica promueve una autorregulación consciente del estudiante', opciones: ['Porque la mediación pedagógica promueve una autorregulación consciente del estudiante', 'Porque la escuela carece de autoridad normativa'] },
+          { nivel: 'Nivel 3: Crítico / Reflexivo', texto: '¿Cómo aplicarías la tecnología responsablemente en tu proyecto comunitario?', correcta: 'Utilizando herramientas colaborativas para investigar y comunicar propuestas de solución', opciones: ['Utilizando herramientas colaborativas para investigar y comunicar propuestas de solución', 'Grabando a compañeros sin su consentimiento'] }
+        ]
+      },
+      {
+        id: 3,
+        titulo: 'Ecosistemas y Preservación de la Cuenca de México',
+        palabras: 310,
+        grado: '1.° Secundaria',
+        texto: 'La cuenca lacustre de México albergaba un complejo sistema de cinco lagos interconectados con abundante fauna endémica como el ajolote y las garzas migrantes. Con el proceso de desecación iniciado en la época colonial y acelerado durante el siglo XX, los humedales de Tláhuac y Xochimilco quedaron como los últimos relictos vivientes de este prodigio ecológico. Su preservación es fundamental para la recarga del acuífero y la regulación del microclima...',
+        preguntas: [
+          { nivel: 'Nivel 1: Literal', texto: '¿Qué especies endémicas habitaban originalmente la cuenca lacustre?', correcta: 'El ajolote y las garzas migrantes', opciones: ['El ajolote y las garzas migrantes', 'El cóndor de los andes y el jaguar del norte', 'El oso pardo polar'] },
+          { nivel: 'Nivel 2: Inferencial', texto: '¿Qué consecuencia directa provoca la pérdida de los humedales en Tláhuac?', correcta: 'Disminución de la recarga del acuífero y aumento de ondas de calor urbanas', opciones: ['Disminución de la recarga del acuífero y aumento de ondas de calor urbanas', 'Sobrepoblación de peces lacustres'] },
+          { nivel: 'Nivel 3: Crítico / Reflexivo', texto: '¿Qué compromiso comunitario podemos asumir desde la escuela para cuidar los canales?', correcta: 'Reducir plásticos de un solo uso y organizar jornadas de limpieza de chinampas', opciones: ['Reducir plásticos de un solo uso y organizar jornadas de limpieza de chinampas', 'Esperar a que otros resuelvan la problemática ambiental'] }
+        ]
+      },
+      {
+        id: 4,
+        titulo: 'Mujeres Pioneras de la Ciencia en México',
+        palabras: 345,
+        grado: '3.° Secundaria',
+        texto: 'A lo largo de la historia científica de México, destacadas investigadoras han roto barreras de género para realizar descubrimientos trascendentales en astronomía, química y medicina. Desde Helia Bravo Hollis, quien dedicó su vida al estudio sistemático de las cactáceas mexicanas, hasta Paris Pishmish, astrónoma que impulsó los primeros posgrados en astrofísica, su legado demuestra que la tenacidad y el rigor transforman el saber universal...',
+        preguntas: [
+          { nivel: 'Nivel 1: Literal', texto: '¿A qué campo de estudio consagró su investigación Helia Bravo Hollis?', correcta: 'Al estudio sistemático de las cactáceas mexicanas', opciones: ['Al estudio sistemático de las cactáceas mexicanas', 'A la exploración espacial en cohetes', 'A la paleontología de dinosaurios'] },
+          { nivel: 'Nivel 2: Inferencial', texto: '¿Cuál fue el impacto institucional de Paris Pishmish en la ciencia mexicana?', correcta: 'Fundar e impulsar los primeros posgrados formales en astrofísica', opciones: ['Fundar e impulsar los primeros posgrados formales en astrofísica', 'Descubrir una nueva constelación a simple vista'] },
+          { nivel: 'Nivel 3: Crítico / Reflexivo', texto: '¿Por qué la equidad de género en las vocaciones STEM fortalece a la sociedad?', correcta: 'Porque diversifica las perspectivas científicas y amplía el talento innovador', opciones: ['Porque diversifica las perspectivas científicas y amplía el talento innovador', 'Porque es una moda temporal'] }
+        ]
+      }
+    ];
+
+    let lecturaDocenteActiva_ = CATALOGO_LECTURAS_DOCENTE_[0];
+    let cronometroLecturaTimer_ = null;
+    let tiempoLecturaInicio_ = 0;
+    let tiempoLecturaTranscurrido_ = 0;
+
+    function inicializarLecturaModulo_() {
+      cambiarLecturaDocenteLocal_(document.getElementById('selLecturaDocente') ? document.getElementById('selLecturaDocente').value : 1);
+    }
+
+    function conmutarSubTabLectura_(subTab) {
+      const pMed = document.getElementById('subPanelLecturaMedicion');
+      const pRea = document.getElementById('subPanelLecturaReactivos');
+      const bMed = document.getElementById('btnSubTabLecMedicion');
+      const bRea = document.getElementById('btnSubTabLecReactivos');
+
+      if (subTab === 'medicion') {
+        if (pMed) pMed.classList.remove('oculto');
+        if (pRea) pRea.classList.add('oculto');
+        if (bMed) bMed.classList.add('activo');
+        if (bRea) bRea.classList.remove('activo');
+      } else {
+        if (pMed) pMed.classList.add('oculto');
+        if (pRea) pRea.classList.remove('oculto');
+        if (bMed) bMed.classList.remove('activo');
+        if (bRea) bRea.classList.add('activo');
+      }
+    }
+
+    function cambiarLecturaDocenteLocal_(val) {
+      const id = parseInt(val, 10) || 1;
+      const l = CATALOGO_LECTURAS_DOCENTE_.find(function (item) { return item.id === id; }) || CATALOGO_LECTURAS_DOCENTE_[0];
+      lecturaDocenteActiva_ = l;
+
+      const tEl = document.getElementById('titLecturaPPM');
+      const pEl = document.getElementById('parrafoLecturaPPM');
+      const bEl = document.getElementById('badgeLecturaPalabras');
+      if (tEl) tEl.textContent = l.titulo;
+      if (pEl) pEl.textContent = l.texto;
+      if (bEl) bEl.textContent = l.palabras + ' palabras';
+
+      if (cronometroLecturaTimer_) {
+        clearInterval(cronometroLecturaTimer_);
+        cronometroLecturaTimer_ = null;
+      }
+      tiempoLecturaInicio_ = 0;
+      tiempoLecturaTranscurrido_ = 0;
+      const dispC = document.getElementById('dispCronometroLectura');
+      const dispP = document.getElementById('dispPPM');
+      if (dispC) dispC.textContent = '00:00';
+      if (dispP) dispP.textContent = '-- PPM';
+
+      renderizarReactivosLecturaLocal_(l);
+    }
+
+    function renderizarReactivosLecturaLocal_(l) {
+      const c = document.getElementById('cajaReactivosLectura');
+      if (!c) return;
+      let html = '';
+      const colores = ['#2563eb', '#10b981', '#f59e0b'];
+      const bgBadges = ['#eff6ff', '#d1fae5', '#fef3c7'];
+      const textBadges = ['#1d4ed8', '#065f46', '#92400e'];
+
+      l.preguntas.forEach(function (p, idx) {
+        const color = colores[idx % colores.length];
+        const bg = bgBadges[idx % bgBadges.length];
+        const fg = textBadges[idx % textBadges.length];
+        html += '<div style="background:#ffffff;border:1px solid var(--app-border);border-radius:10px;padding:14px;border-left:4px solid ' + color + ';">' +
+          '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">' +
+            '<span class="tipo-badge" style="background:' + bg + ';color:' + fg + ';">' + escaparHtml(p.nivel) + '</span>' +
+            '<span style="font-size:11px;color:#64748b;">Reactivo ' + (idx + 1) + '</span>' +
+          '</div>' +
+          '<p style="font-size:13px;font-weight:700;margin:0 0 8px;">' + escaparHtml(p.texto) + '</p>' +
+          '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#334155;">';
+        p.opciones.forEach(function (opt) {
+          const esCorrecta = opt === p.correcta;
+          html += '<label style="display:flex;align-items:center;gap:6px;">' +
+            '<input type="radio" name="rLocal_' + idx + '" ' + (esCorrecta ? 'checked' : '') + '> ' +
+            escaparHtml(opt) + (esCorrecta ? ' <span style="color:#15803d;font-weight:700;">(Correcta)</span>' : '') +
+          '</label>';
+        });
+        html += '</div></div>';
+      });
+      c.innerHTML = html;
+    }</script>

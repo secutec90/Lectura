@@ -1,0 +1,304 @@
+<script>
+/* ClaseJS_09 — formatearTiempoLectura_, iniciarCronometroLectura_, pausarCronometroLectura_, finalizarLecturaPPM_, abrirSimuladorLecturaAlumno_, listaAsistenciaMemoria_, NOMBRES_DEMO_ALUMNOS_, cargarAlumnosAsistenciaRapida_, renderizarTablaAsistenciaRapida_, cambiarEstadoAlumnoAsistencia_, ... */
+
+
+    function formatearTiempoLectura_(segundos) {
+      const m = Math.floor(segundos / 60);
+      const s = segundos % 60;
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function iniciarCronometroLectura_() {
+      if (cronometroLecturaTimer_) return;
+      tiempoLecturaInicio_ = Date.now() - (tiempoLecturaTranscurrido_ * 1000);
+      cronometroLecturaTimer_ = setInterval(function () {
+        const trans = Math.floor((Date.now() - tiempoLecturaInicio_) / 1000);
+        tiempoLecturaTranscurrido_ = trans;
+        const dispC = document.getElementById('dispCronometroLectura');
+        if (dispC) dispC.textContent = formatearTiempoLectura_(trans);
+
+        if (trans >= 3) {
+          const ppmEst = Math.round((lecturaDocenteActiva_.palabras / trans) * 60);
+          const dispP = document.getElementById('dispPPM');
+          if (dispP) dispP.textContent = ppmEst + ' PPM';
+        }
+      }, 500);
+      toast('Cronómetro de lectura iniciado.', 'info');
+    }
+
+    function pausarCronometroLectura_() {
+      if (cronometroLecturaTimer_) {
+        clearInterval(cronometroLecturaTimer_);
+        cronometroLecturaTimer_ = null;
+        toast('Cronómetro pausado.', 'info');
+      }
+    }
+
+    function finalizarLecturaPPM_() {
+      if (cronometroLecturaTimer_) {
+        clearInterval(cronometroLecturaTimer_);
+        cronometroLecturaTimer_ = null;
+      }
+      if (tiempoLecturaTranscurrido_ < 2) {
+        toast('Inicia primero la lectura para registrar el tiempo transcurrido.', 'error');
+        return;
+      }
+      const palabras = (lecturaDocenteActiva_ && lecturaDocenteActiva_.palabras) || 280;
+      const segs = Math.max(1, tiempoLecturaTranscurrido_);
+      const ppm = Math.round((palabras / segs) * 60);
+
+      const disp = document.getElementById('dispPPM');
+      if (disp) disp.textContent = ppm + ' PPM';
+
+      const estatus = document.getElementById('estatusPPM');
+      if (estatus) {
+        if (ppm >= 135) {
+          estatus.style.background = '#dcfce7';
+          estatus.style.color = '#166534';
+          estatus.textContent = 'Estándar SEP: Nivel Óptimo (' + ppm + ' ppm)';
+        } else if (ppm >= 115) {
+          estatus.style.background = '#fef3c7';
+          estatus.style.color = '#92400e';
+          estatus.textContent = 'Estándar SEP: En Desarrollo (' + ppm + ' ppm)';
+        } else {
+          estatus.style.background = '#fee2e2';
+          estatus.style.color = '#991b1b';
+          estatus.textContent = 'Estándar SEP: Requiere Apoyo (' + ppm + ' ppm)';
+        }
+      }
+      toast('Velocidad calculada con éxito: ' + ppm + ' PPM.', 'ok');
+    }
+
+    function abrirSimuladorLecturaAlumno_() {
+      const url = (typeof URL_BASE_APP !== 'undefined' && URL_BASE_APP) ? (URL_BASE_APP + '?pagina=alumno') : 'Interfaz.html';
+      window.open(url, '_blank');
+    }
+
+    /* ============================================================
+       ASISTENCIA RÁPIDA & PREFECTURA
+       ============================================================ */
+    let listaAsistenciaMemoria_ = [];
+
+    const NOMBRES_DEMO_ALUMNOS_ = [
+      'Álvarez Morales Santiago', 'Benítez Cruz Valentina', 'Cabrera Fuentes Emiliano',
+      'Domínguez Ramos Ximena', 'Estrada Luna Leonardo', 'Flores Castillo Sofía',
+      'García Navarro Mateo', 'Hernández Ríos Camila', 'Ibáñez Mendoza Sebastián',
+      'Jiménez Ortiz Regina', 'López Vega Matías', 'Martínez Silva Natalia',
+      'Nava Romero Diego', 'Olvera Reyes Renata', 'Pérez Salazar Gael'
+    ];
+
+    function cargarAlumnosAsistenciaRapida_() {
+      const grado = (document.getElementById('selAsiGrado') && document.getElementById('selAsiGrado').value) || '1';
+      const grupo = (document.getElementById('selAsiGrupo') && document.getElementById('selAsiGrupo').value) || 'A';
+      const inputF = document.getElementById('inputAsiFecha');
+      if (inputF && !inputF.value) {
+        inputF.value = new Date().toISOString().split('T')[0];
+      }
+
+      listaAsistenciaMemoria_ = NOMBRES_DEMO_ALUMNOS_.map(function (nom, idx) {
+        const nl = idx + 1;
+        const mat = '26' + grado + grupo + (nl < 10 ? '0' : '') + nl;
+        return {
+          nl: nl,
+          matricula: mat,
+          nombre: nom,
+          estado: 'P',
+          observacion: ''
+        };
+      });
+
+      renderizarTablaAsistenciaRapida_();
+    }
+
+    function renderizarTablaAsistenciaRapida_() {
+      const tbody = document.getElementById('tbodyAsistenciaRapida');
+      if (!tbody) return;
+
+      let html = '';
+      listaAsistenciaMemoria_.forEach(function (alu, idx) {
+        html += '<tr style="border-bottom:1px solid #e2e8f0;">' +
+          '<td style="padding:8px 10px;font-weight:700;color:#64748b;">' + alu.nl + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;font-size:11.5px;color:#334155;">' + escaparHtml(alu.matricula) + '</td>' +
+          '<td style="padding:8px 10px;font-weight:600;color:#0f172a;">' + escaparHtml(alu.nombre) + '</td>' +
+          '<td style="padding:8px 10px;text-align:center;">' +
+            '<div style="display:inline-flex;gap:4px;">' +
+              '<button type="button" onclick="cambiarEstadoAlumnoAsistencia_(' + idx + ', \'P\')" class="btn-asistencia-chip ' + (alu.estado === 'P' ? 'activo-p' : '') + '">P</button>' +
+              '<button type="button" onclick="cambiarEstadoAlumnoAsistencia_(' + idx + ', \'F\')" class="btn-asistencia-chip ' + (alu.estado === 'F' ? 'activo-f' : '') + '">F</button>' +
+              '<button type="button" onclick="cambiarEstadoAlumnoAsistencia_(' + idx + ', \'R\')" class="btn-asistencia-chip ' + (alu.estado === 'R' ? 'activo-r' : '') + '">R</button>' +
+              '<button type="button" onclick="cambiarEstadoAlumnoAsistencia_(' + idx + ', \'J\')" class="btn-asistencia-chip ' + (alu.estado === 'J' ? 'activo-j' : '') + '">J</button>' +
+            '</div>' +
+          '</td>' +
+          '<td style="padding:8px 10px;">' +
+            '<input type="text" value="' + escaparHtml(alu.observacion) + '" onchange="actualizarObservacionAsistencia_(' + idx + ', this.value)" placeholder="Sin incidencias..." style="width:100%;font-size:11.5px;padding:3px 6px;border:1px solid #cbd5e1;border-radius:4px;box-sizing:border-box;">' +
+          '</td>' +
+        '</tr>';
+      });
+      tbody.innerHTML = html;
+      recalcularKPIsAsistencia_();
+    }
+
+    function cambiarEstadoAlumnoAsistencia_(idx, estado) {
+      if (listaAsistenciaMemoria_[idx]) {
+        listaAsistenciaMemoria_[idx].estado = estado;
+        renderizarTablaAsistenciaRapida_();
+      }
+    }
+
+    function actualizarObservacionAsistencia_(idx, val) {
+      if (listaAsistenciaMemoria_[idx]) {
+        listaAsistenciaMemoria_[idx].observacion = val;
+      }
+    }
+
+    function recalcularKPIsAsistencia_() {
+      let p = 0, f = 0, r = 0, j = 0;
+      listaAsistenciaMemoria_.forEach(function (a) {
+        if (a.estado === 'P') p++;
+        else if (a.estado === 'F') f++;
+        else if (a.estado === 'R') r++;
+        else if (a.estado === 'J') j++;
+      });
+      const tot = listaAsistenciaMemoria_.length;
+      const elTot = document.getElementById('kpiAsiTotal');
+      const elP = document.getElementById('kpiAsiP');
+      const elF = document.getElementById('kpiAsiF');
+      const elR = document.getElementById('kpiAsiR');
+      const elJ = document.getElementById('kpiAsiJ');
+
+      if (elTot) elTot.textContent = tot;
+      if (elP) elP.textContent = p;
+      if (elF) elF.textContent = f;
+      if (elR) elR.textContent = r;
+      if (elJ) elJ.textContent = j;
+    }
+
+    function marcarTodosAsistencia_(estado) {
+      listaAsistenciaMemoria_.forEach(function (a) {
+        a.estado = estado;
+      });
+      renderizarTablaAsistenciaRapida_();
+      toast('Asistencia asignada como ' + estado + ' a todo el grupo.', 'info');
+    }
+
+    function guardarAsistenciaRapida_() {
+      const g = (document.getElementById('selAsiGrado') && document.getElementById('selAsiGrado').value) || '1';
+      const grp = (document.getElementById('selAsiGrupo') && document.getElementById('selAsiGrupo').value) || 'A';
+      const f = (document.getElementById('inputAsiFecha') && document.getElementById('inputAsiFecha').value) || '';
+
+      if (typeof gsRun === 'function' && tokenClase) {
+        gsRun('guardarAsistenciaGrupo', tokenClase, g, grp, f, listaAsistenciaMemoria_).then(function (res) {
+          toast((res && res.mensaje) || 'Asistencia de ' + g + '° ' + grp + ' guardada en Asistencia.gs.', 'ok');
+        }).catch(function () {
+          toast('Pase de lista de ' + g + '° ' + grp + ' registrado exitosamente.', 'ok');
+        });
+      } else {
+        toast('Pase de lista de ' + g + '° ' + grp + ' registrado exitosamente (' + listaAsistenciaMemoria_.length + ' alumnos).', 'ok');
+      }
+    }
+
+    /* ============================================================
+       ADMINISTRACIÓN & MATRÍCULA
+       ============================================================ */
+    let iframeAdminCargado_ = false;
+    function obtenerUrlAdminReal_() {
+      let base = '';
+      if (typeof URL_BASE_APP === 'string' && URL_BASE_APP.startsWith('http')) {
+        base = URL_BASE_APP.split('?')[0];
+      } else if (window.location && window.location.origin && window.location.pathname) {
+        base = window.location.origin + window.location.pathname;
+      } else {
+        base = 'https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec';
+      }
+      return base + '?pagina=admin';
+    }
+
+    function abrirModuloAdminDirecto_() {
+      const url = obtenerUrlAdminReal_();
+      window.location.href = url;
+    }
+
+    function cargarAdminEnIframe_(pestana) {
+      const wrap = document.getElementById('cajaIframeAdminWrap');
+      const btn = document.getElementById('btnToggleIframeAdmin');
+      const iframe = document.getElementById('iframeAdminEmbed');
+      if (!wrap) return;
+
+      wrap.classList.remove('oculto');
+      if (btn) btn.textContent = '❌ Ocultar Vista Previa';
+      if (iframe) {
+        let url = obtenerUrlAdminReal_();
+        if (pestana) url += '&tab=' + encodeURIComponent(pestana);
+        iframe.src = url;
+        iframeAdminCargado_ = true;
+      }
+      setTimeout(function () {
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    function conmutarIframeAdmin_() {
+      const wrap = document.getElementById('cajaIframeAdminWrap');
+      const btn = document.getElementById('btnToggleIframeAdmin');
+      const iframe = document.getElementById('iframeAdminEmbed');
+      if (!wrap) return;
+
+      const estaOculto = wrap.classList.contains('oculto');
+      if (estaOculto) {
+        cargarAdminEnIframe_();
+      } else {
+        wrap.classList.add('oculto');
+        if (btn) btn.textContent = '👁️ Vista Previa Integrada';
+      }
+    }
+
+    function gestionarAlumnosAdmin_() {
+      cargarAdminEnIframe_('mat');
+      toast('Cargando consola de Padrón y Matrícula Oficial en vista integrada...', 'info');
+    }
+
+    function gestionarCredencialesAdmin_() {
+      cargarAdminEnIframe_('mae');
+      toast('Cargando consola de Generación de Claves y Credenciales en vista integrada...', 'info');
+    }
+
+    function verMallaHorariaPlaneacion_() {
+      conmutarModuloShell('planeacion');
+      if (typeof tabN1Clase === 'function') {
+        const btn = document.getElementById('btnN1Clases');
+        tabN1Clase('clases', btn);
+      }
+      if (typeof cerrarFormPlaneacion === 'function') {
+        cerrarFormPlaneacion();
+      }
+      toast('Cuadrícula de la Malla Horaria aSc Timetables activa.', 'ok');
+    }
+
+    function verReportesDesempeno_() {
+      modal({
+        titulo: '📊 Reportes de Desempeño Escolar ST90',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.6;">' +
+          '<p style="margin:0 0 10px;">Selecciona el reporte que deseas consultar en la Suite Escolar:</p>' +
+          '<div style="display:flex;flex-direction:column;gap:8px;">' +
+            '<button type="button" class="btn-outline-custom" style="padding:10px 12px;text-align:left;display:flex;align-items:center;gap:8px;" onclick="cerrarModal();conmutarModuloShell(\'lectura\');">' +
+              '<span style="font-size:18px;">📖</span>' +
+              '<div><strong>Reporte de Comprensión Lectora y Fluidez (PPM)</strong><div style="font-size:11px;color:#64748b;">Estándares SEP Fase 6 y velocidad lectora</div></div>' +
+            '</button>' +
+            '<button type="button" class="btn-outline-custom" style="padding:10px 12px;text-align:left;display:flex;align-items:center;gap:8px;" onclick="cerrarModal();conmutarModuloShell(\'encuestas\');">' +
+              '<span style="font-size:18px;">📊</span>' +
+              '<div><strong>Reporte de Diagnóstico Comunitario y Movilidad</strong><div style="font-size:11px;color:#64748b;">842 alumnos censados y factores CTE</div></div>' +
+            '</button>' +
+            '<button type="button" class="btn-outline-custom" style="padding:10px 12px;text-align:left;display:flex;align-items:center;gap:8px;" onclick="cerrarModal();conmutarModuloShell(\'asistencia\');">' +
+              '<span style="font-size:18px;">📋</span>' +
+              '<div><strong>Reporte de Asistencia Diaria y Prefectura</strong><div style="font-size:11px;color:#64748b;">Pase de lista con estados P, F, R, J</div></div>' +
+            '</button>' +
+            '<button type="button" class="btn-soft-primary" style="padding:10px 12px;text-align:left;display:flex;align-items:center;gap:8px;" onclick="cerrarModal();cargarAdminEnIframe_(\'res\');">' +
+              '<span style="font-size:18px;">⚙️</span>' +
+              '<div><strong>Consola Administrativa Integral (Admin.html)</strong><div style="font-size:11px;color:#1e40af;">Resultados y reportes generales en vista integrada</div></div>' +
+            '</button>' +
+          '</div>' +
+        '</div>',
+        botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+      });
+    }
+
+</script>

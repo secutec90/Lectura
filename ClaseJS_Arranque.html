@@ -1,0 +1,53 @@
+<script>
+/* ClaseJS_Arranque — sentencias de nivel superior en su orden original */
+
+    if (typeof clavesDocentes !== 'undefined') {
+      clavesDocentes.configurar({ caja: 'cajaMaeAcc', busc: 'buscMaeClase', cont: 'contMaeClase' });
+    }
+
+    /* ATAJOS DE TECLADO ACCESIBLES EN AULA HABLADA */
+    document.addEventListener('keydown', function (ev) {
+      const vistaAlu = document.getElementById('vistaAlu');
+      if (!vistaAlu || vistaAlu.classList.contains('oculto')) return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].indexOf((ev.target && ev.target.tagName) || '') >= 0) return;
+
+      if (ev.code === 'Space') {
+        ev.preventDefault();
+        pausarClase();
+      } else if (ev.key === 'j' || ev.key === 'J') {
+        cambiarVelocidadClase(-0.1);
+      } else if (ev.key === 'l' || ev.key === 'L') {
+        cambiarVelocidadClase(0.1);
+      } else if (ev.key === 'Escape') {
+        detenerClaseAlu();
+      } else if (ev.key === 'r' || ev.key === 'R') {
+        repetirClase();
+      }
+    });
+
+    document.getElementById('claveClase').addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') entrarClase();
+    });
+    document.getElementById('usuarioClase').addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') document.getElementById('claveClase').focus();
+    });
+      window.addEventListener('click', function (ev) {
+      /* asi-dd-panel-global-closer */
+      if (!ev.target.closest('.asi-dd')) {
+        document.querySelectorAll('.asi-dd-panel').forEach(function (p) { p.classList.add('oculto'); });
+      }
+    });
+    prepararVocesClase_();
+    if (window.speechSynthesis && typeof window.speechSynthesis.addEventListener === 'function') {
+      window.speechSynthesis.addEventListener('voiceschanged', prepararVocesClase_);
+    }
+    window.conmutarModuloShell = conmutarModuloShell;
+
+    try {
+      if (localStorage.getItem('ST90_SIDEBAR_COLAPSADO') === '1') {
+        setTimeout(function () {
+          const s = document.getElementById('appShellSidebar');
+          if (s) s.classList.add('colapsado');
+        }, 50);
+      }
+    } catch (e) {}</script>

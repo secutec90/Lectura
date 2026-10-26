@@ -3,250 +3,127 @@
 /**
  * manifiesto.js — Arnés de verificación para partir archivos sin cambiar comportamiento.
  *
+ * Usa un parser real (acorn, vendorizado en herramientas/acorn.js) sobre el AST de
+ * nivel superior. No es una heurística: cada declaración y cada sentencia sale del
+ * árbol de sintaxis, con sus posiciones exactas en el archivo.
+ *
  * Uso:
  *   node herramientas/manifiesto.js --salida herramientas/manifiesto-antes.json
  *   node herramientas/manifiesto.js --salida herramientas/manifiesto-despues.json
- *   node herramientas/manifiesto.js --comparar herramientas/manifiesto-antes.json herramientas/manifiesto-despues.json
+ *   node herramientas/manifiesto.js --comparar antes.json despues.json
  *
- * Qué hace:
- *   1. Recorre los .gs y .html del proyecto.
- *   2. Extrae cada bloque <script> de los HTML (los scriptlets <?= ?> se neutralizan).
- *   3. Localiza los símbolos de nivel superior (function, const, let, var, class) y
- *      guarda el sha256 de su texto exacto.
- *   4. Localiza las sentencias ejecutables de nivel superior (las que rompen al partir
- *      un <script> en dos bloques y quedan antes de sus dependencias).
- *   5. Detecta nombres definidos en más de un documento (duplicados: el último cargado gana).
+ * Opciones:
+ *   --raiz <dir>      raíz a analizar (por defecto, la carpeta padre de herramientas/)
+ *   --salida <ruta>   escribe el manifiesto en JSON
+ *   --comparar A B    compara dos manifiestos
+ *   --constructor     incluye la carpeta constructor/ (por defecto se excluye)
  *
- * Comparación: si un corte es puramente mecánico, cada símbolo conserva su hash y solo
- * cambia de documento. Cualquier diferencia de hash es una edición, no un movimiento.
- *
- * Salida: 0 si antes y después son equivalentes; 1 si hay cambios, altas o bajas.
+ * Salida 0 = EQUIVALENTE (ningún símbolo cambió de contenido, solo de archivo)
+ * Salida 1 = DIFERENTE (hay símbolos cambiados, eliminados o nuevos)
+ * Salida 2 = error de uso
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const acorn = require('./acorn.js');
 
-const RAIZ = path.resolve(__dirname, '..');
+const RAIZ_DEFECTO = path.resolve(__dirname, '..');
 const DIRS_EXCLUIDOS = new Set([
   '.git', 'node_modules', '.rsc', '.claude', '.antigravity', '.agents',
   '01-TOOLS', '02-DOCS', '_backup'
 ]);
+const TIPOS_DECLARACION = new Set(['FunctionDeclaration', 'VariableDeclaration', 'ClassDeclaration']);
 
-/* ------------------------------------------------------------------ */
-/* Utilidades                                                          */
-/* ------------------------------------------------------------------ */
+const sha256 = (texto) => crypto.createHash('sha256').update(texto, 'utf8').digest('hex');
+const normalizar = (texto) => texto
+  .replace(/\r\n/g, '\n')
+  .split('\n')
+  .map((l) => l.replace(/[ \t]+$/, ''))
+  .join('\n');
+const contarSalto = (s, hasta) => {
+  let n = 0;
+  for (let i = 0; i < hasta && i < s.length; i++) if (s[i] === '\n') n++;
+  return n;
+};
 
-function sha256(texto) {
-  return crypto.createHash('sha256').update(texto, 'utf8').digest('hex');
+/* Sustituye los scriptlets de Apps Script por una expresión válida de la MISMA
+   longitud, para que las posiciones del AST coincidan con el texto original. */
+function neutralizarScriptlets(cuerpo) {
+  return cuerpo.replace(/<\?[!=]?[\s\S]*?\?>/g, (m) => "''" + ' '.repeat(Math.max(0, m.length - 2)));
 }
 
-function normalizar(texto) {
-  return texto
-    .replace(/\r\n/g, '\n')
-    .split('\n')
-    .map((l) => l.replace(/[ \t]+$/, ''))
-    .join('\n');
-}
-
-function lineaDe(src, indice) {
-  let linea = 1;
-  for (let i = 0; i < indice && i < src.length; i++) if (src[i] === '\n') linea++;
-  return linea;
-}
-
-/* ------------------------------------------------------------------ */
-/* Enmascarado: deja el mismo número de caracteres, pero los          */
-/* comentarios, cadenas, plantillas y regex pasan a espacios. Así el   */
-/* escaneo estructural no se confunde con llaves o punto y coma.       */
-/* ------------------------------------------------------------------ */
-
-function iniciaRegex(ultimo) {
-  if (!ultimo) return true;
-  return '(,=:[!&|?{};+-*%~^<>'.indexOf(ultimo) >= 0 || ultimo === '}';
-}
-
-function enmascarar(src) {
-  const n = src.length;
-  const salida = src.split('');
-  let i = 0;
-  let ultimo = '';
-
-  const borrar = (desde, hasta) => {
-    for (let k = desde; k < hasta && k < n; k++) if (salida[k] !== '\n') salida[k] = ' ';
-  };
-
-  while (i < n) {
-    const c = src[i];
-    const dos = src.substr(i, 2);
-
-    if (c === '/' && dos === '//') {
-      let j = src.indexOf('\n', i);
-      if (j < 0) j = n;
-      borrar(i, j);
-      i = j;
-      continue;
-    }
-    if (c === '/' && dos === '/*') {
-      let j = src.indexOf('*/', i + 2);
-      j = j < 0 ? n : j + 2;
-      borrar(i, j);
-      i = j;
-      continue;
-    }
-    if (c === '/' && iniciaRegex(ultimo)) {
-      let j = i + 1;
-      let enClase = false;
-      while (j < n) {
-        const d = src[j];
-        if (d === '\\') { j += 2; continue; }
-        if (d === '\n') break;
-        if (d === '[') enClase = true;
-        else if (d === ']') enClase = false;
-        else if (d === '/' && !enClase) { j++; break; }
-        j++;
-      }
-      borrar(i, j);
-      i = j;
-      continue;
-    }
-    if (c === "'" || c === '"') {
-      let j = i + 1;
-      while (j < n) {
-        const d = src[j];
-        if (d === '\\') { j += 2; continue; }
-        if (d === c) { j++; break; }
-        if (d === '\n') break;
-        j++;
-      }
-      borrar(i + 1, j - 1);
-      i = j;
-      continue;
-    }
-    if (c === '`') {
-      // Plantilla completa: se enmascara entera, incluidas las interpolaciones.
-      let j = i + 1;
-      while (j < n) {
-        const d = src[j];
-        if (d === '\\') { j += 2; continue; }
-        if (d === '`') { j++; break; }
-        j++;
-      }
-      borrar(i + 1, j - 1);
-      i = j;
-      continue;
-    }
-    if (!/\s/.test(c)) ultimo = c;
-    i++;
+function extraerBloques(html, rutaRelativa) {
+  const docs = [];
+  const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  let m;
+  let indice = 0;
+  while ((m = re.exec(html)) !== null) {
+    if (/\bsrc\s*=/i.test(m[1])) continue;
+    const desplazamiento = m.index + m[0].indexOf('>') + 1;
+    docs.push({
+      id: rutaRelativa + '#script' + indice,
+      lineaBase: contarSalto(html, desplazamiento) + 1,
+      cuerpo: m[2]
+    });
+    indice++;
   }
-  return salida.join('');
+  return docs;
 }
 
-/* ------------------------------------------------------------------ */
-/* Escaneo de un documento (un .gs completo o un <script> de un HTML)  */
-/* ------------------------------------------------------------------ */
-
-const RE_FUNCION = /^(?:async\s+)?function\s*\*?\s*([A-Za-z_$][\w$]*)/;
-const RE_CLASE = /^class\s+([A-Za-z_$][\w$]*)/;
-const RE_VAR = /^(const|let|var)\s+([A-Za-z_$][\w$]*)/;
-
-function escanearDocumento(src, idDocumento, lineaBase) {
-  const mascara = enmascarar(src);
-  const n = src.length;
-  const limites = [0];
-  let prof = 0;
-
-  for (let i = 0; i < n; i++) {
-    const c = mascara[i];
-    if (c === '{' || c === '(' || c === '[') { prof++; continue; }
-    if (c === '}' || c === ')' || c === ']') {
-      prof--;
-      if (prof === 0 && c === '}') limites.push(i + 1);
-      continue;
-    }
-    if (c === ';' && prof === 0) limites.push(i + 1);
+function analizarDocumento(doc) {
+  const limpio = neutralizarScriptlets(doc.cuerpo);
+  let ast;
+  try {
+    ast = acorn.parse(limpio, {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      allowReturnOutsideFunction: true,
+      allowAwaitOutsideFunction: true
+    });
+  } catch (e) {
+    return { id: doc.id, error: e.message, simbolos: {}, sentencias: [] };
   }
-  limites.push(n);
 
   const simbolos = {};
   const sentencias = [];
   const vistos = new Set();
 
-  for (let k = 0; k < limites.length - 1; k++) {
-    const desde = limites[k];
-    const hasta = limites[k + 1];
-    if (hasta <= desde) continue;
+  const registrar = (nombre, tipo, nodo) => {
+    let clave = nombre;
+    if (vistos.has(nombre)) clave = nombre + '@' + (doc.lineaBase + contarSalto(limpio, nodo.start));
+    vistos.add(nombre);
+    simbolos[clave] = {
+      tipo,
+      linea: doc.lineaBase + contarSalto(limpio, nodo.start),
+      hash: sha256(normalizar(doc.cuerpo.slice(nodo.start, nodo.end)))
+    };
+  };
 
-    // Recortar espacios y comentarios de los extremos usando la máscara.
-    let ini = desde;
-    while (ini < hasta && /\s/.test(mascara[ini])) ini++;
-    let fin = hasta;
-    while (fin > ini && /\s/.test(mascara[fin - 1])) fin--;
-    if (fin <= ini) continue;
-
-    const texto = src.slice(ini, fin);
-    const cabeza = mascara.slice(ini, Math.min(ini + 200, fin)).trim();
-
-    let m;
-    let tipo = null;
-    let nombre = null;
-    if ((m = RE_FUNCION.exec(cabeza))) { tipo = 'function'; nombre = m[1]; }
-    else if ((m = RE_CLASE.exec(cabeza))) { tipo = 'class'; nombre = m[1]; }
-    else if ((m = RE_VAR.exec(cabeza))) { tipo = m[1]; nombre = m[2]; }
-
-    if (nombre) {
-      let clave = nombre;
-      if (Object.prototype.hasOwnProperty.call(simbolos, clave) && !vistos.has(clave)) {
-        clave = nombre + '@' + lineaDe(src, ini);
+  for (const nodo of ast.body) {
+    if (nodo.type === 'FunctionDeclaration' && nodo.id) {
+      registrar(nodo.id.name, 'function', nodo);
+    } else if (nodo.type === 'ClassDeclaration' && nodo.id) {
+      registrar(nodo.id.name, 'class', nodo);
+    } else if (nodo.type === 'VariableDeclaration') {
+      for (const d of nodo.declarations) {
+        if (d.id && d.id.type === 'Identifier') registrar(d.id.name, nodo.kind, nodo);
       }
-      vistos.add(nombre);
-      simbolos[clave] = {
-        tipo,
-        linea: lineaBase + lineaDe(src, ini) - 1,
-        hash: sha256(normalizar(texto))
-      };
     } else {
-      const limpio = normalizar(texto).trim();
-      if (limpio.length > 1) {
+      const texto = normalizar(doc.cuerpo.slice(nodo.start, nodo.end)).trim();
+      if (texto) {
         sentencias.push({
-          linea: lineaBase + lineaDe(src, ini) - 1,
-          texto: limpio.replace(/\s+/g, ' ').slice(0, 140),
-          hash: sha256(limpio)
+          linea: doc.lineaBase + contarSalto(limpio, nodo.start),
+          tipo: nodo.type,
+          texto: texto.replace(/\s+/g, ' ').slice(0, 140),
+          hash: sha256(texto)
         });
       }
     }
   }
 
-  return { id: idDocumento, simbolos, sentencias };
+  return { id: doc.id, simbolos, sentencias };
 }
-
-/* ------------------------------------------------------------------ */
-/* Extracción de bloques <script> de un HTML                           */
-/* ------------------------------------------------------------------ */
-
-function escanearHtml(html, rutaRelativa) {
-  const documentos = [];
-  const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
-  let m;
-  let indice = 0;
-
-  while ((m = re.exec(html)) !== null) {
-    const atributos = m[1] || '';
-    if (/\bsrc\s*=/i.test(atributos)) continue;
-
-    const cuerpoOriginal = m[2];
-    const desplazamiento = m.index + m[0].indexOf('>') + 1;
-    // Scriptlets de Apps Script -> cadena vacía (misma semántica que el test existente).
-    const cuerpo = cuerpoOriginal.replace(/<\?[!=]?[\s\S]*?\?>/g, "''");
-    documentos.push(escanearDocumento(cuerpo, rutaRelativa + '#script' + indice, lineaDe(html, desplazamiento)));
-    indice++;
-  }
-  return documentos;
-}
-
-/* ------------------------------------------------------------------ */
-/* Recorrido                                                           */
-/* ------------------------------------------------------------------ */
 
 function recorrer(dir, acc, incluirConstructor) {
   for (const entrada of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -263,28 +140,26 @@ function recorrer(dir, acc, incluirConstructor) {
   return acc;
 }
 
-function construirManifiesto(incluirConstructor) {
+function construirManifiesto(raiz, incluirConstructor) {
   const archivos = {};
   const globales = {};
+  let documentosConError = 0;
 
-  for (const rutaAbs of recorrer(RAIZ, [], incluirConstructor)) {
-    const rel = path.relative(RAIZ, rutaAbs).split(path.sep).join('/');
+  for (const rutaAbs of recorrer(raiz, [], incluirConstructor)) {
+    const rel = path.relative(raiz, rutaAbs).split(path.sep).join('/');
     const contenido = fs.readFileSync(rutaAbs, 'utf8');
     const documentos = /\.html$/i.test(rutaAbs)
-      ? escanearHtml(contenido, rel)
-      : [escanearDocumento(contenido, rel, 1)];
+      ? extraerBloques(contenido, rel).map(analizarDocumento)
+      : [analizarDocumento({ id: rel, lineaBase: 1, cuerpo: contenido })];
 
+    documentos.forEach((d) => { if (d.error) documentosConError++; });
     archivos[rel] = { sha256: sha256(contenido), documentos };
 
     for (const doc of documentos) {
-      for (const nombre of Object.keys(doc.simbolos)) {
-        const base = nombre.split('@')[0];
+      for (const [clave, info] of Object.entries(doc.simbolos)) {
+        const base = clave.split('@')[0];
         if (!globales[base]) globales[base] = [];
-        globales[base].push({
-          documento: doc.id,
-          hash: doc.simbolos[nombre].hash,
-          tipo: doc.simbolos[nombre].tipo
-        });
+        globales[base].push({ documento: doc.id, hash: info.hash, tipo: info.tipo });
       }
     }
   }
@@ -305,29 +180,27 @@ function construirManifiesto(incluirConstructor) {
 
   return {
     generado: new Date().toISOString(),
-    raiz: RAIZ,
+    motor: 'acorn ' + (acorn.version || ''),
+    raiz,
     resumen: {
       archivos: Object.keys(archivos).length,
       documentos: Object.values(archivos).reduce((a, f) => a + f.documentos.length, 0),
       simbolos: totalSimbolos,
       sentencias_superiores: totalSentencias,
-      duplicados: Object.keys(duplicados).length
+      duplicados: Object.keys(duplicados).length,
+      documentos_con_error: documentosConError
     },
     duplicados,
     archivos
   };
 }
 
-/* ------------------------------------------------------------------ */
-/* Comparación                                                         */
-/* ------------------------------------------------------------------ */
-
 function paresDe(manifiesto) {
   const pares = [];
-  for (const [archivo, datos] of Object.entries(manifiesto.archivos)) {
+  for (const datos of Object.values(manifiesto.archivos)) {
     for (const doc of datos.documentos) {
-      for (const [nombre, info] of Object.entries(doc.simbolos)) {
-        pares.push({ nombre: nombre.split('@')[0], documento: doc.id, archivo, hash: info.hash, tipo: info.tipo });
+      for (const [clave, info] of Object.entries(doc.simbolos)) {
+        pares.push({ nombre: clave.split('@')[0], documento: doc.id, hash: info.hash, tipo: info.tipo });
       }
     }
   }
@@ -337,73 +210,61 @@ function paresDe(manifiesto) {
 function comparar(rutaAntes, rutaDespues) {
   const antes = JSON.parse(fs.readFileSync(rutaAntes, 'utf8'));
   const despues = JSON.parse(fs.readFileSync(rutaDespues, 'utf8'));
-
   const A = paresDe(antes);
   const D = paresDe(despues);
 
-  const porNombreA = new Map();
-  for (const p of A) {
-    if (!porNombreA.has(p.nombre)) porNombreA.set(p.nombre, []);
-    porNombreA.get(p.nombre).push(p);
-  }
-  const porNombreD = new Map();
-  for (const p of D) {
-    if (!porNombreD.has(p.nombre)) porNombreD.set(p.nombre, []);
-    porNombreD.get(p.nombre).push(p);
-  }
+  const agrupar = (pares) => {
+    const m = new Map();
+    for (const p of pares) {
+      if (!m.has(p.nombre)) m.set(p.nombre, []);
+      m.get(p.nombre).push(p);
+    }
+    return m;
+  };
+  const porNombreA = agrupar(A);
+  const porNombreD = agrupar(D);
 
-  const conservados = [];
-  const movidos = [];
-  const cambiados = [];
-  const eliminados = [];
-  const nuevos = [];
-  const movidosDocs = [];
+  const conservados = [], movidos = [], cambiados = [], eliminados = [], nuevos = [], detalleMovidos = [];
 
   for (const [nombre, listaA] of porNombreA) {
     const listaD = porNombreD.get(nombre);
     if (!listaD) { eliminados.push(nombre); continue; }
-
     const hashesA = new Set(listaA.map((p) => p.hash));
     const hashesD = new Set(listaD.map((p) => p.hash));
-
-    const iguales = [...hashesA].filter((h) => hashesD.has(h));
-    if (iguales.length === hashesA.size && iguales.length === hashesD.size) {
+    const comunes = [...hashesA].filter((h) => hashesD.has(h));
+    if (comunes.length === hashesA.size && comunes.length === hashesD.size) {
       const docsA = new Set(listaA.map((p) => p.documento));
       const docsD = new Set(listaD.map((p) => p.documento));
-      const mismoSitio = [...docsA].every((d) => docsD.has(d));
-      if (mismoSitio) conservados.push(nombre);
-      else { movidos.push(nombre); movidosDocs.push(nombre + ': ' + [...docsA].join(', ') + ' -> ' + [...docsD].join(', ')); }
+      if ([...docsA].every((d) => docsD.has(d))) conservados.push(nombre);
+      else { movidos.push(nombre); detalleMovidos.push(nombre + ': ' + [...docsA].join(', ') + ' -> ' + [...docsD].join(', ')); }
     } else {
       cambiados.push(nombre);
     }
   }
   for (const nombre of porNombreD.keys()) if (!porNombreA.has(nombre)) nuevos.push(nombre);
 
-  const sentA = new Map();
-  const sentD = new Map();
+  const sentA = new Map(), sentD = new Map();
   const contar = (manifiesto, mapa) => {
     for (const datos of Object.values(manifiesto.archivos)) {
       for (const doc of datos.documentos) {
-        for (const s of doc.sentencias) {
-          const clave = s.hash;
-          mapa.set(clave, (mapa.get(clave) || 0) + 1);
-        }
+        for (const s of doc.sentencias) mapa.set(s.hash, (mapa.get(s.hash) || 0) + 1);
       }
     }
   };
   contar(antes, sentA);
   contar(despues, sentD);
   let sentPerdidas = 0;
-  for (const [clave, cuantos] of sentA) {
-    if ((sentD.get(clave) || 0) < cuantos) sentPerdidas++;
-  }
+  for (const [clave, cuantos] of sentA) if ((sentD.get(clave) || 0) < cuantos) sentPerdidas++;
 
   const lineas = [];
   lineas.push('================================================================');
-  lineas.push('COMPARACIÓN DE MANIFIESTOS');
+  lineas.push('COMPARACIÓN DE MANIFIESTOS (acorn)');
   lineas.push('================================================================');
-  lineas.push('antes : ' + rutaAntes + '  (' + antes.resumen.simbolos + ' símbolos)');
+  lineas.push('antes  : ' + rutaAntes + '  (' + antes.resumen.simbolos + ' símbolos)');
   lineas.push('después: ' + rutaDespues + '  (' + despues.resumen.simbolos + ' símbolos)');
+  if (antes.resumen.documentos_con_error || despues.resumen.documentos_con_error) {
+    lineas.push('AVISO  : documentos sin parsear -> antes ' + antes.resumen.documentos_con_error + ', después ' + despues.resumen.documentos_con_error);
+  }
   lineas.push('');
   lineas.push('  conservados (mismo hash, mismo documento) : ' + conservados.length);
   lineas.push('  movidos     (mismo hash, otro documento)  : ' + movidos.length);
@@ -416,7 +277,6 @@ function comparar(rutaAntes, rutaDespues) {
   if (cambiados.length) {
     lineas.push('--- CAMBIADOS (esto NO es un movimiento: es una edición) ---');
     cambiados.slice(0, 200).forEach((n) => lineas.push('  ' + n));
-    if (cambiados.length > 200) lineas.push('  ... y ' + (cambiados.length - 200) + ' más');
     lineas.push('');
   }
   if (eliminados.length) {
@@ -429,26 +289,20 @@ function comparar(rutaAntes, rutaDespues) {
     nuevos.slice(0, 200).forEach((n) => lineas.push('  ' + n));
     lineas.push('');
   }
-  if (movidosDocs.length) {
+  if (detalleMovidos.length) {
     lineas.push('--- MOVIDOS (primeros 40) ---');
-    movidosDocs.slice(0, 40).forEach((n) => lineas.push('  ' + n));
+    detalleMovidos.slice(0, 40).forEach((n) => lineas.push('  ' + n));
     lineas.push('');
   }
 
   const ok = cambiados.length === 0 && eliminados.length === 0 && nuevos.length === 0 && sentPerdidas === 0;
   lineas.push('================================================================');
-  lineas.push(ok
-    ? 'RESULTADO: EQUIVALENTE — el corte no cambió comportamiento.'
+  lineas.push(ok ? 'RESULTADO: EQUIVALENTE — el corte no cambió comportamiento.'
     : 'RESULTADO: DIFERENTE — revisa los cambios antes de continuar.');
   lineas.push('================================================================');
-
   console.log(lineas.join('\n'));
   return ok ? 0 : 1;
 }
-
-/* ------------------------------------------------------------------ */
-/* CLI                                                                 */
-/* ------------------------------------------------------------------ */
 
 function main() {
   const args = process.argv.slice(2);
@@ -458,19 +312,15 @@ function main() {
   };
 
   if (args.includes('--comparar')) {
-    const a = valorDe('--comparar');
-    const b = args[args.indexOf('--comparar') + 2];
-    if (!a || !b) {
-      console.error('Uso: node herramientas/manifiesto.js --comparar ANTES.json DESPUES.json');
-      process.exit(2);
-    }
+    const i = args.indexOf('--comparar');
+    const a = args[i + 1], b = args[i + 2];
+    if (!a || !b) { console.error('Uso: --comparar ANTES.json DESPUES.json'); process.exit(2); }
     process.exit(comparar(a, b));
   }
 
-  const incluirConstructor = args.includes('--constructor');
-  const manifiesto = construirManifiesto(incluirConstructor);
+  const raiz = valorDe('--raiz') ? path.resolve(valorDe('--raiz')) : RAIZ_DEFECTO;
+  const manifiesto = construirManifiesto(raiz, args.includes('--constructor'));
   const salida = valorDe('--salida');
-
   if (salida) {
     fs.mkdirSync(path.dirname(path.resolve(salida)), { recursive: true });
     fs.writeFileSync(path.resolve(salida), JSON.stringify(manifiesto, null, 2), 'utf8');
@@ -478,28 +328,30 @@ function main() {
 
   const r = manifiesto.resumen;
   console.log('================================================================');
-  console.log('MANIFIESTO DE SÍMBOLOS');
+  console.log('MANIFIESTO DE SÍMBOLOS — ' + manifiesto.motor);
   console.log('================================================================');
+  console.log('  raíz                        : ' + manifiesto.raiz);
   console.log('  archivos                    : ' + r.archivos);
   console.log('  documentos (archivos+script): ' + r.documentos);
   console.log('  símbolos de nivel superior  : ' + r.simbolos);
   console.log('  sentencias ejecutables      : ' + r.sentencias_superiores);
   console.log('  nombres duplicados          : ' + r.duplicados);
+  console.log('  documentos sin parsear      : ' + r.documentos_con_error);
   if (salida) console.log('  escrito en                  : ' + path.resolve(salida));
   console.log('');
 
   const duplicados = Object.entries(manifiesto.duplicados);
   if (duplicados.length) {
     console.log('--- NOMBRES DEFINIDOS EN MÁS DE UN DOCUMENTO (el último cargado gana) ---');
-    for (const [nombre, docs] of duplicados.slice(0, 60)) {
+    for (const [nombre, docs] of duplicados.slice(0, 40)) {
       console.log('  ' + nombre.padEnd(38) + ' ' + docs.join(' | '));
     }
-    if (duplicados.length > 60) console.log('  ... y ' + (duplicados.length - 60) + ' más (ver JSON)');
+    if (duplicados.length > 40) console.log('  ... y ' + (duplicados.length - 40) + ' más (ver JSON)');
     console.log('');
   }
 
   const conSentencias = [];
-  for (const [archivo, datos] of Object.entries(manifiesto.archivos)) {
+  for (const datos of Object.values(manifiesto.archivos)) {
     for (const doc of datos.documentos) {
       if (doc.sentencias.length) conSentencias.push([doc.id, doc.sentencias.length]);
     }

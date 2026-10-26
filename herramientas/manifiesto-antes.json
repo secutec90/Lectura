@@ -1,12 +1,14 @@
 {
-  "generado": "2026-10-26T19:31:08.346Z",
+  "generado": "2026-10-26T19:32:41.859Z",
+  "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
     "archivos": 76,
     "documentos": 65,
-    "simbolos": 1746,
-    "sentencias_superiores": 132,
-    "duplicados": 238
+    "simbolos": 1845,
+    "sentencias_superiores": 41,
+    "duplicados": 286,
+    "documentos_con_error": 0
   },
   "duplicados": {
     "normalizarNombrePref_": [
@@ -16,6 +18,38 @@
     "modal": [
       "ComunJS.html#script0",
       "FormEncJS_01.html#script0"
+    ],
+    "abrirAyuda": [
+      "ComunJS.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "jsSafe_": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
+    ],
+    "SVG_DADO": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
+    ],
+    "SVG_EDITAR": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
+    ],
+    "SVG_COPIAR": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
+    ],
+    "SVG_GRUPOS": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
+    ],
+    "htmlBtnIconoFila": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
+    ],
+    "htmlBtnsCredencial_": [
+      "ComunJS.html#script0",
+      "AdminJS_08.html#script0"
     ],
     "URL_BASE_APP": [
       "Clase.html#script0",
@@ -355,36 +389,193 @@
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "raiz": [
+    "cambiarOrdenDesdeColumna": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "selSeg": [
+    "alternarBuscador": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "segId": [
+    "restablecerFiltrosTabla": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "apilada": [
+    "celdaCSV": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "ejeValor": [
+    "descargarCSVRespuestas": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "ejeCat": [
+    "imprimirRespuestas": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
     ],
-    "colores": [
+    "preguntasVisibles": [
       "AdminEncuestas.html#script0",
       "FormEncJS_03.html#script0"
+    ],
+    "preguntaCategoria": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "opcionesDependientes": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "ampliarGrafica": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "renderGraficaModal": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "abrirSimulacion": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "ejecutarSimulacion": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "limpiarSimulados": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "quitarPreguntasEjemplo": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "vincularHoja": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "pintarConfig": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "leerConfigFormulario": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "pintarPreguntas": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "eliminar": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "abrirModal": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "alternarAyudaPregunta": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "serializarOpcionesPorPadre": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_03.html#script0"
+    ],
+    "parsearOpcionesPorPadre": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "rolesDimension": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "poblarPadresDimension": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarCamposDimension": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarJerarquiaUI": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarRolAnalitico": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarCamposTipo": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "cadenaPadresRepite": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarCondicionUI": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarValoresCondicion": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "guardarPregunta": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "guardarTodo": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "bancoModal": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "abrirBanco": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "cargarListaBanco": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
     ],
     "guardarEnBanco": [
+      "AdminEncuestas.html#script0",
       "Encuestas.gs",
+      "FormEncJS_04.html#script0"
+    ],
+    "verEncuestaDelBanco": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "volverEncuestaActual": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "abrirCategorias": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "getCategorias": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "pintarCategorias": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "guardarCategoria": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "eliminarCategoria": [
+      "AdminEncuestas.html#script0",
+      "FormEncJS_04.html#script0"
+    ],
+    "actualizarCategoriaUI": [
+      "AdminEncuestas.html#script0",
       "FormEncJS_04.html#script0"
     ],
     "restaurarPpmRecomendados": [
@@ -397,6 +588,7 @@
     ],
     "slotMaeSel": [
       "ClaseJS_01.html#script0",
+      "AdminPlanJS_01.html#script0",
       "AdminPlanJS_01.html#script0"
     ],
     "aluClaseSel": [
@@ -545,6 +737,7 @@
     ],
     "fechaLocalDesde_": [
       "ClaseJS_03.html#script0",
+      "AdminPlanJS_01.html#script0",
       "AdminPlanJS_01.html#script0"
     ],
     "pintarCalendarioMae_": [
@@ -964,6 +1157,10 @@
     "limpiarFiltros": [
       "AdminJS_06.html#script0",
       "FormEncJS_02.html#script0"
+    ],
+    "mover": [
+      "AdminJS_09.html#script0",
+      "FormEncJS_03.html#script0"
     ]
   },
   "archivos": {
@@ -1620,7 +1817,7 @@
             "IDENTIDAD_ST90": {
               "tipo": "var",
               "linea": 4,
-              "hash": "6817fb29a29bed060eb60246202a1fa31fc10a67f23df2dd4f2d63b0b9d93e45"
+              "hash": "613c07d3c4aabd3796ea1298fa03427e83423565f178079ae1a2c85375cf69ed"
             },
             "aplicarIdentidad": {
               "tipo": "function",
@@ -1725,10 +1922,182 @@
             "descargarCSV": {
               "tipo": "function",
               "linea": 289,
-              "hash": "e6cce5168e8fb6fa84a78fe0f826e2ed9cf8ea8a44f37e13f3357da6cdb116f3"
+              "hash": "6e0cb3b6cd6c22654e38aa20c623b6ba38f1759b9835c3653471dd874dc87f82"
+            },
+            "escaparRegexComun": {
+              "tipo": "function",
+              "linea": 307,
+              "hash": "df2c526041f5483667f170dc3501cee045354ecb0fe2f04c6e55eae6bd415b83"
+            },
+            "contarPalabrasCliente": {
+              "tipo": "function",
+              "linea": 311,
+              "hash": "98f32565cb7b7eb4ac466266ff3079f97c6f68a54a09b4ada8b8b0f1db0e60cc"
+            },
+            "partirParrafosLibro": {
+              "tipo": "function",
+              "linea": 317,
+              "hash": "1ae8c320d05a59d78196f1f50d0afb67c59ef90f438366105d973c535a76bb62"
+            },
+            "renderizarHojaLibro": {
+              "tipo": "function",
+              "linea": 383,
+              "hash": "fd5bef55330e4885dd2f1bfc1b929d867b3034fc317581ebfb863b2869f922c6"
+            },
+            "htmlBtnAyuda": {
+              "tipo": "function",
+              "linea": 427,
+              "hash": "0fa6bc6f7dcab102f80ad250e17a6f04a4175e940100420ff5134ef6aa3ebe35"
+            },
+            "abrirAyuda": {
+              "tipo": "function",
+              "linea": 438,
+              "hash": "db203ce7e7bf97c73df0d4715c7c6afd57f40b438271c300ec6e98000f0f274d"
+            },
+            "AYUDAS_ST90": {
+              "tipo": "var",
+              "linea": 450,
+              "hash": "5b4ef13ddc4013896d99831966cb9093b8027c13a53c1d5cf1b890c9afc7c98e"
+            },
+            "ribbonN2Abierto": {
+              "tipo": "var",
+              "linea": 831,
+              "hash": "e92824768eaf0ef3ee33b44a0f09e82859d7dc8834d8e737f363d76c6530f7f5"
+            },
+            "ribbonN3CabeceraVisible_": {
+              "tipo": "function",
+              "linea": 832,
+              "hash": "80f33bf3b8c56b8725eaec90b36c4f468df078444dc84036c1102d9bc9da77c6"
+            },
+            "ribbonActualizarContenedoresN2_": {
+              "tipo": "function",
+              "linea": 837,
+              "hash": "bc3cbf2d9e4b36a6314211e6c6972742a49d7663251ae5e2e6ff264673bc32d1"
+            },
+            "ribbonSetNivel2": {
+              "tipo": "function",
+              "linea": 853,
+              "hash": "f56b25bf69f4c3e9afb9a175391aca4e1cd205482f9fe14d0ee921dfb6f246dc"
+            },
+            "ribbonToggleNivel2": {
+              "tipo": "function",
+              "linea": 866,
+              "hash": "7a7a7ddcc509e2a5e742d4c727c3a4877a257ba43855edf3e66ef0010b69a401"
+            },
+            "ribbonColapsarTrasN2": {
+              "tipo": "function",
+              "linea": 869,
+              "hash": "752a1deb44759da365e5353cec78d3e30d1ffa3c3919de2bb3ca41c53c907107"
+            },
+            "jsSafe_": {
+              "tipo": "function",
+              "linea": 874,
+              "hash": "127ec4e33d3827bc368671e6aee1e5407d27563203edc3d86fe3835c544192d7"
+            },
+            "SVG_DADO": {
+              "tipo": "var",
+              "linea": 877,
+              "hash": "e5b29d2acb0f4f1d2e61c07f47f02b65f0c197e6b69c4c992b2f8a4b98aa8626"
+            },
+            "SVG_EDITAR": {
+              "tipo": "var",
+              "linea": 878,
+              "hash": "fc321f7631dc09e81bb36e9174683349924f3593feb96009cd15d5fa1b69476a"
+            },
+            "SVG_COPIAR": {
+              "tipo": "var",
+              "linea": 879,
+              "hash": "7b3ae1d97a1b73ea9e9176f13f3843d56623456ad280208eeda1f6850d08ae3c"
+            },
+            "SVG_GRUPOS": {
+              "tipo": "var",
+              "linea": 880,
+              "hash": "874ea5f7b55e94afd6edad473ab8b307c4951093af24a5b7fce761649747887d"
+            },
+            "htmlBtnIconoFila": {
+              "tipo": "function",
+              "linea": 882,
+              "hash": "74904a90c357bfcec787fc5cba42843c1f428f9b2c95947d258c51d9620c5612"
+            },
+            "htmlBtnsCredencial_": {
+              "tipo": "function",
+              "linea": 887,
+              "hash": "4758bb123ea1317cc9207387a0e378d028d86b5a31de97436aea0ff7bffd9254"
+            },
+            "copiarTextoAux_": {
+              "tipo": "function",
+              "linea": 897,
+              "hash": "ed610ef37cd5a06f655af53f093318c8aa3e00cfef6b59ff34704aa2c1e6de2c"
+            },
+            "clavesDocentes": {
+              "tipo": "var",
+              "linea": 913,
+              "hash": "6960615a6c135320e54310c00d6b335b0295f412b761e779713d9c98d9735b53"
+            },
+            "cargarMaestrosAdmin": {
+              "tipo": "function",
+              "linea": 1103,
+              "hash": "9fed6cfdecbcc388502ac0e7de4ddf80090b2d8b4313b822acbafb209aa7c92e"
+            },
+            "cargarMaestrosAcc": {
+              "tipo": "function",
+              "linea": 1104,
+              "hash": "0caf013e36f55907d35b1c1c32283186eaf7ca5077f9a9bf5fb9ad8f026d57b0"
+            },
+            "filtrarTablaMaeAdminLocal": {
+              "tipo": "function",
+              "linea": 1105,
+              "hash": "7fa4effe326cd8281902e65a646cbb034636d5801014b440e0dac6495b9467e3"
+            },
+            "filtrarTablaMaeClaseLocal": {
+              "tipo": "function",
+              "linea": 1106,
+              "hash": "62d0f24452da48e2b87a0f09574750ebd71fb9b3ec630e6512cbbf05ebc9b109"
+            },
+            "syncMaestrosAdmin": {
+              "tipo": "function",
+              "linea": 1107,
+              "hash": "219175749b0992142cf9d224e8ca0a971a11c72474bca5cbe9a7bcb2b7b79953"
+            },
+            "syncMaestrosClase": {
+              "tipo": "function",
+              "linea": 1108,
+              "hash": "1576ab7b518e24863cf33408a3432b25c43d555c18b63cbeef8b498967f429f9"
+            },
+            "generarClaveUnicaMae": {
+              "tipo": "function",
+              "linea": 1109,
+              "hash": "a7e9d152844d96760ab2e6b565170d8035756c05cee8e7571c6364d0fbf97eb0"
+            },
+            "generarClavesMasivasMae": {
+              "tipo": "function",
+              "linea": 1110,
+              "hash": "bc69b588bebe9731e4a45fe94d64005651d211e0385147da95e700745de634c8"
+            },
+            "ponerClaveMaeAdmin": {
+              "tipo": "function",
+              "linea": 1111,
+              "hash": "300d5ef7626d1ff4601a4de2585356ae1c3b11077e76a2c6b9b4b38221913468"
+            },
+            "ponerClaveMae": {
+              "tipo": "function",
+              "linea": 1112,
+              "hash": "2423bd786770d030b3c05015a969e58b6c28dbd3905f2156c92e24923b458ee1"
+            },
+            "copiarCredencialMae": {
+              "tipo": "function",
+              "linea": 1113,
+              "hash": "a26c263172619f8b96d86ef567e8b4b98e80f9f3d527f3b2f128aa0cdb0f7ff1"
             }
           },
-          "sentencias": []
+          "sentencias": [
+            {
+              "linea": 829,
+              "tipo": "ExpressionStatement",
+              "texto": "AYUDAS_ST90.resRelect = AYUDAS_ST90.resNiveles;",
+              "hash": "43c502ab7538f1c4cb37c4d5c0d9691edda534e90256c4c0a5b4a5fa631ddae6"
+            }
+          ]
         }
       ]
     },
@@ -1745,17 +2114,17 @@
             "URL_BASE_APP": {
               "tipo": "const",
               "linea": 1314,
-              "hash": "525e3b6d50bc566f42866570ba8ea874326b9cdbd4b15ea409eae6aac8756cd9"
+              "hash": "f9861f95a0edb3d6f8ae8b002010e82b060ff641b6806724815bf26347cc388f"
             },
             "MODO_CLASE": {
               "tipo": "const",
               "linea": 1315,
-              "hash": "fe8a5c208cea8daaab48f2db775462c98bcdceac0109cc8e02b3ac29ea69a281"
+              "hash": "6fd069f649a11c60c7211e345b96857131738d6944b097ab0b7797da16d9f6eb"
             },
             "VERSION_CLASE": {
               "tipo": "const",
               "linea": 1316,
-              "hash": "20aa9663555e82eeeea4cb0c7daec43cc5b7a113e6366b774336c210a2f04ec9"
+              "hash": "679476089cfd954e4d48cfc91f2915027b3433cf53e78e040bf67dd501e9e7a2"
             }
           },
           "sentencias": []
@@ -1771,7 +2140,7 @@
             "URL_BASE_APP": {
               "tipo": "const",
               "linea": 245,
-              "hash": "525e3b6d50bc566f42866570ba8ea874326b9cdbd4b15ea409eae6aac8756cd9"
+              "hash": "f9861f95a0edb3d6f8ae8b002010e82b060ff641b6806724815bf26347cc388f"
             }
           },
           "sentencias": []
@@ -1782,32 +2151,32 @@
             "URL_ADMIN_APP": {
               "tipo": "const",
               "linea": 248,
-              "hash": "14744a5ae05bc5cfe2143180da2d9869ce9aa1fd79333cca54eb4e6eeeee3e40"
+              "hash": "9facecd7c9eb4bb50d377237354c63dce5f7003a010206b75de0d5e087e2c13b"
             },
             "URL_DOCENTE_APP": {
               "tipo": "const",
               "linea": 249,
-              "hash": "7a79db7e7f1f311b3a2327640951b4ccf0b53bc35aca4411a69acbd08babf32e"
+              "hash": "8516e067eef713f6cf9bcdc87538f1024ca668bfd8a1b8a9601062f27c081c5d"
             },
             "MAT_AUTO": {
               "tipo": "const",
               "linea": 250,
-              "hash": "148c9f8d03880ebb9a81b97524fb0904cdc42b81ef42809ab85f6ddd9bf95224"
+              "hash": "dcdf8cef3ba19142e8021ef8b52994f0a50c17e13a0d34434133ca2747729157"
             },
             "TOKEN_AUTO": {
               "tipo": "const",
               "linea": 251,
-              "hash": "95078c297d0e271c4177be902df536f74d4c5c1da941e2269bc7824478fa4a72"
+              "hash": "a83a71ab2e1b25ff4a84bc4ab499ef2fc225372d4c11d17d5b6b512682df16f5"
             },
             "ALUMNO_AUTO": {
               "tipo": "const",
               "linea": 252,
-              "hash": "fc4126045dfddcb0cf5e03b100b10fcd41508dbb7b97429e7d9a906042d33bc9"
+              "hash": "59e3822e67759568e0df6c33d0ee34f680cc3194846df01a3222cbe4daa4ed47"
             },
             "CUPO_AUTO": {
               "tipo": "const",
               "linea": 253,
-              "hash": "aeadde47d765c4536b9e776b83dd8cd2e2cf0d4061375572172881abf9fe1a38"
+              "hash": "6cc60047247f96dea0db2e780db4c879efdb419845a4612ff684634c9fcd7f97"
             },
             "irAdmin": {
               "tipo": "function",
@@ -1817,14 +2186,29 @@
             "paquete": {
               "tipo": "let",
               "linea": 263,
-              "hash": "bc9e0b5e891a4e21f18560b4742ae44f3520d460262134ecee79880f4f1557e7"
+              "hash": "5ef426e812cba1d03519ce2551f2744db678918cbbf06dff527d4b4daa25ad4a"
             },
             "tLectura0": {
               "tipo": "let",
               "linea": 264,
               "hash": "ea6e79f66ef875b41896ad80702d9a93f7e2378371f37a571f9f3976a0020700"
             },
+            "tPregunta0": {
+              "tipo": "let",
+              "linea": 264,
+              "hash": "ea6e79f66ef875b41896ad80702d9a93f7e2378371f37a571f9f3976a0020700"
+            },
             "idLecturaReloj": {
+              "tipo": "let",
+              "linea": 265,
+              "hash": "9b2c334fc2922a3ee0add981bb8b237d58237e1c030f25d998a5938a3864f8d0"
+            },
+            "idExamenReloj": {
+              "tipo": "let",
+              "linea": 265,
+              "hash": "9b2c334fc2922a3ee0add981bb8b237d58237e1c030f25d998a5938a3864f8d0"
+            },
+            "idPreguntaReloj": {
               "tipo": "let",
               "linea": 265,
               "hash": "9b2c334fc2922a3ee0add981bb8b237d58237e1c030f25d998a5938a3864f8d0"
@@ -1902,7 +2286,7 @@
             "infoTrimestre": {
               "tipo": "let",
               "linea": 290,
-              "hash": "37a6498f397483e64e750202186c90b58def1aa812a545df1dc537c2c2787bbf"
+              "hash": "ac9c0ae1520ba42fc5c504bf9996b027e0bb7aa97619110d4ecd618ed02e20c0"
             },
             "cupoActual": {
               "tipo": "let",
@@ -1932,12 +2316,12 @@
             "catalogoLogin": {
               "tipo": "let",
               "linea": 296,
-              "hash": "c737e904ec77c29aeed52f651cbb02985143e1da6a740645f67f038e70945545"
+              "hash": "70f47b51e74687fad228566f5bc8ecb99f3812bf7e1955ee21ec475953d34268"
             },
             "NOMBRE_ESCUELA_UI": {
               "tipo": "const",
               "linea": 297,
-              "hash": "a3ec680cf953d3cb350fb2b2155c6338141daa99718f247c1deb9e8e594f3a70"
+              "hash": "d5ebed394709176a3df0dc3fe5fd9756e5eb899323389d6247b23f05776aba11"
             },
             "aplicarTamLectura": {
               "tipo": "function",
@@ -2223,33 +2607,33 @@
           "sentencias": [
             {
               "linea": 279,
+              "tipo": "IfStatement",
               "texto": "if (window.history && window.history.replaceState) { try { const u = new URL(window.location.href); if (u.searchParams.has('token') || u.sea",
               "hash": "ca8f6687eabf22dcb0eaa66fbe1fd0f18ef83b66ac512718582e201fd28a5f5b"
             },
             {
               "linea": 298,
-              "texto": "aplicarIdentidad({ nombre: NOMBRE_ESCUELA_UI, pie: '', logo: '' });",
-              "hash": "76cc3cbb8ab0a6a88cdcc5adcf560f570dc28cd925169ad4c6822fd20ad680a1"
+              "tipo": "ExpressionStatement",
+              "texto": "aplicarIdentidad({ nombre: NOMBRE_ESCUELA_UI, pie: <?!= JSON.stringify(typeof pieLectura !== 'undefined' ? pieLectura : 'Plan de Estudio NEM",
+              "hash": "336c80cc46138563389606c3773c69d2ef70989df5d28cdabfe104d491d51885"
             },
             {
               "linea": 303,
+              "tipo": "ExpressionStatement",
               "texto": "(function pintarMarcaAlumno() { const h = document.getElementById('titEscuela'); if (h) h.textContent = IDENTIDAD_ST90.nombre; const img = d",
               "hash": "c9d763c86ffa905ec9021f309ba1830c5189fefbd563c3fdb7cff082960a7b67"
             },
             {
               "linea": 1548,
+              "tipo": "IfStatement",
               "texto": "if (infoTrimestre) aplicarEstadoTrimestral(cupoActual);",
               "hash": "13ed5292efb81f589aac2618bc0fc814d67f615ed7638175505c767b4262e6fe"
             },
             {
               "linea": 1549,
-              "texto": "if (ALUMNO_AUTO) { aplicarAlumnoAutenticado(ALUMNO_AUTO, CUPO_AUTO); }",
-              "hash": "4b2fd76cebe83d637561eba6c0cf9dcbaf45cbb5ff6359861c15ddba49c5ec04"
-            },
-            {
-              "linea": 1551,
-              "texto": "else if (MAT_AUTO && TOKEN_AUTO) { matriculaActual = MAT_AUTO; consultarCupoPorMat(MAT_AUTO); }",
-              "hash": "ebb0bd06f424f29dcc5de2a1437953333e2c00ec108f47481d7972d671041423"
+              "tipo": "IfStatement",
+              "texto": "if (ALUMNO_AUTO) { aplicarAlumnoAutenticado(ALUMNO_AUTO, CUPO_AUTO); } else if (MAT_AUTO && TOKEN_AUTO) { matriculaActual = MAT_AUTO; consul",
+              "hash": "0abb592a3ee61cffba565632929e6b1bbc5cb3c46ea27ded66fbec7662461d97"
             }
           ]
         }
@@ -2290,32 +2674,32 @@
             "URL_BASE_APP": {
               "tipo": "const",
               "linea": 398,
-              "hash": "b48485d9a876aa88d3c32ef35449e9944660fe8340e84feed767850246f094ca"
+              "hash": "0053ad84dc5c5e1044d041fd522fc1e4ed0ed66c47d99d48ba2839c76c4c67b1"
             },
             "URL_SITIO_ALUMNO": {
               "tipo": "const",
               "linea": 399,
-              "hash": "5f3979c5fd72bef3d997263c08587e639452f8e0059c51e628aa5a4b587cab23"
+              "hash": "1b560b60bc3d6fe397c86e948087fed3253131b9d912639e328c8f55efab2abc"
             },
             "URL_SITIO_DOCENTE": {
               "tipo": "const",
               "linea": 400,
-              "hash": "92aec1b679a1f2a7b1b816ca57904bfa5b6aac0bba2d6c0da02a6a66058556c7"
+              "hash": "9f5cc5225c505ea6a3e468047ca2e2dfcba5c9e1c5645df9ec0b06b361adb94f"
             },
             "URL_ADMIN": {
               "tipo": "const",
               "linea": 401,
-              "hash": "430c103bd63246712270877ce6f35e33c0a8a7d40b1f53f53b94ed9fe4ba9636"
+              "hash": "133aecb38ac2faf012a035eb390e6e0b96fd5f5f20af3394d5dc4f467c15ea74"
             },
             "URL_DOCENTE": {
               "tipo": "const",
               "linea": 402,
-              "hash": "1478f46e9760e5afa7098cc0908e94c5c9db722f3d06f3aa2e5065a7dedcb84f"
+              "hash": "8b5d92a5d99a15cfd0a3c534f444a2774f331cfd37bb27db0aef8a090e2d465b"
             },
             "MODO_VISTA": {
               "tipo": "const",
               "linea": 403,
-              "hash": "03e0ac1c1d347db67a6bf93cb9deb498fc8c9041935682f3d444bc0f12a6a660"
+              "hash": "f7b2264c80a2af788037ec9b4da70249cd9868842ee6d87fc0b747f0b831b5de"
             }
           },
           "sentencias": []
@@ -2488,6 +2872,7 @@
           "sentencias": [
             {
               "linea": 893,
+              "tipo": "ExpressionStatement",
               "texto": "document.querySelectorAll('#simArea .sim-p').forEach(function(el) { el.style.cursor = 'pointer'; el.addEventListener('click', function() { c",
               "hash": "8b8fde48bdd4b6ee135631728ece6c868b79133dce4eb93c897a10deecbe245c"
             }
@@ -2560,12 +2945,12 @@
             "FORM": {
               "tipo": "let",
               "linea": 1118,
-              "hash": "9fc18ebda0d59f1321f847ad6a5f067ed33bb3120f9ed7e988e5983f5231bee4"
+              "hash": "945adc55faef68a93122f49361eeb463444b02688f91dd1cb3705fc479ddfc20"
             },
             "FILTROS": {
               "tipo": "let",
               "linea": 1119,
-              "hash": "ac6be8cc2b6a4069ff244aa21d9b84a7f2254def5cbb88a7449b286c9f935472"
+              "hash": "cc6d87d1ff19693dc7d7402d680f926390da3c110cdf5593ef57e175e973c458"
             },
             "RESPUESTAS": {
               "tipo": "let",
@@ -2620,7 +3005,7 @@
             "CONFIGS_GRAFICA": {
               "tipo": "let",
               "linea": 1130,
-              "hash": "de82b5f5eb81176ebad1b869184e99b7c9546b827d1a3c976f11402b6eae892b"
+              "hash": "bb0acf5a74375f9d2ffec85443791c4b249cf1e129e49a0f94a74d1572512c51"
             },
             "FILTROS_DINAMICOS": {
               "tipo": "let",
@@ -2670,7 +3055,7 @@
             "TIPOS": {
               "tipo": "const",
               "linea": 1148,
-              "hash": "5a9bddf7e161eff8641bee93453bf3e49a963bb84d143e7ecb4a95836cdff172"
+              "hash": "3220553dd7d31190ee60e8e32c17b7afe69ef6dbd598f4b20692416405efcbbf"
             },
             "PALETA_ESTABLE": {
               "tipo": "const",
@@ -2680,7 +3065,7 @@
             "COLORES_ASIGNADOS": {
               "tipo": "const",
               "linea": 1155,
-              "hash": "4614accdbd586944ae7a562165df6a2ba17962ee3e69e55a8503eac60a91601c"
+              "hash": "6e08ce906db64974a50020d292e6c39f8262de28ea666f820dcc50d23a15a6b5"
             },
             "colorDimension": {
               "tipo": "function",
@@ -2735,7 +3120,7 @@
             "pluginValores": {
               "tipo": "const",
               "linea": 1330,
-              "hash": "bb59e296eba6e33cbacd4f02e1b3c3b39153d66a1f89094a7a36801da3b2d64c"
+              "hash": "b775119846579415107b9e9a8d616f49936a1930e308d54d23c14f366acd6b3c"
             },
             "dimensionDe": {
               "tipo": "function",
@@ -2885,7 +3270,7 @@
             "ICONOS_DIMENSION": {
               "tipo": "const",
               "linea": 2016,
-              "hash": "d2baaff6582f11a5ecbe1daf6c9fac22e90b1d1f71a972e90fb0969f133d6c55"
+              "hash": "20ac8a54ab9d808762d0ac7abe807c92ff60a8ccdfe83aef543ae2d62e39b3a4"
             },
             "pintarDimensiones": {
               "tipo": "function",
@@ -2995,319 +3380,271 @@
             "pintarTablaRespuestas": {
               "tipo": "function",
               "linea": 2575,
-              "hash": "3c91d33094222b87bd29a3ccdb1d23a0e01e6b5ba4865cc1ca746e7a1a735671"
+              "hash": "54023818aba606916a41527a9916a4794f2e278e72b12b67def6b729053150df"
             },
-            "raiz": {
-              "tipo": "const",
-              "linea": 2753,
-              "hash": "e0e93352c4a0b0a824b434bde02d9355987e9569bade9feb3174982dec702e46"
+            "cambiarOrdenDesdeColumna": {
+              "tipo": "function",
+              "linea": 2635,
+              "hash": "2b1f80ea1d86af3811430864514060bc6f498b7a4343a3115752f45ad0c18629"
             },
-            "selSeg": {
-              "tipo": "const",
-              "linea": 2812,
-              "hash": "da21aa4e883ac4bcc97f1420cf4f5bfa6704cacecd9ec5903ee078b128f8b71f"
+            "alternarBuscador": {
+              "tipo": "function",
+              "linea": 2647,
+              "hash": "dec19402436c0c49209f0453be919cf731fc0997995f9b346acf54e80dc4a064"
             },
-            "segId": {
+            "restablecerFiltrosTabla": {
+              "tipo": "function",
+              "linea": 2654,
+              "hash": "f0ad3dbda901c11161d5dd705a2cc753510c5d106e11557a3ec363fc01efa10e"
+            },
+            "celdaCSV": {
+              "tipo": "function",
+              "linea": 2668,
+              "hash": "214b37e02b9924f41691ffcb429751ccd859161b43a0b403c71304eccbe786de"
+            },
+            "descargarCSVRespuestas": {
+              "tipo": "function",
+              "linea": 2675,
+              "hash": "b19a2e08d9b7f2fbdb23e863fa2772605db029fe5d2cb264cf725d723613841e"
+            },
+            "imprimirRespuestas": {
+              "tipo": "function",
+              "linea": 2692,
+              "hash": "c9f02c9ee3d15c67bcebd61f9bace9e7b40ba44d2ecd49b6669efb47ec8afff7"
+            },
+            "preguntasVisibles": {
+              "tipo": "function",
+              "linea": 2699,
+              "hash": "1896e24fd1c704e168c2e35e696025249d874ac42fa9828aacacf446220ddb80"
+            },
+            "preguntaCategoria": {
+              "tipo": "function",
+              "linea": 2703,
+              "hash": "743b967a28fa7783015a4e992c59aa0607fb51d159cefc9a219f51e02b1554ad"
+            },
+            "opcionesDependientes": {
+              "tipo": "function",
+              "linea": 2709,
+              "hash": "b2ee9e02b351114756e5371f2b35d7a0e83f138b146f891f29f34297fab9ce92"
+            },
+            "ampliarGrafica": {
+              "tipo": "function",
+              "linea": 2722,
+              "hash": "cc4d05b7fe910fcb0aaa303ffd505e44986aabf3a425554df2d215ddf5405079"
+            },
+            "renderGraficaModal": {
+              "tipo": "function",
+              "linea": 2737,
+              "hash": "c4162c0a8e894c665364a2ba24129fbd2b7886a84ac82d018fa52275a4726240"
+            },
+            "abrirSimulacion": {
+              "tipo": "function",
+              "linea": 2858,
+              "hash": "43f21d1411835f8756b4322abe04b63ceb988cbff80ca70a511e4942b7e5d471"
+            },
+            "ejecutarSimulacion": {
+              "tipo": "function",
+              "linea": 2862,
+              "hash": "c89ac7808a30328454a9258aef1a90bf51738e3ace2d1e9449d84be79bf1bac9"
+            },
+            "limpiarSimulados": {
+              "tipo": "function",
+              "linea": 2897,
+              "hash": "4ad3a8da4b1f893b001bd081ae74fa2de526cc02926ad93df0f3756caaf50e10"
+            },
+            "quitarPreguntasEjemplo": {
+              "tipo": "function",
+              "linea": 2917,
+              "hash": "6fec5ed60dc4ffe987f47638ec4a0a124524b4d408a4a6a862b77cc370629614"
+            },
+            "vincularHoja": {
+              "tipo": "function",
+              "linea": 2933,
+              "hash": "46b706ee99b4ca5c18c35ed4797d761a25a5c63910b37e8fcc32a8e022b5aa8c"
+            },
+            "pintarConfig": {
+              "tipo": "function",
+              "linea": 2977,
+              "hash": "cb2187dc948a628c5efc182e8d9b1a3e8bc4ba6bf6c040a02e06bac2ccc243f8"
+            },
+            "leerConfigFormulario": {
+              "tipo": "function",
+              "linea": 2990,
+              "hash": "c6d6ac808aa71a2d51f149a8a6600c591ac0d053f355f6f237a55152c258fc7b"
+            },
+            "cambiarTabConstructorEnc_": {
+              "tipo": "function",
+              "linea": 3000,
+              "hash": "608695a9dbe57a645b5c54f133daa921119cc171dcf1c01d5014b0560f3fba90"
+            },
+            "pintarPreguntas": {
+              "tipo": "function",
+              "linea": 3021,
+              "hash": "d5f187d506b2d454aa7568fae048c4de20a85847090e597e0000b331b55e2ad1"
+            },
+            "moverPreguntaEncuestas": {
+              "tipo": "function",
+              "linea": 3058,
+              "hash": "28eb6c745edc2250d613015d835230ec236e915a89e22bc66058019660ffea67"
+            },
+            "eliminar": {
+              "tipo": "function",
+              "linea": 3067,
+              "hash": "49e0bbefd1e6aff883fd491ee924980171d6e637be2c1e64273e11f07c0ac616"
+            },
+            "abrirModal": {
+              "tipo": "function",
+              "linea": 3074,
+              "hash": "63df4a46a1e049975c97fe15365107726817ebdd46d419427f2d22eaba3e7890"
+            },
+            "abrirAyudaEncuestas": {
+              "tipo": "function",
+              "linea": 3125,
+              "hash": "533bedfd7812378476d4889968e729e4545d09f70c1decec13139a1fe82429b2"
+            },
+            "alternarAyudaPregunta": {
+              "tipo": "function",
+              "linea": 3134,
+              "hash": "fc905748ebd860735e77eab014bd8b48e66ffd7b13ff269ef7a23fcb222a0f9e"
+            },
+            "serializarOpcionesPorPadre": {
+              "tipo": "function",
+              "linea": 3144,
+              "hash": "f899ad3e6b1b0836e0d01eecdd190d215f7f67d8297991d611d0418962efd35a"
+            },
+            "parsearOpcionesPorPadre": {
+              "tipo": "function",
+              "linea": 3149,
+              "hash": "c1ace3c6aa6b83e22285824dddbce7df00a2bc2f03d31532bc423841f80980c0"
+            },
+            "rolesDimension": {
+              "tipo": "function",
+              "linea": 3164,
+              "hash": "fc789039e6d424a4b4890a1849b35bc92300a601ed394badc90763d19fe61f38"
+            },
+            "poblarPadresDimension": {
+              "tipo": "function",
+              "linea": 3168,
+              "hash": "d3ba2639195e187fe4a890a191ea5a9b1a0ff04fddf22244a429985713dd6c84"
+            },
+            "actualizarCamposDimension": {
+              "tipo": "function",
+              "linea": 3184,
+              "hash": "43b45e9b97306ddc9206d8464e77fddc4c84715de23e181c8d7c8e7eb9869155"
+            },
+            "actualizarJerarquiaUI": {
+              "tipo": "function",
+              "linea": 3192,
+              "hash": "fb91578d4660237c2aa8079f3b018f84f1ce5ac93048ecec645c29e26a5b1477"
+            },
+            "actualizarRolAnalitico": {
+              "tipo": "function",
+              "linea": 3202,
+              "hash": "b04cf3b4ca222784b02bc78cceb2677497d4ffb5b6b82bdc18437ac975fd2961"
+            },
+            "actualizarCamposTipo": {
+              "tipo": "function",
+              "linea": 3216,
+              "hash": "8ed5eac615914650c0a1115e0e0ec2a80ae60c5b052ec1dc3765e77e7cea60af"
+            },
+            "cadenaPadresRepite": {
+              "tipo": "function",
+              "linea": 3246,
+              "hash": "930fb9de56cdf88c4f57d4ee50660ba8991ce1b86dbf59a0816e80f6ca61a061"
+            },
+            "actualizarCondicionUI": {
+              "tipo": "function",
+              "linea": 3258,
+              "hash": "fea00fcbe87e0a769e70873446ceec73fad4c32aa8cd1941ff951af6ffd35f64"
+            },
+            "actualizarValoresCondicion": {
+              "tipo": "function",
+              "linea": 3276,
+              "hash": "6e409b4c83b7d1ae97e17ff3e200b3fbbec682fcf0e5d361b85867595583baab"
+            },
+            "guardarPregunta": {
+              "tipo": "function",
+              "linea": 3303,
+              "hash": "418d83ce3bcf3dc3e506ab271e12abe5e09be25a9af13cf7113721a8627effaf"
+            },
+            "guardarTodo": {
+              "tipo": "function",
+              "linea": 3374,
+              "hash": "b8b5dc13eeb3362708001e17958afcfaecd0d5e36e1cdfd489bce3f0311d219b"
+            },
+            "bancoModal": {
               "tipo": "let",
-              "linea": 2813,
-              "hash": "1b9a7fddaa759fa7b48ccfbdb41bd72f106112dcac2bc5264aba2cc5f9afbd92"
+              "linea": 3415,
+              "hash": "0ff33d9679719a6c744f1e68320a4cd6f940f551e837c772bd0d531160576552"
             },
-            "apilada": {
-              "tipo": "const",
-              "linea": 2815,
-              "hash": "7b4f5c3dcac6464aa035535e0f18be5eadd1899e40c068b18de9d3e45cfd0f52"
+            "abrirBanco": {
+              "tipo": "function",
+              "linea": 3417,
+              "hash": "55d8fa52edf12dc1161397aacecaae81a8bac69bd9d3ae723e8fe14a37ab1302"
             },
-            "ejeValor": {
-              "tipo": "const",
-              "linea": 2816,
-              "hash": "9d4ee1ccde62494cbebc378af3e3f61fab03d7e944f8eb2599215ce8ad1646b0"
+            "cargarListaBanco": {
+              "tipo": "function",
+              "linea": 3424,
+              "hash": "5c6a9598683ff7822e895ac61a83f3650acd88708544f5dc1fbfb565f20f98be"
             },
-            "ejeCat": {
-              "tipo": "const",
-              "linea": 2820,
-              "hash": "e55e2930492404921e9affcc56c4b24ac32e9b1bd5530d8662d35c9452d1f28b"
+            "guardarEnBanco": {
+              "tipo": "function",
+              "linea": 3456,
+              "hash": "a5f6352754606b1361d506085052a1851114527ed4a4b46050628286e38b4a18"
             },
-            "colores": {
-              "tipo": "const",
-              "linea": 2835,
-              "hash": "26eb8aff879cafc50fce0add20f0be3133d421ec5cdf6bd992e96aa4537a0466"
+            "verEncuestaDelBanco": {
+              "tipo": "function",
+              "linea": 3470,
+              "hash": "b0010756c549d6640c250e3104fef3d4fefe3741836a99ec3f491991476572f3"
+            },
+            "volverEncuestaActual": {
+              "tipo": "function",
+              "linea": 3493,
+              "hash": "25ddf95dd49a2ef9647e0763cf6820f847715999691c2465327715583684c4fa"
+            },
+            "abrirCategorias": {
+              "tipo": "function",
+              "linea": 3499,
+              "hash": "633d320b79bf7db45b7631a5a19ee33155b06875943e864f0c370a1aace184e7"
+            },
+            "getCategorias": {
+              "tipo": "function",
+              "linea": 3504,
+              "hash": "089d884467be3d72f7820ec6d17b35b9ae4af0be6b932ad4b4e32f108a610c9e"
+            },
+            "pintarCategorias": {
+              "tipo": "function",
+              "linea": 3508,
+              "hash": "40e8835c2ab3f8fd3500c88608eaf79c355e75b25b14f338c216ab59e084ebf2"
+            },
+            "guardarCategoria": {
+              "tipo": "function",
+              "linea": 3538,
+              "hash": "7441cc9bd2ff92f039cd824bab09ecd1a9b57427be491fe164d3e39df2cdf5aa"
+            },
+            "eliminarCategoria": {
+              "tipo": "function",
+              "linea": 3554,
+              "hash": "06852f37ad940e3a9ec7a191fc9393019ac8181f16068b9d01b608b5bedb460b"
+            },
+            "actualizarCategoriaUI": {
+              "tipo": "function",
+              "linea": 3561,
+              "hash": "edbad75a6aa74a8e597cbb1e5c0c9328059b1609ea8b1a03ec3a9eabaa1df5e1"
             }
           },
           "sentencias": [
             {
               "linea": 1180,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener(\"DOMContentLoaded\", () => { modalPreguntaBS = new bootstrap.Modal(document.getElementById(\"modalPregunta\")); modal",
               "hash": "65618f3a13db36bf4211d5d349d272912b22af891306e3735bdc16688a2574f2"
             },
             {
               "linea": 1234,
+              "tipo": "ExpressionStatement",
               "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
               "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"
-            },
-            {
-              "linea": 2714,
-              "texto": "} if (pregunta.id === \"grupo\") { const mapa = mapaGruposLegado();",
-              "hash": "60ae9bff5af39c065a0968109772b0b7015e8c89b8d8f533f8454f7a70ad3ad2"
-            },
-            {
-              "linea": 2717,
-              "texto": "if (mapa[valorPadre]) return mapa[valorPadre].slice();",
-              "hash": "20f49ea6fc2f2b1288dcfa398c76b6f0861a17d6ce61d6e9d3ea1f0b691a5ffb"
-            },
-            {
-              "linea": 2718,
-              "texto": "} return (pregunta.opciones || []).slice(); } // ZOOM Y MODAL DE GRÁFICA AMPLIADA function ampliarGrafica(e, id) { // Solo amplía el lienzo:",
-              "hash": "3a4a947309525db7b82a21c11c24362e30bb725c331473991e31822a84f1b112"
-            },
-            {
-              "linea": 2750,
-              "texto": "contSun.classList.remove(\"d-none\");",
-              "hash": "dc7e8425c2568eb51a9f53ca89d378ef26b460f0a439fcc1f6ccdd93e789bcba"
-            },
-            {
-              "linea": 2751,
-              "texto": "if (graficaModal && typeof graficaModal.dispose === \"function\") graficaModal.dispose();",
-              "hash": "d71bb890de1ce6a0c64e8fa5382ae1638492f846bd10c140bca854709057264c"
-            },
-            {
-              "linea": 2752,
-              "texto": "graficaModal = echarts.init(contSun);",
-              "hash": "cf1963ed0fd14d1abe86aa12369b49d94b7220e18cb1c7a622a037388add9f8a"
-            },
-            {
-              "linea": 2754,
-              "texto": "filas.forEach(f => { const ruta = [String(valorDe(f, \"turno\")), String(valorDe(f, dim.id))].filter(Boolean); let act = raiz; ruta.forEach(no",
-              "hash": "222ced0730376e50025a03c48587fc87bdac412eeed969973983d0f4e1f4d471"
-            },
-            {
-              "linea": 2764,
-              "texto": "graficaModal.setOption({ series: [{ type: \"sunburst\", data: raiz.children, radius: [\"15%\", \"90%\"], label: { rotate: \"radial\", fontSize: tama",
-              "hash": "e27833389610d94204a8ad20c2527e1f13a7a704c7464b5e63230d2ab15f2d66"
-            },
-            {
-              "linea": 2772,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2773,
-              "texto": "} canvasWrap.classList.remove(\"d-none\"); contSun.classList.add(\"d-none\"); const conteo = {}; const porTurno = {}; filas.forEach(f => { const",
-              "hash": "23efa4b9416d8bea967c505da4858461ad48ca40e261f4eeff1c54128bced488"
-            },
-            {
-              "linea": 2790,
-              "texto": "); const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0); const basePct = (dim.tipo === \"multiple\" && sumaConteosM",
-              "hash": "2653bb4b9adc10e5578f5797b7d4588939214ab6603f11794ead11c1db92bdcc"
-            },
-            {
-              "linea": 2814,
-              "texto": "if (!segId || segId === dim.id) segId = (dim.id === \"turno\") ? \"origen\" : \"turno\";",
-              "hash": "22e20ff37042a3343420b8f021034087bc8c17c75ad6530f7cd9165de0bcceea"
-            },
-            {
-              "linea": 2821,
-              "texto": "graficaModal = new Chart(ctx, { type: \"bar\", data: { labels: apilada.labels, datasets: apilada.datasets }, plugins: [pluginValores], options",
-              "hash": "afb50a3ed244571c877e14972db5f1a0b9b499e8fa90bc82aff0da44b9bd6f85"
-            },
-            {
-              "linea": 2833,
-              "texto": "} else { const datos = pares.map(p => modoVal === \"porcentaje\" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);",
-              "hash": "e68b0e82ae30acfd6e591ded57dd5a4156af9fbe64ab9359f0d4d64567d19da0"
-            },
-            {
-              "linea": 2836,
-              "texto": "graficaModal = new Chart(ctx, { type: tipo === \"barVertical\" ? \"bar\" : tipo, data: { labels: pares.map(p => p.label), datasets: [{ data: dat",
-              "hash": "8f83afb201d708768306143d28d1193479a869b64e9f3d71084d8cf16aba326b"
-            },
-            {
-              "linea": 2854,
-              "texto": "} } // SIMULACIÓN Y MANTENIMIENTO function abrirSimulacion() { if (simulacionModal) simulacionModal.show(); } function ejecutarSimulacion(e)",
-              "hash": "94d5a2f7da5e0b372c682fae520a81fb4a1761c483bf7b83778975bc24aab880"
-            },
-            {
-              "linea": 2888,
-              "texto": ") .withFailureHandler(err => { btn.disabled = false; estado.textContent = \"Error de red: \" + err.message; estado.className = \"alert alert-da",
-              "hash": "364bf44c44caba10ff78d2cc1bd10428354372a650c6c7c8971b2552607408dd"
-            },
-            {
-              "linea": 2893,
-              "texto": ") .simularRespuestasFormulario(creds, cant, clave, perfil); } function limpiarSimulados() { const clave = prompt(\"Ingresa la clave de autori",
-              "hash": "78846e5f1d5aba008f6bef70a30f22604264ced3ab2fbb15e2a2e153d014d683"
-            },
-            {
-              "linea": 2910,
-              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + err.message)) .limpiarSimuladosFormulario(creds, clave); } // CONSTRUCTOR Y EDITO",
-              "hash": "6b96bb6be379b43c04e3dce1dffad4996ed60165786341cb0bdbc2f0b810e7c3"
-            },
-            {
-              "linea": 2918,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2918,
-              "texto": "} if (!confirm(\"¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan",
-              "hash": "1634ac3df046d4db0bf4840c8d168c99ffcc51828a7491aaf698405f5931fa44"
-            },
-            {
-              "linea": 2928,
-              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + (err && err.message ? err.message : err))) .quitarJerarquiaDemo(creds); } // Vinc",
-              "hash": "05d950862ee16c58b0d126079348630144a09110d0dd9a83109ce356b17c0148"
-            },
-            {
-              "linea": 2941,
-              "texto": "estado.className = \"small mt-2 \" + clase;",
-              "hash": "a98b3fd560b83c0a7f4b71cee4ecfaf33a2dd3581da374c1eab587bdecc10031"
-            },
-            {
-              "linea": 2942,
-              "texto": "estado.textContent = texto;",
-              "hash": "33b318c6769b92491b2071ccccd19b24b87ff81ede9bd94f354947089bf45f62"
-            },
-            {
-              "linea": 2943,
-              "texto": "}; if (!creds) { aviso(\"Inicia sesión de administrador para vincular una hoja.\", \"text-danger\");",
-              "hash": "bc04b721d907f0531fd2423dcc7e6c9b4a3edfa3fe6071adc1ac267ae3b3f294"
-            },
-            {
-              "linea": 2945,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2945,
-              "texto": "} if (!valor) { aviso(\"Escribe la URL o el ID de la hoja.\", \"text-danger\");",
-              "hash": "2135e32d9ba13298bc9f270061a43f20da1ce153fd59af4ee2c20dfeae5ee248"
-            },
-            {
-              "linea": 2946,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 2946,
-              "texto": "} if (btn) btn.disabled = true; aviso(\"Comprobando acceso y preparando pestañas...\", \"text-muted\"); google.script.run .withSuccessHandler(re",
-              "hash": "82faaa5861c683e70ba9bebdb6b14a5f4bda467b8ed542dc7407803102f43c31"
-            },
-            {
-              "linea": 2970,
-              "texto": ") .withFailureHandler(err => { if (btn) btn.disabled = false; aviso(\"Error de conexión: \" + (err && err.message ? err.message : err), \"text-",
-              "hash": "cda3718241aa15a5b951262048489af5056ccdbca1affc6e8c3fc44e695f32e6"
-            },
-            {
-              "linea": 2974,
-              "texto": ") .vincularYPrepararHoja(creds, valor); } function pintarConfig() { const c = FORM.config || {}; const campos = [\"escuela\", \"subtitulo\", \"ti",
-              "hash": "b8ab75c13b951c34a694ad3e592d4ddd44dbe001337319677ff200448b899e40"
-            },
-            {
-              "linea": 2983,
-              "texto": "); const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null; const elHoja = document.getElementById(\"hojaActual\"); if (elHoja) ",
-              "hash": "8e66275955f4d5f9a67d22e50c8a7104d7d3c969c802b841c1717d9b90c1a55f"
-            },
-            {
-              "linea": 2991,
-              "texto": ", FORM.config); const campos = [\"escuela\", \"subtitulo\", \"titulo\", \"introduccion\", \"boton\", \"exitoTitulo\", \"otroBoton\", \"exitoTexto\", \"nota\"]",
-              "hash": "099c4d8a8fdc7be4e7ab8cc48ba6bb895a12403a75b452a88a17f3e0b30eb151"
-            },
-            {
-              "linea": 2996,
-              "texto": "); return c; } function cambiarTabConstructorEnc_(cual) { const mapa = { origen: { btn: \"btnTabConsOrigen\", pane: \"subPaneConsOrigen\" }",
-              "hash": "3e5cba48f4c08a0423f76d091f5e2b83323a43d6bc192979f04d36bc1f325487"
-            },
-            {
-              "linea": 3002,
-              "texto": ", cabecera: { btn: \"btnTabConsCabecera\", pane: \"subPaneConsCabecera\" }",
-              "hash": "4dc55f9f527fa3dd676b124841ae140b0ff0cace735b9b8117907d4c471a82ed"
-            },
-            {
-              "linea": 3003,
-              "texto": ", preguntas: { btn: \"btnTabConsPreguntas\", pane: \"subPaneConsPreguntas\" }",
-              "hash": "f836e5daa90b2abfd3c23c5aea2e2dad5467e9276393062bed03a2a887f6175f"
-            },
-            {
-              "linea": 3005,
-              "texto": "}; const clave = mapa[cual] ? cual : \"origen\"; Object.keys(mapa).forEach(k => { const b = document.getElementById(mapa[k].btn); const p = do",
-              "hash": "7c718675dd93fda56f23e82c6008bfd64487d4130ae17a029f0af586de261ba6"
-            },
-            {
-              "linea": 3018,
-              "texto": "); } function pintarPreguntas() { const badgeTotal = document.getElementById(\"badgeTotalPreguntasCons\"); if (badgeTotal) badgeTotal.textCont",
-              "hash": "82fea00f4fde05da3f6e1cb5eaa625d112f18f25b3140d54df8b7d0b423b9ba0"
-            },
-            {
-              "linea": 3449,
-              "texto": ") .withFailureHandler(err => { cont.innerHTML = '<div class=\"text-danger small p-2\">Error: ' + esc(err.message) + '</div>'; }",
-              "hash": "bc28221f14ac4f5ae5c82ff217a066b4079759856dc6828423f6249b69d5dab4"
-            },
-            {
-              "linea": 3452,
-              "texto": ") .listarBanco(creds); } function guardarEnBanco() { if (!creds) { alert(\"Inicia sesión de administrador.\");",
-              "hash": "7b79bfeca5cb329dbf488e08fe0a0ad6252b1c3faf1ac3173820801eff77a959"
-            },
-            {
-              "linea": 3457,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 3457,
-              "texto": "} const n = ((RESPUESTAS && RESPUESTAS.filas) || []).length; if (!confirm(\"¿Guardar en el banco la encuesta actual con \" + n + \" respuestas?",
-              "hash": "b83961926c407fa8250081bfd2d3c855c24882770ffe779ea3053bb3f7576d79"
-            },
-            {
-              "linea": 3465,
-              "texto": ") .withFailureHandler(err => alert(\"Error: \" + err.message)) .guardarEnBanco(creds); } function verEncuestaDelBanco(id) { google.script.run ",
-              "hash": "e60fd24f61c215932d25a0c06fb14f96e7850b05c3ed6735eb70013999c7e4b9"
-            },
-            {
-              "linea": 3488,
-              "texto": ") .withFailureHandler(err => alert(\"Error: \" + err.message)) .obtenerDelBanco(creds, id); } function volverEncuestaActual() { if (bancoModal",
-              "hash": "9939af1bde8456ad08356d883e92629be99d05477f6a204a34cffe19c4c8591c"
-            },
-            {
-              "linea": 3505,
-              "texto": "} catch (e) { return [];",
-              "hash": "2d0fdb17268f87d243c7c8151324d82996bf8e9eb83fc5dcb4658cfd5f51719c"
-            },
-            {
-              "linea": 3505,
-              "texto": "} } function pintarCategorias() { const cats = getCategorias(); const lista = document.getElementById(\"listaCategorias\"); const selPadre = d",
-              "hash": "82d7624aaa80593809926b815c9bf5485e1238fa09b6c4df277e458d056de38b"
-            },
-            {
-              "linea": 3514,
-              "texto": "cats.forEach((c, i) => { lista.innerHTML += ` <li class=\"list-group-item d-flex justify-content-between align-items-center py-2\"> <div> <spa",
-              "hash": "bea8774a3c272a97c6fbafcf8c41c7acb7efcfc0a0d7da2082b727feb42deced"
-            },
-            {
-              "linea": 3531,
-              "texto": "} const dl = document.getElementById(\"datalistCategorias\"); if (dl) { dl.innerHTML = cats.map(c => `<option value=\"${esc(c.nombre)}\"></optio",
-              "hash": "a9abd9c50b5a46bde19b619506099b470d8ed24648beab75e2fcef994c6285c3"
-            },
-            {
-              "linea": 3535,
-              "texto": "} } function guardarCategoria(e) { e.preventDefault(); const nombre = document.getElementById(\"catNombre\").value.trim(); const padre = docum",
-              "hash": "9ed4e64d76eadd019c8726de8ae287a6a1e0a0d4df82b522b4d618641876b20c"
-            },
-            {
-              "linea": 3546,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 3547,
-              "texto": "} cats.push({ nombre: nombre, padre: padre || \"\" }",
-              "hash": "2cc488460d1a779abbf22b9c72645260b88dd63baa42e3fde9c3c66dba8bffa4"
-            },
-            {
-              "linea": 3548,
-              "texto": "); FORM.config.categorias = JSON.stringify(cats); document.getElementById(\"catNombre\").value = \"\"; pintarCategorias(); } function eliminarCa",
-              "hash": "7ffaa89c0f4320cc485855e7d0172531ca106387cab61230a98734770ef55467"
-            },
-            {
-              "linea": 3568,
-              "texto": "} }",
-              "hash": "e4249f92d4fa6771d2b4568e9e1363f6e32b9e9eb54a558736108c9a40fab84e"
             }
           ]
         }
@@ -3351,22 +3688,22 @@
             "GRUPOS_POR_TURNO_DEFECTO": {
               "tipo": "const",
               "linea": 16,
-              "hash": "89974c42715ed1297cc65a9cfacd83f37485fc35a1862966a2f840a81f6c2c22"
+              "hash": "633d501e054c4a992a13aaa3830debda071ac231b7a06d75b29a86cafb09d029"
             },
             "CONFIG_POR_DEFECTO": {
               "tipo": "const",
               "linea": 21,
-              "hash": "70c2539b8daf97461d81cbe8757faefb5b7e9c799b10200f520cb750c87e0a4f"
+              "hash": "46b561424f24c332f8eaca829d4c86b4c8edf6cc10deabc7e1724b3d6ed01d71"
             },
             "OPCIONES_ADMIN": {
               "tipo": "const",
               "linea": 35,
-              "hash": "4f0e15cd7619e5f54d4744659542d3543041c70c60f3642610de18595086f1b1"
+              "hash": "34cbf7e446a7ca37b1ace977caf08927207d8990be20437c95c1546a80fd9270"
             },
             "GRUPOS_SIMULACION": {
               "tipo": "const",
               "linea": 37,
-              "hash": "14d41701d69bfa7939c64c7a8f8744ef873ac24b9e63c685666446a4da9ad884"
+              "hash": "8eb27c192574fc205e7cb11d77ac6334668ef405e5f3db52a6e32d8b6170b025"
             },
             "getCredencialesAdmin": {
               "tipo": "function",
@@ -3732,7 +4069,7 @@
             "ESPECIFICACIONES_GRADO": {
               "tipo": "const",
               "linea": 27,
-              "hash": "7153848995590aea1b9476929248450d792c0f17e11ad24447a2c19e2f774939"
+              "hash": "efa4441de3dfe91680ae0b0c0e3d1fe8e2d1e5c69f5137372c9925513f3396a9"
             },
             "PESO_COMPRENSION": {
               "tipo": "const",
@@ -3747,7 +4084,7 @@
             "ENCABEZADOS": {
               "tipo": "const",
               "linea": 57,
-              "hash": "c106cb59cfd59b0a2714619c1a6c93451bc1a40ae64303606c0b2a455c796680"
+              "hash": "cde17f594128765b823bf5097f228666ff97bd1c8cea5109ec29e68f46da2427"
             }
           },
           "sentencias": []
@@ -6054,7 +6391,7 @@
             "PADRON_INCLUSION_UDEI_": {
               "tipo": "const",
               "linea": 575,
-              "hash": "05420c39ad89f49a11af2fc6524806219317ddb2ad85ecfae58e7e45dfbce590"
+              "hash": "10133378e6f8145e9e5a831ed3b78199e35e6645161df3d98c7805821a72605e"
             }
           },
           "sentencias": []
@@ -6312,12 +6649,12 @@
             "MAPA_MODULOS_": {
               "tipo": "const",
               "linea": 530,
-              "hash": "567a8a5e86c68566612145e0b858da620e6ee2ad5f40e77fb04d44353c4927e2"
+              "hash": "e59be6abce9502491f876bb1d35b30fac17539b82021a381f9697a06e7f1dde7"
             },
             "MAPA_NAV_ITEMS_": {
               "tipo": "const",
               "linea": 540,
-              "hash": "43025166c1055e1d38608eab7107e679d872dc24126c1518870d4ef03a260e37"
+              "hash": "2dcaaa7191e989346f6f9a326e25b22001e46b928ee3e6627f487b72f8fb2bea"
             },
             "moduloActivoShell_": {
               "tipo": "let",
@@ -6620,53 +6957,57 @@
           "sentencias": [
             {
               "linea": 4,
+              "tipo": "IfStatement",
               "texto": "if (typeof clavesDocentes !== 'undefined') { clavesDocentes.configurar({ caja: 'cajaMaeAcc', busc: 'buscMaeClase', cont: 'contMaeClase' }); ",
               "hash": "236b3c0fdefd8dbce86b3287a0ba8972be7e1294dc6516dc16051a01df095bdb"
             },
             {
               "linea": 9,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('keydown', function (ev) { const vistaAlu = document.getElementById('vistaAlu'); if (!vistaAlu || vistaAlu.classLi",
               "hash": "c03973a6fa842b97569a413c018b8404ac2d880091246efe810c0cd7cc83bdd4"
             },
             {
               "linea": 28,
+              "tipo": "ExpressionStatement",
               "texto": "document.getElementById('claveClase').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') entrarClase(); });",
               "hash": "20dc041d87edb9a0c6fedce54e1d54ea0912fc9e9bd7590d183985eacaa81103"
             },
             {
               "linea": 31,
+              "tipo": "ExpressionStatement",
               "texto": "document.getElementById('usuarioClase').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') document.getElementById('claveCl",
               "hash": "577f904454771076b02996b3577b55a8a7e399005d8bd4f639a4d4bd45b7ed2f"
             },
             {
               "linea": 34,
+              "tipo": "ExpressionStatement",
               "texto": "window.addEventListener('click', function (ev) { /* asi-dd-panel-global-closer */ if (!ev.target.closest('.asi-dd')) { document.querySelecto",
               "hash": "8b64ebd721862469ed4a36e788c793d98a06fb7cfa53c3aeeb2e7f9661e05fd2"
             },
             {
               "linea": 40,
+              "tipo": "ExpressionStatement",
               "texto": "prepararVocesClase_();",
               "hash": "6f48ff7e810ac93f129aea24bdffad7aad646036faa5848cd7cb5d41c750cd69"
             },
             {
               "linea": 41,
+              "tipo": "IfStatement",
               "texto": "if (window.speechSynthesis && typeof window.speechSynthesis.addEventListener === 'function') { window.speechSynthesis.addEventListener('voic",
               "hash": "897104e09eb179b2ac594aa833759b948034fa15a1bdeef567ce9eee8a385ab5"
             },
             {
               "linea": 44,
+              "tipo": "ExpressionStatement",
               "texto": "window.conmutarModuloShell = conmutarModuloShell;",
               "hash": "bf6a97e0c32ae70f3533427d5cedb28e56fcb81e92285a306d41d68649f4a621"
             },
             {
               "linea": 46,
+              "tipo": "TryStatement",
               "texto": "try { if (localStorage.getItem('ST90_SIDEBAR_COLAPSADO') === '1') { setTimeout(function () { const s = document.getElementById('appShellSide",
-              "hash": "a8dd6c3be3fb66a662bda448ace47361c378f3bba6ac88d621a68f37d38d7fde"
-            },
-            {
-              "linea": 53,
-              "texto": "catch (e) {}",
-              "hash": "fb901db9a38fd735ea88083ff1225628c48d817b635e63d421f8841305de09d6"
+              "hash": "03c8d004fde84976a7ab8c49c0f4c48e4c99d4865a2c7800717a789be47bc6fb"
             }
           ]
         }
@@ -6701,7 +7042,7 @@
             "datos": {
               "tipo": "let",
               "linea": 8,
-              "hash": "d49ddfd467280fb13f0ccab4ce1e8a4dc863bad8bd64bb86844ef6df52e4126b"
+              "hash": "a233199f77c9a18b7b54c3915ba96e759831e9f032cec3dafb64a0ed24ba0a60"
             },
             "ctxAsi": {
               "tipo": "let",
@@ -6786,7 +7127,7 @@
             "grafSelRepAsi": {
               "tipo": "let",
               "linea": 25,
-              "hash": "3238c82e72c76130af4016e1acc22eb3c0352dde96e8423ccbd816084ddbb503"
+              "hash": "376d4fbfadded8d8accb62ea13e41a1b7df5ba86edb6e64e4c443c1eb56dc822"
             },
             "filtroEstMaeSel": {
               "tipo": "let",
@@ -6821,17 +7162,17 @@
             "urlAlumno": {
               "tipo": "let",
               "linea": 32,
-              "hash": "6200f792c6bbce391378dde1f668455205c29e3cefdf6aa8d401de907b065e94"
+              "hash": "59dd4e565a84908989e6de1519e2991921d90ba2d61e0fcee91ba68287d84573"
             },
             "URL_ASISTENCIA": {
               "tipo": "const",
               "linea": 33,
-              "hash": "b09beabc7008a861c0e69cae57129175f1feeb313c2cc1931ea3b106a310ea13"
+              "hash": "710b304cd70b998f05be988adeda9cc44db68300e96c80ce80b8eca1dbd4bf1f"
             },
             "SOLO_ASISTENCIA": {
               "tipo": "const",
               "linea": 34,
-              "hash": "9189962a6808b46ebc45cbccff2be7eb95931121f079bbd299bfa912d7d64a9f"
+              "hash": "a64299119eb8f2d5f3ca4e893f05091e7771e81472a810f7a062dfa1c24ddab8"
             },
             "hojaDatosDesbloqueada": {
               "tipo": "let",
@@ -6846,7 +7187,7 @@
             "seleccionAlumnosMat": {
               "tipo": "let",
               "linea": 38,
-              "hash": "d74531f2a13f7fce0f2e926fda6b13b014776877167fecde7b7861c1c774a9b0"
+              "hash": "a147e984031e6d7b37a7ef975b18a74c3e649d3fb78484c09ead7a3474d35c43"
             },
             "editorPreguntasDatos": {
               "tipo": "let",
@@ -6916,17 +7257,17 @@
             "seleccionChartGrupos": {
               "tipo": "let",
               "linea": 52,
-              "hash": "baf9979a66cd604d9e423f08599e82cef3fc33fce852d0d9657b107e14d0fe2b"
+              "hash": "2c98cc289e529d4315c262571a29855f0ea3dcfd76e93bea3e256e1fc3cfa730"
             },
             "seleccionChartAlumnos": {
               "tipo": "let",
               "linea": 53,
-              "hash": "4f217d1fc7bf22e2b3b6ab31d67f699f7baabc72027f4e7638a0d7e49eae006d"
+              "hash": "8f129c2fc0bded0bce6b845b88c3fc748a1e2b29a96c4d2c328e623f48978a1f"
             },
             "filtrosColRes": {
               "tipo": "let",
               "linea": 54,
-              "hash": "988f8eb91cf8ab40594ec98c1a7a104796ff56b3a0ef8905483fd32de1d6a84a"
+              "hash": "2a5424c0ddbf2b7fca50a9e333d467b653160900e6db715a19ff16b63324c8f2"
             },
             "mostrarColsNivelesRes": {
               "tipo": "let",
@@ -8237,7 +8578,7 @@
             "panelesAccionMat_": {
               "tipo": "var",
               "linea": 568,
-              "hash": "c8ac1f5923940479d12da5e30f87f829ad2f4429ae434dda43179c540572ec04"
+              "hash": "27d531b6fd65243afbedb68c563c68cdc842f26cd51f8a7a30030334a13fd6ce"
             },
             "mostrarCatalogoAlu_": {
               "tipo": "function",
@@ -8775,7 +9116,7 @@
             "histCalTrim": {
               "tipo": "let",
               "linea": 120,
-              "hash": "195d579a23581f12e5dd39a8eb5093871789bffce572b27afc6b05d153047dc5"
+              "hash": "11197ac08540078b246c220dd9ab7ba51273f4008daf7c76aae9120ee02407ce"
             },
             "abrirCalendarioTrim": {
               "tipo": "function",
@@ -8850,7 +9191,7 @@
             "filtrosAsigPorGrado": {
               "tipo": "const",
               "linea": 365,
-              "hash": "23e4185fd2bbdea3454d6334e9afbac97fc4841dd250f36a8a9c4ffbb4e26b2e"
+              "hash": "223373cdd44e1f7081a70702aae07d5ddae9182ed82e36c9c91d2abe5caa6aed"
             },
             "cambiarFiltroAsigCol": {
               "tipo": "function",
@@ -9051,12 +9392,12 @@
             "ASIGNATURAS_NEM_POR_GRADO": {
               "tipo": "const",
               "linea": 542,
-              "hash": "a83efda5b41063388bfbf4dff48bf9c0843cb331be899a379fdbe0399801513e"
+              "hash": "18a5a504cbb2fd7998714a0fdbda5e451df398442cd8ed91216e1511181011ea"
             },
             "TEMAS_NEM": {
               "tipo": "const",
               "linea": 579,
-              "hash": "3410308f70fe8a78fd363a3a8b4fd0b5e1e17578c1bd6c7422165bbba2d58584"
+              "hash": "ff2d182b6a0c77e74a774dbf71460aabc8a6d643d8b8fdbc9c256d7df7a354c4"
             }
           },
           "sentencias": []
@@ -9339,66 +9680,67 @@
           "sentencias": [
             {
               "linea": 4,
+              "tipo": "IfStatement",
               "texto": "if (typeof clavesDocentes !== 'undefined') { clavesDocentes.configurar({ caja: 'cajaTablaMaeAdmin', busc: 'buscMaeAdmin', cont: 'contMaeAdmi",
               "hash": "c0407648e4370242222d8939f51f37a0e88b79e6834a960da70ee36f5c0dca52"
             },
             {
               "linea": 7,
-              "texto": "try { mostrarColsNivelesRes = localStorage.getItem('st90_verNivelesListaRes') === '1'; }",
-              "hash": "8766c402a432ac5ec26b1a1b9d8e985417cb7c05466d7d82f8ea36deade4c1da"
-            },
-            {
-              "linea": 7,
-              "texto": "catch (e) {}",
-              "hash": "fb901db9a38fd735ea88083ff1225628c48d817b635e63d421f8841305de09d6"
+              "tipo": "TryStatement",
+              "texto": "try { mostrarColsNivelesRes = localStorage.getItem('st90_verNivelesListaRes') === '1'; } catch (e) {}",
+              "hash": "1914ae135dd9a59ee3ef841851ac6f427b5ceb828c103401fbaadd729801f198"
             },
             {
               "linea": 8,
+              "tipo": "ExpressionStatement",
               "texto": "ajustarModoEstrecho();",
               "hash": "f452edce71a42fe702e1d63cea1fb50e4ed0e4a642c6943426a5cc7c9c914ac8"
             },
             {
               "linea": 9,
+              "tipo": "ExpressionStatement",
               "texto": "window.addEventListener('resize', ajustarModoEstrecho);",
               "hash": "7c37293bd6f835c4ac961f363680520e80d135f2f32b0ac0b651a8c546c8b098"
             },
             {
               "linea": 10,
+              "tipo": "IfStatement",
               "texto": "if (window.visualViewport) window.visualViewport.addEventListener('resize', ajustarModoEstrecho);",
               "hash": "464663c51254af30d5b26a599f07066aabf0c8bb116c539d0c8f60f67d14ae49"
             },
             {
               "linea": 13,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !document.getElementById('login').classList.contains('oculto'))",
               "hash": "a8bff384a6437f6c1c29b23d36f2ca1e3b19e2ee45a9e4081f2099ae9c40ac1d"
             },
             {
               "linea": 29,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('click', function (ev) { const dd = document.getElementById('ddGruposRepAsi'); if (dd && !dd.contains(ev.target)) ",
               "hash": "0a04abe0963f32d7d5ca0062f54dec198592371c7c7d237c7554d148950e6800"
             },
             {
               "linea": 37,
-              "texto": "try { actualizarAsignaturasYTemasIA(); }",
-              "hash": "5b730a0dd998417a38a1efb1fadc44fce5e34e604d0d602be2e94935e828bbe9"
-            },
-            {
-              "linea": 37,
-              "texto": "catch (e) {}",
-              "hash": "fb901db9a38fd735ea88083ff1225628c48d817b635e63d421f8841305de09d6"
+              "tipo": "TryStatement",
+              "texto": "try { actualizarAsignaturasYTemasIA(); } catch (e) {}",
+              "hash": "704430c3b290ab62984c9ddd9feb2d20c1bbc0886423c787da993b1103e8ee9e"
             },
             {
               "linea": 38,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('DOMContentLoaded', function () { try { actualizarAsignaturasYTemasIA(); } catch (e) {} });",
               "hash": "6b225bd9051cbc82a6921e61b41dcf0ec5da3c7975e9050713dc97f87da02e42"
             },
             {
               "linea": 42,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('click', function (e) { const wrap = document.getElementById('wrapTabCfg'); const sub = document.getElementById('m",
               "hash": "3527d8d788e7219c0b1ebe8a88a4a35d5a09d57bcd2a2815d1b862bef40e1667"
             },
             {
               "linea": 51,
+              "tipo": "ExpressionStatement",
               "texto": "window.addEventListener('click', function (ev) { /* asi-dd-panel-global-closer */ if (!ev.target.closest('.asi-dd')) { document.querySelecto",
               "hash": "8b64ebd721862469ed4a36e788c793d98a06fb7cfa53c3aeeb2e7f9661e05fd2"
             }
@@ -9444,8 +9786,8 @@
             },
             "slotMaeSel": {
               "tipo": "var",
-              "linea": 16,
-              "hash": "b9ab27de824002e517eb947c1a58cc9b59c4470e0c52d80031b327e754a6b700"
+              "linea": 11,
+              "hash": "408f39e7de56be98df269ba64aeaf211f926b59cd5bfbbb823508160e292e720"
             },
             "panelMaeUlt": {
               "tipo": "var",
@@ -9456,6 +9798,11 @@
               "tipo": "var",
               "linea": 15,
               "hash": "08b8fa8625c9d85ff940b3cd3695f56ed287f5764c16e90f90d1fd77b851e1ea"
+            },
+            "slotMaeSel@16": {
+              "tipo": "var",
+              "linea": 16,
+              "hash": "b9ab27de824002e517eb947c1a58cc9b59c4470e0c52d80031b327e754a6b700"
             },
             "fechaClaseEtiquetaManual": {
               "tipo": "var",
@@ -9469,8 +9816,8 @@
             },
             "fechaLocalDesde_": {
               "tipo": "function",
-              "linea": 382,
-              "hash": "a3d70fa23b761132a3ab16ffd4208ea76b2ee26544494330814bec4476a772a5"
+              "linea": 25,
+              "hash": "e820c0ad3aca400b72bb4b855a1d63f03eb153a9179e5e673fb3e0ff4c7d0770"
             },
             "fechaLocalClase": {
               "tipo": "function",
@@ -9646,6 +9993,11 @@
               "tipo": "function",
               "linea": 376,
               "hash": "9a954253f0092562382763d413bb0bb0f606992f38b3c15e795cf1c0e61ae0f8"
+            },
+            "fechaLocalDesde_@382": {
+              "tipo": "function",
+              "linea": 382,
+              "hash": "a3d70fa23b761132a3ab16ffd4208ea76b2ee26544494330814bec4476a772a5"
             },
             "pintarCalendarioMae_": {
               "tipo": "function",
@@ -9867,7 +10219,7 @@
             "PADRON_INCLUSION_UDEI_": {
               "tipo": "const",
               "linea": 125,
-              "hash": "05420c39ad89f49a11af2fc6524806219317ddb2ad85ecfae58e7e45dfbce590"
+              "hash": "10133378e6f8145e9e5a831ed3b78199e35e6645161df3d98c7805821a72605e"
             },
             "evaluarInclusionGrupo_": {
               "tipo": "function",
@@ -10129,12 +10481,12 @@
             "MAPA_MODULOS_": {
               "tipo": "const",
               "linea": 599,
-              "hash": "567a8a5e86c68566612145e0b858da620e6ee2ad5f40e77fb04d44353c4927e2"
+              "hash": "e59be6abce9502491f876bb1d35b30fac17539b82021a381f9697a06e7f1dde7"
             },
             "MAPA_NAV_ITEMS_": {
               "tipo": "const",
               "linea": 609,
-              "hash": "43025166c1055e1d38608eab7107e679d872dc24126c1518870d4ef03a260e37"
+              "hash": "2dcaaa7191e989346f6f9a326e25b22001e46b928ee3e6627f487b72f8fb2bea"
             },
             "moduloActivoShell_": {
               "tipo": "let",
@@ -10241,56 +10593,61 @@
           "sentencias": [
             {
               "linea": 4,
+              "tipo": "ExpressionStatement",
               "texto": "window.cerrarFormPlaneacion = cerrarFormPlaneacion;",
               "hash": "58b1cfbe87703acb579920cfb259491f43a32eadc7f7b993dd7d1e25517dc23a"
             },
             {
               "linea": 7,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('keydown', function (ev) { const vistaAlu = document.getElementById('vistaAlu'); if (!vistaAlu || vistaAlu.classLi",
               "hash": "c03973a6fa842b97569a413c018b8404ac2d880091246efe810c0cd7cc83bdd4"
             },
             {
               "linea": 25,
+              "tipo": "IfStatement",
               "texto": "if (campoClaveClase) campoClaveClase.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') entrarClase(); });",
               "hash": "925efd7bc1bdd45cc18e267f1856fbbd7739e14a1e6b62c129e9b42a9010b9b7"
             },
             {
               "linea": 28,
+              "tipo": "IfStatement",
               "texto": "if (campoUsuarioClase) campoUsuarioClase.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && campoClaveClase) campoClaveCl",
               "hash": "c8695cb328c437aa91b4a966a8c41aba22ac397140f56c079ee32bd985969f38"
             },
             {
               "linea": 31,
+              "tipo": "ExpressionStatement",
               "texto": "window.addEventListener('click', function (ev) { /* asi-dd-panel-global-closer */ if (!ev.target.closest('.asi-dd')) { document.querySelecto",
               "hash": "8b64ebd721862469ed4a36e788c793d98a06fb7cfa53c3aeeb2e7f9661e05fd2"
             },
             {
               "linea": 37,
+              "tipo": "IfStatement",
               "texto": "if (typeof prepararVocesClase_ === 'function') { prepararVocesClase_(); if (window.speechSynthesis && typeof window.speechSynthesis.addEvent",
               "hash": "3610e00dc20c754f113af4fb20c3379ae525b980223f0d6d9d6f8e5cda5948cf"
             },
             {
               "linea": 43,
+              "tipo": "ExpressionStatement",
               "texto": "window.conmutarModuloShell = conmutarModuloShell;",
               "hash": "bf6a97e0c32ae70f3533427d5cedb28e56fcb81e92285a306d41d68649f4a621"
             },
             {
               "linea": 45,
+              "tipo": "TryStatement",
               "texto": "try { if (localStorage.getItem('ST90_SIDEBAR_COLAPSADO') === '1') { setTimeout(function () { const s = document.getElementById('appShellSide",
-              "hash": "a8dd6c3be3fb66a662bda448ace47361c378f3bba6ac88d621a68f37d38d7fde"
-            },
-            {
-              "linea": 52,
-              "texto": "catch (e) {}",
-              "hash": "fb901db9a38fd735ea88083ff1225628c48d817b635e63d421f8841305de09d6"
+              "hash": "03c8d004fde84976a7ab8c49c0f4c48e4c99d4865a2c7800717a789be47bc6fb"
             },
             {
               "linea": 53,
+              "tipo": "ExpressionStatement",
               "texto": "window.irAPasoPlanNEM = irAPasoPlanNEM;",
               "hash": "17369a9038b717420e8e0422fe80f5382a34ecbe6eb3a7cb303d579f8bde42b1"
             },
             {
               "linea": 56,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener('change', function(e) { if (e.target && e.target.type === 'checkbox' && e.target.closest && e.target.closest('#wra",
               "hash": "3986d205cb4ce26de0d4f7d05487282c36b9b07e7fcb46a4b4377323a2201b1f"
             }
@@ -10307,12 +10664,12 @@
             "FORM": {
               "tipo": "let",
               "linea": 5,
-              "hash": "9fc18ebda0d59f1321f847ad6a5f067ed33bb3120f9ed7e988e5983f5231bee4"
+              "hash": "945adc55faef68a93122f49361eeb463444b02688f91dd1cb3705fc479ddfc20"
             },
             "FILTROS": {
               "tipo": "let",
               "linea": 6,
-              "hash": "ac6be8cc2b6a4069ff244aa21d9b84a7f2254def5cbb88a7449b286c9f935472"
+              "hash": "cc6d87d1ff19693dc7d7402d680f926390da3c110cdf5593ef57e175e973c458"
             },
             "RESPUESTAS": {
               "tipo": "let",
@@ -10367,7 +10724,7 @@
             "CONFIGS_GRAFICA": {
               "tipo": "let",
               "linea": 17,
-              "hash": "de82b5f5eb81176ebad1b869184e99b7c9546b827d1a3c976f11402b6eae892b"
+              "hash": "bb0acf5a74375f9d2ffec85443791c4b249cf1e129e49a0f94a74d1572512c51"
             },
             "FILTROS_DINAMICOS": {
               "tipo": "let",
@@ -10417,7 +10774,7 @@
             "TIPOS": {
               "tipo": "const",
               "linea": 35,
-              "hash": "5a9bddf7e161eff8641bee93453bf3e49a963bb84d143e7ecb4a95836cdff172"
+              "hash": "3220553dd7d31190ee60e8e32c17b7afe69ef6dbd598f4b20692416405efcbbf"
             },
             "PALETA_ESTABLE": {
               "tipo": "const",
@@ -10427,7 +10784,7 @@
             "COLORES_ASIGNADOS": {
               "tipo": "const",
               "linea": 42,
-              "hash": "4614accdbd586944ae7a562165df6a2ba17962ee3e69e55a8503eac60a91601c"
+              "hash": "6e08ce906db64974a50020d292e6c39f8262de28ea666f820dcc50d23a15a6b5"
             },
             "colorDimension": {
               "tipo": "function",
@@ -10482,7 +10839,7 @@
             "pluginValores": {
               "tipo": "const",
               "linea": 144,
-              "hash": "bb59e296eba6e33cbacd4f02e1b3c3b39153d66a1f89094a7a36801da3b2d64c"
+              "hash": "b775119846579415107b9e9a8d616f49936a1930e308d54d23c14f366acd6b3c"
             },
             "dimensionDe": {
               "tipo": "function",
@@ -10633,7 +10990,7 @@
             "ICONOS_DIMENSION": {
               "tipo": "const",
               "linea": 197,
-              "hash": "d2baaff6582f11a5ecbe1daf6c9fac22e90b1d1f71a972e90fb0969f133d6c55"
+              "hash": "20ac8a54ab9d808762d0ac7abe807c92ff60a8ccdfe83aef543ae2d62e39b3a4"
             },
             "pintarDimensiones": {
               "tipo": "function",
@@ -10754,216 +11111,135 @@
             "pintarTablaRespuestas": {
               "tipo": "function",
               "linea": 37,
-              "hash": "108f04b11368dfc157822c842709877492bb3d227da29a4169edcfd7e2e258fa"
+              "hash": "69907244518dba923d5c59b1aef7f2e8c114a045f00ccde94c3cc004b68acd79"
             },
-            "raiz": {
-              "tipo": "const",
-              "linea": 204,
-              "hash": "e0e93352c4a0b0a824b434bde02d9355987e9569bade9feb3174982dec702e46"
+            "cambiarOrdenDesdeColumna": {
+              "tipo": "function",
+              "linea": 91,
+              "hash": "2b1f80ea1d86af3811430864514060bc6f498b7a4343a3115752f45ad0c18629"
             },
-            "selSeg": {
-              "tipo": "const",
-              "linea": 263,
-              "hash": "da21aa4e883ac4bcc97f1420cf4f5bfa6704cacecd9ec5903ee078b128f8b71f"
+            "alternarBuscador": {
+              "tipo": "function",
+              "linea": 103,
+              "hash": "dec19402436c0c49209f0453be919cf731fc0997995f9b346acf54e80dc4a064"
             },
-            "segId": {
-              "tipo": "let",
-              "linea": 264,
-              "hash": "1b9a7fddaa759fa7b48ccfbdb41bd72f106112dcac2bc5264aba2cc5f9afbd92"
+            "restablecerFiltrosTabla": {
+              "tipo": "function",
+              "linea": 110,
+              "hash": "d76ce2922f69ffb3a5981cb493dda882e74b31e5911b7635e84a9bc3bcd440bb"
             },
-            "apilada": {
-              "tipo": "const",
-              "linea": 266,
-              "hash": "7b4f5c3dcac6464aa035535e0f18be5eadd1899e40c068b18de9d3e45cfd0f52"
+            "celdaCSV": {
+              "tipo": "function",
+              "linea": 119,
+              "hash": "214b37e02b9924f41691ffcb429751ccd859161b43a0b403c71304eccbe786de"
             },
-            "ejeValor": {
-              "tipo": "const",
-              "linea": 267,
-              "hash": "9d4ee1ccde62494cbebc378af3e3f61fab03d7e944f8eb2599215ce8ad1646b0"
+            "descargarCSVRespuestas": {
+              "tipo": "function",
+              "linea": 126,
+              "hash": "b19a2e08d9b7f2fbdb23e863fa2772605db029fe5d2cb264cf725d723613841e"
             },
-            "ejeCat": {
-              "tipo": "const",
-              "linea": 271,
-              "hash": "e55e2930492404921e9affcc56c4b24ac32e9b1bd5530d8662d35c9452d1f28b"
+            "imprimirRespuestas": {
+              "tipo": "function",
+              "linea": 143,
+              "hash": "c9f02c9ee3d15c67bcebd61f9bace9e7b40ba44d2ecd49b6669efb47ec8afff7"
             },
-            "colores": {
-              "tipo": "const",
-              "linea": 286,
-              "hash": "26eb8aff879cafc50fce0add20f0be3133d421ec5cdf6bd992e96aa4537a0466"
+            "preguntasVisibles": {
+              "tipo": "function",
+              "linea": 150,
+              "hash": "1896e24fd1c704e168c2e35e696025249d874ac42fa9828aacacf446220ddb80"
+            },
+            "preguntaCategoria": {
+              "tipo": "function",
+              "linea": 154,
+              "hash": "743b967a28fa7783015a4e992c59aa0607fb51d159cefc9a219f51e02b1554ad"
+            },
+            "opcionesDependientes": {
+              "tipo": "function",
+              "linea": 160,
+              "hash": "b2ee9e02b351114756e5371f2b35d7a0e83f138b146f891f29f34297fab9ce92"
+            },
+            "ampliarGrafica": {
+              "tipo": "function",
+              "linea": 173,
+              "hash": "cc4d05b7fe910fcb0aaa303ffd505e44986aabf3a425554df2d215ddf5405079"
+            },
+            "renderGraficaModal": {
+              "tipo": "function",
+              "linea": 188,
+              "hash": "c4162c0a8e894c665364a2ba24129fbd2b7886a84ac82d018fa52275a4726240"
+            },
+            "abrirSimulacion": {
+              "tipo": "function",
+              "linea": 309,
+              "hash": "43f21d1411835f8756b4322abe04b63ceb988cbff80ca70a511e4942b7e5d471"
+            },
+            "ejecutarSimulacion": {
+              "tipo": "function",
+              "linea": 313,
+              "hash": "c89ac7808a30328454a9258aef1a90bf51738e3ace2d1e9449d84be79bf1bac9"
+            },
+            "limpiarSimulados": {
+              "tipo": "function",
+              "linea": 348,
+              "hash": "4ad3a8da4b1f893b001bd081ae74fa2de526cc02926ad93df0f3756caaf50e10"
+            },
+            "quitarPreguntasEjemplo": {
+              "tipo": "function",
+              "linea": 368,
+              "hash": "6fec5ed60dc4ffe987f47638ec4a0a124524b4d408a4a6a862b77cc370629614"
+            },
+            "vincularHoja": {
+              "tipo": "function",
+              "linea": 384,
+              "hash": "46b706ee99b4ca5c18c35ed4797d761a25a5c63910b37e8fcc32a8e022b5aa8c"
+            },
+            "pintarConfig": {
+              "tipo": "function",
+              "linea": 428,
+              "hash": "cb2187dc948a628c5efc182e8d9b1a3e8bc4ba6bf6c040a02e06bac2ccc243f8"
+            },
+            "leerConfigFormulario": {
+              "tipo": "function",
+              "linea": 441,
+              "hash": "c6d6ac808aa71a2d51f149a8a6600c591ac0d053f355f6f237a55152c258fc7b"
+            },
+            "pintarPreguntas": {
+              "tipo": "function",
+              "linea": 451,
+              "hash": "4dff9cc2a07206944c26277f013b79ebdcb9b773bdd1f460a5151cd06db12e70"
+            },
+            "mover": {
+              "tipo": "function",
+              "linea": 486,
+              "hash": "da09ab7822d8c6a333c7531663e78b85545ec396bfedef0b111f6db16b0898d5"
+            },
+            "eliminar": {
+              "tipo": "function",
+              "linea": 495,
+              "hash": "49e0bbefd1e6aff883fd491ee924980171d6e637be2c1e64273e11f07c0ac616"
+            },
+            "abrirModal": {
+              "tipo": "function",
+              "linea": 502,
+              "hash": "789760b433aaa3821db95543cb2f02a4a1870bf22d86fb106274b7764a8c570c"
+            },
+            "abrirAyuda": {
+              "tipo": "function",
+              "linea": 553,
+              "hash": "3e349159dd02b5edec1fa2ca255f0cb64c6197830b981cbeb54fa955480409c3"
+            },
+            "alternarAyudaPregunta": {
+              "tipo": "function",
+              "linea": 562,
+              "hash": "fc905748ebd860735e77eab014bd8b48e66ffd7b13ff269ef7a23fcb222a0f9e"
+            },
+            "serializarOpcionesPorPadre": {
+              "tipo": "function",
+              "linea": 572,
+              "hash": "f899ad3e6b1b0836e0d01eecdd190d215f7f67d8297991d611d0418962efd35a"
             }
           },
-          "sentencias": [
-            {
-              "linea": 165,
-              "texto": "} if (pregunta.id === \"grupo\") { const mapa = mapaGruposLegado();",
-              "hash": "60ae9bff5af39c065a0968109772b0b7015e8c89b8d8f533f8454f7a70ad3ad2"
-            },
-            {
-              "linea": 168,
-              "texto": "if (mapa[valorPadre]) return mapa[valorPadre].slice();",
-              "hash": "20f49ea6fc2f2b1288dcfa398c76b6f0861a17d6ce61d6e9d3ea1f0b691a5ffb"
-            },
-            {
-              "linea": 169,
-              "texto": "} return (pregunta.opciones || []).slice(); } // ZOOM Y MODAL DE GRÁFICA AMPLIADA function ampliarGrafica(e, id) { // Solo amplía el lienzo:",
-              "hash": "3a4a947309525db7b82a21c11c24362e30bb725c331473991e31822a84f1b112"
-            },
-            {
-              "linea": 201,
-              "texto": "contSun.classList.remove(\"d-none\");",
-              "hash": "dc7e8425c2568eb51a9f53ca89d378ef26b460f0a439fcc1f6ccdd93e789bcba"
-            },
-            {
-              "linea": 202,
-              "texto": "if (graficaModal && typeof graficaModal.dispose === \"function\") graficaModal.dispose();",
-              "hash": "d71bb890de1ce6a0c64e8fa5382ae1638492f846bd10c140bca854709057264c"
-            },
-            {
-              "linea": 203,
-              "texto": "graficaModal = echarts.init(contSun);",
-              "hash": "cf1963ed0fd14d1abe86aa12369b49d94b7220e18cb1c7a622a037388add9f8a"
-            },
-            {
-              "linea": 205,
-              "texto": "filas.forEach(f => { const ruta = [String(valorDe(f, \"turno\")), String(valorDe(f, dim.id))].filter(Boolean); let act = raiz; ruta.forEach(no",
-              "hash": "222ced0730376e50025a03c48587fc87bdac412eeed969973983d0f4e1f4d471"
-            },
-            {
-              "linea": 215,
-              "texto": "graficaModal.setOption({ series: [{ type: \"sunburst\", data: raiz.children, radius: [\"15%\", \"90%\"], label: { rotate: \"radial\", fontSize: tama",
-              "hash": "e27833389610d94204a8ad20c2527e1f13a7a704c7464b5e63230d2ab15f2d66"
-            },
-            {
-              "linea": 223,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 224,
-              "texto": "} canvasWrap.classList.remove(\"d-none\"); contSun.classList.add(\"d-none\"); const conteo = {}; const porTurno = {}; filas.forEach(f => { const",
-              "hash": "23efa4b9416d8bea967c505da4858461ad48ca40e261f4eeff1c54128bced488"
-            },
-            {
-              "linea": 241,
-              "texto": "); const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0); const basePct = (dim.tipo === \"multiple\" && sumaConteosM",
-              "hash": "2653bb4b9adc10e5578f5797b7d4588939214ab6603f11794ead11c1db92bdcc"
-            },
-            {
-              "linea": 265,
-              "texto": "if (!segId || segId === dim.id) segId = (dim.id === \"turno\") ? \"origen\" : \"turno\";",
-              "hash": "22e20ff37042a3343420b8f021034087bc8c17c75ad6530f7cd9165de0bcceea"
-            },
-            {
-              "linea": 272,
-              "texto": "graficaModal = new Chart(ctx, { type: \"bar\", data: { labels: apilada.labels, datasets: apilada.datasets }, plugins: [pluginValores], options",
-              "hash": "afb50a3ed244571c877e14972db5f1a0b9b499e8fa90bc82aff0da44b9bd6f85"
-            },
-            {
-              "linea": 284,
-              "texto": "} else { const datos = pares.map(p => modoVal === \"porcentaje\" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);",
-              "hash": "e68b0e82ae30acfd6e591ded57dd5a4156af9fbe64ab9359f0d4d64567d19da0"
-            },
-            {
-              "linea": 287,
-              "texto": "graficaModal = new Chart(ctx, { type: tipo === \"barVertical\" ? \"bar\" : tipo, data: { labels: pares.map(p => p.label), datasets: [{ data: dat",
-              "hash": "8f83afb201d708768306143d28d1193479a869b64e9f3d71084d8cf16aba326b"
-            },
-            {
-              "linea": 305,
-              "texto": "} } // SIMULACIÓN Y MANTENIMIENTO function abrirSimulacion() { if (simulacionModal) simulacionModal.show(); } function ejecutarSimulacion(e)",
-              "hash": "94d5a2f7da5e0b372c682fae520a81fb4a1761c483bf7b83778975bc24aab880"
-            },
-            {
-              "linea": 339,
-              "texto": ") .withFailureHandler(err => { btn.disabled = false; estado.textContent = \"Error de red: \" + err.message; estado.className = \"alert alert-da",
-              "hash": "364bf44c44caba10ff78d2cc1bd10428354372a650c6c7c8971b2552607408dd"
-            },
-            {
-              "linea": 344,
-              "texto": ") .simularRespuestasFormulario(creds, cant, clave, perfil); } function limpiarSimulados() { const clave = prompt(\"Ingresa la clave de autori",
-              "hash": "78846e5f1d5aba008f6bef70a30f22604264ced3ab2fbb15e2a2e153d014d683"
-            },
-            {
-              "linea": 361,
-              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + err.message)) .limpiarSimuladosFormulario(creds, clave); } // CONSTRUCTOR Y EDITO",
-              "hash": "6b96bb6be379b43c04e3dce1dffad4996ed60165786341cb0bdbc2f0b810e7c3"
-            },
-            {
-              "linea": 369,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 369,
-              "texto": "} if (!confirm(\"¿Desactivar las preguntas «Ejemplo · Sede / Área / Puesto»? Dejarán de aparecer en la encuesta y sus respuestas se conservan",
-              "hash": "1634ac3df046d4db0bf4840c8d168c99ffcc51828a7491aaf698405f5931fa44"
-            },
-            {
-              "linea": 379,
-              "texto": ") .withFailureHandler(err => alert(\"Error de conexión: \" + (err && err.message ? err.message : err))) .quitarJerarquiaDemo(creds); } // Vinc",
-              "hash": "05d950862ee16c58b0d126079348630144a09110d0dd9a83109ce356b17c0148"
-            },
-            {
-              "linea": 392,
-              "texto": "estado.className = \"small mt-2 \" + clase;",
-              "hash": "a98b3fd560b83c0a7f4b71cee4ecfaf33a2dd3581da374c1eab587bdecc10031"
-            },
-            {
-              "linea": 393,
-              "texto": "estado.textContent = texto;",
-              "hash": "33b318c6769b92491b2071ccccd19b24b87ff81ede9bd94f354947089bf45f62"
-            },
-            {
-              "linea": 394,
-              "texto": "}; if (!creds) { aviso(\"Inicia sesión de administrador para vincular una hoja.\", \"text-danger\");",
-              "hash": "bc04b721d907f0531fd2423dcc7e6c9b4a3edfa3fe6071adc1ac267ae3b3f294"
-            },
-            {
-              "linea": 396,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 396,
-              "texto": "} if (!valor) { aviso(\"Escribe la URL o el ID de la hoja.\", \"text-danger\");",
-              "hash": "2135e32d9ba13298bc9f270061a43f20da1ce153fd59af4ee2c20dfeae5ee248"
-            },
-            {
-              "linea": 397,
-              "texto": "return;",
-              "hash": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f"
-            },
-            {
-              "linea": 397,
-              "texto": "} if (btn) btn.disabled = true; aviso(\"Comprobando acceso y preparando pestañas...\", \"text-muted\"); google.script.run .withSuccessHandler(re",
-              "hash": "82faaa5861c683e70ba9bebdb6b14a5f4bda467b8ed542dc7407803102f43c31"
-            },
-            {
-              "linea": 421,
-              "texto": ") .withFailureHandler(err => { if (btn) btn.disabled = false; aviso(\"Error de conexión: \" + (err && err.message ? err.message : err), \"text-",
-              "hash": "cda3718241aa15a5b951262048489af5056ccdbca1affc6e8c3fc44e695f32e6"
-            },
-            {
-              "linea": 425,
-              "texto": ") .vincularYPrepararHoja(creds, valor); } function pintarConfig() { const c = FORM.config || {}; const campos = [\"escuela\", \"subtitulo\", \"ti",
-              "hash": "b8ab75c13b951c34a694ad3e592d4ddd44dbe001337319677ff200448b899e40"
-            },
-            {
-              "linea": 434,
-              "texto": "); const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null; const elHoja = document.getElementById(\"hojaActual\"); if (elHoja) ",
-              "hash": "8e66275955f4d5f9a67d22e50c8a7104d7d3c969c802b841c1717d9b90c1a55f"
-            },
-            {
-              "linea": 442,
-              "texto": ", FORM.config); const campos = [\"escuela\", \"subtitulo\", \"titulo\", \"introduccion\", \"boton\", \"exitoTitulo\", \"otroBoton\", \"exitoTexto\", \"nota\"]",
-              "hash": "099c4d8a8fdc7be4e7ab8cc48ba6bb895a12403a75b452a88a17f3e0b30eb151"
-            },
-            {
-              "linea": 447,
-              "texto": "); return c; } function pintarPreguntas() { const cont = document.getElementById(\"listaPreguntas\"); if (!cont) return; cont.innerHTML = \"\"; ",
-              "hash": "6d948c20792119b3c53fca0340077ea8f405f5b5205747e56f55055651cab76b"
-            }
-          ]
+          "sentencias": []
         }
       ]
     },
@@ -11107,11 +11383,13 @@
           "sentencias": [
             {
               "linea": 5,
+              "tipo": "ExpressionStatement",
               "texto": "document.addEventListener(\"DOMContentLoaded\", () => { modal = new bootstrap.Modal(document.getElementById(\"modalPregunta\")); modalGrafica = ",
               "hash": "986e9c7742723974a5e5851a094efdb9885aaca3a583f10a82543958295d4b19"
             },
             {
               "linea": 62,
+              "tipo": "ExpressionStatement",
               "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
               "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"
             }

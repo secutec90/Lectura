@@ -1,0 +1,667 @@
+<script>
+/* AdminJS_12 — obtenerTemasNEM, actualizarAsignaturasYTemasIA, actualizarSugerenciasTemasIA, seleccionarTemaSugeridoIA, alEscribirTemaIA, preguntaVacia, etiquetaNivelComprensionCliente, generarLec, CATALOGO_PDAS_NEM, masivoIndice, ... */
+
+
+    function obtenerTemasNEM(grado, asignatura) {
+      const g = String(grado || '1');
+      const asigNorm = String(asignatura || '').trim();
+      const mapaGrado = TEMAS_NEM[g] || TEMAS_NEM['1'];
+      if (!mapaGrado) return [];
+      
+      if (mapaGrado[asigNorm]) return mapaGrado[asigNorm];
+      
+      const keys = Object.keys(mapaGrado);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        if (k.toLowerCase().indexOf(asigNorm.toLowerCase()) >= 0 || asigNorm.toLowerCase().indexOf(k.toLowerCase()) >= 0) {
+          return mapaGrado[k];
+        }
+      }
+      return mapaGrado['Español'] || [];
+    }
+
+    function actualizarAsignaturasYTemasIA() {
+      const g = document.getElementById('lGra').value || '1';
+      const selAsi = document.getElementById('lAsi');
+      if (!selAsi) return;
+
+      const valorAnterior = selAsi.value;
+      const asigs = ASIGNATURAS_NEM_POR_GRADO[g] || ASIGNATURAS_NEM_POR_GRADO['1'];
+      
+      selAsi.innerHTML = asigs.map(function (a) {
+        return '<option value="' + escaparHtml(a) + '">' + escaparHtml(a) + '</option>';
+      }).join('');
+
+      // Mantener la asignatura seleccionada si es compatible con el nuevo grado
+      if (asigs.indexOf(valorAnterior) >= 0) {
+        selAsi.value = valorAnterior;
+      } else {
+        if (/Ciencias/i.test(valorAnterior)) {
+          const matchCiencia = asigs.find(function (a) { return /Ciencias/i.test(a); });
+          if (matchCiencia) selAsi.value = matchCiencia;
+          else selAsi.selectedIndex = 0;
+        } else {
+          selAsi.selectedIndex = 0;
+        }
+      }
+
+      actualizarSugerenciasTemasIA();
+    }
+
+    function actualizarSugerenciasTemasIA() {
+      const g = document.getElementById('lGra').value || '1';
+      const a = document.getElementById('lAsi').value || 'Español';
+      const temas = obtenerTemasNEM(g, a);
+      const inputTema = document.getElementById('lTema');
+      const dataList = document.getElementById('listaTemasNEM');
+      const contChips = document.getElementById('chipsTemasNEM');
+
+      if (dataList) {
+        dataList.innerHTML = temas.map(function (t) {
+          return '<option value="' + escaparHtml(t) + '">';
+        }).join('');
+      }
+
+      if (inputTema) {
+        inputTema.placeholder = 'Ej. ' + (temas[0] || 'Tema del contenido curricular NEM');
+      }
+
+      if (contChips) {
+        const valActual = (inputTema ? inputTema.value.trim() : '');
+        contChips.innerHTML = temas.map(function (t) {
+          const esSel = (valActual && valActual.toLowerCase() === t.toLowerCase());
+          return '<button type="button" class="chip-tema-nem' + (esSel ? ' seleccionado' : '') + '" onclick="seleccionarTemaSugeridoIA(\'' + escaparHtml(t).replace(/'/g, "\\'") + '\')">' +
+            '📌 ' + escaparHtml(t) + '</button>';
+        }).join('');
+      }
+    }
+
+    function seleccionarTemaSugeridoIA(tema) {
+      const inputTema = document.getElementById('lTema');
+      if (inputTema) {
+        inputTema.value = tema;
+        inputTema.focus();
+      }
+      const chips = document.querySelectorAll('#chipsTemasNEM .chip-tema-nem');
+      chips.forEach(function (c) {
+        const txt = c.textContent.replace(/^📌\s*/, '').trim();
+        if (txt.toLowerCase() === tema.toLowerCase()) {
+          c.classList.add('seleccionado');
+        } else {
+          c.classList.remove('seleccionado');
+        }
+      });
+    }
+
+    function alEscribirTemaIA() {
+      const val = (document.getElementById('lTema').value || '').trim().toLowerCase();
+      const chips = document.querySelectorAll('#chipsTemasNEM .chip-tema-nem');
+      chips.forEach(function (c) {
+        const txt = c.textContent.replace(/^📌\s*/, '').trim().toLowerCase();
+        if (val && txt === val) {
+          c.classList.add('seleccionado');
+        } else {
+          c.classList.remove('seleccionado');
+        }
+      });
+    }
+
+    function preguntaVacia() {
+      return { p: '', opciones: ['', '', '', ''], respuesta: '', nivel: '' };
+    }
+
+    function etiquetaNivelComprensionCliente(n) {
+      if (n === 'literal') return 'Literal';
+      if (n === 'inferencial') return 'Inferencial';
+      if (n === 'critica') return 'Crítica';
+      return '';
+    }
+
+    function generarLec() {
+      const g = document.getElementById('lGra').value;
+      const a = document.getElementById('lAsi').value;
+      const t = document.getElementById('lTema').value.trim();
+      if (!t) return toast('Escribe el tema para generar la lectura.', 'error');
+      
+      const btn = document.getElementById('btnGenerarIA');
+      btn.disabled = true;
+      document.getElementById('msgIA').textContent = 'Generando con IA… esto puede tardar unos 10-15 segundos.';
+      
+      gsRun('generarLecturaAdmin', token, g, a, t)
+        .then(function (res) {
+          btn.disabled = false;
+          document.getElementById('msgIA').textContent = '';
+          document.getElementById('lTema').value = '';
+          alternarPanelIA();
+          toast('Lectura generada con éxito (' + res.palabras + ' palabras).', 'exito');
+          lecturaSeleccionadaId = res.id;
+          cargarDetalleLecturas();
+        })
+        .catch(function (e) {
+          btn.disabled = false;
+          document.getElementById('msgIA').textContent = 'Error: ' + e.message;
+          toast(e.message, 'error');
+        });
+    }
+    const CATALOGO_PDAS_NEM = [
+      {g:"1", a:"Español", t:"La función creativa del español en la expresión de necesidades"},
+      {g:"1", a:"Español", t:"Los elementos y los recursos estéticos de la lengua española"},
+      {g:"1", a:"Español", t:"Textos de divulgación científica"},
+      {g:"1", a:"Matemáticas", t:"Extensión del significado de las operaciones"},
+      {g:"1", a:"Matemáticas", t:"Regularidades y Patrones"},
+      {g:"1", a:"Matemáticas", t:"Introducción al álgebra"},
+      {g:"1", a:"Ciencias", t:"Funcionamiento del cuerpo humano y sistema nervioso"},
+      {g:"1", a:"Ciencias", t:"La biodiversidad como expresión del cambio en los seres vivos"},
+      {g:"1", a:"Ciencias", t:"El calentamiento global y la alteración de los ciclos"},
+      {g:"1", a:"Geografía", t:"El espacio geográfico como una construcción social"},
+      {g:"1", a:"Geografía", t:"La distribución y dinámica de las aguas continentales"},
+      {g:"1", a:"Geografía", t:"Riesgos de desastre y crisis humanitarias"},
+      {g:"1", a:"Formación Cívica y Ética", t:"Grupos sociales y culturales en la conformación de las identidades"},
+      {g:"1", a:"Formación Cívica y Ética", t:"El derecho a la salud y la prevención en el consumo de drogas"},
+      {g:"1", a:"Formación Cívica y Ética", t:"Normas, leyes, instituciones y organizaciones garantes de derechos humanos"},
+      {g:"1", a:"Tecnología", t:"Herramientas, máquinas e instrumentos"},
+      {g:"1", a:"Tecnología", t:"Materiales, procesos técnicos y comunidad"},
+      {g:"1", a:"Tecnología", t:"Usos e implicaciones de la energía en los procesos técnicos"},
+      {g:"2", a:"Español", t:"La diversidad lingüística y sus formas de expresión"},
+      {g:"2", a:"Español", t:"El reportaje y la crónica comunitaria"},
+      {g:"2", a:"Español", t:"Creación de textos argumentativos sobre debates actuales"},
+      {g:"2", a:"Matemáticas", t:"Proporcionalidad inversa y directa"},
+      {g:"2", a:"Matemáticas", t:"Medición y cálculo en diferentes contextos"},
+      {g:"2", a:"Matemáticas", t:"Azar y probabilidad"},
+      {g:"2", a:"Ciencias", t:"Estructura, propiedades y características de la materia"},
+      {g:"2", a:"Ciencias", t:"Fenómenos, procesos y factores asociados al cambio climático"},
+      {g:"2", a:"Ciencias", t:"Interacciones en fenómenos magnéticos y electromagnéticos"},
+      {g:"2", a:"Historia", t:"Las gestas de resistencia y los movimientos independentistas"},
+      {g:"2", a:"Historia", t:"Las revoluciones modernas y sus tendencias"},
+      {g:"2", a:"Historia", t:"El dominio español y el mestizaje cultural"},
+      {g:"2", a:"Formación Cívica y Ética", t:"Resolución de conflictos de manera pacífica y dialogada"},
+      {g:"2", a:"Formación Cívica y Ética", t:"La cultura de paz y la mediación escolar"},
+      {g:"2", a:"Formación Cívica y Ética", t:"Defensa y exigibilidad de los derechos humanos"},
+      {g:"2", a:"Tecnología", t:"Comunicación y representación técnica"},
+      {g:"2", a:"Tecnología", t:"Factores que inciden en los procesos técnicos"},
+      {g:"2", a:"Tecnología", t:"Evaluación de sistemas tecnológicos"},
+      {g:"3", a:"Español", t:"La función argumentativa en ensayos críticos"},
+      {g:"3", a:"Español", t:"Textos literarios clásicos y contemporáneos"},
+      {g:"3", a:"Español", t:"Mensajes en medios de comunicación y redes sociales"},
+      {g:"3", a:"Matemáticas", t:"Ecuaciones lineales y cuadráticas"},
+      {g:"3", a:"Matemáticas", t:"Funciones y gráficas"},
+      {g:"3", a:"Matemáticas", t:"Teorema de Pitágoras y trigonometría básica"},
+      {g:"3", a:"Ciencias", t:"Los hitos que contribuyeron al avance del conocimiento científico"},
+      {g:"3", a:"Ciencias", t:"Las reacciones químicas: manifestaciones y ecuaciones"},
+      {g:"3", a:"Ciencias", t:"Propiedades de los ácidos y bases"},
+      {g:"3", a:"Historia", t:"Las tensiones en el siglo XX y el mundo bipolar"},
+      {g:"3", a:"Historia", t:"La Guerra Fría y los conflictos regionales"},
+      {g:"3", a:"Historia", t:"Los movimientos sociales en el México contemporáneo"},
+      {g:"3", a:"Formación Cívica y Ética", t:"Igualdad sustantiva y perspectiva de género"},
+      {g:"3", a:"Formación Cívica y Ética", t:"Participación ciudadana y mecanismos democráticos"},
+      {g:"3", a:"Formación Cívica y Ética", t:"Desarrollo sustentable y el derecho a un medio ambiente sano"},
+      {g:"3", a:"Tecnología", t:"Innovación y desarrollo tecnológico sustentable"},
+      {g:"3", a:"Tecnología", t:"Pensamiento estratégico y resolución de problemas técnicos"},
+      {g:"3", a:"Tecnología", t:"Evaluación de proyectos tecnológicos comunitarios"}
+    ];
+
+    let masivoIndice = 0;
+    let masivoCancelado = false;
+
+    function alternarPanelMasivo() {
+      const p = document.getElementById('panelMasivo');
+      if (p.classList.contains('oculto')) {
+        document.getElementById('panelIA').classList.add('oculto');
+        const vistaDet = document.getElementById('vistaDetalleLec');
+        if (vistaDet) vistaDet.classList.add('oculto');
+        p.classList.remove('oculto');
+        sincronizarUbicacionAccionesBanco_();
+      } else {
+        p.classList.add('oculto');
+        sincronizarUbicacionAccionesBanco_();
+      }
+    }
+
+    function iniciarGeneracionMasiva() {
+      const c = document.getElementById('claveMasiva');
+      if (c && c.value !== 'memo2') {
+        toast('Contraseña incorrecta para esta opción.', 'error');
+        return;
+      }
+      if (c) c.disabled = true;
+      
+      masivoCancelado = false;
+      masivoIndice = 0;
+      document.getElementById('btnIniciarMasivo').classList.add('oculto');
+      document.getElementById('btnDetenerMasivo').classList.remove('oculto');
+      document.getElementById('masivoProgresoContenedor').classList.remove('oculto');
+      procesarSiguienteMasivo();
+    }
+
+    function detenerGeneracionMasiva() {
+      masivoCancelado = true;
+      document.getElementById('btnIniciarMasivo').classList.remove('oculto');
+      document.getElementById('btnDetenerMasivo').classList.add('oculto');
+      const c = document.getElementById('claveMasiva');
+      if (c) c.disabled = false;
+      document.getElementById('masivoEstadoTexto').textContent = 'Cancelado en ' + masivoIndice + ' de ' + CATALOGO_PDAS_NEM.length;
+    }
+
+    function procesarSiguienteMasivo() {
+      if (masivoCancelado) return;
+      if (masivoIndice >= CATALOGO_PDAS_NEM.length) {
+        document.getElementById('masivoEstadoTexto').textContent = '¡Generación completada!';
+        document.getElementById('masivoBarra').style.width = '100%';
+        document.getElementById('masivoContador').textContent = CATALOGO_PDAS_NEM.length + ' / ' + CATALOGO_PDAS_NEM.length;
+        document.getElementById('btnIniciarMasivo').classList.remove('oculto');
+        document.getElementById('btnDetenerMasivo').classList.add('oculto');
+        const c = document.getElementById('claveMasiva');
+        if (c) c.disabled = false;
+        cargarDetalleLecturas();
+        return;
+      }
+      
+      const pda = CATALOGO_PDAS_NEM[masivoIndice];
+      const pct = Math.round((masivoIndice / CATALOGO_PDAS_NEM.length) * 100);
+      document.getElementById('masivoBarra').style.width = pct + '%';
+      document.getElementById('masivoContador').textContent = masivoIndice + ' / ' + CATALOGO_PDAS_NEM.length;
+      document.getElementById('masivoEstadoTexto').textContent = 'Generando: ' + pda.a + ' ' + pda.g + '° - ' + pda.t.substring(0,25) + '...';
+
+      gsRun('generarLecturaAdmin', token, pda.g, pda.a, pda.t)
+        .then(function(res) {
+          if (!res.ok) {
+            console.error('Error IA masiva:', res);
+            document.getElementById('masivoEstadoTexto').textContent = 'Error en ' + pda.a + ' (reintentando en 5s)...';
+            setTimeout(procesarSiguienteMasivo, 5000);
+            return;
+          }
+          masivoIndice++;
+          // Pequeña pausa para no saturar la API
+          setTimeout(procesarSiguienteMasivo, 2500);
+        })
+        .catch(function(e) {
+          console.error(e);
+          document.getElementById('masivoEstadoTexto').textContent = 'Error de red (reintentando en 5s)...';
+          setTimeout(procesarSiguienteMasivo, 5000);
+        });
+    }
+    let lecturaPreviaActual = null;
+
+    function abrirVistaPreviaModal() {
+      const lec = (typeof currentLecturaDetalle !== 'undefined') ? currentLecturaDetalle : (datos.bancoDetalle || []).find(function(l) { return l.id === lecturaSeleccionadaId; });
+      if (!lec) return;
+      lecturaPreviaActual = lec;
+      document.getElementById('modalPreviaTitulo').textContent = 'Vista previa: ' + (lec.tema || '');
+      document.getElementById('modalPreviaTexto').innerHTML = renderizarHojaLibro(lec.texto, lec.tema, lec.asignatura, lec.grado, lec.palabras);
+      pintarPreguntasPrevia();
+      cambiarTabPrevia('texto');
+      document.getElementById('modalVistaPrevia').classList.add('visible');
+    }
+
+    function pintarPreguntasPrevia() {
+      const lec = lecturaPreviaActual;
+      const cont = document.getElementById('modalPreviaPreguntas');
+      if (!lec || !cont) return;
+      const comoAlumno = !!(document.getElementById('chkPreviaAlumno') && document.getElementById('chkPreviaAlumno').checked);
+      const qs = Array.isArray(lec.preguntas) ? lec.preguntas : [];
+      if (!qs.length) {
+        cont.innerHTML = '<p>No hay preguntas.</p>';
+        return;
+      }
+      let pregHtml = '';
+      if (comoAlumno) {
+        pregHtml += '<p style="font-size:13px;color:#64748b;margin:0 0 12px;">Así verá el alumno las preguntas, sin marcar la respuesta correcta.</p>';
+      }
+      qs.forEach(function(q, i) {
+        pregHtml += '<div style="margin-bottom:20px;">';
+        pregHtml += '<p style="font-weight:600;margin:0 0 10px;">' + (i+1) + '. ' + escaparHtml(q.p) + '</p>';
+        const opts = Array.isArray(q.opciones) ? q.opciones : (Array.isArray(q.o) ? q.o : []);
+        opts.forEach(function(opt) {
+          const isCorrect = (opt === (q.respuesta || q.r));
+          if (comoAlumno) {
+            pregHtml += '<div class="opcion"><span>' + escaparHtml(opt) + '</span></div>';
+          } else {
+            pregHtml += '<div class="opcion' + (isCorrect ? ' correcta' : '') + '"><span>' + escaparHtml(opt) + '</span></div>';
+          }
+        });
+        pregHtml += '</div>';
+      });
+      cont.innerHTML = pregHtml;
+    }
+
+    function cambiarModoPrevia() {
+      pintarPreguntasPrevia();
+    }
+
+    function cerrarVistaPreviaModal() {
+      document.getElementById('modalVistaPrevia').classList.remove('visible');
+    }
+
+    function cambiarTabPrevia(tab) {
+      const btnTexto = document.getElementById('btnPreviaTabTexto');
+      const btnPreg = document.getElementById('btnPreviaTabPreg');
+      if (btnTexto) btnTexto.classList.toggle('activa', tab === 'texto');
+      if (btnPreg) btnPreg.classList.toggle('activa', tab === 'preguntas');
+      if (tab === 'texto') {
+        document.getElementById('modalPreviaTexto').classList.remove('oculto');
+        document.getElementById('modalPreviaPreguntas').classList.add('oculto');
+      } else {
+        document.getElementById('modalPreviaTexto').classList.add('oculto');
+        document.getElementById('modalPreviaPreguntas').classList.remove('oculto');
+      }
+    }
+
+    let claveAyudaCfgActual = 'cfgLectora';
+
+    function esTabCfgAvanzada(tabId) {
+      return tabId === 'Hoja' || tabId === 'Sitio' || tabId === 'Graf' || tabId === 'Pass' || tabId === 'Identidad' || tabId === 'Ia';
+    }
+
+    function cerrarMenuAvanzadoCfg() {
+      /* Las opciones de Ajustes quedan siempre disponibles: ya no se ocultan. */
+      hojaDatosDesbloqueada = true;
+    }
+
+    function cambiarTabCfg(tabId) {
+      const subMenuCfg = document.getElementById('menuCfgTabs');
+      if (subMenuCfg) subMenuCfg.classList.add('oculto');
+      const btnCfg = document.getElementById('btnTabCfg');
+      if (btnCfg) btnCfg.classList.remove('activa');
+      if (esTabCfgAvanzada(tabId) && !hojaDatosDesbloqueada) {
+        pedirDesbloqueoHoja(tabId);
+        return;
+      }
+      if (!esTabCfgAvanzada(tabId)) cerrarMenuAvanzadoCfg();
+      document.querySelectorAll('.sec-cfg').forEach(function(el) { el.classList.add('oculto'); });
+      const botones = ['Lectora', 'Cupo', 'Pass', 'Sitio', 'Identidad', 'Graf', 'Pda', 'Hoja', 'Ia'];
+      botones.forEach(function(b) {
+        const btn = document.getElementById('btnTabCfg' + b);
+        if (btn) btn.classList.remove('activa');
+      });
+      const sec = document.getElementById('secCfg' + tabId);
+      if (sec) sec.classList.remove('oculto');
+      const btn = document.getElementById('btnTabCfg' + tabId);
+      if (btn) btn.classList.add('activa');
+      if (tabId === 'Ia') consultarEstadoIa();
+      if (tabId === 'Lectora' && typeof pintarGridPpm === 'function') pintarGridPpm();
+      if (tabId === 'Identidad' && typeof pintarCamposIdentidad === 'function') pintarCamposIdentidad();
+      if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+      abrirModalCfg(tabId);
+    }
+
+    function abrirModalCfg(tabId) {
+      const titulos = {
+        Lectora: 'Velocidad lectora',
+        Cupo: 'Intentos',
+        Pass: 'Contraseña del panel',
+        Sitio: 'Páginas del sitio',
+        Identidad: 'Identidad de la escuela',
+        Graf: 'Datos de prueba',
+        Pda: 'Qué se espera en cada grado',
+        Hoja: 'Hoja de datos',
+        Ia: 'Inteligencia Artificial (DeepSeek)'
+      };
+      const ayudas = {
+        Lectora: 'cfgLectora',
+        Cupo: 'cfgCupo',
+        Pass: 'cfgPass',
+        Sitio: 'cfgSitio',
+        Identidad: 'cfgIdentidad',
+        Graf: 'cfgGraf',
+        Pda: 'cfgPda',
+        Hoja: 'cfgHoja',
+        Ia: 'cfgIa'
+      };
+      const tit = document.getElementById('titModalCfgTxt');
+      if (tit) tit.textContent = titulos[tabId] || 'Configuración';
+      claveAyudaCfgActual = ayudas[tabId] || 'cfgLectora';
+      const fondo = document.getElementById('modalCfg');
+      if (fondo) {
+        if (fondo.parentElement !== document.body) document.body.appendChild(fondo);
+        fondo.style.display = 'flex';
+        fondo.style.zIndex = '10000';
+        fondo.classList.add('visible');
+      }
+      const sec = document.getElementById('secCfg' + tabId);
+      if (sec) { sec.classList.remove('oculto'); sec.style.display = 'block'; }
+    }
+
+    function cerrarModalCfg() {
+      const fondo = document.getElementById('modalCfg');
+      if (fondo) fondo.classList.remove('visible');
+      const btnCfg = document.getElementById('btnTabCfg');
+      if (btnCfg) btnCfg.classList.remove('activa');
+    }
+
+    function mostrarSeccionHojaDatos(tabId) {
+      hojaDatosDesbloqueada = true;
+      ['btnTabCfgHoja', 'btnTabCfgSitio', 'btnTabCfgGraf', 'btnTabCfgPass', 'btnTabCfgIdentidad', 'btnTabCfgIa'].forEach(function (id) {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('oculto');
+      });
+      const btnLock = document.getElementById('btnDesbloquearHoja');
+      if (btnLock) btnLock.classList.add('oculto');
+      cambiarTabCfg(tabId || 'Hoja');
+    }
+
+    function pedirDesbloqueoHoja(tabId) {
+      /* Sin contraseña: abre la sección directamente. */
+      cambiarTabCfg(tabId || 'Hoja');
+    }
+
+    function consultarEstadoIa() {
+      const lbl = document.getElementById('lblEstadoIa');
+      const msg = document.getElementById('msgEstadoIa');
+      if (lbl) lbl.textContent = 'Consultando...';
+      if (msg) msg.textContent = '';
+      gsRun('estadoDeepSeek', token).then(function (res) {
+        if (res && res.configurada) {
+          if (lbl) {
+            lbl.textContent = 'Configurada (' + res.mascara + ')';
+            lbl.style.color = 'var(--st90-verde)';
+          }
+        } else {
+          if (lbl) {
+            lbl.textContent = 'No configurada (usando banco temático predeterminado)';
+            lbl.style.color = '#c0392b';
+          }
+        }
+      }).catch(function (err) {
+        if (lbl) {
+          lbl.textContent = 'Error al consultar estado';
+          lbl.style.color = '#c0392b';
+        }
+      });
+    }
+
+    function guardarClaveIaClick() {
+      const campo = document.getElementById('cfgDeepSeekKey');
+      const clave = campo ? campo.value.trim() : '';
+      if (!clave) {
+        toast('Escribe la clave de DeepSeek antes de guardar.', 'error');
+        return;
+      }
+      const msg = document.getElementById('msgEstadoIa');
+      if (msg) { msg.style.color = '#0284c7'; msg.textContent = 'Guardando clave en el servidor...'; }
+      gsRun('guardarClaveDeepSeek', token, clave).then(function (res) {
+        if (res && res.ok) {
+          toast(res.mensaje || 'Clave guardada con éxito.', 'exito');
+          if (campo) campo.value = '';
+          if (msg) { msg.style.color = 'var(--st90-verde)'; msg.textContent = 'Clave guardada correctamente.'; }
+          consultarEstadoIa();
+        } else {
+          toast((res && res.error) || 'No se pudo guardar la clave.', 'error');
+        }
+      }).catch(function (err) {
+        toast(String(err.message || err), 'error');
+      });
+    }
+
+    function probarConexionIaClick() {
+      const msg = document.getElementById('msgEstadoIa');
+      if (msg) { msg.style.color = '#0284c7'; msg.textContent = 'Probando conexión con DeepSeek...'; }
+      gsRun('probarConexionDeepSeek', token).then(function (res) {
+        if (res && res.ok) {
+          toast(res.mensaje || 'Conexión exitosa.', 'exito');
+          if (msg) { msg.style.color = 'var(--st90-verde)'; msg.textContent = res.mensaje; }
+        } else {
+          toast((res && res.error) || 'Fallo en la conexión.', 'error');
+          if (msg) { msg.style.color = '#c0392b'; msg.textContent = (res && res.error) || 'Fallo en la conexión.'; }
+        }
+      }).catch(function (err) {
+        toast(String(err.message || err), 'error');
+        if (msg) { msg.style.color = '#c0392b'; msg.textContent = String(err.message || err); }
+      });
+    }
+
+    function eliminarClaveIaClick() {
+      confirmar('¿Seguro que deseas eliminar la clave de API de DeepSeek? La plataforma pasará a usar el banco temático local.', 'Borrar clave IA').then(function (ok) {
+        if (!ok) return;
+        gsRun('guardarClaveDeepSeek', token, '').then(function (res) {
+          toast('Clave eliminada.', 'info');
+          consultarEstadoIa();
+        }).catch(function (err) {
+          toast(String(err.message || err), 'error');
+        });
+      });
+    }
+
+    function crearRespaldoClick() {
+      confirmar('¿Deseas crear una copia de respaldo completa de la hoja de cálculo en Google Drive?', 'Crear respaldo').then(function (ok) {
+        if (!ok) return;
+        toast('Generando copia de respaldo en Google Drive...', 'info');
+        gsRun('crearRespaldoLibro', token).then(function (res) {
+          if (res && res.ok) {
+            toast(res.mensaje || 'Respaldo creado con éxito.', 'exito');
+          } else {
+            toast((res && res.error) || 'No se pudo crear el respaldo.', 'error');
+          }
+        }).catch(function (err) {
+          toast(String(err.message || err), 'error');
+        });
+      });
+    }
+
+    function confirmarGenerarCredenciales_(quien, fnGo) {
+      modal({
+        titulo: 'Generar usuario y contraseña',
+        html: '<p style="margin:0 0 12px;font-size:14px;line-height:1.45;">¿Generar <strong>usuario y contraseña aleatorios</strong> para <strong>todas las ' + quien + '</strong>?<br><br><small style="color:#b91c1c;">Se sustituyen las credenciales actuales.</small></p>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Sí, generar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) { return val; }
+      }).then(function (confirmo) {
+        if (!confirmo) return;
+        fnGo();
+      });
+    }
+
+    function generarClavesMasivasAlu() {
+      if (typeof cerrarPanelesAccionMat_ === 'function') cerrarPanelesAccionMat_();
+      confirmarGenerarCredenciales_('alumnos', function () {
+        toast('Generando usuario y contraseña para alumnos…', 'info');
+        gsRun('generarClavesAlumnosClase', token, '', '', 'todos', '').then(function (r) {
+          toast((r && r.mensaje) || 'Credenciales generadas.', 'ok');
+          recargar(false);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    function generarClavesMasivasPref() {
+      confirmarGenerarCredenciales_('prefectas', function () {
+        toast('Generando usuario y contraseña para prefectas…', 'info');
+        gsRun('generarClavesPrefectos', token).then(function (r) {
+          toast((r && r.mensaje) || 'Credenciales generadas.', 'ok');
+          cargarPrefectosAsi();
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    function generarClavesMasivasApoyo() {
+      confirmarGenerarCredenciales_('personas de apoyo', function () {
+        toast('Generando usuario y contraseña para personal de apoyo…', 'info');
+        gsRun('generarClavesPersonalApoyo', token).then(function (r) {
+          toast((r && r.mensaje) || 'Credenciales generadas.', 'ok');
+          cargarPersonalApoyo(true);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    function aplicarAccesoAlumnoLocal_(mat, usuario, clave) {
+      (datos.alumnos || []).forEach(function (a) {
+        if (String(a.matricula || '').trim() !== String(mat || '').trim()) return;
+        if (usuario != null && usuario !== '') a.usuario = usuario;
+        if (clave != null && clave !== '') a.clave = clave;
+      });
+      pintarAlumnos();
+    }
+
+    function generarClaveUnicaAlu(mat, nombre) {
+      toast('Generando contraseña aleatoria para ' + nombre + '…', 'info');
+      gsRun('generarClavesAlumnosClase', token, '', '', 'alumno', mat).then(function (r) {
+        toast((r && r.mensaje) || 'Contraseña generada.', 'ok');
+        aplicarAccesoAlumnoLocal_(mat, r && r.usuario, r && r.clave);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function editarAccesoAlu(mat, nombre, usuario, clave) {
+      modal({
+        titulo: 'Acceso del alumno: ' + escaparHtml(nombre),
+        html: '<label for="usuClaveAluAdmin">Usuario</label><input id="usuClaveAluAdmin" type="text" value="' + escaparHtml(usuario || '') + '" autocomplete="off" style="width:100%;margin-bottom:10px;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">' +
+          '<label for="passClaveAluAdmin">Contraseña (mín. 6)</label><input id="passClaveAluAdmin" type="text" value="' + escaparHtml(clave || '') + '" autocomplete="off" style="width:100%;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            usuario: (fondo.querySelector('#usuClaveAluAdmin') || {}).value || '',
+            clave: (fondo.querySelector('#passClaveAluAdmin') || {}).value || ''
+          };
+        }
+      }).then(function (datosAcc) {
+        if (!datosAcc) return;
+        gsRun('asignarClaveAlumnoClase', token, mat, datosAcc.usuario, datosAcc.clave).then(function (r) {
+          toast((r && r.mensaje) || 'Listo.', 'ok');
+          aplicarAccesoAlumnoLocal_(mat, (r && r.usuario) || datosAcc.usuario, (r && r.clave) || datosAcc.clave);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    let listaApoyoAdminCache = [];
+
+    function cargarPersonalApoyo(forzar) {
+      const caja = document.getElementById('cajaTablaApoyoAdmin');
+      if (listaApoyoAdminCache.length > 0 && !forzar) {
+        filtrarTablaApoyoLocal();
+        return;
+      }
+      if (caja) caja.innerHTML = '<p style="color:#64748b;font-size:13px;">Cargando personal de apoyo…</p>';
+      gsRun('listarPersonalApoyo', token).then(function (r) {
+        listaApoyoAdminCache = (r && r.personal) || [];
+        filtrarTablaApoyoLocal();
+      }).catch(function (e) {
+        if (caja) caja.innerHTML = '<p style="color:var(--st90-rojo);font-weight:600;">Error al cargar personal de apoyo: ' + escaparHtml((e && e.message) || String(e)) + '</p>';
+      });
+    }
+
+    function filtrarTablaApoyoLocal() {
+      const busc = ((document.getElementById('buscApoyoAdmin') || {}).value || '').trim().toLowerCase();
+      const cont = document.getElementById('contApoyoAdmin');
+      const filtrados = (listaApoyoAdminCache || []).filter(function (p) {
+        if (!busc) return true;
+        const nom = String(p.nombre || '').toLowerCase();
+        const usu = String(p.usuario || '').toLowerCase();
+        const area = String(p.area || '').toLowerCase();
+        return nom.indexOf(busc) >= 0 || usu.indexOf(busc) >= 0 || area.indexOf(busc) >= 0;
+      });
+      if (cont) cont.textContent = 'Personas: ' + filtrados.length;
+      renderTablaApoyo_(filtrados);
+    }</script>

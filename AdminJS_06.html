@@ -1,0 +1,678 @@
+<script>
+/* AdminJS_06 — coincidenAlumno, cambiarFiltroGrupo, cambiarFiltroAlumno, limpiarFiltros, textoOpcionSelect_, marcarFiltrosResActivos, toggleDdPeriodoRes, limpiarPeriodoRes, abrirModalFiltroRes, limpiarFiltrosLista, ... */
+
+
+    function coincidenAlumno(r, matricula, nombre) {
+      if (!matricula && !nombre) return true;
+      const matR = String(r.matricula || '').trim();
+      const nomR = normalizarNombreFiltro(r.nombre);
+      if (matricula && matR && matR === String(matricula)) return true;
+      if (nombre && nomR && nomR === normalizarNombreFiltro(nombre)) return true;
+      if (matricula && nomR && nomR === normalizarNombreFiltro(matricula)) return true;
+      return false;
+    }
+
+    function cambiarFiltroGrupo() {
+      const grado = document.getElementById('fGrado').value;
+      const grupo = document.getElementById('fGrupo').value;
+      const sel = document.getElementById('fAlumno');
+      const vistos = {};
+      const alumnos = [];
+      function agregar(mat, nom, gra, gru) {
+        if (!nombreEsAlumnoReal(nom)) return;
+        const clave = normalizarNombreFiltro(nom);
+        if (vistos[clave]) return;
+        vistos[clave] = true;
+        alumnos.push({ matricula: mat || clave, nombre: nom, grado: gra, grupo: gru });
+      }
+      (datos.alumnos || []).forEach(function (a) {
+        if (String(a.activo).toUpperCase() === 'NO') return;
+        if (grado && normalizarGrado(a.grado) !== String(grado) && normalizarGrado(a.grupo) !== String(grado)) return;
+        if (grupo && normalizarGrupoFiltro(a.grupo) !== normalizarGrupoFiltro(grupo)) return;
+        agregar(a.matricula, a.nombre, a.grado, a.grupo);
+      });
+      alumnos.sort(function (a, b) { return String(a.nombre).localeCompare(String(b.nombre), 'es'); });
+      let html = '<option value="">Todos</option>';
+      alumnos.forEach(function (a) {
+        html += '<option value="' + escaparHtml(a.matricula) + '" data-nombre="' + escaparHtml(a.nombre) + '">' + escaparHtml(a.nombre) + '</option>';
+      });
+      sel.innerHTML = html;
+      cambiarFiltroAlumno();
+    }
+
+    function cambiarFiltroAlumno() {
+      const al = document.getElementById('fAlumno').value;
+      const agr = document.getElementById('fAgrupar');
+      if (al) {
+        if (agr) agr.value = 'alumno';
+        seleccionChartAlumnos = {};
+        seleccionChartAlumnos[al] = true;
+      } else {
+        if (agr) agr.value = 'grupo';
+        seleccionChartAlumnos = {};
+      }
+      pintarResultados();
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('fGrado').value = '';
+      document.getElementById('fGrupo').value = '';
+      document.getElementById('fAlumno').value = '';
+      document.getElementById('fLectura').value = '';
+      document.getElementById('fDesde').value = '';
+      document.getElementById('fHasta').value = '';
+      const agr = document.getElementById('fAgrupar');
+      if (agr) agr.value = 'grupo';
+      seleccionChartGrupos = {};
+      seleccionChartAlumnos = {};
+      cambiarFiltroGrado();
+    }
+
+    function textoOpcionSelect_(id) {
+      const sel = document.getElementById(id);
+      if (!sel || sel.selectedIndex < 0) return '';
+      return String(sel.options[sel.selectedIndex].text || '').trim();
+    }
+
+    function marcarFiltrosResActivos() {
+      function setBtn(idBtn, activo, etq) {
+        const b = document.getElementById(idBtn);
+        if (!b) return;
+        b.classList.toggle('activo', !!activo);
+        const lab = b.querySelector('.ribbon-label');
+        if (lab && etq) lab.textContent = etq;
+      }
+      const g = textoOpcionSelect_('fGrado') || 'Grado';
+      const gp = textoOpcionSelect_('fGrupo') || 'Grupo';
+      const al = textoOpcionSelect_('fAlumno') || 'Alumno';
+      const tp = textoOpcionSelect_('fChartTipo') || 'Tipo';
+      const cmp = textoOpcionSelect_('fAgrupar') || 'Comparar';
+      const ind = textoOpcionSelect_('fMetrica') || 'Indicador';
+      const vs = textoOpcionSelect_('fChartTiempo') || 'Vista';
+      const d = ((document.getElementById('fDesde') || {}).value || '');
+      const h = ((document.getElementById('fHasta') || {}).value || '');
+      const txtPeriodo = (d && h) ? (d.slice(5) + ' a ' + h.slice(5)) : (d ? ('Desde ' + d.slice(5)) : (h ? ('Hasta ' + h.slice(5)) : 'Periodo'));
+      setBtn('btnFGrado', !!(document.getElementById('fGrado') || {}).value, (document.getElementById('fGrado') || {}).value ? g : 'Grado');
+      setBtn('btnFGrupo', !!(document.getElementById('fGrupo') || {}).value, (document.getElementById('fGrupo') || {}).value ? gp : 'Grupo');
+      setBtn('btnFAlumno', !!(document.getElementById('fAlumno') || {}).value, (document.getElementById('fAlumno') || {}).value ? (al.length > 10 ? al.split(' ')[0] : al) : 'Alumno');
+      setBtn('btnFPeriodo', !!(d || h), txtPeriodo);
+      setBtn('btnFTipo', ((document.getElementById('fChartTipo') || {}).value || 'lineas') !== 'lineas', tp);
+      setBtn('btnFComparar', ((document.getElementById('fAgrupar') || {}).value || 'grupo') !== 'grupo', cmp);
+      setBtn('btnFIndicador', ((document.getElementById('fMetrica') || {}).value || 'comprension') !== 'comprension', ind);
+      setBtn('btnFVista', ((document.getElementById('fChartTiempo') || {}).value || 'tiempo') !== 'tiempo', vs);
+    }
+
+    function toggleDdPeriodoRes(ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      const p = document.getElementById('panelPeriodoRes');
+      if (!p) return;
+      const oc = p.classList.contains('oculto');
+      document.querySelectorAll('.asi-dd-panel').forEach(function (el) { el.classList.add('oculto'); });
+      if (oc) {
+        p.classList.remove('oculto');
+        const f1 = document.getElementById('fDesde');
+        if (f1) { try { f1.showPicker(); } catch (e) { try { f1.focus(); } catch (e2) {} } }
+      }
+    }
+
+    function limpiarPeriodoRes(ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      const d = document.getElementById('fDesde');
+      const h = document.getElementById('fHasta');
+      if (d) d.value = '';
+      if (h) h.value = '';
+      const p = document.getElementById('panelPeriodoRes');
+      if (p) p.classList.add('oculto');
+      pintarResultados();
+    }
+
+    function abrirModalFiltroRes(cual) {
+      if (cual === 'periodo') {
+        toggleDdPeriodoRes();
+        return;
+      }
+      const mapa = {
+        grado: 'fGrado',
+        grupo: 'fGrupo',
+        alumno: 'fAlumno',
+        tipo: 'fChartTipo',
+        comparar: 'fAgrupar',
+        indicador: 'fMetrica',
+        vista: 'fChartTiempo',
+        lectura: 'fLectura'
+      };
+      const id = mapa[cual];
+      const sel = id ? document.getElementById(id) : null;
+      if (sel) {
+        try { sel.showPicker(); } catch (e) { try { sel.focus(); } catch (e2) {} }
+      }
+    }
+
+    function limpiarFiltrosLista() {
+      filtrosColRes = { fecha: '', alumno: '', grupo: '', lectura: '', comprension: '', ppm: '', velocidad: '', global: '', tLectura: '', tReactivos: '', intento: '' };
+      pintarResultados();
+    }
+
+    function resultadosFiltrados() {
+      const g = document.getElementById('fGrado').value;
+      const gr = document.getElementById('fGrupo').value;
+      const alSel = document.getElementById('fAlumno');
+      const al = alSel ? alSel.value : '';
+      const alNombre = (alSel && alSel.selectedIndex >= 0) ? alSel.options[alSel.selectedIndex].text : '';
+      const desde = document.getElementById('fDesde').value;
+      const hasta = document.getElementById('fHasta').value;
+
+      return (datos.resultados || []).filter(function (r) {
+        if (al) {
+          if (!coincidenAlumno(r, al, alNombre === 'Todos' ? '' : alNombre)) return false;
+        } else {
+          if (g && normalizarGrado(r.grado) !== g && normalizarGrado(r.grupo) !== g) return false;
+          if (gr && normalizarGrupoFiltro(r.grupo) !== normalizarGrupoFiltro(gr) &&
+              normalizarGrupoFiltro(r.grado) !== normalizarGrupoFiltro(gr)) return false;
+        }
+        if (desde) {
+          const iso = String(r.fechaIso || '').substring(0, 10);
+          if (iso && iso < desde) return false;
+        }
+        if (hasta) {
+          const iso = String(r.fechaIso || '').substring(0, 10);
+          if (iso && iso > hasta) return false;
+        }
+        return true;
+      });
+    }
+
+    function armarSerieDinamica(filas, agrupar, metrica) {
+      const mapa = {};
+      filas.forEach(function (r) {
+        const clave = claveAgrupacionRes(r, agrupar);
+        mapa[clave] = mapa[clave] || nuevaCeldaSerie();
+        sumarCeldaSerie(mapa[clave], r);
+      });
+      return Object.keys(mapa).sort().map(function (k) {
+        const x = mapa[k];
+        const item = {
+          etiqueta: k,
+          n: x.n,
+          comprension: x.n ? Math.round((x.comp / x.n) * 10) / 10 : 0,
+          ppm: x.n ? Math.round(x.ppm / x.n) : 0,
+          pme: x.n ? Math.round(x.pme / x.n) : 0,
+          tPregunta: x.n ? Math.round((x.tPreg / x.n) * 10) / 10 : 0
+        };
+        item.valor = valorCeldaSerie(x, metrica === 'ambos' ? 'comprension' : metrica) || 0;
+        item.sufijo = sufijoMetrica(metrica);
+        return item;
+      });
+    }
+
+    function grupoDeRes(r) {
+      let g = normalizarGrupoFiltro(r.grupo);
+      if (esGrupoValido(g)) return g;
+      g = normalizarGrupoFiltro(r.grado);
+      if (esGrupoValido(g)) return g;
+      return '';
+    }
+
+    function claveAgrupacionRes(r, agrupar) {
+      if (agrupar === 'grupo') {
+        const g = grupoDeRes(r);
+        return g ? g.toUpperCase() : 'Sin grupo';
+      }
+      if (agrupar === 'alumno') return String(r.nombre || r.matricula || 'Alumno');
+      const gd = normalizarGrado(r.grado) || normalizarGrado(r.grupo);
+      return gd ? (gd + '°') : 'Sin grado';
+    }
+
+    function fechaClaveRes(r) {
+      if (r.fechaIso) {
+        const sIso = String(r.fechaIso).trim();
+        const m = sIso.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m) return m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+        return sIso.substring(0, 10);
+      }
+      const s = String(r.fecha || '').trim();
+      const m = s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (m) return m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+      const dmy = s.match(/(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+      if (dmy) {
+        let p1 = parseInt(dmy[1], 10);
+        let p2 = parseInt(dmy[2], 10);
+        let y = dmy[3].length === 2 ? ('20' + dmy[3]) : dmy[3];
+        let d = p1, mo = p2;
+        if (p2 > 12 && p1 <= 12) { d = p2; mo = p1; }
+        return y + '-' + ('0' + mo).slice(-2) + '-' + ('0' + d).slice(-2);
+      }
+      return s || 's/f';
+    }
+
+    function formatearFechaGrafica(f) {
+      if (!f || f === 's/f') return f || '';
+      const s = String(f).trim();
+
+      const mIso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (mIso) {
+        return ('0' + mIso[3]).slice(-2) + '/' + ('0' + mIso[2]).slice(-2) + '/' + mIso[1];
+      }
+
+      const mFull = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+      if (mFull) {
+        let p1 = parseInt(mFull[1], 10);
+        let p2 = parseInt(mFull[2], 10);
+        let y = mFull[3].length === 2 ? ('20' + mFull[3]) : mFull[3];
+        let d, m;
+        if (p1 > 12) {
+          d = ('0' + p1).slice(-2);
+          m = ('0' + p2).slice(-2);
+        } else if (p2 > 12) {
+          d = ('0' + p2).slice(-2);
+          m = ('0' + p1).slice(-2);
+        } else {
+          d = ('0' + p1).slice(-2);
+          m = ('0' + p2).slice(-2);
+        }
+        return d + '/' + m + '/' + y;
+      }
+
+      const mTwo = s.match(/^(\d{1,2})[-/](\d{1,2})$/);
+      if (mTwo) {
+        let p1 = parseInt(mTwo[1], 10);
+        let p2 = parseInt(mTwo[2], 10);
+        let curYear = String(new Date().getFullYear());
+        let d, m;
+        if (p1 > 12) {
+          d = ('0' + p1).slice(-2);
+          m = ('0' + p2).slice(-2);
+        } else if (p2 > 12) {
+          d = ('0' + p2).slice(-2);
+          m = ('0' + p1).slice(-2);
+        } else {
+          d = ('0' + p2).slice(-2);
+          m = ('0' + p1).slice(-2);
+        }
+        return d + '/' + m + '/' + curYear;
+      }
+
+      return s;
+    }
+
+    function formatearFechaMostrada(r) {
+      const iso = fechaClaveRes(r);
+      const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return r.fecha || '';
+      const hora = String(r.fecha || '').match(/(\d{1,2}:\d{2})/);
+      return m[3] + '/' + m[2] + '/' + m[1] + (hora ? (' ' + hora[1]) : '');
+    }
+
+    function textoFiltroActual(filas, totalEnBase) {
+      const partes = [];
+      const g = document.getElementById('fGrado') ? document.getElementById('fGrado').value : '';
+      const gr = document.getElementById('fGrupo') ? document.getElementById('fGrupo').value : '';
+      const alSel = document.getElementById('fAlumno');
+      if (alSel && alSel.value && alSel.selectedIndex > 0) {
+        partes.push(alSel.options[alSel.selectedIndex].text);
+      } else {
+        if (g) partes.push(g + '°');
+        if (gr) partes.push(String(gr).toUpperCase());
+      }
+      const extra = partes.length ? (' · ' + partes.join(' · ')) : '';
+      return filas.length + ' de ' + totalEnBase + ' lecturas' + extra;
+    }
+
+    function hayFiltrosColRes() {
+      return Object.keys(filtrosColRes).some(function (k) { return !!filtrosColRes[k]; });
+    }
+
+    function textoFiltroLista(filasTabla, totalEnBase) {
+      if (!hayFiltrosColRes()) return filasTabla.length + ' lecturas';
+      return filasTabla.length + ' de ' + totalEnBase + ' lecturas';
+    }
+
+    function filasParaGrafica(filas) {
+      const al = (document.getElementById('fAlumno') || {}).value;
+      if (al) return filas;
+      const agrupar = (document.getElementById('fAgrupar') || {}).value || 'grupo';
+      const gSel = Object.keys(seleccionChartGrupos).filter(esGrupoValido);
+      const aSel = Object.keys(seleccionChartAlumnos);
+      let out = filas;
+      if (gSel.length) {
+        const f = filas.filter(function (r) { return gSel.indexOf(grupoDeRes(r)) >= 0; });
+        if (f.length) out = f;
+      }
+      if (agrupar === 'alumno' && aSel.length) {
+        const f = out.filter(function (r) {
+          return aSel.some(function (v) { return coincidenAlumno(r, v, ''); });
+        });
+        if (f.length) out = f;
+      }
+      return out;
+    }
+
+    function cambiarAgruparGraf() {
+      const agr = (document.getElementById('fAgrupar') || {}).value || 'grupo';
+      if (agr === 'grupo' || agr === 'grado') {
+        const al = document.getElementById('fAlumno');
+        if (al) al.value = '';
+        seleccionChartAlumnos = {};
+      }
+      pintarResultados();
+    }
+
+    function pintarChipsChart(filas) {
+      const cajaG = document.getElementById('chipsGruposChart');
+      const cajaWrap = document.getElementById('cajaCompararGrupos');
+      const agrupar = (document.getElementById('fAgrupar') || {}).value || 'grupo';
+      const hayAlumno = !!(document.getElementById('fAlumno') || {}).value;
+      if (cajaWrap) {
+        if (agrupar === 'grupo' && !hayAlumno) cajaWrap.classList.remove('oculto');
+        else cajaWrap.classList.add('oculto');
+      }
+      if (!cajaG) return;
+      const grupos = {};
+      filas.forEach(function (r) {
+        const g = grupoDeRes(r);
+        if (g) grupos[g] = true;
+      });
+      Object.keys(seleccionChartGrupos).forEach(function (g) {
+        if (!esGrupoValido(g)) delete seleccionChartGrupos[g];
+      });
+      const lista = Object.keys(grupos).sort();
+      cajaG.innerHTML = lista.map(function (g) {
+        const act = seleccionChartGrupos[g] ? ' activo' : '';
+        return '<button type="button" class="chip-sel' + act + '" onclick="toggleChipChart(\'grupo\',\'' + escaparHtml(g) + '\')">' + escaparHtml(g.toUpperCase()) + '</button>';
+      }).join('') || '<span style="color:#94a3b8;font-size:12px;">Sin grupos en el filtro actual. Elige Grado/Grupo = Todos para comparar.</span>';
+    }
+
+    function toggleChipChart(tipo, valor) {
+      const mapa = tipo === 'grupo' ? seleccionChartGrupos : seleccionChartAlumnos;
+      if (mapa[valor]) delete mapa[valor];
+      else mapa[valor] = true;
+      pintarResultados();
+    }
+
+    function abrirPanelRes(btn) {
+      const id = btn.getAttribute('data-panel');
+      mostrarCintaN3_('cintaLec', false);
+      const pRes = document.getElementById('panelResultadosLec');
+      if (pRes) pRes.classList.remove('oculto');
+      ['panelGraficasRes', 'panelListaRes', 'panelObservacionesRes'].forEach(function (p) {
+        const el = document.getElementById(p);
+        if (el) el.classList.add('oculto');
+      });
+      document.querySelectorAll('.btn-icono-res[data-panel], .ribbon-btn[data-panel]').forEach(function (b) { b.classList.remove('activo', 'activa'); });
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.remove('oculto');
+      if (btn) btn.classList.add('activo');
+      const esGraf = (id === 'panelGraficasRes');
+      ['btnFTipo', 'btnFComparar', 'btnFIndicador', 'btnFVista'].forEach(function (fid) {
+        const el = document.getElementById(fid);
+        if (el) el.classList.toggle('oculto', !esGraf);
+      });
+      asegurarResultadosAdmin().then(function () {
+        pintarResultados();
+        if (id === 'panelObservacionesRes') pintarObservacionesRes();
+      });
+    }
+
+    function pintarObservacionesRes() {
+      const caja = document.getElementById('listaObservacionesRes');
+      if (!caja) return;
+      const filas = resultadosFiltradosCache || [];
+      if (!filas.length) {
+        caja.innerHTML = '<p class="msg-res">No hay evaluaciones con los filtros actuales.</p>';
+        return;
+      }
+      const porAlu = {};
+      filas.forEach(function (r) {
+        const k = String(r.matricula || r.nombre || '').trim();
+        if (!k) return;
+        if (!porAlu[k]) {
+          porAlu[k] = {
+            nombre: r.nombre || '',
+            matricula: r.matricula || '',
+            grupo: r.grupo || '',
+            grado: r.grado || '',
+            n: 0, comp: 0, ppm: 0, rel: 0
+          };
+        }
+        const o = porAlu[k];
+        o.n++;
+        o.comp += Number(r.comprension || 0);
+        o.ppm += Number(r.ppm || 0);
+        o.rel += Number(r.relecturas || 0);
+      });
+      const notas = Object.keys(porAlu).map(function (k) {
+        const o = porAlu[k];
+        o.comp = o.n ? (o.comp / o.n) : 0;
+        o.ppm = o.n ? (o.ppm / o.n) : 0;
+        const avisos = [];
+        if (o.comp < 60) avisos.push('Comprensión baja (' + Math.round(o.comp) + '%)');
+        if (o.ppm && o.ppm < 100) avisos.push('Velocidad baja (' + Math.round(o.ppm) + ' PPM)');
+        if (o.rel >= 2) avisos.push(o.rel + ' relecturas');
+        o.avisos = avisos;
+        return o;
+      }).filter(function (o) { return o.avisos.length; })
+        .sort(function (a, b) { return a.comp - b.comp; });
+      if (!notas.length) {
+        caja.innerHTML = '<p class="msg-res">Sin observaciones: nadie está por debajo de los umbrales con los filtros actuales.</p>';
+        return;
+      }
+      caja.innerHTML = '<table class="tabla-ficha"><thead><tr><th>Alumno</th><th>Grupo</th><th>Nota</th></tr></thead><tbody>' +
+        notas.map(function (o) {
+          return '<tr><td>' + escaparHtml(o.nombre || o.matricula) + '</td><td>' + escaparHtml(String(o.grupo || '').toUpperCase()) + '</td><td>' + escaparHtml(o.avisos.join(' · ')) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+    }
+
+    function imprimirReporteResultados() {
+      mostrarCintaN3_('cintaLec', false);
+      const pRes = document.getElementById('panelResultadosLec');
+      if (pRes) pRes.classList.remove('oculto');
+      const vis = document.querySelector('#panelGraficasRes:not(.oculto), #panelListaRes:not(.oculto), #panelObservacionesRes:not(.oculto)');
+      if (!vis) {
+        const lista = document.getElementById('panelListaRes');
+        if (lista) lista.classList.remove('oculto');
+      }
+      window.print();
+    }
+
+    function exportarResultadosCsv() {
+      mostrarCintaN3_('cintaLec', false);
+      const pRes = document.getElementById('panelResultadosLec');
+      if (pRes) pRes.classList.remove('oculto');
+      const vis = document.querySelector('#panelGraficasRes:not(.oculto), #panelListaRes:not(.oculto), #panelObservacionesRes:not(.oculto)');
+      if (!vis) {
+        const lista = document.getElementById('panelListaRes');
+        if (lista) lista.classList.remove('oculto');
+      }
+      exportarCSV();
+    }
+
+    function etiquetaEjeY(metrica) {
+      if (metrica === 'ppm') return 'Velocidad (PPM)';
+      if (metrica === 'pme') return 'Palabras por minuto eficientes';
+      if (metrica === 'tPregunta') return 'Segundos por pregunta';
+      if (metrica === 'niveles') return 'Aciertos por nivel (%)';
+      return 'Comprensión (%)';
+    }
+
+    function promedioSegundosPregunta(r) {
+      const segs = r.segundosPregunta || [];
+      if (!segs.length) return 0;
+      let s = 0, n = 0;
+      segs.forEach(function (x) {
+        const v = Number(x);
+        if (v > 0) { s += v; n++; }
+      });
+      return n ? s / n : 0;
+    }
+
+    function nuevaCeldaSerie() {
+      return { n: 0, comp: 0, ppm: 0, pme: 0, tPreg: 0 };
+    }
+
+    function sumarCeldaSerie(cel, r) {
+      cel.n++;
+      cel.comp += Number(r.comprension || 0);
+      cel.ppm += Number(r.ppm || 0);
+      cel.pme += Number(r.pme || 0);
+      cel.tPreg += promedioSegundosPregunta(r);
+    }
+
+    function colorMetrica(metrica) {
+      if (metrica === 'ppm') return '#d35400';
+      if (metrica === 'pme') return '#0f766e';
+      if (metrica === 'tPregunta') return '#7c3aed';
+      return '#1f6f9f';
+    }
+
+    function sufijoMetrica(metrica) {
+      if (metrica === 'tPregunta') return ' s';
+      if (metrica === 'ppm' || metrica === 'pme') return '';
+      return '%';
+    }
+
+    var NIVELES_RES = [
+      { clave: 'literal', etiqueta: 'Literal', color: '#1f6f9f' },
+      { clave: 'inferencial', etiqueta: 'Inferencial', color: '#0f766e' },
+      { clave: 'critica', etiqueta: 'Crítica', color: '#7c3aed' }
+    ];
+
+    function desgloseDe(r) {
+      let d = r && r.desglose;
+      if (!d) return null;
+      if (typeof d === 'string') {
+        try { d = JSON.parse(d); } catch (e1) { return null; }
+      }
+      if (!d || typeof d !== 'object') return null;
+      return d;
+    }
+
+    function agregarDesgloseFilas(filas) {
+      const acc = { literal: { a: 0, t: 0 }, inferencial: { a: 0, t: 0 }, critica: { a: 0, t: 0 } };
+      let n = 0;
+      (filas || []).forEach(function (r) {
+        const d = desgloseDe(r);
+        if (!d) return;
+        n++;
+        NIVELES_RES.forEach(function (nv) {
+          const x = d[nv.clave];
+          if (!x || !x.total) return;
+          acc[nv.clave].a += Number(x.aciertos || 0);
+          acc[nv.clave].t += Number(x.total || 0);
+        });
+      });
+      const niveles = {};
+      NIVELES_RES.forEach(function (nv) {
+        const x = acc[nv.clave];
+        niveles[nv.clave] = x.t ? { aciertos: x.a, total: x.t, pct: Math.round((x.a / x.t) * 1000) / 10 } : null;
+      });
+      return { n: n, niveles: niveles };
+    }
+
+    function textoPctNivel(r, clave) {
+      const d = desgloseDe(r);
+      if (!d || !d[clave] || !d[clave].total) return '—';
+      return d[clave].pct + '%';
+    }
+
+    function pintarCajaNiveles(filas) {
+      const caja = document.getElementById('cajaNivelesRes');
+      if (!caja) return;
+      const agg = agregarDesgloseFilas(filas);
+      let html = '<p class="titulo-grafica-viva">Niveles de comprensión</p>';
+      if (!agg.n) {
+        html += '<p class="subtitulo-grafica">Aún no hay evaluaciones con preguntas clasificadas en este filtro. Aparecerá en los exámenes nuevos.</p>';
+        caja.innerHTML = html;
+        return;
+      }
+      html += '<p class="subtitulo-grafica">Porcentaje de aciertos por tipo de pregunta · ' + agg.n +
+        ' de ' + (filas || []).length +
+        ((filas || []).length === 1 ? ' evaluación' : ' evaluaciones') +
+        ' del filtro con desglose.</p>';
+      html += '<div class="desglose-niveles-res">';
+      NIVELES_RES.forEach(function (nv) {
+        const d = agg.niveles[nv.clave];
+        const hay = d && d.total;
+        html += '<div class="desglose-item-res n-' + nv.clave + (hay ? '' : ' vacio') + '">' +
+          '<div class="n">' + (hay ? d.pct + '%' : '0 preguntas') + '</div>' +
+          '<div class="l">' + nv.etiqueta + '</div>' +
+          '<div class="l">' + (hay ? (d.aciertos + ' / ' + d.total) : 'Ninguna pregunta de este tipo') + '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+      caja.innerHTML = html;
+    }
+
+    function etiquetaEjeX(modo) {
+      if (modo === 'tiempo') return 'Fecha de la prueba';
+      if (modo === 'grupo') return 'Grupo';
+      if (modo === 'alumno') return 'Alumno';
+      if (modo === 'grado') return 'Grado';
+      return 'Categoría';
+    }
+
+    function svgTitulosEjes(w, h, ejeX, ejeY) {
+      return '<text x="14" y="' + (h / 2 - 8) + '" transform="rotate(-90 14 ' + (h / 2 - 8) + ')" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">' +
+        escaparHtml(ejeY) + '</text>' +
+        '<text x="' + (w / 2 + 8) + '" y="' + (h - 4) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">' +
+        escaparHtml(ejeX) + '</text>';
+    }
+
+    function pintarGraficaSVG(filas) {
+      const cont = document.getElementById('gGraficaPrincipal');
+      if (!cont) return;
+      const tipo = (document.getElementById('fChartTipo') || {}).value || 'lineas';
+      const hayAlumno = !!(document.getElementById('fAlumno') || {}).value;
+      let agrupar = (document.getElementById('fAgrupar') || {}).value || 'grupo';
+      if (!hayAlumno && agrupar === 'alumno' && Object.keys(seleccionChartAlumnos).length === 0) {
+        agrupar = 'grupo';
+      }
+      const metrica = (document.getElementById('fMetrica') || {}).value || 'comprension';
+      const vista = (document.getElementById('fChartTiempo') || {}).value || 'tiempo';
+      const data = filasParaGrafica(filas);
+      const metricaEje = (metrica === 'ambos') ? 'comprension' : metrica;
+      const ejeY = etiquetaEjeY(metricaEje);
+      const ejeXTiempo = etiquetaEjeX('tiempo');
+      const ejeXCat = etiquetaEjeX(agrupar);
+
+      if (document.getElementById('lblGraficaTitulo')) {
+        const tM = metrica === 'ppm' ? 'Velocidad PPM'
+          : (metrica === 'pme' ? 'PME'
+          : (metrica === 'tPregunta' ? 'Tiempo por pregunta'
+          : (metrica === 'niveles' ? 'Niveles de comprensión'
+          : (metrica === 'ambos' ? 'Comprensión y velocidad' : 'Comprensión'))));
+        const tA = agrupar === 'grupo' ? 'promedio por grupo' : (agrupar === 'alumno' ? 'por alumno' : 'por grado');
+        const tT = tipo === 'barras' ? 'barras' : (tipo === 'pastel' ? 'pastel' : 'líneas');
+        document.getElementById('lblGraficaTitulo').textContent = tM + ' · ' + tA + ' · ' + tT + (vista === 'tiempo' && tipo !== 'pastel' && metrica !== 'tPregunta' ? ' · en el tiempo' : '');
+      }
+
+      if (!data.length) {
+        cont.innerHTML = '<p style="color:#64748b;font-size:13px;">No hay datos con la selección actual.</p>';
+        return;
+      }
+
+      if (metrica === 'tPregunta' && (vista === 'promedio' || tipo === 'pastel')) {
+        cont.innerHTML = dibujarBarrasTiempoPregunta(data);
+        return;
+      }
+
+      if (metrica === 'niveles') {
+        if (vista === 'tiempo' && tipo !== 'pastel') cont.innerHTML = dibujarLineasNivelesTiempo(data);
+        else cont.innerHTML = dibujarBarrasNiveles(data, agrupar);
+        return;
+      }
+
+      const metricaDibujo = metrica === 'ambos' ? 'comprension' : metrica;
+      if (tipo === 'pastel') {
+        const serie = armarSerieDinamica(data, agrupar, metricaDibujo === 'ppm' ? 'ppm' : metricaDibujo);
+        cont.innerHTML = dibujarPastel(serie, metricaDibujo);
+        return;
+      }
+      if (vista === 'tiempo') {
+        if (tipo === 'barras') cont.innerHTML = dibujarBarrasTiempo(data, agrupar, metricaDibujo, ejeXTiempo, ejeY);
+        else cont.innerHTML = dibujarLineasTiempo(data, agrupar, metricaDibujo, ejeXTiempo, ejeY);
+        return;
+      }
+      const serie = armarSerieDinamica(data, agrupar, metricaDibujo);
+      if (tipo === 'lineas') cont.innerHTML = dibujarLineasCategoria(serie, metricaDibujo, ejeXCat, ejeY);
+      else cont.innerHTML = dibujarBarras(serie, metricaDibujo, ejeXCat, ejeY);
+    }</script>

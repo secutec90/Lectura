@@ -1,0 +1,147 @@
+<script>
+/* AdminJS_13 — renderTablaApoyo_, crearPersonalApoyo, abrirModalAltaApoyo, generarClaveUnicaApoyo, editarPersonalApoyo */
+
+
+    function renderTablaApoyo_(filas) {
+      const caja = document.getElementById('cajaTablaApoyoAdmin');
+      if (!caja) return;
+      if (!filas.length) {
+        caja.innerHTML = '<p style="color:#64748b;font-size:13px;padding:12px 0;">Aún no hay personal de apoyo. Da de alta a secretaría, biblioteca, trabajo social u otras áreas.</p>';
+        return;
+      }
+      let html = '<table class="tabla-acc"><thead><tr>' +
+        '<th style="width:30px;">#</th>' +
+        '<th>Nombre</th>' +
+        '<th>Área</th>' +
+        '<th>Usuario</th>' +
+        '<th>Contraseña</th>' +
+        '<th style="text-align:right;">Acciones</th>' +
+        '</tr></thead><tbody>';
+      html += filas.map(function (p, idx) {
+        const idSafe = String(p.id || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const nomSafe = String(p.nombre || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const usuSafe = String(p.usuario || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const claSafe = String(p.clave || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const areaSafe = String(p.area || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const claveHtml = p.clave
+          ? ('<span class="dato-acc badge-pass">' + escaparHtml(p.clave) + '</span>')
+          : '<span style="color:#94a3b8;font-size:12px;">Sin contraseña</span>';
+        return '<tr>' +
+          '<td style="color:#94a3b8;font-size:12px;">' + (idx + 1) + '</td>' +
+          '<td><strong>' + escaparHtml(p.nombre) + '</strong></td>' +
+          '<td>' + escaparHtml(p.area || '—') + '</td>' +
+          '<td><span class="dato-acc" style="color:var(--st90-azul);">' + escaparHtml(p.usuario || '—') + '</span></td>' +
+          '<td>' + claveHtml + '</td>' +
+          '<td style="text-align:right;white-space:nowrap;"><span class="acciones-fila">' +
+            htmlBtnsCredencial_({
+              aleatoria: 'generarClaveUnicaApoyo(\'' + idSafe + '\',\'' + nomSafe + '\')',
+              editar: 'editarPersonalApoyo(\'' + idSafe + '\',\'' + nomSafe + '\',\'' + usuSafe + '\',\'' + claSafe + '\',\'' + areaSafe + '\')',
+              copiar: p.clave ? 'copiarCredencialMae(\'' + usuSafe + '\',\'' + claSafe + '\')' : ''
+            }) +
+          '</span></td>' +
+        '</tr>';
+      }).join('');
+      html += '</tbody></table>';
+      caja.innerHTML = html;
+    }
+
+    function crearPersonalApoyo(datos) {
+      datos = datos || {};
+      const nom = datos.nom != null ? datos.nom : ((document.getElementById('nomApoyoNuevo') || {}).value || '');
+      const usu = datos.usu != null ? datos.usu : ((document.getElementById('usuarioApoyoNuevo') || {}).value || '');
+      const area = datos.area != null ? datos.area : ((document.getElementById('areaApoyoNuevo') || {}).value || '');
+      const cla = datos.cla != null ? datos.cla : ((document.getElementById('claveApoyoNuevo') || {}).value || '');
+      gsRun('altaPersonalApoyo', token, nom, usu, area, cla).then(function (res) {
+        toast((res && res.mensaje) || 'Creado.', 'exito');
+        cargarPersonalApoyo(true);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function abrirModalAltaApoyo() {
+      modal({
+        titulo: 'Alta de personal de apoyo',
+        html:
+          '<div class="form-modal-usu">' +
+            '<p>Secretaría, biblioteca, trabajo social, orientación y demás áreas. Cada persona entra con su usuario y contraseña.</p>' +
+            '<div class="campo"><label for="nomApoyoNuevo">Nombre</label>' +
+              '<input type="text" id="nomApoyoNuevo" placeholder="Nombre completo" autocomplete="off"></div>' +
+            '<div class="campo"><label for="usuarioApoyoNuevo">Usuario</label>' +
+              '<input type="text" id="usuarioApoyoNuevo" placeholder="ej. laura" autocomplete="off"></div>' +
+            '<div class="campo"><label for="areaApoyoNuevo">Área</label>' +
+              '<select id="areaApoyoNuevo">' +
+                '<option value="Secretaría">Secretaría</option>' +
+                '<option value="Biblioteca">Biblioteca</option>' +
+                '<option value="Trabajo social">Trabajo social</option>' +
+                '<option value="Orientación">Orientación</option>' +
+                '<option value="Laboratorio">Laboratorio</option>' +
+                '<option value="Intendencia">Intendencia</option>' +
+                '<option value="Otro">Otro</option>' +
+              '</select></div>' +
+            '<div class="campo" style="margin:0;"><label for="claveApoyoNuevo">Clave (mín. 6)</label>' +
+              '<input type="text" id="claveApoyoNuevo" placeholder="Vacío = aleatoria" autocomplete="off"></div>' +
+          '</div>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Crear', valor: 'ok', clase: 'btn-verde' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            nom: ((fondo.querySelector('#nomApoyoNuevo') || {}).value || '').trim(),
+            usu: ((fondo.querySelector('#usuarioApoyoNuevo') || {}).value || '').trim(),
+            area: ((fondo.querySelector('#areaApoyoNuevo') || {}).value || '').trim(),
+            cla: ((fondo.querySelector('#claveApoyoNuevo') || {}).value || '').trim()
+          };
+        }
+      }).then(function (datos) {
+        if (!datos) return;
+        crearPersonalApoyo(datos);
+      });
+    }
+
+    function generarClaveUnicaApoyo(id, nombre) {
+      toast('Generando contraseña aleatoria para ' + nombre + '…', 'info');
+      gsRun('generarClavePersonalApoyo', token, id).then(function (r) {
+        toast((r && r.mensaje) || 'Contraseña generada.', 'ok');
+        cargarPersonalApoyo(true);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function editarPersonalApoyo(id, nombre, usuario, clave, area) {
+      const areas = ['Secretaría', 'Biblioteca', 'Trabajo social', 'Orientación', 'Laboratorio', 'Intendencia', 'Otro'];
+      const opts = areas.map(function (a) {
+        const sel = a === area ? ' selected' : '';
+        return '<option value="' + escaparHtml(a) + '"' + sel + '>' + escaparHtml(a) + '</option>';
+      }).join('');
+      modal({
+        titulo: 'Acceso de apoyo: ' + escaparHtml(nombre),
+        html: '<label for="usuClaveApoAdmin">Usuario</label><input id="usuClaveApoAdmin" type="text" value="' + escaparHtml(usuario || '') + '" autocomplete="off" style="width:100%;margin-bottom:10px;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">' +
+          '<label for="areaClaveApoAdmin">Área</label><select id="areaClaveApoAdmin" style="width:100%;margin-bottom:10px;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">' + opts + '</select>' +
+          '<label for="passClaveApoAdmin">Contraseña (mín. 6)</label><input id="passClaveApoAdmin" type="text" value="' + escaparHtml(clave || '') + '" autocomplete="off" style="width:100%;padding:8px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:6px;">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            usuario: (fondo.querySelector('#usuClaveApoAdmin') || {}).value || '',
+            clave: (fondo.querySelector('#passClaveApoAdmin') || {}).value || '',
+            area: (fondo.querySelector('#areaClaveApoAdmin') || {}).value || ''
+          };
+        }
+      }).then(function (datos) {
+        if (!datos) return;
+        gsRun('asignarClavePersonalApoyo', token, id, datos.usuario, datos.clave, datos.area).then(function (r) {
+          toast((r && r.mensaje) || 'Listo.', 'ok');
+          cargarPersonalApoyo(true);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+</script>

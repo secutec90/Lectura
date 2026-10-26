@@ -1,0 +1,688 @@
+<script>
+/* AdminJS_07 — dibujarBarras, dibujarLineasCategoria, dibujarPastel, svgDefsEstilo, dibujarLineasTiempo, valorCeldaSerie, dibujarBarrasTiempoPregunta, dibujarBarrasNiveles, dibujarLineasNivelesTiempo, dibujarBarrasTiempo, ... */
+
+
+    function dibujarBarras(serie, metrica, ejeX, ejeY) {
+      const w = 760, h = 300, pad = 58;
+      const max = Math.max(1, ...serie.map(function (s) { return metrica === 'ambos' ? Math.max(s.comprension, s.ppm) : s.valor; }));
+      const n = serie.length || 1;
+      const bw = Math.min(48, (w - pad - 16) / n * 0.7);
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet">';
+      for (let t = 0; t <= 4; t++) {
+        const v = Math.round((max * t) / 4);
+        const y = h - 48 - ((h - 90) * v) / max;
+        svg += '<line x1="' + pad + '" y1="' + y + '" x2="' + (w - 10) + '" y2="' + y + '" stroke="#eef2f6"/>';
+        svg += '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="10" fill="#94a3b8">' + v + '</text>';
+      }
+      svg += '<line x1="' + pad + '" y1="' + (h - 48) + '" x2="' + (w - 10) + '" y2="' + (h - 48) + '" stroke="#cbd5e1"/>';
+      serie.forEach(function (s, i) {
+        const x = pad + (i + 0.5) * ((w - pad - 10) / n);
+        if (metrica === 'ambos') {
+          const h1 = ((h - 90) * s.comprension) / max;
+          const h2 = ((h - 90) * s.ppm) / max;
+          svg += '<rect x="' + (x - bw / 2) + '" y="' + (h - 48 - h1) + '" width="' + (bw / 2 - 1) + '" height="' + h1 + '" fill="#1f6f9f" rx="3"/>';
+          svg += '<rect x="' + (x + 1) + '" y="' + (h - 48 - h2) + '" width="' + (bw / 2 - 1) + '" height="' + h2 + '" fill="#d35400" rx="3"/>';
+        } else {
+          const hh = ((h - 90) * s.valor) / max;
+          svg += '<rect x="' + (x - bw / 2) + '" y="' + (h - 48 - hh) + '" width="' + bw + '" height="' + hh + '" fill="' + colorMetrica(metrica) + '" rx="3"/>';
+          svg += '<text x="' + x + '" y="' + (h - 52 - hh) + '" text-anchor="middle" font-size="11" fill="#334155">' + s.valor + (s.sufijo || '') + '</text>';
+        }
+        svg += '<text x="' + x + '" y="' + (h - 30) + '" text-anchor="middle" font-size="11" fill="#64748b">' + escaparHtml(s.etiqueta) + '</text>';
+      });
+      svg += svgTitulosEjes(w, h, ejeX || 'Categoría', ejeY || etiquetaEjeY(metrica));
+      svg += '</svg>';
+      if (metrica === 'ambos') {
+        svg += '<div class="leyenda-svg"><span>■ Comprensión %</span><span style="color:#d35400;">■ Velocidad PPM</span></div>';
+      }
+      return svg;
+    }
+
+    function dibujarLineasCategoria(serie, metrica, ejeX, ejeY) {
+      const w = 760, h = 300, pad = 58;
+      const max = Math.max(1, ...serie.map(function (s) { return metrica === 'ambos' ? Math.max(s.comprension, s.ppm) : s.valor; }));
+      const n = Math.max(1, serie.length - 1);
+      function xy(i, val) {
+        const x = pad + (serie.length <= 1 ? (w - pad) / 2 : i * ((w - pad - 20) / n));
+        const y = h - 48 - ((h - 90) * val) / max;
+        return x + ',' + y;
+      }
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '">';
+      svg += '<line x1="' + pad + '" y1="' + (h - 30) + '" x2="' + (w - 10) + '" y2="' + (h - 30) + '" stroke="#cbd5e1"/>';
+      if (metrica === 'ambos') {
+        svg += '<polyline fill="none" stroke="#1f6f9f" stroke-width="3" points="' + serie.map(function (s, i) { return xy(i, s.comprension); }).join(' ') + '"/>';
+        svg += '<polyline fill="none" stroke="#d35400" stroke-width="3" points="' + serie.map(function (s, i) { return xy(i, s.ppm); }).join(' ') + '"/>';
+      } else {
+        svg += '<polyline fill="none" stroke="' + colorMetrica(metrica) + '" stroke-width="3" points="' + serie.map(function (s, i) { return xy(i, s.valor); }).join(' ') + '"/>';
+      }
+      serie.forEach(function (s, i) {
+        const p = xy(i, s.valor).split(',');
+        svg += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4" fill="#1f6f9f"/>';
+        svg += '<text x="' + p[0] + '" y="' + (h - 28) + '" text-anchor="middle" font-size="11" fill="#64748b">' + escaparHtml(s.etiqueta) + '</text>';
+      });
+      svg += svgTitulosEjes(w, 300, ejeX || 'Categoría', ejeY || etiquetaEjeY(metrica));
+      svg += '</svg>';
+      return svg;
+    }
+
+    function dibujarPastel(serie, metrica) {
+      const total = serie.reduce(function (a, s) { return a + Number(s.valor || 0); }, 0) || 1;
+      let ang = -Math.PI / 2;
+      const cx = 140, cy = 130, r = 90;
+      let svg = '<svg class="grafica-svg" viewBox="0 0 760 260">';
+      serie.forEach(function (s, i) {
+        const porc = Number(s.valor || 0) / total;
+        const a2 = ang + porc * Math.PI * 2;
+        const x1 = cx + r * Math.cos(ang), y1 = cy + r * Math.sin(ang);
+        const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+        const large = porc > 0.5 ? 1 : 0;
+        svg += '<path d="M ' + cx + ' ' + cy + ' L ' + x1 + ' ' + y1 + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + COLORES_GRAF[i % COLORES_GRAF.length] + '"/>';
+        svg += '<rect x="300" y="' + (24 + i * 22) + '" width="12" height="12" fill="' + COLORES_GRAF[i % COLORES_GRAF.length] + '"/>';
+        svg += '<text x="318" y="' + (35 + i * 22) + '" font-size="12" fill="#334155">' + escaparHtml(s.etiqueta) + ' · ' + s.valor + (s.sufijo || '') + '</text>';
+        ang = a2;
+      });
+      svg += '</svg>';
+      return svg;
+    }
+
+    function svgDefsEstilo() {
+      let d = '<defs>';
+      COLORES_GRAF.forEach(function (c, i) {
+        d += '<linearGradient id="areaGraf' + i + '" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0%" stop-color="' + c + '" stop-opacity="0.32"/>' +
+          '<stop offset="100%" stop-color="' + c + '" stop-opacity="0.02"/>' +
+          '</linearGradient>';
+        d += '<linearGradient id="barraGraf' + i + '" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0%" stop-color="' + c + '" stop-opacity="1"/>' +
+          '<stop offset="100%" stop-color="' + c + '" stop-opacity="0.72"/>' +
+          '</linearGradient>';
+      });
+      d += '</defs>';
+      return d;
+    }
+
+    function dibujarLineasTiempo(filas, agrupar, metrica, ejeX, ejeY) {
+      const series = {};
+      const fechas = {};
+      filas.forEach(function (r) {
+        const clave = claveAgrupacionRes(r, agrupar);
+        const f = fechaClaveRes(r);
+        fechas[f] = true;
+        series[clave] = series[clave] || {};
+        series[clave][f] = series[clave][f] || nuevaCeldaSerie();
+        sumarCeldaSerie(series[clave][f], r);
+      });
+      const xs = Object.keys(fechas).sort();
+      const nombres = Object.keys(series).sort();
+      if (!xs.length) return '<p style="color:#64748b;font-size:13px;">No hay fechas para graficar el avance.</p>';
+      const w = 760, h = 360, pad = 58;
+      let max = 1;
+      nombres.forEach(function (nom) {
+        xs.forEach(function (f) {
+          const cel = series[nom][f];
+          if (!cel) return;
+          const val = valorCeldaSerie(cel, metrica);
+          if (val != null && val > max) max = val;
+        });
+      });
+      max = Math.ceil(max / 10) * 10;
+      function xPos(i) { return pad + (xs.length <= 1 ? (w - pad) / 2 : i * ((w - pad - 20) / Math.max(1, xs.length - 1))); }
+      function yPos(v) { return h - 58 - ((h - 110) * v) / max; }
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '">';
+      svg += svgDefsEstilo();
+      svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#fbfdff"/>';
+      for (let t = 0; t <= 4; t++) {
+        const v = Math.round(max * (t / 4));
+        const y = yPos(v);
+        svg += '<line x1="' + pad + '" y1="' + y + '" x2="' + (w - 10) + '" y2="' + y + '" stroke="#e2e8f0" stroke-dasharray="4 4"/>';
+        svg += '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="#64748b">' + v + '</text>';
+      }
+      svg += '<line x1="' + pad + '" y1="' + (h - 58) + '" x2="' + (w - 10) + '" y2="' + (h - 58) + '" stroke="#94a3b8"/>';
+      svg += '<line x1="' + pad + '" y1="20" x2="' + pad + '" y2="' + (h - 58) + '" stroke="#94a3b8"/>';
+      nombres.forEach(function (nom, si) {
+        const color = COLORES_GRAF[si % COLORES_GRAF.length];
+        const pts = [];
+        const dots = [];
+        xs.forEach(function (f, i) {
+          const cel = series[nom][f];
+          if (!cel) return;
+          const val = valorCeldaSerie(cel, metrica) || 0;
+          const x = xPos(i), y = yPos(val);
+          pts.push(x + ',' + y);
+          dots.push({ x: x, y: y, val: val });
+        });
+        if (pts.length) {
+          const first = pts[0].split(',');
+          const last = pts[pts.length - 1].split(',');
+          svg += '<path d="M ' + first[0] + ' ' + (h - 58) + ' L ' + pts.join(' L ') + ' L ' + last[0] + ' ' + (h - 58) + ' Z" fill="url(#areaGraf' + (si % COLORES_GRAF.length) + ')"/>';
+          svg += '<polyline fill="none" stroke="' + color + '" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
+        }
+        dots.forEach(function (d) {
+          svg += '<circle cx="' + d.x + '" cy="' + d.y + '" r="5.5" fill="#fff" stroke="' + color + '" stroke-width="2.5"/>';
+          svg += '<text x="' + d.x + '" y="' + (d.y - 10) + '" text-anchor="middle" font-size="10" font-weight="700" fill="' + color + '">' + d.val + '</text>';
+        });
+      });
+      xs.forEach(function (f, i) {
+        svg += '<text x="' + xPos(i) + '" y="' + (h - 36) + '" text-anchor="middle" font-size="10.5" fill="#475569">' + escaparHtml(formatearFechaGrafica(f)) + '</text>';
+      });
+      svg += svgTitulosEjes(w, h, ejeX || 'Fecha de la prueba', ejeY || etiquetaEjeY(metrica));
+      svg += '</svg><div class="leyenda-svg">';
+      nombres.forEach(function (nom, si) {
+        svg += '<span style="color:' + COLORES_GRAF[si % COLORES_GRAF.length] + '">● ' + escaparHtml(nom) + '</span>';
+      });
+      svg += '</div>';
+      return svg;
+    }
+
+    function valorCeldaSerie(cel, metrica) {
+      if (!cel || !cel.n) return null;
+      if (metrica === 'ppm') return Math.round(cel.ppm / cel.n);
+      if (metrica === 'pme') return Math.round((cel.pme / cel.n) * 10) / 10;
+      if (metrica === 'tPregunta') return Math.round((cel.tPreg / cel.n) * 10) / 10;
+      return Math.round((cel.comp / cel.n) * 10) / 10;
+    }
+
+    function dibujarBarrasTiempoPregunta(filas) {
+      const sumas = [];
+      const cuentas = [];
+      filas.forEach(function (r) {
+        const segs = r.segundosPregunta || [];
+        segs.forEach(function (s, i) {
+          const v = Number(s);
+          if (!(v > 0)) return;
+          sumas[i] = (sumas[i] || 0) + v;
+          cuentas[i] = (cuentas[i] || 0) + 1;
+        });
+      });
+      const serie = [];
+      for (let i = 0; i < sumas.length; i++) {
+        if (!cuentas[i]) continue;
+        serie.push({ etiqueta: 'P' + (i + 1), valor: Math.round(sumas[i] / cuentas[i]), sufijo: ' s' });
+      }
+      if (!serie.length) return '<p style="color:#64748b;font-size:13px;">No hay tiempos por pregunta en esta selección.</p>';
+      if (document.getElementById('lblGraficaTitulo')) {
+        document.getElementById('lblGraficaTitulo').textContent = 'Tiempo medio por pregunta (s)';
+      }
+      return dibujarBarras(serie, 'tPregunta', 'Pregunta', 'Segundos');
+    }
+
+    function dibujarBarrasNiveles(filas, agrupar) {
+      const mapa = {};
+      filas.forEach(function (r) {
+        const d = desgloseDe(r);
+        if (!d) return;
+        const k = claveAgrupacionRes(r, agrupar);
+        mapa[k] = mapa[k] || { literal: { a: 0, t: 0 }, inferencial: { a: 0, t: 0 }, critica: { a: 0, t: 0 } };
+        NIVELES_RES.forEach(function (nv) {
+          const x = d[nv.clave];
+          if (!x || !x.total) return;
+          mapa[k][nv.clave].a += Number(x.aciertos || 0);
+          mapa[k][nv.clave].t += Number(x.total || 0);
+        });
+      });
+      const grupos = Object.keys(mapa).sort();
+      if (!grupos.length) return '<p style="color:#64748b;font-size:13px;">No hay desglose por niveles en esta selección.</p>';
+      const serie = grupos.map(function (g) {
+        const item = { etiqueta: g };
+        NIVELES_RES.forEach(function (nv) {
+          const x = mapa[g][nv.clave];
+          item[nv.clave] = x.t ? Math.round((x.a / x.t) * 10) / 10 : 0;
+        });
+        return item;
+      });
+      const w = 760, h = 320, pad = 58, max = 100;
+      const n = serie.length;
+      const slot = (w - pad - 16) / n;
+      const bw = Math.min(16, Math.max(6, slot / 5));
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet">';
+      for (let t = 0; t <= 4; t++) {
+        const v = Math.round((max * t) / 4);
+        const y = h - 48 - ((h - 90) * v) / max;
+        svg += '<line x1="' + pad + '" y1="' + y + '" x2="' + (w - 10) + '" y2="' + y + '" stroke="#eef2f6"/>';
+        svg += '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="10" fill="#94a3b8">' + v + '</text>';
+      }
+      svg += '<line x1="' + pad + '" y1="' + (h - 48) + '" x2="' + (w - 10) + '" y2="' + (h - 48) + '" stroke="#cbd5e1"/>';
+      serie.forEach(function (s, i) {
+        const x0 = pad + (i + 0.5) * slot;
+        NIVELES_RES.forEach(function (nv, ni) {
+          const hh = ((h - 90) * s[nv.clave]) / max;
+          const x = x0 - (NIVELES_RES.length * bw) / 2 + ni * bw;
+          svg += '<rect x="' + x + '" y="' + (h - 48 - hh) + '" width="' + Math.max(4, bw - 2) + '" height="' + hh + '" fill="' + nv.color + '" rx="2"/>';
+        });
+        svg += '<text x="' + x0 + '" y="' + (h - 30) + '" text-anchor="middle" font-size="11" fill="#64748b">' + escaparHtml(s.etiqueta) + '</text>';
+      });
+      svg += svgTitulosEjes(w, h, etiquetaEjeX(agrupar), 'Aciertos por nivel (%)');
+      svg += '</svg><div class="leyenda-svg">';
+      NIVELES_RES.forEach(function (nv) {
+        svg += '<span style="color:' + nv.color + '">■ ' + nv.etiqueta + '</span>';
+      });
+      svg += '</div>';
+      return svg;
+    }
+
+    function dibujarLineasNivelesTiempo(filas) {
+      const fechas = {};
+      const series = { literal: {}, inferencial: {}, critica: {} };
+      filas.forEach(function (r) {
+        const d = desgloseDe(r);
+        if (!d) return;
+        const f = fechaClaveRes(r);
+        fechas[f] = true;
+        NIVELES_RES.forEach(function (nv) {
+          const x = d[nv.clave];
+          if (!x || !x.total) return;
+          series[nv.clave][f] = series[nv.clave][f] || { a: 0, t: 0 };
+          series[nv.clave][f].a += Number(x.aciertos || 0);
+          series[nv.clave][f].t += Number(x.total || 0);
+        });
+      });
+      const xs = Object.keys(fechas).sort();
+      if (!xs.length) return '<p style="color:#64748b;font-size:13px;">No hay desglose por niveles en esta selección.</p>';
+      const w = 760, h = 360, pad = 58, max = 100;
+      function xPos(i) { return pad + (xs.length <= 1 ? (w - pad) / 2 : i * ((w - pad - 20) / Math.max(1, xs.length - 1))); }
+      function yPos(v) { return h - 58 - ((h - 110) * v) / max; }
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '">';
+      svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#fbfdff"/>';
+      for (let t = 0; t <= 4; t++) {
+        const v = Math.round(max * (t / 4));
+        const y = yPos(v);
+        svg += '<line x1="' + pad + '" y1="' + y + '" x2="' + (w - 10) + '" y2="' + y + '" stroke="#e2e8f0" stroke-dasharray="4 4"/>';
+        svg += '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="#64748b">' + v + '</text>';
+      }
+      svg += '<line x1="' + pad + '" y1="' + (h - 58) + '" x2="' + (w - 10) + '" y2="' + (h - 58) + '" stroke="#94a3b8"/>';
+      svg += '<line x1="' + pad + '" y1="20" x2="' + pad + '" y2="' + (h - 58) + '" stroke="#94a3b8"/>';
+      NIVELES_RES.forEach(function (nv) {
+        const pts = [];
+        xs.forEach(function (f, i) {
+          const cel = series[nv.clave][f];
+          if (!cel || !cel.t) return;
+          const val = Math.round((cel.a / cel.t) * 10) / 10;
+          const x = xPos(i), y = yPos(val);
+          pts.push(x + ',' + y);
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="4.5" fill="#fff" stroke="' + nv.color + '" stroke-width="2"/>';
+          svg += '<text x="' + x + '" y="' + (y - 10) + '" text-anchor="middle" font-size="10" font-weight="700" fill="' + nv.color + '">' + val + '</text>';
+        });
+        if (pts.length) {
+          svg += '<polyline fill="none" stroke="' + nv.color + '" stroke-width="3" stroke-linecap="round" points="' + pts.join(' ') + '"/>';
+        }
+      });
+      xs.forEach(function (f, i) {
+        svg += '<text x="' + xPos(i) + '" y="' + (h - 36) + '" text-anchor="middle" font-size="10.5" fill="#475569">' + escaparHtml(formatearFechaGrafica(f)) + '</text>';
+      });
+      svg += svgTitulosEjes(w, h, 'Fecha de la prueba', 'Aciertos por nivel (%)');
+      svg += '</svg><div class="leyenda-svg">';
+      NIVELES_RES.forEach(function (nv) {
+        svg += '<span style="color:' + nv.color + '">● ' + nv.etiqueta + '</span>';
+      });
+      svg += '</div>';
+      return svg;
+    }
+
+    function dibujarBarrasTiempo(filas, agrupar, metrica, ejeX, ejeY) {
+      const series = {};
+      const fechas = {};
+      filas.forEach(function (r) {
+        const clave = claveAgrupacionRes(r, agrupar);
+        const f = fechaClaveRes(r);
+        fechas[f] = true;
+        series[clave] = series[clave] || {};
+        series[clave][f] = series[clave][f] || nuevaCeldaSerie();
+        sumarCeldaSerie(series[clave][f], r);
+      });
+      const xs = Object.keys(fechas).sort();
+      const nombres = Object.keys(series).sort();
+      if (!xs.length) return '<p style="color:#64748b;font-size:13px;">No hay fechas para graficar.</p>';
+      const w = 760, h = 340, pad = 58;
+      let max = 1;
+      nombres.forEach(function (nom) {
+        xs.forEach(function (f) {
+          const val = valorCeldaSerie(series[nom][f], metrica);
+          if (val != null && val > max) max = val;
+        });
+      });
+      max = Math.ceil(max / 10) * 10 || 1;
+      const grupoAncho = (w - pad - 24) / xs.length;
+      const bw = Math.max(4, Math.min(22, (grupoAncho * 0.75) / Math.max(1, nombres.length)));
+      function yPos(v) { return h - 58 - ((h - 100) * v) / max; }
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '">';
+      svg += svgDefsEstilo();
+      svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#fbfdff"/>';
+      for (let t = 0; t <= 4; t++) {
+        const v = Math.round(max * (t / 4));
+        const y = yPos(v);
+        svg += '<line x1="' + pad + '" y1="' + y + '" x2="' + (w - 10) + '" y2="' + y + '" stroke="#e2e8f0" stroke-dasharray="4 4"/>';
+        svg += '<text x="' + (pad - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="#64748b">' + v + '</text>';
+      }
+      svg += '<line x1="' + pad + '" y1="' + (h - 58) + '" x2="' + (w - 10) + '" y2="' + (h - 58) + '" stroke="#94a3b8"/>';
+      xs.forEach(function (f, i) {
+        const x0 = pad + i * grupoAncho + grupoAncho / 2;
+        nombres.forEach(function (nom, si) {
+          const val = valorCeldaSerie(series[nom][f], metrica) || 0;
+          const hh = ((h - 100) * val) / max;
+          const x = x0 - (nombres.length * bw) / 2 + si * bw;
+          svg += '<rect x="' + x + '" y="' + (h - 58 - hh) + '" width="' + Math.max(3, bw - 2) + '" height="' + hh + '" fill="url(#barraGraf' + (si % COLORES_GRAF.length) + ')" rx="3"/>';
+        });
+        svg += '<text x="' + x0 + '" y="' + (h - 38) + '" text-anchor="middle" font-size="10.5" fill="#64748b">' + escaparHtml(formatearFechaGrafica(f)) + '</text>';
+      });
+      svg += svgTitulosEjes(w, h, ejeX || 'Fecha de la prueba', ejeY || etiquetaEjeY(metrica));
+      svg += '</svg><div class="leyenda-svg">';
+      nombres.forEach(function (nom, si) {
+        svg += '<span style="color:' + COLORES_GRAF[si % COLORES_GRAF.length] + '">■ ' + escaparHtml(nom) + '</span>';
+      });
+      svg += '</div>';
+      return svg;
+    }
+
+    function opcionesUnicas(filas, fn) {
+      const mapa = {};
+      filas.forEach(function (r) {
+        const v = fn(r);
+        if (v === '' || v == null) return;
+        mapa[String(v)] = true;
+      });
+      return Object.keys(mapa).sort(function (a, b) { return String(a).localeCompare(String(b), 'es', { numeric: true }); });
+    }
+
+    function htmlFiltroCol(campo, opciones, placeholder) {
+      const actual = filtrosColRes[campo] || '';
+      let h = '<select class="filtro-col" onchange="cambiarFiltroColRes(\'' + campo + '\', this.value)">';
+      h += '<option value="">' + escaparHtml(placeholder) + '</option>';
+      opciones.forEach(function (o) {
+        h += '<option value="' + escaparHtml(o) + '"' + (String(actual) === String(o) ? ' selected' : '') + '>' + escaparHtml(o) + '</option>';
+      });
+      return h + '</select>';
+    }
+
+    function cambiarFiltroColRes(campo, valor) {
+      filtrosColRes[campo] = valor || '';
+      pintarResultados();
+    }
+
+    function aplicarFiltrosColumna(filas) {
+      return filas.filter(function (r) {
+        if (filtrosColRes.fecha && String(r.fecha || '').indexOf(filtrosColRes.fecha) < 0 && String(r.fechaIso || '').indexOf(filtrosColRes.fecha) < 0) return false;
+        if (filtrosColRes.alumno && String(r.nombre) !== filtrosColRes.alumno) return false;
+        if (filtrosColRes.grupo) {
+          const gNum = normalizarGrado(r.grado) || normalizarGrado(r.grupo) || '';
+          const etq = (gNum ? gNum + '° ' : '') + String(r.grupo || '').toUpperCase();
+          if (etq !== filtrosColRes.grupo) return false;
+        }
+        if (filtrosColRes.lectura && ((r.asignatura || '') + ' · ' + (r.tema || '')) !== filtrosColRes.lectura) return false;
+        if (filtrosColRes.comprension && String(r.comprension) + '%' !== filtrosColRes.comprension) return false;
+        if (filtrosColRes.ppm && String(r.ppm) !== filtrosColRes.ppm) return false;
+        if (filtrosColRes.pme && String(r.pme) !== filtrosColRes.pme) return false;
+        if (filtrosColRes.velocidad && etiquetaNivelPpm(nivelPpmVivo(r)) !== filtrosColRes.velocidad) return false;
+        if (filtrosColRes.global && String(r.global) + '%' !== filtrosColRes.global) return false;
+        if (filtrosColRes.tLectura && String(r.tLectura) + 's' !== filtrosColRes.tLectura) return false;
+        if (filtrosColRes.tReactivos && String(r.tReactivos) + 's' !== filtrosColRes.tReactivos) return false;
+        if (filtrosColRes.intento && String(r.intento) !== filtrosColRes.intento) return false;
+        return true;
+      });
+    }
+
+    function pintarResultados() {
+      if (!resultadosAdminListos && !(datos.resultados || []).length) {
+        if (document.getElementById('lblResumenFiltro')) {
+          document.getElementById('lblResumenFiltro').textContent = 'Cargando resultados…';
+        }
+      }
+      const filasGraf = resultadosFiltrados();
+      resultadosFiltradosCache = filasGraf;
+      const todas = datos.resultados || [];
+      const totalEnBase = todas.length;
+
+      if (document.getElementById('lblResumenFiltro')) {
+        document.getElementById('lblResumenFiltro').textContent = textoFiltroActual(filasGraf, totalEnBase);
+      }
+      marcarFiltrosResActivos();
+      if (document.getElementById('lblGraficaSub')) {
+        document.getElementById('lblGraficaSub').textContent = textoFiltroActual(filasGraf, totalEnBase);
+      }
+
+      document.getElementById('kpiTotal').textContent = filasGraf.length;
+      if (filasGraf.length > 0) {
+        const sumaComp = filasGraf.reduce(function (acc, r) { return acc + Number(r.comprension || 0); }, 0);
+        const sumaPpm = filasGraf.reduce(function (acc, r) { return acc + Number(r.ppm || 0); }, 0);
+        const sumaGlob = filasGraf.reduce(function (acc, r) { return acc + Number(r.global || 0); }, 0);
+        document.getElementById('kpiComp').textContent = Math.round((sumaComp / filasGraf.length) * 10) / 10 + '%';
+        document.getElementById('kpiPpm').textContent = Math.round(sumaPpm / filasGraf.length);
+        const conPme = filasGraf.filter(function (r) { return Number(r.pme) > 0; });
+        if (document.getElementById('kpiPme')) {
+          document.getElementById('kpiPme').textContent = conPme.length
+            ? Math.round(conPme.reduce(function (acc, r) { return acc + Number(r.pme || 0); }, 0) / conPme.length)
+            : '—';
+        }
+        document.getElementById('kpiGlobal').textContent = Math.round((sumaGlob / filasGraf.length) * 10) / 10 + '%';
+      } else {
+        document.getElementById('kpiComp').textContent = '0%';
+        document.getElementById('kpiPpm').textContent = '0';
+        if (document.getElementById('kpiPme')) document.getElementById('kpiPme').textContent = '—';
+        document.getElementById('kpiGlobal').textContent = '0%';
+      }
+
+      pintarChipsChart(filasGraf);
+      pintarGraficaSVG(filasGraf);
+      pintarCajaNiveles(filasGraf);
+
+      const filasTabla = aplicarFiltrosColumna(todas);
+      if (totalEnBase === 0) {
+        document.getElementById('msgRes').innerHTML = '<div class="estado-vacio"><p>Aún no hay lecturas evaluadas.</p></div>';
+      } else if (filasTabla.length === 0) {
+        document.getElementById('msgRes').innerHTML = '<div class="estado-vacio"><p>Ninguna lectura coincide con los filtros de la lista.</p><button class="btn-secundario" onclick="limpiarFiltrosLista()">Limpiar filtros de la lista</button></div>';
+      } else {
+        document.getElementById('msgRes').textContent = textoFiltroLista(filasTabla, totalEnBase);
+      }
+
+      let html = '<tr><th>Fecha' + htmlFiltroCol('fecha', opcionesUnicas(todas, function (r) { return r.fecha; }), 'Todas') + '</th>' +
+        '<th>Alumno' + htmlFiltroCol('alumno', opcionesUnicas(todas, function (r) { return r.nombre; }), 'Todos') + '</th>' +
+        '<th>Grupo' + htmlFiltroCol('grupo', opcionesUnicas(todas, function (r) {
+          const gNum = normalizarGrado(r.grado) || normalizarGrado(r.grupo) || '';
+          return (gNum ? gNum + '° ' : '') + String(r.grupo || '').toUpperCase();
+        }), 'Todos') + '</th>' +
+        '<th>Lectura' + htmlFiltroCol('lectura', opcionesUnicas(todas, function (r) { return (r.asignatura || '') + ' · ' + (r.tema || ''); }), 'Todas') + '</th>' +
+        '<th>Comprensión' + htmlFiltroCol('comprension', opcionesUnicas(todas, function (r) { return r.comprension + '%'; }), 'Todas') + '</th>' +
+        '<th class="col-nivel-res" title="Literal: porcentaje de aciertos en preguntas de dato explícito del texto">Lit.</th>' +
+        '<th class="col-nivel-res" title="Inferencial: porcentaje de aciertos en preguntas de leer entre líneas">Inf.</th>' +
+        '<th class="col-nivel-res" title="Crítica: porcentaje de aciertos en preguntas de postura o propósito del autor">Crít.</th>' +
+        '<th>PPM' + htmlFiltroCol('ppm', opcionesUnicas(todas, function (r) { return r.ppm; }), 'Todos') + '</th>' +
+        '<th>PME' + htmlFiltroCol('pme', opcionesUnicas(todas, function (r) { return r.pme || ''; }), 'Todos') + '</th>' +
+        '<th title="Relecturas: veces que el alumno volvió al texto durante el cuestionario">Relect.</th>' +
+        '<th>Velocidad' + htmlFiltroCol('velocidad', opcionesUnicas(todas, function (r) { return etiquetaNivelPpm(nivelPpmVivo(r)); }), 'Todas') + '</th>' +
+        '<th>Final' + htmlFiltroCol('global', opcionesUnicas(todas, function (r) { return r.global + '%'; }), 'Todas') + '</th>' +
+        '<th>T. lectura' + htmlFiltroCol('tLectura', opcionesUnicas(todas, function (r) { return r.tLectura + 's'; }), 'Todos') + '</th>' +
+        '<th>T. preguntas' + htmlFiltroCol('tReactivos', opcionesUnicas(todas, function (r) { return r.tReactivos + 's'; }), 'Todos') + '</th>' +
+        '<th>Intento' + htmlFiltroCol('intento', opcionesUnicas(todas, function (r) { return r.intento; }), 'Todos') + '</th></tr>';
+      if (!filasTabla.length) {
+        html += '<tr><td colspan="' + (mostrarColsNivelesRes ? 16 : 13) + '" style="text-align:center;color:#64748b;padding:16px;">Sin lecturas con los filtros actuales.</td></tr>';
+      } else {
+        filasTabla.forEach(function (r) {
+          const gNum = normalizarGrado(r.grado) || normalizarGrado(r.grupo) || '';
+          const nivel = nivelPpmVivo(r);
+          const matRes = String(r.matricula || '').trim();
+          const celdaAlumno = matRes
+            ? '<button type="button" class="enlace-ficha-res" onclick="abrirFichaAlumno(\'' + escaparHtml(matRes) + '\')"><strong>' + escaparHtml(r.nombre) + '</strong><br><small style="color:#64748b;">Mat. ' + escaparHtml(matRes) + '</small></button>'
+            : '<strong>' + escaparHtml(r.nombre) + '</strong>';
+          html += '<tr>' +
+            '<td>' + escaparHtml(formatearFechaMostrada(r)) + '</td>' +
+            '<td>' + celdaAlumno + '</td>' +
+            '<td>' + escaparHtml((gNum ? gNum + '° ' : '') + String(r.grupo || '').toUpperCase()) + '</td>' +
+            '<td>' + escaparHtml((r.asignatura || '') + ' · ' + (r.tema || '')) + '</td>' +
+            '<td><strong>' + r.comprension + '%</strong></td>' +
+            '<td class="col-nivel-res">' + textoPctNivel(r, 'literal') + '</td>' +
+            '<td class="col-nivel-res">' + textoPctNivel(r, 'inferencial') + '</td>' +
+            '<td class="col-nivel-res">' + textoPctNivel(r, 'critica') + '</td>' +
+            '<td>' + r.ppm + '</td>' +
+            '<td>' + (Number(r.pme) > 0 ? r.pme : '—') + '</td>' +
+            '<td>' + (r.relecturas != null ? r.relecturas : '—') + '</td>' +
+            '<td><span class="st90-semaforo ' + claseNivelPpm(nivel) + '">' + etiquetaNivelPpm(nivel) + '</span></td>' +
+            '<td><strong style="color:var(--st90-naranja);">' + r.global + '%</strong></td>' +
+            '<td>' + r.tLectura + 's</td>' +
+            '<td>' + r.tReactivos + 's</td>' +
+            '<td>' + r.intento + '</td>' +
+          '</tr>';
+        });
+      }
+      document.getElementById('tablaRes').innerHTML = html;
+      aplicarVistaColsNivelesRes();
+    }
+
+    function aplicarVistaColsNivelesRes() {
+      const tabla = document.getElementById('tablaRes');
+      const btn = document.getElementById('btnColsNivelesRes');
+      if (tabla) tabla.classList.toggle('sin-niveles', !mostrarColsNivelesRes);
+      if (tabla) {
+        const vacio = tabla.querySelector('td[colspan]');
+        if (vacio) vacio.setAttribute('colspan', mostrarColsNivelesRes ? '16' : '13');
+      }
+      if (btn) {
+        btn.classList.toggle('activo', mostrarColsNivelesRes);
+        btn.setAttribute('aria-pressed', mostrarColsNivelesRes ? 'true' : 'false');
+        btn.textContent = mostrarColsNivelesRes ? 'Ocultar Lit. Inf. Crít.' : 'Ver Lit. Inf. Crít.';
+      }
+    }
+
+    function alternarColsNivelesRes() {
+      mostrarColsNivelesRes = !mostrarColsNivelesRes;
+      try { localStorage.setItem('st90_verNivelesListaRes', mostrarColsNivelesRes ? '1' : '0'); } catch (e) {}
+      aplicarVistaColsNivelesRes();
+    }
+
+    function exportarCSV() {
+      const filas = resultadosFiltradosCache;
+      if (!filas.length) return toast('No hay resultados para exportar.', 'error');
+      const enc = ['Fecha','Matrícula','Nombre','Grado','Grupo','Asignatura','Tema','ID Lectura',
+        'T lectura (s)','T reactivos (s)','Aciertos','Comprensión (%)','Literal (%)','Inferencial (%)','Crítica (%)',
+        'PPM','PME','Relecturas','Nivel PPM','Global (%)','Intento'];
+      const data = [enc].concat(filas.map(function (r) {
+        const d = desgloseDe(r) || {};
+        return [r.fecha, r.matricula, r.nombre, r.grado, r.grupo, r.asignatura, r.tema, r.idLectura,
+          r.tLectura, r.tReactivos, r.aciertos, r.comprension,
+          d.literal ? d.literal.pct : '', d.inferencial ? d.inferencial.pct : '', d.critica ? d.critica.pct : '',
+          r.ppm, r.pme, r.relecturas, nivelPpmVivo(r), r.global, r.intento];
+      }));
+      const f = new Date().toISOString().substring(0, 10);
+      descargarCSV('resultados_st90_' + f + '.csv', data);
+      toast('CSV descargado con éxito.', 'exito');
+    }
+
+    /* ==================== ALUMNOS Y MATRÍCULA ==================== */
+    var panelesAccionMat_ = {
+      panelAltaAlumno: 'btnMatAlta',
+      panelImportarCSV: 'btnMatCsv',
+      panelNuevoGrupo: 'btnMatGrupoNuevo'
+    };
+
+    function mostrarCatalogoAlu_(visible) {
+      const cat = document.getElementById('catalogoAlu');
+      if (cat) cat.classList.toggle('oculto', !visible);
+      const barra = document.getElementById('barraAccionesMasivasAlumnos');
+      if (barra && !visible) barra.classList.add('oculto');
+    }
+
+    function marcarBotonAccionMat_(panelId, activo) {
+      Object.keys(panelesAccionMat_).forEach(function (id) {
+        const b = document.getElementById(panelesAccionMat_[id]);
+        if (b) b.classList.toggle('activo', !!(activo && id === panelId));
+      });
+    }
+
+    function cerrarPanelesAccionMat_() {
+      Object.keys(panelesAccionMat_).forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('oculto');
+      });
+      marcarBotonAccionMat_('', false);
+      mostrarCatalogoAlu_(true);
+    }
+
+    function alternarPanelMat(panelId) {
+      const p = document.getElementById(panelId);
+      if (!p) return;
+      const estaAbierto = !p.classList.contains('oculto');
+      Object.keys(panelesAccionMat_).forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('oculto');
+      });
+      if (estaAbierto) {
+        marcarBotonAccionMat_('', false);
+        mostrarCatalogoAlu_(true);
+        return;
+      }
+      p.classList.remove('oculto');
+      marcarBotonAccionMat_(panelId, true);
+      mostrarCatalogoAlu_(false);
+      if (panelId === 'panelAltaAlumno') {
+        llenarGruposAlta();
+        setTimeout(function () { const n = document.getElementById('nMat'); if (n) n.focus(); }, 100);
+      } else if (panelId === 'panelNuevoGrupo') {
+        setTimeout(function () { const n = document.getElementById('gGru'); if (n) n.focus(); }, 100);
+      }
+    }
+
+    function verTodosAlumnos() {
+      cerrarPanelesAccionMat_();
+      if (document.getElementById('filtroMatBusqueda')) document.getElementById('filtroMatBusqueda').value = '';
+      if (document.getElementById('filtroMatGrado')) document.getElementById('filtroMatGrado').value = '';
+      if (document.getElementById('filtroMatGrupo')) document.getElementById('filtroMatGrupo').value = '';
+      if (document.getElementById('filtroMatEstado')) document.getElementById('filtroMatEstado').value = '';
+      cambiarFiltroMatGrado();
+      toast('Mostrando todos los alumnos inscritos.', 'exito');
+    }
+
+    function marcarFiltrosMatActivos() {
+      function setBtn(idBtn, activo, etq) {
+        const b = document.getElementById(idBtn);
+        if (!b) return;
+        b.classList.toggle('activo', !!activo);
+        const lab = b.querySelector('.ribbon-label');
+        if (lab && etq) lab.textContent = etq;
+      }
+      const bus = ((document.getElementById('filtroMatBusqueda') || {}).value || '').trim();
+      const g = textoOpcionSelect_('filtroMatGrado');
+      const gp = textoOpcionSelect_('filtroMatGrupo');
+      const es = textoOpcionSelect_('filtroMatEstado');
+      setBtn('btnMatBuscar', !!bus, bus ? (bus.length > 10 ? bus.slice(0, 10) + '…' : bus) : 'Buscar');
+      setBtn('btnMatGrado', !!(document.getElementById('filtroMatGrado') || {}).value, (document.getElementById('filtroMatGrado') || {}).value ? g : 'Grado');
+      setBtn('btnMatGrupo', !!(document.getElementById('filtroMatGrupo') || {}).value, (document.getElementById('filtroMatGrupo') || {}).value ? gp : 'Grupo');
+      setBtn('btnMatEstado', !!(document.getElementById('filtroMatEstado') || {}).value, (document.getElementById('filtroMatEstado') || {}).value ? es : 'Estado');
+    }
+
+    function toggleDdMatBuscar(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const p = document.getElementById('panelMatBuscar');
+      if (!p) return;
+      const oc = p.classList.contains('oculto');
+      document.querySelectorAll('.asi-dd-panel').forEach(function (el) { el.classList.add('oculto'); });
+      if (oc) {
+        p.classList.remove('oculto');
+        const inp = document.getElementById('filtroMatBusqueda');
+        if (inp) setTimeout(function () { inp.focus(); inp.select(); }, 50);
+      }
+    }
+
+    function limpiarFiltroMatBuscar() {
+      const inp = document.getElementById('filtroMatBusqueda');
+      if (inp) inp.value = '';
+      filtrarAlumnosUI();
+      actualizarEtqMatFiltros();
+      const p = document.getElementById('panelMatBuscar');
+      if (p) p.classList.add('oculto');
+    }
+
+    function actualizarEtqMatFiltros() {
+      marcarFiltrosMatActivos();
+    }
+
+    function abrirModalFiltroMat(cual) {
+      cerrarPanelesAccionMat_();
+      if (cual === 'buscar') toggleDdMatBuscar();
+      else if (cual === 'grado') {
+        const s = document.getElementById('filtroMatGrado');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      } else if (cual === 'grupo') {
+        const s = document.getElementById('filtroMatGrupo');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      } else if (cual === 'estado') {
+        const s = document.getElementById('filtroMatEstado');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      }
+    }</script>

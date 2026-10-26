@@ -1,0 +1,56 @@
+<script>
+/* AdminJS_Arranque — sentencias de nivel superior en su orden original */
+
+    if (typeof clavesDocentes !== 'undefined') {
+      clavesDocentes.configurar({ caja: 'cajaTablaMaeAdmin', busc: 'buscMaeAdmin', cont: 'contMaeAdmin' });
+    }
+    try { mostrarColsNivelesRes = localStorage.getItem('st90_verNivelesListaRes') === '1'; } catch (e) {}
+    ajustarModoEstrecho();
+    window.addEventListener('resize', ajustarModoEstrecho);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', ajustarModoEstrecho);
+
+    // Enter para login
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !document.getElementById('login').classList.contains('oculto')) {
+        entrar();
+      }
+      if (e.key === 'Escape') {
+        const periodo = document.getElementById('modalPeriodoRepAsi');
+        if (periodo && periodo.classList.contains('visible')) {
+          cerrarModalPeriodoRepAsi();
+          return;
+        }
+        const ficha = document.getElementById('modalFichaAlumno');
+        if (ficha && ficha.classList.contains('visible')) cerrarFichaAlumno();
+        cerrarDdGruposRep();
+        cerrarDdDocenteAsi();
+      }
+    });
+    document.addEventListener('click', function (ev) {
+      const dd = document.getElementById('ddGruposRepAsi');
+      if (dd && !dd.contains(ev.target)) cerrarDdGruposRep();
+      const ddDoc = document.getElementById('ddDocenteAsiMae');
+      if (ddDoc && !ddDoc.contains(ev.target)) cerrarDdDocenteAsi();
+    });
+
+    // Inicialización inmediata de selectores NEM
+    try { actualizarAsignaturasYTemasIA(); } catch (e) {}
+    document.addEventListener('DOMContentLoaded', function () {
+      try { actualizarAsignaturasYTemasIA(); } catch (e) {}
+    });
+
+    document.addEventListener('click', function (e) {
+      const wrap = document.getElementById('wrapTabCfg');
+      const sub = document.getElementById('menuCfgTabs');
+      const btnCfg = document.getElementById('btnTabCfg');
+      if (wrap && sub && !sub.classList.contains('oculto') && !wrap.contains(e.target)) {
+        sub.classList.add('oculto');
+        if (btnCfg) btnCfg.classList.remove('activa');
+      }
+    });
+      window.addEventListener('click', function (ev) {
+      /* asi-dd-panel-global-closer */
+      if (!ev.target.closest('.asi-dd')) {
+        document.querySelectorAll('.asi-dd-panel').forEach(function (p) { p.classList.add('oculto'); });
+      }
+    });</script>

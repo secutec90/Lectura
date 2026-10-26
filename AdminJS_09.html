@@ -1,0 +1,695 @@
+<script>
+/* AdminJS_09 — eliminarAlumnoIndividual, eliminarAlumnosSeleccionados, generarMatriculaDemo, vaciarTodaLaMatricula, reactivarA, altaA, bajaA, mover, altaG, plantilla, ... */
+
+
+    function eliminarAlumnoIndividual(mat, nom, grupo) {
+      confirmar('¿Estás seguro de eliminar permanentemente al alumno ' + (nom || mat) + ' (Matrícula: ' + mat + (grupo ? ', grupo ' + String(grupo).toUpperCase() : '') + ') de la base de datos?\nEsta acción no se puede deshacer.', 'Eliminar estudiante').then(function (ok) {
+        if (!ok) return;
+        gsRun('eliminarAlumno', token, mat, grupo || '')
+          .then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function eliminarAlumnosSeleccionados() {
+      const mats = obtenerMatriculasSeleccionadas();
+      if (!mats.length) return toast('Selecciona al menos un alumno.', 'error');
+      const payload = mats.map(function (k) {
+        const p = String(k).split('||');
+        return { matricula: p[0] || k, grupo: p[1] || '' };
+      });
+      confirmar('⚠️ ¿Estás seguro de ELIMINAR DEFINITIVAMENTE a los ' + payload.length + ' alumnos seleccionados de la base de datos?\nEsta acción borrará sus registros de forma permanente.', 'Eliminar alumnos seleccionados').then(function (ok) {
+        if (!ok) return;
+        gsRun('eliminarAlumnosMultiples', token, JSON.stringify(payload))
+          .then(function (r) {
+            toast(r.mensaje, 'exito');
+            limpiarSeleccionAlumnos();
+            recargar();
+          })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function generarMatriculaDemo() {
+      confirmar('¿Deseas generar 75 alumnos de demostración distribuidos en los grupos de 1°, 2° y 3° para probar la plataforma?', 'Generar matrícula de demostración').then(function (ok) {
+        if (!ok) return;
+        gsRun('generarAlumnosSimuladosAdmin', token)
+          .then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function vaciarTodaLaMatricula() {
+      confirmar('⚠️ ATENCIÓN: ¿Deseas vaciar y borrar a TODOS los alumnos de la matrícula?\nUtiliza esto únicamente si deseas reiniciar desde cero o subir una nueva lista completa por CSV.', 'Vaciar matrícula').then(function (ok) {
+        if (!ok) return;
+        gsRun('vaciarMatriculaAdmin', token)
+          .then(function (r) {
+            toast(r.mensaje, 'exito');
+            limpiarSeleccionAlumnos();
+            recargar();
+          })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function reactivarA(m) {
+      confirmar('¿Deseas reactivar al alumno con matrícula ' + m + '?', 'Reactivar alumno').then(function (ok) {
+        if (!ok) return;
+        gsRun('reactivarAlumno', token, m).then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function altaA() {
+      const datosA = {
+        matricula: document.getElementById('nMat').value.trim(),
+        nombre: document.getElementById('nNom').value.trim(),
+        grado: document.getElementById('nGra').value.trim(),
+        grupo: document.getElementById('nGru').value.trim()
+      };
+      if (!datosA.grado || !datosA.grupo) return toast('Elige grado y grupo.', 'error');
+      if (!datosA.matricula || !datosA.nombre) return toast('Matrícula y nombre son obligatorios.', 'error');
+      gsRun('altaAlumno', token, datosA)
+        .then(function (r) {
+          toast(r.mensaje, 'exito');
+          document.getElementById('nMat').value = '';
+          document.getElementById('nNom').value = '';
+          alternarPanelMat('panelAltaAlumno');
+          recargar();
+        })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+
+    function bajaA(m) {
+      confirmar('¿Dar de baja a la matrícula ' + m + '?', 'Baja de estudiante').then(function (ok) {
+        if (!ok) return;
+        gsRun('bajaAlumno', token, m).then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function mover(m) {
+      abrirModalMoverGrupo([m]);
+    }
+
+    function altaG() {
+      const g = document.getElementById('gGra').value;
+      const nom = document.getElementById('gGru').value.trim();
+      if (!nom) return toast('Escribe el nombre del grupo.', 'error');
+      gsRun('altaGrupo', token, g, nom).then(function (r) {
+        toast(r.mensaje, 'exito');
+        document.getElementById('gGru').value = '';
+        alternarPanelMat('panelNuevoGrupo');
+        recargar();
+      }).catch(function (e) { toast(e.message, 'error'); });
+    }
+
+    function plantilla() {
+      google.script.run.withSuccessHandler(function (b64) {
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;base64,' + b64;
+        a.download = 'plantilla_alumnos.csv';
+        a.click();
+      }).obtenerPlantillaExcel();
+    }
+
+    function importar() {
+      const f = document.getElementById('csv').files[0];
+      if (!f) return toast('Elige un archivo CSV.', 'error');
+      const r = new FileReader();
+      r.onload = function (ev) {
+        const b64 = btoa(unescape(encodeURIComponent(ev.target.result)));
+        gsRun('importarAlumnosDesdeExcel', token, b64)
+          .then(function (res) {
+            toast(res.mensaje, 'exito');
+            document.getElementById('csv').value = '';
+            alternarPanelMat('panelImportarCSV');
+            recargar();
+          })
+          .catch(function (e) { toast(e.message, 'error'); });
+      };
+      r.readAsText(f);
+    }
+
+    /* ==================== CONFIG ==================== */
+    function guardarVinculoHoja() {
+      const u = document.getElementById('cfgUrlHoja').value.trim();
+      if (!u) return toast('Ingresa el enlace o ID de la hoja de cálculo.', 'error');
+      gsRun('vincularHojaCalculo', token, u)
+        .then(function (r) {
+          toast(r.mensaje, 'exito');
+          if (r.url) {
+            document.getElementById('enlaceHoja').href = r.url;
+            if (document.getElementById('btnAbrirHojaDirecto')) document.getElementById('btnAbrirHojaDirecto').href = r.url;
+          }
+          recargar();
+        })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+
+    function repararResultadosClick() {
+      confirmar('¿Deseas sincronizar y alinear las columnas de Resultados? Esto corregirá inconsistencias entre pruebas reales y datos simulados.', 'Reparar resultados')
+        .then(function (ok) {
+          if (!ok) return;
+          toast('Alineando y reparando datos de Resultados…');
+          gsRun('repararResultadosAdmin', token)
+            .then(function (r) {
+              toast(r.mensaje || 'Resultados reparados correctamente.', 'exito');
+              recargar();
+            })
+            .catch(function (e) { toast(e.message || String(e), 'error'); });
+        });
+    }
+
+    function cargarDatosPrueba() {
+      toast('Generando resultados de prueba para todos los alumnos…');
+      gsRun('cargarResultadosSimulados', token)
+        .then(function (r) {
+          toast((r && r.mensaje) ? r.mensaje : 'Datos de prueba listos.', 'exito');
+          recargar(false);
+        })
+        .catch(function (e) { toast((e && e.message) || String(e), 'error'); });
+    }
+
+    function guardarInt() {
+      gsRun('guardarIntentosDefault', token, document.getElementById('cfgInt').value)
+        .then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+    function guardarExtraGrupo() {
+      gsRun('asignarIntentosExtraGrupo', token,
+        document.getElementById('cfgGrupo').value,
+        document.getElementById('cfgGrupoExtra').value)
+        .then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+    function guardarExtraAlumno() {
+      gsRun('asignarIntentosExtra', token,
+        document.getElementById('cfgAlumno').value,
+        document.getElementById('cfgAlumnoExtra').value)
+        .then(function (r) { toast(r.mensaje, 'exito'); recargar(); })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+    function guardarUrlsSitioClick() {
+      gsRun('guardarUrlsSitio', token,
+        document.getElementById('cfgUrlSitioAlumno').value,
+        document.getElementById('cfgUrlSitioDocente').value)
+        .then(function (r) {
+          toast(r.mensaje, 'exito');
+          if (r.urlSitioAlumno) {
+            const login = document.getElementById('btnLoginAlumno');
+            const header = document.getElementById('btnVistaAlumno');
+            if (login) login.href = r.urlSitioAlumno;
+            if (header) header.href = r.urlSitioAlumno;
+          }
+        })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+    let logoIdentidadActual = '';
+    function pintarCamposIdentidad(id) {
+      const iden = id || {};
+      aplicarIdentidad(iden);
+      const nom = document.getElementById('cfgNombreEscuela');
+      const pie = document.getElementById('cfgPieLectura');
+      if (nom) nom.value = iden.nombre || 'Secundaria Técnica 90';
+      if (pie) pie.value = iden.pie || 'Plan de Estudio NEM';
+      logoIdentidadActual = iden.logo || '';
+      mostrarPrevLogoIdentidad(logoIdentidadActual);
+      const loginNom = document.querySelector('.login-escuela');
+      if (loginNom && iden.nombre) loginNom.textContent = iden.nombre;
+    }
+    function mostrarPrevLogoIdentidad(src) {
+      const img = document.getElementById('prevLogoIdentidad');
+      const vacio = document.getElementById('prevLogoVacio');
+      if (!img) return;
+      if (src) {
+        img.src = src;
+        img.classList.remove('oculto');
+        if (vacio) vacio.classList.add('oculto');
+      } else {
+        img.removeAttribute('src');
+        img.classList.add('oculto');
+        if (vacio) vacio.classList.remove('oculto');
+      }
+    }
+    function elegirLogoIdentidad(input) {
+      const file = input && input.files && input.files[0];
+      if (!file) return;
+      if (file.size > 4 * 1024 * 1024) {
+        toast('El archivo pesa demasiado. Usa una imagen de menos de 4 MB.', 'error');
+        input.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = new Image();
+        img.onload = function () {
+          const max = 220;
+          let w = img.width, h = img.height;
+          if (w > max || h > max) {
+            const r = Math.min(max / w, max / h);
+            w = Math.round(w * r);
+            h = Math.round(h * r);
+          }
+          const c = document.createElement('canvas');
+          c.width = w;
+          c.height = h;
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          let data = c.toDataURL('image/png');
+          if (data.length > 45000) data = c.toDataURL('image/jpeg', 0.82);
+          if (data.length > 45000) data = c.toDataURL('image/jpeg', 0.62);
+          if (data.length > 45000) {
+            toast('El logotipo sigue siendo grande. Prueba con un PNG o JPG más simple.', 'error');
+            return;
+          }
+          logoIdentidadActual = data;
+          mostrarPrevLogoIdentidad(data);
+        };
+        img.onerror = function () { toast('No se pudo leer la imagen.', 'error'); };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    function quitarLogoIdentidad() {
+      logoIdentidadActual = '';
+      mostrarPrevLogoIdentidad('');
+      const inp = document.getElementById('cfgLogoEscuela');
+      if (inp) inp.value = '';
+    }
+    function guardarIdentidadClick() {
+      const nom = document.getElementById('cfgNombreEscuela') ? document.getElementById('cfgNombreEscuela').value : '';
+      const pie = document.getElementById('cfgPieLectura') ? document.getElementById('cfgPieLectura').value : '';
+      gsRun('guardarIdentidadEscuela', token, nom, pie, logoIdentidadActual)
+        .then(function (r) {
+          toast(r.mensaje || 'Identidad guardada.', 'exito');
+          if (r.identidad) {
+            if (!datos.config) datos.config = {};
+            datos.config.identidad = r.identidad;
+            pintarCamposIdentidad(r.identidad);
+          }
+        })
+        .catch(function (e) { toast((e && e.message) || String(e), 'error'); });
+    }
+    function cambiarClave() {
+      const a = document.getElementById('nuevaClave').value;
+      const b = document.getElementById('nuevaClave2').value;
+      if (a !== b) return toast('Las contraseñas no coinciden.', 'error');
+      gsRun('cambiarClaveAdmin', token, a)
+        .then(function (r) { toast(r.mensaje, 'exito'); document.getElementById('nuevaClave').value = ''; document.getElementById('nuevaClave2').value = ''; document.getElementById('avisoClaveDefault').classList.add('oculto'); })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+
+    /* ======================================================= */
+    function alternarPanelIA() {
+      const p = document.getElementById('panelIA');
+      const pMasivo = document.getElementById('panelMasivo');
+      const vistaDet = document.getElementById('vistaDetalleLec');
+      const estaAbierto = !p.classList.contains('oculto');
+      if (estaAbierto) {
+        p.classList.add('oculto');
+        alternarVisibilidadListaLecturas(true);
+        mostrarDetalleLecturaSeleccionada();
+      } else {
+        modoCreacionNueva = false;
+        modoEdicionActivo = false;
+        p.classList.remove('oculto');
+        if (pMasivo) pMasivo.classList.add('oculto');
+        if (vistaDet) vistaDet.classList.add('oculto');
+        alternarVisibilidadListaLecturas(false);
+        actualizarAsignaturasYTemasIA();
+        document.getElementById('lTema').focus();
+      }
+    }
+
+    function cargarDetalleLecturas(forzar) {
+      if (forzar !== true) {
+        if (datos.bancoDetalle && datos.bancoDetalle.length) {
+          actualizarSelectAsignaturasFiltro();
+          actualizarDatalistTemasEdit();
+          pintarLecturas();
+          pintarPanelTrimestral();
+          return;
+        }
+        if (datos.lecturas && datos.lecturas.length) {
+          datos.bancoDetalle = datos.lecturas.slice();
+          actualizarSelectAsignaturasFiltro();
+          actualizarDatalistTemasEdit();
+          pintarLecturas();
+          pintarPanelTrimestral();
+          return;
+        }
+      }
+      ['1', '2', '3'].forEach(function(g) {
+        const col = document.getElementById('listaLecturasCol_' + g);
+        if (col) col.innerHTML = '<p style="color:#64748b;font-size:12px;text-align:center;padding:14px;margin:0;">Cargando…</p>';
+      });
+      gsRun('listaLecturasAdmin', token).then(function (res) {
+        const lista = (res && res.lecturas) || [];
+        datos.lecturas = lista;
+        datos.bancoDetalle = lista.slice();
+        actualizarSelectAsignaturasFiltro();
+        actualizarDatalistTemasEdit();
+        pintarLecturas();
+        pintarPanelTrimestral();
+      }).catch(function (e) {
+        toast('Error al cargar banco de lecturas: ' + ((e && e.message) || String(e)), 'error');
+      });
+    }
+
+    function aplicarSubLec(id, boton) {
+      const dest = id === 'trim' ? 'trim' : (id === 'res' ? 'res' : 'banco');
+      if (subLecActual === dest) {
+        mostrarCintaN3_('cintaLec', false);
+        if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+        return;
+      }
+      const ir = function () {
+        try { resetearEditor(); } catch (eRes) {}
+        lecturaSeleccionadaId = '';
+        modoCreacionNueva = false;
+        modoEdicionActivo = false;
+        const pIA = document.getElementById('panelIA');
+        const pMasivo = document.getElementById('panelMasivo');
+        const det = document.getElementById('vistaDetalleLec');
+        if (pIA) pIA.classList.add('oculto');
+        if (pMasivo) pMasivo.classList.add('oculto');
+        if (det) det.classList.add('oculto');
+
+        subLecActual = dest;
+        const tabLec = document.getElementById('tab-lec');
+        if (tabLec) tabLec.classList.remove('oculto');
+        
+        // Cerrar y desmarcar Ajustes si estaba activo
+        const subCfg = document.getElementById('menuCfgTabs');
+        if (subCfg) subCfg.classList.add('oculto');
+        const btnCfg = document.getElementById('btnTabCfg');
+        if (btnCfg) btnCfg.classList.remove('activa', 'activo');
+
+        document.querySelectorAll('#menuLecTabs .ribbon-btn').forEach(function (b) { b.classList.remove('activa', 'activo'); });
+        const btnBanco = document.getElementById('btnSubLecBanco');
+        const btnTrim = document.getElementById('btnSubLecTrim');
+        const btnRes = document.getElementById('btnSubLecRes');
+        if (btnBanco) btnBanco.classList.toggle('activa', subLecActual === 'banco');
+        if (btnTrim) btnTrim.classList.toggle('activa', subLecActual === 'trim');
+        if (btnRes) btnRes.classList.toggle('activa', subLecActual === 'res');
+        if (boton) {
+          boton.classList.add('activa');
+        }
+        const btnN1Lec = document.getElementById('btnTabLec');
+        if (btnN1Lec) btnN1Lec.classList.add('activa');
+
+        const titulo = document.getElementById('tituloLec');
+        const sub = document.getElementById('subLec');
+        const barraSupBanco = document.getElementById('barraSuperiorBancoLec');
+        const lblTotal = document.getElementById('lblTotalLecturas');
+        const wrapBusq = document.getElementById('wrapBusquedaBancoLec');
+        const accBanco = document.getElementById('accionesLecBanco');
+        const accRes = document.getElementById('accionesLecRes');
+        const pBanco = document.getElementById('cajaListaYFiltrosLecturas');
+        const pTrim = document.getElementById('panelLecturaTrimestral');
+        const pRes = document.getElementById('panelResultadosLec');
+        const btnCal = document.getElementById('btnCalendarioTrim');
+
+        if (subLecActual === 'trim') {
+          mostrarCintaN3_('cintaLec', false);
+          if (titulo) titulo.textContent = 'Banco de lecturas trimestrales';
+          if (sub) { sub.textContent = ''; sub.style.display = 'none'; }
+          if (barraSupBanco) barraSupBanco.classList.remove('oculto');
+          if (lblTotal) lblTotal.classList.add('oculto');
+          if (wrapBusq) wrapBusq.classList.add('oculto');
+          if (accBanco) accBanco.classList.remove('oculto');
+          if (accRes) accRes.classList.add('oculto');
+          if (btnCal) btnCal.classList.remove('oculto');
+          if (pBanco) pBanco.classList.add('oculto');
+          if (pTrim) pTrim.classList.remove('oculto');
+          if (pRes) pRes.classList.add('oculto');
+          if (det) det.classList.add('oculto');
+          if (pIA) pIA.classList.add('oculto');
+          if (pMasivo) pMasivo.classList.add('oculto');
+          pintarPanelTrimestral();
+          if (bancoTrimSinAsignar()) cargarMuestraTrimestral(false);
+          alternarVisibilidadListaLecturas(true, false);
+        } else if (subLecActual === 'res') {
+          mostrarCintaN3_('cintaLec', false);
+          if (titulo) titulo.textContent = 'Resultados';
+          if (sub) { sub.textContent = ''; sub.style.display = 'none'; }
+          if (barraSupBanco) barraSupBanco.classList.add('oculto');
+          if (accBanco) accBanco.classList.add('oculto');
+          if (accRes) accRes.classList.remove('oculto');
+          if (btnCal) btnCal.classList.add('oculto');
+          if (pBanco) pBanco.classList.add('oculto');
+          if (pTrim) pTrim.classList.add('oculto');
+          if (pRes) pRes.classList.remove('oculto');
+          if (det) det.classList.add('oculto');
+          if (pIA) pIA.classList.add('oculto');
+          if (pMasivo) pMasivo.classList.add('oculto');
+          ['panelGraficasRes', 'panelListaRes', 'panelObservacionesRes'].forEach(function (p) {
+            const el = document.getElementById(p);
+            if (el) el.classList.toggle('oculto', p !== 'panelGraficasRes');
+          });
+          document.querySelectorAll('#accionesLecRes .ribbon-btn[data-panel]').forEach(function (b) {
+            b.classList.toggle('activo', b.getAttribute('data-panel') === 'panelGraficasRes');
+            b.classList.remove('activa');
+          });
+          ['btnFTipo', 'btnFComparar', 'btnFIndicador', 'btnFVista'].forEach(function (fid) {
+            const el = document.getElementById(fid);
+            if (el) el.classList.remove('oculto');
+          });
+          asegurarResultadosAdmin().then(function () { pintarResultados(); }).catch(function (e) {
+            toast('No se pudieron cargar los resultados: ' + ((e && e.message) || String(e)), 'error');
+          });
+        } else {
+          mostrarCintaN3_('cintaLec', false);
+          if (titulo) titulo.textContent = 'Banco de lecturas';
+          if (sub) { sub.textContent = ''; sub.style.display = 'none'; }
+          if (barraSupBanco) barraSupBanco.classList.remove('oculto');
+          if (lblTotal) lblTotal.classList.add('oculto');
+          if (wrapBusq) wrapBusq.classList.remove('oculto');
+          if (accBanco) accBanco.classList.remove('oculto');
+          if (accRes) accRes.classList.add('oculto');
+          if (btnCal) btnCal.classList.add('oculto');
+          if (pBanco) pBanco.classList.remove('oculto');
+          if (pTrim) pTrim.classList.add('oculto');
+          if (pRes) pRes.classList.add('oculto');
+          if (det) det.classList.add('oculto');
+          if (pIA) pIA.classList.add('oculto');
+          if (pMasivo) pMasivo.classList.add('oculto');
+          pintarLecturas();
+          alternarVisibilidadListaLecturas(true, false);
+        }
+        if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+      };
+      if (modoCreacionNueva || modoEdicionActivo || editorDirty) {
+        salirSiEditorDirty().then(function (ok) { if (ok) ir(); });
+        return;
+      }
+      ir();
+    }
+
+    function cfgTrimActual() {
+      if (!datos.config) datos.config = {};
+      if (!datos.config.lecturasTrimestrales) {
+        datos.config.lecturasTrimestrales = {
+          ciclo: '',
+          activo: 'auto',
+          trimestres: {
+            '1': { inicio: '', fin: '', intentos: 1 },
+            '2': { inicio: '', fin: '', intentos: 1 },
+            '3': { inicio: '', fin: '', intentos: 1 }
+          },
+          lecturas: {
+            '1': { '1': '', '2': '', '3': '' },
+            '2': { '1': '', '2': '', '3': '' },
+            '3': { '1': '', '2': '', '3': '' }
+          }
+        };
+      }
+      if (!datos.config.lecturasTrimestrales.activo) datos.config.lecturasTrimestrales.activo = 'auto';
+      return datos.config.lecturasTrimestrales;
+    }
+
+    function lecturasDeGradoTrim(grado) {
+      const g = String(normalizarGrado(grado) || '');
+      if (!g) return [];
+      const banco = datos.bancoDetalle && datos.bancoDetalle.length ? datos.bancoDetalle : (datos.lecturas || []);
+      return banco.filter(function (l) {
+        return String(normalizarGrado(l.grado) || '') === g;
+      });
+    }
+
+    function esLecturaMuestraTrim(l) {
+      const origen = String((l && l.origen) || '').toUpperCase();
+      const id = String((l && l.id) || '');
+      return origen.indexOf('TRIM') >= 0 || id.indexOf('TRIM_') === 0;
+    }
+
+    function lecturaBancoPorId(id) {
+      if (!id) return null;
+      const banco = datos.bancoDetalle && datos.bancoDetalle.length ? datos.bancoDetalle : (datos.lecturas || []);
+      for (let i = 0; i < banco.length; i++) {
+        if (String(banco[i].id) === String(id)) return banco[i];
+      }
+      return null;
+    }
+
+    function verLecturaTrim(id) {
+      const sid = String(id || '').trim();
+      if (!sid) return toast('No hay una lectura asignada.', 'error');
+      salirSiEditorDirty().then(function (ok) {
+        if (!ok) return;
+        const lec = lecturaBancoPorId(sid);
+        if (!lec) {
+          toast('Aún se cargan los datos de esa lectura. Espera un momento.', 'info');
+          cargarDetalleLecturas();
+          return;
+        }
+        lecturaSeleccionadaId = sid;
+        modoCreacionNueva = false;
+        modoEdicionActivo = false;
+        mostrarDetalleLecturaSeleccionada();
+      });
+    }
+
+    function htmlOpcionLecturaTrim(l, idSel) {
+      const inact = String(l.activa || '').toUpperCase() === 'NO';
+      const etiqueta = (l.tema || 'Sin tema') + ' · ' + (l.asignatura || 'Sin materia') +
+        (inact ? ' (inactiva)' : '');
+      return '<option value="' + escaparHtml(l.id) + '"' + (String(l.id) === String(idSel || '') ? ' selected' : '') + '>' +
+        escaparHtml(etiqueta) + '</option>';
+    }
+
+    function opcionesLecturaGrado(grado, idSel) {
+      const lista = lecturasDeGradoTrim(grado);
+      const muestra = [];
+      const resto = [];
+      lista.forEach(function (l) {
+        if (esLecturaMuestraTrim(l)) muestra.push(l);
+        else resto.push(l);
+      });
+      muestra.sort(function (a, b) { return String(a.tema || '').localeCompare(String(b.tema || ''), 'es'); });
+      resto.sort(function (a, b) { return String(a.tema || '').localeCompare(String(b.tema || ''), 'es'); });
+      let html = '<option value="">— Sin asignar —</option>';
+      if (muestra.length) {
+        html += '<optgroup label="Muestra de ' + grado + '°">' +
+          muestra.map(function (l) { return htmlOpcionLecturaTrim(l, idSel); }).join('') +
+          '</optgroup>';
+      }
+      if (resto.length) {
+        html += '<optgroup label="Banco general de ' + grado + '°">' +
+          resto.map(function (l) { return htmlOpcionLecturaTrim(l, idSel); }).join('') +
+          '</optgroup>';
+      }
+      if (!muestra.length && !resto.length) {
+        html += '<option value="" disabled>No hay lecturas de ' + grado + '° en el banco</option>';
+      }
+      return html;
+    }
+
+    function trimestreCalendarioUi(cfg) {
+      const hoy = (function () {
+        const d = new Date();
+        const mm = d.getMonth() + 1;
+        const dd = d.getDate();
+        return d.getFullYear() + '-' + (mm < 10 ? '0' : '') + mm + '-' + (dd < 10 ? '0' : '') + dd;
+      })();
+      let actual = '';
+      ['1', '2', '3'].forEach(function (n) {
+        const t = (cfg.trimestres && cfg.trimestres[n]) || {};
+        if (t.inicio && t.fin && hoy >= t.inicio && hoy <= t.fin) actual = n;
+      });
+      return actual;
+    }
+
+    function trimestreServidoUi(cfg) {
+      const a = String(cfg.activo || 'auto');
+      if (a === '1' || a === '2' || a === '3') return a;
+      return trimestreCalendarioUi(cfg) || '1';
+    }
+
+    function etiquetaTrimUi(n) {
+      if (n === '1') return '1er trimestre';
+      if (n === '2') return '2° trimestre';
+      if (n === '3') return '3er trimestre';
+      return 'Trimestre';
+    }
+
+    function metaLecturaTrim(lec) {
+      if (!lec) return '';
+      const pal = lec.palabras ? (lec.palabras + ' pal.') : '';
+      const npreg = lec.nPreguntas || (lec.preguntas && lec.preguntas.length) || 0;
+      const muestra = esLecturaMuestraTrim(lec) ? 'Muestra' : '';
+      return [lec.asignatura || '', pal, npreg ? (npreg + ' preg.') : '', muestra].filter(Boolean).join(' · ');
+    }
+
+    function htmlSlotTrim(t, g, nom, idL, esVigente) {
+      const lec = lecturaBancoPorId(idL);
+      const asignada = !!(idL && lec);
+      let cuerpo;
+      if (asignada) {
+        cuerpo = '<div class="tema-slot">' + escaparHtml(lec.tema || 'Sin tema') + '</div>' +
+          '<div class="meta-slot">' + escaparHtml(metaLecturaTrim(lec)) + '</div>' +
+          '<div class="acciones-slot">' +
+            '<button type="button" onclick="verLecturaTrim(\'' + escaparHtml(idL) + '\')">Ver</button>' +
+            '<button type="button" class="btn-secundario" onclick="abrirPickTrim(\'' + t + '\',\'' + g + '\')">Cambiar</button>' +
+            '<button type="button" class="btn-secundario" onclick="quitarLecturaTrim(\'' + t + '\',\'' + g + '\')">Quitar</button>' +
+          '</div>';
+      } else if (idL) {
+        cuerpo = '<div class="tema-slot">Lectura asignada</div>' +
+          '<div class="meta-slot">Cargando datos del banco…</div>' +
+          '<div class="acciones-slot">' +
+            '<button type="button" onclick="verLecturaTrim(\'' + escaparHtml(idL) + '\')">Ver</button>' +
+            '<button type="button" class="btn-secundario" onclick="abrirPickTrim(\'' + t + '\',\'' + g + '\')">Cambiar</button>' +
+            '<button type="button" class="btn-secundario" onclick="quitarLecturaTrim(\'' + t + '\',\'' + g + '\')">Quitar</button>' +
+          '</div>';
+      } else {
+        cuerpo = '<div class="tema-slot">Sin lectura</div>' +
+          '<div class="meta-slot">Elige una del banco de ' + nom + '.</div>' +
+          '<div class="acciones-slot">' +
+            '<button type="button" onclick="abrirPickTrim(\'' + t + '\',\'' + g + '\')">Elegir del banco</button>' +
+          '</div>';
+      }
+      const clases = (asignada || idL ? 'con-lectura' : 'vacio') + (esVigente ? ' vigente' : '');
+      const badge = esVigente ? ' <span class="badge-alumnos">Lo ven los alumnos</span>' : '';
+      return '<div class="slot-trim ' + clases + '">' +
+        '<div class="grado-slot">' + etiquetaTrimUi(t) + badge + '</div>' +
+        cuerpo +
+        '<input type="hidden" id="trimLec_' + t + '_' + g + '" value="' + escaparHtml(idL || '') + '">' +
+      '</div>';
+    }
+
+    function pintarPanelTrimestral() {
+      const grid = document.getElementById('gridTrimestres');
+      if (!grid) return;
+      const cfg = cfgTrimActual();
+      const servido = trimestreServidoUi(cfg);
+      const lblCiclo = document.getElementById('lblCicloTrim');
+      if (lblCiclo) {
+        const etiq = servido ? etiquetaTrimUi(servido) : '';
+        const fechas = (cfg.trimestres && cfg.trimestres[servido]) || {};
+        const rango = (fechas.inicio || fechas.fin)
+          ? (' · ' + formatoFechaCortaUi(fechas.inicio) + ' – ' + formatoFechaCortaUi(fechas.fin))
+          : '';
+        const nInt = Math.max(1, Number((fechas && fechas.intentos) || 1) || 1);
+        lblCiclo.textContent = (cfg.ciclo ? ('Ciclo ' + cfg.ciclo) : '') +
+          (etiq ? (' · Los alumnos ven el ' + etiq) : '') + rango +
+          (' · ' + nInt + (nInt === 1 ? ' intento exclusivo' : ' intentos exclusivos'));
+      }
+      const grados = [
+        { id: '1', nom: '1°' },
+        { id: '2', nom: '2°' },
+        { id: '3', nom: '3°' }
+      ];
+      grid.innerHTML = grados.map(function (g) {
+        const slots = ['1', '2', '3'].map(function (t) {
+          const lec = (cfg.lecturas && cfg.lecturas[t]) || {};
+          return htmlSlotTrim(t, g.id, g.nom, String(lec[g.id] || '').trim(), servido === t);
+        }).join('');
+        return '<div class="card-trimestre">' +
+          '<div class="cab-trim"><h3>' + g.nom + ' de secundaria</h3></div>' +
+          slots +
+        '</div>';
+      }).join('');
+    }</script>

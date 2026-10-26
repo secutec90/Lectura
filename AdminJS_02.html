@@ -1,0 +1,672 @@
+<script>
+/* AdminJS_02 — fechaLocalAsi, aplicarVistaRolAsistencia, aplicarSubAsi, fechaAsiActiva, fmtFechaCortaAsi_, actualizarBannerPrefecta_, actualizarEtqFechaAsi, toggleDdFechaAsi, aplicarFechaAsiElegida_, alCambiarFechaAsiAlu, ... */
+
+
+    function fechaLocalAsi() {
+      const d = new Date();
+      const m = String(d.getMonth() + 1);
+      const day = String(d.getDate());
+      return d.getFullYear() + '-' + (m.length < 2 ? '0' + m : m) + '-' + (day.length < 2 ? '0' + day : day);
+    }
+
+    function aplicarVistaRolAsistencia() {
+      const esAdmin = sesionRol === 'admin';
+      const esDocente = sesionRol === 'docente';
+      const esPref = sesionRol === 'prefecto';
+      const esApoyo = sesionRol === 'apoyo';
+
+      const btnPref = document.getElementById('btnAsiPref');
+      if (btnPref) {
+        if (esAdmin) btnPref.classList.remove('oculto');
+        else btnPref.classList.add('oculto');
+      }
+      const btnApoyo = document.getElementById('btnSubUsuAdm');
+      if (btnApoyo) btnApoyo.style.display = esAdmin ? '' : 'none';
+      const wrapCfg = document.querySelector('.wrap-tab-cfg');
+      if (wrapCfg) wrapCfg.style.display = esAdmin ? '' : 'none';
+      const btnTabMaeEl = document.getElementById('btnTabMae');
+      if (btnTabMaeEl) btnTabMaeEl.style.display = esAdmin ? '' : 'none';
+      const txt = document.getElementById('txtAsiRol');
+      if (txt) {
+        txt.textContent = esAdmin
+          ? 'Administrador: todos los grupos. Alumnos al inicio del turno · maestros en cada bloque.'
+          : (esPref ? ('Prefecta ' + (sesionNombre || '') + ': solo tus grupos. Alumnos al inicio del turno · maestros en cada hora.')
+            : (esApoyo ? ('Apoyo ' + (sesionNombre || '') + ': personal de secretaría, biblioteca y trabajo social.')
+              : ('Docente ' + (sesionNombre || ''))));
+      }
+
+      asistenciaDesbloqueada = true;
+      iniciarCintaSinSeleccion_();
+      pintarFiltroGrupoAsi();
+    }
+
+    function aplicarSubAsi(id, boton) {
+      if (subAsiActual === id) {
+        if (id === 'rep') prepararReporteAsi();
+        if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+        return;
+      }
+      subAsiActual = id;
+      const tabAsi = document.getElementById('tab-asi');
+      if (tabAsi) tabAsi.classList.remove('oculto');
+      ['alu', 'mae', 'rep', 'pref'].forEach(function (t) {
+        const el = document.getElementById('subAsi' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (el) el.classList.add('oculto');
+      });
+      const map = { alu: 'subAsiAlu', mae: 'subAsiMae', rep: 'subAsiRep', pref: 'subAsiPref' };
+      const el = document.getElementById(map[id]);
+      if (el) el.classList.remove('oculto');
+      document.querySelectorAll('#menuAsiTabs button').forEach(function (b) {
+        b.classList.remove('activo', 'activa');
+      });
+      const ids = { alu: 'btnAsiAlu', mae: 'btnAsiMae', rep: 'btnAsiRep', pref: 'btnAsiPref' };
+      const bAct = boton || document.getElementById(ids[id]);
+      if (bAct) bAct.classList.add('activo');
+      const btnN1Asi = document.getElementById('btnTabAsi');
+      if (btnN1Asi) btnN1Asi.classList.add('activa');
+      const filtroAlu = document.getElementById('asiFiltroAlu');
+      const filtroMae = document.getElementById('asiFiltroMae');
+      const sep = document.getElementById('sepFiltroAsi');
+      if (filtroAlu) filtroAlu.classList.toggle('oculto', id !== 'alu');
+      if (filtroMae) filtroMae.classList.toggle('oculto', id !== 'mae');
+      if (sep) sep.classList.toggle('oculto', true);
+      if (id !== 'rep') {
+        const tipoRep = document.getElementById('cajaTipoRepAsi');
+        const tarjetaRep = document.getElementById('tarjetaRepAsi');
+        if (tipoRep) tipoRep.classList.add('oculto');
+        if (tarjetaRep) tarjetaRep.classList.add('oculto');
+      }
+      const n3Asi = document.querySelector('#cintaAsi .cinta-n3');
+      if (n3Asi) n3Asi.classList.add('oculto');
+      if (id === 'mae') {
+        cargarContextoAsistencia();
+        const irA = (!bloqueAsiManual && esHoyFechaAsi_()) ? bloqueParaPosicionarAsi_() : '';
+        cargarMaestrosAsiBloque(irA || undefined);
+      }
+      if (id === 'pref') cargarPrefectosAsi();
+      if (id === 'rep') prepararReporteAsi();
+      if (id === 'alu') {
+        cargarContextoAsistencia();
+        mostrarVistaAsiAlu_();
+      }
+      actualizarBannerPrefecta_();
+      if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+    }
+
+    function fechaAsiActiva() {
+      const a = document.getElementById('fechaAsiAlu');
+      const m = document.getElementById('fechaAsiMae');
+      const v = (a && a.value) || (m && m.value) || fechaLocalAsi();
+      if (a && !a.value) a.value = v;
+      if (m && !m.value) m.value = v;
+      if (a && m && a.value !== m.value) {
+        if (document.getElementById('subAsiMae') && !document.getElementById('subAsiMae').classList.contains('oculto')) {
+          a.value = m.value;
+          return m.value;
+        }
+        m.value = a.value;
+        return a.value;
+      }
+      return v;
+    }
+
+    function fmtFechaCortaAsi_(iso) {
+      const s = String(iso || '').trim();
+      const p = s.split('-');
+      if (p.length < 3) return 'Fecha';
+      return p[2] + '/' + p[1];
+    }
+
+    function actualizarBannerPrefecta_() {
+      const banner = document.getElementById('bannerPrefectaAsi');
+      const lblSes = document.getElementById('lblSesionAsi');
+      const etqFila = document.getElementById('etqPrefectaFilaAsi');
+
+      const esPref = (sesionRol === 'prefecto') || (ctxAsi && ctxAsi.rol === 'prefecto');
+      const nombre = (ctxAsi && ctxAsi.nombre) || sesionNombre || 'Prefecta';
+
+      if (lblSes) {
+        lblSes.textContent = '';
+        lblSes.classList.add('oculto');
+      }
+      if (banner) {
+        banner.classList.add('oculto');
+        banner.setAttribute('hidden', '');
+      }
+      if (etqFila) {
+        if (esPref && nombre) {
+          etqFila.textContent = 'Prefecta: ' + nombre;
+          etqFila.classList.remove('oculto');
+        } else {
+          etqFila.textContent = '';
+          etqFila.classList.add('oculto');
+        }
+      }
+      const tarjeta = document.querySelector('.asi-tarjeta-lista');
+      if (tarjeta) tarjeta.classList.toggle('is-prefecta', !!(esPref && nombre));
+    }
+
+    function actualizarEtqFechaAsi() {
+      const a = document.getElementById('etqFechaAsiAlu');
+      const m = document.getElementById('etqFechaAsiMae');
+      const ba = document.getElementById('btnFechaAsiAlu');
+      const bm = document.getElementById('btnFechaAsiMae');
+      const iso = fechaAsiActiva();
+      const txt = fechaAsiEtiquetaManual ? (fmtFechaRepAsi_(iso) || fmtFechaCortaAsi_(iso)) : 'Fecha';
+      if (a) a.textContent = txt;
+      if (m) m.textContent = txt;
+      if (ba) ba.classList.toggle('activo', fechaAsiEtiquetaManual);
+      if (bm) bm.classList.toggle('activo', fechaAsiEtiquetaManual);
+    }
+
+    function toggleDdFechaAsi(cual, ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      const id = cual === 'mae' ? 'panelFechaAsiMae' : 'panelFechaAsiAlu';
+      const p = document.getElementById(id);
+      if (!p) return;
+      const oc = p.classList.contains('oculto');
+      document.querySelectorAll('.asi-dd-panel').forEach(function (el) { el.classList.add('oculto'); });
+      if (oc) {
+        const inp = document.getElementById(cual === 'mae' ? 'fechaAsiMae' : 'fechaAsiAlu');
+        if (inp && !inp.value) inp.value = fechaLocalAsi();
+        p.classList.remove('oculto');
+        if (inp) {
+          try { inp.showPicker(); } catch (e) { try { inp.focus(); } catch (e2) {} }
+        }
+      }
+    }
+
+    function aplicarFechaAsiElegida_(fecha) {
+      const fe = String(fecha || fechaLocalAsi()).slice(0, 10);
+      const a = document.getElementById('fechaAsiAlu');
+      const m = document.getElementById('fechaAsiMae');
+      if (a) a.value = fe;
+      if (m) m.value = fe;
+      fechaAsiEtiquetaManual = true;
+      actualizarEtqFechaAsi();
+      const pAlu = document.getElementById('panelFechaAsiAlu');
+      const pMae = document.getElementById('panelFechaAsiMae');
+      if (pAlu) pAlu.classList.add('oculto');
+      if (pMae) pMae.classList.add('oculto');
+      cargarContextoAsistencia();
+    }
+
+    function alCambiarFechaAsiAlu() {
+      aplicarFechaAsiElegida_((document.getElementById('fechaAsiAlu') || {}).value);
+    }
+
+    function alCambiarFechaAsiMae() {
+      aplicarFechaAsiElegida_((document.getElementById('fechaAsiMae') || {}).value);
+    }
+
+    function abrirFechaAsiDirecto(cual, ev) {
+      toggleDdFechaAsi(cual === 'mae' ? 'mae' : 'alu', ev);
+    }
+
+    function actualizarEtqGrupoAsi() {
+      const etq = document.getElementById('etqGrupoAsiAlu');
+      const btn = document.getElementById('btnGrupoAsiAlu');
+      let txt = 'Grupo';
+      const clave = grupoAsiSel && grupoAsiSel.grupo
+        ? valorGrupoAsi_(grupoAsiSel)
+        : grupoAsiFiltro;
+      if (clave && String(clave).indexOf('|') >= 0) {
+        txt = String(clave.split('|')[1] || '').toUpperCase() || 'Grupo';
+      }
+      if (etq) etq.textContent = txt;
+      if (btn) {
+        btn.classList.toggle('activo', txt !== 'Grupo');
+      }
+    }
+
+    function abrirModalFechaAsi(cual) {
+      const inp = document.getElementById(cual === 'mae' ? 'fechaAsiMae' : 'fechaAsiAlu');
+      const actual = (inp && inp.value) || fechaAsiActiva() || fechaLocalAsi();
+      modal({
+        titulo: 'Fecha de asistencia',
+        html: '<label for="fechaAsiModal">Elige el día</label><input id="fechaAsiModal" type="date" value="' + escaparHtml(actual) + '" style="width:100%;height:42px;padding:0 10px;box-sizing:border-box;border:1px solid var(--st90-borde);border-radius:8px;font-weight:700;">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Aplicar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return (fondo.querySelector('#fechaAsiModal') || {}).value || '';
+        }
+      }).then(function (fecha) {
+        if (!fecha) return;
+        fechaAsiEtiquetaManual = true;
+        const a = document.getElementById('fechaAsiAlu');
+        const m = document.getElementById('fechaAsiMae');
+        if (a) a.value = fecha;
+        if (m) m.value = fecha;
+        actualizarEtqFechaAsi();
+        cargarContextoAsistencia();
+      });
+    }
+
+    function abrirModalGrupoAsi() {
+      const grupos = gruposAsiFiltrados_();
+      if (!grupos.length) {
+        toast('No hay grupos para elegir.', 'error');
+        return;
+      }
+      const actual = grupoAsiSel ? valorGrupoAsi_(grupoAsiSel) : '';
+      const celdas = ['<button type="button" class="btn-grupo-modal' + (!actual ? ' seleccionado' : '') + '" data-valor="">Todos</button>'].concat(grupos.map(function (g) {
+        const val = valorGrupoAsi_(g);
+        const etq = String(g.grupo || '').toUpperCase();
+        const n = g.alumnos || 0;
+        const on = val === actual ? ' seleccionado' : '';
+        return '<button type="button" class="btn-grupo-modal' + on + '" data-valor="' + escaparHtml(val) + '">' +
+          escaparHtml(etq) + (n ? '<small>' + n + '</small>' : '') + '</button>';
+      })).join('');
+      modal({
+        titulo: 'Elegir grupo',
+        html: '<input type="hidden" id="grupoAsiModalVal" value="' + escaparHtml(actual) + '">' +
+          '<p class="sub-lec" style="margin:0 0 8px">Lista completa en orden alfabético.</p>' +
+          '<div class="modal-grupos-grid" id="gridGrupoAsiModal">' + celdas + '</div>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Aplicar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === '') return '';
+          if (val === null) return null;
+          return (fondo.querySelector('#grupoAsiModalVal') || {}).value || '';
+        }
+      }).then(function (v) {
+        if (v === null) return;
+        const sel = document.getElementById('selGrupoAsiAlu');
+        if (sel) sel.value = v;
+        cambiarFiltroGrupoAsi();
+        actualizarEtqGrupoAsi();
+      });
+      setTimeout(function () {
+        const grid = document.getElementById('gridGrupoAsiModal');
+        const hid = document.getElementById('grupoAsiModalVal');
+        if (!grid || !hid) return;
+        grid.addEventListener('click', function (ev) {
+          const b = ev.target.closest('.btn-grupo-modal');
+          if (!b) return;
+          ev.preventDefault();
+          grid.querySelectorAll('.btn-grupo-modal').forEach(function (x) { x.classList.remove('seleccionado'); });
+          b.classList.add('seleccionado');
+          hid.value = b.getAttribute('data-valor') || '';
+        });
+      }, 40);
+    }
+
+    function abrirModalGradoAsiAlu() {
+      const actual = gradoAsiFiltro || ((document.getElementById('selGradoAsiAlu') || {}).value || '');
+      modal({
+        titulo: 'Filtrar por grado',
+        html: '<div class="form-modal-usu"><div class="campo" style="margin:0;"><label for="gradoAsiModal">Grado</label>' +
+          '<select id="gradoAsiModal"><option value="">Todos</option><option value="1">1°</option><option value="2">2°</option><option value="3">3°</option></select></div></div>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Aplicar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return (fondo.querySelector('#gradoAsiModal') || {}).value || '';
+        }
+      }).then(function (v) {
+        if (v === null || v === undefined) return;
+        const sel = document.getElementById('selGradoAsiAlu');
+        if (sel) sel.value = v;
+        cambiarFiltroGradoAsiAlu();
+      });
+      setTimeout(function () {
+        const s = document.getElementById('gradoAsiModal');
+        if (s) s.value = actual;
+      }, 30);
+    }
+
+    function abrirModalBuscarAsiAlu() {
+      const actual = buscarAsiFiltro || ((document.getElementById('filtroBuscarAsiAlu') || {}).value || '');
+      modal({
+        titulo: 'Buscar alumno',
+        html: '<div class="form-modal-usu"><div class="campo" style="margin:0;"><label for="buscarAsiModal">Nombre o matrícula</label>' +
+          '<input type="text" id="buscarAsiModal" value="' + escaparHtml(actual) + '" placeholder="Buscar…" autocomplete="off"></div></div>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Aplicar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return (fondo.querySelector('#buscarAsiModal') || {}).value || '';
+        }
+      }).then(function (v) {
+        if (v === null || v === undefined) return;
+        const inp = document.getElementById('filtroBuscarAsiAlu');
+        if (inp) inp.value = v;
+        cambiarBuscarAsiAlu();
+      });
+    }
+
+    function cambiarBuscarAsiAlu() {
+      const inp = document.getElementById('filtroBuscarAsiAlu');
+      buscarAsiFiltro = inp ? String(inp.value || '').trim() : '';
+      const etq = document.getElementById('etqBuscarAsiAlu');
+      const btn = document.getElementById('btnBuscarAsiAlu');
+      const corto = buscarAsiFiltro.length > 10 ? buscarAsiFiltro.slice(0, 10) + '…' : buscarAsiFiltro;
+      if (etq) etq.textContent = corto || 'Buscar';
+      if (btn) {
+        btn.classList.toggle('activo', !!buscarAsiFiltro);
+      }
+      if (grupoAsiSel) {
+        grupoAsiSel = null;
+        listaAsiAlu = [];
+        const sG = document.getElementById('selGrupoAsiAlu');
+        if (sG) sG.value = '';
+        actualizarEtqGrupoAsi();
+      }
+      mostrarVistaAsiAlu_();
+    }
+
+    function esHoyFechaAsi_(fecha) {
+      return String(fecha || fechaAsiActiva() || '') === fechaLocalAsi();
+    }
+
+    function minutosAhoraAsi_() {
+      const d = new Date();
+      return d.getHours() * 60 + d.getMinutes();
+    }
+
+    function minutosDeHoraAsi_(v) {
+      const s = horaCortaAsi_(v);
+      if (!s) return 0;
+      const p = String(s).split(':');
+      return Number(p[0] || 0) * 60 + Number(p[1] || 0);
+    }
+
+    function bloqueHoraActualAsi_(bloques) {
+      bloques = bloques || (ctxAsi && ctxAsi.bloques) || [];
+      if (!bloques.length || !esHoyFechaAsi_()) return '';
+      const ahora = minutosAhoraAsi_();
+      let siguiente = '';
+      for (let i = 0; i < bloques.length; i++) {
+        const ini = minutosDeHoraAsi_(bloques[i].horaInicio);
+        let fin = minutosDeHoraAsi_(bloques[i].horaFin);
+        if (!fin || fin <= ini) fin = ini + 40;
+        if (ahora >= ini && ahora < fin) return bloques[i].bloque;
+        if (!siguiente && ahora < ini) siguiente = bloques[i].bloque;
+      }
+      return siguiente;
+    }
+
+    function bloqueParaPosicionarAsi_() {
+      const actual = bloqueHoraActualAsi_();
+      if (actual) return actual;
+      const bloques = (ctxAsi && ctxAsi.bloques) || [];
+      if (!bloques.length) return '';
+      if (!esHoyFechaAsi_()) return bloques[0].bloque;
+      return bloques[bloques.length - 1].bloque;
+    }
+
+    function arrancarRelojBloqueAsi_() {
+      if (timerHoraAsi) return;
+      timerHoraAsi = setInterval(function () {
+        if (!ctxAsi || !ctxAsi.bloques || !ctxAsi.bloques.length) return;
+        const prev = ctxAsi.bloqueActual || '';
+        const actual = bloqueHoraActualAsi_();
+        ctxAsi.bloqueActual = actual;
+        if (actual === prev) return;
+        if (!bloqueAsiManual && actual && esHoyFechaAsi_()) {
+          cargarMaestrosAsiBloque(actual);
+        } else {
+          pintarTabsBloquesAsi();
+        }
+      }, 30000);
+    }
+
+    function cargarContextoAsistencia() {
+      if (!token) return;
+      const fecha = fechaAsiActiva();
+      bloqueAsiManual = false;
+      gsRun('asistenciaContexto', token, fecha).then(function (res) {
+        ctxAsi = res || {};
+        const actual = bloqueHoraActualAsi_(ctxAsi.bloques);
+        if (actual) ctxAsi.bloqueActual = actual;
+        else if (!esHoyFechaAsi_()) ctxAsi.bloqueActual = '';
+        pintarFiltroGrupoAsi();
+        bloqueAsiSel = bloqueParaPosicionarAsi_() || ctxAsi.bloqueActual || '';
+        pintarTabsBloquesAsi();
+        const grupos = gruposAsiFiltrados_();
+        if (grupoAsiSel && grupos.some(function (g) { return String(g.grado) === String(grupoAsiSel.grado) && String(g.grupo) === String(grupoAsiSel.grupo); })) {
+          seleccionarGrupoAsi(grupoAsiSel.grado, grupoAsiSel.grupo);
+        } else if (grupos.length > 0) {
+          seleccionarGrupoAsi(grupos[0].grado, grupos[0].grupo);
+        } else {
+          mostrarVistaAsiAlu_();
+        }
+        if (bloqueAsiSel) cargarMaestrosAsiBloque(bloqueAsiSel);
+        arrancarRelojBloqueAsi_();
+        actualizarEtqFechaAsi();
+        actualizarEtqGrupoAsi();
+        actualizarBannerPrefecta_();
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function valorGrupoAsi_(g) {
+      return String(g.grado || '') + '|' + String(g.grupo || '');
+    }
+
+    function gruposAsiOrdenados_() {
+      const mapa = {};
+      const out = [];
+      function meter(g) {
+        if (!g) return;
+        const grupo = String(g.grupo || '').trim().toLowerCase();
+        if (!grupo) return;
+        const grado = String(g.grado || '').trim() || String(grupo).charAt(0);
+        const k = grado + '|' + grupo;
+        if (!mapa[k]) {
+          mapa[k] = {
+            grado: grado,
+            grupo: grupo,
+            alumnos: Number(g.alumnos || 0),
+            turno: g.turno || ''
+          };
+          out.push(mapa[k]);
+        } else if (g.alumnos) {
+          mapa[k].alumnos = Number(g.alumnos || mapa[k].alumnos || 0);
+        }
+      }
+      ((ctxAsi && ctxAsi.grupos) || []).forEach(meter);
+      if (sesionRol !== 'prefecto') {
+        try { listaGrupos().forEach(meter); } catch (eLis) {}
+      }
+      return out.sort(function (a, b) {
+        return String(a.grupo).localeCompare(String(b.grupo), 'es', { numeric: true, sensitivity: 'base' });
+      });
+    }
+
+    function gruposAsiFiltrados_() {
+      return gruposAsiOrdenados_();
+    }
+
+    function actualizarEtqGradoAsiAlu() {
+      const etq = document.getElementById('etqGradoAsiAlu');
+      const btn = document.getElementById('btnGradoAsiAlu');
+      const txt = gradoAsiFiltro ? (gradoAsiFiltro + '°') : 'Grado';
+      if (etq) etq.textContent = txt;
+      if (btn) {
+        btn.classList.toggle('activo', !!gradoAsiFiltro);
+      }
+    }
+
+    function cambiarFiltroGradoAsiAlu() {
+      const sel = document.getElementById('selGradoAsiAlu');
+      gradoAsiFiltro = sel ? String(sel.value || '') : '';
+      actualizarEtqGradoAsiAlu();
+      pintarFiltroGrupoAsi();
+      const grupos = gruposAsiFiltrados_();
+      if (grupos.length > 0) {
+        if (!grupoAsiSel || (gradoAsiFiltro && String(grupoAsiSel.grado) !== String(gradoAsiFiltro))) {
+          seleccionarGrupoAsi(grupos[0].grado, grupos[0].grupo);
+        } else {
+          seleccionarGrupoAsi(grupoAsiSel.grado, grupoAsiSel.grupo);
+        }
+      }
+      mostrarVistaAsiAlu_();
+    }
+
+    function mostrarVistaAsiAlu_() {
+      const cat = document.getElementById('panelListaGruposAsi');
+      const alu = document.getElementById('panelListaAluAsi');
+      const txt = document.getElementById('txtListaGruposAsi');
+      const acc = document.getElementById('asiAccionesAlu');
+      const lbl = document.getElementById('lblTurnoAsiAlu');
+      // Siempre mostrar la opción para tomar asistencia con todos los grupos y grados
+      if (cat) cat.classList.add('oculto');
+      if (alu) alu.classList.remove('oculto');
+      if (txt) txt.classList.add('oculto');
+      if (acc) acc.classList.remove('oculto');
+      if (lbl) {
+        lbl.textContent = '';
+        lbl.classList.add('oculto');
+      }
+      if (!grupoAsiSel) {
+        const grupos = gruposAsiFiltrados_();
+        if (grupos.length > 0) {
+          seleccionarGrupoAsi(grupos[0].grado, grupos[0].grupo);
+        }
+      }
+    }
+
+    function alumnosAsiCatalogo_() {
+      const gruposOk = gruposAsiFiltrados_();
+      const permit = {};
+      gruposOk.forEach(function (g) { permit[valorGrupoAsi_(g)] = true; });
+      let lista = ((ctxAsi && ctxAsi.alumnos) || []).slice();
+      if (!lista.length && datos && datos.alumnos) {
+        lista = (datos.alumnos || []).filter(function (a) {
+          return String(a.activo || 'SI').toUpperCase() !== 'NO';
+        });
+      }
+      const bus = (buscarAsiFiltro || '').toLowerCase().trim();
+      return lista.filter(function (a) {
+        const gra = String(a.grado || '');
+        const gru = String(a.grupo || '').toLowerCase();
+        if (permit[gra + '|' + gru] !== true && gruposOk.length) {
+          const ok = gruposOk.some(function (g) {
+            return String(g.grupo).toLowerCase() === gru && (!gradoAsiFiltro || String(g.grado) === gra);
+          });
+          if (!ok) return false;
+        }
+        if (gradoAsiFiltro && gra !== String(gradoAsiFiltro)) return false;
+        if (grupoAsiFiltro) {
+          const p = String(grupoAsiFiltro).split('|');
+          if (gra !== String(p[0] || '') || gru !== String(p[1] || '').toLowerCase()) return false;
+        }
+        if (bus) {
+          const nom = String(a.nombre || '').toLowerCase();
+          const mat = String(a.matricula || '').toLowerCase();
+          if (nom.indexOf(bus) < 0 && mat.indexOf(bus) < 0) return false;
+        }
+        return true;
+      }).sort(function (a, b) {
+        const g = String(a.grupo || '').localeCompare(String(b.grupo || ''), 'es', { numeric: true, sensitivity: 'base' });
+        if (g) return g;
+        return String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { sensitivity: 'base' });
+      });
+    }
+
+    function pintarCatalogoGruposAsi() {
+      const tb = document.getElementById('tablaListaGruposAsi');
+      const txt = document.getElementById('txtListaGruposAsi');
+      if (!tb) return;
+      const filas = alumnosAsiCatalogo_();
+      if (txt) {
+        txt.classList.add('oculto');
+        txt.style.display = 'none';
+      }
+      if (!filas.length) {
+        tb.innerHTML = '<tr><td>No hay alumnos para mostrar.</td></tr>';
+        return;
+      }
+      let html = '<thead><tr><th>Matrícula</th><th>Estudiante</th><th>Grado</th><th>Grupo</th></tr></thead><tbody>';
+      filas.forEach(function (a) {
+        const grado = String(a.grado || '').replace(/'/g, '');
+        const grupo = String(a.grupo || '').replace(/'/g, '');
+        html += '<tr class="fila-informe" onclick="seleccionarGrupoAsi(\'' + grado + '\',\'' + grupo + '\')">' +
+          '<td>' + escaparHtml(a.matricula || '') + '</td>' +
+          '<td>' + escaparHtml(a.nombre || '') + '</td>' +
+          '<td>' + escaparHtml(grado ? (grado + '°') : '—') + '</td>' +
+          '<td><strong>' + escaparHtml(String(grupo || '').toUpperCase()) + '</strong></td></tr>';
+      });
+      html += '</tbody>';
+      tb.innerHTML = html;
+    }
+
+    function pintarFiltroGrupoAsi() {
+      const sel = document.getElementById('selGrupoAsiAlu');
+      const chips = document.getElementById('chipsAsiGrupos');
+      const grupos = gruposAsiFiltrados_();
+      const actual = grupoAsiFiltro || (grupoAsiSel ? valorGrupoAsi_(grupoAsiSel) : '');
+      if (chips) chips.classList.add('oculto');
+
+      if (sel) {
+        if (!grupos.length) {
+          sel.innerHTML = '<option value="">Sin grupos</option>';
+          sel.disabled = true;
+        } else {
+          sel.disabled = false;
+          sel.innerHTML = '<option value="">Todos los grupos</option>' + grupos.map(function (g) {
+            const etq = String(g.grupo || '').toUpperCase();
+            const extra = (g.alumnos || 0) ? (' · ' + g.alumnos + ' alumnos') : '';
+            return '<option value="' + valorGrupoAsi_(g) + '">' + etq + extra + '</option>';
+          }).join('');
+          if (actual && grupos.some(function (g) { return valorGrupoAsi_(g) === actual; })) {
+            sel.value = actual;
+          } else {
+            sel.value = '';
+          }
+        }
+      }
+      actualizarEtqGrupoAsi();
+    }
+
+    function cambiarFiltroGrupoAsi() {
+      const sel = document.getElementById('selGrupoAsiAlu');
+      const v = sel && sel.value ? String(sel.value) : '';
+      grupoAsiFiltro = v;
+      if (v) {
+        const p = v.split('|');
+        seleccionarGrupoAsi(p[0], p[1]);
+      } else {
+        const grupos = gruposAsiFiltrados_();
+        if (grupos.length > 0) {
+          seleccionarGrupoAsi(grupos[0].grado, grupos[0].grupo);
+        }
+      }
+      actualizarEtqGrupoAsi();
+      mostrarVistaAsiAlu_();
+    }
+
+    function seleccionarGrupoAsi(grado, grupo) {
+      grupoAsiSel = { grado: grado, grupo: grupo };
+      pintarFiltroGrupoAsi();
+      mostrarVistaAsiAlu_();
+      gsRun('asistenciaAlumnosGrupo', token, grado, grupo, fechaAsiActiva()).then(function (res) {
+        listaAsiAlu = (res && res.alumnos) || [];
+        const lbl = document.getElementById('lblTurnoAsiAlu');
+        if (lbl) {
+          lbl.textContent = '';
+          lbl.classList.add('oculto');
+        }
+        pintarTablaAsiAlu();
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function recogerObsAlu_() {
+      document.querySelectorAll('#tablaAsiAlu input.asi-obs').forEach(function (inp) {
+        const i = Number(inp.getAttribute('data-i'));
+        if (listaAsiAlu[i]) listaAsiAlu[i].observacion = inp.value;
+      });
+    }</script>

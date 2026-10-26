@@ -1,0 +1,667 @@
+<script>
+/* AdminJS_10 — formatoFechaCortaUi, leerFormularioTrimestral, abrirPickTrim, cerrarPickTrim, filtrarPickTrim, pintarListaPickTrim, asignarLecturaTrim, quitarLecturaTrim, usarTrimestreAhora, draftCalTrim, ... */
+
+
+    function formatoFechaCortaUi(iso) {
+      const s = String(iso || '');
+      const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m) return s || '—';
+      return m[3] + '/' + m[2] + '/' + m[1];
+    }
+
+    function leerFormularioTrimestral() {
+      const cfg = cfgTrimActual();
+      const out = {
+        ciclo: cfg.ciclo || '',
+        activo: cfg.activo || 'auto',
+        trimestres: {},
+        lecturas: {}
+      };
+      ['1', '2', '3'].forEach(function (t) {
+        const prev = (cfg.trimestres && cfg.trimestres[t]) || {};
+        out.trimestres[t] = {
+          inicio: String(prev.inicio || ''),
+          fin: String(prev.fin || ''),
+          intentos: Math.max(1, parseInt(prev.intentos, 10) || 1)
+        };
+        out.lecturas[t] = {};
+        ['1', '2', '3'].forEach(function (g) {
+          const hid = document.getElementById('trimLec_' + t + '_' + g);
+          const prevL = (cfg.lecturas[t] && cfg.lecturas[t][g]) || '';
+          out.lecturas[t][g] = hid ? String(hid.value || '') : prevL;
+        });
+      });
+      return out;
+    }
+
+    function abrirPickTrim(t, g) {
+      pickTrimCtx = { t: String(t), g: String(g) };
+      const tit = document.getElementById('titPickTrim');
+      const sub = document.getElementById('subPickTrim');
+      if (tit) tit.textContent = 'Elegir lectura de ' + g + '° · ' + etiquetaTrimUi(t);
+      if (sub) sub.textContent = 'Solo se muestran lecturas de ' + g + '°. Toca una para asignarla.';
+      const busq = document.getElementById('busqPickTrim');
+      if (busq) busq.value = '';
+      const modal = document.getElementById('modalPickTrim');
+      if (modal) modal.classList.add('visible');
+      pintarListaPickTrim();
+      if (busq) setTimeout(function () { busq.focus(); }, 30);
+    }
+
+    function cerrarPickTrim() {
+      pickTrimCtx = null;
+      const modal = document.getElementById('modalPickTrim');
+      if (modal) modal.classList.remove('visible');
+    }
+
+    function filtrarPickTrim() {
+      pintarListaPickTrim();
+    }
+
+    function pintarListaPickTrim() {
+      const caja = document.getElementById('listaPickTrim');
+      if (!caja || !pickTrimCtx) return;
+      const g = pickTrimCtx.g;
+      const t = pickTrimCtx.t;
+      const q = String((document.getElementById('busqPickTrim') || {}).value || '').toLowerCase().trim();
+      const actual = String((cfgTrimActual().lecturas[t] && cfgTrimActual().lecturas[t][g]) || '').trim();
+      const lista = lecturasDeGradoTrim(g);
+      const muestra = [];
+      const resto = [];
+      lista.forEach(function (l) {
+        const blob = ((l.tema || '') + ' ' + (l.asignatura || '')).toLowerCase();
+        if (q && blob.indexOf(q) < 0) return;
+        if (esLecturaMuestraTrim(l)) muestra.push(l);
+        else resto.push(l);
+      });
+      function itemHtml(l) {
+        const sel = String(l.id) === actual ? ' sel' : '';
+        return '<button type="button" class="item-pick-trim' + sel + '" onclick="asignarLecturaTrim(\'' +
+          escaparHtml(l.id) + '\')">' +
+          '<strong>' + escaparHtml(l.tema || 'Sin tema') + '</strong>' +
+          '<span>' + escaparHtml(metaLecturaTrim(l) || 'Lectura del banco') + '</span>' +
+        '</button>';
+      }
+      let html = '';
+      if (muestra.length) html += '<div class="grupo-pick-trim">Muestra de ' + g + '°</div>' + muestra.map(itemHtml).join('');
+      if (resto.length) html += '<div class="grupo-pick-trim">Banco general de ' + g + '°</div>' + resto.map(itemHtml).join('');
+      if (!muestra.length && !resto.length) {
+        html = '<p style="color:#64748b;font-size:13px;margin:8px 0;">No hay lecturas de ' + g + '°' + (q ? ' con ese filtro.' : '.') + '</p>';
+      }
+      caja.innerHTML = html;
+    }
+
+    function asignarLecturaTrim(id) {
+      if (!pickTrimCtx) return;
+      const cfg = cfgTrimActual();
+      if (!cfg.lecturas[pickTrimCtx.t]) cfg.lecturas[pickTrimCtx.t] = {};
+      cfg.lecturas[pickTrimCtx.t][pickTrimCtx.g] = String(id || '');
+      cerrarPickTrim();
+      pintarPanelTrimestral();
+      guardarLecturaTrimestral();
+    }
+
+    function quitarLecturaTrim(t, g) {
+      const cfg = cfgTrimActual();
+      if (!cfg.lecturas[t]) cfg.lecturas[t] = {};
+      cfg.lecturas[t][g] = '';
+      pintarPanelTrimestral();
+      guardarLecturaTrimestral();
+    }
+
+    function usarTrimestreAhora(n) {
+      const cfg = cfgTrimActual();
+      cfg.activo = String(n);
+      guardarLecturaTrimestral();
+    }
+
+    let draftCalTrim = null;
+    let trimCalSel = '1';
+    let histCalTrim = { '1': 0, '2': 0, '3': 0 };
+
+    function abrirCalendarioTrim() {
+      const cfg = cfgTrimActual();
+      draftCalTrim = {
+        activo: cfg.activo || 'auto',
+        trimestres: {
+          '1': {
+            inicio: String((cfg.trimestres && cfg.trimestres['1'] && cfg.trimestres['1'].inicio) || ''),
+            fin: String((cfg.trimestres && cfg.trimestres['1'] && cfg.trimestres['1'].fin) || ''),
+            intentos: Math.max(1, parseInt(cfg.trimestres && cfg.trimestres['1'] && cfg.trimestres['1'].intentos, 10) || 1)
+          },
+          '2': {
+            inicio: String((cfg.trimestres && cfg.trimestres['2'] && cfg.trimestres['2'].inicio) || ''),
+            fin: String((cfg.trimestres && cfg.trimestres['2'] && cfg.trimestres['2'].fin) || ''),
+            intentos: Math.max(1, parseInt(cfg.trimestres && cfg.trimestres['2'] && cfg.trimestres['2'].intentos, 10) || 1)
+          },
+          '3': {
+            inicio: String((cfg.trimestres && cfg.trimestres['3'] && cfg.trimestres['3'].inicio) || ''),
+            fin: String((cfg.trimestres && cfg.trimestres['3'] && cfg.trimestres['3'].fin) || ''),
+            intentos: Math.max(1, parseInt(cfg.trimestres && cfg.trimestres['3'] && cfg.trimestres['3'].intentos, 10) || 1)
+          }
+        }
+      };
+      trimCalSel = trimestreServidoUi(cfg) || '1';
+      const selAct = document.getElementById('calTrimActivo');
+      if (selAct) selAct.value = draftCalTrim.activo || 'auto';
+      const msg = document.getElementById('msgCalTrim');
+      if (msg) msg.textContent = '';
+      llenarCamposCalendarioTrim();
+      const modal = document.getElementById('modalCalTrim');
+      if (modal) modal.classList.add('visible');
+      const lbl = document.getElementById('lblCalTrimHist');
+      if (lbl) lbl.textContent = 'Cargando historial…';
+      gsRun('resumenCalendarioTrimestral', token)
+        .then(function (res) {
+          histCalTrim = (res && res.intentosRegistrados) || { '1': 0, '2': 0, '3': 0 };
+          if (res && res.config) {
+            if (!datos.config) datos.config = {};
+            datos.config.lecturasTrimestrales = res.config;
+          }
+          pintarHistCalendarioTrim();
+        })
+        .catch(function () {
+          histCalTrim = { '1': 0, '2': 0, '3': 0 };
+          pintarHistCalendarioTrim();
+        });
+    }
+
+    function cerrarCalendarioTrim() {
+      const modal = document.getElementById('modalCalTrim');
+      if (modal) modal.classList.remove('visible');
+      draftCalTrim = null;
+    }
+
+    function volcarCamposCalendarioTrim() {
+      if (!draftCalTrim) return;
+      const t = trimCalSel;
+      if (!draftCalTrim.trimestres[t]) draftCalTrim.trimestres[t] = { inicio: '', fin: '', intentos: 1 };
+      const ini = document.getElementById('calTrimIni');
+      const fin = document.getElementById('calTrimFin');
+      const nInt = document.getElementById('calTrimIntentos');
+      const act = document.getElementById('calTrimActivo');
+      draftCalTrim.trimestres[t].inicio = ini ? String(ini.value || '') : '';
+      draftCalTrim.trimestres[t].fin = fin ? String(fin.value || '') : '';
+      draftCalTrim.trimestres[t].intentos = Math.max(1, parseInt(nInt && nInt.value, 10) || 1);
+      if (act) draftCalTrim.activo = String(act.value || 'auto');
+    }
+
+    function llenarCamposCalendarioTrim() {
+      ['1', '2', '3'].forEach(function (n) {
+        const b = document.getElementById('tabCalTrim' + n);
+        if (b) b.classList.toggle('activa', n === trimCalSel);
+      });
+      const d = (draftCalTrim && draftCalTrim.trimestres[trimCalSel]) || { inicio: '', fin: '', intentos: 1 };
+      const ini = document.getElementById('calTrimIni');
+      const fin = document.getElementById('calTrimFin');
+      const nInt = document.getElementById('calTrimIntentos');
+      if (ini) ini.value = d.inicio || '';
+      if (fin) fin.value = d.fin || '';
+      if (nInt) nInt.value = String(Math.max(1, parseInt(d.intentos, 10) || 1));
+      pintarHistCalendarioTrim();
+    }
+
+    function cambiarTrimCalendario(n) {
+      volcarCamposCalendarioTrim();
+      trimCalSel = String(n);
+      llenarCamposCalendarioTrim();
+    }
+
+    function pintarHistCalendarioTrim() {
+      const lbl = document.getElementById('lblCalTrimHist');
+      if (!lbl) return;
+      const n = Number((histCalTrim && histCalTrim[trimCalSel]) || 0);
+      const etiq = etiquetaTrimUi(trimCalSel);
+      lbl.textContent = n
+        ? ('Hay ' + n + ' intento' + (n === 1 ? '' : 's') + ' registrado' + (n === 1 ? '' : 's') + ' del ' + etiq + '.')
+        : ('No hay intentos registrados del ' + etiq + '.');
+    }
+
+    function guardarCalendarioTrim() {
+      volcarCamposCalendarioTrim();
+      if (!draftCalTrim) return;
+      const payload = leerFormularioTrimestral();
+      payload.activo = draftCalTrim.activo || 'auto';
+      payload.trimestres = draftCalTrim.trimestres;
+      const msg = document.getElementById('msgCalTrim');
+      if (msg) msg.textContent = 'Guardando…';
+      gsRun('guardarLecturasTrimestrales', token, payload)
+        .then(function (res) {
+          if (res && res.config) {
+            if (!datos.config) datos.config = {};
+            datos.config.lecturasTrimestrales = res.config;
+          }
+          pintarPanelTrimestral();
+          if (msg) msg.textContent = (res && res.mensaje) || 'Calendario guardado.';
+          toast('Calendario trimestral guardado.', 'exito');
+          cerrarCalendarioTrim();
+        })
+        .catch(function (e) {
+          if (msg) msg.textContent = '';
+          toast((e && e.message) || 'No se pudo guardar el calendario.', 'error');
+        });
+    }
+
+    function pedirLimpiarIntentosTrim() {
+      volcarCamposCalendarioTrim();
+      const etiq = etiquetaTrimUi(trimCalSel);
+      const n = Number((histCalTrim && histCalTrim[trimCalSel]) || 0);
+      const aviso = n
+        ? ('Se borrarán ' + n + ' resultado' + (n === 1 ? '' : 's') + ' del ' + etiq + '. Los alumnos podrán volver a presentar ese examen trimestral. Esta acción no se puede deshacer. ¿Continuar?')
+        : ('No hay resultados del ' + etiq + '. ¿Quieres revisar de todos modos?');
+      confirmar(aviso, 'Limpiar historial').then(function (ok) {
+        if (!ok) return;
+        const msg = document.getElementById('msgCalTrim');
+        if (msg) msg.textContent = 'Limpiando historial…';
+        gsRun('limpiarIntentosTrimestrales', token, trimCalSel)
+          .then(function (res) {
+            histCalTrim[trimCalSel] = 0;
+            pintarHistCalendarioTrim();
+            if (msg) msg.textContent = (res && res.mensaje) || 'Historial limpio.';
+            toast((res && res.mensaje) || 'Historial limpio.', 'exito');
+          })
+          .catch(function (e) {
+            if (msg) msg.textContent = '';
+            toast((e && e.message) || 'No se pudo limpiar el historial.', 'error');
+          });
+      });
+    }
+
+    function bancoTrimSinAsignar() {
+      const cfg = cfgTrimActual();
+      let vacios = 0;
+      ['1', '2', '3'].forEach(function (t) {
+        ['1', '2', '3'].forEach(function (g) {
+          if (!String((cfg.lecturas[t] && cfg.lecturas[t][g]) || '').trim()) vacios++;
+        });
+      });
+      return vacios === 9;
+    }
+
+    function pedirMuestraTrimestral() {
+      const vacio = bancoTrimSinAsignar();
+      const aviso = vacio
+        ? 'Se crearán 9 lecturas de muestra (una por grado y trimestre) y se asignarán a este banco. Podrás cambiarlas después por cualquier lectura del mismo grado. ¿Continuar?'
+        : 'Ya hay lecturas asignadas. ¿Quieres reemplazarlas por las 9 de muestra? Los casilleros actuales se sobrescribirán.';
+      confirmar(aviso, 'Lecturas de muestra').then(function (ok) {
+        if (!ok) return;
+        cargarMuestraTrimestral(!vacio);
+      });
+    }
+
+    function cargarMuestraTrimestral(reemplazar) {
+      if (sembrandoTrim) return;
+      sembrandoTrim = true;
+      const msg = document.getElementById('msgTrimestre');
+      if (msg) msg.textContent = 'Creando lecturas de muestra…';
+      toast('Preparando las 9 lecturas de muestra…', 'info');
+      gsRun('sembrarBancoTrimestral', token, !!reemplazar)
+        .then(function (res) {
+          if (res && res.config) {
+            if (!datos.config) datos.config = {};
+            datos.config.lecturasTrimestrales = res.config;
+          }
+          toast((res && res.mensaje) || 'Muestra lista.', 'exito');
+          if (msg) msg.textContent = (res && res.mensaje) || '';
+          cargarDetalleLecturas();
+        })
+        .catch(function (e) {
+          if (msg) msg.textContent = '';
+          toast((e && e.message) || 'No se pudieron crear las lecturas de muestra.', 'error');
+        })
+        .then(function () { sembrandoTrim = false; });
+    }
+
+    function guardarLecturaTrimestral() {
+      const payload = leerFormularioTrimestral();
+      const msg = document.getElementById('msgTrimestre');
+      if (msg) msg.textContent = 'Guardando…';
+      gsRun('guardarLecturasTrimestrales', token, payload)
+        .then(function (res) {
+          if (res && res.config) {
+            if (!datos.config) datos.config = {};
+            datos.config.lecturasTrimestrales = res.config;
+          }
+          pintarPanelTrimestral();
+          if (msg) msg.textContent = (res && res.mensaje) || 'Guardado.';
+          toast((res && res.mensaje) || 'Banco trimestral guardado.', 'exito');
+        })
+        .catch(function (e) {
+          if (msg) msg.textContent = '';
+          toast((e && e.message) || 'No se pudo guardar.', 'error');
+        });
+    }
+
+    function clasificarNivelesBanco() {
+      confirmar('Se analizarán todas las preguntas del banco y se guardará el nivel (literal, inferencial o crítica). Puede tardar uno o dos minutos. ¿Continuar?', 'Clasificar niveles')
+        .then(function (ok) {
+          if (!ok) return;
+          toast('Analizando preguntas…', 'info');
+          gsRun('clasificarNivelesTodasLasPreguntas', token)
+            .then(function (res) {
+              toast((res && res.mensaje) || 'Niveles actualizados.', 'exito');
+              cargarDetalleLecturas();
+            })
+            .catch(function (e) {
+              toast((e && e.message) || 'No se pudieron clasificar las preguntas.', 'error');
+            });
+        });
+    }
+
+    function obtenerClaseAsignatura(asig) {
+      const a = String(asig || '').toLowerCase();
+      if (a.indexOf('español') >= 0 || a.indexOf('lenguajes') >= 0) return 'asig-espanol';
+      if (a.indexOf('ciencia') >= 0 || a.indexOf('biolog') >= 0 || a.indexOf('física') >= 0 || a.indexOf('química') >= 0) return 'asig-ciencias';
+      if (a.indexOf('historia') >= 0) return 'asig-historia';
+      if (a.indexOf('cívica') >= 0 || a.indexOf('civica') >= 0 || a.indexOf('ética') >= 0) return 'asig-civica';
+      if (a.indexOf('tecnolog') >= 0) return 'asig-tecnologia';
+      if (a.indexOf('matemática') >= 0) return 'asig-matematicas';
+      if (a.indexOf('inglés') >= 0 || a.indexOf('ingles') >= 0) return 'asig-ingles';
+      if (a.indexOf('arte') >= 0) return 'asig-artes';
+      if (a.indexOf('geograf') >= 0) return 'asig-geografia';
+      return '';
+    }
+
+    const filtrosAsigPorGrado = { '1': '', '2': '', '3': '' };
+
+    function cambiarFiltroAsigCol(grado, valor) {
+      filtrosAsigPorGrado[grado] = String(valor || '').trim();
+      pintarLecturas();
+    }
+
+    function cambiarFiltroLecturasUI() {
+      pintarLecturas();
+    }
+
+    function limpiarBusquedaLecturas() {
+      const inp = document.getElementById('cBusqueda');
+      if (inp) {
+        inp.value = '';
+        pintarLecturas();
+        inp.focus();
+      }
+    }
+
+    function restablecerTodosFiltros() {
+      filtrosAsigPorGrado['1'] = '';
+      filtrosAsigPorGrado['2'] = '';
+      filtrosAsigPorGrado['3'] = '';
+      ['1', '2', '3'].forEach(function (g) {
+        const sel = document.getElementById('filtroAsigCol_' + g);
+        if (sel) sel.value = '';
+      });
+      const inp = document.getElementById('cBusqueda');
+      if (inp) inp.value = '';
+      pintarLecturas();
+    }
+
+    function actualizarSelectAsignaturasFiltro() {
+      const lista = datos.bancoDetalle || [];
+
+      // Actualizar el filtro por asignatura en cada una de las 3 columnas
+      ['1', '2', '3'].forEach(function (g) {
+        const sel = document.getElementById('filtroAsigCol_' + g);
+        if (!sel) return;
+        const actualVal = filtrosAsigPorGrado[g] || sel.value || '';
+
+        // Contar materias en este grado
+        const conteos = {};
+        let totalEnGrado = 0;
+        lista.forEach(function (l) {
+          const gL = String(l.grado || '').replace(/[^0-9]/g, '') || '1';
+          if (gL === g) {
+            totalEnGrado++;
+            const asig = String(l.asignatura || '').trim();
+            if (asig) conteos[asig] = (conteos[asig] || 0) + 1;
+          }
+        });
+
+        let html = '<option value="">Todas las materias (' + totalEnGrado + ')</option>';
+        Object.keys(conteos).sort().forEach(function (a) {
+          html += '<option value="' + escaparHtml(a) + '">' + escaparHtml(a) + ' (' + conteos[a] + ')</option>';
+        });
+        sel.innerHTML = html;
+        if (actualVal && conteos[actualVal]) sel.value = actualVal;
+        else if (actualVal && !conteos[actualVal]) sel.value = '';
+      });
+
+      // Actualizar también el select de edición modal
+      const asigsVistas = {};
+      lista.forEach(function (l) { if (l.asignatura) asigsVistas[String(l.asignatura).trim()] = true; });
+      (datos.config && datos.config.asignaturas ? datos.config.asignaturas : []).forEach(function (a) { asigsVistas[String(a).trim()] = true; });
+      const selEdit = document.getElementById('editAsi');
+      if (selEdit) {
+        selEdit.innerHTML = Object.keys(asigsVistas).sort().map(function (a) {
+          return '<option value="' + escaparHtml(a) + '">' + escaparHtml(a) + '</option>';
+        }).join('');
+      }
+    }
+
+    function alternarVisibilidadListaLecturas(forzarEstado, marcarActivo) {
+      if (forzarEstado !== undefined) {
+        listaLecturasVisible = !!forzarEstado;
+      } else {
+        listaLecturasVisible = !listaLecturasVisible;
+      }
+      const cajaBanco = document.getElementById('cajaListaYFiltrosLecturas');
+      const cajaTrim = document.getElementById('panelLecturaTrimestral');
+      const btn = document.getElementById('btnToggleListaLecturas');
+      if (cajaBanco) cajaBanco.classList.add('oculto');
+      if (cajaTrim) cajaTrim.classList.add('oculto');
+      if (listaLecturasVisible) {
+        if (subLecActual === 'trim') {
+          if (cajaTrim) cajaTrim.classList.remove('oculto');
+        } else if (subLecActual === 'banco' && cajaBanco) {
+          cajaBanco.classList.remove('oculto');
+        }
+        if (btn) {
+          if (marcarActivo === false) btn.classList.remove('activo');
+          else btn.classList.add('activo');
+          btn.setAttribute('aria-label', subLecActual === 'trim' ? 'Lectura trimestral' : 'Lista de lecturas');
+        }
+      } else if (btn) {
+        btn.classList.remove('activo');
+        btn.setAttribute('aria-label', 'Volver a la lista');
+      }
+      sincronizarUbicacionAccionesBanco_();
+    }
+
+    function sincronizarUbicacionAccionesBanco_() {
+      const acc = document.getElementById('accionesLecBanco');
+      const slotBarra = document.getElementById('slotAccionesBarraBanco');
+      const slotDet = document.getElementById('slotAccionesDetalleLec');
+      const vistaDet = document.getElementById('vistaDetalleLec');
+      const barraSup = document.getElementById('barraSuperiorBancoLec');
+      const enDetalle = !!(vistaDet && !vistaDet.classList.contains('oculto'));
+      if (enDetalle) {
+        if (acc && slotDet && acc.parentNode !== slotDet) slotDet.appendChild(acc);
+        if (barraSup) barraSup.classList.add('oculto');
+      } else {
+        if (acc && slotBarra && acc.parentNode !== slotBarra) slotBarra.appendChild(acc);
+        if (barraSup) {
+          if (subLecActual === 'banco' || subLecActual === 'trim') barraSup.classList.remove('oculto');
+          else barraSup.classList.add('oculto');
+        }
+      }
+    }
+
+    function pintarLecturas() {
+      const lista = (datos.bancoDetalle && datos.bancoDetalle.length) ? datos.bancoDetalle : (datos.lecturas || []);
+      const busqueda = String(document.getElementById('cBusqueda').value || '').toLowerCase().trim();
+
+      const btnLimp = document.getElementById('btnLimpiarBusqueda');
+      if (btnLimp) {
+        if (busqueda) btnLimp.classList.remove('oculto');
+        else btnLimp.classList.add('oculto');
+      }
+
+      const hayFiltrosActivos = busqueda !== '' ||
+        (filtrosAsigPorGrado['1'] && filtrosAsigPorGrado['1'] !== '') ||
+        (filtrosAsigPorGrado['2'] && filtrosAsigPorGrado['2'] !== '') ||
+        (filtrosAsigPorGrado['3'] && filtrosAsigPorGrado['3'] !== '');
+
+      const btnReset = document.getElementById('btnRestablecerFiltros');
+      if (btnReset) {
+        if (hayFiltrosActivos) btnReset.classList.remove('oculto');
+        else btnReset.classList.add('oculto');
+      }
+
+      function crearCardLecturaHtml(l) {
+        const esActiva = l.id === lecturaSeleccionadaId && !modoCreacionNueva;
+        const activaRuleta = String(l.activa).toUpperCase() !== 'NO';
+        const labelAsig = l.asignatura || 'Sin materia';
+        const labelTema = l.tema || l.id || 'Lectura';
+        const claseAsig = obtenerClaseAsignatura(labelAsig);
+        const cantPalabras = Number(l.palabras) || (l.texto ? l.texto.split(/\s+/).filter(Boolean).length : 0);
+        const cantPreg = (l.preguntas && Array.isArray(l.preguntas) && l.preguntas.length)
+          ? l.preguntas.length
+          : Number(l.nPreguntas || 0);
+
+
+        return '<button type="button" class="card-lectura-nav' + (esActiva ? ' activa' : '') + '" onclick="seleccionarLectura(\'' + escaparHtml(l.id) + '\')">' +
+          '<div class="card-lec-titulo" title="' + escaparHtml(labelTema) + '">' + escaparHtml(labelTema) + '</div>' +
+          '<div class="card-lec-meta">' +
+            '<span class="badge-asig ' + claseAsig + '">' + escaparHtml(labelAsig) + '</span>' +
+            '<span>' + cantPalabras + ' pal. · ' + cantPreg + ' preg.' +
+              (activaRuleta ? '' : ' · <span class="badge-oculta-card">Oculta</span>') +
+            '</span>' +
+          '</div>' +
+        '</button>';
+      }
+
+      let totalCoincidencias = 0;
+      const todasVisibles = [];
+
+      ['1', '2', '3'].forEach(function (g) {
+        const contCol = document.getElementById('listaLecturasCol_' + g);
+        const lblConteo = document.getElementById('conteoCol_' + g);
+        const asigF = (filtrosAsigPorGrado[g] || '').toLowerCase().trim();
+
+        const lecturasGrado = lista.filter(function (l) {
+          const gL = String(l.grado || '').replace(/[^0-9]/g, '') || '1';
+          if (gL !== g) return false;
+          if (asigF && String(l.asignatura || '').toLowerCase().trim() !== asigF) return false;
+          if (busqueda) {
+            const matchTema = String(l.tema || '').toLowerCase().indexOf(busqueda) >= 0;
+            const matchAsig = String(l.asignatura || '').toLowerCase().indexOf(busqueda) >= 0;
+            const matchTexto = String(l.texto || '').toLowerCase().indexOf(busqueda) >= 0;
+            if (!matchTema && !matchAsig && !matchTexto) return false;
+          }
+          return true;
+        });
+
+        // Ordenar por Asignatura y luego Tema
+        lecturasGrado.sort(function (a, b) {
+          const asigA = String(a.asignatura || '').trim();
+          const asigB = String(b.asignatura || '').trim();
+          const comp = asigA.localeCompare(asigB, 'es', { sensitivity: 'base' });
+          if (comp !== 0) return comp;
+          return String(a.tema || '').trim().localeCompare(String(b.tema || '').trim(), 'es', { sensitivity: 'base' });
+        });
+
+        totalCoincidencias += lecturasGrado.length;
+        lecturasGrado.forEach(function (l) { todasVisibles.push(l); });
+
+        if (lblConteo) lblConteo.textContent = lecturasGrado.length;
+
+        if (contCol) {
+          if (!lecturasGrado.length) {
+            if (!lista.length) {
+              contCol.innerHTML = '<div style="text-align:center;padding:18px 8px;color:#64748b;">' +
+                '<p style="margin:0 0 10px;font-size:13px;">Aún no hay lecturas en ' + g + '°.</p>' +
+                '<button type="button" class="btn-verde" style="padding:6px 10px;font-size:12px;margin:0 4px 4px;" onclick="iniciarNuevaLectura()">Nueva lectura</button>' +
+                '<button type="button" class="btn-secundario" style="padding:6px 10px;font-size:12px;margin:0 4px 4px;" onclick="alternarPanelIA()">Lectura IA</button>' +
+                '</div>';
+            } else {
+              contCol.innerHTML = '<p style="color:#94a3b8;font-size:12px;padding:8px 4px;margin:0;">Sin lecturas con estos filtros</p>';
+            }
+          } else {
+            let colHtml = '';
+            lecturasGrado.forEach(function (l) {
+              colHtml += crearCardLecturaHtml(l);
+            });
+            contCol.innerHTML = colHtml;
+          }
+        }
+      });
+
+      const lblTotal = document.getElementById('lblTotalLecturas');
+      if (lblTotal) lblTotal.textContent = 'Lecturas disponibles (' + totalCoincidencias + ' de ' + lista.length + ')';
+
+      const existeSel = todasVisibles.some(function (l) { return l.id === lecturaSeleccionadaId; });
+      if (lecturaSeleccionadaId && !existeSel && !modoCreacionNueva && !modoEdicionActivo) {
+        lecturaSeleccionadaId = '';
+      }
+
+      if (!modoCreacionNueva) {
+        mostrarDetalleLecturaSeleccionada();
+      }
+    }
+
+    function marcarEditorDirty() {
+      editorDirty = true;
+    }
+
+    function resetearEditor() {
+      modoEdicionActivo = false;
+      modoCreacionNueva = false;
+      editorDirty = false;
+      ignorarCambioQuill = false;
+    }
+
+    function salirSiEditorDirty() {
+      if (!modoEdicionActivo && !modoCreacionNueva) return Promise.resolve(true);
+      if (!editorDirty) {
+        resetearEditor();
+        return Promise.resolve(true);
+      }
+      return modal({
+        titulo: 'Cambios sin guardar',
+        mensaje: 'Tienes cambios en la lectura. ¿Qué deseas hacer?',
+        botones: [
+          { texto: 'Cancelar', valor: 'cancelar', clase: 'btn-secundario' },
+          { texto: 'Descartar', valor: 'descartar', clase: 'btn-naranja' },
+          { texto: 'Guardar', valor: 'guardar', clase: 'btn-verde' }
+        ]
+      }).then(function (accion) {
+        if (accion === 'cancelar') return false;
+        if (accion === 'guardar') {
+          return guardarEdicionDosColumnas().then(function (ok) {
+            return !!ok;
+          });
+        }
+        resetearEditor();
+        return true;
+      });
+    }
+
+    function seleccionarLectura(id) {
+      if (id === lecturaSeleccionadaId && !modoCreacionNueva) return;
+      salirSiEditorDirty().then(function (ok) {
+        if (!ok) return;
+        lecturaSeleccionadaId = id;
+        pintarLecturas();
+      });
+    }
+
+    function volverAListaLecturas() {
+      const pIA = document.getElementById('panelIA');
+      const pMasivo = document.getElementById('panelMasivo');
+      const iaAbierta = pIA && !pIA.classList.contains('oculto');
+      const masivoAbierto = pMasivo && !pMasivo.classList.contains('oculto');
+      if (listaLecturasVisible && !lecturaSeleccionadaId && !modoCreacionNueva && !iaAbierta && !masivoAbierto) {
+        return;
+      }
+      salirSiEditorDirty().then(function (ok) {
+        if (!ok) return;
+        resetearEditor();
+        lecturaSeleccionadaId = '';
+        if (pIA) pIA.classList.add('oculto');
+        if (pMasivo) pMasivo.classList.add('oculto');
+        const c = document.getElementById('vistaDetalleLec');
+        if (c) c.classList.add('oculto');
+        alternarVisibilidadListaLecturas(true);
+        if (subLecActual === 'trim') pintarPanelTrimestral();
+        else pintarLecturas();
+      });
+    }</script>

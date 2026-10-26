@@ -1,0 +1,692 @@
+<script>
+/* AdminJS_04 — actualizarEtqGruposRepAsi, leerGruposPanelRepAsi_, htmlPanelGruposRepAsi_, filtrarCatalogoRepAsi, toggleDdGruposRep, cerrarDdGruposRep, toggleGrupoAlcanceRep, marcarTodosGruposRep, generarReporteAsi, coloresDistAsi_, ... */
+
+
+    function actualizarEtqGruposRepAsi() {
+      const etq = document.getElementById('etqGruposRepAsi');
+      const btn = document.getElementById('btnDdGruposRep');
+      const n = (filtroGpAlcanceSel || []).length;
+      let txt = 'Grupos';
+      if (n === 1) txt = String(filtroGpAlcanceSel[0].split('|')[1] || '').toUpperCase() || 'Grupos';
+      else if (n > 1) txt = n + ' grupos';
+      if (etq) etq.textContent = txt;
+      if (btn) btn.classList.toggle('activo', n > 0);
+    }
+
+    function leerGruposPanelRepAsi_() {
+      const panel = document.getElementById('panelGruposRepAsi');
+      filtroGpAlcanceSel = [];
+      if (!panel) return;
+      panel.querySelectorAll('input[type="checkbox"]').forEach(function (c) {
+        if (c.checked) filtroGpAlcanceSel.push(c.value);
+      });
+    }
+
+    function htmlPanelGruposRepAsi_(grupos) {
+      if (!grupos.length) return '<span class="sub-lec" style="margin:0">Sin grupos</span>';
+      return '<div class="asi-dd-acc">' +
+        '<button type="button" onclick="marcarTodosGruposRep(true, event)">Todos</button>' +
+        '<button type="button" onclick="marcarTodosGruposRep(false, event)">Ninguno</button>' +
+        '</div>' + grupos.map(function (g) {
+          const v = valorGrupoAsi_(g);
+          const on = filtroGpAlcanceSel.indexOf(v) >= 0;
+          return '<label><input type="checkbox" value="' + escaparHtml(v) + '"' +
+            (on ? ' checked' : '') + ' onchange="toggleGrupoAlcanceRep()">' +
+            escaparHtml(String(g.grupo || '').toUpperCase()) + '</label>';
+        }).join('');
+    }
+
+    function filtrarCatalogoRepAsi(opts) {
+      opts = opts || {};
+      const grupos = ((catRepAsi && catRepAsi.grupos) || []).slice().sort(function (a, b) {
+        return String(a.grupo || '').localeCompare(String(b.grupo || ''), 'es', { numeric: true, sensitivity: 'base' });
+      });
+      const permitidos = {};
+      grupos.forEach(function (g) { permitidos[valorGrupoAsi_(g)] = true; });
+      filtroGpAlcanceSel = (filtroGpAlcanceSel || []).filter(function (v) { return permitidos[v]; });
+      if (!opts.sinPanel) {
+        const panel = document.getElementById('panelGruposRepAsi');
+        if (panel) panel.innerHTML = htmlPanelGruposRepAsi_(grupos);
+      }
+      actualizarEtqGruposRepAsi();
+      const gps = (filtroGpAlcanceSel || []).map(function (v) {
+        return String(v.split('|')[1] || '').toLowerCase();
+      }).filter(Boolean);
+      const selA = document.getElementById('selAluRepAsi');
+      const selM = document.getElementById('selMaeRepAsi');
+      const matPrev = selA ? selA.value : '';
+      const maePrev = selM ? selM.value : '';
+      let alumnos = (catRepAsi && catRepAsi.alumnos) || [];
+      if (gps.length) {
+        alumnos = alumnos.filter(function (a) {
+          return gps.indexOf(String(a.grupo).toLowerCase()) >= 0;
+        });
+      }
+      if (selA) {
+        selA.innerHTML = '<option value="">Alumno</option>' + alumnos.map(function (a) {
+          return '<option value="' + escaparHtml(a.matricula) + '">' + escaparHtml(a.nombre) + ' · ' + escaparHtml(String(a.grupo || '').toUpperCase()) + '</option>';
+        }).join('');
+        if (matPrev) selA.value = matPrev;
+      }
+      if (selM) {
+        let maestros = (catRepAsi && catRepAsi.maestros) || [];
+        if (gps.length) {
+          maestros = maestros.filter(function (m) {
+            const gs = m.grupos || [];
+            if (!gs.length && typeof m === 'string') return true;
+            return gs.some(function (g) {
+              return gps.indexOf(String(g.grupo).toLowerCase()) >= 0;
+            });
+          });
+        }
+        selM.innerHTML = '<option value="">Docente</option>' + maestros.map(function (m) {
+          const n = (m && m.nombre) ? m.nombre : String(m);
+          return '<option value="' + escaparHtml(n) + '">' + escaparHtml(n) + '</option>';
+        }).join('');
+        if (maePrev) selM.value = maePrev;
+      }
+      ajustarFiltrosRepAsi();
+      actualizarEtqAluRepAsi();
+      actualizarEtqMaeRepAsi();
+    }
+
+    function toggleDdGruposRep(ev) {
+      if (ev) ev.stopPropagation();
+      const panel = document.getElementById('panelGruposRepAsi');
+      if (!panel) return;
+      const abrir = panel.classList.contains('oculto');
+      if (abrir) panel.classList.remove('oculto');
+      else panel.classList.add('oculto');
+    }
+
+    function cerrarDdGruposRep() {
+      const panel = document.getElementById('panelGruposRepAsi');
+      if (panel) panel.classList.add('oculto');
+    }
+
+    function toggleGrupoAlcanceRep() {
+      leerGruposPanelRepAsi_();
+      filtrarCatalogoRepAsi({ sinPanel: true });
+    }
+
+    function marcarTodosGruposRep(todos, ev) {
+      if (ev) ev.stopPropagation();
+      const panel = document.getElementById('panelGruposRepAsi');
+      if (!panel) return;
+      panel.querySelectorAll('input[type="checkbox"]').forEach(function (c) { c.checked = !!todos; });
+      leerGruposPanelRepAsi_();
+      filtrarCatalogoRepAsi({ sinPanel: true });
+    }
+
+    function generarReporteAsi() {
+      if (ramaRepAsi !== 'alumno' && ramaRepAsi !== 'maestro') {
+        toast('Elige Alumnos o Docentes.', 'error');
+        return;
+      }
+      ajustarFiltrosRepAsi();
+      const grupos = (filtroGpAlcanceSel || []).map(function (v) {
+        const p = String(v).split('|');
+        return { grado: p[0] || '', grupo: p[1] || '' };
+      }).filter(function (g) { return g.grupo; });
+      const grupo = grupos.length === 1 ? grupos[0].grupo : '';
+      const grado = grupos.length === 1 ? (grupos[0].grado || '') : '';
+      const esMae = ramaRepAsi === 'maestro';
+      const maestro = esMae ? (((document.getElementById('selMaeRepAsi') || {}).value || '').trim()) : '';
+      const matricula = esMae ? '' : (((document.getElementById('selAluRepAsi') || {}).value || '').trim());
+      let tipo = 'grupo';
+      if (esMae) tipo = 'maestro';
+      else if (matricula) tipo = 'alumno';
+      else if (sesionRol !== 'prefecto' && !grado && !grupos.length) tipo = 'escuela';
+      const cuerpo = document.getElementById('cuerpoRepAsi');
+      if (cuerpo) cuerpo.innerHTML = '<p class="sub-lec">Generando reporte…</p>';
+      gsRun('reporteAsistencia', token, {
+        tipo: tipo,
+        fechaIni: (document.getElementById('fechaIniRepAsi') || {}).value,
+        fechaFin: (document.getElementById('fechaFinRepAsi') || {}).value,
+        grado: grado,
+        grupo: grupo,
+        grupos: grupos,
+        matricula: matricula,
+        maestro: maestro
+      }).then(function (res) {
+        pintarReporteAsi(res || {});
+      }).catch(function (e) {
+        if (cuerpo) cuerpo.innerHTML = '';
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function coloresDistAsi_(tipo) {
+      if (tipo === 'maestro') {
+        return [
+          { k: 'presente', etiqueta: 'Asistió', color: '#16a34a' },
+          { k: 'retardo', etiqueta: 'Llegó tarde', color: '#ca8a04' },
+          { k: 'falta', etiqueta: 'Faltó', color: '#dc2626' }
+        ];
+      }
+      return [
+        { k: 'P', etiqueta: 'Presente', color: '#16a34a' },
+        { k: 'T', etiqueta: 'Tarde', color: '#ca8a04' },
+        { k: 'A', etiqueta: 'Ausente', color: '#dc2626' },
+        { k: 'J', etiqueta: 'Justificado', color: '#2563eb' },
+        { k: 'PE', etiqueta: 'Permiso', color: '#7c3aed' }
+      ];
+    }
+
+    function svgPastelAsi_(dist, tipo) {
+      const items = coloresDistAsi_(tipo).map(function (it) {
+        return { etiqueta: it.etiqueta, valor: Number((dist && dist[it.k]) || 0), color: it.color };
+      }).filter(function (s) { return s.valor > 0; });
+      if (!items.length) return '<p class="sub-lec" style="margin:0">Sin datos en el periodo.</p>';
+      const total = items.reduce(function (a, s) { return a + s.valor; }, 0) || 1;
+      let ang = -Math.PI / 2;
+      const cx = 120, cy = 110, r = 78;
+      let svg = '<svg class="grafica-svg" viewBox="0 0 420 230" preserveAspectRatio="xMidYMid meet">';
+      items.forEach(function (s, i) {
+        const porc = s.valor / total;
+        const a2 = ang + porc * Math.PI * 2;
+        const x1 = cx + r * Math.cos(ang), y1 = cy + r * Math.sin(ang);
+        const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+        const large = porc > 0.5 ? 1 : 0;
+        svg += '<path d="M ' + cx + ' ' + cy + ' L ' + x1 + ' ' + y1 + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + s.color + '"/>';
+        svg += '<rect x="230" y="' + (28 + i * 22) + '" width="12" height="12" rx="2" fill="' + s.color + '"/>';
+        svg += '<text x="248" y="' + (38 + i * 22) + '" font-size="12" fill="#334155">' + s.etiqueta + ' · ' + s.valor + '</text>';
+        ang = a2;
+      });
+      svg += '</svg>';
+      return svg;
+    }
+
+    function svgBarrasPctAsi_(serie) {
+      const xs = serie || [];
+      if (!xs.length) return '<p class="sub-lec" style="margin:0">Aún no hay tendencia.</p>';
+      const w = 520, h = 220, pad = 40;
+      const n = xs.length;
+      const max = 100;
+      const bw = Math.min(28, (w - pad - 12) / n * 0.65);
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet">';
+      for (let t = 0; t <= 4; t++) {
+        const v = t * 25;
+        const y = h - 36 - ((h - 56) * v) / max;
+        svg += '<line x1="' + pad + '" y1="' + y + '" x2="' + (w - 8) + '" y2="' + y + '" stroke="#eef2f6"/>';
+        svg += '<text x="' + (pad - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="10" fill="#94a3b8">' + v + '</text>';
+      }
+      xs.forEach(function (s, i) {
+        const x = pad + (i + 0.5) * ((w - pad - 8) / n);
+        const hh = ((h - 56) * Number(s.pct || 0)) / max;
+        svg += '<rect x="' + (x - bw / 2) + '" y="' + (h - 36 - hh) + '" width="' + bw + '" height="' + hh + '" fill="#1f6f9f" rx="3"/>';
+        const raw = String(s.etiqueta || s.hora || s.fecha || '');
+        const etq = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? fmtFechaRepAsi_(raw) : raw.replace(/^20\d\d-/, '');
+        const corto = etq.length > 8 ? String(s.bloque || etq).slice(0, 8) : etq;
+        svg += '<text x="' + x + '" y="' + (h - 18) + '" text-anchor="middle" font-size="9" fill="#64748b">' + corto + '</text>';
+      });
+      svg += '</svg>';
+      return svg;
+    }
+
+    function coloresLineasAsi_(i) {
+      const cs = ['#1f6f9f', '#d35400', '#1e8449', '#7c3aed', '#be123c', '#0f766e', '#ca8a04'];
+      return cs[i % cs.length];
+    }
+
+    function seriesLineasRepAsi_(bloque) {
+      const sg = (bloque && bloque.seriesGrupos) || [];
+      if (sg.length) return sg;
+      const dias = (bloque && bloque.serieDias) || [];
+      return dias.length ? [{ etiqueta: 'Total', puntos: dias }] : [];
+    }
+
+    function svgLineasPctAsi_(series) {
+      const ss = series || [];
+      if (!ss.length) return '<p class="sub-lec" style="margin:0">Aún no hay tendencia.</p>';
+      const fechas = {};
+      ss.forEach(function (s) {
+        (s.puntos || []).forEach(function (p) {
+          if (p && p.fecha) fechas[p.fecha] = true;
+        });
+      });
+      const xs = Object.keys(fechas).sort();
+      if (!xs.length) return '<p class="sub-lec" style="margin:0">Aún no hay tendencia.</p>';
+      const w = 560, h = 240, padL = 36, padR = 10, padT = 14, padB = 52;
+      const max = 100;
+      const innerW = w - padL - padR;
+      const innerH = h - padT - padB;
+      let svg = '<svg class="grafica-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet">';
+      for (let t = 0; t <= 4; t++) {
+        const v = t * 25;
+        const y = padT + innerH - (innerH * v) / max;
+        svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (w - padR) + '" y2="' + y + '" stroke="#eef2f6"/>';
+        svg += '<text x="' + (padL - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="10" fill="#94a3b8">' + v + '</text>';
+      }
+      ss.forEach(function (s, si) {
+        const color = s.color || coloresLineasAsi_(si);
+        const mapa = {};
+        (s.puntos || []).forEach(function (p) { mapa[p.fecha] = Number(p.pct || 0); });
+        let d = '';
+        xs.forEach(function (fe, i) {
+          if (mapa[fe] == null) return;
+          const x = padL + (xs.length === 1 ? innerW / 2 : (i * innerW) / (xs.length - 1));
+          const y = padT + innerH - (innerH * mapa[fe]) / max;
+          d += (d ? ' L ' : 'M ') + x + ' ' + y;
+        });
+        if (d) svg += '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2.2" stroke-linejoin="round"/>';
+        xs.forEach(function (fe, i) {
+          if (mapa[fe] == null) return;
+          const x = padL + (xs.length === 1 ? innerW / 2 : (i * innerW) / (xs.length - 1));
+          const y = padT + innerH - (innerH * mapa[fe]) / max;
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="' + color + '"/>';
+        });
+      });
+      xs.forEach(function (fe, i) {
+        const x = padL + (xs.length === 1 ? innerW / 2 : (i * innerW) / (xs.length - 1));
+        const etq = fmtFechaRepAsi_(fe) || String(fe).replace(/^20\d\d-/, '');
+        svg += '<text x="' + x + '" y="' + (h - 34) + '" text-anchor="middle" font-size="9" fill="#64748b">' + etq + '</text>';
+      });
+      ss.forEach(function (s, si) {
+        const color = s.color || coloresLineasAsi_(si);
+        const lx = padL + si * 78;
+        svg += '<rect x="' + lx + '" y="' + (h - 22) + '" width="10" height="10" rx="2" fill="' + color + '"/>';
+        svg += '<text x="' + (lx + 14) + '" y="' + (h - 13) + '" font-size="11" fill="#334155">' + String(s.etiqueta || '') + '</text>';
+      });
+      svg += '</svg>';
+      return svg;
+    }
+
+    function htmlKpisAsi_(k, tipoMae) {
+      let html = '<div class="asi-kpi-grid">';
+      html += '<div class="asi-kpi"><div class="n">' + (k.pct || 0) + '%</div><div class="l">Asistencia</div></div>';
+      html += '<div class="asi-kpi"><div class="n">' + (k.sesiones || 0) + '</div><div class="l">' + (tipoMae ? 'Bloques' : 'Registros') + '</div></div>';
+      html += '<div class="asi-kpi"><div class="n">' + (k.presentes || 0) + '</div><div class="l">Presentes</div></div>';
+      html += '<div class="asi-kpi"><div class="n">' + (k.tardes || 0) + '</div><div class="l">' + (tipoMae ? 'Retardos' : 'Tarde') + '</div></div>';
+      html += '<div class="asi-kpi"><div class="n">' + (k.ausentes || 0) + '</div><div class="l">' + (tipoMae ? 'Faltas' : 'Ausentes') + '</div></div>';
+      if (!tipoMae) {
+        html += '<div class="asi-kpi"><div class="n">' + (k.justificados || 0) + '</div><div class="l">Justificados</div></div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function htmlTablaAsi_(cols, filas, celdasFn, _scroll, claseFn) {
+      let html = '<div class="caja-tabla-mat"><table class="tabla-asi"><thead><tr>';
+      cols.forEach(function (c) { html += '<th>' + c + '</th>'; });
+      html += '</tr></thead><tbody>';
+      if (!filas || !filas.length) html += '<tr><td colspan="' + cols.length + '">No hay registros en ese periodo.</td></tr>';
+      else {
+        filas.forEach(function (r) {
+          const cls = claseFn ? claseFn(r) : '';
+          html += '<tr' + (cls ? ' class="' + cls + '"' : '') + '>' + celdasFn(r) + '</tr>';
+        });
+      }
+      html += '</tbody></table></div>';
+      return html;
+    }
+
+    function etiquetaEstadoMaeAsi_(est) {
+      const e = String(est || '').toLowerCase();
+      if (e === 'presente') return 'Asistió';
+      if (e === 'retardo') return 'Llegó tarde';
+      if (e === 'falta') return 'Faltó';
+      return est || '';
+    }
+
+    function claseEstadoMaeAsi_(est) {
+      const e = String(est || '').toLowerCase();
+      if (e === 'retardo') return 'asi-fila-retardo';
+      if (e === 'falta') return 'asi-fila-falta';
+      return '';
+    }
+
+    function badgeEstadoMaeAsi_(est) {
+      const e = String(est || '').toLowerCase();
+      const cls = (e === 'presente' || e === 'retardo' || e === 'falta') ? e : '';
+      return '<span class="asi-est-badge ' + cls + '">' + escaparHtml(etiquetaEstadoMaeAsi_(est)) + '</span>';
+    }
+
+    function pintarReporteAsi(res) {
+      const cuerpo = document.getElementById('cuerpoRepAsi');
+      if (!cuerpo) return;
+      const tipo = res.tipo || 'grupo';
+      const soloMae = tipo === 'maestro' || !!(res.soloMaestros);
+      const alu = soloMae ? null : (res.alumnos || null);
+      const mae = soloMae ? (res.maestros || res) : null;
+      const per = (res.periodo && res.periodo.ini)
+        ? fmtRangoRepAsi_(res.periodo.ini, res.periodo.fin)
+        : '';
+      const kpis = alu
+        ? htmlKpisAsi_(alu.kpis || {}, false)
+        : (mae ? htmlKpisAsi_(mae.kpis || {}, true) : '');
+      if (vistaRepAsi === 'obs') vistaRepAsi = 'lista';
+      let html = '<div class="asi-rep-cabeza">' +
+        '<strong>' + escaparHtml(res.titulo || 'Reporte') + '</strong>' +
+        (per ? ('<span class="per">' + per + '</span>') : '') +
+        kpis +
+        htmlBotonesVistaRepAsi_() +
+        '</div>';
+
+      if (alu) {
+        const seriesAlu = seriesLineasRepAsi_(alu);
+        if (seriesAlu.length >= 2) grafSelRepAsi.lin = true;
+        html += '<div id="vistaGrafRepAsi">';
+        html += htmlFiltrosGrafRepAsi_(false);
+        html += '<div id="cajasGrafRepAsi">';
+        html += '<div class="asi-graf-caja" id="cajaGrafDistRep"><h3>Distribución</h3>' + svgPastelAsi_(alu.distribucion, 'alumno') + '</div>';
+        html += '<div class="asi-graf-caja" id="cajaGrafDiaRep"><h3>% por día</h3>' + svgBarrasPctAsi_(alu.serieDias) + '</div>';
+        html += '<div class="asi-graf-caja" id="cajaGrafLinRep"><h3>Líneas por grupo</h3>' + svgLineasPctAsi_(seriesAlu) + '</div>';
+        html += '</div></div>';
+        listaRepAluObsAsi = incidenciasAluRepAsi_(alu);
+        filtroEstAluObsSel = ['P', 'T', 'A', 'J', 'PE'];
+        html += '<div id="vistaListaRepAsi">';
+        html += htmlFiltrosObsAluRepAsi_(listaRepAluObsAsi);
+        html += '<p id="cuentaObsAluRepAsi" class="asi-rep-cuenta"></p>';
+        html += '<div id="cajaTablaObsAluRepAsi"></div>';
+        html += '</div>';
+      } else {
+        listaRepAluObsAsi = [];
+      }
+
+      if (mae) {
+        listaRepMaeAsi = mae.detalleHoras || mae.detalle || [];
+        if (!filtroEstMaeSel.length) filtroEstMaeSel = ['presente', 'retardo', 'falta'];
+        unMaeRepAsi = !!(res.maestroFiltro) || ((mae.ranking || []).length === 1);
+        const seriesMae = seriesLineasRepAsi_(mae);
+        if (seriesMae.length >= 2) grafSelRepAsi.lin = true;
+        html += '<div id="vistaGrafRepAsi">';
+        html += htmlFiltrosGrafRepAsi_(true);
+        html += '<div id="cajasGrafRepAsi">';
+        html += '<div class="asi-graf-caja" id="cajaGrafDistRep"><h3>Distribución</h3>' + svgPastelAsi_(mae.distribucion, 'maestro') + '</div>';
+        html += '<div class="asi-graf-caja" id="cajaGrafHoraRep"><h3>% por hora</h3>' + svgBarrasPctAsi_(mae.serieHoras || []) + '</div>';
+        html += '<div class="asi-graf-caja" id="cajaGrafDiaRep"><h3>% por día</h3>' + svgBarrasPctAsi_(mae.serieDias) + '</div>';
+        html += '<div class="asi-graf-caja" id="cajaGrafLinRep"><h3>Líneas por grupo</h3>' + svgLineasPctAsi_(seriesMae) + '</div>';
+        html += '</div></div>';
+        html += '<div id="vistaListaRepAsi">';
+        html += htmlFiltrosListaMaeRepAsi_(listaRepMaeAsi);
+        html += '<p id="cuentaListaMaeRepAsi" class="asi-rep-cuenta"></p>';
+        html += '<div id="cajaTablaMaeRepAsi"></div>';
+        html += '</div>';
+      } else {
+        listaRepMaeAsi = [];
+      }
+
+      cuerpo.innerHTML = html;
+      if (mae) pintarTablaMaeRepAsi();
+      if (alu) pintarTablaObsAluRepAsi();
+      aplicarVistaRepAsi_(vistaRepAsi);
+      aplicarFiltroGrafRepAsi_();
+    }
+
+    function htmlBotonesVistaRepAsi_() {
+      if (vistaRepAsi === 'obs') vistaRepAsi = 'lista';
+      document.querySelectorAll('.asi-rep-vistas button').forEach(function (b) {
+        b.classList.toggle('activo', b.getAttribute('data-vista') === vistaRepAsi);
+      });
+      return '';
+    }
+
+    function cambiarVistaRepAsi(v, btn) {
+      vistaRepAsi = (v === 'lista' || v === 'obs') ? 'lista' : 'graf';
+      aplicarVistaRepAsi_(vistaRepAsi);
+      document.querySelectorAll('.asi-rep-vistas button').forEach(function (b) {
+        b.classList.toggle('activo', b.getAttribute('data-vista') === vistaRepAsi);
+      });
+    }
+
+    function aplicarVistaRepAsi_(v) {
+      if (v === 'obs') v = 'lista';
+      const graf = document.getElementById('vistaGrafRepAsi');
+      const lista = document.getElementById('vistaListaRepAsi');
+      if (graf) graf.classList.toggle('oculto', v !== 'graf');
+      if (lista) lista.classList.toggle('oculto', v !== 'lista');
+      ajustarAltoIframeAsi_();
+    }
+
+    function ajustarAltoIframeAsi_() {
+      try {
+        const h = Math.max(
+          document.body.scrollHeight || 0,
+          document.documentElement.scrollHeight || 0,
+          (document.body && document.body.offsetHeight) || 0
+        );
+        if (google && google.script && google.script.host && google.script.host.setHeight) {
+          google.script.host.setHeight(Math.ceil(h + 32));
+        }
+      } catch (eAlt) {}
+    }
+
+    function incidenciasAluRepAsi_(alu) {
+      if (alu && alu.incidencias && alu.incidencias.length) return alu.incidencias;
+      return (alu && alu.observaciones) || [];
+    }
+
+    function etiquetaEstadoAluAsi_(est) {
+      const e = String(est || '').toUpperCase();
+      if (e === 'P') return 'Presente';
+      if (e === 'T') return 'Tarde';
+      if (e === 'A') return 'Ausente';
+      if (e === 'J') return 'Justificado';
+      if (e === 'PE') return 'Permiso';
+      return est || '';
+    }
+
+    function badgeEstadoAluAsi_(est) {
+      const e = String(est || '').toUpperCase();
+      const cls = e === 'P' ? 'presente' : (e === 'T' ? 'retardo' : (e === 'A' ? 'falta' : (e === 'J' ? 'justificado' : (e === 'PE' ? 'permiso' : ''))));
+      return '<span class="asi-est-badge ' + cls + '">' + escaparHtml(etiquetaEstadoAluAsi_(est)) + '</span>';
+    }
+
+    function claseEstadoAluAsi_(r) {
+      const e = String((r && r.estado) || '').toUpperCase();
+      if (e === 'T') return 'asi-fila-retardo';
+      if (e === 'A') return 'asi-fila-falta';
+      return '';
+    }
+
+    function htmlFiltrosObsAluRepAsi_(filas) {
+      const chipsEst = [
+        { v: 'P', t: 'Presente' },
+        { v: 'T', t: 'Tarde' },
+        { v: 'A', t: 'Ausente' },
+        { v: 'J', t: 'Justificado' },
+        { v: 'PE', t: 'Permiso' }
+      ].map(function (e) {
+        return '<button type="button" class="asi-chip' + chipActivoRep_(filtroEstAluObsSel, e.v) +
+          '" data-val="' + e.v + '" onclick="toggleFiltroAluObsRep(this)">' + e.t + '</button>';
+      }).join('');
+      const nNota = (filas || []).filter(function (r) { return String(r.observacion || '').trim(); }).length;
+      return '<div class="asi-rep-filtros">' +
+        '<div><span class="asi-rep-fil-etq">Estado <small style="font-weight:600;color:#94a3b8;">(varios)</small></span>' +
+        '<div id="filtroEstAluObsRep" class="asi-rep-chips" role="group" aria-label="Estado">' + chipsEst + '</div></div>' +
+        '<label class="asi-chip"><input type="checkbox" id="filtroObsAluRep" onchange="pintarTablaObsAluRepAsi()"> Solo con observación' +
+        (nNota ? (' · ' + nNota) : '') + '</label>' +
+        '</div>';
+    }
+
+    function toggleFiltroAluObsRep(btn) {
+      if (!btn) return;
+      btn.classList.toggle('activa');
+      const caja = btn.parentNode;
+      const vals = [];
+      if (caja) {
+        caja.querySelectorAll('.asi-chip.activa').forEach(function (b) {
+          vals.push(b.getAttribute('data-val') || '');
+        });
+      }
+      filtroEstAluObsSel = vals;
+      pintarTablaObsAluRepAsi();
+    }
+
+    function pintarTablaObsAluRepAsi() {
+      const caja = document.getElementById('cajaTablaObsAluRepAsi');
+      if (!caja) return;
+      const ests = filtroEstAluObsSel || [];
+      const soloObs = !!(document.getElementById('filtroObsAluRep') || {}).checked;
+      const filas = (listaRepAluObsAsi || []).filter(function (r) {
+        const e = String(r.estado || '').toUpperCase();
+        if (ests.length && ests.indexOf(e) < 0) return false;
+        if (soloObs && !String(r.observacion || '').trim()) return false;
+        return true;
+      });
+      const cuenta = document.getElementById('cuentaObsAluRepAsi');
+      if (cuenta) {
+        const tot = (listaRepAluObsAsi || []).length;
+        cuenta.textContent = filas.length === tot
+          ? (filas.length + ' registro' + (filas.length === 1 ? '' : 's'))
+          : (filas.length + ' de ' + tot);
+      }
+      caja.innerHTML = htmlTablaAsi_(
+        ['Fecha', 'Alumno', 'Grupo', 'Estado', 'Observación'],
+        filas,
+        function (r) {
+          return '<td>' + fmtFechaRepAsi_(r.fecha) + '</td>' +
+            '<td>' + escaparHtml(r.nombre || '') + '</td>' +
+            '<td>' + escaparHtml(r.grupo || '') + '</td>' +
+            '<td>' + badgeEstadoAluAsi_(r.estado) + '</td>' +
+            '<td>' + (String(r.observacion || '').trim() ? escaparHtml(r.observacion) : '<span style="color:#94a3b8;">Sin nota</span>') + '</td>';
+        },
+        true,
+        claseEstadoAluAsi_
+      );
+      ajustarAltoIframeAsi_();
+    }
+
+    function htmlFiltrosGrafRepAsi_(tieneHora) {
+      if (!grafSelRepAsi.dist && !grafSelRepAsi.dia && !grafSelRepAsi.lin && (!tieneHora || !grafSelRepAsi.hora)) {
+        grafSelRepAsi.dist = true;
+      }
+      const chip = function (k, etq) {
+        const on = !!grafSelRepAsi[k];
+        return '<button type="button" class="asi-chip asi-rep-chip-graf' + (on ? ' activa' : '') +
+          '" data-graf="' + k + '" onclick="toggleGrafRepAsi(this)">' + etq + '</button>';
+      };
+      return '<div class="asi-rep-filtros" style="margin-bottom:12px;">' +
+        '<div><span class="asi-rep-fil-etq">Gráfica</span>' +
+        '<div class="asi-rep-chips" role="group" aria-label="Gráficas">' +
+        chip('dist', 'Distribución') +
+        (tieneHora ? chip('hora', '% por hora') : '') +
+        chip('dia', '% por día') +
+        chip('lin', 'Líneas') +
+        '</div></div></div>';
+    }
+
+    function toggleGrafRepAsi(btn) {
+      if (!btn) return;
+      const k = btn.getAttribute('data-graf');
+      const ibaOn = btn.classList.contains('activa');
+      if (ibaOn) {
+        const n = document.querySelectorAll('.asi-rep-chip-graf.activa').length;
+        if (n <= 1) return;
+      }
+      btn.classList.toggle('activa');
+      grafSelRepAsi[k] = btn.classList.contains('activa');
+      aplicarFiltroGrafRepAsi_();
+    }
+
+    function aplicarFiltroGrafRepAsi_() {
+      const mapa = {
+        dist: document.getElementById('cajaGrafDistRep'),
+        hora: document.getElementById('cajaGrafHoraRep'),
+        dia: document.getElementById('cajaGrafDiaRep'),
+        lin: document.getElementById('cajaGrafLinRep')
+      };
+      let n = 0;
+      Object.keys(mapa).forEach(function (k) {
+        const el = mapa[k];
+        if (!el) return;
+        const on = !!grafSelRepAsi[k];
+        el.classList.toggle('oculto', !on);
+        if (on) n++;
+      });
+      if (n === 0 && mapa.dist) {
+        grafSelRepAsi.dist = true;
+        mapa.dist.classList.remove('oculto');
+        n = 1;
+        const chip = document.querySelector('.asi-rep-chip-graf[data-graf="dist"]');
+        if (chip) chip.classList.add('activa');
+      }
+      const caja = document.getElementById('cajasGrafRepAsi');
+      if (caja) {
+        caja.classList.remove('graf-1', 'graf-2', 'graf-3', 'graf-4');
+        caja.classList.add('graf-' + Math.max(1, n));
+      }
+      ajustarAltoIframeAsi_();
+    }
+
+    function chipActivoRep_(arr, val) {
+      return (arr || []).indexOf(val) >= 0 ? ' activa' : '';
+    }
+
+    function htmlFiltrosListaMaeRepAsi_(filas) {
+      const grupos = {};
+      (filas || []).forEach(function (r) {
+        const g = r.grupoEtq || r.grupo || '';
+        if (g) grupos[g] = true;
+      });
+      const chipsEst = [
+        { v: 'presente', t: 'Asistió' },
+        { v: 'retardo', t: 'Llegó tarde' },
+        { v: 'falta', t: 'Faltó' }
+      ].map(function (e) {
+        return '<button type="button" class="asi-chip' + chipActivoRep_(filtroEstMaeSel, e.v) +
+          '" data-val="' + e.v + '" onclick="toggleFiltroMaeRep(\'est\', this)">' + e.t + '</button>';
+      }).join('');
+      const chipsGp = Object.keys(grupos).sort(function (a, b) {
+        return String(a).localeCompare(String(b), 'es');
+      }).map(function (g) {
+        return '<button type="button" class="asi-chip' + chipActivoRep_(filtroGpMaeSel, g) +
+          '" data-val="' + escaparHtml(g) + '" onclick="toggleFiltroMaeRep(\'gp\', this)">' + escaparHtml(g) + '</button>';
+      }).join('');
+      return '<div class="asi-rep-filtros">' +
+        '<div><span class="asi-rep-fil-etq">Estado <small style="font-weight:600;color:#94a3b8;">(varios)</small></span>' +
+        '<div id="filtroEstMaeRep" class="asi-rep-chips" role="group" aria-label="Estado">' + chipsEst + '</div></div>' +
+        '<div><span class="asi-rep-fil-etq">Grupo <small style="font-weight:600;color:#94a3b8;">(uno o varios)</small></span>' +
+        '<div id="filtroGpMaeRep" class="asi-rep-chips" role="group" aria-label="Grupo">' + chipsGp + '</div></div>' +
+        '<label class="asi-chip"><input type="checkbox" id="filtroObsMaeRep" onchange="pintarTablaMaeRepAsi()"> Solo con observación</label>' +
+        '</div>';
+    }
+
+    function toggleFiltroMaeRep(tipo, btn) {
+      if (!btn) return;
+      btn.classList.toggle('activa');
+      const caja = btn.parentNode;
+      const vals = [];
+      if (caja) {
+        caja.querySelectorAll('.asi-chip.activa').forEach(function (b) {
+          vals.push(b.getAttribute('data-val') || '');
+        });
+      }
+      if (tipo === 'est') filtroEstMaeSel = vals;
+      else filtroGpMaeSel = vals;
+      pintarTablaMaeRepAsi();
+    }
+
+    function pintarTablaMaeRepAsi() {
+      const caja = document.getElementById('cajaTablaMaeRepAsi');
+      if (!caja) return;
+      const ests = filtroEstMaeSel || [];
+      const gps = filtroGpMaeSel || [];
+      const soloObs = !!(document.getElementById('filtroObsMaeRep') || {}).checked;
+      const filas = (listaRepMaeAsi || []).filter(function (r) {
+        if (ests.length && ests.indexOf(String(r.estado || '').toLowerCase()) < 0) return false;
+        const g = r.grupoEtq || r.grupo || '';
+        if (gps.length && gps.indexOf(g) < 0) return false;
+        if (soloObs && !String(r.observacion || '').trim()) return false;
+        return true;
+      });
+      const cuenta = document.getElementById('cuentaListaMaeRepAsi');
+      if (cuenta) {
+        cuenta.textContent = filas.length === (listaRepMaeAsi || []).length
+          ? (filas.length + ' registro' + (filas.length === 1 ? '' : 's'))
+          : (filas.length + ' de ' + (listaRepMaeAsi || []).length);
+      }
+      const cols = unMaeRepAsi
+        ? ['Fecha', 'Hora', 'Grupo', 'Asignatura', 'Estado', 'Observación']
+        : ['Fecha', 'Hora', 'Maestro', 'Grupo', 'Asignatura', 'Estado', 'Observación'];
+      caja.innerHTML = htmlTablaAsi_(cols, filas, function (r) {
+        const grupo = r.grupoEtq || r.grupo || '';
+        let fila = '<td>' + fmtFechaRepAsi_(r.fecha) + '</td><td>' + escaparHtml(r.hora || r.bloque || '') + '</td>';
+        if (!unMaeRepAsi) fila += '<td>' + escaparHtml(r.maestro || '') + '</td>';
+        fila += '<td>' + escaparHtml(grupo) + '</td><td>' + escaparHtml(r.asignatura || '') + '</td>';
+        fila += '<td>' + badgeEstadoMaeAsi_(r.estado) + '</td><td>' + escaparHtml(r.observacion || '') + '</td>';
+        return fila;
+      }, true, claseEstadoMaeAsi_);
+      ajustarAltoIframeAsi_();
+    }</script>

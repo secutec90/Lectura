@@ -1,0 +1,620 @@
+<script>
+/* AdminJS_01 — token, sesionRol, sesionPrefectoId, sesionNombre, datos, ctxAsi, grupoAsiSel, gradoAsiFiltro, grupoAsiFiltro, buscarAsiFiltro, ... */
+
+    let token = '';
+    let sesionRol = 'admin';
+    let sesionPrefectoId = '';
+    let sesionNombre = '';
+    let datos = {};
+    let ctxAsi = null;
+    let grupoAsiSel = null;
+    let gradoAsiFiltro = '';
+    let grupoAsiFiltro = '';
+    let buscarAsiFiltro = '';
+    let listaAsiAlu = [];
+    let bloqueAsiSel = '';
+    let bloqueAsiManual = false;
+    let timerHoraAsi = null;
+    let listaPrefectosAsi = [];
+    let catRepAsi = null;
+    let listaRepMaeAsi = [];
+    let listaRepAluObsAsi = [];
+    let unMaeRepAsi = true;
+    let vistaRepAsi = 'graf';
+    let ramaRepAsi = '';
+    let grafSelRepAsi = { dist: true, hora: false, dia: false, lin: false };
+    let filtroEstMaeSel = [];
+    let filtroGpMaeSel = [];
+    let filtroEstAluObsSel = [];
+    let filtroGpAlcanceSel = [];
+    let resultadosAdminListos = false;
+    let resultadosAdminPendiente = null;
+    let urlAlumno = limpiarComillasScriptlet_(<?= JSON.stringify(urlAlumno || '') ?>);
+    const URL_ASISTENCIA = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlAsistencia !== 'undefined' ? urlAsistencia : '') ?>);
+    const SOLO_ASISTENCIA = <?= (typeof soloAsistencia !== 'undefined' && soloAsistencia) ? 'true' : 'false' ?>;
+    let hojaDatosDesbloqueada = true;
+    let asistenciaDesbloqueada = SOLO_ASISTENCIA || (MODO_VISTA === 'admin');
+    /* Contraseña de la hoja retirada: acceso permanente. */
+    let seleccionAlumnosMat = {};
+    let editorPreguntasDatos = [];
+    let editorIdActual = '';
+    let resultadosFiltradosCache = [];
+    let lecturaSeleccionadaId = '';
+    let modoEdicionActivo = false;
+    let modoCreacionNueva = false;
+    let editorDirty = false;
+    let ignorarCambioQuill = false;
+    let listaLecturasVisible = true;
+    let subLecActual = '';
+    let sembrandoTrim = false;
+    let pickTrimCtx = null;
+    let layoutActual = 'ambas';
+    let seleccionChartGrupos = {};
+    let seleccionChartAlumnos = {};
+    let filtrosColRes = { fecha: '', alumno: '', grupo: '', lectura: '', comprension: '', ppm: '', velocidad: '', global: '', tLectura: '', tReactivos: '', intento: '' };
+    let mostrarColsNivelesRes = false;
+    const COLORES_GRAF = ['#1f6f9f', '#d35400', '#1e8449', '#8e44ad', '#c0392b', '#16a085', '#f39c12', '#2c3e50', '#2980b9', '#27ae60'];
+
+    function ajustarModoEstrecho() {
+      var w = document.documentElement.clientWidth || window.innerWidth || 1200;
+      try {
+        if (window.visualViewport && window.visualViewport.width) {
+          w = Math.min(w, Math.round(window.visualViewport.width));
+        }
+      } catch (e) {}
+      document.body.classList.toggle('es-estrecho', w < 900);
+    }
+
+    /* ============================================================
+       ENCUESTAS: se abren DENTRO del panel, con la sesión ya iniciada
+       ============================================================ */
+    function abrirEncuestasEmbebidas() {
+      tab('enc', document.getElementById('btnTabEnc'));
+    }
+
+    function entrar() {
+      const uEl = document.getElementById('usuarioLogin') || document.getElementById('usuarioAsiLogin');
+      const usuario = (uEl ? uEl.value : '').trim();
+      const clave = ((document.getElementById('clave') || {}).value || '').trim();
+      window.__st90ClaveAdmin = clave;
+      const btnEntrar = document.getElementById('btnEntrar') || document.querySelector('#login button');
+      const errEl = document.getElementById('errorLogin');
+
+      if (!clave) {
+        if (errEl) errEl.textContent = 'Por favor ingresa tu contraseña.';
+        return;
+      }
+      if (btnEntrar) { btnEntrar.disabled = true; btnEntrar.textContent = 'Verificando credenciales…'; }
+      if (errEl) errEl.textContent = 'Iniciando sesión…';
+
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+        if (errEl) errEl.textContent = 'No se pudo conectar con el servidor de Apps Script. Recarga la página.';
+        if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = 'Entrar al Sistema'; }
+        return;
+      }
+
+      const timeoutLogin = setTimeout(function () {
+        if (btnEntrar && btnEntrar.disabled) {
+          btnEntrar.disabled = false;
+          btnEntrar.textContent = 'Entrar al Sistema';
+          if (errEl) errEl.textContent = 'El servidor está tardando. Verifica tu conexión o intenta nuevamente.';
+        }
+      }, 20000);
+
+      gsRun('iniciarSesionUnificada', usuario, clave, MODO_VISTA)
+        .then(function (res) {
+          if (!res || !res.ok) {
+            if (errEl) {
+              errEl.textContent = (res && res.mensaje) || 'Credenciales incorrectas.';
+              const dest = (res && res.urlAsistencia) || URL_ASISTENCIA;
+              if (dest && String((res && res.mensaje) || '').indexOf('Asistencia') >= 0) {
+                errEl.innerHTML = escaparHtml((res && res.mensaje) || '') +
+                  ' <a href="' + dest + '" target="_top" rel="noopener">Abrir Asistencia</a>';
+              }
+            }
+            if (res && res.requiereNombre && uEl) {
+              uEl.focus();
+            }
+            if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = 'Entrar al Sistema'; }
+            return;
+          }
+
+          token = res.token || '';
+          sesionRol = res.rol || 'admin';
+          sesionPrefectoId = res.prefectoId || '';
+          sesionNombre = res.nombre || '';
+          urlAlumno = res.urlAlumno || urlAlumno || urlWebApp('alumno');
+          if (res.urlHoja) document.getElementById('enlaceHoja').href = res.urlHoja;
+          const lblSes = document.getElementById('lblSesionAsi');
+          if (lblSes) {
+            lblSes.textContent = '';
+            lblSes.classList.add('oculto');
+          }
+          actualizarBannerPrefecta_();
+
+          // Si es alumno, redirigir a su examen/panel
+          if (res.rol === 'alumno') {
+            if (errEl) errEl.innerHTML = '✅ Bienvenido(a) ' + escaparHtml(res.nombre) + '. Cargando tu panel…';
+            const dest = res.urlDestino || urlAlumno;
+            setTimeout(function () {
+              try { window.top.location.href = dest; } catch (eTop) { window.location.href = dest; }
+            }, 300);
+            return;
+          }
+
+          // Si es docente pero entró a página Admin
+          if (res.rol === 'docente' && MODO_VISTA === 'admin') {
+            const dest = res.urlDestino || URL_DOCENTE || urlWebApp('docente');
+            if (errEl) errEl.innerHTML = '✅ Bienvenido Profesor(a) ' + escaparHtml(res.nombre) + '. Redirigiendo al Panel Docente…';
+            setTimeout(function () {
+              try { window.top.location.href = dest; } catch (eTop) { window.location.href = dest; }
+            }, 350);
+            return;
+          }
+
+          // Si es prefecto pero entró a página Docente
+          if (res.rol === 'prefecto' && MODO_VISTA === 'docente') {
+            const dest = res.urlDestino || URL_ASISTENCIA || urlWebApp('asistencia');
+            if (errEl) errEl.innerHTML = '✅ Bienvenida Prefecta ' + escaparHtml(res.nombre) + '. Redirigiendo a Asistencia…';
+            setTimeout(function () {
+              try { window.top.location.href = dest; } catch (eTop) { window.location.href = dest; }
+            }, 350);
+            return;
+          }
+
+          // Ajustar vista en el cliente según rol y modo
+          if (res.rol === 'admin') {
+            asistenciaDesbloqueada = true;
+            document.body.classList.remove('modo-docente', 'solo-asi');
+            document.body.classList.add('modo-admin');
+          } else if (res.rol === 'docente') {
+            document.body.classList.remove('modo-admin', 'solo-asi');
+            document.body.classList.add('modo-docente');
+          } else if (res.rol === 'prefecto') {
+            asistenciaDesbloqueada = true;
+            document.body.classList.remove('modo-admin', 'modo-docente');
+            document.body.classList.add('solo-asi', 'modo-asistencia');
+          }
+
+          document.getElementById('login').classList.add('oculto');
+          document.getElementById('panel').classList.remove('oculto');
+          aplicarVistaColsNivelesRes();
+          ajustarModoEstrecho();
+          const lblVer = document.getElementById('lblVersionPanel');
+          if (lblVer) lblVer.textContent = res.version || '';
+          const badgeDev = document.getElementById('badgeEntornoDev');
+          if (badgeDev && String(res.version || '').indexOf('dev') >= 0) badgeDev.classList.remove('oculto');
+
+          recargar().catch(function (errRec) {
+            console.error('Error en recarga inicial:', errRec);
+          }).then(function () {
+            aplicarVistaRolAsistencia();
+          });
+        })
+        .catch(function (e) {
+          console.error('Error en login:', e);
+          if (errEl) errEl.textContent = (e && e.message) || String(e);
+        })
+        .finally(function () {
+          clearTimeout(timeoutLogin);
+          if (btnEntrar) { btnEntrar.disabled = false; btnEntrar.textContent = 'Entrar al Sistema'; }
+        });
+    }
+
+    function cerrarSesion() {
+      confirmar('¿Cerrar la sesión?').then(function (ok) {
+        if (!ok) return;
+        gsRun('cerrarSesionAdmin', token).finally(function () {
+          token = '';
+          location.reload();
+        });
+      });
+    }
+
+    function irAVistaAlumno() {
+      const url = (typeof URL_SITIO_ALUMNO === 'string' && URL_SITIO_ALUMNO) ? URL_SITIO_ALUMNO : '';
+      if (!url) {
+        toast('No está configurada la página de alumnos.', 'error');
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_top';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+    }
+
+    function irAlumno() {
+      irAVistaAlumno();
+    }
+
+    function recargar(mostrarToastExito) {
+      const btns = document.querySelectorAll('button[onclick*="recargar"]');
+      function restaurarBotones() {
+        btns.forEach(function (b) {
+          b.disabled = false;
+          if (b.classList.contains('btn-icono-res') || b.classList.contains('ribbon-btn')) return;
+          b.textContent = b.dataset.origText || '🔄 Actualizar';
+        });
+      }
+      btns.forEach(function (b) {
+        b.disabled = true;
+        if (b.classList.contains('btn-icono-res') || b.classList.contains('ribbon-btn')) return;
+        b.dataset.origText = b.textContent;
+        b.textContent = '⏳ Actualizando…';
+      });
+
+      if (!token) {
+        document.getElementById('panel').classList.add('oculto');
+        document.getElementById('login').classList.remove('oculto');
+        toast('Por favor inicia sesión con tu contraseña de administrador', 'error');
+        btns.forEach(function (b) { b.disabled = false; if (!b.classList.contains('btn-icono-res') && !b.classList.contains('ribbon-btn')) b.textContent = b.dataset.origText || '🔄 Actualizar'; });
+        return Promise.reject(new Error('Sin sesión'));
+      }
+
+      if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('cargando');
+
+      return gsRun('panelResumen', token).then(function (res) {
+        resultadosAdminListos = false;
+        resultadosAdminPendiente = null;
+        if (!res) {
+          if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('error');
+          toast('No se pudieron leer los datos de la hoja.', 'error');
+          datos = {
+            alumnos: [], grupos: [], lecturas: [], resultados: [],
+            urlHoja: 'https://docs.google.com/spreadsheets/d/1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU/edit',
+            diagnostico: {
+              url: 'https://docs.google.com/spreadsheets/d/1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU/edit',
+              libro: 'Sin conexión',
+              errorHojaDefault: 'El servidor no devolvió datos.'
+            },
+            config: { asignaturas: [], especificaciones: {}, ppmObjetivo: {} }
+          };
+          document.getElementById('enlaceHoja').href = datos.urlHoja;
+          try { pintarTodo(); } catch (eP) {}
+          return;
+        }
+        datos = res || {};
+        if (res.diagnostico && res.diagnostico.url) {
+          document.getElementById('enlaceHoja').href = res.diagnostico.url;
+        } else if (res.urlHoja) {
+          document.getElementById('enlaceHoja').href = res.urlHoja;
+        }
+        if (res.ok === false && res.mensaje) {
+          if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('error');
+          toast(res.mensaje, 'error');
+        } else {
+          if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('exito');
+        }
+        pintarTodo();
+      }).catch(function (e) {
+        if (typeof barraProgresoSt90 === 'function') barraProgresoSt90('error');
+        const msg = (e && e.message) || String(e);
+        if (msg.indexOf('Sesión') >= 0 || msg.indexOf('sesión') >= 0 || msg.indexOf('expirada') >= 0) {
+          document.getElementById('panel').classList.add('oculto');
+          document.getElementById('login').classList.remove('oculto');
+          toast('Tu sesión ha expirado. Por favor ingresa tu contraseña.', 'error');
+        } else {
+          toast(msg, 'error');
+        }
+      }).finally(function () {
+        restaurarBotones();
+      });
+    }
+
+    function mostrarCintaN3_(idCinta, visible) {
+      const n3 = document.querySelector('#' + idCinta + ' .cinta-n3');
+      if (n3) n3.classList.toggle('oculto', !visible);
+    }
+
+    function limpiarActivoBotones_(selector) {
+      document.querySelectorAll(selector).forEach(function (b) {
+        b.classList.remove('activo', 'activa');
+      });
+    }
+
+    function ocultarCuerposModulo_(id) {
+      if (id === 'mat' || !id) {
+        ['secUsuAlu', 'secUsuDoc', 'secUsuPref', 'secUsuAdm'].forEach(function (x) {
+          const el = document.getElementById(x);
+          if (el) el.classList.add('oculto');
+        });
+      }
+      if (id === 'asi' || !id) {
+        ['subAsiAlu', 'subAsiMae', 'subAsiRep', 'subAsiPref'].forEach(function (x) {
+          const el = document.getElementById(x);
+          if (el) el.classList.add('oculto');
+        });
+      }
+    }
+
+    function cerrarSubN2_(modulo) {
+      if (modulo === 'mat') {
+        subUsuActual = '';
+        limpiarActivoBotones_('#menuUsuTabs button');
+        mostrarCintaN3_('cintaMat', false);
+        ocultarCuerposModulo_('mat');
+        cerrarPanelesAccionMat_();
+        const t = document.getElementById('tab-mat');
+        if (t) t.classList.add('oculto');
+        return;
+      }
+      if (modulo === 'asi') {
+        subAsiActual = '';
+        limpiarActivoBotones_('#menuAsiTabs button');
+        mostrarCintaN3_('cintaAsi', false);
+        ocultarCuerposModulo_('asi');
+        const t = document.getElementById('tab-asi');
+        if (t) t.classList.add('oculto');
+        return;
+      }
+      if (modulo === 'lec') {
+        subLecActual = '';
+        limpiarActivoBotones_('#menuLecTabs > button');
+        const btnBanco = document.getElementById('btnSubLecBanco');
+        const btnTrim = document.getElementById('btnSubLecTrim');
+        const btnRes = document.getElementById('btnSubLecRes');
+        if (btnBanco) btnBanco.classList.remove('activa', 'activo');
+        if (btnTrim) btnTrim.classList.remove('activa', 'activo');
+        if (btnRes) btnRes.classList.remove('activa', 'activo');
+        mostrarCintaN3_('cintaLec', false);
+        const t = document.getElementById('tab-lec');
+        if (t) t.classList.add('oculto');
+        ['barraSuperiorBancoLec', 'cajaListaYFiltrosLecturas', 'panelListaLecturas', 'panelFiltrosLecturas', 'panelLecturaTrimestral', 'panelResultadosLec',
+          'accionesLecBanco', 'accionesLecRes', 'panelIA', 'panelMasivo', 'vistaDetalleLec'].forEach(function (x) {
+          const el = document.getElementById(x);
+          if (el) el.classList.add('oculto');
+        });
+        return;
+      }
+      if (modulo === 'plan') {
+        subPlanActual = '';
+        window.subPlanActual = '';
+        limpiarActivoBotones_('#menuPlanTabs .ribbon-btn');
+        mostrarCintaN3_('cintaPlan', false);
+        const tabClases = document.getElementById('tabClases');
+        const tabPlan = document.getElementById('tabPlaneacion');
+        if (tabClases) tabClases.classList.add('oculto');
+        if (tabPlan) tabPlan.classList.add('oculto');
+        const t = document.getElementById('tab-plan');
+        if (t) t.classList.add('oculto');
+        return;
+      }
+    }
+
+    var subPlanActual = '';
+
+    function iniciarCintaSinSeleccion_() {
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
+      ['mat', 'asi', 'lec', 'plan', 'mae', 'enc'].forEach(function (t) {
+        const el = document.getElementById('tab-' + t);
+        if (el) el.classList.add('oculto');
+      });
+      ['cintaMat', 'cintaAsi', 'cintaLec', 'cintaPlan'].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('oculto');
+        mostrarCintaN3_(id, false);
+      });
+      limpiarActivoBotones_('.tabs > button, .wrap-tab-cfg > button');
+      limpiarActivoBotones_('#menuUsuTabs button, #menuAsiTabs button, #menuLecTabs > button, #menuLecTabs .ribbon-btn, #menuPlanTabs .ribbon-btn');
+      subUsuActual = '';
+      subAsiActual = '';
+      subLecActual = '';
+      subPlanActual = '';
+      window.subPlanActual = '';
+      tabN1Actual = '';
+      ocultarCuerposModulo_();
+      if (typeof cerrarPanelesAccionMat_ === 'function') cerrarPanelesAccionMat_();
+    }
+
+    var tabN1Actual = '';
+
+    function hayCuerpoN1_(id) {
+      if (id === 'mat') return !!subUsuActual;
+      if (id === 'asi') return !!subAsiActual;
+      if (id === 'lec') return !!subLecActual;
+      if (id === 'plan') return !!(window.subPlanActual || subPlanActual);
+      return false;
+    }
+
+    function tab(id, boton) {
+      if (id === 'res') {
+        const btnLec = document.getElementById('btnTabLec');
+        aplicarTab('lec', btnLec);
+        aplicarSubLec('res', document.getElementById('btnSubLecRes'));
+        return;
+      }
+      if (id === 'cfg') {
+        const sub = document.getElementById('menuCfgTabs');
+        if (sub) {
+          const estaAbierto = !sub.classList.contains('oculto');
+          sub.classList.toggle('oculto');
+          if (boton) boton.classList.toggle('activa', !estaAbierto);
+        }
+        return;
+      }
+      if (id === 'enc') {
+        aplicarTab('enc', boton);
+        return;
+      }
+      if (id === tabN1Actual) {
+        if (typeof ribbonN2Abierto !== 'undefined' && !ribbonN2Abierto) {
+          if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
+          return;
+        }
+        if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(false);
+        return;
+      }
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
+      const tabLec = document.getElementById('tab-lec');
+      const enLecturas = tabLec && !tabLec.classList.contains('oculto');
+      if (enLecturas && id !== 'lec') {
+        salirSiEditorDirty().then(function (ok) {
+          if (!ok) return;
+          aplicarTab(id, boton);
+        });
+        return;
+      }
+      aplicarTab(id, boton);
+    }
+
+    function aplicarTab(id, boton) {
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
+      const subCfg = document.getElementById('menuCfgTabs');
+      if (subCfg) subCfg.classList.add('oculto');
+      const btnCfg = document.getElementById('btnTabCfg');
+      if (btnCfg) btnCfg.classList.remove('activa');
+
+      ['mat', 'asi', 'lec', 'plan', 'enc', 'mae'].forEach(function (t) {
+        const el = document.getElementById('tab-' + t);
+        if (el) el.classList.add('oculto');
+      });
+      document.querySelectorAll('.tabs > button, .wrap-tab-cfg > button').forEach(function (b) { b.classList.remove('activa'); });
+      if (!boton && id) {
+        boton = document.getElementById('btnTab' + id.charAt(0).toUpperCase() + id.slice(1)) || document.querySelector('.tabs > button[data-tab="' + id + '"]');
+      }
+      tabN1Actual = id;
+      if (boton) boton.classList.add('activa');
+      const cinta = document.getElementById('cintaAsi');
+      if (cinta) cinta.classList.toggle('oculto', id !== 'asi');
+      const cintaMat = document.getElementById('cintaMat');
+      if (cintaMat) cintaMat.classList.toggle('oculto', id !== 'mat');
+      const cintaLec = document.getElementById('cintaLec');
+      if (cintaLec) cintaLec.classList.toggle('oculto', id !== 'lec');
+      const cintaPlan = document.getElementById('cintaPlan');
+      if (cintaPlan) cintaPlan.classList.toggle('oculto', id !== 'plan');
+      const cintaEnc = document.getElementById('cintaEnc');
+      if (cintaEnc) cintaEnc.classList.toggle('oculto', id !== 'enc');
+
+      mostrarCintaN3_('cintaMat', false);
+      mostrarCintaN3_('cintaAsi', false);
+      mostrarCintaN3_('cintaLec', false);
+      mostrarCintaN3_('cintaPlan', false);
+      mostrarCintaN3_('cintaEnc', false);
+      if (typeof ribbonSetNivel2 === 'function') ribbonSetNivel2(true);
+
+      const tabActivo = document.getElementById('tab-' + id);
+      if (tabActivo) tabActivo.classList.remove('oculto');
+
+      if (id === 'enc') {
+        if (typeof inicializarModuloEncuestas_ === 'function') inicializarModuloEncuestas_();
+        return;
+      } else if (id === 'plan') {
+        subPlanActual = '';
+        window.subPlanActual = '';
+        limpiarActivoBotones_('#menuPlanTabs .ribbon-btn');
+        const tabClases = document.getElementById('tabClases');
+        const tabPlan = document.getElementById('tabPlaneacion');
+        if (tabClases) tabClases.classList.add('oculto');
+        if (tabPlan) tabPlan.classList.add('oculto');
+        if (typeof inicializarModuloPlaneacion_ === 'function') inicializarModuloPlaneacion_();
+        return;
+      } else if (id === 'mat') {
+        subUsuActual = '';
+        limpiarActivoBotones_('#menuUsuTabs button');
+        ocultarCuerposModulo_('mat');
+      } else if (id === 'asi') {
+        subAsiActual = '';
+        fechaAsiEtiquetaManual = false;
+        periodoRepEtiquetaManual = false;
+        ramaRepAsi = '';
+        limpiarActivoBotones_('#menuAsiTabs button');
+        ocultarCuerposModulo_('asi');
+        try { actualizarEtqFechaAsi(); } catch (eF) {}
+        try { pintarEtqPeriodoRepAsi(); } catch (eP) {}
+      } else if (id === 'lec') {
+        subLecActual = '';
+        limpiarActivoBotones_('#menuLecTabs > button, #btnTabCfg');
+      }
+
+      try {
+        if (id === 'lec') {
+          actualizarAsignaturasYTemasIA();
+          cargarDetalleLecturas(false);
+        } else if (id === 'mae') {
+          aplicarTab('mat', document.getElementById('btnTabMat'));
+          aplicarSubUsu('doc');
+        }
+      } catch (errTab) {
+        console.error('Error al cambiar de pestaña:', errTab);
+      }
+    }
+
+    var subUsuActual = '';
+    var subAsiActual = '';
+    var fechaAsiEtiquetaManual = false;
+    var periodoRepEtiquetaManual = false;
+    var modoPeriodoRepAsi = 'mes';
+    var nTrimRepAsi = '1';
+
+    function aplicarSubUsu(id, boton) {
+      if (subUsuActual === id) {
+        if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+        return;
+      }
+      cerrarPanelesAccionMat_();
+      subUsuActual = id;
+      const tabMat = document.getElementById('tab-mat');
+      if (tabMat) tabMat.classList.remove('oculto');
+      ['alu', 'doc', 'pref', 'adm'].forEach(function (t) {
+        const sec = document.getElementById('secUsu' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (sec) sec.classList.add('oculto');
+      });
+      const map = { alu: 'secUsuAlu', doc: 'secUsuDoc', pref: 'secUsuPref', adm: 'secUsuAdm' };
+      const secAct = document.getElementById(map[id]);
+      if (secAct) secAct.classList.remove('oculto');
+
+      document.querySelectorAll('#menuUsuTabs button').forEach(function (b) {
+        b.classList.remove('activo', 'activa');
+      });
+      const ids = { alu: 'btnSubUsuAlu', doc: 'btnSubUsuDoc', pref: 'btnSubUsuPref', adm: 'btnSubUsuAdm' };
+      const bAct = boton || document.getElementById(ids[id]);
+      if (bAct) bAct.classList.add('activo');
+      const btnN1Mat = document.getElementById('btnTabMat');
+      if (btnN1Mat) btnN1Mat.classList.add('activa');
+      mostrarCintaN3_('cintaMat', false);
+
+      const kpiFila = document.getElementById('kpiMatFila');
+      const accMat = document.getElementById('accionesGrupoMat');
+      const filMat = document.getElementById('filtrosGrupoMat');
+      const accDoc = document.getElementById('accionesGrupoDoc');
+      const accPref = document.getElementById('accionesGrupoPref');
+      const accAdm = document.getElementById('accionesGrupoAdm');
+      const sepMat = document.getElementById('sepCintaMat');
+
+      if (kpiFila) kpiFila.style.display = 'none';
+      if (accMat) accMat.style.display = (id === 'alu') ? '' : 'none';
+      if (filMat) filMat.classList.toggle('oculto', id !== 'alu');
+      if (accDoc) accDoc.classList.toggle('oculto', id !== 'doc');
+      if (accPref) accPref.classList.toggle('oculto', id !== 'pref');
+      if (accAdm) accAdm.classList.toggle('oculto', id !== 'adm');
+      if (sepMat) sepMat.style.display = (id === 'alu') ? '' : 'none';
+
+      const btnAyuda = document.getElementById('btnAyudaMat');
+      if (btnAyuda) {
+        const claveAyuda = (id === 'alu') ? 'matDirectorio' : ((id === 'doc') ? 'maeAccesos' : ((id === 'pref') ? 'asiPrefecto' : 'usuApoyo'));
+        btnAyuda.setAttribute('onclick', "abrirAyuda('" + claveAyuda + "')");
+      }
+
+      try {
+        if (id === 'alu') {
+          llenarGruposAlta();
+          pintarAlumnos();
+        } else if (id === 'doc') {
+          cargarMaestrosAdmin();
+        } else if (id === 'pref') {
+          cargarPrefectosAsi();
+        } else if (id === 'adm') {
+          cargarPersonalApoyo();
+        }
+      } catch (errUsu) {
+        console.error('Error al cambiar subsección de usuarios:', errUsu);
+      }
+      if (typeof ribbonColapsarTrasN2 === 'function') ribbonColapsarTrasN2();
+    }
+
+    function pedirDesbloqueoAsistencia(boton) {
+      asistenciaDesbloqueada = true;
+      aplicarTab('asi', boton || document.getElementById('btnTabAsi'));
+    }</script>

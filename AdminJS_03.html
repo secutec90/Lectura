@@ -1,0 +1,661 @@
+<script>
+/* AdminJS_03 — pintarTablaAsiAlu, setEstadoAsiAlu, marcarTodosAsiAlu, guardarListaAsiAlu, horaCortaAsi_, pintarTabsBloquesAsi, docenteAsiSel, toggleDdDocenteAsi, cerrarDdDocenteAsi, obtenerDocentesAsi_, ... */
+
+
+    function pintarTablaAsiAlu() {
+      recogerObsAlu_();
+      const tb = document.getElementById('tablaAsiAlu');
+      if (!tb) return;
+      if (!listaAsiAlu.length) {
+        tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">No hay alumnos activos en este grupo.</td></tr>';
+        return;
+      }
+      let html = '<thead><tr><th>#</th><th>Matrícula</th><th>Nombre</th><th>Estado</th><th class="asi-th-obs">Observación</th></tr></thead><tbody>';
+      const tipsEstAlu = { P: 'Presente', T: 'Tarde', A: 'Ausente', J: 'Justificado', PE: 'Permiso' };
+      const q = (buscarAsiFiltro || '').trim().toLowerCase();
+      let visibles = 0;
+      listaAsiAlu.forEach(function (a, i) {
+        if (q) {
+          const m = String(a.matricula || '').toLowerCase();
+          const n = String(a.nombre || '').toLowerCase();
+          if (m.indexOf(q) < 0 && n.indexOf(q) < 0) return;
+        }
+        visibles++;
+        html += '<tr data-i="' + i + '"><td>' + (i + 1) + '</td><td>' + escaparHtml(a.matricula || '') + '</td><td>' + escaparHtml(a.nombre || '') + '</td><td>';
+        html += '<div class="asi-estados">';
+        ['P', 'T', 'A', 'J'].forEach(function (e) {
+          html += '<button type="button" class="asi-e ' + e + (a.estado === e ? ' activa' : '') + '" onclick="setEstadoAsiAlu(' + i + ',\'' + e + '\')" data-tip="' + tipsEstAlu[e] + '" aria-label="' + tipsEstAlu[e] + '">' + e + '</button>';
+        });
+        html += '</div></td><td class="asi-td-obs"><input class="asi-obs" data-i="' + i + '" value="' + escaparHtml(a.observacion || '') + '" placeholder="Nota (opcional)" oninput="listaAsiAlu[' + i + '].observacion=this.value"></td></tr>';
+      });
+      if (q && !visibles) {
+        html += '<tr><td colspan="5" style="text-align:center;padding:16px;color:#64748b;">No se encontraron alumnos con "' + escaparHtml(q) + '" en este grupo.</td></tr>';
+      }
+      html += '</tbody>';
+      tb.innerHTML = html;
+    }
+
+    function setEstadoAsiAlu(i, estado) {
+      recogerObsAlu_();
+      if (!listaAsiAlu[i]) return;
+      listaAsiAlu[i].estado = estado;
+      pintarTablaAsiAlu();
+    }
+
+    function marcarTodosAsiAlu(estado) {
+      recogerObsAlu_();
+      listaAsiAlu.forEach(function (a) { a.estado = estado; });
+      pintarTablaAsiAlu();
+    }
+
+    function guardarListaAsiAlu() {
+      recogerObsAlu_();
+      if (!grupoAsiSel) {
+        toast('Elige un grupo.', 'error');
+        return;
+      }
+      const sin = listaAsiAlu.filter(function (a) { return !a.estado; });
+      if (sin.length) {
+        toast('Marca a todos los alumnos (faltan ' + sin.length + ').', 'error');
+        return;
+      }
+      const turno = ((ctxAsi && ctxAsi.grupos) || []).reduce(function (t, g) {
+        if (g.grupo === grupoAsiSel.grupo && String(g.grado) === String(grupoAsiSel.grado)) return g.turno;
+        return t;
+      }, 'matutino');
+      gsRun('guardarAsistenciaAlumnos', token, {
+        fecha: fechaAsiActiva(),
+        turno: turno,
+        grado: grupoAsiSel.grado,
+        grupo: grupoAsiSel.grupo,
+        registros: listaAsiAlu
+      }).then(function (res) {
+        toast((res && res.mensaje) || 'Lista guardada.', 'exito');
+        seleccionarGrupoAsi(grupoAsiSel.grado, grupoAsiSel.grupo);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function horaCortaAsi_(v) {
+      if (v == null || v === '') return '';
+      if (typeof v === 'object' && typeof v.getHours === 'function') {
+        return v.getHours() + ':' + ('0' + v.getMinutes()).slice(-2);
+      }
+      const s = String(v);
+      const m = s.match(/(\d{1,2}):(\d{2})/);
+      if (!m) return '';
+      return Number(m[1]) + ':' + m[2];
+    }
+
+    function pintarTabsBloquesAsi() {
+      const caja = document.getElementById('tabsAsiBloques');
+      const vacio = document.getElementById('txtAsiMaeVacio');
+      if (!caja) return;
+      const bloques = (ctxAsi && ctxAsi.bloques) || [];
+      if (vacio) {
+        if (bloques.length) vacio.classList.add('oculto');
+        else vacio.classList.remove('oculto');
+      }
+      if (!bloques.length) {
+        caja.innerHTML = '';
+        return;
+      }
+      const enCurso = bloqueHoraActualAsi_(bloques);
+      if (ctxAsi) ctxAsi.bloqueActual = enCurso;
+      if (!bloqueAsiSel) bloqueAsiSel = bloqueParaPosicionarAsi_() || bloques[0].bloque;
+      caja.innerHTML = bloques.map(function (b) {
+        const act = b.bloque === bloqueAsiSel ? ' activa' : '';
+        const actual = b.bloque === enCurso ? ' actual' : '';
+        const num = String(b.bloque || '').replace(/[^\d].*$/, '') || String(b.bloque || '');
+        const ini = horaCortaAsi_(b.horaInicio);
+        const fin = horaCortaAsi_(b.horaFin);
+        const rango = (ini && fin) ? (ini + '–' + fin) : (ini || '');
+        const tip = (rango ? ('Hora ' + num + ' · ' + rango) : ('Hora ' + num)) + (actual ? ' · en curso' : '');
+        return '<button type="button" class="asi-hora-btn' + act + actual + '" onclick="cargarMaestrosAsiBloque(\'' + String(b.bloque).replace(/'/g, '') + '\', true)" data-tip="' + tip + '" aria-label="' + tip + '">' +
+          '<strong>' + num + '</strong>' +
+          (rango ? ('<span>' + rango + '</span>') : '') +
+          '</button>';
+      }).join('');
+      const foco = caja.querySelector('.asi-hora-btn.actual') || caja.querySelector('.asi-hora-btn.activa');
+      if (foco && typeof foco.scrollIntoView === 'function') {
+        try { foco.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+      }
+    }
+
+    let docenteAsiSel = '';
+
+    function toggleDdDocenteAsi(ev) {
+      if (ev) ev.stopPropagation();
+      const panel = document.getElementById('panelDocenteAsiMae');
+      if (!panel) return;
+      const abrir = panel.classList.contains('oculto');
+      cerrarDdGruposRep();
+      if (abrir) {
+        poblarListaDocentesAsiDd();
+        panel.classList.remove('oculto');
+      } else {
+        panel.classList.add('oculto');
+      }
+    }
+
+    function cerrarDdDocenteAsi() {
+      const panel = document.getElementById('panelDocenteAsiMae');
+      if (panel) panel.classList.add('oculto');
+    }
+
+    function obtenerDocentesAsi_() {
+      const set = {};
+      if (ctxAsi && Array.isArray(ctxAsi.maestros)) {
+        ctxAsi.maestros.forEach(function (m) {
+          const n = String(m || '').trim();
+          if (n) set[n] = true;
+        });
+      }
+      const tb = document.getElementById('tablaAsiMae');
+      if (tb && Array.isArray(tb._listaMaeCompleta)) {
+        tb._listaMaeCompleta.forEach(function (m) {
+          const n = String(m.maestro || '').trim();
+          if (n) set[n] = true;
+        });
+      }
+      return Object.keys(set).sort(function (a, b) {
+        return a.localeCompare(b, 'es');
+      });
+    }
+
+    function poblarListaDocentesAsiDd() {
+      const c = document.getElementById('listaDocentesAsiDd');
+      if (!c) return;
+      const docs = obtenerDocentesAsi_();
+      if (!docs.length) {
+        c.innerHTML = '<span style="font-size:12px;color:#64748b;padding:8px;">No hay docentes en tus grupos</span>';
+        return;
+      }
+      let html = '';
+      docs.forEach(function (nom) {
+        const esActivo = (docenteAsiSel && normalizarNombrePref_(docenteAsiSel) === normalizarNombrePref_(nom));
+        const estilo = esActivo
+          ? 'background:#eff6ff;color:var(--st90-azul);font-weight:700;border:1px solid #bfdbfe;'
+          : 'background:#fff;color:#1e293b;border:1px solid #e2e8f0;';
+        html += '<button type="button" style="text-align:left;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .15s;' + estilo + '" onclick="seleccionarDocenteAsi(\'' + escaparHtml(nom).replace(/'/g, "\\'") + '\')">' +
+          (esActivo ? '✓ ' : '') + escaparHtml(nom) +
+          '</button>';
+      });
+      c.innerHTML = html;
+    }
+
+    function seleccionarDocenteAsi(nombre) {
+      docenteAsiSel = String(nombre || '').trim();
+      cerrarDdDocenteAsi();
+      const btn = document.getElementById('btnElegirDocenteAsi');
+      const chip = document.getElementById('chipDocenteAsiSel');
+      const txt = document.getElementById('txtDocenteAsiSel');
+      if (docenteAsiSel) {
+        if (btn) {
+          btn.classList.add('activo');
+        }
+        if (chip && txt) {
+          txt.textContent = docenteAsiSel;
+          chip.classList.remove('oculto');
+        }
+      } else {
+        if (btn) {
+          btn.classList.remove('activo');
+        }
+        if (chip) chip.classList.add('oculto');
+      }
+      const tb = document.getElementById('tablaAsiMae');
+      if (tb && Array.isArray(tb._listaMaeCompleta)) {
+        pintarTablaAsiMae(tb._listaMaeCompleta);
+      } else if (bloqueAsiSel) {
+        cargarMaestrosAsiBloque(bloqueAsiSel);
+      }
+    }
+
+    function cargarMaestrosAsiBloque(bloque, manual) {
+      if (manual) bloqueAsiManual = true;
+      if (bloque) bloqueAsiSel = bloque;
+      if (!bloqueAsiSel || !token) return;
+      pintarTabsBloquesAsi();
+      const bl = ((ctxAsi && ctxAsi.bloques) || []).filter(function (b) { return b.bloque === bloqueAsiSel; })[0];
+      const turno = (bl && bl.turno) || (ctxAsi && ctxAsi.grupos && ctxAsi.grupos[0] && ctxAsi.grupos[0].turno) || 'matutino';
+      gsRun('asistenciaMaestrosBloque', token, fechaAsiActiva(), bloqueAsiSel, turno).then(function (res) {
+        pintarTablaAsiMae((res && res.maestros) || []);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function recogerObsMae_() {
+      const tb = document.getElementById('tablaAsiMae');
+      const lista = tb && tb._listaMae;
+      if (!lista) return lista;
+      tb.querySelectorAll('input.asi-obs').forEach(function (inp) {
+        const i = Number(inp.getAttribute('data-i'));
+        if (lista[i]) lista[i].observacion = inp.value;
+      });
+      return lista;
+    }
+
+    function pintarTablaAsiMae(lista) {
+      const tb = document.getElementById('tablaAsiMae');
+      if (!tb) return;
+      tb._listaMaeCompleta = lista;
+      let items = lista;
+      if (docenteAsiSel) {
+        items = lista.filter(function (m) {
+          return normalizarNombrePref_(m.maestro || '') === normalizarNombrePref_(docenteAsiSel);
+        });
+      }
+      if (!items.length) {
+        if (docenteAsiSel) {
+          tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#64748b;">El docente <strong>' + escaparHtml(docenteAsiSel) + '</strong> no tiene clase en este cambio de hora. <button type="button" class="btn-link" style="color:var(--st90-azul);font-weight:700;background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:8px;" onclick="seleccionarDocenteAsi(\'\')">Ver todos los docentes</button></td></tr>';
+        } else {
+          tb.innerHTML = '<tr><td>No hay docentes de tus grupos en este cambio de hora.</td></tr>';
+        }
+        tb._listaMae = items;
+        return;
+      }
+      let html = '<thead><tr><th>Docente</th><th>Grupo</th><th>Asignatura</th><th>Salón</th><th>Estado</th><th class="asi-th-obs">Observación</th></tr></thead><tbody>';
+      items.forEach(function (m, i) {
+        html += '<tr><td>' + (m.maestro || '') + '</td><td>' + String(m.grupo || '').toUpperCase() + '</td><td>' + (m.asignatura || '') + '</td><td>' + (m.salon || '') + '</td><td>';
+        html += '<div class="asi-estados">';
+        [{ id: 'presente', t: 'P', tip: 'Asistió' }, { id: 'retardo', t: 'R', tip: 'Retardo' }, { id: 'falta', t: 'F', tip: 'Falta' }].forEach(function (e) {
+          html += '<button type="button" class="asi-e ' + e.id + (m.estado === e.id ? ' activa' : '') + '" onclick="guardarEstadoAsiMae(' + i + ',\'' + e.id + '\')" data-tip="' + e.tip + '" aria-label="' + e.tip + '">' + e.t + '</button>';
+        });
+        html += '</div></td><td class="asi-td-obs"><input class="asi-obs" data-i="' + i + '" value="' + escaparHtml(m.observacion || '') + '" placeholder="Nota (opcional)" oninput="setObsAsiMae(' + i + ', this.value)" onblur="guardarObsAsiMae(' + i + ')"></td></tr>';
+      });
+      html += '</tbody>';
+      tb.innerHTML = html;
+      tb._listaMae = items;
+    }
+
+    function setObsAsiMae(i, val) {
+      const tb = document.getElementById('tablaAsiMae');
+      const lista = tb && tb._listaMae;
+      if (lista && lista[i]) lista[i].observacion = val;
+    }
+
+    function guardarObsAsiMae(i) {
+      const tb = document.getElementById('tablaAsiMae');
+      const lista = recogerObsMae_() || (tb && tb._listaMae);
+      if (!lista || !lista[i] || !lista[i].estado) return;
+      persistirAsiMae_(lista, i, lista[i].estado, false);
+    }
+
+    function guardarEstadoAsiMae(i, estado) {
+      const tb = document.getElementById('tablaAsiMae');
+      const lista = recogerObsMae_() || (tb && tb._listaMae);
+      if (!lista || !lista[i]) return;
+      persistirAsiMae_(lista, i, estado, true);
+    }
+
+    function persistirAsiMae_(lista, i, estado, pintar) {
+      const m = lista[i];
+      gsRun('guardarAsistenciaMaestro', token, {
+        fecha: fechaAsiActiva(),
+        turno: (ctxAsi && ctxAsi.grupos && ctxAsi.grupos[0] && ctxAsi.grupos[0].turno) || 'matutino',
+        bloque: bloqueAsiSel,
+        idHorario: m.idHorario,
+        maestro: m.maestro,
+        grado: m.grado,
+        grupo: m.grupo,
+        asignatura: m.asignatura,
+        estado: estado,
+        observacion: m.observacion || ''
+      }).then(function (res) {
+        lista[i].estado = estado;
+        if (pintar) {
+          const tb = document.getElementById('tablaAsiMae');
+          pintarTablaAsiMae((tb && tb._listaMaeCompleta) || lista);
+          toast((res && res.mensaje) || 'Guardado.', 'exito');
+        }
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function primerDiaMesAsi_() {
+      const d = new Date();
+      const m = String(d.getMonth() + 1);
+      return d.getFullYear() + '-' + (m.length < 2 ? '0' + m : m) + '-01';
+    }
+
+    function mesesCortosAsi_() {
+      return ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    }
+
+    function fmtFechaRepAsi_(iso) {
+      const s = String(iso || '').trim();
+      const p = s.split('-');
+      if (p.length < 3) return '';
+      const mes = mesesCortosAsi_()[Number(p[1]) - 1] || p[1];
+      return p[2] + '/' + mes + '/' + String(p[0]).slice(-2);
+    }
+
+    function fmtRangoRepAsi_(ini, fin) {
+      const a = fmtFechaRepAsi_(ini);
+      const b = fmtFechaRepAsi_(fin);
+      if (!a && !b) return '';
+      if (!b || a === b) return a;
+      return a + ' a ' + b;
+    }
+
+    function isoDeDateAsi_(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1);
+      const day = String(d.getDate());
+      return y + '-' + (m.length < 2 ? '0' + m : m) + '-' + (day.length < 2 ? '0' + day : day);
+    }
+
+    function dateDeIsoAsi_(iso) {
+      const p = String(iso || '').split('-');
+      if (p.length < 3) return new Date();
+      return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    }
+
+    function cfgTrimsRepAsi_() {
+      const t = (catRepAsi && catRepAsi.trimestres) || null;
+      if (t && t['1'] && t['1'].inicio) return t;
+      const hoy = new Date();
+      const y = hoy.getMonth() >= 7 ? hoy.getFullYear() : hoy.getFullYear() - 1;
+      const y2 = y + 1;
+      return {
+        '1': { inicio: y + '-08-24', fin: y + '-11-27' },
+        '2': { inicio: y + '-12-01', fin: y2 + '-03-27' },
+        '3': { inicio: y2 + '-04-07', fin: y2 + '-07-10' }
+      };
+    }
+
+    function trimestreDeFechaRepAsi_(iso) {
+      const tr = cfgTrimsRepAsi_();
+      const fe = iso || fechaLocalAsi();
+      for (let n = 1; n <= 3; n++) {
+        const t = tr[String(n)];
+        if (t && t.inicio && t.fin && fe >= t.inicio && fe <= t.fin) return String(n);
+      }
+      return nTrimRepAsi || '1';
+    }
+
+    function rangoModoPeriodoRepAsi_(modo, anclaIso) {
+      const hoy = fechaLocalAsi();
+      const d = dateDeIsoAsi_(anclaIso || hoy);
+      if (modo === 'dia') {
+        const x = isoDeDateAsi_(d);
+        return { ini: x, fin: x };
+      }
+      if (modo === 'semana') {
+        const dia = d.getDay();
+        const diff = dia === 0 ? -6 : 1 - dia;
+        const lun = new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+        const dom = new Date(lun.getFullYear(), lun.getMonth(), lun.getDate() + 6);
+        let ini = isoDeDateAsi_(lun);
+        let fin = isoDeDateAsi_(dom);
+        if (fin > hoy) fin = hoy;
+        return { ini: ini, fin: fin };
+      }
+      if (modo === 'trimestre') {
+        nTrimRepAsi = String(nTrimRepAsi || trimestreDeFechaRepAsi_(anclaIso) || '1');
+        const t = cfgTrimsRepAsi_()[nTrimRepAsi] || {};
+        let ini = t.inicio || isoDeDateAsi_(d);
+        let fin = t.fin || isoDeDateAsi_(d);
+        if (fin > hoy) fin = hoy;
+        if (ini > fin) ini = fin;
+        return { ini: ini, fin: fin };
+      }
+      const mm = String(d.getMonth() + 1);
+      const ini = d.getFullYear() + '-' + (mm.length < 2 ? '0' + mm : mm) + '-01';
+      const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+      let fin = isoDeDateAsi_(last);
+      if (fin > hoy) fin = hoy;
+      return { ini: ini, fin: fin };
+    }
+
+    function aplicarRangoInputsPeriodo_(r) {
+      const ini = document.getElementById('fechaIniRepAsi');
+      const fin = document.getElementById('fechaFinRepAsi');
+      if (ini) ini.value = r.ini;
+      if (fin) fin.value = r.fin;
+    }
+
+    function etqCortaPeriodoRepAsi_(ini, fin) {
+      if (modoPeriodoRepAsi === 'trimestre') {
+        if (nTrimRepAsi === '1') return '1er trim';
+        if (nTrimRepAsi === '2') return '2° trim';
+        return '3er trim';
+      }
+      if (modoPeriodoRepAsi === 'mes') {
+        const p = String(ini || '').split('-');
+        if (p.length < 2) return 'Mes';
+        return (mesesCortosAsi_()[Number(p[1]) - 1] || p[1]) + '/' + String(p[0]).slice(-2);
+      }
+      if (modoPeriodoRepAsi === 'dia') return fmtFechaRepAsi_(ini) || 'Día';
+      const a = String(ini || '').split('-');
+      const b = String(fin || '').split('-');
+      if (a.length < 3 || b.length < 3) return 'Semana';
+      const mes = mesesCortosAsi_()[Number(b[1]) - 1] || b[1];
+      return a[2] + '–' + b[2] + '/' + mes;
+    }
+
+    function pintarPanelPeriodoRepAsi_() {
+      const caja = document.getElementById('cajaTrimRepAsi');
+      if (caja) caja.classList.toggle('oculto', modoPeriodoRepAsi !== 'trimestre');
+      document.querySelectorAll('#panelPeriodoRepAsi [data-modo]').forEach(function (b) {
+        b.classList.toggle('activa', b.getAttribute('data-modo') === modoPeriodoRepAsi);
+      });
+      document.querySelectorAll('#cajaTrimRepAsi [data-trim]').forEach(function (b) {
+        b.classList.toggle('activa', b.getAttribute('data-trim') === String(nTrimRepAsi));
+      });
+      const ini = (document.getElementById('fechaIniRepAsi') || {}).value || '';
+      const fin = (document.getElementById('fechaFinRepAsi') || {}).value || '';
+      const prev = document.getElementById('txtRangoPeriodoRepAsi');
+      if (prev) prev.textContent = fmtRangoRepAsi_(ini, fin);
+    }
+
+    function pintarEtqPeriodoRepAsi() {
+      const ini = (document.getElementById('fechaIniRepAsi') || {}).value || '';
+      const fin = (document.getElementById('fechaFinRepAsi') || {}).value || '';
+      const txt = etqCortaPeriodoRepAsi_(ini, fin) || 'Periodo';
+      const btn = document.getElementById('btnPeriodoRepAsi');
+      const lab = btn && btn.querySelector('.ribbon-label');
+      if (lab) lab.textContent = txt;
+      if (btn) btn.classList.toggle('activo', !!(ini && fin));
+      pintarPanelPeriodoRepAsi_();
+    }
+
+    function setModoPeriodoRepAsi(modo, ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      modoPeriodoRepAsi = (modo === 'dia' || modo === 'semana' || modo === 'trimestre') ? modo : 'mes';
+      if (modoPeriodoRepAsi === 'trimestre') {
+        nTrimRepAsi = trimestreDeFechaRepAsi_(fechaLocalAsi());
+      }
+      aplicarRangoInputsPeriodo_(rangoModoPeriodoRepAsi_(modoPeriodoRepAsi, fechaLocalAsi()));
+      periodoRepEtiquetaManual = true;
+      pintarEtqPeriodoRepAsi();
+    }
+
+    function setTrimPeriodoRepAsi(n, ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      nTrimRepAsi = String(n === '2' || n === '3' ? n : '1');
+      modoPeriodoRepAsi = 'trimestre';
+      aplicarRangoInputsPeriodo_(rangoModoPeriodoRepAsi_('trimestre'));
+      periodoRepEtiquetaManual = true;
+      pintarEtqPeriodoRepAsi();
+    }
+
+    function desplazarPeriodoRepAsi(dir, ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      dir = dir < 0 ? -1 : 1;
+      const ini = (document.getElementById('fechaIniRepAsi') || {}).value || fechaLocalAsi();
+      if (modoPeriodoRepAsi === 'trimestre') {
+        let n = parseInt(nTrimRepAsi, 10) || 1;
+        n += dir;
+        if (n < 1) n = 3;
+        if (n > 3) n = 1;
+        nTrimRepAsi = String(n);
+        aplicarRangoInputsPeriodo_(rangoModoPeriodoRepAsi_('trimestre'));
+      } else {
+        const d = dateDeIsoAsi_(ini);
+        if (modoPeriodoRepAsi === 'dia') d.setDate(d.getDate() + dir);
+        else if (modoPeriodoRepAsi === 'semana') d.setDate(d.getDate() + dir * 7);
+        else d.setMonth(d.getMonth() + dir);
+        aplicarRangoInputsPeriodo_(rangoModoPeriodoRepAsi_(modoPeriodoRepAsi, isoDeDateAsi_(d)));
+      }
+      periodoRepEtiquetaManual = true;
+      pintarEtqPeriodoRepAsi();
+    }
+
+    function toggleDdPeriodoRep(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const p = document.getElementById('panelPeriodoRepAsi');
+      if (!p) return;
+      const oc = p.classList.contains('oculto');
+      document.querySelectorAll('.asi-dd-panel').forEach(function (el) { el.classList.add('oculto'); });
+      if (oc) {
+        pintarPanelPeriodoRepAsi_();
+        p.classList.remove('oculto');
+      }
+    }
+
+    function aplicarPeriodoRepAsiDirecto() {
+      pintarEtqPeriodoRepAsi();
+    }
+
+    function abrirModalPeriodoRepAsi() {
+      toggleDdPeriodoRep();
+    }
+
+    function cerrarModalPeriodoRepAsi() {
+      const p = document.getElementById('panelPeriodoRepAsi');
+      if (p) p.classList.add('oculto');
+    }
+
+    function aplicarPeriodoRepAsi() {
+      pintarEtqPeriodoRepAsi();
+      cerrarModalPeriodoRepAsi();
+    }
+
+    function mostrarVistaTipoRepAsi_() {
+      ramaRepAsi = '';
+      const tipo = document.getElementById('cajaTipoRepAsi');
+      const tarjeta = document.getElementById('tarjetaRepAsi');
+      const cuerpo = document.getElementById('cuerpoRepAsi');
+      const bAlu = document.getElementById('btnRamaAluRep');
+      const bMae = document.getElementById('btnRamaMaeRep');
+      if (tipo) tipo.classList.remove('oculto');
+      if (tarjeta) tarjeta.classList.add('oculto');
+      if (cuerpo) cuerpo.innerHTML = '';
+      if (bAlu) bAlu.classList.remove('activo');
+      if (bMae) bMae.classList.remove('activo');
+    }
+
+    function prepararReporteAsi() {
+      modoPeriodoRepAsi = 'mes';
+      aplicarRangoInputsPeriodo_(rangoModoPeriodoRepAsi_('mes', fechaLocalAsi()));
+      periodoRepEtiquetaManual = false;
+      mostrarVistaTipoRepAsi_();
+      pintarEtqPeriodoRepAsi();
+      ajustarFiltrosRepAsi();
+      gsRun('catalogoReporteAsistencia', token).then(function (res) {
+        catRepAsi = res || {};
+        if (modoPeriodoRepAsi === 'trimestre') {
+          aplicarRangoInputsPeriodo_(rangoModoPeriodoRepAsi_('trimestre'));
+          pintarEtqPeriodoRepAsi();
+        }
+        filtrarCatalogoRepAsi();
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function cambiarRamaRepAsi(rama) {
+      ramaRepAsi = rama === 'maestro' ? 'maestro' : 'alumno';
+      const tipo = document.getElementById('cajaTipoRepAsi');
+      const tarjeta = document.getElementById('tarjetaRepAsi');
+      if (tipo) tipo.classList.add('oculto');
+      if (tarjeta) tarjeta.classList.remove('oculto');
+      const bAlu = document.getElementById('btnRamaAluRep');
+      const bMae = document.getElementById('btnRamaMaeRep');
+      if (bAlu) bAlu.classList.toggle('activo', ramaRepAsi === 'alumno');
+      if (bMae) bMae.classList.toggle('activo', ramaRepAsi === 'maestro');
+      const selA = document.getElementById('selAluRepAsi');
+      const selM = document.getElementById('selMaeRepAsi');
+      if (ramaRepAsi === 'maestro') {
+        if (selA) selA.value = '';
+      } else if (selM) selM.value = '';
+      ajustarFiltrosRepAsi();
+      actualizarEtqAluRepAsi();
+      actualizarEtqMaeRepAsi();
+      filtrarCatalogoRepAsi();
+      const cuerpo = document.getElementById('cuerpoRepAsi');
+      if (cuerpo) cuerpo.innerHTML = '';
+    }
+
+    function ajustarFiltrosRepAsi() {
+      const btnA = document.getElementById('btnAluRepAsi');
+      const btnM = document.getElementById('btnMaeRepAsi');
+      const esMae = ramaRepAsi === 'maestro';
+      if (!ramaRepAsi) {
+        if (btnA) btnA.classList.add('oculto');
+        if (btnM) btnM.classList.add('oculto');
+        return;
+      }
+      if (btnA) btnA.classList.toggle('oculto', esMae);
+      if (btnM) btnM.classList.toggle('oculto', !esMae);
+    }
+
+    function actualizarEtqGradoRepAsi() {
+      const sel = document.getElementById('selGradoRepAsi');
+      const etq = document.getElementById('etqGradoRepAsi');
+      const btn = document.getElementById('btnGradoRepAsi');
+      const v = sel && sel.value ? String(sel.value) : '';
+      const txt = v ? (v + '°') : 'Grado';
+      if (etq) etq.textContent = txt;
+      if (btn) {
+        btn.classList.toggle('activo', !!v);
+      }
+    }
+
+    function actualizarEtqAluRepAsi() {
+      const sel = document.getElementById('selAluRepAsi');
+      const etq = document.getElementById('etqAluRepAsi');
+      const btn = document.getElementById('btnAluRepAsi');
+      const v = sel && sel.value ? String(sel.value) : '';
+      let txt = 'Alumno';
+      if (v && sel && sel.options && sel.selectedIndex >= 0) {
+        const op = sel.options[sel.selectedIndex];
+        txt = op && op.text ? String(op.text).split('·')[0].trim() : v;
+        if (txt.length > 14) txt = txt.slice(0, 13) + '…';
+      }
+      if (etq) etq.textContent = txt;
+      if (btn) {
+        btn.classList.toggle('activo', !!v);
+      }
+    }
+
+    function actualizarEtqMaeRepAsi() {
+      const sel = document.getElementById('selMaeRepAsi');
+      const etq = document.getElementById('etqMaeRepAsi');
+      const btn = document.getElementById('btnMaeRepAsi');
+      const v = sel && sel.value ? String(sel.value) : '';
+      let txt = 'Docente';
+      if (v) txt = v.length > 14 ? v.slice(0, 13) + '…' : v;
+      if (etq) etq.textContent = txt;
+      if (btn) {
+        btn.classList.toggle('activo', !!v);
+      }
+    }
+
+    function abrirModalFiltroRepAsi(cual) {
+      if (cual === 'grado') {
+        const s = document.getElementById('selGradoRepAsi');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      } else if (cual === 'docente') {
+        const s = document.getElementById('selMaeRepAsi');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      } else {
+        const s = document.getElementById('selAluRepAsi');
+        if (s) { s.focus(); try { s.showPicker(); } catch (e) {} }
+      }
+    }</script>

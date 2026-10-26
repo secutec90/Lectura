@@ -1,0 +1,771 @@
+<script>
+/* AdminJS_11 — fusionarLecturaEnBanco_, mostrarDetalleLecturaSeleccionada, irAlInicioVistaLectura, quillInstance, inicializarQuill, actualizarConteoPalabrasQuill, renderizarVistaInPlace, renderizarEdicionInPlace, activarModoEdicion, cancelarEdicionDosColumnas, ... */
+
+
+    function fusionarLecturaEnBanco_(full) {
+      if (!full || !full.id) return full;
+      if (!datos.bancoDetalle) datos.bancoDetalle = [];
+      let i = -1;
+      for (let k = 0; k < datos.bancoDetalle.length; k++) {
+        if (String(datos.bancoDetalle[k].id) === String(full.id)) { i = k; break; }
+      }
+      if (i >= 0) datos.bancoDetalle[i] = Object.assign({}, datos.bancoDetalle[i], full);
+      else datos.bancoDetalle.push(full);
+      return datos.bancoDetalle[i >= 0 ? i : datos.bancoDetalle.length - 1];
+    }
+
+    function mostrarDetalleLecturaSeleccionada() {
+      if (modoCreacionNueva) return;
+      const pIA = document.getElementById('panelIA');
+      if (pIA && !pIA.classList.contains('oculto')) {
+        const c = document.getElementById('vistaDetalleLec');
+        if (c) c.classList.add('oculto');
+        return;
+      }
+      const lec0 = lecturaBancoPorId(lecturaSeleccionadaId);
+      const contenedor = document.getElementById('vistaDetalleLec');
+      
+      if (!lec0) {
+        contenedor.classList.add('oculto');
+        if (!modoCreacionNueva) alternarVisibilidadListaLecturas(true);
+        return;
+      }
+
+      function pintar(lec) {
+      contenedor.classList.remove('oculto');
+      alternarVisibilidadListaLecturas(false);
+
+      const activa = String(lec.activa).toUpperCase() !== 'NO';
+      const gNum = String(lec.grado || '').replace(/[^0-9]/g, '') || '1';
+      document.getElementById('detTitulo').textContent = gNum + '° · ' + (lec.asignatura || '') + ' · ' + (lec.tema || '');
+      
+      let chipsHtml = '<span class="st90-chip">' + gNum + '° de secundaria</span>' +
+        '<span class="st90-chip ' + (activa ? 'ok' : 'no') + '">' + (activa ? '✓ Activa en ruleta' : 'Oculta') + '</span>' +
+        '<span class="st90-chip">' + lec.palabras + ' palabras</span>' +
+        '<span class="st90-chip">' + (lec.preguntas || []).length + ' preguntas</span>' +
+        '<span class="st90-chip" style="color:#64748b;">Origen: ' + escaparHtml(lec.origen || 'BANCO') + '</span>';
+      document.getElementById('detChips').innerHTML = chipsHtml;
+
+      const btnToggle = document.getElementById('btnToggleActiva');
+      if (btnToggle) {
+        if (activa) {
+          btnToggle.setAttribute('data-tip', 'Ocultar de la ruleta');
+          btnToggle.setAttribute('aria-label', 'Ocultar de la ruleta');
+          btnToggle.className = 'btn-icono-res';
+        } else {
+          btnToggle.setAttribute('data-tip', 'Activar en ruleta');
+          btnToggle.setAttribute('aria-label', 'Activar en ruleta');
+          btnToggle.className = 'btn-icono-res verde';
+        }
+      }
+
+      if (modoEdicionActivo) {
+        renderizarEdicionInPlace(lec);
+      } else {
+        renderizarVistaInPlace(lec);
+      }
+      cambiarLayoutColumnas(layoutActual);
+      irAlInicioVistaLectura();
+      }
+
+      if (lec0.texto && lec0.preguntas && lec0.preguntas.length) {
+        pintar(lec0);
+        return;
+      }
+      contenedor.classList.remove('oculto');
+      alternarVisibilidadListaLecturas(false);
+      document.getElementById('detTitulo').textContent = 'Cargando lectura…';
+      const idPedido = lecturaSeleccionadaId;
+      gsRun('detalleUnaLectura', token, idPedido).then(function (full) {
+        if (String(lecturaSeleccionadaId) !== String(idPedido)) return;
+        if (!full) {
+          toast('No se pudo abrir la lectura.', 'error');
+          return;
+        }
+        pintar(fusionarLecturaEnBanco_(full));
+      }).catch(function (e) {
+        toast((e && e.message) || 'No se pudo abrir la lectura.', 'error');
+      });
+    }
+
+    function irAlInicioVistaLectura() {
+      function aplicar() {
+        try {
+          if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+        } catch (eBlur) {}
+        [document.scrollingElement, document.documentElement, document.body, document.getElementById('panel'), document.getElementById('tab-lec')].forEach(function (n) {
+          if (n) n.scrollTop = 0;
+        });
+        try { window.scrollTo(0, 0); } catch (e0) {}
+        ['cajaVistaTexto', 'cajaVistaPreguntas', 'cajaEdicionTexto', 'cajaEdicionPreguntas', 'listaEditorPreguntasInPlace'].forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) el.scrollTop = 0;
+        });
+        const ancla = document.getElementById('barraAccionesLec') || document.getElementById('tab-lec');
+        if (ancla && ancla.scrollIntoView) {
+          try { ancla.scrollIntoView({ block: 'start', inline: 'nearest' }); } catch (e1) {
+            try { ancla.scrollIntoView(true); } catch (e2) {}
+          }
+        }
+        try { if (window.parent !== window) window.parent.scrollTo(0, 0); } catch (e3) {}
+        try { if (window.top !== window) window.top.scrollTo(0, 0); } catch (e4) {}
+      }
+      aplicar();
+      requestAnimationFrame(function () {
+        aplicar();
+        setTimeout(aplicar, 60);
+      });
+    }
+
+    let quillInstance = null;
+
+    function inicializarQuill() {
+      if (quillInstance) return;
+      if (typeof Quill === 'undefined') return;
+
+      const toolbarOptions = [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        ['clean']
+      ];
+
+      quillInstance = new Quill('#quillEditor', {
+        modules: {
+          toolbar: toolbarOptions
+        },
+        theme: 'snow',
+        placeholder: 'Escribe o pega aquí el contenido de la lectura…'
+      });
+
+      quillInstance.on('text-change', function () {
+        actualizarConteoPalabrasQuill();
+        if (!ignorarCambioQuill && (modoEdicionActivo || modoCreacionNueva)) marcarEditorDirty();
+      });
+    }
+
+    function actualizarConteoPalabrasQuill() {
+      if (!quillInstance) return;
+      const textoPlano = quillInstance.getText();
+      const n = String(textoPlano || '').trim().split(/\s+/).filter(Boolean).length;
+      document.getElementById('detPalabrasConteo').textContent = n + ' palabras';
+    }
+
+    function renderizarVistaInPlace(lec) {
+      document.getElementById('grupoAccionesVista').classList.remove('oculto');
+      document.getElementById('grupoAccionesEdicion').classList.add('oculto');
+      
+      document.getElementById('lblColTextoHeader').textContent = '📖 Texto de la lectura';
+      document.getElementById('lblColPregHeader').textContent = '📝 Preguntas y respuestas';
+      
+      document.getElementById('cajaVistaTexto').classList.remove('oculto');
+      document.getElementById('cajaEdicionTexto').classList.add('oculto');
+      
+      document.getElementById('cajaVistaPreguntas').classList.remove('oculto');
+      document.getElementById('cajaEdicionPreguntas').classList.add('oculto');
+
+      // Columna 1: Texto formateado tipo libro
+      document.getElementById('detPalabrasConteo').textContent = (lec.palabras || contarPalabrasCliente(lec.texto)) + ' palabras';
+      document.getElementById('cajaVistaTexto').innerHTML = renderizarHojaLibro(lec.texto, lec.tema, lec.asignatura, lec.grado, lec.palabras);
+
+      // Columna 2: Preguntas estilizadas
+      document.getElementById('detPreguntasConteo').textContent = (lec.preguntas || []).length + ' preguntas';
+      const pregs = lec.preguntas || [];
+      if (!pregs.length) {
+        document.getElementById('cajaVistaPreguntas').innerHTML = '<p style="color:#64748b;font-size:13px;padding:12px;">Esta lectura no tiene preguntas configuradas.</p>';
+      } else {
+        let pregsHtml = '';
+        pregs.forEach(function (p, i) {
+          pregsHtml += '<div class="card-pregunta-vista">' +
+            '<div class="num-p">Pregunta ' + (i + 1) +
+              (p.nivel ? ' · ' + etiquetaNivelComprensionCliente(p.nivel) : '') +
+            '</div>' +
+            '<div class="enunciado-p">' + escaparHtml(p.p) + '</div>';
+          (p.opciones || []).forEach(function (op, j) {
+            const esCorrecta = op && op === p.respuesta;
+            pregsHtml += '<div class="opcion-vista' + (esCorrecta ? ' correcta' : '') + '">' +
+              (esCorrecta ? '<span class="check-badge">✓</span>' : '<span style="color:#94a3b8;">•</span>') +
+              '<span>' + escaparHtml(op) + '</span>' +
+              (esCorrecta ? '<span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--st90-verde);">Respuesta correcta</span>' : '') +
+              '</div>';
+          });
+          pregsHtml += '</div>';
+        });
+        document.getElementById('cajaVistaPreguntas').innerHTML = pregsHtml;
+      }
+    }
+
+    function renderizarEdicionInPlace(lec) {
+      document.getElementById('grupoAccionesVista').classList.add('oculto');
+      document.getElementById('grupoAccionesEdicion').classList.remove('oculto');
+      
+      document.getElementById('lblColTextoHeader').textContent = '✏️ Editando texto de la lectura';
+      document.getElementById('lblColPregHeader').textContent = '✏️ Editando preguntas';
+      
+      document.getElementById('cajaVistaTexto').classList.add('oculto');
+      document.getElementById('cajaEdicionTexto').classList.remove('oculto');
+      
+      document.getElementById('cajaVistaPreguntas').classList.add('oculto');
+      document.getElementById('cajaEdicionPreguntas').classList.remove('oculto');
+
+      // Cargar valores en campos de texto
+      const gNum = String(lec.grado || '').replace(/[^0-9]/g, '') || '1';
+      document.getElementById('editGra').value = gNum;
+      document.getElementById('editAsi').value = lec.asignatura || '';
+      document.getElementById('editTema').value = lec.tema || '';
+      
+      // Inicializar y cargar texto en Quill
+      inicializarQuill();
+      const t = String(lec.texto || '');
+      if (quillInstance) {
+        ignorarCambioQuill = true;
+        if (/<[a-z][\s\S]*>/i.test(t)) {
+          quillInstance.root.innerHTML = t;
+        } else if (t.trim()) {
+          const ps = t.split(/\n\s*\n/).map(function (p) { return '<p>' + escaparHtml(p) + '</p>'; }).join('');
+          quillInstance.root.innerHTML = ps;
+        } else {
+          quillInstance.setText('');
+        }
+        actualizarConteoPalabrasQuill();
+        ignorarCambioQuill = false;
+        editorDirty = false;
+      }
+      
+      actualizarDatalistTemasEdit();
+
+      // Cargar preguntas para editar
+      editorPreguntasDatos = (lec.preguntas && lec.preguntas.length ? lec.preguntas : [preguntaVacia()]).map(function (p) {
+        return {
+          p: p.p || '',
+          opciones: (p.opciones && p.opciones.length ? p.opciones : ['', '', '', '']).slice(),
+          respuesta: p.respuesta || '',
+          nivel: (function () {
+            const s = String(p.nivel || '').toLowerCase();
+            if (s.indexOf('crit') >= 0) return 'critica';
+            if (s.indexOf('infer') >= 0) return 'inferencial';
+            if (s.indexOf('liter') >= 0) return 'literal';
+            return '';
+          }())
+        };
+      });
+      pintarEditorPreguntasInPlace();
+    }
+
+    function activarModoEdicion() {
+      modoEdicionActivo = true;
+      editorDirty = false;
+      mostrarDetalleLecturaSeleccionada();
+    }
+
+    function cancelarEdicionDosColumnas() {
+      salirSiEditorDirty().then(function (ok) {
+        if (!ok) return;
+        resetearEditor();
+        mostrarDetalleLecturaSeleccionada();
+      });
+    }
+
+    function iniciarNuevaLectura() {
+      salirSiEditorDirty().then(function (ok) {
+        if (!ok) return;
+        iniciarNuevaLecturaAhora();
+      });
+    }
+
+    function iniciarNuevaLecturaAhora() {
+      const pIA = document.getElementById('panelIA');
+      if (pIA) pIA.classList.add('oculto');
+      const pMasivo = document.getElementById('panelMasivo');
+      if (pMasivo) pMasivo.classList.add('oculto');
+
+      modoCreacionNueva = true;
+      modoEdicionActivo = true;
+      editorDirty = false;
+
+      const contenedor = document.getElementById('vistaDetalleLec');
+      contenedor.classList.remove('oculto');
+
+      // Ocultar la lista de lecturas encontradas para máxima concentración
+      alternarVisibilidadListaLecturas(false);
+
+      document.getElementById('detTitulo').textContent = 'Redactar nueva lectura escolar';
+      document.getElementById('detChips').innerHTML = '<span class="st90-chip ok">Nueva lectura</span>';
+
+      document.getElementById('grupoAccionesVista').classList.add('oculto');
+      document.getElementById('grupoAccionesEdicion').classList.remove('oculto');
+
+      document.getElementById('lblColTextoHeader').textContent = 'Redactar texto de la lectura';
+      document.getElementById('lblColPregHeader').textContent = 'Redactar preguntas';
+
+      document.getElementById('cajaVistaTexto').classList.add('oculto');
+      document.getElementById('cajaEdicionTexto').classList.remove('oculto');
+
+      document.getElementById('cajaVistaPreguntas').classList.add('oculto');
+      document.getElementById('cajaEdicionPreguntas').classList.remove('oculto');
+
+      // Campos en blanco para redacción
+      document.getElementById('editGra').value = '1';
+      const asigs = (datos.config && datos.config.asignaturas ? datos.config.asignaturas : []);
+      document.getElementById('editAsi').value = asigs[0] || 'Español';
+      document.getElementById('editTema').value = '';
+
+      inicializarQuill();
+      if (quillInstance) {
+        ignorarCambioQuill = true;
+        quillInstance.setText('');
+        actualizarConteoPalabrasQuill();
+        ignorarCambioQuill = false;
+      }
+
+      actualizarDatalistTemasEdit();
+
+      // 4 preguntas en blanco
+      editorPreguntasDatos = [preguntaVacia(), preguntaVacia(), preguntaVacia(), preguntaVacia()];
+      pintarEditorPreguntasInPlace();
+
+      cambiarLayoutColumnas(layoutActual);
+      editorDirty = false;
+      irAlInicioVistaLectura();
+      document.getElementById('editTema').focus();
+    }
+
+    function actualizarDatalistTemasEdit() {
+      const grado = document.getElementById('editGra').value;
+      const asig = document.getElementById('editAsi').value;
+      const temas = {};
+      (datos.bancoDetalle || []).forEach(function (l) {
+        if (String(l.grado) === String(grado) && l.asignatura === asig && l.tema) temas[l.tema] = true;
+      });
+      // Agregar sugerencias curriculares de la NEM
+      const temasNem = obtenerTemasNEM(grado, asig);
+      temasNem.forEach(function (t) { temas[t] = true; });
+
+      document.getElementById('listaTemasEdit').innerHTML = Object.keys(temas).map(function (t) {
+        return '<option value="' + escaparHtml(t) + '">';
+      }).join('');
+    }
+
+    function pintarEditorPreguntasInPlace() {
+      const cont = document.getElementById('listaEditorPreguntasInPlace');
+      document.getElementById('detPreguntasConteo').textContent = editorPreguntasDatos.length + ' preguntas';
+      
+      let html = '';
+      editorPreguntasDatos.forEach(function (p, i) {
+        html += '<div class="preg-ed">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+            '<label style="font-weight:700;color:var(--st90-azul);font-size:13px;">Pregunta ' + (i + 1) + '</label>' +
+            '<button type="button" class="btn-rojo" style="padding:2px 8px;font-size:11px;" onclick="quitarPreguntaInPlace(' + i + ')">Eliminar</button>' +
+          '</div>' +
+          '<input type="text" value="' + escaparHtml(p.p) + '" placeholder="Escribe el enunciado de la pregunta..." oninput="editorPreguntasDatos[' + i + '].p=this.value;marcarEditorDirty()" style="margin-bottom:8px;">' +
+          '<label style="font-size:12px;margin:0 0 8px;">Nivel de comprensión' +
+            '<select onchange="editorPreguntasDatos[' + i + '].nivel=this.value;marcarEditorDirty()" style="margin-top:4px;">' +
+              '<option value="">Sin clasificar</option>' +
+              '<option value="literal"' + (p.nivel === 'literal' ? ' selected' : '') + '>Literal</option>' +
+              '<option value="inferencial"' + (p.nivel === 'inferencial' ? ' selected' : '') + '>Inferencial</option>' +
+              '<option value="critica"' + (p.nivel === 'critica' ? ' selected' : '') + '>Crítica</option>' +
+            '</select></label>';
+
+        (p.opciones || []).forEach(function (op, j) {
+          const esOk = op && op === p.respuesta;
+          html += '<div class="opt-ed' + (esOk ? ' correcta-elegida' : '') + '">' +
+            '<button type="button" class="btn-marcar" onclick="marcarCorrectaInPlace(' + i + ',' + j + ')">' +
+              (esOk ? '✓ Correcta' : 'Esta es la correcta') + '</button>' +
+            (esOk ? '<span class="etiqueta-ok">✓</span>' : '') +
+            '<input type="text" value="' + escaparHtml(op) + '" placeholder="Opción ' + (j + 1) + '" oninput="cambiarOpcionInPlace(' + i + ',' + j + ', this.value)">' +
+            (p.opciones.length > 2 ? '<button type="button" class="btn-secundario" style="padding:4px 6px;font-size:11px;" onclick="quitarOpcionInPlace(' + i + ',' + j + ')">×</button>' : '') +
+            '</div>';
+        });
+
+        html += '<button type="button" class="btn-secundario" style="margin-top:6px;padding:4px 10px;font-size:11px;" onclick="agregarOpcionInPlace(' + i + ')">+ Agregar opción</button>' +
+          '</div>';
+      });
+      cont.innerHTML = html;
+    }
+
+    function cambiarOpcionInPlace(i, j, valor) {
+      const p = editorPreguntasDatos[i];
+      const era = p.respuesta === p.opciones[j];
+      p.opciones[j] = valor;
+      if (era) p.respuesta = valor;
+      marcarEditorDirty();
+    }
+
+    function marcarCorrectaInPlace(i, j) {
+      editorPreguntasDatos[i].respuesta = editorPreguntasDatos[i].opciones[j] || '';
+      marcarEditorDirty();
+      pintarEditorPreguntasInPlace();
+    }
+
+    function agregarOpcionInPlace(i) {
+      editorPreguntasDatos[i].opciones.push('');
+      marcarEditorDirty();
+      pintarEditorPreguntasInPlace();
+    }
+
+    function quitarOpcionInPlace(i, j) {
+      editorPreguntasDatos[i].opciones.splice(j, 1);
+      marcarEditorDirty();
+      pintarEditorPreguntasInPlace();
+    }
+
+    function agregarPreguntaInPlace() {
+      editorPreguntasDatos.push(preguntaVacia());
+      marcarEditorDirty();
+      pintarEditorPreguntasInPlace();
+    }
+
+    function quitarPreguntaInPlace(i) {
+      editorPreguntasDatos.splice(i, 1);
+      if (!editorPreguntasDatos.length) editorPreguntasDatos.push(preguntaVacia());
+      marcarEditorDirty();
+      pintarEditorPreguntasInPlace();
+    }
+
+    function guardarEdicionDosColumnas() {
+      const tema = document.getElementById('editTema').value.trim();
+      let texto = '';
+      if (quillInstance) {
+        const textoPlano = quillInstance.getText().trim();
+        if (textoPlano) {
+          texto = quillInstance.root.innerHTML;
+        }
+      }
+      if (!tema) {
+        toast('Por favor ingresa el tema de la lectura.', 'error');
+        return Promise.resolve(false);
+      }
+      if (!texto) {
+        toast('Por favor ingresa el contenido del texto.', 'error');
+        return Promise.resolve(false);
+      }
+
+      const payload = {
+        id: modoCreacionNueva || lecturaSeleccionadaId.startsWith('NUEVA_') ? '' : lecturaSeleccionadaId,
+        grado: document.getElementById('editGra').value,
+        asignatura: document.getElementById('editAsi').value,
+        tema: tema,
+        texto: texto,
+        activa: 'SI',
+        preguntas: editorPreguntasDatos
+      };
+
+      toast('Guardando cambios en la hoja de cálculo…', 'info');
+      return gsRun('guardarLecturaBanco', token, payload)
+        .then(function (res) {
+          toast('Lectura guardada con éxito.', 'exito');
+          resetearEditor();
+          lecturaSeleccionadaId = res.id || lecturaSeleccionadaId;
+          cargarDetalleLecturas();
+          return true;
+        })
+        .catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+          return false;
+        });
+    }
+
+    function eliminarLecturaActual() {
+      const lista = datos.bancoDetalle || [];
+      const lec = lista.find(function (l) { return l.id === lecturaSeleccionadaId; });
+      if (!lec) return;
+      confirmar('¿Eliminar definitivamente la lectura "' + (lec.tema || lec.id) + '" del banco?', 'Eliminar lectura')
+        .then(function (ok) {
+          if (!ok) return;
+          gsRun('eliminarLectura', token, lec.id)
+            .then(function (res) {
+              toast(res.mensaje || 'Lectura eliminada', 'exito');
+              lecturaSeleccionadaId = '';
+              cargarDetalleLecturas();
+            })
+            .catch(function (e) { toast(e.message, 'error'); });
+        });
+    }
+
+    function toggleActivaLecturaActual() {
+      const lista = datos.bancoDetalle || [];
+      const lec = lista.find(function (l) { return l.id === lecturaSeleccionadaId; });
+      if (!lec) return;
+      const nuevaActiva = String(lec.activa).toUpperCase() === 'NO';
+      gsRun('cambiarActivaLectura', token, lec.id, nuevaActiva)
+        .then(function (r) {
+          toast(r.mensaje, 'exito');
+          cargarDetalleLecturas();
+        })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+
+    /* =======================================================
+       CONTROL DE VISIBILIDAD DE COLUMNAS (CAMPO DE VISIÓN)
+       ======================================================= */
+    function cambiarLayoutColumnas(tipo) {
+      layoutActual = tipo || 'ambas';
+      const grid = document.getElementById('gridDosColumnas');
+      const pTexto = document.getElementById('panelColTexto');
+      const pPreg = document.getElementById('panelColPreguntas');
+
+      const btnAmbas = document.getElementById('btnLayoutAmbas');
+      const btnTexto = document.getElementById('btnLayoutTexto');
+      const btnPreg = document.getElementById('btnLayoutPreguntas');
+
+      if (btnAmbas) btnAmbas.classList.remove('activo');
+      if (btnTexto) btnTexto.classList.remove('activo');
+      if (btnPreg) btnPreg.classList.remove('activo');
+
+      if (!grid || !pTexto || !pPreg) return;
+
+      if (layoutActual === 'texto') {
+        if (btnTexto) btnTexto.classList.add('activo');
+        grid.className = 'grid-dos-columnas solo-texto';
+        pTexto.classList.remove('oculta');
+        pPreg.classList.add('oculta');
+      } else if (layoutActual === 'preguntas') {
+        if (btnPreg) btnPreg.classList.add('activo');
+        grid.className = 'grid-dos-columnas solo-preguntas';
+        pTexto.classList.add('oculta');
+        pPreg.classList.remove('oculta');
+      } else {
+        if (btnAmbas) btnAmbas.classList.add('activo');
+        grid.className = 'grid-dos-columnas';
+        pTexto.classList.remove('oculta');
+        pPreg.classList.remove('oculta');
+      }
+    }
+
+    /* =======================================================
+       NUEVA ESCUELA MEXICANA (NEM - FASE 6 SECUNDARIA)
+       ASIGNATURAS POR GRADO Y CONTENIDOS CURRICULARES / PDA
+       ======================================================= */
+    const ASIGNATURAS_NEM_POR_GRADO = {
+      "1": [
+        "Español",
+        "Matemáticas",
+        "Ciencias (Biología)",
+        "Geografía",
+        "Historia",
+        "Formación Cívica y Ética",
+        "Tecnología",
+        "Inglés",
+        "Artes",
+        "Tutoría / Socioemocional"
+      ],
+      "2": [
+        "Español",
+        "Matemáticas",
+        "Ciencias (Física)",
+        "Historia",
+        "Formación Cívica y Ética",
+        "Tecnología",
+        "Inglés",
+        "Artes",
+        "Tutoría / Socioemocional"
+      ],
+      "3": [
+        "Español",
+        "Matemáticas",
+        "Ciencias (Química)",
+        "Historia",
+        "Formación Cívica y Ética",
+        "Tecnología",
+        "Inglés",
+        "Artes",
+        "Tutoría / Socioemocional"
+      ]
+    };
+
+    const TEMAS_NEM = {
+      "1": {
+        "Español": [
+          "La diversidad lingüística y sus formas de expresión en México y el mundo",
+          "La función creativa del español en la expresión de necesidades comunitarias",
+          "Textos de divulgación científica y medios de comunicación comunitaria",
+          "Manifestaciones culturales, artísticas y literarias sobre la identidad",
+          "Creación y representación de narrativas tradicionales y relatos comunitarios",
+          "Análisis de textos informativos sobre el cuidado de la salud y el entorno"
+        ],
+        "Matemáticas": [
+          "Extensión de los números a positivos y negativos y su orden en la recta",
+          "Regularidades y patrones en fenómenos cotidianos y sucesiones",
+          "Introducción al álgebra en situaciones prácticas y ecuaciones lineales",
+          "Medición y cálculo en diferentes contextos comunitarios",
+          "Obtención y representación de información a través de tablas y gráficas",
+          "Cálculo de perímetro y área en figuras geométricas del entorno"
+        ],
+        "Ciencias (Biología)": [
+          "Funcionamiento del cuerpo humano coordinado por los sistemas nervioso y endocrino",
+          "Salud sexual y reproductiva en adolescentes: prevención de ITS y embarazo",
+          "Prevención de enfermedades relacionadas con la alimentación y la dieta correcta",
+          "La biodiversidad como expresión del cambio de los seres vivos en el tiempo",
+          "El calentamiento global como consecuencia de la alteración de ciclos biogeoquímicos",
+          "Manipulación genética y sus implicaciones éticas y en la salud"
+        ],
+        "Geografía": [
+          "El espacio geográfico como una construcción social y dinámica",
+          "Las categorías de análisis espacial y representaciones del espacio geográfico",
+          "Los procesos naturales y la prevención de desastres y riesgos",
+          "Dinámica de la población y sus implicaciones socioeconómicas y ambientales",
+          "La diversidad natural y la sustentabilidad ambiental comunitaria",
+          "Los retos del cambio climático y la conservación del agua"
+        ],
+        "Historia": [
+          "Los albores de la humanidad: los pueblos antiguos del mundo y su devenir",
+          "La conformación de las metrópolis y los sistemas de dominación colonial",
+          "Las luchas populares y la construcción del estado nación en México",
+          "Pueblos originarios y afrodescendientes: identidad y aportes históricos",
+          "La vida cotidiana en Mesoamérica antes de la llegada española"
+        ],
+        "Formación Cívica y Ética": [
+          "Los derechos humanos en México y el mundo como valores compartidos",
+          "La cultura de paz y la resolución pacífica de conflictos escolares",
+          "Identidad, sentido de pertenencia y derechos de las juventudes",
+          "Igualdad de género y no discriminación en la comunidad escolar",
+          "Principios éticos y valores democráticos en la toma de decisiones cotidianas"
+        ],
+        "Tecnología": [
+          "Herramientas, máquinas e instrumentos como extensión de las capacidades humanas",
+          "Materiales, procesos técnicos y comunidad: sustentabilidad y uso responsable",
+          "Usos e implicaciones de la energía en los procesos técnicos del taller",
+          "Factores que inciden en los procesos técnicos y la innovación artesanal",
+          "Pensamiento estratégico y creativo en la resolución de problemas técnicos"
+        ],
+        "Inglés": [
+          "La diversidad lingüística y sus formas de expresión en la comunicación cotidiana",
+          "Manifestaciones culturales y artísticas de los pueblos de habla inglesa",
+          "Uso del inglés para expresar sensaciones, emociones e ideas sobre la comunidad",
+          "El juego del lenguaje en textos líricos y canciones en inglés"
+        ],
+        "Artes": [
+          "Diversidad de lenguajes artísticos en la expresión de la identidad comunitaria",
+          "Manifestaciones culturales y artísticas que conforman el patrimonio cultural",
+          "Elementos de las artes y recursos estéticos en el entorno natural y social"
+        ],
+        "Tutoría / Socioemocional": [
+          "Formas de ser, pensar, actuar y relacionarse en la adolescencia",
+          "Los sentimientos y su influencia en la toma de decisiones asertivas",
+          "Prevención de situaciones de riesgo, adicciones y autocuidado"
+        ]
+      },
+      "2": {
+        "Español": [
+          "El dinamismo de las lenguas y su relevancia como patrimonio cultural",
+          "Recursos literarios en lengua española para expresar emociones y críticas",
+          "Textos argumentativos y artículos de divulgación científica",
+          "Análisis de mensajes publicitarios y estereotipos en medios de comunicación",
+          "La función social de la poesía y el ensayo literario en la juventud"
+        ],
+        "Matemáticas": [
+          "Multiplicación y división con números enteros, fracciones y decimales con signo",
+          "Proporcionalidad directa e inversa en contextos científicos y comunitarios",
+          "Ecuaciones lineales y sistemas de ecuaciones 2x2 aplicados a situaciones reales",
+          "Rectas, ángulos y propiedades de los polígonos regulares",
+          "Azar y probabilidad en la toma de decisiones cotidianas"
+        ],
+        "Ciencias (Física)": [
+          "El pensamiento científico y su incidencia en la transformación de la sociedad",
+          "Unidades y medidas utilizados en física en el entorno escolar",
+          "Estructura, propiedades y características de la materia: modelos atómicos",
+          "Interacciones en fenómenos relacionados con la fuerza y el movimiento (Leyes de Newton)",
+          "Principios de Pascal y de Arquímedes y sus aplicaciones hidráulicas",
+          "Transformaciones de la energía térmica y eléctrica: fuentes sustentables",
+          "Fenómenos electromagnéticos y su importancia en las telecomunicaciones"
+        ],
+        "Historia": [
+          "Las gestas de resistencia y los movimientos independentistas en México",
+          "Las revoluciones modernas y las leyes de Reforma",
+          "La conformación del México contemporáneo y las transformaciones sociales",
+          "Las tensiones en el siglo XX: causas y desarrollo de la Revolución Mexicana",
+          "El impacto de la Constitución de 1917 en los derechos sociales"
+        ],
+        "Formación Cívica y Ética": [
+          "Personas, grupos y organizaciones a favor de la cultura de paz",
+          "Movimientos sociales y políticos por los derechos humanos en el mundo",
+          "Participación ciudadana y mecanismos de transparencia y rendición de cuentas",
+          "Proyectos comunitarios para la erradicación de la violencia y la discriminación",
+          "El Estado de derecho y la legalidad democrática en la vida adolescente"
+        ],
+        "Tecnología": [
+          "Procesos técnicos industriales y su impacto social y ambiental",
+          "Comunicación y representación técnica en planos y diagramas de diseño",
+          "Evaluación de sistemas tecnológicos: costo, beneficio e impacto ecológico",
+          "Innovación técnica para el desarrollo sustentable en la comunidad"
+        ],
+        "Inglés": [
+          "La identidad y cultura de pueblos de habla inglesa en el mundo contemporáneo",
+          "El uso del inglés en la construcción de mensajes a favor de la inclusión",
+          "Comunicación asertiva y dialógica en inglés para erradicar la violencia"
+        ],
+        "Artes": [
+          "Memoria colectiva representada por medios artísticos comunitarios",
+          "Procesos creativos en las artes visuales, danza y música contemporánea",
+          "El arte como herramienta de transformación y conciencia social"
+        ],
+        "Tutoría / Socioemocional": [
+          "Construcción del proyecto de vida y metas a mediano plazo",
+          "Empatía y relaciones asertivas en la convivencia escolar y comunitaria",
+          "Manejo del estrés escolar, autorregulación emocional y bienestar integral"
+        ]
+      },
+      "3": {
+        "Español": [
+          "El ensayo crítico sobre problemáticas de interés social y comunitario",
+          "Creación de propuestas literarias colectivas para transformar la comunidad",
+          "El debate y la argumentación oral en torno a dilemas éticos y científicos",
+          "Análisis crítico de la información en medios digitales, redes sociales y algoritmos",
+          "Manifestaciones artísticas y culturales de la diversidad latinoamericana"
+        ],
+        "Matemáticas": [
+          "Ecuaciones cuadráticas y resolución por factorización y fórmula general",
+          "Funciones lineales y cuadráticas: interpretación gráfica y modelación",
+          "Teorema de Pitágoras y razones trigonométricas en problemas de medición",
+          "Criterios de congruencia y semejanza de triángulos en la arquitectura",
+          "Medidas de tendencia central y dispersión en estudios estadísticos comunitarios"
+        ],
+        "Ciencias (Química)": [
+          "Los hitos que contribuyeron al avance del conocimiento químico y tecnológico",
+          "Las propiedades extensivas e intensivas de las sustancias cotidianas",
+          "Mezclas, compuestos y elementos representados con el modelo corpuscular",
+          "La tabla periódica: criterios de clasificación y propiedades de los elementos",
+          "Las reacciones químicas: manifestaciones, conservación de la masa e interpretación",
+          "Ácidos y bases en la vida cotidiana, la industria y el medio ambiente",
+          "Reacciones de óxido-reducción (redox): aplicaciones biológicas y corrosión"
+        ],
+        "Historia": [
+          "Las luchas por la democracia en el México de la segunda mitad del siglo XX",
+          "México en el contexto global: tratados internacionales, soberanía y petróleo",
+          "Movimientos estudiantiles, sindicales y ciudadanos de finales del siglo XX",
+          "Desafíos del siglo XXI: migración, crisis climática y equidad social",
+          "El papel de las mujeres en la historia y la transformación de México"
+        ],
+        "Formación Cívica y Ética": [
+          "Defensa de los derechos humanos y el acceso irrestricto a la justicia",
+          "El ejercicio de la ciudadanía informada, crítica y participativa",
+          "Igualdad sustantiva y erradicación de la violencia de género",
+          "Ética ambiental, desarrollo sustentable y responsabilidad intergeneracional",
+          "Transformación pacífica de conflictos y justicia restaurativa en la comunidad"
+        ],
+        "Tecnología": [
+          "Los sistemas tecnológicos y su control mediante interfaces digitales y programación",
+          "Prospectiva tecnológica e impacto de la inteligencia artificial y automatización",
+          "Gestión técnica y diseño de proyectos comunitarios de impacto social y ecológico",
+          "Transferencia tecnológica y soberanía tecnológica comunitaria"
+        ],
+        "Inglés": [
+          "El uso del inglés en las manifestaciones culturales y artísticas globales",
+          "Elaboración de ensayos y proyectos de difusión comunitaria en inglés",
+          "Debates y posturas críticas en inglés sobre desafíos globales y ambientales"
+        ],
+        "Artes": [
+          "Experimentación con elementos de las artes en proyectos interdisciplinarios",
+          "Patrimonio cultural, identidad comunitaria y arte público",
+          "Creación de intervenciones artísticas en espacios escolares y comunitarios"
+        ],
+        "Tutoría / Socioemocional": [
+          "Toma de decisiones vocacionales y proyecto formativo hacia la educación media superior",
+          "Liderazgo ético, servicio a la comunidad y ciudadanía activa",
+          "Resiliencia, proyecto de vida y bienestar socioemocional para el futuro"
+        ]
+      }
+    };</script>

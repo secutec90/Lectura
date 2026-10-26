@@ -1,0 +1,673 @@
+<script>
+/* AdminJS_08 — filtrarPorGradoDirecto, filtrarPorGrupoDirecto, filtrarPorEstadoDirecto, cambiarFiltroMatGrado, filtrarAlumnosUI, obtenerIniciales, pintarChipsGruposMat, alternarChipsGruposMat, fusionarNombresAlumnosConResultados, claveSelAlumno, ... */
+
+
+    function filtrarPorGradoDirecto(g) {
+      if (document.getElementById('filtroMatGrado')) document.getElementById('filtroMatGrado').value = g || '';
+      cambiarFiltroMatGrado();
+    }
+
+    function filtrarPorGrupoDirecto(grupoCod) {
+      const gNum = gradoDeGrupo(grupoCod);
+      if (document.getElementById('filtroMatGrado')) document.getElementById('filtroMatGrado').value = gNum || '';
+      
+      const selGrupo = document.getElementById('filtroMatGrupo');
+      if (selGrupo) {
+        let grupos = listaGrupos().filter(function (g) {
+          const gg = gradoDeGrupo(g);
+          return !gNum || gg === gNum;
+        });
+        let html = '<option value="">Todos los grupos</option>';
+        grupos.forEach(function (g) {
+          html += '<option value="' + escaparHtml(g.grupo) + '">' + escaparHtml(g.grupo.toUpperCase()) + '</option>';
+        });
+        selGrupo.innerHTML = html;
+        selGrupo.value = String(grupoCod).trim().toLowerCase();
+      }
+      filtrarAlumnosUI();
+    }
+
+    function filtrarPorEstadoDirecto(estado) {
+      if (document.getElementById('filtroMatEstado')) document.getElementById('filtroMatEstado').value = estado || '';
+      filtrarAlumnosUI();
+    }
+
+    function cambiarFiltroMatGrado() {
+      const selGrado = document.getElementById('filtroMatGrado');
+      const grado = normalizarGrado(selGrado ? selGrado.value : '');
+      const selGrupo = document.getElementById('filtroMatGrupo');
+      if (selGrupo) {
+        let grupos = listaGrupos().filter(function (g) {
+          const gg = gradoDeGrupo(g);
+          return !grado || gg === grado;
+        });
+        let html = '<option value="">Todos los grupos</option>';
+        grupos.forEach(function (g) {
+          html += '<option value="' + escaparHtml(g.grupo) + '">' + escaparHtml(g.grupo.toUpperCase()) + '</option>';
+        });
+        selGrupo.innerHTML = html;
+      }
+      filtrarAlumnosUI();
+    }
+
+    function filtrarAlumnosUI() {
+      pintarAlumnos();
+    }
+
+    function obtenerIniciales(nombre) {
+      if (!nombre) return 'AL';
+      const partes = String(nombre).trim().split(/\s+/).filter(Boolean);
+      if (partes.length >= 2) return (partes[0].charAt(0) + partes[1].charAt(0)).toUpperCase();
+      return (partes[0].substring(0, 2) || 'AL').toUpperCase();
+    }
+
+    function pintarChipsGruposMat() {
+      const caja = document.getElementById('cajaChipsGruposMat');
+      if (caja) caja.classList.add('oculto');
+    }
+
+    function alternarChipsGruposMat() {
+      const caja = document.getElementById('cajaChipsGruposMat');
+      if (caja) caja.classList.add('oculto');
+    }
+
+    function fusionarNombresAlumnosConResultados() {
+      const porClave = {};
+      (datos.resultados || []).forEach(function (r) {
+        const nom = String(r.nombre || '').trim();
+        if (!nom || /^estudiante\s*\d+$/i.test(nom)) return;
+        const mat = String(r.matricula || '').trim();
+        const gru = String(r.grupo || '').toLowerCase().replace(/\s+/g, '');
+        if (mat && gru) porClave[mat + '|' + gru] = nom;
+        if (mat && !porClave['m:' + mat]) porClave['m:' + mat] = nom;
+      });
+      (datos.alumnos || []).forEach(function (a) {
+        if (a.nombre && !/^estudiante\s*\d+$/i.test(String(a.nombre))) return;
+        const mat = String(a.matricula || '').trim();
+        const gru = String(a.grupo || '').toLowerCase().replace(/\s+/g, '');
+        a.nombre = porClave[mat + '|' + gru] || porClave['m:' + mat] || a.nombre;
+      });
+    }
+
+    function claveSelAlumno(mat, gru) {
+      return String(mat || '').trim() + '||' + String(gru || '').toLowerCase().trim();
+    }
+
+    function htmlBtnIconoFila(tip, onclick, svgInner, extraClass) {
+      return '<button type="button" class="btn-icono-res btn-icono-fila' + (extraClass ? ' ' + extraClass : '') + '" data-tip="' + tip + '" title="' + tip + '" aria-label="' + tip + '" onclick="' + onclick + '">' +
+        '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' + svgInner + '</svg></button>';
+    }
+
+    var SVG_DADO = '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.3" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.3" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.3" fill="currentColor" stroke="none"/>';
+    var SVG_EDITAR = '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>';
+    var SVG_COPIAR = '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+    var SVG_GRUPOS = '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>';
+
+    function jsSafe_(s) {
+      return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function htmlBtnsCredencial_(opts) {
+      opts = opts || {};
+      var html = '';
+      if (opts.aleatoria) html += htmlBtnIconoFila('Contraseña aleatoria', opts.aleatoria, SVG_DADO);
+      if (opts.editar) html += htmlBtnIconoFila('Editar usuario y contraseña', opts.editar, SVG_EDITAR);
+      if (opts.copiar) html += htmlBtnIconoFila('Copiar usuario y contraseña', opts.copiar, SVG_COPIAR);
+      if (opts.grupos) html += htmlBtnIconoFila('Asignar grupos', opts.grupos, SVG_GRUPOS);
+      return html;
+    }
+
+    function pintarAlumnos() {
+      const alus = datos.alumnos || [];
+      
+      // Actualizar KPIs de Matrícula
+      const kTotal = alus.length;
+      const kActivos = alus.filter(function (a) { return String(a.activo).toUpperCase() !== 'NO'; }).length;
+      const k1 = alus.filter(function (a) { return normalizarGrado(a.grado) === '1'; }).length;
+      const k2 = alus.filter(function (a) { return normalizarGrado(a.grado) === '2'; }).length;
+      const k3 = alus.filter(function (a) { return normalizarGrado(a.grado) === '3'; }).length;
+      
+      const gruposConAlumnos = {};
+      alus.forEach(function (a) { if (a && a.grupo) gruposConAlumnos[String(a.grupo).toLowerCase()] = true; });
+      (datos.grupos || []).forEach(function (g) { if (g && g.grupo && String(g.activo).toUpperCase() !== 'NO') gruposConAlumnos[String(g.grupo).toLowerCase()] = true; });
+      const kGrupos = Object.keys(gruposConAlumnos).length;
+
+      if (document.getElementById('kpiMatTotal')) document.getElementById('kpiMatTotal').textContent = kTotal;
+      if (document.getElementById('kpiMatActivos')) document.getElementById('kpiMatActivos').textContent = kActivos;
+      if (document.getElementById('kpiMatBajas')) document.getElementById('kpiMatBajas').textContent = kTotal - kActivos;
+      if (document.getElementById('kpiMat1')) document.getElementById('kpiMat1').textContent = k1;
+      if (document.getElementById('kpiMat2')) document.getElementById('kpiMat2').textContent = k2;
+      if (document.getElementById('kpiMat3')) document.getElementById('kpiMat3').textContent = k3;
+      if (document.getElementById('kpiMatGrupos')) document.getElementById('kpiMatGrupos').textContent = kGrupos;
+
+      const chipTotal = document.getElementById('kpiMatTotal') && document.getElementById('kpiMatTotal').parentNode;
+      const chipAct = document.getElementById('kpiMatActivos') && document.getElementById('kpiMatActivos').parentNode;
+      const chipBaja = document.getElementById('kpiMatBajas') && document.getElementById('kpiMatBajas').parentNode;
+      const chip1 = document.getElementById('kpiMat1') && document.getElementById('kpiMat1').parentNode;
+      const chip2 = document.getElementById('kpiMat2') && document.getElementById('kpiMat2').parentNode;
+      const chip3 = document.getElementById('kpiMat3') && document.getElementById('kpiMat3').parentNode;
+      const chipGpo = document.getElementById('kpiMatGrupos') && document.getElementById('kpiMatGrupos').parentNode;
+      const gradoChip = normalizarGrado(document.getElementById('filtroMatGrado') ? document.getElementById('filtroMatGrado').value : '');
+      const estadoChip = (document.getElementById('filtroMatEstado') ? document.getElementById('filtroMatEstado').value : '').toUpperCase().trim();
+      const cajaGpo = document.getElementById('cajaChipsGruposMat');
+      if (cajaGpo) cajaGpo.classList.add('oculto');
+      if (chipTotal) chipTotal.classList.toggle('activo', !gradoChip && !estadoChip);
+      if (chipAct) chipAct.classList.toggle('activo', estadoChip === 'SI');
+      if (chipBaja) chipBaja.classList.toggle('activo', estadoChip === 'NO');
+      if (chip1) chip1.classList.toggle('activo', gradoChip === '1');
+      if (chip2) chip2.classList.toggle('activo', gradoChip === '2');
+      if (chip3) chip3.classList.toggle('activo', gradoChip === '3');
+      if (chipGpo) chipGpo.classList.remove('activo');
+
+      // Actualizar info de conexión de la hoja en Matrícula
+      const diag = datos.diagnostico || {};
+      const txtInfo = document.getElementById('txtInfoHojaMat');
+      const btnVerH = document.getElementById('btnVerHojaMat');
+      const urlDoc = diag.url || datos.urlHoja || '';
+      if (btnVerH && urlDoc) {
+        btnVerH.href = urlDoc;
+      }
+      if (txtInfo) {
+        if (diag.errorHojaDefault) {
+          txtInfo.innerHTML = '⚠️ <strong style="color:#b91c1c;">No se pudo conectar a la hoja:</strong> ' + escaparHtml(diag.errorHojaDefault);
+        } else {
+          const nomL = diag.libro || 'Libro de Google Sheets';
+          const pList = (diag.pestanas && diag.pestanas.length)
+            ? diag.pestanas.map(function (p) { return '<code>' + escaparHtml(p.nombre) + '</code> (' + p.filas + ' filas)'; }).join(' · ')
+            : 'Sin pestañas detectadas';
+          txtInfo.innerHTML = '📊 <strong>Conectado a:</strong> ' + escaparHtml(nomL) +
+            ' &nbsp;|&nbsp; <strong>Pestañas:</strong> ' + pList +
+            ' &nbsp;|&nbsp; <strong>Alumnos cargados:</strong> ' + alus.length;
+        }
+      }
+
+      // Alerta de permisos
+      const alertaPerm = document.getElementById('alertaPermisosHoja');
+      if (alertaPerm) {
+        if (diag.errorHojaDefault) {
+          alertaPerm.classList.remove('oculto');
+          const idH = diag.idHojaConfigurada || '1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU';
+          if (document.getElementById('txtIdHojaBloqueada')) {
+            document.getElementById('txtIdHojaBloqueada').textContent = idH;
+          }
+          if (document.getElementById('lnkHojaBloqueada')) {
+            document.getElementById('lnkHojaBloqueada').href = 'https://docs.google.com/spreadsheets/d/' + idH + '/edit';
+          }
+        } else {
+          alertaPerm.classList.add('oculto');
+        }
+      }
+
+      // Pintar chips de grupos
+      pintarChipsGruposMat(alus);
+
+      // Filtros de búsqueda
+      const busqueda = (document.getElementById('filtroMatBusqueda') ? document.getElementById('filtroMatBusqueda').value : '').toLowerCase().trim();
+      const gradoF = normalizarGrado(document.getElementById('filtroMatGrado') ? document.getElementById('filtroMatGrado').value : '');
+      const grupoF = (document.getElementById('filtroMatGrupo') ? document.getElementById('filtroMatGrupo').value : '').toLowerCase().trim();
+      const estadoF = (document.getElementById('filtroMatEstado') ? document.getElementById('filtroMatEstado').value : '').toUpperCase().trim();
+
+      const filtrados = alus.filter(function (a) {
+        if (busqueda) {
+          const matchNom = String(a.nombre || '').toLowerCase().indexOf(busqueda) >= 0;
+          const matchMat = String(a.matricula || '').toLowerCase().indexOf(busqueda) >= 0;
+          const matchUsu = String(a.usuario || '').toLowerCase().indexOf(busqueda) >= 0;
+          if (!matchNom && !matchMat && !matchUsu) return false;
+        }
+        if (gradoF && normalizarGrado(a.grado) !== gradoF) return false;
+        if (grupoF && String(a.grupo || '').toLowerCase().trim() !== grupoF) return false;
+        if (estadoF && String(a.activo || 'SI').toUpperCase() !== estadoF) return false;
+        return true;
+      });
+
+      if (document.getElementById('lblConteoAlumnos')) {
+        document.getElementById('lblConteoAlumnos').textContent = 'Mostrando ' + filtrados.length + ' de ' + kTotal + ' alumnos';
+      }
+      marcarFiltrosMatActivos();
+
+      // Check si todos los filtrados están seleccionados
+      const todosSelec = filtrados.length > 0 && filtrados.every(function (a) {
+        return !!seleccionAlumnosMat[claveSelAlumno(a.matricula, a.grupo)];
+      });
+
+      let html = '<tr>' +
+        '<th style="text-align:center;"><input type="checkbox" id="chkTodosAlumnos" ' + (todosSelec ? 'checked' : '') + ' onchange="seleccionarTodosAlumnos(this.checked)" title="Seleccionar todos"></th>' +
+        '<th>Matrícula</th>' +
+        '<th>Estudiante</th>' +
+        '<th style="text-align:center;">Grado</th>' +
+        '<th style="text-align:center;">Grupo</th>' +
+        '<th style="text-align:center;">Estado</th>' +
+        '<th>Usuario</th>' +
+        '<th>Contraseña</th>' +
+        '<th style="text-align:center;">Intentos</th>' +
+        '<th style="text-align:right;">Acciones</th>' +
+        '</tr>';
+
+      if (!filtrados.length) {
+        if (kTotal === 0) {
+          html += '<tr><td colspan="10" style="text-align:center;padding:48px 20px;color:#64748b;">' +
+            '<strong style="display:block;font-size:15px;color:#1e293b;margin-bottom:6px;">No hay alumnos en la matrícula</strong>' +
+            '<span style="display:block;font-size:13px;margin-bottom:14px;">Da de alta un alumno o importa un archivo CSV para empezar.</span>' +
+            '<button type="button" class="btn-verde" style="margin-right:8px;" onclick="alternarPanelMat(\'panelAltaAlumno\')">Alta de alumno</button>' +
+            '<button type="button" class="btn-secundario" onclick="alternarPanelMat(\'panelImportarCSV\')">Importar CSV</button>' +
+            '</td></tr>';
+        } else {
+          html += '<tr><td colspan="10" style="text-align:center;padding:24px;color:#64748b;">' +
+            'No se encontraron alumnos con los filtros seleccionados. <button class="btn-secundario" style="margin-left:8px;padding:3px 8px;font-size:11px;" onclick="verTodosAlumnos()">Ver todos los alumnos</button>' +
+            '</td></tr>';
+        }
+      } else {
+        filtrados.forEach(function (a) {
+          const esActivo = String(a.activo || 'SI').toUpperCase() !== 'NO';
+          const ini = obtenerIniciales(a.nombre);
+          const gNum = normalizarGrado(a.grado) || '1';
+          const gpoTxt = String(a.grupo || '').toUpperCase();
+          const extraNum = Number(a.extra || 0);
+          const matStr = String(a.matricula || '').trim();
+          const claveSel = claveSelAlumno(matStr, a.grupo);
+          const esSelec = !!seleccionAlumnosMat[claveSel];
+
+          html += '<tr class="' + (esSelec ? 'fila-seleccionada' : '') + (esActivo ? '' : ' fila-baja') + '"' + (esSelec ? ' style="background:#eff6ff;"' : '') + '>' +
+            '<td style="text-align:center;"><input type="checkbox" class="chk-alumno-fila" value="' + escaparHtml(claveSel) + '" ' + (esSelec ? 'checked' : '') + ' onchange="toggleSeleccionAlumno(\'' + escaparHtml(claveSel) + '\', this.checked)"></td>' +
+            '<td><span class="matricula-badge">' + escaparHtml(matStr) + '</span></td>' +
+            '<td>' +
+              '<button type="button" class="btn-nombre-ficha" onclick="abrirFichaAlumno(\'' + escaparHtml(matStr) + '\')" title="Ver ficha de ' + escaparHtml(a.nombre) + '">' +
+                '<span class="avatar-alumno">' + escaparHtml(ini) + '</span>' +
+                '<strong class="nombre-alumno-mat">' + escaparHtml(a.nombre) + '</strong>' +
+              '</button>' +
+            '</td>' +
+            '<td style="text-align:center;"><span style="font-weight:600;color:#334155;">' + escaparHtml(gNum) + '°</span></td>' +
+            '<td style="text-align:center;"><button type="button" class="badge-grupo" data-tip="Mover de grupo" aria-label="Mover de grupo" onclick="abrirModalMoverGrupo([\'' + escaparHtml(matStr) + '\'], \'' + escaparHtml(a.nombre) + '\')">' + escaparHtml(gpoTxt) + '</button></td>' +
+            '<td style="text-align:center;"><span class="st90-chip ' + (esActivo ? 'ok' : 'no') + '">' + (esActivo ? 'Activo' : 'Baja') + '</span></td>' +
+            '<td><span class="dato-acc" style="color:var(--st90-azul);">' + escaparHtml(a.usuario || '—') + '</span></td>' +
+            '<td>' + (a.clave ? ('<span class="dato-acc badge-pass">' + escaparHtml(a.clave) + '</span>') : '<span style="color:#94a3b8;font-size:12px;">Sin contraseña</span>') + '</td>' +
+            '<td style="text-align:center;"><button type="button" style="background:transparent;border:none;cursor:pointer;padding:0;" data-tip="Ajustar intentos" aria-label="Ajustar intentos" onclick="ajustarIntentosAlumnoIndividual(\'' + escaparHtml(matStr) + '\', ' + extraNum + ')">' + (extraNum > 0 ? '<span class="st90-chip warn">+' + extraNum + '</span>' : '<span style="color:#94a3b8;font-size:12px;">0</span>') + '</button></td>' +
+            '<td style="text-align:right;"><span class="acciones-fila">' +
+              htmlBtnIconoFila('Ver ficha', 'abrirFichaAlumno(\'' + escaparHtml(matStr) + '\')', '<circle cx="9" cy="8" r="2.6"/><path d="M4 19c.5-2.6 2.2-4.2 5-4.2s4.5 1.6 5 4.2"/><rect x="15" y="4.5" width="6.5" height="9" rx="1"/><path d="M16.5 7.5h3.5M16.5 10h3.5"/>') +
+              htmlBtnIconoFila('Mover de grupo', 'abrirModalMoverGrupo([\'' + escaparHtml(matStr) + '\'], \'' + escaparHtml(a.nombre) + '\')', '<circle cx="9" cy="8" r="2.6"/><path d="M4 19c.5-2.6 2.2-4.2 5-4.2s4.5 1.6 5 4.2"/><path d="M16 8h5M19 5v6"/>') +
+              htmlBtnsCredencial_({
+                aleatoria: 'generarClaveUnicaAlu(\'' + jsSafe_(matStr) + '\',\'' + jsSafe_(a.nombre) + '\')',
+                editar: 'editarAccesoAlu(\'' + jsSafe_(matStr) + '\',\'' + jsSafe_(a.nombre) + '\',\'' + jsSafe_(a.usuario) + '\',\'' + jsSafe_(a.clave) + '\')',
+                copiar: a.usuario || a.clave ? 'copiarCredencialMae(\'' + jsSafe_(a.usuario) + '\',\'' + jsSafe_(a.clave) + '\')' : ''
+              }) +
+              (esActivo
+                ? htmlBtnIconoFila('Dar de baja', 'bajaA(\'' + escaparHtml(matStr) + '\',\'' + escaparHtml(String(a.grupo || '')) + '\')', '<circle cx="12" cy="8" r="3.2"/><path d="M5 20c.6-3.2 3-5 7-5"/><path d="M16 16l5 5M21 16l-5 5"/>')
+                : htmlBtnIconoFila('Reactivar', 'reactivarA(\'' + escaparHtml(matStr) + '\')', '<path d="M20 12a8 8 0 1 1-2.2-5.5"/><path d="M20 5v5h-5"/>', 'verde')) +
+              htmlBtnIconoFila('Eliminar', 'eliminarAlumnoIndividual(\'' + escaparHtml(matStr) + '\', \'' + escaparHtml(a.nombre) + '\', \'' + escaparHtml(String(a.grupo || '')) + '\')', '<path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 12h8l1-12"/>', 'rojo') +
+            '</span></td>' +
+          '</tr>';
+        });
+      }
+      document.getElementById('tablaAlu').innerHTML = html;
+      actualizarBarraAccionesMasivas();
+    }
+
+    let fichaAlumnoActual = null;
+
+    function abrirFichaAlumno(matricula) {
+      const mat = String(matricula || '').trim();
+      if (!mat) return toast('No hay matrícula para abrir la ficha.', 'error');
+      const modal = document.getElementById('modalFichaAlumno');
+      const cuerpo = document.getElementById('modalFichaCuerpo');
+      const titulo = document.getElementById('modalFichaTitulo');
+      if (!modal || !cuerpo) return;
+      titulo.textContent = 'Ficha del alumno';
+      cuerpo.innerHTML = '<p style="color:#64748b;margin:12px 0;">Cargando historial…</p>';
+      modal.classList.add('visible');
+      gsRun('fichaAlumnoAdmin', token, mat)
+        .then(function (res) {
+          if (!res || !res.ok) {
+            cuerpo.innerHTML = '<p style="color:#b91c1c;">' + escaparHtml((res && res.mensaje) || 'No se pudo cargar la ficha.') + '</p>';
+            return;
+          }
+          fichaAlumnoActual = res;
+          pintarFichaAlumno(res);
+        })
+        .catch(function (e) {
+          cuerpo.innerHTML = '<p style="color:#b91c1c;">' + escaparHtml((e && e.message) || 'Error de red') + '</p>';
+        });
+    }
+
+    function pintarFichaAlumno(res) {
+      const al = res.alumno || {};
+      const r = res.resumen || {};
+      document.getElementById('modalFichaTitulo').textContent = al.nombre || 'Ficha del alumno';
+      function kpi(valor, label, extraClass) {
+        return '<div class="ficha-kpi' + (extraClass ? ' ' + extraClass : '') + '"><div class="n">' +
+          (valor == null || valor === '' ? '—' : valor) + '</div><div class="l">' + label + '</div></div>';
+      }
+      const estado = al.activo === false
+        ? '<span class="st90-chip no">Baja</span>'
+        : '<span class="st90-chip ok">Activo</span>';
+      let html = '<p style="margin:0 0 4px;color:#64748b;font-size:13px;">' +
+        escaparHtml((al.grado ? al.grado + '° ' : '') + String(al.grupo || '').toUpperCase()) +
+        ' · Matrícula ' + escaparHtml(al.matricula || '') + ' · ' + estado + '</p>';
+      html += '<div class="ficha-kpis">' +
+        kpi(r.n || 0, 'Evaluaciones') +
+        kpi(r.promedioComprension != null ? r.promedioComprension + '%' : '—', 'Comprensión') +
+        kpi(r.promedioPpm != null ? r.promedioPpm : '—', 'PPM promedio') +
+        kpi(r.promedioGlobal != null ? r.promedioGlobal + '%' : '—', 'Global', 'naranja') +
+        kpi((res.restantes != null ? res.restantes : '—') + ' / ' + (res.permitidos || '—'), 'Intentos') +
+        kpi((res.lecturasDisponibles != null ? res.lecturasDisponibles : '—') + ' / ' + (res.lecturasTotales || '—'), 'Lecturas nuevas') +
+      '</div>';
+
+      if (res.evolucion && res.evolucion.length >= 2) {
+        html += '<div class="ficha-caja"><h4>Evolución del global</h4>' + svgEvolucionFicha(res.evolucion) + '</div>';
+      }
+
+      const evals = res.evaluaciones || [];
+      html += '<div class="ficha-caja"><h4>Historial de evaluaciones</h4>';
+      if (!evals.length) {
+        html += '<p style="margin:0;color:#64748b;font-size:13px;">Aún no tiene evaluaciones registradas.</p>';
+      } else {
+        html += '<div style="overflow-x:auto;"><table class="tabla-ficha"><thead><tr>' +
+          '<th>Fecha</th><th>Lectura</th><th>Comprensión</th><th>PPM</th><th>Global</th><th>Intento</th><th></th>' +
+          '</tr></thead><tbody>';
+        evals.forEach(function (e, i) {
+          const lec = [e.asignatura, e.tema].filter(Boolean).join(' · ') || '—';
+          html += '<tr class="fila-informe" onclick="verInformeEnFicha(' + i + ')">' +
+            '<td>' + escaparHtml(e.fecha || '—') + '</td>' +
+            '<td>' + escaparHtml(lec) + '</td>' +
+            '<td class="num">' + (e.comprension != null ? e.comprension + '%' : '—') + '</td>' +
+            '<td class="num">' + (e.ppm != null ? e.ppm : '—') + '</td>' +
+            '<td class="num">' + (e.global != null ? e.global + '%' : '—') + '</td>' +
+            '<td class="num">' + (e.intento || '—') + '</td>' +
+            '<td><button type="button" class="btn-ver-informe" onclick="event.stopPropagation();verInformeEnFicha(' + i + ')">Ver informe</button></td>' +
+          '</tr>';
+        });
+        html += '</tbody></table></div>';
+        html += '<p style="margin:8px 0 0;color:#64748b;font-size:12px;">El informe es el mismo que vio el alumno al terminar el examen.</p>';
+        html += '<div id="cajaInformeFicha"></div>';
+      }
+      html += '</div>';
+
+      const hechas = res.lecturasHechas || [];
+      if (hechas.length) {
+        html += '<div class="ficha-caja"><h4>Lecturas que ya presentó</h4>' +
+          '<p style="margin:0 0 8px;color:#64748b;font-size:12px;">La ruleta no le volverá a asignar estas lecturas.</p>' +
+          '<div class="ficha-chips">' +
+          hechas.map(function (l) {
+            const t = [l.asignatura, l.tema].filter(Boolean).join(' · ') || 'Lectura';
+            return '<span class="ficha-chip">' + escaparHtml(t) + '</span>';
+          }).join('') +
+          '</div></div>';
+      }
+
+      html += '<div class="ficha-aviso ' + (res.puedePresentar ? 'ok' : 'warn') + '">' +
+        escaparHtml(res.mensaje || '') + '</div>';
+
+      document.getElementById('modalFichaCuerpo').innerHTML = html;
+      const btnExtra = document.getElementById('btnFichaIntentos');
+      if (btnExtra) btnExtra.disabled = !al.matricula;
+    }
+
+    function svgEvolucionFicha(puntos) {
+      const w = 420, h = 68, pad = 8;
+      const vals = puntos.map(function (p) { return Number(p.global) || 0; });
+      const min = Math.min.apply(null, vals.concat([0]));
+      const max = Math.max.apply(null, vals.concat([100]));
+      const span = Math.max(1, max - min);
+      const coords = vals.map(function (v, i) {
+        const x = pad + (i * (w - pad * 2) / Math.max(1, vals.length - 1));
+        const y = h - pad - ((v - min) / span) * (h - pad * 2);
+        return { x: x, y: y, v: v, fecha: puntos[i].fecha || '' };
+      });
+      const poly = coords.map(function (c) { return c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+      const dots = coords.map(function (c) {
+        return '<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) +
+          '" r="3.2" fill="#1f6f9f"><title>' + escaparHtml(c.fecha) + ': ' + c.v + '%</title></circle>';
+      }).join('');
+      return '<svg class="spark-ficha" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Evolución de la calificación global">' +
+        '<polyline points="' + poly + '" fill="none" stroke="#1f6f9f" stroke-width="2.5" stroke-linejoin="round"/>' +
+        dots + '</svg>';
+    }
+
+    function cerrarFichaAlumno() {
+      const modal = document.getElementById('modalFichaAlumno');
+      if (modal) modal.classList.remove('visible');
+      fichaAlumnoActual = null;
+    }
+
+    function verInformeEnFicha(idx) {
+      const evals = (fichaAlumnoActual && fichaAlumnoActual.evaluaciones) || [];
+      const e = evals[idx];
+      const caja = document.getElementById('cajaInformeFicha');
+      if (!caja) return;
+      if (!e || !e.informe) {
+        caja.innerHTML = '<p style="color:#b91c1c;margin-top:12px;">No hay un informe guardado de esta evaluación.</p>';
+        return;
+      }
+      caja.innerHTML = htmlCuerpoInformeFicha(e.informe);
+      try { caja.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (err) {}
+    }
+
+    function htmlCuerpoInformeFicha(r) {
+      const spec = r.spec || {};
+      const d = r.datos || {};
+      const tiempos = r.tiemposPregunta || {};
+      const hist = r.historial || {};
+      const desglose = r.desglose || null;
+      const clasePpm = claseNivelPpm(r.nivelPpm);
+      const etiquetaPpm = etiquetaNivelPpm(r.nivelPpm);
+      function celda(k, v) {
+        return '<div class="ficha-dato"><div class="k">' + k + '</div><div class="v">' +
+          escaparHtml(String(v || '—')) + '</div></div>';
+      }
+      let html = '<div class="ficha-caja" style="margin-top:14px;border-color:#1f6f9f;">';
+      html += '<h4>Informe de evaluación</h4>';
+      html += '<div class="ficha-resultado" style="margin:8px 0 12px;">' +
+        '<div class="ficha-escuela"><div class="k">Escuela</div><div class="v">' + escaparHtml(d.escuela || '') + '</div></div>' +
+        celda('Alumno', d.nombre) +
+        celda('Matrícula', d.matricula) +
+        celda('Grupo', String(d.grupo || '').toUpperCase()) +
+        celda('Fecha', d.fecha + (d.hora ? ' · ' + d.hora : '')) +
+        celda('Lectura', (d.asignatura && d.tema) ? (d.asignatura + ' · ' + d.tema) : (d.asignatura || d.tema)) +
+        celda('Intento', d.intento ? (d.intento + (d.permitidos ? ' de ' + d.permitidos : '')) : '') +
+      '</div>';
+      html += '<div class="kpi-grid" style="margin:0 0 12px;">' +
+        '<div class="kpi-card"><div class="kpi-lbl">Comprensión</div><div class="kpi-num">' + r.comprension + '%</div><div style="font-size:12px;color:#64748b;">' + r.aciertos + ' de ' + r.total + ' correctas</div></div>' +
+        '<div class="kpi-card"><div class="kpi-lbl">Velocidad</div><div class="kpi-num">' + r.ppm + '</div><div style="font-size:12px;"><span class="st90-semaforo ' + clasePpm + '">' + etiquetaPpm + '</span></div></div>' +
+        '<div class="kpi-card"><div class="kpi-lbl">Global</div><div class="kpi-num" style="color:var(--st90-naranja);">' + r.global + '%</div><div style="font-size:12px;color:#64748b;">70% + 30%</div></div>' +
+        '<div class="kpi-card"><div class="kpi-lbl">PME</div><div class="kpi-num">' + (r.pme != null ? r.pme : '—') + '</div></div>' +
+      '</div>';
+      html += '<p style="margin:0 0 8px;font-size:13px;">Tiempo de lectura: ' + fmtTiempo(r.tiempoLectura) +
+        ' · Tiempo de preguntas: ' + fmtTiempo(r.tiempoReactivos) + '</p>';
+      if (tiempos.n) {
+        html += '<p style="margin:0 0 8px;font-size:13px;">Tiempo por pregunta: promedio ' + tiempos.promedio + ' s · más rápida ' + tiempos.minimo + ' s · más lenta ' + tiempos.maximo + ' s.</p>';
+        if (tiempos.impulsivo) html += '<p style="margin:0 0 8px;font-size:13px;color:#7d6608;">Respondió muy rápido en promedio.</p>';
+      }
+      html += '<p style="margin:0 0 8px;font-size:13px;">Relecturas: ' + Number(r.relecturas || 0) + '.</p>';
+      if (desglose) {
+        html += '<div class="desglose-niveles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;">';
+        [['literal', 'Literal'], ['inferencial', 'Inferencial'], ['critica', 'Crítica']].forEach(function (par) {
+          const x = desglose[par[0]];
+          const hay = x && x.total;
+          html += '<div style="text-align:center;background:#f8fafc;border-radius:8px;padding:8px;"><strong>' +
+            (hay ? x.pct + '%' : '0 preguntas') + '</strong><br><span style="font-size:12px;color:#64748b;">' + par[1] +
+            (hay ? ' · ' + x.aciertos + '/' + x.total : '') + '</span></div>';
+        });
+        html += '</div>';
+      }
+      if (hist.n) {
+        html += '<p style="margin:8px 0 0;font-size:13px;">Evaluaciones anteriores: ' + hist.n + '. Promedio global previo: ' + hist.promedioGlobal + '%.</p>';
+      }
+      if (r.recomendacion) {
+        html += '<p style="margin:10px 0 0;font-size:13px;background:#eaf4fb;border-radius:8px;padding:10px;"><strong>Recomendación:</strong> ' + escaparHtml(r.recomendacion) + '</p>';
+      }
+      if (spec.ppmMin) {
+        html += '<p style="margin:8px 0 0;font-size:12px;color:#64748b;">Rango PPM del grado: ' + spec.ppmMin + '–' + spec.ppmMax + ' (objetivo ' + spec.ppmObjetivo + ').</p>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function ajustarIntentosDesdeFicha() {
+      const mat = fichaAlumnoActual && fichaAlumnoActual.alumno && fichaAlumnoActual.alumno.matricula;
+      if (!mat) return toast('No hay alumno en la ficha.', 'error');
+      const extra = (fichaAlumnoActual.alumno && fichaAlumnoActual.alumno.extra) || 0;
+      ajustarIntentosAlumnoIndividual(mat, extra);
+    }
+
+    /* ==================== SELECCIÓN MASIVA ==================== */
+    function seleccionarTodosAlumnos(checked) {
+      const chks = document.querySelectorAll('.chk-alumno-fila');
+      chks.forEach(function (c) {
+        c.checked = checked;
+        if (checked) seleccionAlumnosMat[c.value] = true;
+        else delete seleccionAlumnosMat[c.value];
+      });
+      actualizarBarraAccionesMasivas();
+      pintarAlumnos();
+    }
+
+    function toggleSeleccionAlumno(mat, checked) {
+      if (checked) seleccionAlumnosMat[mat] = true;
+      else delete seleccionAlumnosMat[mat];
+      actualizarBarraAccionesMasivas();
+      pintarAlumnos();
+    }
+
+    function limpiarSeleccionAlumnos() {
+      seleccionAlumnosMat = {};
+      actualizarBarraAccionesMasivas();
+      pintarAlumnos();
+    }
+
+    function obtenerMatriculasSeleccionadas() {
+      return Object.keys(seleccionAlumnosMat).filter(Boolean);
+    }
+
+    function actualizarBarraAccionesMasivas() {
+      const barra = document.getElementById('barraAccionesMasivasAlumnos');
+      const seleccionados = obtenerMatriculasSeleccionadas();
+      if (!barra) return;
+      if (seleccionados.length > 0) {
+        barra.classList.remove('oculto');
+        document.getElementById('lblTotalSeleccionados').textContent = seleccionados.length + (seleccionados.length === 1 ? ' alumno seleccionado' : ' alumnos seleccionados');
+      } else {
+        barra.classList.add('oculto');
+      }
+    }
+
+    /* ==================== ACCIONES INDIVIDUALES Y MASIVAS ==================== */
+    function abrirModalMoverGrupo(matriculas, nombreOpcional) {
+      if (!matriculas || !matriculas.length) return toast('Selecciona al menos un alumno.', 'error');
+      const todosGrupos = listaGrupos();
+      
+      let htmlBotones = '';
+      ['1', '2', '3'].forEach(function (gr) {
+        const grpGrado = todosGrupos.filter(function (g) { return gradoDeGrupo(g) === gr; });
+        if (grpGrado.length) {
+          htmlBotones += '<div style="margin-bottom:8px;"><strong style="font-size:12px;color:#1e40af;">' + gr + '° de secundaria:</strong><div class="modal-grupos-grid">';
+          grpGrado.forEach(function (g) {
+            htmlBotones += '<button type="button" class="btn-grupo-modal" onclick="ejecutarMoverGrupoModal(\'' + escaparHtml(g.grupo) + '\')">' + escaparHtml(g.grupo.toUpperCase()) + '</button>';
+          });
+          htmlBotones += '</div></div>';
+        }
+      });
+
+      const tit = matriculas.length === 1
+        ? 'Mover a ' + (nombreOpcional || 'alumno') + ' de grupo'
+        : 'Mover ' + matriculas.length + ' alumnos seleccionados a otro grupo';
+
+      modal({
+        titulo: tit,
+        html: '<p style="margin:0 0 10px;font-size:13px;color:#334155;">Selecciona el grupo destino al que deseas asignar ' + (matriculas.length === 1 ? 'al estudiante' : 'a los estudiantes seleccionados') + ':</p>' + htmlBotones,
+        botones: [{ texto: 'Cancelar', valor: false, clase: 'btn-secundario' }]
+      });
+
+      window._matriculasParaMover = matriculas;
+    }
+
+    function ejecutarMoverGrupoModal(grupoDestino) {
+      const mats = window._matriculasParaMover || [];
+      if (!mats.length) return;
+      
+      const fondoModal = document.querySelector('.st90-modal-fondo.visible');
+      if (fondoModal) fondoModal.remove();
+
+      gsRun('cambiarGrupoAlumnosMultiples', token, mats, grupoDestino)
+        .then(function (r) {
+          toast(r.mensaje, 'exito');
+          limpiarSeleccionAlumnos();
+          recargar();
+        })
+        .catch(function (e) { toast(e.message, 'error'); });
+    }
+
+    function abrirModalMoverGrupoSeleccionados() {
+      const mats = obtenerMatriculasSeleccionadas();
+      if (!mats.length) return toast('Selecciona al menos un alumno.', 'error');
+      abrirModalMoverGrupo(mats);
+    }
+
+    function ajustarIntentosAlumnoIndividual(mat, actual) {
+      pedirNumero({
+        titulo: 'Intentos extra',
+        mensaje: 'Número de intentos extra para este alumno (actual: ' + (actual || 0) + ').',
+        valor: actual || 0,
+        min: 0
+      }).then(function (n) {
+        if (n === null) return;
+        if (isNaN(n) || n < 0) return toast('Ingresa un número válido de intentos (0 o más).', 'error');
+        gsRun('asignarIntentosExtra', token, mat, n)
+          .then(function (r) {
+            toast(r.mensaje, 'exito');
+            recargar();
+            if (fichaAlumnoActual && fichaAlumnoActual.alumno &&
+                String(fichaAlumnoActual.alumno.matricula) === String(mat)) {
+              abrirFichaAlumno(mat);
+            }
+          })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function abrirModalIntentosSeleccionados() {
+      const mats = obtenerMatriculasSeleccionadas();
+      if (!mats.length) return toast('Selecciona al menos un alumno.', 'error');
+      pedirNumero({
+        titulo: 'Intentos extra',
+        mensaje: 'Número de intentos extra a asignar a los ' + mats.length + ' alumnos seleccionados.',
+        valor: 1,
+        min: 0
+      }).then(function (n) {
+        if (n === null) return;
+        if (isNaN(n) || n < 0) return toast('Ingresa un número válido.', 'error');
+        gsRun('asignarIntentosExtraAlumnosMultiples', token, mats, n)
+          .then(function (r) {
+            toast(r.mensaje, 'exito');
+            limpiarSeleccionAlumnos();
+            recargar();
+          })
+          .catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function darBajaSeleccionados() {
+      const mats = obtenerMatriculasSeleccionadas();
+      if (!mats.length) return toast('Selecciona al menos un alumno.', 'error');
+      confirmar('¿Deseas dar de baja a los ' + mats.length + ' alumnos seleccionados?', 'Baja masiva').then(function (ok) {
+        if (!ok) return;
+        let promesas = mats.map(function (m) { return gsRun('bajaAlumno', token, m); });
+        Promise.all(promesas).then(function () {
+          toast(mats.length + ' alumno(s) dados de baja.', 'exito');
+          limpiarSeleccionAlumnos();
+          recargar();
+        }).catch(function (e) { toast(e.message, 'error'); });
+      });
+    }
+
+    function reactivarSeleccionados() {
+      const mats = obtenerMatriculasSeleccionadas();
+      if (!mats.length) return toast('Selecciona al menos un alumno.', 'error');
+      confirmar('¿Deseas reactivar a los ' + mats.length + ' alumnos seleccionados?', 'Reactivar alumnos').then(function (ok) {
+        if (!ok) return;
+        let promesas = mats.map(function (m) { return gsRun('reactivarAlumno', token, m); });
+        Promise.all(promesas).then(function () {
+          toast(mats.length + ' alumno(s) reactivados con éxito.', 'exito');
+          limpiarSeleccionAlumnos();
+          recargar();
+        }).catch(function (e) { toast(e.message, 'error'); });
+      });
+    }</script>

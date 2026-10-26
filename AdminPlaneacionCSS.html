@@ -1,0 +1,870 @@
+<style id="estilosHorarioOficialST90">
+        /* Ocultar input date nativo de manera invisible y accesible */
+        .filtro-date-hidden {
+          position: absolute !important;
+          opacity: 0 !important;
+          width: 0 !important;
+          height: 0 !important;
+          pointer-events: none !important;
+          clip: rect(0, 0, 0, 0) !important;
+          border: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        /* Contenedor principal de la barra de controles de horario */
+        .horario-toolbar-shell {
+          background: #ffffff;
+          border: 1px solid #dbeafe;
+          border-radius: 12px;
+          padding: 12px 16px;
+          margin-bottom: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .horario-toolbar-fila {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .horario-toolbar-bloque {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        /* Botón Chip de Filtros */
+        .filtro-chip-btn {
+          position: relative;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-width: 68px;
+          padding: 6px 12px;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          user-select: none;
+          box-sizing: border-box;
+          color: #334155;
+        }
+
+        .filtro-chip-btn:hover {
+          background: #eff6ff;
+          border-color: #93c5fd;
+          color: #1d4ed8;
+          box-shadow: 0 2px 4px rgba(37, 99, 235, 0.08);
+        }
+
+        .filtro-chip-btn.activo {
+          background: #eff6ff;
+          border-color: #3b82f6;
+          color: #1d4ed8;
+        }
+
+        .filtro-chip-btn svg {
+          stroke: currentColor;
+          margin-bottom: 2px;
+        }
+
+        .filtro-chip-btn .chip-label {
+          font-size: 11px;
+          font-weight: 600;
+          line-height: 1.1;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        .filtro-select-overlay {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+          z-index: 2;
+        }
+
+        /* Botones de acción (XML, Ayuda) */
+        .btn-toolbar-accion {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 7px 13px;
+          font-size: 12px;
+          font-weight: 600;
+          border-radius: 8px;
+          border: 1px solid #cbd5e1;
+          background: #ffffff;
+          color: #334155;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .btn-toolbar-accion:hover {
+          background: #f1f5f9;
+          border-color: #94a3b8;
+          color: #0f172a;
+        }
+
+        .btn-toolbar-accion.btn-xml-destacado {
+          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          color: #ffffff;
+          border: 1px solid #0284c7;
+          box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+        }
+
+        .btn-toolbar-accion.btn-xml-destacado:hover {
+          background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 4px 8px rgba(2, 132, 199, 0.35);
+          transform: translateY(-1px);
+        }
+
+        .btn-toolbar-accion.btn-ayuda-amber {
+          color: #b45309;
+          border-color: #fde68a;
+          background: #fffbeb;
+        }
+
+        .btn-toolbar-accion.btn-ayuda-amber:hover {
+          background: #fef3c7;
+          border-color: #fcd34d;
+        }
+
+        /* Controles de navegación y switchers de vista */
+        .btn-segment-group {
+          display: inline-flex;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          padding: 2px;
+          gap: 2px;
+        }
+
+        .btn-segment {
+          border: none;
+          background: transparent;
+          color: #475569;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-segment:hover {
+          color: #0f172a;
+          background: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-segment.activo {
+          background: #0284c7;
+          color: #ffffff;
+          box-shadow: 0 1px 3px rgba(2, 132, 199, 0.3);
+        }
+
+        .nav-semana-box {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .btn-nav-fecha {
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          padding: 6px 10px;
+          font-size: 12px;
+          font-weight: 600;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .btn-nav-fecha:hover {
+          background: #e2e8f0;
+          color: #0f172a;
+        }
+
+        .badge-rango-semana {
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #1e293b;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          letter-spacing: 0.2px;
+        }
+
+        /* =========================================================
+           CUADRÍCULA DE CLASES: BOTONES EXACTAMENTE DEL MISMO TAMAÑO
+           ========================================================= */
+        .cal-tabla {
+          width: 100% !important;
+          table-layout: fixed !important;
+          border-collapse: separate !important;
+          border-spacing: 6px !important;
+          margin-top: 8px;
+        }
+
+        .cal-tabla th {
+          background: #f1f5f9;
+          color: #334155;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 8px 4px;
+          text-align: center;
+          border-radius: 6px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .cal-tabla th.hoy-col {
+          background: #e0f2fe;
+          color: #0369a1;
+          border-color: #bae6fd;
+        }
+
+        .cal-tabla th.th-hora {
+          width: 68px !important;
+          max-width: 68px !important;
+        }
+
+        .cal-tabla td.hora {
+          width: 68px !important;
+          max-width: 68px !important;
+          font-size: 11px;
+          font-weight: 700;
+          color: #64748b;
+          text-align: center;
+          vertical-align: middle;
+          background: #f8fafc;
+          border-radius: 6px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .cal-tabla td {
+          padding: 0 !important;
+          vertical-align: middle !important;
+        }
+
+        /* Botón de la celda de clase con tamaño completamente uniforme */
+        .cal-celda {
+          width: 100% !important;
+          height: 58px !important;
+          min-height: 58px !important;
+          max-height: 58px !important;
+          box-sizing: border-box !important;
+          margin: 0 !important;
+          padding: 4px 6px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          align-items: center !important;
+          text-align: center !important;
+          background: #0284c7 !important;
+          color: #ffffff !important;
+          border: 1px solid #0369a1 !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+          overflow: hidden !important;
+        }
+
+        .cal-celda:hover {
+          transform: translateY(-1px) !important;
+          box-shadow: 0 3px 6px rgba(2, 132, 199, 0.3) !important;
+          background: #0369a1 !important;
+        }
+
+        .cal-celda strong {
+          display: block !important;
+          font-size: 11px !important;
+          font-weight: 700 !important;
+          line-height: 1.2 !important;
+          width: 100% !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          white-space: nowrap !important;
+        }
+
+        .cal-celda span {
+          display: block !important;
+          font-size: 10px !important;
+          font-weight: 400 !important;
+          line-height: 1.2 !important;
+          opacity: 0.92 !important;
+          width: 100% !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          white-space: nowrap !important;
+          margin-top: 2px !important;
+        }
+
+        .cal-celda.en-curso {
+          background: #0d9488 !important;
+          border-color: #0f766e !important;
+        }
+
+        .cal-celda.con-texto {
+          background: #047857 !important;
+          border-color: #065f46 !important;
+        }
+
+        .cal-celda.ajena {
+          background: #64748b !important;
+          border-color: #475569 !important;
+          opacity: 0.85 !important;
+        }
+
+        .cal-celda.sel {
+          outline: 2px solid #f59e0b !important;
+          outline-offset: 1px !important;
+          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35) !important;
+        }
+
+        /* Celda vacía con el mismo tamaño uniforme */
+        .cal-vacia {
+          width: 100% !important;
+          height: 58px !important;
+          min-height: 58px !important;
+          max-height: 58px !important;
+          box-sizing: border-box !important;
+          border: 1px dashed #cbd5e1 !important;
+          border-radius: 8px !important;
+          background: #f8fafc !important;
+          cursor: pointer !important;
+          transition: background 0.15s ease, border-color 0.15s ease !important;
+        }
+
+        .cal-vacia:hover {
+          background: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+        }
+
+        /* ======================================================== */
+        /* ESTILOS DE ALTA GAMA: SUITE PLANEACIÓN DIDÁCTICA NEM */
+        /* ======================================================== */
+        .nem-shell-tarjeta {
+          background: #ffffff;
+          border: 1px solid var(--st90-borde);
+          border-radius: 14px;
+          padding: 24px;
+          box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+          box-sizing: border-box;
+        }
+
+        .nem-header-box {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 18px;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 14px;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .nem-header-title {
+          font-size: 20px;
+          font-weight: 800;
+          color: var(--st90-azul);
+          margin: 0 0 4px;
+          letter-spacing: -0.01em;
+        }
+
+        .nem-header-sub {
+          font-size: 13px;
+          color: #64748b;
+          margin: 0;
+          line-height: 1.4;
+        }
+
+        /* Banner de Clase Seleccionada */
+        .nem-banner {
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          border: 1px solid #bae6fd;
+          border-radius: 12px;
+          padding: 14px 18px;
+          margin-bottom: 20px;
+          box-shadow: 0 2px 6px rgba(2, 132, 199, 0.06);
+        }
+
+        .nem-banner-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: nowrap;
+          gap: 12px;
+        }
+
+        .nem-banner-fila {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: nowrap;
+          gap: 12px;
+          margin-top: 10px;
+        }
+
+        .nem-banner-main {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+
+        .nem-banner-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 11px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: .05em;
+          color: #0369a1;
+          background: #ffffff;
+          border: 1px solid #7dd3fc;
+          padding: 2px 9px;
+          border-radius: 999px;
+          width: fit-content;
+        }
+
+        .nem-banner-title {
+          font-size: 20px;
+          font-weight: 800;
+          color: #0c4a6e;
+          margin: 2px 0 6px;
+        }
+
+        .nem-banner-meta {
+          display: flex;
+          align-items: center;
+          flex-wrap: nowrap;
+          gap: 8px;
+          min-width: 0;
+          overflow-x: auto;
+        }
+
+        .nem-banner-meta span {
+          display: inline-flex;
+          align-items: center;
+          white-space: nowrap;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          padding: 4px 10px;
+          font-size: 12px;
+          font-weight: 600;
+          color: #334155;
+        }
+
+        .nem-banner-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          flex: 0 0 auto;
+          white-space: nowrap;
+          padding: 8px 14px;
+          font-size: 12.5px;
+          font-weight: 700;
+          color: #0284c7;
+          background: #ffffff;
+          border: 1.5px solid #0284c7;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all .2s ease;
+          box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);
+        }
+
+        .nem-banner-btn:hover {
+          background: #0284c7;
+          color: #ffffff;
+        }
+
+        /* Banner compacto: etiqueta, titulo, chips y boton en UNA sola fila */
+        .nem-banner {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: nowrap;
+          padding: 10px 16px;
+        }
+
+        .nem-banner .nem-banner-header,
+        .nem-banner .nem-banner-main,
+        .nem-banner .nem-banner-fila {
+          display: contents;
+        }
+
+        .nem-banner .nem-banner-tag,
+        .nem-banner .nem-banner-btn {
+          flex: 0 0 auto;
+        }
+
+        .nem-banner .nem-banner-title {
+          flex: 0 0 auto;
+          margin: 0;
+          font-size: 18px;
+          white-space: nowrap;
+        }
+
+        .nem-banner .nem-banner-meta {
+          flex: 1 1 auto;
+          justify-content: space-evenly;
+          overflow: hidden;
+        }
+
+        /* Stepper UX Interactivo en 4 Pasos */
+        .nem-stepper-header {
+          display: flex;
+          align-items: stretch;
+          gap: 8px;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 6px;
+          margin: 18px 0 24px;
+          box-sizing: border-box;
+        }
+
+        .nem-step-tab {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 10px 14px;
+          border: none;
+          border-radius: 8px;
+          background: transparent;
+          cursor: pointer;
+          transition: all .2s ease;
+          font-family: inherit;
+          user-select: none;
+        }
+
+        .nem-step-tab:hover {
+          background: #e2e8f0;
+        }
+
+        .nem-step-tab .step-num {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: #cbd5e1;
+          color: #334155;
+          font-size: 12px;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all .2s ease;
+        }
+
+        .nem-step-tab .step-txt {
+          font-size: 13px;
+          font-weight: 700;
+          color: #64748b;
+          white-space: nowrap;
+          transition: all .2s ease;
+        }
+
+        .nem-step-tab.activo {
+          background: #ffffff;
+          box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+          border: 1px solid #cbd5e1;
+        }
+
+        .nem-step-tab.activo .step-num {
+          background: #0284c7;
+          color: #ffffff;
+        }
+
+        .nem-step-tab.activo .step-txt {
+          color: #0284c7;
+          font-weight: 800;
+        }
+
+        .nem-step-tab.completado .step-num {
+          background: #10b981;
+          color: #ffffff;
+        }
+
+        .nem-step-tab.completado .step-txt {
+          color: #047857;
+        }
+
+        /* Campos y Grid del Formulario */
+        .nem-fila-una {
+          display: grid;
+          grid-template-columns: minmax(260px, 2.5fr) minmax(180px, 1.8fr) minmax(180px, 1.8fr) 110px;
+          gap: 16px;
+          align-items: flex-end;
+          margin-bottom: 22px;
+        }
+
+        @media (max-width: 900px) {
+          .nem-fila-una {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .nem-campo-inline {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          width: 100%;
+        }
+
+        .nem-campo-inline label {
+          font-size: 12.5px;
+          font-weight: 700;
+          color: #1e293b;
+          margin: 0;
+        }
+
+        .nem-campo-inline input,
+        .nem-campo-inline select,
+        .nem-campo-inline textarea {
+          border: 1.5px solid #cbd5e1;
+          border-radius: 8px;
+          padding: 8px 12px;
+          font-size: 13.5px;
+          color: #0f172a;
+          background: #ffffff;
+          box-sizing: border-box;
+          font-family: inherit;
+          transition: border-color .2s ease, box-shadow .2s ease;
+          height: 42px;
+          width: 100%;
+        }
+
+        .nem-campo-inline textarea {
+          height: auto;
+          min-height: 80px;
+          line-height: 1.45;
+        }
+
+        .nem-campo-inline input:focus,
+        .nem-campo-inline select:focus,
+        .nem-campo-inline textarea:focus {
+          outline: none;
+          border-color: #0284c7;
+          box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        /* Ejes Articuladores Chips */
+        .nem-ejes-fila {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 16px 20px;
+          margin-bottom: 22px;
+        }
+
+        .nem-ejes-fila > label {
+          display: block;
+          font-size: 13px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 12px;
+        }
+
+        .nem-ejes-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 9px;
+        }
+
+        .nem-eje-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          background: #ffffff;
+          border: 1.5px solid #cbd5e1;
+          border-radius: 999px;
+          font-size: 12.5px;
+          font-weight: 600;
+          color: #334155;
+          cursor: pointer;
+          user-select: none;
+          transition: all .15s ease;
+        }
+
+        .nem-eje-chip:hover {
+          border-color: #94a3b8;
+          background: #f1f5f9;
+        }
+
+        .nem-eje-chip input[type="checkbox"] {
+          accent-color: #0284c7;
+          width: 15px;
+          height: 15px;
+          margin: 0;
+          cursor: pointer;
+        }
+
+        .nem-eje-chip.seleccionado {
+          background: #eff6ff;
+          border-color: #0284c7;
+          color: #0284c7;
+          font-weight: 700;
+          box-shadow: 0 1px 3px rgba(2, 132, 199, 0.12);
+        }
+
+        /* Footer de Navegación de Pasos */
+        .nem-step-nav-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding-top: 18px;
+          margin-top: 24px;
+          border-top: 1px solid #e2e8f0;
+        }
+
+        .nem-btn-accion {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 9px 18px;
+          font-size: 13px;
+          font-weight: 700;
+          border-radius: 8px;
+          border: 1.5px solid #cbd5e1;
+          background: #ffffff;
+          color: #334155;
+          cursor: pointer;
+          transition: all .2s ease;
+        }
+
+        .nem-btn-accion:hover {
+          background: #f1f5f9;
+          border-color: #94a3b8;
+          color: #0f172a;
+        }
+
+        .nem-btn-accion.nem-btn-primario {
+          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          color: #ffffff;
+          border-color: #0284c7;
+          box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+        }
+
+        .nem-btn-accion.nem-btn-primario:hover {
+          background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 4px 10px rgba(2, 132, 199, 0.35);
+          transform: translateY(-1px);
+        }
+
+        /* Catálogo y Dos Columnas */
+        .nem-catalogo-box {
+          background: #f0fdf4;
+          border: 1px solid #bbf7d0;
+          border-radius: 12px;
+          padding: 16px;
+          margin-bottom: 20px;
+        }
+
+        .nem-catalogo-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 12px;
+        }
+
+        .nem-catalogo-dos-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+
+        @media (max-width: 800px) {
+          .nem-catalogo-dos-col {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .nem-fila-dos-col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+
+        @media (max-width: 800px) {
+          .nem-fila-dos-col {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .nem-select-sintetico {
+          width: 100%;
+          border: 1.5px solid #86efac;
+          border-radius: 8px;
+          padding: 8px 12px;
+          font-size: 13px;
+          background: #ffffff;
+          color: #14532d;
+          box-sizing: border-box;
+          font-family: inherit;
+        }
+
+        .nem-lista-pda-scroll {
+          max-height: 220px;
+          overflow-y: auto;
+          border: 1.5px solid #86efac;
+          border-radius: 8px;
+          padding: 10px;
+          background: #ffffff;
+          box-sizing: border-box;
+        }
+
+        .nem-inclusion-box {
+          background: #fffbeb;
+          border: 1px solid #fde68a;
+          border-radius: 12px;
+          padding: 16px;
+          margin-bottom: 20px;
+        }
+
+        .nem-badge-official {
+          background: #15803d;
+          color: #ffffff;
+          font-size: 10.5px;
+          font-weight: 800;
+          padding: 2px 8px;
+          border-radius: 999px;
+          text-transform: uppercase;
+        }
+
+        .nem-badge-pill {
+          background: #e0f2fe;
+          color: #0369a1;
+          font-size: 11px;
+          font-weight: 700;
+          padding: 3px 9px;
+          border-radius: 999px;
+        }
+      </style>

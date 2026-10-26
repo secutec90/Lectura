@@ -385,7 +385,7 @@ function comparar(rutaAntes, rutaDespues) {
     for (const datos of Object.values(manifiesto.archivos)) {
       for (const doc of datos.documentos) {
         for (const s of doc.sentencias) {
-          const clave = doc.id.split('#')[0] + '::' + s.hash;
+          const clave = s.hash;
           mapa.set(clave, (mapa.get(clave) || 0) + 1);
         }
       }
@@ -410,7 +410,7 @@ function comparar(rutaAntes, rutaDespues) {
   lineas.push('  cambiados   (mismo nombre, otro hash)     : ' + cambiados.length);
   lineas.push('  eliminados                                : ' + eliminados.length);
   lineas.push('  nuevos                                    : ' + nuevos.length);
-  lineas.push('  sentencias superiores perdidas            : ' + sentPerdidas);
+  lineas.push('  sentencias superiores desaparecidas       : ' + sentPerdidas);
   lineas.push('');
 
   if (cambiados.length) {

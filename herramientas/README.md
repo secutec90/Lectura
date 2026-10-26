@@ -40,7 +40,7 @@ Salida `1` = hay símbolos cambiados, eliminados o nuevos (eso ya no es un movim
 | movidos | Mismo hash, otro documento. **Es un corte correcto.** |
 | cambiados | Mismo nombre, contenido distinto. **Es una edición**, no un movimiento. |
 | eliminados / nuevos | Símbolos que desaparecieron o aparecieron. |
-| sentencias superiores perdidas | Código ejecutable de nivel superior que se perdió: el corte rompió el orden de carga. |
+| sentencias superiores desaparecidas | Código ejecutable de nivel superior que ya no existe en ninguna parte: el corte lo perdió. |
 
 ### Regla de trabajo
 

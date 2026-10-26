@@ -1,9 +1,9 @@
 {
-  "generado": "2026-10-26T19:15:08.944Z",
+  "generado": "2026-10-26T19:19:18.983Z",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
-    "archivos": 20,
-    "documentos": 19,
+    "archivos": 34,
+    "documentos": 33,
     "simbolos": 1722,
     "sentencias_superiores": 147,
     "duplicados": 237
@@ -599,7 +599,7 @@
     ],
     "restaurarPpmRecomendados": [
       "Admin.html#script1",
-      "Codigo.gs"
+      "06_Alumnos.gs"
     ],
     "limpiarFiltros": [
       "Admin.html#script1",
@@ -6247,1382 +6247,6 @@
         }
       ]
     },
-    "Codigo.gs": {
-      "sha256": "7efb132fc87077f8e5ee5167e508c14ad5e79672f3b8ba1a6d0ce2de66a3e6e2",
-      "documentos": [
-        {
-          "id": "Codigo.gs",
-          "simbolos": {
-            "URL_BASE_DEEPSEEK": {
-              "tipo": "const",
-              "linea": 6,
-              "hash": "986cd63e4608df67458d8b1d670a55d0e65d1b561795ddb0e0a8e8ab408baceb"
-            },
-            "NOMBRE_ESCUELA": {
-              "tipo": "const",
-              "linea": 7,
-              "hash": "f4ffc31ce7a3c50cbae2dde89f7d8ae0c8eb26c0cd4aa9b9d2b3797245894158"
-            },
-            "VERSION_APP": {
-              "tipo": "const",
-              "linea": 8,
-              "hash": "8da0caff7ad6140f9042ffbe61865dd8c79a21ddee3c2e72eb80801ffb857bb9"
-            },
-            "CLAVE_ADMIN_DEFAULT": {
-              "tipo": "const",
-              "linea": 9,
-              "hash": "566a7ffef943ca7b8cb9920bc697e791bbe889a75a653bccb6aa3bf1da9e2629"
-            },
-            "USUARIO_ADMIN_ASISTENCIA": {
-              "tipo": "const",
-              "linea": 10,
-              "hash": "e74ff3cfbb7b9cacc8b35b41f89d5fada6a41201f30f7a7782b8ea2ff88c4bb5"
-            },
-            "URL_SITIO_ALUMNO_DEFAULT": {
-              "tipo": "const",
-              "linea": 11,
-              "hash": "d371050f6ba58e7248958bf5ac21a2aaf112c8b631b1fae9c84daaead9dfd65c"
-            },
-            "URL_SITIO_DOCENTE_DEFAULT": {
-              "tipo": "const",
-              "linea": 12,
-              "hash": "11fd51449db55d78525d5c090cff7c209e604e193222d80fd8a0d708552f831e"
-            },
-            "ID_DEPLOY_ASISTENCIA": {
-              "tipo": "const",
-              "linea": 14,
-              "hash": "50b1488c422afa063c8cdb9495f08363801ce240b26eb069062776ea92e1f21d"
-            },
-            "ID_DEPLOY_CLASE": {
-              "tipo": "const",
-              "linea": 16,
-              "hash": "e8330d46e09f14e3dfa71c934aeebdb897fb6e16397e69ea50eea4bb2eb041a2"
-            },
-            "ASIGNATURAS_DEFAULT": {
-              "tipo": "const",
-              "linea": 18,
-              "hash": "0d2ce1200cb2bb305bf118f58c3866ad94aa0d19384cb97491f9a8e27210a614"
-            },
-            "ESPECIFICACIONES_GRADO": {
-              "tipo": "const",
-              "linea": 27,
-              "hash": "7153848995590aea1b9476929248450d792c0f17e11ad24447a2c19e2f774939"
-            },
-            "PESO_COMPRENSION": {
-              "tipo": "const",
-              "linea": 54,
-              "hash": "c4760fd97545db897b039cbfdfdc4b6e375e8d4bb0617d71e63109e6827262b6"
-            },
-            "PESO_VELOCIDAD": {
-              "tipo": "const",
-              "linea": 55,
-              "hash": "3f5d270f4abecaf995197855bbe0e9592b7d9ec0ebcabd914f303b44958d687b"
-            },
-            "ENCABEZADOS": {
-              "tipo": "const",
-              "linea": 57,
-              "hash": "c106cb59cfd59b0a2714619c1a6c93451bc1a40ae64303606c0b2a455c796680"
-            },
-            "ID_HOJA_DEFAULT": {
-              "tipo": "const",
-              "linea": 118,
-              "hash": "7684f6b6269af7d2aad2ee93aa71147029353fc9886073dfaafefb9ee278d5d7"
-            },
-            "URL_HOJA_DEFAULT": {
-              "tipo": "const",
-              "linea": 119,
-              "hash": "1c67b9fd2630c57a04e49c1899c76d89168c4a0a1f8967d322cd9b3517ab71ea"
-            },
-            "ultimoErrorAperturaLibro": {
-              "tipo": "let",
-              "linea": 120,
-              "hash": "b9029147d9eb0cb00c03ae08a91d1212bce31cd6d7863891435c22df583754ab"
-            },
-            "memoLibro_": {
-              "tipo": "let",
-              "linea": 121,
-              "hash": "d69deb699176614cb47f385b940ad8faed4af525b65127e75daf4615c9603032"
-            },
-            "memoAlumnos_": {
-              "tipo": "let",
-              "linea": 122,
-              "hash": "bb062cf7911c37ba8bc7cf0a485b2fe8a12a9e12adc1cfeb3a0e3ce963b4da1e"
-            },
-            "memoResultados_": {
-              "tipo": "let",
-              "linea": 123,
-              "hash": "d9f42524aa88993ddc8950760c729a6b9cff1299dcf80cbd326d1b04a7dec77f"
-            },
-            "memoLecturasIdx_": {
-              "tipo": "let",
-              "linea": 124,
-              "hash": "0458928d85c493b6e325b6b3afc7b45378ba8b53ea376c1c5ad5115284514197"
-            },
-            "memoConfig_": {
-              "tipo": "let",
-              "linea": 125,
-              "hash": "95fe236ec8b871617082565fb31226ad09e65512eda508db2d7573ea69ef288f"
-            },
-            "memoGrupos_": {
-              "tipo": "let",
-              "linea": 126,
-              "hash": "27f325976a5f59c81919c9595230e455316991bbac78bce18c3c3eaac56e3e81"
-            },
-            "cacheGetJson_": {
-              "tipo": "function",
-              "linea": 128,
-              "hash": "3815e41bc98b3fb68772220c304b0569c0f226618e5f61ce03df2d3c30359c94"
-            },
-            "cachePutJson_": {
-              "tipo": "function",
-              "linea": 138,
-              "hash": "f18a7cccb4e82e91276827290a71f4e334684e29bd6c511586f648ac94130a06"
-            },
-            "invalidarCachesDatos_": {
-              "tipo": "function",
-              "linea": 144,
-              "hash": "5787d29a275bbf31dcb4b8c81254fe614c35a03c0627fdeda58f886914f5de56"
-            },
-            "obtenerLibro": {
-              "tipo": "function",
-              "linea": 158,
-              "hash": "23159bf36b5d55f31ca8e53fa22c2112fea20c2bad3d7cbdb2749605946dbcfc"
-            },
-            "vincularHojaCalculo": {
-              "tipo": "function",
-              "linea": 230,
-              "hash": "9b6d5fccabc88ba0e5daddea5d0d42e8e986837c8d3378dc13f24a78d4bbb514"
-            },
-            "obtenerPestana": {
-              "tipo": "function",
-              "linea": 271,
-              "hash": "90748c63d701a5eb6cb02316c3f765522e506bff9f31b0d13a6bb5b91daada5c"
-            },
-            "doGet": {
-              "tipo": "function",
-              "linea": 327,
-              "hash": "29416e6675c7eb2e23899c3ffed0d531996a5262de27bfacfe09339a5bc577a6"
-            },
-            "rellenarPlantillaAdmin_": {
-              "tipo": "function",
-              "linea": 461,
-              "hash": "c585dcde7048345a89ae21a329e5601ad2252c90c702c33e712c4f7fcf33f807"
-            },
-            "evaluarPlantillaAdmin_": {
-              "tipo": "function",
-              "linea": 476,
-              "hash": "cd1260d4927ff7cd100c83bd5d7c3baaca656d6a679894482641aea7cf4f5316"
-            },
-            "include": {
-              "tipo": "function",
-              "linea": 485,
-              "hash": "41511ebdde87cad98c8d162a9d9940a71c2596e192c203fc36d3d12845a559ee"
-            },
-            "asegurarSetup": {
-              "tipo": "function",
-              "linea": 492,
-              "hash": "84dc2448b293ee2d6f331f921b1ab5ccb42582f73d7f3278058ef07b97a1870d"
-            },
-            "verificarYCrearPestanas": {
-              "tipo": "function",
-              "linea": 515,
-              "hash": "d3bff40cc53550cd9924e08d67a628b45a102db0d4856830c95eeb6159d91dca"
-            },
-            "migrarLecturasSiEsAntiguo": {
-              "tipo": "function",
-              "linea": 542,
-              "hash": "1f0083b6c5d76c4bf9fbb30896088aa14d51e5e86cda65b605c8c62c28b6c73c"
-            },
-            "migrarAlumnosSiEsAntiguo": {
-              "tipo": "function",
-              "linea": 583,
-              "hash": "e980eb4d3a321479269fba571f09c675efe745ce9b385d4f4bb86a7e6da9199e"
-            },
-            "repararResultadosSiEsNecesario": {
-              "tipo": "function",
-              "linea": 605,
-              "hash": "6120cbf763b7b42166f316a5f52d4745a6c13a3e2b67046e90d9f54c687b7cb3"
-            },
-            "unificarEstructuraResultados": {
-              "tipo": "function",
-              "linea": 609,
-              "hash": "4801f516becba85de21cf0f648d3bfd69560855c88907a81feee1e9519273e35"
-            },
-            "repararResultadosAdmin": {
-              "tipo": "function",
-              "linea": 755,
-              "hash": "4576d951dfddf54360dd7204c9eb5dee9d8574a415d58a6a41c14a1c55cf729f"
-            },
-            "buscarIdLecturaPorTema_": {
-              "tipo": "function",
-              "linea": 760,
-              "hash": "dd0149221e2a44144bf96d14986d1d9a252cd3e430424e73d6354971fe8d796f"
-            },
-            "asegurarConfig": {
-              "tipo": "function",
-              "linea": 784,
-              "hash": "1a5b192fc6f67bd3655be6a674f3908564709a37da8f589f6d017ba2a4b9a301"
-            },
-            "sanitizarUrlSitio_": {
-              "tipo": "function",
-              "linea": 819,
-              "hash": "7c6042219b2b235ba0b05317c19585195234a6421f96b1442467f16d5a55ec0c"
-            },
-            "urlSitioAlumno_": {
-              "tipo": "function",
-              "linea": 827,
-              "hash": "738ea1b7b211e011064533cfa840e18a13804c9a4c2aaf3401217d942e97c918"
-            },
-            "urlSitioDocente_": {
-              "tipo": "function",
-              "linea": 831,
-              "hash": "724552cf86d4456712af7828cba480a76fd163292af0ee0232367a7dd44acdb5"
-            },
-            "nombreEscuela_": {
-              "tipo": "function",
-              "linea": 835,
-              "hash": "56243a563881b1b1b953e0ee0c20e9852bf1f154302c398f0dbdc121d9b8d130"
-            },
-            "pieLectura_": {
-              "tipo": "function",
-              "linea": 840,
-              "hash": "2b2e8536fa1ac75aee0fe222bdb68a8372a765ed8f8a5773f86b52f8cd44f2cf"
-            },
-            "logoEscuela_": {
-              "tipo": "function",
-              "linea": 845,
-              "hash": "945f18f259c75d18075024a2f33943b78c40761425513c8abf321ac14c6e2322"
-            },
-            "identidadEscuela_": {
-              "tipo": "function",
-              "linea": 851,
-              "hash": "29c5955568e1be773e4f7f87f715631d9ecd9f94812139291a49eaac5f707506"
-            },
-            "sanitizarTextoIdentidad_": {
-              "tipo": "function",
-              "linea": 855,
-              "hash": "5726b320e6301e7d9e9e6899af981d84ae3aacb06d9c45120743bbe915c4ba2d"
-            },
-            "guardarIdentidadEscuela": {
-              "tipo": "function",
-              "linea": 863,
-              "hash": "c5a052ffd37292467baf075cf0b37677dd78ade6636f4a89c5ebaff9d28d3b09"
-            },
-            "guardarUrlsSitio": {
-              "tipo": "function",
-              "linea": 885,
-              "hash": "655c6c1f2cff16910d846fc0381145311517e3a554e985c0c585e1be6033f582"
-            },
-            "asegurarColumnaIntentosGrupo": {
-              "tipo": "function",
-              "linea": 900,
-              "hash": "edef4fbcb2825b4e196751b66fee37c2dae4b7539086d2ef8733d52ba3f1c467"
-            },
-            "asegurarColumnaTurnoGrupo": {
-              "tipo": "function",
-              "linea": 910,
-              "hash": "57095de763121faf1e4ba83bcd3e2c02f795d2548fa5fa6fa31eac7816c549b9"
-            },
-            "asegurarColumnaNivelPreguntas": {
-              "tipo": "function",
-              "linea": 921,
-              "hash": "a1be1059966042065bd3f1ee9da70f50ad3fdb24cfcbfcddf238e0dd40b7e8bf"
-            },
-            "mapaConfig_": {
-              "tipo": "function",
-              "linea": 936,
-              "hash": "2561a119d4d56986c3134e84c3e57732c98b29fc7048c5cc51535ed5eb251a63"
-            },
-            "leerConfig": {
-              "tipo": "function",
-              "linea": 958,
-              "hash": "0727154f80a77077e25eaa282fce140e067e68a235df4f73a712600c5a21195f"
-            },
-            "escribirConfig_": {
-              "tipo": "function",
-              "linea": 964,
-              "hash": "fae8b40e6d47c2aafe3478369925feeb3789b0fc25db9d02be8c5da8a285f786"
-            },
-            "hashClave": {
-              "tipo": "function",
-              "linea": 1004,
-              "hash": "3b5545e7cc8f64051e67c8b5ada8ac7802e4df1534335ae3ab4b9b966b2b0ba3"
-            },
-            "obtenerCredencialesAdminAutoritativas_": {
-              "tipo": "function",
-              "linea": 1015,
-              "hash": "800dce23b55f6942f2c82dcf2d34915ce8e1ff7adad43ea3647b73cff19b7920"
-            },
-            "credencialesEncuestasPanel": {
-              "tipo": "function",
-              "linea": 1040,
-              "hash": "6b71443da12d7edc5025944c38f812a3a27b683e1b50fd251c4456b3aabd5290"
-            },
-            "claveEsDefault": {
-              "tipo": "function",
-              "linea": 1058,
-              "hash": "2d4045bd69f8d5df042e6dcbe9d93e7928dd3ba79f4d13dff0d8b03624fa949a"
-            },
-            "esUsuarioAdminAsistencia_": {
-              "tipo": "function",
-              "linea": 1063,
-              "hash": "572ad3e5ece3bcfbc79db4f69dd085ed5e15c2ef297da68b8bf51b36e846d125"
-            },
-            "iniciarSesionUnificada": {
-              "tipo": "function",
-              "linea": 1068,
-              "hash": "68ad670aee2a7820545d9c2d47d1b7b03ed1de645c72fca1bf46d96a3b054b47"
-            },
-            "iniciarSesionAdmin": {
-              "tipo": "function",
-              "linea": 1283,
-              "hash": "8f76f0fc1c60c2f665fae302153031facefd32b4b7ba185629c307efdd5a1715"
-            },
-            "revocarTokenSesion": {
-              "tipo": "function",
-              "linea": 1287,
-              "hash": "e24feddf42772f1802f5c598d3b2fa248a8ac9c42e6329eae4fc91ad50257b94"
-            },
-            "cerrarSesionAlumno": {
-              "tipo": "function",
-              "linea": 1337,
-              "hash": "5654ea434aefbc97702ee9fd0e3346611d588368d181e53f3f1921ee14398f7e"
-            },
-            "cerrarSesionAdmin": {
-              "tipo": "function",
-              "linea": 1341,
-              "hash": "2e4238b51d64239b6aca922014ca087fb48d92cc31fea28d51a6cdc25c9fd90a"
-            },
-            "ROLES_VALIDOS_SISTEMA_": {
-              "tipo": "const",
-              "linea": 1345,
-              "hash": "ec224ca41f32c1eea7135d903b2fde89d0e6297b71bbdb99732d047108fbb09d"
-            },
-            "obtenerSesionValida_": {
-              "tipo": "function",
-              "linea": 1347,
-              "hash": "10434b5883b4de83b925ac15ebddc80fcf59ced710591aa2eb4b5fb1e6a31b47"
-            },
-            "exigirRoles_": {
-              "tipo": "function",
-              "linea": 1365,
-              "hash": "2d4aa4b1661fd56b72d5a81efc03b450be91b034a01d35c4bb3891bca12b144d"
-            },
-            "exigirAdmin": {
-              "tipo": "function",
-              "linea": 1378,
-              "hash": "028e19d9f49643f317940451f9b7ad4fcd7b9f7f324248265ce5c0aaa5981993"
-            },
-            "adminRestablecerClaveConsola_": {
-              "tipo": "function",
-              "linea": 1400,
-              "hash": "ad8d402eb463005829cd04a029736414b9fbd85b63abc18c07e676730dc3c24d"
-            },
-            "AREAS_APOYO": {
-              "tipo": "const",
-              "linea": 1416,
-              "hash": "48ff4fa81519531b6661e06e14519973ff6ff2cc0f4e179ac7e5a6fa9d18812c"
-            },
-            "areaApoyoValida_": {
-              "tipo": "function",
-              "linea": 1426,
-              "hash": "cd28d5bf2d3a26ab55ead613d7fffc7dd5ee940f3405f5cbb3bf27b6a29ef836"
-            },
-            "generarClaveAleatoriaApoyo_": {
-              "tipo": "function",
-              "linea": 1434,
-              "hash": "74da48d3fa0a1a4c8f8932921a309b67431a95e70a5c7a13950e180844040b2f"
-            },
-            "usuariosOcupadosApoyo_": {
-              "tipo": "function",
-              "linea": 1445,
-              "hash": "c10b8727038c2a67ee59715035e1847b652342777872519bd8f97c1a4a357f0f"
-            },
-            "usuarioApoyoLibre_": {
-              "tipo": "function",
-              "linea": 1466,
-              "hash": "2fcb3394d38e758147c90897a8def91fadced486213cfd091538ae528c9132e8"
-            },
-            "buscarPersonalApoyoLogin_": {
-              "tipo": "function",
-              "linea": 1479,
-              "hash": "a03dc5606932b51bbd8148cf6cb76f77c691d1076c133da2996583b3029a2f52"
-            },
-            "listarPersonalApoyo": {
-              "tipo": "function",
-              "linea": 1521,
-              "hash": "03b80f55f8527e685d985ec96f305bef6a0fb926adf2c27dfa648db26b7ea617"
-            },
-            "altaPersonalApoyo": {
-              "tipo": "function",
-              "linea": 1543,
-              "hash": "6f4daace6c833672ed6c90c205ce8de234453757441b018f858a0035c22bdada"
-            },
-            "asignarClavePersonalApoyo": {
-              "tipo": "function",
-              "linea": 1569,
-              "hash": "505183a2538bc7a7f2cf52bd38ffacd4fb5bfc0123fed522ad1b627fdfc48575"
-            },
-            "generarClavePersonalApoyo": {
-              "tipo": "function",
-              "linea": 1615,
-              "hash": "69115283c395cfeb73f36fc317e0e5e417918d6f51b3dd91c6e8ee575422e59f"
-            },
-            "generarClavesPersonalApoyo": {
-              "tipo": "function",
-              "linea": 1620,
-              "hash": "18abc21ba902530739925eca6b617667bdc3c86594f5ca2eea61cd2db90ccd51"
-            },
-            "cambiarClaveAdmin": {
-              "tipo": "function",
-              "linea": 1639,
-              "hash": "aecfd443ea401ffc0e6a6b668b1bbfbdc689ac1c028d534c0483a4b47103409f"
-            },
-            "urlHojaCalculo": {
-              "tipo": "function",
-              "linea": 1659,
-              "hash": "f522339910e7bbba9ae1a06c15b0e46a823cfe2d11bb21b7b2d2e38e6fbc847f"
-            },
-            "aJsonSeguro": {
-              "tipo": "function",
-              "linea": 1667,
-              "hash": "4fef88ff3e8d38bb12fe1cc36e85d8ba8256172f4f049ceb200309ce66422d18"
-            },
-            "urlAdmin": {
-              "tipo": "function",
-              "linea": 1676,
-              "hash": "d093496730391a0fd75816fce2f58634b152c81e7fe64299abd6790744d2959b"
-            },
-            "urlAdminPub": {
-              "tipo": "function",
-              "linea": 1681,
-              "hash": "79518e48df0aee680a19982ac6d2db68df9b24d76fdf0e7c399c42573f53d48e"
-            },
-            "urlDocentePub": {
-              "tipo": "function",
-              "linea": 1685,
-              "hash": "34e176a5c5e12b828ccb59790b1fa82d83e96e102f0cece8ff88aae3f623c3d5"
-            },
-            "urlAlumnoPub": {
-              "tipo": "function",
-              "linea": 1690,
-              "hash": "aa035dc81434190f079e11fa7c0111a681f23fa360e4ff3e7b877040c9f80293"
-            },
-            "urlDestinoAlumno_": {
-              "tipo": "function",
-              "linea": 1695,
-              "hash": "59863c4f8255df3ef321b7010c36c70b41acdb3ffdc565f5b2528dac18044eff"
-            },
-            "esVistaAsistencia_": {
-              "tipo": "function",
-              "linea": 1703,
-              "hash": "40f076038870839e362311557f2c3b32a5d947ecba7f290fb3784a04292638fa"
-            },
-            "urlAsistenciaPub": {
-              "tipo": "function",
-              "linea": 1711,
-              "hash": "4d8e42cc22437cea6e49574d200d48a12c68f459030d09b4b735d258da3149f2"
-            },
-            "esVistaClaseMaestro_": {
-              "tipo": "function",
-              "linea": 1720,
-              "hash": "d48811312da3bf565bc4c35d5f8c52e4af89a8f22fcbaf4c1055aa7e471f9996"
-            },
-            "esVistaClase_": {
-              "tipo": "function",
-              "linea": 1725,
-              "hash": "137aaa0b20b5ab25cbb0b8314c9a78d86aeaac3fc795b57343322a3a988b2ae3"
-            },
-            "urlClasePub": {
-              "tipo": "function",
-              "linea": 1737,
-              "hash": "54f7ccea77409b676d9d0a37e0c11a7a802b11a142439f45777bf99b087e7a89"
-            },
-            "panelResumen": {
-              "tipo": "function",
-              "linea": 1749,
-              "hash": "b5bb648f6f7c810b4355c25a371d419eece359613615e984906fe25003c067bb"
-            },
-            "leerGruposHoja_": {
-              "tipo": "function",
-              "linea": 1923,
-              "hash": "1ff5d81ed81b0f69aa00ab27afd77d7ed45a024349443696488a2310560101fc"
-            },
-            "extraGrupoDe_": {
-              "tipo": "function",
-              "linea": 1958,
-              "hash": "aed85b03f88810876405a4a609bf07eef59daf9a0eb7813f12fb142baf458d25"
-            },
-            "leerGruposDesdeLibro": {
-              "tipo": "function",
-              "linea": 1970,
-              "hash": "0ade82c41f75090f6ca8168dc325098f2888943112dc08ac9cdc399c34edac62"
-            },
-            "extraerAlumnosDePestana": {
-              "tipo": "function",
-              "linea": 1992,
-              "hash": "6c6eb37ae4f16e1f0a866337dd93a484542c08e1b7ef205ec93ce2bfbd268cdf"
-            },
-            "enriquecerAlumnosConAcceso_": {
-              "tipo": "function",
-              "linea": 2229,
-              "hash": "d61e2886eee31d195780f4bb77da9afa7fbeab7fbdb59c71d08e2a6abf2804d4"
-            },
-            "leerAlumnosResumen": {
-              "tipo": "function",
-              "linea": 2250,
-              "hash": "55b48fd91c06411c6ebe53aae5e8adf8be51740c24ca88d8a9e16b34b4ca2719"
-            },
-            "guardarAlumnosResumen_": {
-              "tipo": "function",
-              "linea": 2350,
-              "hash": "830775788ea606e401eb2757e11e9d7bf816a999353b71cca3d61cd95480aa2f"
-            },
-            "normalizarGradoServer": {
-              "tipo": "function",
-              "linea": 2356,
-              "hash": "2db44234c751fe2556b1a730632ac1998cc4493a185c426c5ff0bd8c36d33467"
-            },
-            "leerGruposResumen": {
-              "tipo": "function",
-              "linea": 2362,
-              "hash": "f65a7253d8e2f2911e8d76321f2cc101e4ae815a677b531f1cdffa42b32266c5"
-            },
-            "leerLecturasResumen": {
-              "tipo": "function",
-              "linea": 2392,
-              "hash": "598029d285838bc9c0450f08f4f8dae2e8cfdef03157a08923ea194997b14603"
-            },
-            "fusionarNivelesDesdeJson_": {
-              "tipo": "function",
-              "linea": 2407,
-              "hash": "1a5b8501b32e7be2a9f7e30fb79f32db1fcba777330d75dd5155bd58dc149347"
-            },
-            "inspeccionarNivelesPreguntas": {
-              "tipo": "function",
-              "linea": 2439,
-              "hash": "409965c97a4531524bb4f8a321409b62dcf6a3c7cfd7b90a501a1c9aec0e0db1"
-            },
-            "sincronizarNivelesHojaDesdeJson": {
-              "tipo": "function",
-              "linea": 2473,
-              "hash": "8d56347cb81d39cbe9b8f94ebd29e65c0cd010ea6d778b765b28d835644bfc94"
-            },
-            "detalleLecturas": {
-              "tipo": "function",
-              "linea": 2482,
-              "hash": "db5d958815f6051d0ae780d41bc600784b9975029716bc8395990241896dde4d"
-            },
-            "detalleUnaLectura": {
-              "tipo": "function",
-              "linea": 2511,
-              "hash": "cf7e2ea21e5aa4c192b8bb2b3988c468665edbd34c665d0fae55b7d91bb63093"
-            },
-            "detalleResultados": {
-              "tipo": "function",
-              "linea": 2530,
-              "hash": "3c0620bdbc44efbd4be38698ad0fb5c754694b8aefb0b58547b5c9d8321ead70"
-            },
-            "listaLecturasAdmin": {
-              "tipo": "function",
-              "linea": 2536,
-              "hash": "ab395b59f5ce190caaa6942d94f745fdc4f44b4697ce8fa5ca4f38652df15d23"
-            },
-            "valoresHoja_": {
-              "tipo": "function",
-              "linea": 2541,
-              "hash": "afd3bf3b9892042578d15e44b64e001be9c2e9093681326c17ecac2a8df74654"
-            },
-            "leerFilas": {
-              "tipo": "function",
-              "linea": 2550,
-              "hash": "de8b473f6f4f378b50d6a5a142e5badca563b91c3cbda7335374a57c2bd05d3b"
-            },
-            "especificacionesDeGrado": {
-              "tipo": "function",
-              "linea": 2591,
-              "hash": "8cf68a241935b8b100e03b7a3992f94360fbb72a68ce478e867bcbfb1f2447c3"
-            },
-            "especificacionesDeTodos": {
-              "tipo": "function",
-              "linea": 2604,
-              "hash": "f61d04dd26836d95c7cb4a5b86c1b7860965d3da4e3c36423fc01073dfb72394"
-            },
-            "ppmObjetivoDeTodos": {
-              "tipo": "function",
-              "linea": 2608,
-              "hash": "8b1cb84915886be8c3083480cbbbbb56f9ada902e7bb8f93e523332638b49b9a"
-            },
-            "restaurarPpmRecomendados": {
-              "tipo": "function",
-              "linea": 2632,
-              "hash": "1fa3337d1dbc56ae8a1f0e3ea3e3aeb28dc2a5af807b9a0c87620d44e2c719c9"
-            },
-            "guardarPpmObjetivo": {
-              "tipo": "function",
-              "linea": 2646,
-              "hash": "42c27f5bf78cef0b1c9263326a75220f86703afda66cb9220ad9a72355c2bbea"
-            },
-            "obtenerGruposPorGrado": {
-              "tipo": "function",
-              "linea": 2665,
-              "hash": "f7b352f708d88d715bb17c10f0ab34893c8ddb878942a5781a014b4692a4bbe2"
-            },
-            "obtenerAlumnosPorGrupo": {
-              "tipo": "function",
-              "linea": 2681,
-              "hash": "438b5684f8b382b92516246b95e8a78a274e64193312046c5b4d40743db3de41"
-            },
-            "catalogoLoginPorGrado": {
-              "tipo": "function",
-              "linea": 2700,
-              "hash": "49053dca6884ef1a25c4a2c3e6ff3fd80f28a8d81207044c2dd35963e56d5250"
-            },
-            "buscarAlumno": {
-              "tipo": "function",
-              "linea": 2719,
-              "hash": "e0a127d5ed12212440180635582a5f4867fc32b9275c7fbbdd2d51fcac0afd9a"
-            },
-            "filaAlumnoPorMatricula": {
-              "tipo": "function",
-              "linea": 2765,
-              "hash": "74155f133ce6c39ce33a289bb43923ec6758144fefe3e32344137ee1613b0c17"
-            },
-            "contarIntentosAlumno": {
-              "tipo": "function",
-              "linea": 2785,
-              "hash": "a774ce26b3bdf8e3fc5eac8403411127a332cb862aebc32d5a2fe49a391f5f2b"
-            },
-            "intentosPermitidosDe": {
-              "tipo": "function",
-              "linea": 2793,
-              "hash": "079f69ec42ed40a329d8a2b138abb6eecad9f224efc691e02f87ee816cb75469"
-            },
-            "mensajeCupoDisponible": {
-              "tipo": "function",
-              "linea": 2800,
-              "hash": "345ba80407c46849b0fdbfaeebdafa6f0fe08873162d525f972b2ff563d6d1f9"
-            },
-            "mensajeCupoAgotado": {
-              "tipo": "function",
-              "linea": 2808,
-              "hash": "bca4825f8118c757a8a67548b5b1d6073315621d3fe550ecb2943ef50ff435b9"
-            },
-            "consultarCupoAlumno": {
-              "tipo": "function",
-              "linea": 2815,
-              "hash": "3144d0206eb7dedf89d9cc6388185e34610ff798721775eac9bf23f7c7ce5da3"
-            },
-            "altaAlumno": {
-              "tipo": "function",
-              "linea": 2832,
-              "hash": "1070a8b76ac161b17d08b6052f906cf6943ea87b13804442553b50582d49b50d"
-            },
-            "bajaAlumno": {
-              "tipo": "function",
-              "linea": 2844,
-              "hash": "15cbfd25d7fdc42cf5fafad654ea167b92287a7845afb37055e27c1f4a9ad7ef"
-            },
-            "reactivarAlumno": {
-              "tipo": "function",
-              "linea": 2853,
-              "hash": "f80c790ba42f3b6f6158a47723da918310747fdef08562df1b323a80f287c6b4"
-            },
-            "celdaAlumno": {
-              "tipo": "function",
-              "linea": 2862,
-              "hash": "b19758eff4a436004fe9bedefc5f1417fc3469659e0a9c52e545145aa5e0e1ae"
-            },
-            "eliminarAlumno": {
-              "tipo": "function",
-              "linea": 2869,
-              "hash": "9758421539621918659e9f1efe81d2aa6fb6775f745813cd92bbf67f571be32c"
-            },
-            "eliminarAlumnosMultiples": {
-              "tipo": "function",
-              "linea": 2892,
-              "hash": "2eff030c58b94c39bf3d396188307d68b87c401b1cd269965d16b5ff996e87bc"
-            },
-            "cambiarGrupoAlumno": {
-              "tipo": "function",
-              "linea": 2933,
-              "hash": "81e92f6a069cc109b51b1c51b3097688000dea0ded8cf35498f896de707142a9"
-            },
-            "cambiarGrupoAlumnosMultiples": {
-              "tipo": "function",
-              "linea": 2946,
-              "hash": "8e66e28164ecc6820e5fdd1454f41b821940e896ab198f7622c515166a38fbb8"
-            },
-            "asignarIntentosExtra": {
-              "tipo": "function",
-              "linea": 2975,
-              "hash": "61a91860319d7a57699a73d1a33bccab14cd74ebe0ef5b1bd85ab2208628392f"
-            },
-            "asignarIntentosExtraAlumnosMultiples": {
-              "tipo": "function",
-              "linea": 3020,
-              "hash": "2c303d79e37da055ab1cc5e04a61cc60f2761f1cbd0040d31a2ad2cebe5f6bd9"
-            },
-            "generarAlumnosSimuladosAdmin": {
-              "tipo": "function",
-              "linea": 3047,
-              "hash": "1fa6773e49feedfb2957d352045d71e4236cb0796a0a7a09881117b20e0ff570"
-            },
-            "vaciarMatriculaAdmin": {
-              "tipo": "function",
-              "linea": 3054,
-              "hash": "45455dbd8be1b9021b8be605587ec595f09ae594c9c09cf110c06e7be32b28d4"
-            },
-            "altaGrupo": {
-              "tipo": "function",
-              "linea": 3065,
-              "hash": "9d5ca345cb3dbea031f5ba136f001c244aa1c70b2a0a9a979df4c473bb4a40f6"
-            },
-            "asignarIntentosExtraGrupo": {
-              "tipo": "function",
-              "linea": 3071,
-              "hash": "2a085859c8eb3bc0985156d0389a102b96fefaac99b767ee7407c012881cc1cd"
-            },
-            "guardarIntentosDefault": {
-              "tipo": "function",
-              "linea": 3086,
-              "hash": "2f327bfda744f7b720e7c536ef82f6238adf8d55c87ca95c14bcbc4d7bfbf364"
-            },
-            "sembrarGrupos_": {
-              "tipo": "function",
-              "linea": 3092,
-              "hash": "5723ae156f7894be3ba376bfeee177970fb667367b1cba26789df1cb10cce7a0"
-            },
-            "uniq": {
-              "tipo": "function",
-              "linea": 3115,
-              "hash": "528590571eddd8d3aaeb6a0bd144ea44129b327d9da838f4ee65d80c7358cca2"
-            },
-            "asegurarDatosDePrueba_": {
-              "tipo": "function",
-              "linea": 3124,
-              "hash": "56d6d52f278b9388e355e4e15165166afea97e862c590c9962831b333e30fe46"
-            },
-            "generarAlumnosSimulados_": {
-              "tipo": "function",
-              "linea": 3137,
-              "hash": "1ac883f0bb62ebabfd6caee2952842cf761d5cd41a73d9e40eac3c2ad17580be"
-            },
-            "temasBancoPorAsignatura": {
-              "tipo": "function",
-              "linea": 3170,
-              "hash": "e997a4b225899d19a97f3310a198498ce4f8765a7da1a9eb67416c0bffb78fba"
-            },
-            "completarBancoLecturas_": {
-              "tipo": "function",
-              "linea": 3181,
-              "hash": "b83c96d469c0d113e86efef367d58aa8b7f8fd02c549b5dcb7d6514800971d49"
-            },
-            "filaLectura": {
-              "tipo": "function",
-              "linea": 3303,
-              "hash": "c26e6d04215ebd8a002661bf0a4024f4608398876664b2ed56ce047026fd6290"
-            },
-            "construirLecturaBanco": {
-              "tipo": "function",
-              "linea": 3310,
-              "hash": "282bcfcdb2a77e2b6d511038defe37fce230f32e7ea5e83276dd560b34127d55"
-            },
-            "contarPalabras": {
-              "tipo": "function",
-              "linea": 3328,
-              "hash": "f4655859e4ffdde342b8c9b39eb4eeabdfba01315edc5bb54d3ffa2215515470"
-            },
-            "asegurarFormatoLibro": {
-              "tipo": "function",
-              "linea": 3333,
-              "hash": "f69742b52b20af426908dba22a45eee2f91b5af829f73749ef737e9c6ede1a64"
-            },
-            "expandirTextoHasta": {
-              "tipo": "function",
-              "linea": 3348,
-              "hash": "1404a050e1b55c6d3849ee5a2b3d43344e96e6c6f529bc5769bd6307e75c6e72"
-            },
-            "preguntaDesdeFilaHoja": {
-              "tipo": "function",
-              "linea": 3374,
-              "hash": "8206d44d2b1c5a733299d149ad6e9991f8bde422c471c818345ba670f7f50d85"
-            },
-            "preguntasDeLectura": {
-              "tipo": "function",
-              "linea": 3386,
-              "hash": "2934ff06787b20cadc6fa779234a753ade2e901abc09bfb3d54759c37d156714"
-            },
-            "mapaPreguntasPorId": {
-              "tipo": "function",
-              "linea": 3405,
-              "hash": "9c939edf259d00fafa8f0b2d6b353a72aee1073895cc244ef789e15da4dda9e8"
-            },
-            "reemplazarPreguntasDeLectura_": {
-              "tipo": "function",
-              "linea": 3452,
-              "hash": "ed2731992daf12cfe4dd73996fea9dcc2df99deae17037fbe580e637daa840e8"
-            },
-            "filaPreguntaParaHoja": {
-              "tipo": "function",
-              "linea": 3485,
-              "hash": "667e2fdbbd2a2d5ba1435499934cf5c8c0222106ce04de9eea9e549bb54b7d9c"
-            },
-            "pregunta": {
-              "tipo": "function",
-              "linea": 3496,
-              "hash": "e4e64c1c21c0a7e82972dc71880eb4257c1fe8a30e23021189e5098b9605a5a3"
-            },
-            "mezclar": {
-              "tipo": "function",
-              "linea": 3500,
-              "hash": "d178c3c6c8d5370ef0b8a09297ad87668afb8bf1208506aea66542be2d34528a"
-            },
-            "buscarLecturaPorId": {
-              "tipo": "function",
-              "linea": 3509,
-              "hash": "b6478faec93cc0a97fe40d3be22f79f94b1c920490e78119d020cfbe3103b09e"
-            },
-            "normalizarPreguntaAdmin": {
-              "tipo": "function",
-              "linea": 3531,
-              "hash": "da1c0b97cfd1d2da2ef2bbaab866954cec655d350145fa636cdcf2f86897bbc4"
-            },
-            "claveTemaLectura_": {
-              "tipo": "function",
-              "linea": 3542,
-              "hash": "66fd12a47bda66a59d8dc3e8d58ee221e6302565f46d7380ff53c224045727e1"
-            },
-            "exclusionLecturasDeResultados_": {
-              "tipo": "function",
-              "linea": 3546,
-              "hash": "ff259d0abdcc9b4fd2063baa0e29f97cdb56a73ce0cf50715fa75b4acc5b7cba"
-            },
-            "lecturaYaPresentada_": {
-              "tipo": "function",
-              "linea": 3584,
-              "hash": "0bc47feff4f07c2446e1c9e7e028447292efe269977b3f89dc379d04e8c7ded9"
-            },
-            "leerLecturasIndice_": {
-              "tipo": "function",
-              "linea": 3592,
-              "hash": "20d3a9ec978ac23bae8d86adb1f7752550d314a982e60c32f62d641b31fb4b77"
-            },
-            "lecturasActivasDeGrado_": {
-              "tipo": "function",
-              "linea": 3628,
-              "hash": "c94950502b4ae75d072fbdc3d469226270bc983a932090c0c4099c4fe2e81572"
-            },
-            "totalPreguntasDeEval_": {
-              "tipo": "function",
-              "linea": 3634,
-              "hash": "d5f43e00a6e9dc374b9e85355e84f8a76c735ebbf8d10e02d70d0ef79a7eb536"
-            },
-            "partirFechaHora_": {
-              "tipo": "function",
-              "linea": 3651,
-              "hash": "59c7c4e506e83363ebd7cf0875ca13952a43db8d63693c5fe0d85c0eccaf3c64"
-            },
-            "adjuntarInformesEvaluaciones_": {
-              "tipo": "function",
-              "linea": 3658,
-              "hash": "26d8c2c47eea7d9f888548d9300d2cf2583d9e10ec22aaf57a1665b161121c72"
-            },
-            "construirPanelAlumno_": {
-              "tipo": "function",
-              "linea": 3719,
-              "hash": "696168f31f6c0c5357c915208a784e97fd381def3f6a2301a5abf6920b866466"
-            },
-            "TZ_MEXICO": {
-              "tipo": "const",
-              "linea": 3840,
-              "hash": "d104c0c3db742d69a358467ec71063c9879db9fc44c3457c8cbefeb739e034da"
-            },
-            "MESES_CORTOS_ES": {
-              "tipo": "const",
-              "linea": 3841,
-              "hash": "8bb704f18795c4af0e0e8fda1d1989518a4620bb46d11026078b3c9400544f31"
-            },
-            "claveGrado_": {
-              "tipo": "function",
-              "linea": 3843,
-              "hash": "82e5ccab53ac3b6db834e5e0ef93e62f9b28084011e46e93bcf7939d8fb0fd28"
-            },
-            "hoyIsoMexico_": {
-              "tipo": "function",
-              "linea": 3848,
-              "hash": "81e8c7ed7b58eea344d0bfec97641b71e5332a2178823f2520dae36e85e8b9a3"
-            },
-            "cicloEscolarDeFecha_": {
-              "tipo": "function",
-              "linea": 3852,
-              "hash": "677120d429d1e6d01da889012127942e6fd94c9f3c795b1ecea11d5ae2333905"
-            },
-            "cfgTrimestralPorDefecto_": {
-              "tipo": "function",
-              "linea": 3860,
-              "hash": "7ff06a8ef73626bce233008bf3557f827110c06a1d2e295138281ab2c5f7f55b"
-            },
-            "normalizarCfgTrimestral_": {
-              "tipo": "function",
-              "linea": 3880,
-              "hash": "5a19f9138bc53567b062651d5e6983829c2b86194d88970e0da4e9569b25ed9c"
-            },
-            "leerCfgTrimestral_": {
-              "tipo": "function",
-              "linea": 3910,
-              "hash": "b24fd956d44ec8386357718529121ccd84861887e613640f60c046f98a2def81"
-            },
-            "idsLecturasTrimestre_": {
-              "tipo": "function",
-              "linea": 3916,
-              "hash": "9424cbcdab82cadd5e386efa0d51028997b5c1df37a09cb17bade7b273893415"
-            },
-            "intentosTrimestralesPermitidos_": {
-              "tipo": "function",
-              "linea": 3923,
-              "hash": "201de9b319e40075b9a2f507cc14e20998e1f3499404a52d9d5e15103ae786f3"
-            },
-            "esResultadoTrimestralDe_": {
-              "tipo": "function",
-              "linea": 3929,
-              "hash": "b2a266521a516b16ae2fa4ac1d5f4a63352aaded18ad877615ada5be5d79c951"
-            },
-            "contarIntentosSorteo_": {
-              "tipo": "function",
-              "linea": 3950,
-              "hash": "522e414e1c2a317e86d73692641ecc3e81ce41c1f443e02caa847cc4049eed51"
-            },
-            "contarIntentosTrimestrales_": {
-              "tipo": "function",
-              "linea": 3963,
-              "hash": "1266d3a24cc313eb8e14dcbf7f40225f5e92c6b04ac682ebac1f45885978f7ae"
-            },
-            "etiquetaTrimestre_": {
-              "tipo": "function",
-              "linea": 3975,
-              "hash": "5983523307397b37fa7fc8f6519b11e015f6ee03cf0b2e0a2b232e7d91cf0be9"
-            },
-            "formatoFechaCorta_": {
-              "tipo": "function",
-              "linea": 3982,
-              "hash": "fdcda6258a0f0360fb7e44e58626289de7d6ecbe06a8868fb716e30294a8bcf3"
-            },
-            "rangoFechaTexto_": {
-              "tipo": "function",
-              "linea": 3990,
-              "hash": "dd13838154f2f703d9e82e165255b66384980348447e84a2e067da9d50046b20"
-            },
-            "itemTrimestre_": {
-              "tipo": "function",
-              "linea": 4004,
-              "hash": "86bc2f78c1c585014334a86d34cd02bc28e21c5847f5c59fccce6e793de6723d"
-            },
-            "trimestreCalendario_": {
-              "tipo": "function",
-              "linea": 4015,
-              "hash": "d5e1f77ff3700c2d8343b59a91b162c1578369a4c714cbb5f2a5bb557aa7d742"
-            },
-            "trimestreVigente_": {
-              "tipo": "function",
-              "linea": 4032,
-              "hash": "3367aabf5fe9b9f52fa965d8124aa5eb818ca96b9bbb8f7d1fa32c297ab050d2"
-            },
-            "infoTrimestreActual": {
-              "tipo": "function",
-              "linea": 4048,
-              "hash": "ee22042dffefc5a38c2dd882491285546f25c8c72f93d11afdd33e389db34528"
-            },
-            "infoLecturaTrimestralDe_": {
-              "tipo": "function",
-              "linea": 4066,
-              "hash": "0ad429ae687ab247f33228709b38cf9decd51c2be9fc945bfdfef1bae4f2dcfb"
-            },
-            "paqueteDesdeFilaLectura_": {
-              "tipo": "function",
-              "linea": 4123,
-              "hash": "c2c306d714705ce04c2fec5e4545eeb0455475524b94205b7889e0efdcb5b4c3"
-            },
-            "paqueteLecturaTrimestral_": {
-              "tipo": "function",
-              "linea": 4148,
-              "hash": "687e771abd12404e5246d3b772723ef533705e186a113cbe43c22d85247bb17f"
-            },
-            "obtenerLecturasTrimestrales": {
-              "tipo": "function",
-              "linea": 4164,
-              "hash": "647e9fa9cc3b589745167862dfca5197f65e1ab0ec33cdb4bf4079fc74c4a5be"
-            },
-            "resumenCalendarioTrimestral": {
-              "tipo": "function",
-              "linea": 4177,
-              "hash": "6e9687ab472d242fe7b770bc8777b21def0a4f0c031e1b395d672ff18c8a80cb"
-            },
-            "limpiarIntentosTrimestrales": {
-              "tipo": "function",
-              "linea": 4181,
-              "hash": "857d36a9f077772659aa84979dbd2e8d4fd3bf959cbb2dd2c92b0df3c9388c35"
-            },
-            "guardarLecturasTrimestrales": {
-              "tipo": "function",
-              "linea": 4234,
-              "hash": "338f9a9351378c2fe9bd02fd45baed6f97c7ff946cc3d38f03888c2b9f396108"
-            },
-            "idLecturaTrimestralMuestra_": {
-              "tipo": "function",
-              "linea": 4262,
-              "hash": "f5bef6d1ba796051b5d3de2d8f0fe3fb7664b5a3ec7c7542426c04f47bacf28a"
-            },
-            "catalogoMuestraTrimestral_": {
-              "tipo": "function",
-              "linea": 4266,
-              "hash": "23faaebd28a1631afde434f6e001b404293e3152915e7b124c7e2e1f9345e749"
-            },
-            "construirLecturaTrimestralMuestra_": {
-              "tipo": "function",
-              "linea": 4280,
-              "hash": "2dec8fd4b5339571b0ce42dfc90816d72cc329a25379e5effeaceb50a40d381a"
-            },
-            "sembrarBancoTrimestral": {
-              "tipo": "function",
-              "linea": 4289,
-              "hash": "1b17b815b6ab91175705682ada3ce80951a04f94268cc20524dc291f9b28fb6b"
-            },
-            "panelAlumno": {
-              "tipo": "function",
-              "linea": 4340,
-              "hash": "f5d523da7df92c44892e70ebd7de2f6541427c8f7a07f395026236ecf0bf601a"
-            },
-            "fichaAlumnoAdmin": {
-              "tipo": "function",
-              "linea": 4367,
-              "hash": "f5678e684d0c0a77c2ca0fb28aa00b9e55c21c36e17c4b5c1c25852b9ad08ccd"
-            },
-            "iniciarEvaluacionAlumno": {
-              "tipo": "function",
-              "linea": 4426,
-              "hash": "94f2b95adb82dcd16ada99ea0fbdb892ef1b4211d827711cabe38287a93e74f9"
-            },
-            "sortearLectura": {
-              "tipo": "function",
-              "linea": 4563,
-              "hash": "e1abe0d2516a632bf345bc6442c0f2fa6daaffcd3512a0fc470b3c9c79dd3b06"
-            },
-            "normalizarNivelComprension": {
-              "tipo": "function",
-              "linea": 4610,
-              "hash": "b9467f4bd974d3232f5cfb9ca647264022dd1a06d75d3b2689a59f3bec7f8414"
-            },
-            "etiquetaNivelComprension": {
-              "tipo": "function",
-              "linea": 4618,
-              "hash": "2c2ba753ab7164bf90ebfd31055be9197fc61d3e66146af3aac3da7b9894a218"
-            },
-            "normalizarEnunciadoNivel_": {
-              "tipo": "function",
-              "linea": 4625,
-              "hash": "4ff0c8a8b516063fc57a2992b5a511519b0572067e928ed36e95fe21c94a0b0f"
-            },
-            "mapaNivelesBanco_": {
-              "tipo": "function",
-              "linea": 4630,
-              "hash": "1823226fe4eff879fd9231e5f5fb0af7c60cbcf51fc65a9755d79f6e476bd310"
-            },
-            "inferirNivelComprensionPregunta": {
-              "tipo": "function",
-              "linea": 4643,
-              "hash": "1503aaa9c0f38d0f9594403f30674af24772e761b50bdb70914c3da317051c25"
-            },
-            "obtenerClaveDeepSeek_": {
-              "tipo": "function",
-              "linea": 4662,
-              "hash": "1e471cbd24040a18f10a66d258736a36086e8ae36995c7edebd53aa3efbc403a"
-            },
-            "estadoDeepSeek": {
-              "tipo": "function",
-              "linea": 4676,
-              "hash": "d585cf812e178a422b6aedc6b9ea0b55bf1f2eb489e96344ae80eccb0049e8f4"
-            },
-            "guardarClaveDeepSeek": {
-              "tipo": "function",
-              "linea": 4684,
-              "hash": "d548e22f49b8ea5b885821fee2f524b3343ac3f9ed8dd1a26625db4134ce05e6"
-            },
-            "probarConexionDeepSeek": {
-              "tipo": "function",
-              "linea": 4697,
-              "hash": "989e69427b30520685cabe36243da8132fdd141a267d47d2ec62219cd040c68a"
-            },
-            "crearRespaldoLibro": {
-              "tipo": "function",
-              "linea": 4724,
-              "hash": "1a8ea34df4b0bd050d88c13960ba0a384b1ce149c375b4cb37bb3384fd696a4d"
-            },
-            "pedirNivelesLoteDeepSeek": {
-              "tipo": "function",
-              "linea": 4742,
-              "hash": "daa85de27c347510ffef9bf5cb138e7c92ae3020f59a0ffca0becd3fd272857d"
-            },
-            "clasificarNivelesTodasLasPreguntas": {
-              "tipo": "function",
-              "linea": 4783,
-              "hash": "2789f97e33374c4bb487097694a232f3d5ddba4eaceae3288d87e22520ff4c4e"
-            },
-            "calcularPme": {
-              "tipo": "function",
-              "linea": 4882,
-              "hash": "527a516c4895cc7c810805ede399af24d8929b9c2f060511360406b8ab3efa1d"
-            },
-            "resumenTiemposPregunta": {
-              "tipo": "function",
-              "linea": 4886,
-              "hash": "20f87d560b231d1dabb55771154e6f31eaff41e3a27d8a53fb8c5dedf3b94846"
-            },
-            "desgloseNivelesComprension": {
-              "tipo": "function",
-              "linea": 4900,
-              "hash": "d3620e69d3724ad7d932632c52c98cbf4f7fdf9e416ec92e90c8b650a0550b96"
-            },
-            "historialAlumnoParaReporte": {
-              "tipo": "function",
-              "linea": 4927,
-              "hash": "fc8445c672b134b7edf2b14c05c77a603d2d5a52d189b7eae14c53080e09b764"
-            },
-            "pedirRecomendacionAlumnoDeepSeek": {
-              "tipo": "function",
-              "linea": 4958,
-              "hash": "e9518abe7c56abae0d798a4e99310d94ecd34f24d8247a1bdfe85b3976fb45d7"
-            },
-            "calcularNivelPpm": {
-              "tipo": "function",
-              "linea": 4992,
-              "hash": "321f5fa1629a54f42f2b29d2ca11e765d5549b47142a6add4712f66776e23d2f"
-            },
-            "calcularCalificaciones": {
-              "tipo": "function",
-              "linea": 4998,
-              "hash": "1a48bafdd4e4862a56f66f3978ed6f2875afbd5442669b18b278b47e2e364a7e"
-            },
-            "guardarResultadosExamen": {
-              "tipo": "function",
-              "linea": 5022,
-              "hash": "fb764db83f7bf1a564b7c3921fea49180806f3ca185976b8508186f733a0ad06"
-            },
-            "buscarResultadoPrevioEnHoja_": {
-              "tipo": "function",
-              "linea": 5446,
-              "hash": "7ccf4821ede57fa87f83dab51c2f9d8523c3f0401efbeb0da06d7361b2ffeba3"
-            },
-            "calcularHistorialDesdeFilasPrevias_": {
-              "tipo": "function",
-              "linea": 5573,
-              "hash": "2ae3ade2eb6b62cf5e8c225bbef3c52469f50bdfc3d9606e9445e0256ad9b4a5"
-            },
-            "reconstruirResultadoDesdeFila_": {
-              "tipo": "function",
-              "linea": 5677,
-              "hash": "113c068117b83af4d5710c77478b51eeb837262b6476a57fd3153e37f179893e"
-            },
-            "guardarLecturaBanco": {
-              "tipo": "function",
-              "linea": 5886,
-              "hash": "5585a8ec375afea929e5282bef3cd5e6574552bcecb15344a22af9d5b7bb587c"
-            },
-            "cambiarActivaLectura": {
-              "tipo": "function",
-              "linea": 5919,
-              "hash": "7fe021ad3fa74f6882130559a3fbbd1cda66e3ff3ed992caa8b837e7f492a6a7"
-            },
-            "eliminarLectura": {
-              "tipo": "function",
-              "linea": 5929,
-              "hash": "20e4485c339e5be41465a5b7615535209e2864e4b50a72825a29d25a0c32d12c"
-            },
-            "generarLecturaAdmin": {
-              "tipo": "function",
-              "linea": 5961,
-              "hash": "5767c28fb1992857b14431f763149e23e1076c278fc2976957f02e421212fd72"
-            },
-            "generarPaqueteIaOLocal": {
-              "tipo": "function",
-              "linea": 5976,
-              "hash": "ddaabea880b82d809d069ceafe3c771dce976c169ad74a2c9d4c47d28e750798"
-            },
-            "pedirLecturaDeepSeek": {
-              "tipo": "function",
-              "linea": 5987,
-              "hash": "f1063c285b1675e66e73ac57766b7bce1f8fb06c6a52085c01d25df9b3895092"
-            },
-            "lecturaLocalAdministrador": {
-              "tipo": "function",
-              "linea": 6053,
-              "hash": "fba07792613cb833d61b41f7d45fac89b4e2184d69a487988c0ddcaaef46b72c"
-            },
-            "limpiarHtmlLectura": {
-              "tipo": "function",
-              "linea": 6058,
-              "hash": "8ef086936b14213e019b82d20a9dc2837b39081974f827795fe0697a48d24fc5"
-            },
-            "partirParrafosLectura": {
-              "tipo": "function",
-              "linea": 6075,
-              "hash": "80c135308a9942c5c3aebab34325d8ea6e09129ef77ba879010770aa58287a37"
-            },
-            "compactarParrafosLectura": {
-              "tipo": "function",
-              "linea": 6081,
-              "hash": "b1109b37275cb5a233183090393168851e656bef217f096ee4bebf2e03a48b0d"
-            },
-            "recortarTextoHasta": {
-              "tipo": "function",
-              "linea": 6098,
-              "hash": "df5b4c4c75a6a91739c7b7b00317f2efd12b2cc9fcdb6bf454ecb09c98f70065"
-            },
-            "ajustarTextoAEspecificacion": {
-              "tipo": "function",
-              "linea": 6109,
-              "hash": "aab68fee5f6f79c77f51ec626442802f28fa7a14a18c7fc34d9ba4a5f62844ad"
-            },
-            "esOpcionAbsurda": {
-              "tipo": "function",
-              "linea": 6129,
-              "hash": "be10d4f7998d4d7ab59c027be36fda6f409afb745184513cfe3803138d7a5ec4"
-            },
-            "esReactivoRelleno": {
-              "tipo": "function",
-              "linea": 6133,
-              "hash": "a94720bf468db7cccae97a999bd40383429c72453449ce2f80a09a067b7b8346"
-            },
-            "homogeneizarPregunta": {
-              "tipo": "function",
-              "linea": 6137,
-              "hash": "b33a508033e51c5cf16eebf8559aee01d33e2976fb2308eb5cdaea5086426f66"
-            },
-            "bancoReactivosReglamentarios": {
-              "tipo": "function",
-              "linea": 6151,
-              "hash": "2feef057c4a54b347f424c899b27be7eeb398576169097048f1097734615d2a5"
-            },
-            "seleccionarReactivosPorGrado": {
-              "tipo": "function",
-              "linea": 6284,
-              "hash": "c87027d5682d1e483109aa1c7c90ff43218fae1e85ee31bd730ec7d1e81b97da"
-            },
-            "auditarLecturaItem": {
-              "tipo": "function",
-              "linea": 6310,
-              "hash": "bf30ca20d0116ef4ea454fba2c3a69d3c8c5b7872d3c1745d989ba1c2db2374e"
-            },
-            "revisarLecturaDeepSeek": {
-              "tipo": "function",
-              "linea": 6333,
-              "hash": "6ce67726a9ff7563d78fbc0a5163f946d34a6e63d4149b497e411d48aacdd97c"
-            },
-            "reconstruirHojaPreguntasDesdeJson_": {
-              "tipo": "function",
-              "linea": 6377,
-              "hash": "329b0b2f8c9fb2f5470c82c3a4cf360556fb0d23cfa5f851b64161a88e360a71"
-            },
-            "ajustarLecturasAEspecificaciones": {
-              "tipo": "function",
-              "linea": 6440,
-              "hash": "749d481110400b31433ac054554006f9010fd82782d7d5f6711b788d6b5e5f67"
-            },
-            "cacheGetResultados_": {
-              "tipo": "function",
-              "linea": 6522,
-              "hash": "1e5357ad9d36fb4ba49ebb67382524ebacec82b7a902de54499d2e084c08da71"
-            },
-            "cachePutResultados_": {
-              "tipo": "function",
-              "linea": 6540,
-              "hash": "dc01b0c05e995513d0d43e3284085fd9f838c0fe00790d963010b305cfb42660"
-            },
-            "valoresHojaSinEncabezadosGordos_": {
-              "tipo": "function",
-              "linea": 6554,
-              "hash": "3a2a5e266c450b23cf10e0a026ec301f5c09a71e983e867459e1df03d93fa5dc"
-            },
-            "leerResultadosDeTodasLasPestanas": {
-              "tipo": "function",
-              "linea": 6587,
-              "hash": "a2b583457c2ca4816a239015ff92f07dd2cdca4e942d62708311105fb103c028"
-            },
-            "normalizarResultado": {
-              "tipo": "function",
-              "linea": 6635,
-              "hash": "86f07a78512c4523ef0c653ff97dbbfddcc367ee893736c4c568676f35ddbf85"
-            },
-            "valorColumna": {
-              "tipo": "function",
-              "linea": 6693,
-              "hash": "557aa83e132c6b306b6e142ebaaefb7d2745b31fe14a0b7e99ef96c69d029c56"
-            },
-            "formatearFechaAdmin": {
-              "tipo": "function",
-              "linea": 6701,
-              "hash": "56f8ac3e3662dbbc55ea54483465d9cf96ddae7da1db51f72cf6951a0fda1acc"
-            },
-            "fechaIsoAdmin": {
-              "tipo": "function",
-              "linea": 6708,
-              "hash": "e7aea2bea6adfada829741becfe2ad9288bee053c6dd5550ef5d312fe0af7d53"
-            },
-            "obtenerPlantillaExcel": {
-              "tipo": "function",
-              "linea": 6730,
-              "hash": "9e1cad379109a3c80961f9d72d8856d7ce5f2ee30916f39920dcf3785eff11e7"
-            },
-            "importarAlumnosDesdeExcel": {
-              "tipo": "function",
-              "linea": 6735,
-              "hash": "0c3a0d85e44d3851fb99c9199008ce6d10c68a94cc92f4412fe0a448364b1fb5"
-            },
-            "formatearHojasDeLectura": {
-              "tipo": "function",
-              "linea": 6763,
-              "hash": "8cd6b8037ab7d82c6b9671f76f21188fb25d6c79ef56e78cc078c26007a71785"
-            },
-            "contenidoTematico": {
-              "tipo": "function",
-              "linea": 6786,
-              "hash": "be15fa30f278d1a61bb320b6ea0992efd91132525902cec4293d0c9f78275093"
-            },
-            "parrafosContinuacion": {
-              "tipo": "function",
-              "linea": 6956,
-              "hash": "f25f747b54592b42f48583ef6c14563cf837586de000c9811d3493c6a2ece5ff"
-            },
-            "gruposRespaldo": {
-              "tipo": "function",
-              "linea": 7007,
-              "hash": "be41fa824660650f44634a6e844ecb98303ae5310668f5fcc1b6ce6868321992"
-            },
-            "hashEntero_": {
-              "tipo": "function",
-              "linea": 7018,
-              "hash": "d0c96e7c9c0fa84abff1d4f12ac0f3b15594b6c4997092ce2925a7210020a24f"
-            },
-            "lecturasPorGradoSim_": {
-              "tipo": "function",
-              "linea": 7027,
-              "hash": "5bcb08a40bfd697b6c6cdf0aa19b2f7a5efb2a5bb9b8e4f8d61590c86b3774e3"
-            },
-            "ponerValorEnc_": {
-              "tipo": "function",
-              "linea": 7055,
-              "hash": "2a78ca0deae57316ccc3696e099d13328d29884560d5539a659296332ff06279"
-            },
-            "cargarResultadosSimulados": {
-              "tipo": "function",
-              "linea": 7067,
-              "hash": "58d1bdf00ff6b12e3ca25b25f83bde35bd5d7a85bef6ae82e92ffdd1feb83c44"
-            }
-          },
-          "sentencias": []
-        }
-      ]
-    },
     "PlaneacionNEM.gs": {
       "sha256": "62476010c04559323c250c0ed190edd7ab4607c8ab96bf8c956bd5f0d91c5597",
       "documentos": [
@@ -10519,6 +9143,1536 @@
               "tipo": "function",
               "linea": 258,
               "hash": "26430cbb061899bfb4efaa13e9577d36d992ab22916d7c4bc62b92e6f0dae4dd"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "00_Constantes.gs": {
+      "sha256": "c1327eb4bb933e6f77778bf44df2bd015740d67aeb96fc6cac41b1686d7ec0f1",
+      "documentos": [
+        {
+          "id": "00_Constantes.gs",
+          "simbolos": {
+            "URL_BASE_DEEPSEEK": {
+              "tipo": "const",
+              "linea": 6,
+              "hash": "986cd63e4608df67458d8b1d670a55d0e65d1b561795ddb0e0a8e8ab408baceb"
+            },
+            "NOMBRE_ESCUELA": {
+              "tipo": "const",
+              "linea": 7,
+              "hash": "f4ffc31ce7a3c50cbae2dde89f7d8ae0c8eb26c0cd4aa9b9d2b3797245894158"
+            },
+            "VERSION_APP": {
+              "tipo": "const",
+              "linea": 8,
+              "hash": "8da0caff7ad6140f9042ffbe61865dd8c79a21ddee3c2e72eb80801ffb857bb9"
+            },
+            "CLAVE_ADMIN_DEFAULT": {
+              "tipo": "const",
+              "linea": 9,
+              "hash": "566a7ffef943ca7b8cb9920bc697e791bbe889a75a653bccb6aa3bf1da9e2629"
+            },
+            "USUARIO_ADMIN_ASISTENCIA": {
+              "tipo": "const",
+              "linea": 10,
+              "hash": "e74ff3cfbb7b9cacc8b35b41f89d5fada6a41201f30f7a7782b8ea2ff88c4bb5"
+            },
+            "URL_SITIO_ALUMNO_DEFAULT": {
+              "tipo": "const",
+              "linea": 11,
+              "hash": "d371050f6ba58e7248958bf5ac21a2aaf112c8b631b1fae9c84daaead9dfd65c"
+            },
+            "URL_SITIO_DOCENTE_DEFAULT": {
+              "tipo": "const",
+              "linea": 12,
+              "hash": "11fd51449db55d78525d5c090cff7c209e604e193222d80fd8a0d708552f831e"
+            },
+            "ID_DEPLOY_ASISTENCIA": {
+              "tipo": "const",
+              "linea": 14,
+              "hash": "50b1488c422afa063c8cdb9495f08363801ce240b26eb069062776ea92e1f21d"
+            },
+            "ID_DEPLOY_CLASE": {
+              "tipo": "const",
+              "linea": 16,
+              "hash": "e8330d46e09f14e3dfa71c934aeebdb897fb6e16397e69ea50eea4bb2eb041a2"
+            },
+            "ASIGNATURAS_DEFAULT": {
+              "tipo": "const",
+              "linea": 18,
+              "hash": "0d2ce1200cb2bb305bf118f58c3866ad94aa0d19384cb97491f9a8e27210a614"
+            },
+            "ESPECIFICACIONES_GRADO": {
+              "tipo": "const",
+              "linea": 27,
+              "hash": "7153848995590aea1b9476929248450d792c0f17e11ad24447a2c19e2f774939"
+            },
+            "PESO_COMPRENSION": {
+              "tipo": "const",
+              "linea": 54,
+              "hash": "c4760fd97545db897b039cbfdfdc4b6e375e8d4bb0617d71e63109e6827262b6"
+            },
+            "PESO_VELOCIDAD": {
+              "tipo": "const",
+              "linea": 55,
+              "hash": "3f5d270f4abecaf995197855bbe0e9592b7d9ec0ebcabd914f303b44958d687b"
+            },
+            "ENCABEZADOS": {
+              "tipo": "const",
+              "linea": 57,
+              "hash": "c106cb59cfd59b0a2714619c1a6c93451bc1a40ae64303606c0b2a455c796680"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "01_Hoja.gs": {
+      "sha256": "a5e654299dcd1469ac6f367d11be7bcd8de74f692b60902f3ae8adfaf7385845",
+      "documentos": [
+        {
+          "id": "01_Hoja.gs",
+          "simbolos": {
+            "ID_HOJA_DEFAULT": {
+              "tipo": "const",
+              "linea": 4,
+              "hash": "7684f6b6269af7d2aad2ee93aa71147029353fc9886073dfaafefb9ee278d5d7"
+            },
+            "URL_HOJA_DEFAULT": {
+              "tipo": "const",
+              "linea": 5,
+              "hash": "1c67b9fd2630c57a04e49c1899c76d89168c4a0a1f8967d322cd9b3517ab71ea"
+            },
+            "ultimoErrorAperturaLibro": {
+              "tipo": "let",
+              "linea": 6,
+              "hash": "b9029147d9eb0cb00c03ae08a91d1212bce31cd6d7863891435c22df583754ab"
+            },
+            "memoLibro_": {
+              "tipo": "let",
+              "linea": 7,
+              "hash": "d69deb699176614cb47f385b940ad8faed4af525b65127e75daf4615c9603032"
+            },
+            "memoAlumnos_": {
+              "tipo": "let",
+              "linea": 8,
+              "hash": "bb062cf7911c37ba8bc7cf0a485b2fe8a12a9e12adc1cfeb3a0e3ce963b4da1e"
+            },
+            "memoResultados_": {
+              "tipo": "let",
+              "linea": 9,
+              "hash": "d9f42524aa88993ddc8950760c729a6b9cff1299dcf80cbd326d1b04a7dec77f"
+            },
+            "memoLecturasIdx_": {
+              "tipo": "let",
+              "linea": 10,
+              "hash": "0458928d85c493b6e325b6b3afc7b45378ba8b53ea376c1c5ad5115284514197"
+            },
+            "memoConfig_": {
+              "tipo": "let",
+              "linea": 11,
+              "hash": "95fe236ec8b871617082565fb31226ad09e65512eda508db2d7573ea69ef288f"
+            },
+            "memoGrupos_": {
+              "tipo": "let",
+              "linea": 12,
+              "hash": "27f325976a5f59c81919c9595230e455316991bbac78bce18c3c3eaac56e3e81"
+            },
+            "cacheGetJson_": {
+              "tipo": "function",
+              "linea": 14,
+              "hash": "3815e41bc98b3fb68772220c304b0569c0f226618e5f61ce03df2d3c30359c94"
+            },
+            "cachePutJson_": {
+              "tipo": "function",
+              "linea": 24,
+              "hash": "f18a7cccb4e82e91276827290a71f4e334684e29bd6c511586f648ac94130a06"
+            },
+            "invalidarCachesDatos_": {
+              "tipo": "function",
+              "linea": 30,
+              "hash": "5787d29a275bbf31dcb4b8c81254fe614c35a03c0627fdeda58f886914f5de56"
+            },
+            "obtenerLibro": {
+              "tipo": "function",
+              "linea": 44,
+              "hash": "23159bf36b5d55f31ca8e53fa22c2112fea20c2bad3d7cbdb2749605946dbcfc"
+            },
+            "vincularHojaCalculo": {
+              "tipo": "function",
+              "linea": 116,
+              "hash": "9b6d5fccabc88ba0e5daddea5d0d42e8e986837c8d3378dc13f24a78d4bbb514"
+            },
+            "obtenerPestana": {
+              "tipo": "function",
+              "linea": 157,
+              "hash": "90748c63d701a5eb6cb02316c3f765522e506bff9f31b0d13a6bb5b91daada5c"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "02_Rutas.gs": {
+      "sha256": "2d73e004adb2787271fc5b6c788e950c5af257c135134f09051a94bfaf029c24",
+      "documentos": [
+        {
+          "id": "02_Rutas.gs",
+          "simbolos": {
+            "doGet": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "29416e6675c7eb2e23899c3ffed0d531996a5262de27bfacfe09339a5bc577a6"
+            },
+            "rellenarPlantillaAdmin_": {
+              "tipo": "function",
+              "linea": 138,
+              "hash": "c585dcde7048345a89ae21a329e5601ad2252c90c702c33e712c4f7fcf33f807"
+            },
+            "evaluarPlantillaAdmin_": {
+              "tipo": "function",
+              "linea": 153,
+              "hash": "cd1260d4927ff7cd100c83bd5d7c3baaca656d6a679894482641aea7cf4f5316"
+            },
+            "include": {
+              "tipo": "function",
+              "linea": 162,
+              "hash": "41511ebdde87cad98c8d162a9d9940a71c2596e192c203fc36d3d12845a559ee"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "03_Setup.gs": {
+      "sha256": "9eba478463f73f9bd1bbd8921cd2a0bb37c2f3543ce58a90a467ca769b283385",
+      "documentos": [
+        {
+          "id": "03_Setup.gs",
+          "simbolos": {
+            "asegurarSetup": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "84dc2448b293ee2d6f331f921b1ab5ccb42582f73d7f3278058ef07b97a1870d"
+            },
+            "verificarYCrearPestanas": {
+              "tipo": "function",
+              "linea": 27,
+              "hash": "d3bff40cc53550cd9924e08d67a628b45a102db0d4856830c95eeb6159d91dca"
+            },
+            "migrarLecturasSiEsAntiguo": {
+              "tipo": "function",
+              "linea": 54,
+              "hash": "1f0083b6c5d76c4bf9fbb30896088aa14d51e5e86cda65b605c8c62c28b6c73c"
+            },
+            "migrarAlumnosSiEsAntiguo": {
+              "tipo": "function",
+              "linea": 95,
+              "hash": "e980eb4d3a321479269fba571f09c675efe745ce9b385d4f4bb86a7e6da9199e"
+            },
+            "repararResultadosSiEsNecesario": {
+              "tipo": "function",
+              "linea": 117,
+              "hash": "6120cbf763b7b42166f316a5f52d4745a6c13a3e2b67046e90d9f54c687b7cb3"
+            },
+            "unificarEstructuraResultados": {
+              "tipo": "function",
+              "linea": 121,
+              "hash": "4801f516becba85de21cf0f648d3bfd69560855c88907a81feee1e9519273e35"
+            },
+            "repararResultadosAdmin": {
+              "tipo": "function",
+              "linea": 267,
+              "hash": "4576d951dfddf54360dd7204c9eb5dee9d8574a415d58a6a41c14a1c55cf729f"
+            },
+            "buscarIdLecturaPorTema_": {
+              "tipo": "function",
+              "linea": 272,
+              "hash": "dd0149221e2a44144bf96d14986d1d9a252cd3e430424e73d6354971fe8d796f"
+            },
+            "asegurarConfig": {
+              "tipo": "function",
+              "linea": 296,
+              "hash": "1a5b192fc6f67bd3655be6a674f3908564709a37da8f589f6d017ba2a4b9a301"
+            },
+            "sanitizarUrlSitio_": {
+              "tipo": "function",
+              "linea": 331,
+              "hash": "7c6042219b2b235ba0b05317c19585195234a6421f96b1442467f16d5a55ec0c"
+            },
+            "urlSitioAlumno_": {
+              "tipo": "function",
+              "linea": 339,
+              "hash": "738ea1b7b211e011064533cfa840e18a13804c9a4c2aaf3401217d942e97c918"
+            },
+            "urlSitioDocente_": {
+              "tipo": "function",
+              "linea": 343,
+              "hash": "724552cf86d4456712af7828cba480a76fd163292af0ee0232367a7dd44acdb5"
+            },
+            "nombreEscuela_": {
+              "tipo": "function",
+              "linea": 347,
+              "hash": "56243a563881b1b1b953e0ee0c20e9852bf1f154302c398f0dbdc121d9b8d130"
+            },
+            "pieLectura_": {
+              "tipo": "function",
+              "linea": 352,
+              "hash": "2b2e8536fa1ac75aee0fe222bdb68a8372a765ed8f8a5773f86b52f8cd44f2cf"
+            },
+            "logoEscuela_": {
+              "tipo": "function",
+              "linea": 357,
+              "hash": "945f18f259c75d18075024a2f33943b78c40761425513c8abf321ac14c6e2322"
+            },
+            "identidadEscuela_": {
+              "tipo": "function",
+              "linea": 363,
+              "hash": "29c5955568e1be773e4f7f87f715631d9ecd9f94812139291a49eaac5f707506"
+            },
+            "sanitizarTextoIdentidad_": {
+              "tipo": "function",
+              "linea": 367,
+              "hash": "5726b320e6301e7d9e9e6899af981d84ae3aacb06d9c45120743bbe915c4ba2d"
+            },
+            "guardarIdentidadEscuela": {
+              "tipo": "function",
+              "linea": 375,
+              "hash": "c5a052ffd37292467baf075cf0b37677dd78ade6636f4a89c5ebaff9d28d3b09"
+            },
+            "guardarUrlsSitio": {
+              "tipo": "function",
+              "linea": 397,
+              "hash": "655c6c1f2cff16910d846fc0381145311517e3a554e985c0c585e1be6033f582"
+            },
+            "asegurarColumnaIntentosGrupo": {
+              "tipo": "function",
+              "linea": 412,
+              "hash": "edef4fbcb2825b4e196751b66fee37c2dae4b7539086d2ef8733d52ba3f1c467"
+            },
+            "asegurarColumnaTurnoGrupo": {
+              "tipo": "function",
+              "linea": 422,
+              "hash": "57095de763121faf1e4ba83bcd3e2c02f795d2548fa5fa6fa31eac7816c549b9"
+            },
+            "asegurarColumnaNivelPreguntas": {
+              "tipo": "function",
+              "linea": 433,
+              "hash": "a1be1059966042065bd3f1ee9da70f50ad3fdb24cfcbfcddf238e0dd40b7e8bf"
+            },
+            "mapaConfig_": {
+              "tipo": "function",
+              "linea": 448,
+              "hash": "2561a119d4d56986c3134e84c3e57732c98b29fc7048c5cc51535ed5eb251a63"
+            },
+            "leerConfig": {
+              "tipo": "function",
+              "linea": 470,
+              "hash": "0727154f80a77077e25eaa282fce140e067e68a235df4f73a712600c5a21195f"
+            },
+            "escribirConfig_": {
+              "tipo": "function",
+              "linea": 476,
+              "hash": "fae8b40e6d47c2aafe3478369925feeb3789b0fc25db9d02be8c5da8a285f786"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "04_Sesiones.gs": {
+      "sha256": "fe000926050f94dc08b9bea5bc58b4de24d43a01200a8d0a55cb6b29fc2d3f80",
+      "documentos": [
+        {
+          "id": "04_Sesiones.gs",
+          "simbolos": {
+            "hashClave": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "3b5545e7cc8f64051e67c8b5ada8ac7802e4df1534335ae3ab4b9b966b2b0ba3"
+            },
+            "obtenerCredencialesAdminAutoritativas_": {
+              "tipo": "function",
+              "linea": 15,
+              "hash": "800dce23b55f6942f2c82dcf2d34915ce8e1ff7adad43ea3647b73cff19b7920"
+            },
+            "credencialesEncuestasPanel": {
+              "tipo": "function",
+              "linea": 40,
+              "hash": "6b71443da12d7edc5025944c38f812a3a27b683e1b50fd251c4456b3aabd5290"
+            },
+            "claveEsDefault": {
+              "tipo": "function",
+              "linea": 58,
+              "hash": "2d4045bd69f8d5df042e6dcbe9d93e7928dd3ba79f4d13dff0d8b03624fa949a"
+            },
+            "esUsuarioAdminAsistencia_": {
+              "tipo": "function",
+              "linea": 63,
+              "hash": "572ad3e5ece3bcfbc79db4f69dd085ed5e15c2ef297da68b8bf51b36e846d125"
+            },
+            "iniciarSesionUnificada": {
+              "tipo": "function",
+              "linea": 68,
+              "hash": "68ad670aee2a7820545d9c2d47d1b7b03ed1de645c72fca1bf46d96a3b054b47"
+            },
+            "iniciarSesionAdmin": {
+              "tipo": "function",
+              "linea": 283,
+              "hash": "8f76f0fc1c60c2f665fae302153031facefd32b4b7ba185629c307efdd5a1715"
+            },
+            "revocarTokenSesion": {
+              "tipo": "function",
+              "linea": 287,
+              "hash": "e24feddf42772f1802f5c598d3b2fa248a8ac9c42e6329eae4fc91ad50257b94"
+            },
+            "cerrarSesionAlumno": {
+              "tipo": "function",
+              "linea": 337,
+              "hash": "5654ea434aefbc97702ee9fd0e3346611d588368d181e53f3f1921ee14398f7e"
+            },
+            "cerrarSesionAdmin": {
+              "tipo": "function",
+              "linea": 341,
+              "hash": "2e4238b51d64239b6aca922014ca087fb48d92cc31fea28d51a6cdc25c9fd90a"
+            },
+            "ROLES_VALIDOS_SISTEMA_": {
+              "tipo": "const",
+              "linea": 345,
+              "hash": "ec224ca41f32c1eea7135d903b2fde89d0e6297b71bbdb99732d047108fbb09d"
+            },
+            "obtenerSesionValida_": {
+              "tipo": "function",
+              "linea": 347,
+              "hash": "10434b5883b4de83b925ac15ebddc80fcf59ced710591aa2eb4b5fb1e6a31b47"
+            },
+            "exigirRoles_": {
+              "tipo": "function",
+              "linea": 365,
+              "hash": "2d4aa4b1661fd56b72d5a81efc03b450be91b034a01d35c4bb3891bca12b144d"
+            },
+            "exigirAdmin": {
+              "tipo": "function",
+              "linea": 378,
+              "hash": "028e19d9f49643f317940451f9b7ad4fcd7b9f7f324248265ce5c0aaa5981993"
+            },
+            "adminRestablecerClaveConsola_": {
+              "tipo": "function",
+              "linea": 400,
+              "hash": "ad8d402eb463005829cd04a029736414b9fbd85b63abc18c07e676730dc3c24d"
+            },
+            "AREAS_APOYO": {
+              "tipo": "const",
+              "linea": 416,
+              "hash": "48ff4fa81519531b6661e06e14519973ff6ff2cc0f4e179ac7e5a6fa9d18812c"
+            },
+            "areaApoyoValida_": {
+              "tipo": "function",
+              "linea": 426,
+              "hash": "cd28d5bf2d3a26ab55ead613d7fffc7dd5ee940f3405f5cbb3bf27b6a29ef836"
+            },
+            "generarClaveAleatoriaApoyo_": {
+              "tipo": "function",
+              "linea": 434,
+              "hash": "74da48d3fa0a1a4c8f8932921a309b67431a95e70a5c7a13950e180844040b2f"
+            },
+            "usuariosOcupadosApoyo_": {
+              "tipo": "function",
+              "linea": 445,
+              "hash": "c10b8727038c2a67ee59715035e1847b652342777872519bd8f97c1a4a357f0f"
+            },
+            "usuarioApoyoLibre_": {
+              "tipo": "function",
+              "linea": 466,
+              "hash": "2fcb3394d38e758147c90897a8def91fadced486213cfd091538ae528c9132e8"
+            },
+            "buscarPersonalApoyoLogin_": {
+              "tipo": "function",
+              "linea": 479,
+              "hash": "a03dc5606932b51bbd8148cf6cb76f77c691d1076c133da2996583b3029a2f52"
+            },
+            "listarPersonalApoyo": {
+              "tipo": "function",
+              "linea": 521,
+              "hash": "03b80f55f8527e685d985ec96f305bef6a0fb926adf2c27dfa648db26b7ea617"
+            },
+            "altaPersonalApoyo": {
+              "tipo": "function",
+              "linea": 543,
+              "hash": "6f4daace6c833672ed6c90c205ce8de234453757441b018f858a0035c22bdada"
+            },
+            "asignarClavePersonalApoyo": {
+              "tipo": "function",
+              "linea": 569,
+              "hash": "505183a2538bc7a7f2cf52bd38ffacd4fb5bfc0123fed522ad1b627fdfc48575"
+            },
+            "generarClavePersonalApoyo": {
+              "tipo": "function",
+              "linea": 615,
+              "hash": "69115283c395cfeb73f36fc317e0e5e417918d6f51b3dd91c6e8ee575422e59f"
+            },
+            "generarClavesPersonalApoyo": {
+              "tipo": "function",
+              "linea": 620,
+              "hash": "18abc21ba902530739925eca6b617667bdc3c86594f5ca2eea61cd2db90ccd51"
+            },
+            "cambiarClaveAdmin": {
+              "tipo": "function",
+              "linea": 639,
+              "hash": "aecfd443ea401ffc0e6a6b668b1bbfbdc689ac1c028d534c0483a4b47103409f"
+            },
+            "urlHojaCalculo": {
+              "tipo": "function",
+              "linea": 659,
+              "hash": "f522339910e7bbba9ae1a06c15b0e46a823cfe2d11bb21b7b2d2e38e6fbc847f"
+            },
+            "aJsonSeguro": {
+              "tipo": "function",
+              "linea": 667,
+              "hash": "4fef88ff3e8d38bb12fe1cc36e85d8ba8256172f4f049ceb200309ce66422d18"
+            },
+            "urlAdmin": {
+              "tipo": "function",
+              "linea": 676,
+              "hash": "d093496730391a0fd75816fce2f58634b152c81e7fe64299abd6790744d2959b"
+            },
+            "urlAdminPub": {
+              "tipo": "function",
+              "linea": 681,
+              "hash": "79518e48df0aee680a19982ac6d2db68df9b24d76fdf0e7c399c42573f53d48e"
+            },
+            "urlDocentePub": {
+              "tipo": "function",
+              "linea": 685,
+              "hash": "34e176a5c5e12b828ccb59790b1fa82d83e96e102f0cece8ff88aae3f623c3d5"
+            },
+            "urlAlumnoPub": {
+              "tipo": "function",
+              "linea": 690,
+              "hash": "aa035dc81434190f079e11fa7c0111a681f23fa360e4ff3e7b877040c9f80293"
+            },
+            "urlDestinoAlumno_": {
+              "tipo": "function",
+              "linea": 695,
+              "hash": "59863c4f8255df3ef321b7010c36c70b41acdb3ffdc565f5b2528dac18044eff"
+            },
+            "esVistaAsistencia_": {
+              "tipo": "function",
+              "linea": 703,
+              "hash": "40f076038870839e362311557f2c3b32a5d947ecba7f290fb3784a04292638fa"
+            },
+            "urlAsistenciaPub": {
+              "tipo": "function",
+              "linea": 711,
+              "hash": "4d8e42cc22437cea6e49574d200d48a12c68f459030d09b4b735d258da3149f2"
+            },
+            "esVistaClaseMaestro_": {
+              "tipo": "function",
+              "linea": 720,
+              "hash": "d48811312da3bf565bc4c35d5f8c52e4af89a8f22fcbaf4c1055aa7e471f9996"
+            },
+            "esVistaClase_": {
+              "tipo": "function",
+              "linea": 725,
+              "hash": "137aaa0b20b5ab25cbb0b8314c9a78d86aeaac3fc795b57343322a3a988b2ae3"
+            },
+            "urlClasePub": {
+              "tipo": "function",
+              "linea": 737,
+              "hash": "54f7ccea77409b676d9d0a37e0c11a7a802b11a142439f45777bf99b087e7a89"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "05_Panel.gs": {
+      "sha256": "379e6241a8bf431ca63b3dcfc773f830a93d5ce3c5dab3c39b9faed8e0d36e75",
+      "documentos": [
+        {
+          "id": "05_Panel.gs",
+          "simbolos": {
+            "panelResumen": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "b5bb648f6f7c810b4355c25a371d419eece359613615e984906fe25003c067bb"
+            },
+            "leerGruposHoja_": {
+              "tipo": "function",
+              "linea": 178,
+              "hash": "1ff5d81ed81b0f69aa00ab27afd77d7ed45a024349443696488a2310560101fc"
+            },
+            "extraGrupoDe_": {
+              "tipo": "function",
+              "linea": 213,
+              "hash": "aed85b03f88810876405a4a609bf07eef59daf9a0eb7813f12fb142baf458d25"
+            },
+            "leerGruposDesdeLibro": {
+              "tipo": "function",
+              "linea": 225,
+              "hash": "0ade82c41f75090f6ca8168dc325098f2888943112dc08ac9cdc399c34edac62"
+            },
+            "extraerAlumnosDePestana": {
+              "tipo": "function",
+              "linea": 247,
+              "hash": "6c6eb37ae4f16e1f0a866337dd93a484542c08e1b7ef205ec93ce2bfbd268cdf"
+            },
+            "enriquecerAlumnosConAcceso_": {
+              "tipo": "function",
+              "linea": 484,
+              "hash": "d61e2886eee31d195780f4bb77da9afa7fbeab7fbdb59c71d08e2a6abf2804d4"
+            },
+            "leerAlumnosResumen": {
+              "tipo": "function",
+              "linea": 505,
+              "hash": "55b48fd91c06411c6ebe53aae5e8adf8be51740c24ca88d8a9e16b34b4ca2719"
+            },
+            "guardarAlumnosResumen_": {
+              "tipo": "function",
+              "linea": 605,
+              "hash": "830775788ea606e401eb2757e11e9d7bf816a999353b71cca3d61cd95480aa2f"
+            },
+            "normalizarGradoServer": {
+              "tipo": "function",
+              "linea": 611,
+              "hash": "2db44234c751fe2556b1a730632ac1998cc4493a185c426c5ff0bd8c36d33467"
+            },
+            "leerGruposResumen": {
+              "tipo": "function",
+              "linea": 617,
+              "hash": "f65a7253d8e2f2911e8d76321f2cc101e4ae815a677b531f1cdffa42b32266c5"
+            },
+            "leerLecturasResumen": {
+              "tipo": "function",
+              "linea": 647,
+              "hash": "598029d285838bc9c0450f08f4f8dae2e8cfdef03157a08923ea194997b14603"
+            },
+            "fusionarNivelesDesdeJson_": {
+              "tipo": "function",
+              "linea": 662,
+              "hash": "1a5b8501b32e7be2a9f7e30fb79f32db1fcba777330d75dd5155bd58dc149347"
+            },
+            "inspeccionarNivelesPreguntas": {
+              "tipo": "function",
+              "linea": 694,
+              "hash": "409965c97a4531524bb4f8a321409b62dcf6a3c7cfd7b90a501a1c9aec0e0db1"
+            },
+            "sincronizarNivelesHojaDesdeJson": {
+              "tipo": "function",
+              "linea": 728,
+              "hash": "8d56347cb81d39cbe9b8f94ebd29e65c0cd010ea6d778b765b28d835644bfc94"
+            },
+            "detalleLecturas": {
+              "tipo": "function",
+              "linea": 737,
+              "hash": "db5d958815f6051d0ae780d41bc600784b9975029716bc8395990241896dde4d"
+            },
+            "detalleUnaLectura": {
+              "tipo": "function",
+              "linea": 766,
+              "hash": "cf7e2ea21e5aa4c192b8bb2b3988c468665edbd34c665d0fae55b7d91bb63093"
+            },
+            "detalleResultados": {
+              "tipo": "function",
+              "linea": 785,
+              "hash": "3c0620bdbc44efbd4be38698ad0fb5c754694b8aefb0b58547b5c9d8321ead70"
+            },
+            "listaLecturasAdmin": {
+              "tipo": "function",
+              "linea": 791,
+              "hash": "ab395b59f5ce190caaa6942d94f745fdc4f44b4697ce8fa5ca4f38652df15d23"
+            },
+            "valoresHoja_": {
+              "tipo": "function",
+              "linea": 796,
+              "hash": "afd3bf3b9892042578d15e44b64e001be9c2e9093681326c17ecac2a8df74654"
+            },
+            "leerFilas": {
+              "tipo": "function",
+              "linea": 805,
+              "hash": "de8b473f6f4f378b50d6a5a142e5badca563b91c3cbda7335374a57c2bd05d3b"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "06_Alumnos.gs": {
+      "sha256": "748317b2bfe4112fb922d583109dc2303edb956a75c2a33e132cad3a3bb7c966",
+      "documentos": [
+        {
+          "id": "06_Alumnos.gs",
+          "simbolos": {
+            "especificacionesDeGrado": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "8cf68a241935b8b100e03b7a3992f94360fbb72a68ce478e867bcbfb1f2447c3"
+            },
+            "especificacionesDeTodos": {
+              "tipo": "function",
+              "linea": 17,
+              "hash": "f61d04dd26836d95c7cb4a5b86c1b7860965d3da4e3c36423fc01073dfb72394"
+            },
+            "ppmObjetivoDeTodos": {
+              "tipo": "function",
+              "linea": 21,
+              "hash": "8b1cb84915886be8c3083480cbbbbb56f9ada902e7bb8f93e523332638b49b9a"
+            },
+            "restaurarPpmRecomendados": {
+              "tipo": "function",
+              "linea": 45,
+              "hash": "1fa3337d1dbc56ae8a1f0e3ea3e3aeb28dc2a5af807b9a0c87620d44e2c719c9"
+            },
+            "guardarPpmObjetivo": {
+              "tipo": "function",
+              "linea": 59,
+              "hash": "42c27f5bf78cef0b1c9263326a75220f86703afda66cb9220ad9a72355c2bbea"
+            },
+            "obtenerGruposPorGrado": {
+              "tipo": "function",
+              "linea": 78,
+              "hash": "f7b352f708d88d715bb17c10f0ab34893c8ddb878942a5781a014b4692a4bbe2"
+            },
+            "obtenerAlumnosPorGrupo": {
+              "tipo": "function",
+              "linea": 94,
+              "hash": "438b5684f8b382b92516246b95e8a78a274e64193312046c5b4d40743db3de41"
+            },
+            "catalogoLoginPorGrado": {
+              "tipo": "function",
+              "linea": 113,
+              "hash": "49053dca6884ef1a25c4a2c3e6ff3fd80f28a8d81207044c2dd35963e56d5250"
+            },
+            "buscarAlumno": {
+              "tipo": "function",
+              "linea": 132,
+              "hash": "e0a127d5ed12212440180635582a5f4867fc32b9275c7fbbdd2d51fcac0afd9a"
+            },
+            "filaAlumnoPorMatricula": {
+              "tipo": "function",
+              "linea": 178,
+              "hash": "74155f133ce6c39ce33a289bb43923ec6758144fefe3e32344137ee1613b0c17"
+            },
+            "contarIntentosAlumno": {
+              "tipo": "function",
+              "linea": 198,
+              "hash": "a774ce26b3bdf8e3fc5eac8403411127a332cb862aebc32d5a2fe49a391f5f2b"
+            },
+            "intentosPermitidosDe": {
+              "tipo": "function",
+              "linea": 206,
+              "hash": "079f69ec42ed40a329d8a2b138abb6eecad9f224efc691e02f87ee816cb75469"
+            },
+            "mensajeCupoDisponible": {
+              "tipo": "function",
+              "linea": 213,
+              "hash": "345ba80407c46849b0fdbfaeebdafa6f0fe08873162d525f972b2ff563d6d1f9"
+            },
+            "mensajeCupoAgotado": {
+              "tipo": "function",
+              "linea": 221,
+              "hash": "bca4825f8118c757a8a67548b5b1d6073315621d3fe550ecb2943ef50ff435b9"
+            },
+            "consultarCupoAlumno": {
+              "tipo": "function",
+              "linea": 228,
+              "hash": "3144d0206eb7dedf89d9cc6388185e34610ff798721775eac9bf23f7c7ce5da3"
+            },
+            "altaAlumno": {
+              "tipo": "function",
+              "linea": 245,
+              "hash": "1070a8b76ac161b17d08b6052f906cf6943ea87b13804442553b50582d49b50d"
+            },
+            "bajaAlumno": {
+              "tipo": "function",
+              "linea": 257,
+              "hash": "15cbfd25d7fdc42cf5fafad654ea167b92287a7845afb37055e27c1f4a9ad7ef"
+            },
+            "reactivarAlumno": {
+              "tipo": "function",
+              "linea": 266,
+              "hash": "f80c790ba42f3b6f6158a47723da918310747fdef08562df1b323a80f287c6b4"
+            },
+            "celdaAlumno": {
+              "tipo": "function",
+              "linea": 275,
+              "hash": "b19758eff4a436004fe9bedefc5f1417fc3469659e0a9c52e545145aa5e0e1ae"
+            },
+            "eliminarAlumno": {
+              "tipo": "function",
+              "linea": 282,
+              "hash": "9758421539621918659e9f1efe81d2aa6fb6775f745813cd92bbf67f571be32c"
+            },
+            "eliminarAlumnosMultiples": {
+              "tipo": "function",
+              "linea": 305,
+              "hash": "2eff030c58b94c39bf3d396188307d68b87c401b1cd269965d16b5ff996e87bc"
+            },
+            "cambiarGrupoAlumno": {
+              "tipo": "function",
+              "linea": 346,
+              "hash": "81e92f6a069cc109b51b1c51b3097688000dea0ded8cf35498f896de707142a9"
+            },
+            "cambiarGrupoAlumnosMultiples": {
+              "tipo": "function",
+              "linea": 359,
+              "hash": "8e66e28164ecc6820e5fdd1454f41b821940e896ab198f7622c515166a38fbb8"
+            },
+            "asignarIntentosExtra": {
+              "tipo": "function",
+              "linea": 388,
+              "hash": "61a91860319d7a57699a73d1a33bccab14cd74ebe0ef5b1bd85ab2208628392f"
+            },
+            "asignarIntentosExtraAlumnosMultiples": {
+              "tipo": "function",
+              "linea": 433,
+              "hash": "2c303d79e37da055ab1cc5e04a61cc60f2761f1cbd0040d31a2ad2cebe5f6bd9"
+            },
+            "generarAlumnosSimuladosAdmin": {
+              "tipo": "function",
+              "linea": 460,
+              "hash": "1fa6773e49feedfb2957d352045d71e4236cb0796a0a7a09881117b20e0ff570"
+            },
+            "vaciarMatriculaAdmin": {
+              "tipo": "function",
+              "linea": 467,
+              "hash": "45455dbd8be1b9021b8be605587ec595f09ae594c9c09cf110c06e7be32b28d4"
+            },
+            "altaGrupo": {
+              "tipo": "function",
+              "linea": 478,
+              "hash": "9d5ca345cb3dbea031f5ba136f001c244aa1c70b2a0a9a979df4c473bb4a40f6"
+            },
+            "asignarIntentosExtraGrupo": {
+              "tipo": "function",
+              "linea": 484,
+              "hash": "2a085859c8eb3bc0985156d0389a102b96fefaac99b767ee7407c012881cc1cd"
+            },
+            "guardarIntentosDefault": {
+              "tipo": "function",
+              "linea": 499,
+              "hash": "2f327bfda744f7b720e7c536ef82f6238adf8d55c87ca95c14bcbc4d7bfbf364"
+            },
+            "sembrarGrupos_": {
+              "tipo": "function",
+              "linea": 505,
+              "hash": "5723ae156f7894be3ba376bfeee177970fb667367b1cba26789df1cb10cce7a0"
+            },
+            "uniq": {
+              "tipo": "function",
+              "linea": 528,
+              "hash": "528590571eddd8d3aaeb6a0bd144ea44129b327d9da838f4ee65d80c7358cca2"
+            },
+            "asegurarDatosDePrueba_": {
+              "tipo": "function",
+              "linea": 537,
+              "hash": "56d6d52f278b9388e355e4e15165166afea97e862c590c9962831b333e30fe46"
+            },
+            "generarAlumnosSimulados_": {
+              "tipo": "function",
+              "linea": 550,
+              "hash": "1ac883f0bb62ebabfd6caee2952842cf761d5cd41a73d9e40eac3c2ad17580be"
+            },
+            "temasBancoPorAsignatura": {
+              "tipo": "function",
+              "linea": 583,
+              "hash": "e997a4b225899d19a97f3310a198498ce4f8765a7da1a9eb67416c0bffb78fba"
+            },
+            "completarBancoLecturas_": {
+              "tipo": "function",
+              "linea": 594,
+              "hash": "b83c96d469c0d113e86efef367d58aa8b7f8fd02c549b5dcb7d6514800971d49"
+            },
+            "filaLectura": {
+              "tipo": "function",
+              "linea": 716,
+              "hash": "c26e6d04215ebd8a002661bf0a4024f4608398876664b2ed56ce047026fd6290"
+            },
+            "construirLecturaBanco": {
+              "tipo": "function",
+              "linea": 723,
+              "hash": "282bcfcdb2a77e2b6d511038defe37fce230f32e7ea5e83276dd560b34127d55"
+            },
+            "contarPalabras": {
+              "tipo": "function",
+              "linea": 741,
+              "hash": "f4655859e4ffdde342b8c9b39eb4eeabdfba01315edc5bb54d3ffa2215515470"
+            },
+            "asegurarFormatoLibro": {
+              "tipo": "function",
+              "linea": 746,
+              "hash": "f69742b52b20af426908dba22a45eee2f91b5af829f73749ef737e9c6ede1a64"
+            },
+            "expandirTextoHasta": {
+              "tipo": "function",
+              "linea": 761,
+              "hash": "1404a050e1b55c6d3849ee5a2b3d43344e96e6c6f529bc5769bd6307e75c6e72"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "07_Preguntas.gs": {
+      "sha256": "70b0db458260456f5897c571a40598fe0b513a3a9d575b0cd50919aa68783f1e",
+      "documentos": [
+        {
+          "id": "07_Preguntas.gs",
+          "simbolos": {
+            "preguntaDesdeFilaHoja": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "8206d44d2b1c5a733299d149ad6e9991f8bde422c471c818345ba670f7f50d85"
+            },
+            "preguntasDeLectura": {
+              "tipo": "function",
+              "linea": 16,
+              "hash": "2934ff06787b20cadc6fa779234a753ade2e901abc09bfb3d54759c37d156714"
+            },
+            "mapaPreguntasPorId": {
+              "tipo": "function",
+              "linea": 35,
+              "hash": "9c939edf259d00fafa8f0b2d6b353a72aee1073895cc244ef789e15da4dda9e8"
+            },
+            "reemplazarPreguntasDeLectura_": {
+              "tipo": "function",
+              "linea": 82,
+              "hash": "ed2731992daf12cfe4dd73996fea9dcc2df99deae17037fbe580e637daa840e8"
+            },
+            "filaPreguntaParaHoja": {
+              "tipo": "function",
+              "linea": 115,
+              "hash": "667e2fdbbd2a2d5ba1435499934cf5c8c0222106ce04de9eea9e549bb54b7d9c"
+            },
+            "pregunta": {
+              "tipo": "function",
+              "linea": 126,
+              "hash": "e4e64c1c21c0a7e82972dc71880eb4257c1fe8a30e23021189e5098b9605a5a3"
+            },
+            "mezclar": {
+              "tipo": "function",
+              "linea": 130,
+              "hash": "d178c3c6c8d5370ef0b8a09297ad87668afb8bf1208506aea66542be2d34528a"
+            },
+            "buscarLecturaPorId": {
+              "tipo": "function",
+              "linea": 139,
+              "hash": "b6478faec93cc0a97fe40d3be22f79f94b1c920490e78119d020cfbe3103b09e"
+            },
+            "normalizarPreguntaAdmin": {
+              "tipo": "function",
+              "linea": 161,
+              "hash": "da1c0b97cfd1d2da2ef2bbaab866954cec655d350145fa636cdcf2f86897bbc4"
+            },
+            "claveTemaLectura_": {
+              "tipo": "function",
+              "linea": 172,
+              "hash": "66fd12a47bda66a59d8dc3e8d58ee221e6302565f46d7380ff53c224045727e1"
+            },
+            "exclusionLecturasDeResultados_": {
+              "tipo": "function",
+              "linea": 176,
+              "hash": "ff259d0abdcc9b4fd2063baa0e29f97cdb56a73ce0cf50715fa75b4acc5b7cba"
+            },
+            "lecturaYaPresentada_": {
+              "tipo": "function",
+              "linea": 214,
+              "hash": "0bc47feff4f07c2446e1c9e7e028447292efe269977b3f89dc379d04e8c7ded9"
+            },
+            "leerLecturasIndice_": {
+              "tipo": "function",
+              "linea": 222,
+              "hash": "20d3a9ec978ac23bae8d86adb1f7752550d314a982e60c32f62d641b31fb4b77"
+            },
+            "lecturasActivasDeGrado_": {
+              "tipo": "function",
+              "linea": 258,
+              "hash": "c94950502b4ae75d072fbdc3d469226270bc983a932090c0c4099c4fe2e81572"
+            },
+            "totalPreguntasDeEval_": {
+              "tipo": "function",
+              "linea": 264,
+              "hash": "d5f43e00a6e9dc374b9e85355e84f8a76c735ebbf8d10e02d70d0ef79a7eb536"
+            },
+            "partirFechaHora_": {
+              "tipo": "function",
+              "linea": 281,
+              "hash": "59c7c4e506e83363ebd7cf0875ca13952a43db8d63693c5fe0d85c0eccaf3c64"
+            },
+            "adjuntarInformesEvaluaciones_": {
+              "tipo": "function",
+              "linea": 288,
+              "hash": "26d8c2c47eea7d9f888548d9300d2cf2583d9e10ec22aaf57a1665b161121c72"
+            },
+            "construirPanelAlumno_": {
+              "tipo": "function",
+              "linea": 349,
+              "hash": "696168f31f6c0c5357c915208a784e97fd381def3f6a2301a5abf6920b866466"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "08_Trimestral.gs": {
+      "sha256": "8e0681a758bcdb186b2ddd1bc52955d0202dd98ff49be073cb79db6da95c3dba",
+      "documentos": [
+        {
+          "id": "08_Trimestral.gs",
+          "simbolos": {
+            "TZ_MEXICO": {
+              "tipo": "const",
+              "linea": 4,
+              "hash": "d104c0c3db742d69a358467ec71063c9879db9fc44c3457c8cbefeb739e034da"
+            },
+            "MESES_CORTOS_ES": {
+              "tipo": "const",
+              "linea": 5,
+              "hash": "8bb704f18795c4af0e0e8fda1d1989518a4620bb46d11026078b3c9400544f31"
+            },
+            "claveGrado_": {
+              "tipo": "function",
+              "linea": 7,
+              "hash": "82e5ccab53ac3b6db834e5e0ef93e62f9b28084011e46e93bcf7939d8fb0fd28"
+            },
+            "hoyIsoMexico_": {
+              "tipo": "function",
+              "linea": 12,
+              "hash": "81e8c7ed7b58eea344d0bfec97641b71e5332a2178823f2520dae36e85e8b9a3"
+            },
+            "cicloEscolarDeFecha_": {
+              "tipo": "function",
+              "linea": 16,
+              "hash": "677120d429d1e6d01da889012127942e6fd94c9f3c795b1ecea11d5ae2333905"
+            },
+            "cfgTrimestralPorDefecto_": {
+              "tipo": "function",
+              "linea": 24,
+              "hash": "7ff06a8ef73626bce233008bf3557f827110c06a1d2e295138281ab2c5f7f55b"
+            },
+            "normalizarCfgTrimestral_": {
+              "tipo": "function",
+              "linea": 44,
+              "hash": "5a19f9138bc53567b062651d5e6983829c2b86194d88970e0da4e9569b25ed9c"
+            },
+            "leerCfgTrimestral_": {
+              "tipo": "function",
+              "linea": 74,
+              "hash": "b24fd956d44ec8386357718529121ccd84861887e613640f60c046f98a2def81"
+            },
+            "idsLecturasTrimestre_": {
+              "tipo": "function",
+              "linea": 80,
+              "hash": "9424cbcdab82cadd5e386efa0d51028997b5c1df37a09cb17bade7b273893415"
+            },
+            "intentosTrimestralesPermitidos_": {
+              "tipo": "function",
+              "linea": 87,
+              "hash": "201de9b319e40075b9a2f507cc14e20998e1f3499404a52d9d5e15103ae786f3"
+            },
+            "esResultadoTrimestralDe_": {
+              "tipo": "function",
+              "linea": 93,
+              "hash": "b2a266521a516b16ae2fa4ac1d5f4a63352aaded18ad877615ada5be5d79c951"
+            },
+            "contarIntentosSorteo_": {
+              "tipo": "function",
+              "linea": 114,
+              "hash": "522e414e1c2a317e86d73692641ecc3e81ce41c1f443e02caa847cc4049eed51"
+            },
+            "contarIntentosTrimestrales_": {
+              "tipo": "function",
+              "linea": 127,
+              "hash": "1266d3a24cc313eb8e14dcbf7f40225f5e92c6b04ac682ebac1f45885978f7ae"
+            },
+            "etiquetaTrimestre_": {
+              "tipo": "function",
+              "linea": 139,
+              "hash": "5983523307397b37fa7fc8f6519b11e015f6ee03cf0b2e0a2b232e7d91cf0be9"
+            },
+            "formatoFechaCorta_": {
+              "tipo": "function",
+              "linea": 146,
+              "hash": "fdcda6258a0f0360fb7e44e58626289de7d6ecbe06a8868fb716e30294a8bcf3"
+            },
+            "rangoFechaTexto_": {
+              "tipo": "function",
+              "linea": 154,
+              "hash": "dd13838154f2f703d9e82e165255b66384980348447e84a2e067da9d50046b20"
+            },
+            "itemTrimestre_": {
+              "tipo": "function",
+              "linea": 168,
+              "hash": "86bc2f78c1c585014334a86d34cd02bc28e21c5847f5c59fccce6e793de6723d"
+            },
+            "trimestreCalendario_": {
+              "tipo": "function",
+              "linea": 179,
+              "hash": "d5e1f77ff3700c2d8343b59a91b162c1578369a4c714cbb5f2a5bb557aa7d742"
+            },
+            "trimestreVigente_": {
+              "tipo": "function",
+              "linea": 196,
+              "hash": "3367aabf5fe9b9f52fa965d8124aa5eb818ca96b9bbb8f7d1fa32c297ab050d2"
+            },
+            "infoTrimestreActual": {
+              "tipo": "function",
+              "linea": 212,
+              "hash": "ee22042dffefc5a38c2dd882491285546f25c8c72f93d11afdd33e389db34528"
+            },
+            "infoLecturaTrimestralDe_": {
+              "tipo": "function",
+              "linea": 230,
+              "hash": "0ad429ae687ab247f33228709b38cf9decd51c2be9fc945bfdfef1bae4f2dcfb"
+            },
+            "paqueteDesdeFilaLectura_": {
+              "tipo": "function",
+              "linea": 287,
+              "hash": "c2c306d714705ce04c2fec5e4545eeb0455475524b94205b7889e0efdcb5b4c3"
+            },
+            "paqueteLecturaTrimestral_": {
+              "tipo": "function",
+              "linea": 312,
+              "hash": "687e771abd12404e5246d3b772723ef533705e186a113cbe43c22d85247bb17f"
+            },
+            "obtenerLecturasTrimestrales": {
+              "tipo": "function",
+              "linea": 328,
+              "hash": "647e9fa9cc3b589745167862dfca5197f65e1ab0ec33cdb4bf4079fc74c4a5be"
+            },
+            "resumenCalendarioTrimestral": {
+              "tipo": "function",
+              "linea": 341,
+              "hash": "6e9687ab472d242fe7b770bc8777b21def0a4f0c031e1b395d672ff18c8a80cb"
+            },
+            "limpiarIntentosTrimestrales": {
+              "tipo": "function",
+              "linea": 345,
+              "hash": "857d36a9f077772659aa84979dbd2e8d4fd3bf959cbb2dd2c92b0df3c9388c35"
+            },
+            "guardarLecturasTrimestrales": {
+              "tipo": "function",
+              "linea": 398,
+              "hash": "338f9a9351378c2fe9bd02fd45baed6f97c7ff946cc3d38f03888c2b9f396108"
+            },
+            "idLecturaTrimestralMuestra_": {
+              "tipo": "function",
+              "linea": 426,
+              "hash": "f5bef6d1ba796051b5d3de2d8f0fe3fb7664b5a3ec7c7542426c04f47bacf28a"
+            },
+            "catalogoMuestraTrimestral_": {
+              "tipo": "function",
+              "linea": 430,
+              "hash": "23faaebd28a1631afde434f6e001b404293e3152915e7b124c7e2e1f9345e749"
+            },
+            "construirLecturaTrimestralMuestra_": {
+              "tipo": "function",
+              "linea": 444,
+              "hash": "2dec8fd4b5339571b0ce42dfc90816d72cc329a25379e5effeaceb50a40d381a"
+            },
+            "sembrarBancoTrimestral": {
+              "tipo": "function",
+              "linea": 453,
+              "hash": "1b17b815b6ab91175705682ada3ce80951a04f94268cc20524dc291f9b28fb6b"
+            },
+            "panelAlumno": {
+              "tipo": "function",
+              "linea": 504,
+              "hash": "f5d523da7df92c44892e70ebd7de2f6541427c8f7a07f395026236ecf0bf601a"
+            },
+            "fichaAlumnoAdmin": {
+              "tipo": "function",
+              "linea": 531,
+              "hash": "f5678e684d0c0a77c2ca0fb28aa00b9e55c21c36e17c4b5c1c25852b9ad08ccd"
+            },
+            "iniciarEvaluacionAlumno": {
+              "tipo": "function",
+              "linea": 590,
+              "hash": "94f2b95adb82dcd16ada99ea0fbdb892ef1b4211d827711cabe38287a93e74f9"
+            },
+            "sortearLectura": {
+              "tipo": "function",
+              "linea": 727,
+              "hash": "e1abe0d2516a632bf345bc6442c0f2fa6daaffcd3512a0fc470b3c9c79dd3b06"
+            },
+            "normalizarNivelComprension": {
+              "tipo": "function",
+              "linea": 774,
+              "hash": "b9467f4bd974d3232f5cfb9ca647264022dd1a06d75d3b2689a59f3bec7f8414"
+            },
+            "etiquetaNivelComprension": {
+              "tipo": "function",
+              "linea": 782,
+              "hash": "2c2ba753ab7164bf90ebfd31055be9197fc61d3e66146af3aac3da7b9894a218"
+            },
+            "normalizarEnunciadoNivel_": {
+              "tipo": "function",
+              "linea": 789,
+              "hash": "4ff0c8a8b516063fc57a2992b5a511519b0572067e928ed36e95fe21c94a0b0f"
+            },
+            "mapaNivelesBanco_": {
+              "tipo": "function",
+              "linea": 794,
+              "hash": "1823226fe4eff879fd9231e5f5fb0af7c60cbcf51fc65a9755d79f6e476bd310"
+            },
+            "inferirNivelComprensionPregunta": {
+              "tipo": "function",
+              "linea": 807,
+              "hash": "1503aaa9c0f38d0f9594403f30674af24772e761b50bdb70914c3da317051c25"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "09_IA.gs": {
+      "sha256": "4a369346918200c0dfef1d6b85ad51814ec7590d2d6dfb623d0d4b4a0b4a1c2e",
+      "documentos": [
+        {
+          "id": "09_IA.gs",
+          "simbolos": {
+            "obtenerClaveDeepSeek_": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "1e471cbd24040a18f10a66d258736a36086e8ae36995c7edebd53aa3efbc403a"
+            },
+            "estadoDeepSeek": {
+              "tipo": "function",
+              "linea": 18,
+              "hash": "d585cf812e178a422b6aedc6b9ea0b55bf1f2eb489e96344ae80eccb0049e8f4"
+            },
+            "guardarClaveDeepSeek": {
+              "tipo": "function",
+              "linea": 26,
+              "hash": "d548e22f49b8ea5b885821fee2f524b3343ac3f9ed8dd1a26625db4134ce05e6"
+            },
+            "probarConexionDeepSeek": {
+              "tipo": "function",
+              "linea": 39,
+              "hash": "989e69427b30520685cabe36243da8132fdd141a267d47d2ec62219cd040c68a"
+            },
+            "crearRespaldoLibro": {
+              "tipo": "function",
+              "linea": 66,
+              "hash": "1a8ea34df4b0bd050d88c13960ba0a384b1ce149c375b4cb37bb3384fd696a4d"
+            },
+            "pedirNivelesLoteDeepSeek": {
+              "tipo": "function",
+              "linea": 84,
+              "hash": "daa85de27c347510ffef9bf5cb138e7c92ae3020f59a0ffca0becd3fd272857d"
+            },
+            "clasificarNivelesTodasLasPreguntas": {
+              "tipo": "function",
+              "linea": 125,
+              "hash": "2789f97e33374c4bb487097694a232f3d5ddba4eaceae3288d87e22520ff4c4e"
+            },
+            "calcularPme": {
+              "tipo": "function",
+              "linea": 224,
+              "hash": "527a516c4895cc7c810805ede399af24d8929b9c2f060511360406b8ab3efa1d"
+            },
+            "resumenTiemposPregunta": {
+              "tipo": "function",
+              "linea": 228,
+              "hash": "20f87d560b231d1dabb55771154e6f31eaff41e3a27d8a53fb8c5dedf3b94846"
+            },
+            "desgloseNivelesComprension": {
+              "tipo": "function",
+              "linea": 242,
+              "hash": "d3620e69d3724ad7d932632c52c98cbf4f7fdf9e416ec92e90c8b650a0550b96"
+            },
+            "historialAlumnoParaReporte": {
+              "tipo": "function",
+              "linea": 269,
+              "hash": "fc8445c672b134b7edf2b14c05c77a603d2d5a52d189b7eae14c53080e09b764"
+            },
+            "pedirRecomendacionAlumnoDeepSeek": {
+              "tipo": "function",
+              "linea": 300,
+              "hash": "e9518abe7c56abae0d798a4e99310d94ecd34f24d8247a1bdfe85b3976fb45d7"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "10_Resultados.gs": {
+      "sha256": "f29aba693d1f44cbc8a844692390dbb927e96cac93e7ebbe6d49b9149cad8a6d",
+      "documentos": [
+        {
+          "id": "10_Resultados.gs",
+          "simbolos": {
+            "calcularNivelPpm": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "321f5fa1629a54f42f2b29d2ca11e765d5549b47142a6add4712f66776e23d2f"
+            },
+            "calcularCalificaciones": {
+              "tipo": "function",
+              "linea": 10,
+              "hash": "1a48bafdd4e4862a56f66f3978ed6f2875afbd5442669b18b278b47e2e364a7e"
+            },
+            "guardarResultadosExamen": {
+              "tipo": "function",
+              "linea": 34,
+              "hash": "fb764db83f7bf1a564b7c3921fea49180806f3ca185976b8508186f733a0ad06"
+            },
+            "buscarResultadoPrevioEnHoja_": {
+              "tipo": "function",
+              "linea": 458,
+              "hash": "7ccf4821ede57fa87f83dab51c2f9d8523c3f0401efbeb0da06d7361b2ffeba3"
+            },
+            "calcularHistorialDesdeFilasPrevias_": {
+              "tipo": "function",
+              "linea": 585,
+              "hash": "2ae3ade2eb6b62cf5e8c225bbef3c52469f50bdfc3d9606e9445e0256ad9b4a5"
+            },
+            "reconstruirResultadoDesdeFila_": {
+              "tipo": "function",
+              "linea": 689,
+              "hash": "113c068117b83af4d5710c77478b51eeb837262b6476a57fd3153e37f179893e"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "11_Lecturas.gs": {
+      "sha256": "496246a9259d52522d81aaf065645033edf2d97eb03f920db1a4833cf902f156",
+      "documentos": [
+        {
+          "id": "11_Lecturas.gs",
+          "simbolos": {
+            "guardarLecturaBanco": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "5585a8ec375afea929e5282bef3cd5e6574552bcecb15344a22af9d5b7bb587c"
+            },
+            "cambiarActivaLectura": {
+              "tipo": "function",
+              "linea": 37,
+              "hash": "7fe021ad3fa74f6882130559a3fbbd1cda66e3ff3ed992caa8b837e7f492a6a7"
+            },
+            "eliminarLectura": {
+              "tipo": "function",
+              "linea": 47,
+              "hash": "20e4485c339e5be41465a5b7615535209e2864e4b50a72825a29d25a0c32d12c"
+            },
+            "generarLecturaAdmin": {
+              "tipo": "function",
+              "linea": 79,
+              "hash": "5767c28fb1992857b14431f763149e23e1076c278fc2976957f02e421212fd72"
+            },
+            "generarPaqueteIaOLocal": {
+              "tipo": "function",
+              "linea": 94,
+              "hash": "ddaabea880b82d809d069ceafe3c771dce976c169ad74a2c9d4c47d28e750798"
+            },
+            "pedirLecturaDeepSeek": {
+              "tipo": "function",
+              "linea": 105,
+              "hash": "f1063c285b1675e66e73ac57766b7bce1f8fb06c6a52085c01d25df9b3895092"
+            },
+            "lecturaLocalAdministrador": {
+              "tipo": "function",
+              "linea": 171,
+              "hash": "fba07792613cb833d61b41f7d45fac89b4e2184d69a487988c0ddcaaef46b72c"
+            },
+            "limpiarHtmlLectura": {
+              "tipo": "function",
+              "linea": 176,
+              "hash": "8ef086936b14213e019b82d20a9dc2837b39081974f827795fe0697a48d24fc5"
+            },
+            "partirParrafosLectura": {
+              "tipo": "function",
+              "linea": 193,
+              "hash": "80c135308a9942c5c3aebab34325d8ea6e09129ef77ba879010770aa58287a37"
+            },
+            "compactarParrafosLectura": {
+              "tipo": "function",
+              "linea": 199,
+              "hash": "b1109b37275cb5a233183090393168851e656bef217f096ee4bebf2e03a48b0d"
+            },
+            "recortarTextoHasta": {
+              "tipo": "function",
+              "linea": 216,
+              "hash": "df5b4c4c75a6a91739c7b7b00317f2efd12b2cc9fcdb6bf454ecb09c98f70065"
+            },
+            "ajustarTextoAEspecificacion": {
+              "tipo": "function",
+              "linea": 227,
+              "hash": "aab68fee5f6f79c77f51ec626442802f28fa7a14a18c7fc34d9ba4a5f62844ad"
+            },
+            "esOpcionAbsurda": {
+              "tipo": "function",
+              "linea": 247,
+              "hash": "be10d4f7998d4d7ab59c027be36fda6f409afb745184513cfe3803138d7a5ec4"
+            },
+            "esReactivoRelleno": {
+              "tipo": "function",
+              "linea": 251,
+              "hash": "a94720bf468db7cccae97a999bd40383429c72453449ce2f80a09a067b7b8346"
+            },
+            "homogeneizarPregunta": {
+              "tipo": "function",
+              "linea": 255,
+              "hash": "b33a508033e51c5cf16eebf8559aee01d33e2976fb2308eb5cdaea5086426f66"
+            },
+            "bancoReactivosReglamentarios": {
+              "tipo": "function",
+              "linea": 269,
+              "hash": "2feef057c4a54b347f424c899b27be7eeb398576169097048f1097734615d2a5"
+            },
+            "seleccionarReactivosPorGrado": {
+              "tipo": "function",
+              "linea": 402,
+              "hash": "c87027d5682d1e483109aa1c7c90ff43218fae1e85ee31bd730ec7d1e81b97da"
+            },
+            "auditarLecturaItem": {
+              "tipo": "function",
+              "linea": 428,
+              "hash": "bf30ca20d0116ef4ea454fba2c3a69d3c8c5b7872d3c1745d989ba1c2db2374e"
+            },
+            "revisarLecturaDeepSeek": {
+              "tipo": "function",
+              "linea": 451,
+              "hash": "6ce67726a9ff7563d78fbc0a5163f946d34a6e63d4149b497e411d48aacdd97c"
+            },
+            "reconstruirHojaPreguntasDesdeJson_": {
+              "tipo": "function",
+              "linea": 495,
+              "hash": "329b0b2f8c9fb2f5470c82c3a4cf360556fb0d23cfa5f851b64161a88e360a71"
+            },
+            "ajustarLecturasAEspecificaciones": {
+              "tipo": "function",
+              "linea": 558,
+              "hash": "749d481110400b31433ac054554006f9010fd82782d7d5f6711b788d6b5e5f67"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "12_Importacion.gs": {
+      "sha256": "26a4a3e7db97200e97d0115b067895d9bd6f4c8a4badd3b703bbb51d6b0456d4",
+      "documentos": [
+        {
+          "id": "12_Importacion.gs",
+          "simbolos": {
+            "cacheGetResultados_": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "1e5357ad9d36fb4ba49ebb67382524ebacec82b7a902de54499d2e084c08da71"
+            },
+            "cachePutResultados_": {
+              "tipo": "function",
+              "linea": 22,
+              "hash": "dc01b0c05e995513d0d43e3284085fd9f838c0fe00790d963010b305cfb42660"
+            },
+            "valoresHojaSinEncabezadosGordos_": {
+              "tipo": "function",
+              "linea": 36,
+              "hash": "3a2a5e266c450b23cf10e0a026ec301f5c09a71e983e867459e1df03d93fa5dc"
+            },
+            "leerResultadosDeTodasLasPestanas": {
+              "tipo": "function",
+              "linea": 69,
+              "hash": "a2b583457c2ca4816a239015ff92f07dd2cdca4e942d62708311105fb103c028"
+            },
+            "normalizarResultado": {
+              "tipo": "function",
+              "linea": 117,
+              "hash": "86f07a78512c4523ef0c653ff97dbbfddcc367ee893736c4c568676f35ddbf85"
+            },
+            "valorColumna": {
+              "tipo": "function",
+              "linea": 175,
+              "hash": "557aa83e132c6b306b6e142ebaaefb7d2745b31fe14a0b7e99ef96c69d029c56"
+            },
+            "formatearFechaAdmin": {
+              "tipo": "function",
+              "linea": 183,
+              "hash": "56f8ac3e3662dbbc55ea54483465d9cf96ddae7da1db51f72cf6951a0fda1acc"
+            },
+            "fechaIsoAdmin": {
+              "tipo": "function",
+              "linea": 190,
+              "hash": "e7aea2bea6adfada829741becfe2ad9288bee053c6dd5550ef5d312fe0af7d53"
+            },
+            "obtenerPlantillaExcel": {
+              "tipo": "function",
+              "linea": 212,
+              "hash": "9e1cad379109a3c80961f9d72d8856d7ce5f2ee30916f39920dcf3785eff11e7"
+            },
+            "importarAlumnosDesdeExcel": {
+              "tipo": "function",
+              "linea": 217,
+              "hash": "0c3a0d85e44d3851fb99c9199008ce6d10c68a94cc92f4412fe0a448364b1fb5"
+            },
+            "formatearHojasDeLectura": {
+              "tipo": "function",
+              "linea": 245,
+              "hash": "8cd6b8037ab7d82c6b9671f76f21188fb25d6c79ef56e78cc078c26007a71785"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "13_BancoLocal.gs": {
+      "sha256": "dcf5205a6a954e85faa639806b4d0c4b5bd12a487b51c598d2f0529de6cf7013",
+      "documentos": [
+        {
+          "id": "13_BancoLocal.gs",
+          "simbolos": {
+            "contenidoTematico": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "be15fa30f278d1a61bb320b6ea0992efd91132525902cec4293d0c9f78275093"
+            },
+            "parrafosContinuacion": {
+              "tipo": "function",
+              "linea": 174,
+              "hash": "f25f747b54592b42f48583ef6c14563cf837586de000c9811d3493c6a2ece5ff"
+            },
+            "gruposRespaldo": {
+              "tipo": "function",
+              "linea": 225,
+              "hash": "be41fa824660650f44634a6e844ecb98303ae5310668f5fcc1b6ce6868321992"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "14_Simulados.gs": {
+      "sha256": "181f2d21b49909889bef4571a85090598ae2b2efb707ba0136b1ec4bd1b98623",
+      "documentos": [
+        {
+          "id": "14_Simulados.gs",
+          "simbolos": {
+            "hashEntero_": {
+              "tipo": "function",
+              "linea": 4,
+              "hash": "d0c96e7c9c0fa84abff1d4f12ac0f3b15594b6c4997092ce2925a7210020a24f"
+            },
+            "lecturasPorGradoSim_": {
+              "tipo": "function",
+              "linea": 13,
+              "hash": "5bcb08a40bfd697b6c6cdf0aa19b2f7a5efb2a5bb9b8e4f8d61590c86b3774e3"
+            },
+            "ponerValorEnc_": {
+              "tipo": "function",
+              "linea": 41,
+              "hash": "2a78ca0deae57316ccc3696e099d13328d29884560d5539a659296332ff06279"
+            },
+            "cargarResultadosSimulados": {
+              "tipo": "function",
+              "linea": 53,
+              "hash": "58d1bdf00ff6b12e3ca25b25f83bde35bd5d7a85bef6ae82e92ffdd1feb83c44"
             }
           },
           "sentencias": []

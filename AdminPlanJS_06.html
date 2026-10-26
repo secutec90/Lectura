@@ -1,0 +1,468 @@
+<script>
+/* AdminPlanJS_06 — conmutarModuloShell, toggleSidebarShell, etapaPlanActual_, irAPasoPlanNEM, CATALOGO_LIBROS_SEP_FASE6_, abrirModalLibrosSEP_, insertarReferenciaLibroSesion_, eliminarIDeviceCard_, eliminarLegoCard_, insertariDeviceSesion_, ... */
+
+
+    function conmutarModuloShell(nombreModulo) {
+      const clave = resolverClaveModulo_(nombreModulo);
+      const idContenedor = MAPA_MODULOS_[clave] || 'moduloViewPlaneacion';
+      const idNav = MAPA_NAV_ITEMS_[clave] || 'navModPlaneacion';
+      moduloActivoShell_ = clave;
+
+      // 1. Oculta TODOS los contenedores modulares (.modulo-shell-contenedor)
+      const vistas = document.querySelectorAll('.modulo-shell-contenedor');
+      vistas.forEach(function (v) {
+        v.classList.add('oculto');
+        v.classList.add('d-none');
+        v.style.setProperty('display', 'none', 'important');
+      });
+
+      // 2. Quita la clase activo de todos los botones .app-shell-nav-item
+      const navItems = document.querySelectorAll('.app-shell-nav-item');
+      navItems.forEach(function (btn) {
+        btn.classList.remove('activo');
+      });
+
+      // 3. Al contenedor del módulo seleccionado, retírale la clase oculto y aplícale display: block !important
+      const vistaDestino = document.getElementById(idContenedor);
+      if (vistaDestino) {
+        vistaDestino.classList.remove('oculto');
+        vistaDestino.classList.remove('d-none');
+        vistaDestino.style.setProperty('display', 'block', 'important');
+      }
+
+      // 4. Al botón correspondiente en la barra lateral, agrégale la clase activo
+      const btnActivo = document.getElementById(idNav);
+      if (btnActivo) {
+        btnActivo.classList.add('activo');
+      }
+
+      // 5. Inicializaciones reactivas bajo demanda
+      if (clave === 'encuestas') {
+        setTimeout(iniciarGraficasDiagnostico_, 100);
+      } else if (clave === 'asistencia') {
+        setTimeout(cargarAlumnosAsistenciaRapida_, 50);
+      } else if (clave === 'lectura') {
+        setTimeout(inicializarLecturaModulo_, 50);
+      } else if (clave === 'admin') {
+        // Desplazamiento suave al inicio de la consola de administración
+        if (vistaDestino) {
+          vistaDestino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    function toggleSidebarShell() {
+      const sidebar = document.getElementById('appShellSidebar');
+      if (!sidebar) return;
+      sidebar.classList.toggle('colapsado');
+      try {
+        localStorage.setItem('ST90_SIDEBAR_COLAPSADO', sidebar.classList.contains('colapsado') ? '1' : '0');
+      } catch (e) {}
+    }
+
+    /* ============================================================
+       STEPPER UX INTERACTIVO EN 4 ETAPAS (PLANEACIÓN NEM)
+       ============================================================ */
+    var etapaPlanActual_ = 1;
+
+    function irAPasoPlanNEM(paso) {
+      const p = Math.max(1, Math.min(4, parseInt(paso, 10) || 1));
+      etapaPlanActual_ = p;
+
+      for (let i = 1; i <= 4; i++) {
+        const tab = document.getElementById('tabPasoPlan' + i);
+        const pane = document.getElementById('etapaPlanNEM_' + i);
+        if (tab) {
+          tab.classList.toggle('activo', i === p);
+          tab.classList.toggle('completado', i < p);
+          tab.setAttribute('aria-selected', i === p ? 'true' : 'false');
+        }
+        if (pane) {
+          pane.classList.toggle('oculto', i !== p);
+        }
+      }
+
+      // Sincronizar dinámicamente según el paso
+      if (p === 2) {
+        const asig = (document.getElementById('planAsignatura') || {}).value || '';
+        const gr = (document.getElementById('planGrado') || {}).value || '1';
+        if (typeof actualizarCatalogoPDAParaClase_ === 'function') {
+          actualizarCatalogoPDAParaClase_(asig, gr);
+        }
+      } else if (p === 3) {
+        if (typeof poblarSelectorProblemasCTE_ === 'function') {
+          poblarSelectorProblemasCTE_();
+        }
+        const gr = (document.getElementById('planGrado') || {}).value || '1';
+        const gp = (document.getElementById('planGrupo') || {}).value || 'A';
+        if (typeof evaluarInclusionGrupo_ === 'function') {
+          evaluarInclusionGrupo_(gr, gp);
+        }
+      }
+
+      const stepHeader = document.querySelector('.nem-stepper-header');
+      if (stepHeader) {
+        try { stepHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+      }
+    }
+
+    /* ============================================================
+       CATÁLOGO OFICIAL DE LIBROS DE TEXTO SEP FASE 6 (SECUNDARIA)
+       ============================================================ */
+    const CATALOGO_LIBROS_SEP_FASE6_ = [
+      {
+        id: 'LIB-1-LEN',
+        grado: 1,
+        campo: 'Lenguajes',
+        titulo: 'Lenguajes (Colección Ximhai - 1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Narrativas de la comunidad', 'Códices y expresiones artísticas', 'El periódico escolar comunitario'],
+        paginasRelevantes: 'Págs. 14-38 (Identidad y memoria), Págs. 82-105 (Teatro y palabra)'
+      },
+      {
+        id: 'LIB-1-SAB',
+        grado: 1,
+        campo: 'Saberes y Pensamiento Científico',
+        titulo: 'Saberes y Pensamiento Científico (1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Biología y salud comunitaria', 'Matemáticas en la biodiversidad', 'Ecosistemas locales'],
+        paginasRelevantes: 'Págs. 22-45 (Célula y funciones vitales), Págs. 120-138 (Álgebra y geometría del entorno)'
+      },
+      {
+        id: 'LIB-1-ENS',
+        grado: 1,
+        campo: 'Ética, Naturaleza y Sociedades',
+        titulo: 'Ética, Naturaleza y Sociedades (1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Geografía del entorno escolar', 'Historia comunitaria', 'Pueblos originarios'],
+        paginasRelevantes: 'Págs. 18-42 (Espacio geográfico y riesgos), Págs. 94-118 (Derechos humanos)'
+      },
+      {
+        id: 'LIB-1-DHC',
+        grado: 1,
+        campo: 'De lo Humano y lo Comunitario',
+        titulo: 'De lo Humano y lo Comunitario (1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Tecnología y bienestar', 'Educación física e inclusión', 'Tutoría socioemocional'],
+        paginasRelevantes: 'Págs. 10-34 (Procesos técnicos y artesanales), Págs. 60-85 (Asertividad)'
+      },
+      {
+        id: 'LIB-1-PROY',
+        grado: 1,
+        campo: 'Interdisciplinar',
+        titulo: 'Nuestro Libro de Proyectos (Tomo 1 - 1.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Proyectos Comunitarios de Aula y Escuela', 'Indagación STEAM escolar'],
+        paginasRelevantes: 'Págs. 40-75 (Guía metodológica para proyectos integradores)'
+      },
+      {
+        id: 'LIB-2-LEN',
+        grado: 2,
+        campo: 'Lenguajes',
+        titulo: 'Lenguajes (2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Ensayo crítico y argumentación', 'Lectura dramatizada', 'Variantes lingüísticas'],
+        paginasRelevantes: 'Págs. 28-60 (Textos informativos y opinión), Págs. 140-165 (Poesía comunitaria)'
+      },
+      {
+        id: 'LIB-2-SAB',
+        grado: 2,
+        campo: 'Saberes y Pensamiento Científico',
+        titulo: 'Saberes y Pensamiento Científico: Física y Matemáticas (2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Fuerzas y movimiento en el transporte', 'Energía sustentable', 'Sistemas de ecuaciones'],
+        paginasRelevantes: 'Págs. 30-58 (Leyes del movimiento y fricción), Págs. 110-135 (Energía térmica)'
+      },
+      {
+        id: 'LIB-2-ENS',
+        grado: 2,
+        campo: 'Ética, Naturaleza y Sociedades',
+        titulo: 'Ética, Naturaleza y Sociedades: Historia de México (2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Independencia y soberanía', 'Identidades culturales', 'Cultura de paz'],
+        paginasRelevantes: 'Págs. 50-82 (Transformaciones sociales del siglo XIX)'
+      },
+      {
+        id: 'LIB-2-PROY',
+        grado: 2,
+        campo: 'Interdisciplinar',
+        titulo: 'Nuestro Libro de Proyectos (Tomo 2 - 2.° Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Proyectos Comunitarios de Aula', 'Indagación y ABP'],
+        paginasRelevantes: 'Págs. 35-70 (Metodologías activas para segundo grado)'
+      },
+      {
+        id: 'LIB-3-LEN',
+        grado: 3,
+        campo: 'Lenguajes',
+        titulo: 'Lenguajes (3.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Debate y oratoria', 'Literatura latinoamericana', 'Medios de comunicación'],
+        paginasRelevantes: 'Págs. 32-65 (Análisis crítico del discurso mediático)'
+      },
+      {
+        id: 'LIB-3-SAB',
+        grado: 3,
+        campo: 'Saberes y Pensamiento Científico',
+        titulo: 'Saberes y Pensamiento Científico: Química y Matemáticas (3.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Reacciones químicas en el entorno', 'Funciones cuadráticas', 'Salud y consumo'],
+        paginasRelevantes: 'Págs. 40-72 (Tabla periódica y enlaces), Págs. 130-160 (Trigonometría)'
+      },
+      {
+        id: 'LIB-3-PROY',
+        grado: 3,
+        campo: 'Interdisciplinar',
+        titulo: 'Nuestro Libro de Proyectos (Tomo 3 - 3.er Grado)',
+        editorial: 'SEP / Conaliteg',
+        proyectosSugeridos: ['Proyectos de impacto comunitario final', 'ABP y Aprendizaje Servicio'],
+        paginasRelevantes: 'Págs. 20-55 (Rúbricas de evaluación formativa y productos comunitarios)'
+      }
+    ];
+
+    function abrirModalLibrosSEP_() {
+      const gradoSel = parseInt((document.getElementById('planGrado') && document.getElementById('planGrado').value) || '1', 10);
+      const campoSel = (document.getElementById('planCampoFormativo') && document.getElementById('planCampoFormativo').value) || '';
+
+      const filtrados = CATALOGO_LIBROS_SEP_FASE6_.filter(function (l) {
+        return l.grado === gradoSel || l.campo === campoSel || l.campo === 'Interdisciplinar';
+      });
+
+      let itemsHtml = '';
+      filtrados.forEach(function (lib, idx) {
+        itemsHtml += '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;margin-bottom:8px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+            '<div>' +
+              '<span style="font-size:10px;font-weight:800;color:#1e40af;background:#dbeafe;padding:1px 6px;border-radius:4px;">' + escaparHtml(lib.campo) + ' • ' + lib.grado + '°</span>' +
+              '<h4 style="margin:4px 0 2px;font-size:13px;color:#0f172a;">' + escaparHtml(lib.titulo) + '</h4>' +
+              '<p style="font-size:11px;color:#64748b;margin:0 0 4px;">Editorial: ' + escaparHtml(lib.editorial) + ' | ' + escaparHtml(lib.paginasRelevantes) + '</p>' +
+              '<div style="font-size:10.5px;color:#15803d;">💡 Sugerencias: ' + escaparHtml(lib.proyectosSugeridos.join(', ')) + '</div>' +
+            '</div>' +
+            '<button type="button" class="btn-soft-primary" onclick="insertarReferenciaLibroSesion_(' + idx + ')" style="font-size:11px;padding:4px 8px;white-space:nowrap;">' +
+              '📥 Vincular' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      });
+
+      const modalHtml = '<div style="max-height:420px;overflow-y:auto;padding-right:4px;">' +
+        '<p style="font-size:12px;color:#475569;margin:0 0 10px;">' +
+          'Selecciona un libro de texto oficial de la SEP Fase 6 para insertar su vinculación curricular y páginas sugeridas en la sesión activa:' +
+        '</p>' +
+        '<div>' + itemsHtml + '</div>' +
+      '</div>';
+
+      modal({
+        titulo: '📚 Catálogo de Libros de Texto Gratuitos SEP Fase 6',
+        html: modalHtml,
+        botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+      });
+    }
+
+    function insertarReferenciaLibroSesion_(idx) {
+      const gradoSel = parseInt((document.getElementById('planGrado') && document.getElementById('planGrado').value) || '1', 10);
+      const campoSel = (document.getElementById('planCampoFormativo') && document.getElementById('planCampoFormativo').value) || '';
+      const filtrados = CATALOGO_LIBROS_SEP_FASE6_.filter(function (l) {
+        return l.grado === gradoSel || l.campo === campoSel || l.campo === 'Interdisciplinar';
+      });
+      const libro = filtrados[idx];
+      if (!libro) return;
+
+      const refTexto = '\n\n[Referencia SEP Fase 6]: ' + libro.titulo + ' (' + libro.paginasRelevantes + '). Proyectos recomendados: ' + libro.proyectosSugeridos.join('; ') + '.';
+      const sesDesarrollo = document.getElementById('sesDesarrollo');
+      if (sesDesarrollo) {
+        sesDesarrollo.value = (sesDesarrollo.value ? sesDesarrollo.value.trim() : '') + refTexto;
+        sesDesarrollo.focus();
+      }
+      toast('Referencia del libro SEP vinculada a la sesión.', 'ok');
+    }
+
+    /* ============================================================
+       BLOQUES MODULARES IDEVICES TIPO EXELearning
+       ============================================================ */
+    function eliminarIDeviceCard_(btn) {
+      if (!btn) return;
+      const c = btn.closest('.idevice-card');
+      if (c) c.remove();
+    }
+
+    function eliminarLegoCard_(btn) {
+      if (!btn) return;
+      const c = btn.closest('.lego-card');
+      if (c) c.remove();
+    }
+
+    function insertariDeviceSesion_(tipo) {
+      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
+      if (!contenedor) return;
+
+      const idUnico = 'idevice_' + Date.now();
+      const div = document.createElement('div');
+
+      if (tipo === 'lectura') {
+        div.className = 'idevice-card idevice-card-audio';
+        div.id = idUnico;
+        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="tipo-badge" style="background:#0284c7;color:#fff;">iDevice Lectura Guiada (DUA)</span>' +
+            '<strong style="font-size:12px;color:#0369a1;">Texto narrado con audio accesible</strong>' +
+          '</div>' +
+          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
+        '</div>' +
+        '<input type="text" placeholder="Título de la lectura breve..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;">' +
+        '<textarea id="txtLectura_' + idUnico + '" rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Escribe el párrafo que los alumnos leerán y escucharán..."></textarea>' +
+        '<div style="display:flex;gap:6px;margin-top:4px;">' +
+          '<button type="button" class="btn-soft-primary" onclick="probarAudioIDevice_(\'' + idUnico + '\')" style="font-size:11px;padding:3px 8px;">🔊 Escuchar con Web Speech</button>' +
+        '</div>';
+      } else if (tipo === 'pregunta') {
+        div.className = 'idevice-card idevice-card-pregunta';
+        div.id = idUnico;
+        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="tipo-badge" style="background:#7c3aed;color:#fff;">iDevice Pregunta Formativa</span>' +
+            '<strong style="font-size:12px;color:#6d28d9;">Reactivo detonador de reflexión</strong>' +
+          '</div>' +
+          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
+        '</div>' +
+        '<input type="text" placeholder="¿Qué pregunta detonadora plantearás a los estudiantes?..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;">' +
+        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Retroalimentación formativa y criterios esperados de respuesta..."></textarea>';
+      } else if (tipo === 'reto') {
+        div.className = 'idevice-card idevice-card-reto';
+        div.id = idUnico;
+        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="tipo-badge" style="background:#16a34a;color:#fff;">iDevice Desafío Práctico</span>' +
+            '<strong style="font-size:12px;color:#15803d;">Actividad comunitaria situada</strong>' +
+          '</div>' +
+          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
+        '</div>' +
+        '<input type="text" placeholder="Nombre del reto o producto esperado de la sesión..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;">' +
+        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad..."></textarea>';
+      }
+
+      contenedor.appendChild(div);
+      toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
+    }
+
+    function probarAudioIDevice_(btn) {
+      let texto = '';
+      if (btn && btn.closest) {
+        const card = btn.closest('.idevice-card');
+        const txtEl = card ? card.querySelector('textarea') : null;
+        texto = txtEl ? txtEl.value.trim() : '';
+      }
+      if (!texto) texto = 'Por favor escribe un texto en el bloque de lectura para escucharlo.';
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(texto);
+        u.lang = 'es-MX';
+        u.rate = 1.0;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+
+  // Puente para la barra de navegación Ribbon N2 de Planeación
+  function conmutarVistaPlaneacion_(vista, btn) {
+    tokenClase = getTokenPlan_();
+    if (!btn) {
+      if (vista === 'horario') btn = document.getElementById('btnSubPlanHorario');
+      else if (vista === 'personal') btn = document.getElementById('btnSubPlanBancoPersonal');
+      else if (vista === 'global') btn = document.getElementById('btnSubPlanBancoGlobal');
+    }
+    document.querySelectorAll('#menuPlanTabs .ribbon-btn').forEach(function (b) { b.classList.remove('activo', 'activa'); });
+    if (btn) btn.classList.add('activo');
+    window.subPlanActual = vista;
+    if (typeof subPlanActual !== 'undefined') subPlanActual = vista;
+
+    const vistaMae = document.getElementById('vistaMae');
+    if (vistaMae) vistaMae.classList.remove('oculto');
+    const tabClases = document.getElementById('tabClases');
+    const tabPlaneacion = document.getElementById('tabPlaneacion');
+    const cintaClase = document.getElementById('cintaClase');
+    const cajaLista = document.getElementById('cajaListaPlanNEM');
+    const cajaForm = document.getElementById('cajaFormPlanNEM');
+    const cajaSes = document.getElementById('cajaSesionesPlanNEM');
+
+    if (vista === 'horario') {
+      if (tabClases) tabClases.classList.remove('oculto');
+      if (tabPlaneacion) tabPlaneacion.classList.add('oculto');
+      if (cintaClase) cintaClase.classList.remove('oculto');
+      const n3c = document.getElementById('n3Clases');
+      if (n3c) n3c.classList.remove('oculto');
+      const fe = document.getElementById('fechaMaeClase');
+      if (fe && !fe.value) fe.value = fechaLocalClase();
+      toggleHorarioMae(true);
+      cargarHorarioMae();
+    } else if (vista === 'personal') {
+      if (tabClases) tabClases.classList.add('oculto');
+      if (tabPlaneacion) tabPlaneacion.classList.remove('oculto');
+      if (cajaLista) cajaLista.classList.remove('oculto');
+      if (cajaForm) cajaForm.classList.add('oculto');
+      if (cajaSes) cajaSes.classList.add('oculto');
+      conmutarBancoPlaneacion_('personal');
+    } else if (vista === 'global') {
+      if (tabClases) tabClases.classList.add('oculto');
+      if (tabPlaneacion) tabPlaneacion.classList.remove('oculto');
+      if (cajaLista) cajaLista.classList.remove('oculto');
+      if (cajaForm) cajaForm.classList.add('oculto');
+      if (cajaSes) cajaSes.classList.add('oculto');
+      conmutarBancoPlaneacion_('global');
+    }
+
+    if (typeof ribbonColapsarTrasN2 === 'function') {
+      ribbonColapsarTrasN2();
+    }
+  }
+
+  function abrirFormNuevaPlaneacionNEM() {
+    tokenClase = getTokenPlan_();
+    const vistaMae = document.getElementById('vistaMae');
+    if (vistaMae) vistaMae.classList.remove('oculto');
+    const tabClases = document.getElementById('tabClases');
+    const tabPlaneacion = document.getElementById('tabPlaneacion');
+    if (tabClases) tabClases.classList.add('oculto');
+    if (tabPlaneacion) tabPlaneacion.classList.remove('oculto');
+
+    document.querySelectorAll('#menuPlanTabs .ribbon-btn').forEach(function (b) { b.classList.remove('activo', 'activa'); });
+    const btnNueva = document.getElementById('btnSubPlanNueva');
+    if (btnNueva) btnNueva.classList.add('activo');
+    window.subPlanActual = 'nueva';
+    if (typeof subPlanActual !== 'undefined') subPlanActual = 'nueva';
+
+    const form = document.getElementById('cajaFormPlanNEM');
+    const lista = document.getElementById('cajaListaPlanNEM');
+    const ses = document.getElementById('cajaSesionesPlanNEM');
+    if (form) form.classList.remove('oculto');
+    if (lista) lista.classList.add('oculto');
+    if (ses) ses.classList.add('oculto');
+
+    if (typeof abrirFormNuevaPlaneacion === 'function') {
+      abrirFormNuevaPlaneacion();
+    }
+
+    if (typeof ribbonColapsarTrasN2 === 'function') {
+      ribbonColapsarTrasN2();
+    }
+  }
+
+  function inicializarModuloPlaneacion_() {
+    tokenClase = getTokenPlan_();
+    const vistaMae = document.getElementById('vistaMae');
+    if (vistaMae) vistaMae.classList.remove('oculto');
+    const tabClases = document.getElementById('tabClases');
+    const tabPlaneacion = document.getElementById('tabPlaneacion');
+    if (tabClases) tabClases.classList.add('oculto');
+    if (tabPlaneacion) tabPlaneacion.classList.add('oculto');
+    document.querySelectorAll('#menuPlanTabs .ribbon-btn').forEach(function (b) { b.classList.remove('activo', 'activa'); });
+    window.subPlanActual = '';
+    if (typeof subPlanActual !== 'undefined') subPlanActual = '';
+
+    if (typeof cargarContextoPlaneacionNEM === 'function') {
+      cargarContextoPlaneacionNEM();
+    }
+    if (typeof cargarListaPlaneacionesNEM === 'function') {
+      cargarListaPlaneacionesNEM();
+    }
+  }
+</script>

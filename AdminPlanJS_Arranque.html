@@ -1,0 +1,61 @@
+<script>
+/* AdminPlanJS_Arranque — sentencias de nivel superior en su orden original */
+
+    window.cerrarFormPlaneacion = cerrarFormPlaneacion;
+
+    /* ATAJOS DE TECLADO ACCESIBLES EN AULA HABLADA */
+    document.addEventListener('keydown', function (ev) {
+      const vistaAlu = document.getElementById('vistaAlu');
+      if (!vistaAlu || vistaAlu.classList.contains('oculto')) return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].indexOf((ev.target && ev.target.tagName) || '') >= 0) return;
+
+      if (ev.code === 'Space') {
+        ev.preventDefault();
+        pausarClase();
+      } else if (ev.key === 'j' || ev.key === 'J') {
+        cambiarVelocidadClase(-0.1);
+      } else if (ev.key === 'l' || ev.key === 'L') {
+        cambiarVelocidadClase(0.1);
+      } else if (ev.key === 'Escape') {
+        detenerClaseAlu();
+      } else if (ev.key === 'r' || ev.key === 'R') {
+        repetirClase();
+      }
+    });
+    if (campoClaveClase) campoClaveClase.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') entrarClase();
+    });
+    if (campoUsuarioClase) campoUsuarioClase.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' && campoClaveClase) campoClaveClase.focus();
+    });
+      window.addEventListener('click', function (ev) {
+      /* asi-dd-panel-global-closer */
+      if (!ev.target.closest('.asi-dd')) {
+        document.querySelectorAll('.asi-dd-panel').forEach(function (p) { p.classList.add('oculto'); });
+      }
+    });
+    if (typeof prepararVocesClase_ === 'function') {
+      prepararVocesClase_();
+      if (window.speechSynthesis && typeof window.speechSynthesis.addEventListener === 'function') {
+        window.speechSynthesis.addEventListener('voiceschanged', prepararVocesClase_);
+      }
+    }
+    window.conmutarModuloShell = conmutarModuloShell;
+
+    try {
+      if (localStorage.getItem('ST90_SIDEBAR_COLAPSADO') === '1') {
+        setTimeout(function () {
+          const s = document.getElementById('appShellSidebar');
+          if (s) s.classList.add('colapsado');
+        }, 50);
+      }
+    } catch (e) {}
+    window.irAPasoPlanNEM = irAPasoPlanNEM;
+
+    // Sincronizar estilo seleccionado de chips de ejes articuladores
+    document.addEventListener('change', function(e) {
+      if (e.target && e.target.type === 'checkbox' && e.target.closest && e.target.closest('#wrapEjesPlan')) {
+        const chip = e.target.closest('.nem-eje-chip');
+        if (chip) chip.classList.toggle('seleccionado', e.target.checked);
+      }
+    });</script>

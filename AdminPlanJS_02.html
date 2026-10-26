@@ -1,0 +1,643 @@
+<script>
+/* AdminPlanJS_02 — cambiarGradoPassAlu, cambiarGrupoPassAlu, coincideGrupoLocal_, filtrarTablaPassLocal, renderTablaPassAlu_, generarClaveUnicaAlu, generarClavesMasivasAlu, copiarCredencialAlu, copiarFallback_, ponerClaveAlu, ... */
+
+
+    function cambiarGradoPassAlu() {
+      actualizarGruposPassDropdown_();
+      filtrarTablaPassLocal();
+    }
+
+    function cambiarGrupoPassAlu() {
+      filtrarTablaPassLocal();
+    }
+
+    function coincideGrupoLocal_(alumno, grFiltro, gpFiltro) {
+      const grA = String(alumno.grado || '').trim();
+      const gpA = String(alumno.grupo || '').trim().toUpperCase();
+      const etqA = String(alumno.grupoEtq || (grA + gpA)).trim().toUpperCase();
+      const grF = String(grFiltro || '').trim();
+      let gpF = String(gpFiltro || '').trim().toUpperCase();
+
+      if (grF && grA !== grF) return false;
+      if (!gpF) return true;
+
+      if (gpF.indexOf('|') >= 0) {
+        const partes = gpF.split('|');
+        if (partes[0].trim() && grA !== partes[0].trim()) return false;
+        gpF = partes[1].trim().toUpperCase();
+      }
+
+      let letraF = gpF;
+      if (grF && letraF.indexOf(grF) === 0) {
+        letraF = letraF.substring(grF.length).replace(/^[-_°\s]+/, '');
+      }
+
+      return (etqA === gpF) ||
+             (gpA === gpF) ||
+             (gpA === letraF) ||
+             (etqA === (grA + letraF));
+    }
+
+    function filtrarTablaPassLocal() {
+      const busc = ((document.getElementById('buscAluPass') || {}).value || '').trim().toLowerCase();
+      const g = ((document.getElementById('filtroGradoPass') || {}).value || '').trim();
+      const gp = ((document.getElementById('filtroGrupoPass') || {}).value || '').trim();
+
+      const filtrados = (listaAlumnosPassCache || []).filter(function (a) {
+        if (!coincideGrupoLocal_(a, g, gp)) return false;
+        if (busc) {
+          const nom = String(a.nombre || '').toLowerCase();
+          const mat = String(a.matricula || '').toLowerCase();
+          const usu = String(a.usuario || '').toLowerCase();
+          if (nom.indexOf(busc) < 0 && mat.indexOf(busc) < 0 && usu.indexOf(busc) < 0) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      renderTablaPassAlu_(filtrados);
+      pintarEtqFiltroPass_();
+    }
+
+    function renderTablaPassAlu_(filas) {
+      const txtConteo = document.getElementById('txtAluPassConteo');
+      if (txtConteo) {
+        txtConteo.textContent = 'Alumnos encontrados: ' + filas.length;
+      }
+      const caja = document.getElementById('cajaTablaAluPass');
+      if (!caja) return;
+      if (!filas.length) {
+        caja.innerHTML = '<p class="hint" style="text-align:center;">No hay alumnos que coincidan con los filtros o la búsqueda.</p>';
+        return;
+      }
+      let html = '<table class="tabla-acc"><thead><tr>' +
+        '<th style="width:30px;">#</th>' +
+        '<th>Alumno</th>' +
+        '<th>Grupo</th>' +
+        '<th>Usuario</th>' +
+        '<th>Contraseña</th>' +
+        '<th style="text-align:right;">Acciones</th>' +
+        '</tr></thead><tbody>';
+
+      html += filas.map(function (a, idx) {
+        const mat = String(a.matricula || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const usu = String(a.usuario || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const cla = String(a.clave || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const claveHtml = a.clave
+          ? ('<span class="dato-acc badge-pass">' + escaparHtml(a.clave) + '</span>')
+          : '<span style="color:#94a3b8;font-size:12px;">Sin contraseña</span>';
+
+        return '<tr>' +
+          '<td style="color:#94a3b8;font-size:12px;">' + (idx + 1) + '</td>' +
+          '<td><strong>' + escaparHtml(a.nombre) + '</strong><br><small style="color:#64748b;">Mat: ' + escaparHtml(a.matricula) + '</small></td>' +
+          '<td><span class="badge">' + escaparHtml((a.grado ? (a.grado + '° ') : '') + (a.grupo || '')) + '</span></td>' +
+          '<td><span class="dato-acc" style="color:var(--st90-azul);">' + escaparHtml(a.usuario || '—') + '</span></td>' +
+          '<td>' + claveHtml + '</td>' +
+          '<td style="text-align:right;white-space:nowrap;">' +
+            '<div style="display:inline-flex;gap:4px;">' +
+              '<button type="button" class="btn-secundario" onclick="generarClaveUnicaAlu(\'' + mat + '\')" title="Generar contraseña aleatoria individual">🎲 Aleatoria</button>' +
+              '<button type="button" class="btn-secundario" onclick="ponerClaveAlu(\'' + mat + '\',\'' + usu + '\',\'' + cla + '\')" title="Editar usuario y contraseña">✏️ Editar</button>' +
+              (a.clave ? ('<button type="button" class="btn-secundario" onclick="copiarCredencialAlu(\'' + usu + '\',\'' + cla + '\')" title="Copiar usuario y contraseña">📋</button>') : '') +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      html += '</tbody></table>';
+      caja.innerHTML = html;
+    }
+
+    function generarClaveUnicaAlu(matricula) {
+      toast('Generando contraseña aleatoria…', 'info');
+      gsRun('generarClavesAlumnosClase', tokenClase, '', '', 'alumno', matricula).then(function (r) {
+        toast((r && r.mensaje) || 'Contraseña generada.', 'ok');
+        cargarAlumnosPass(true);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function generarClavesMasivasAlu(modo) {
+      const g = (document.getElementById('filtroGradoPass') || {}).value || '';
+      const gp = (document.getElementById('filtroGrupoPass') || {}).value || '';
+
+      let pregunta = '';
+      if (modo === 'todos') {
+        pregunta = '¿Deseas generar contraseñas aleatorias para <strong>TODOS los grupos</strong>?<br><br><small style="color:#b91c1c;">Esta acción creará o renovará la contraseña de acceso de todos los alumnos activos.</small>';
+      } else {
+        const etq = (g ? (g + '° ') : '') + (gp || '');
+        if (!etq) {
+          toast('Por favor selecciona primero un grado o grupo en los filtros superiores.', 'error');
+          return;
+        }
+        pregunta = '¿Deseas generar contraseñas aleatorias para los alumnos de <strong>' + escaparHtml(etq) + '</strong>?';
+      }
+
+      modal({
+        titulo: 'Generar contraseñas aleatorias',
+        html: '<p style="margin:0 0 12px;font-size:14px;line-height:1.45;">' + pregunta + '</p>',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Sí, generar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) { return val; }
+      }).then(function (confirmo) {
+        if (!confirmo) return;
+        toast('Generando contraseñas aleatorias, por favor espera…', 'info');
+        gsRun('generarClavesAlumnosClase', tokenClase, g, gp, modo, '').then(function (r) {
+          toast((r && r.mensaje) || 'Contraseñas generadas correctamente.', 'ok');
+          cargarAlumnosPass(true);
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    function copiarCredencialAlu(usuario, clave) {
+      const texto = 'Usuario: ' + usuario + '\nContraseña: ' + clave;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(function () {
+          toast('Credenciales copiadas al portapapeles.', 'ok');
+        }).catch(function () {
+          copiarFallback_(texto);
+        });
+      } else {
+        copiarFallback_(texto);
+      }
+    }
+
+    function copiarFallback_(texto) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('Credenciales copiadas al portapapeles.', 'ok');
+      } catch (e) {
+        toast('Credenciales: ' + texto, 'info');
+      }
+    }
+
+    function ponerClaveAlu(mat, usuario, clave) {
+      modal({
+        titulo: 'Cambiar acceso del alumno',
+        html: '<label for="usuClaveAlu">Usuario</label><input id="usuClaveAlu" type="text" value="' + escaparHtml(usuario || '') + '" autocomplete="off">' +
+          '<label for="passClaveAlu">Contraseña (mín. 6)</label><input id="passClaveAlu" type="text" value="' + escaparHtml(clave || '') + '" autocomplete="off">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            usuario: (fondo.querySelector('#usuClaveAlu') || {}).value || '',
+            clave: (fondo.querySelector('#passClaveAlu') || {}).value || ''
+          };
+        }
+      }).then(function (datos) {
+        if (!datos) return;
+        gsRun('asignarClaveAlumnoClase', tokenClase, mat, datos.usuario, datos.clave).then(function (r) {
+          toast((r && r.mensaje) || 'Listo.', 'ok');
+          cargarHorarioMae();
+          if (document.getElementById('tabAluAcc') && !document.getElementById('tabAluAcc').classList.contains('oculto')) {
+            cargarAlumnosPass(true);
+          }
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    
+
+  function cargarContextoPlaneacionNEM() {
+      gsRun('contextoInicialPlaneacionNEM', tokenClase).then(function (r) {
+        ctxPlanNEM = r || {};
+        poblarFiltrosPlan_();
+        cargarListaPlaneacionesNEM();
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function poblarFiltrosPlan_() {
+      if (!ctxPlanNEM) return;
+      const selG = document.getElementById('selPlanGrupo');
+      if (selG) {
+        const grupos = ctxPlanNEM.grupos || [];
+        selG.innerHTML = '<option value="">Todos los grupos</option>' + grupos.map(function (g) {
+          return '<option value="' + escaparHtml(g) + '">' + escaparHtml(g) + '</option>';
+        }).join('');
+      }
+    }
+
+    function alCambiarFiltroPlan() {
+      const g = (document.getElementById('selPlanGrado') || {}).value || '';
+      const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
+      const lblG = document.getElementById('lblPlanGrado');
+      const lblGrp = document.getElementById('lblPlanGrupo');
+      if (lblG) lblG.textContent = g ? (g + '°') : 'Grado';
+      if (lblGrp) lblGrp.textContent = grp ? grp : 'Grupo';
+      cargarListaPlaneacionesNEM();
+    }
+
+    let bancoPlanActual = 'personal';
+
+    function conmutarBancoPlaneacion_(banco) {
+      bancoPlanActual = banco;
+      const btnPer = document.getElementById('btnBancoPersonal');
+      const btnGlo = document.getElementById('btnBancoGlobal');
+      const bannerGlo = document.getElementById('bannerRepositorioGlobal');
+      const wrapDoc = document.getElementById('wrapPlanFiltroDocente');
+      const titCat = document.getElementById('titCatalogoPlan');
+
+      if (banco === 'global') {
+        if (btnPer) { btnPer.classList.remove('activo'); btnPer.style.background = 'transparent'; btnPer.style.color = '#475569'; }
+        if (btnGlo) { btnGlo.classList.add('activo'); btnGlo.style.background = '#ffffff'; btnGlo.style.color = 'var(--st90-azul)'; }
+        if (bannerGlo) bannerGlo.classList.remove('oculto');
+        if (wrapDoc) wrapDoc.classList.remove('oculto');
+        if (titCat) titCat.textContent = 'Repositorio Escolar Global — Proyectos Colegiados Publicados';
+      } else {
+        if (btnGlo) { btnGlo.classList.remove('activo'); btnGlo.style.background = 'transparent'; btnGlo.style.color = '#475569'; }
+        if (btnPer) { btnPer.classList.add('activo'); btnPer.style.background = '#ffffff'; btnPer.style.color = 'var(--st90-azul)'; }
+        if (bannerGlo) bannerGlo.classList.add('oculto');
+        if (wrapDoc) wrapDoc.classList.add('oculto');
+        if (titCat) titCat.textContent = 'Mi Banco Personal de Proyectos y Planeaciones (NEM Fase 6)';
+      }
+      cargarListaPlaneacionesNEM();
+    }
+
+    function cargarListaPlaneacionesNEM(forzar) {
+      const g = (document.getElementById('selPlanGrado') || {}).value || '';
+      const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
+      const asig = (document.getElementById('selPlanAsignatura') || {}).value || '';
+      const trim = (document.getElementById('selPlanTrimestre') || {}).value || '';
+      const doc = (document.getElementById('inpPlanDocente') || {}).value || '';
+
+      const grid = document.getElementById('gridPlaneaciones');
+      if (grid) grid.innerHTML = '<p class="hint" style="text-align:center;">Cargando planeaciones didácticas…</p>';
+
+      const opciones = {
+        banco: bancoPlanActual,
+        grado: g,
+        grupo: grp,
+        asignatura: asig,
+        trimestre: trim,
+        docente: doc
+      };
+
+      gsRun('listarPlaneacionesNEM', tokenClase, opciones).then(function (res) {
+        listaPlanNEM = (res && res.planeaciones) || [];
+        pintarGridPlaneaciones(listaPlanNEM);
+      }).catch(function (e) {
+        if (grid) grid.innerHTML = '<p class="hint" style="color:var(--st90-rojo);text-align:center;">' + escaparHtml((e && e.message) || String(e)) + '</p>';
+      });
+    }
+
+    function pintarGridPlaneaciones(lista) {
+      const grid = document.getElementById('gridPlaneaciones');
+      const txtConteo = document.getElementById('txtPlanConteo');
+      if (!grid) return;
+      if (txtConteo) txtConteo.textContent = lista.length + (lista.length === 1 ? ' planeación' : ' planeaciones');
+
+      if (!lista || !lista.length) {
+        const esGlobal = (bancoPlanActual === 'global');
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px 16px;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">' +
+          '<p style="font-size:16px;font-weight:700;color:#334155;margin:0 0 6px;">' +
+            (esGlobal ? 'No hay proyectos publicados en el Repositorio Global con estos filtros' : 'No hay planeaciones registradas en tu Banco Personal con estos filtros') +
+          '</p>' +
+          '<p class="hint" style="margin:0 0 14px;">' +
+            (esGlobal ? 'Los proyectos aparecerán aquí cuando los docentes completen sus sesiones didácticas y las publiquen.' : 'Pulsa el botón "Nueva" para crear tu primer proyecto didáctico o clona uno desde el Repositorio Global.') +
+          '</p>' +
+          (esGlobal 
+            ? '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="conmutarBancoPlaneacion_(\'personal\')">← Ir a Mi Banco Personal</button>' 
+            : '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="abrirFormNuevaPlaneacion()">+ Nueva Planeación</button>') +
+        '</div>';
+        return;
+      }
+
+      let html = '';
+      lista.forEach(function (p) {
+        const pId = p.Id || p.id || '';
+        const pTitulo = p.Titulo || p.titulo || 'Sin título';
+        const est = String(p.Estado || p.estado || 'BORRADOR').toUpperCase();
+        const docProp = p.DocentePropietario || p.docentePropietario || p.Docente || p.docente || 'Docente ST90';
+        const esCopia = p.EsCopiaDe || p.esCopiaDe || '';
+        const puedeEditar = !!p.puedeEditar;
+        const numSes = Number(p.NumSesiones || p.numSesiones || '3');
+        const comp = Number(p.sesionesCompletadas || 0);
+
+        let claseBadge = 'badge-borrador';
+        if (est === 'PUBLICADA' || est === 'APROBADO' || est === 'TERMINADA') claseBadge = 'badge-aprobado';
+        else if (est === 'PROGRAMADO') claseBadge = 'badge-programado';
+        else if (est === 'REALIZADO') claseBadge = 'badge-realizado';
+
+        html += '<div class="nem-card" style="display:flex;flex-direction:column;justify-content:space-between;">';
+        html += '<div>';
+        html += '  <div class="nem-card-header">';
+        html += '    <h3 class="nem-card-title">' + escaparHtml(pTitulo) + '</h3>';
+        html += '    <span class="badge-nem ' + claseBadge + '">' + escaparHtml(est) + '</span>';
+        html += '  </div>';
+
+        // Badge de autor y procedencia
+        html += '  <div style="margin:4px 0 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">';
+        html += '    <span class="tipo-badge" style="background:#e0e7ff;color:#3730a3;font-size:11px;">👨‍🏫 ' + escaparHtml(docProp) + '</span>';
+        if (esCopia) {
+          html += '    <span class="tipo-badge" style="background:#fef3c7;color:#92400e;font-size:10.5px;">📋 Copia adaptada</span>';
+        }
+        html += '  </div>';
+
+        html += '  <div class="nem-meta-row">';
+        html += '    <span class="nem-meta-pill">📚 ' + escaparHtml(p.Asignatura || p.asignatura || '') + '</span>';
+        html += '    <span class="nem-meta-pill">👥 ' + escaparHtml((p.Grado || p.grado || '') + '°' + (p.Grupo || p.grupo || '')) + '</span>';
+        html += '    <span class="nem-meta-pill">⏱️ ' + escaparHtml(numSes) + ' sesiones</span>';
+        html += '  </div>';
+
+        html += '  <div class="nem-meta-row">';
+        html += '    <span class="nem-meta-pill" style="color:var(--st90-azul);">🌐 ' + escaparHtml(p.CampoFormativo || p.campoFormativo || 'Campo NEM') + '</span>';
+        const per = p.Periodo || p.periodo;
+        if (per) {
+          html += '    <span class="nem-meta-pill" style="color:#0f766e;background:#ccfbf1;">🗓️ ' + escaparHtml(per) + '</span>';
+        }
+        html += '  </div>';
+
+        const pdaTxt = p.PDA || p.pda || '';
+        if (pdaTxt) {
+          html += '  <p class="nem-card-pda" title="' + escaparHtml(pdaTxt) + '"><strong>PDA:</strong> ' + escaparHtml(pdaTxt) + '</p>';
+        }
+        html += '</div>';
+
+        // Footer con botones según contexto de Banco Personal vs Global
+        html += '<div class="nem-card-footer" style="display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0;">';
+        
+        if (bancoPlanActual === 'global') {
+          // Acciones en Banco Global: Copiar a mi Banco y Ver Sesiones
+          html += '  <button type="button" class="nem-btn-accion nem-btn-primario" style="width:100%;text-align:center;background:#059669;border-color:#059669;" onclick="copiarProyectoGlobalAMiBanco_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\')">📥 Copiar a mi Banco Personal</button>';
+          html += '  <button type="button" class="nem-btn-accion" style="width:100%;text-align:center;" onclick="abrirGestorSesiones(\'' + escaparHtml(pId) + '\')">👁️ Explorar Sesiones (' + escaparHtml(numSes) + ')</button>';
+        } else {
+          // Acciones en Banco Personal del docente creador
+          html += '  <div style="display:flex;gap:6px;width:100%;">';
+          html += '    <button type="button" class="nem-btn-accion nem-btn-primario" style="flex:1;" onclick="abrirGestorSesiones(\'' + escaparHtml(pId) + '\')">Sesiones (' + escaparHtml(numSes) + ')</button>';
+          if (puedeEditar) {
+            html += '    <button type="button" class="nem-btn-accion" style="flex:1;" onclick="editarPlaneacionGeneral(\'' + escaparHtml(pId) + '\')">Editar</button>';
+          }
+          html += '  </div>';
+
+          html += '  <div style="display:flex;gap:6px;width:100%;">';
+          if (puedeEditar && est !== 'PUBLICADA') {
+            html += '    <button type="button" class="nem-btn-accion" style="flex:1;background:#f0fdf4;color:#166534;border-color:#bbf7d0;font-weight:700;" onclick="publicarProyectoEnGlobal_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\', ' + numSes + ', ' + comp + ')" title="Publicar este proyecto didáctico terminado al Repositorio Global Escolar">🚀 Publicar Global</button>';
+          }
+          if (puedeEditar) {
+            html += '    <button type="button" class="nem-btn-accion" style="color:#dc2626;border-color:#fecaca;padding:4px 8px;" onclick="eliminarProyectoPersonal_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\')" title="Eliminar del Banco Personal">🗑️</button>';
+          }
+          html += '  </div>';
+        }
+
+        html += '</div>';
+        html += '</div>';
+      });
+
+      grid.innerHTML = html;
+    }
+
+    /* ============================================================
+       OPERACIONES COLEGIALES: CLONAR, PUBLICAR Y ELIMINAR PLANEACIONES
+       ============================================================ */
+    function copiarProyectoGlobalAMiBanco_(idPlan, titulo) {
+      modal({
+        titulo: '📥 Copiar al Banco Personal',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.6;">' +
+          '<p>¿Deseas clonar el proyecto didáctico <strong>' + escaparHtml(titulo) + '</strong> a tu Banco Personal?</p>' +
+          '<p style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 12px;color:#166534;font-size:12px;">' +
+            '✨ <strong>Reglas Colegiadas:</strong> Se generará una copia 100% independiente con todas sus sesiones y momentos didácticos para que puedas adaptarla a tus alumnos sin alterar el proyecto original del colega.' +
+          '</p>' +
+        '</div>',
+        botones: [
+          { texto: 'Cancelar', clase: 'btn-secundario', valor: false },
+          { texto: 'Copiar a mi Banco', clase: 'btn-primario', valor: true }
+        ]
+      }).then(function (conf) {
+        if (!conf) return;
+        toast('Clonando proyecto didáctico...', 'info');
+        gsRun('clonarPlaneacionAGlobal', tokenClase, idPlan).then(function (res) {
+          toast(res.mensaje || 'Planeación clonada con éxito.', 'ok');
+          conmutarBancoPlaneacion_('personal');
+        }).catch(function (err) {
+          toast((err && err.message) || String(err), 'error');
+        });
+      });
+    }
+
+    function publicarProyectoEnGlobal_(idPlan, titulo, numSes, comp) {
+      modal({
+        titulo: '🚀 Publicar en el Repositorio Global',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.6;">' +
+          '<p>Estás a punto de publicar el proyecto <strong>' + escaparHtml(titulo) + '</strong> en el Repositorio Colegiado de la Secundaria Técnica 90.</p>' +
+          '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 12px;color:#1e40af;font-size:12px;margin-bottom:10px;">' +
+            '📋 <strong>Validación de Calidad Pedagógica:</strong><br>' +
+            '• Todas las sesiones (' + numSes + ') deben tener sus momentos didácticos completos (Apertura, Desarrollo, Actividad, Cierre).<br>' +
+            '• Guion accesible e iDevices para lectura/escucha del estudiante.' +
+          '</div>' +
+          '<p>Al publicar, tus colegas podrán inspirarse en tu diseño didáctico y copiarlo a sus respectivos bancos de planeación.</p>' +
+        '</div>',
+        botones: [
+          { texto: 'Aún no', clase: 'btn-secundario', valor: false },
+          { texto: 'Publicar Ahora', clase: 'btn-primario', valor: true }
+        ]
+      }).then(function (conf) {
+        if (!conf) return;
+        toast('Verificando sesiones y publicando...', 'info');
+        gsRun('publicarPlaneacionEnRepositorio', tokenClase, idPlan).then(function (res) {
+          toast(res.mensaje || '¡Proyecto publicado exitosamente en el Repositorio Global!', 'ok');
+          cargarListaPlaneacionesNEM();
+        }).catch(function (err) {
+          modal({
+            titulo: '⚠️ Sesiones Incompletas',
+            html: '<p style="color:#b91c1c;font-size:13px;line-height:1.5;">' + escaparHtml((err && err.message) || String(err)) + '</p>',
+            botones: [{ texto: 'Entendido', clase: 'btn-primario', valor: true }]
+          });
+        });
+      });
+    }
+
+    function eliminarProyectoPersonal_(idPlan, titulo) {
+      modal({
+        titulo: '🗑️ Eliminar Planeación',
+        html: '<p style="font-size:13px;color:#334155;">¿Estás seguro de que deseas eliminar permanentemente <strong>' + escaparHtml(titulo) + '</strong> y todas sus sesiones de tu Banco Personal?</p>',
+        botones: [
+          { texto: 'Cancelar', clase: 'btn-secundario', valor: false },
+          { texto: 'Eliminar', clase: 'btn-peligro', valor: true }
+        ]
+      }).then(function (conf) {
+        if (!conf) return;
+        toast('Eliminando planeación...', 'info');
+        gsRun('eliminarPlaneacionNEM', tokenClase, idPlan).then(function (res) {
+          toast(res.mensaje || 'Planeación eliminada.', 'ok');
+          cargarListaPlaneacionesNEM();
+        }).catch(function (err) {
+          toast((err && err.message) || String(err), 'error');
+        });
+      });
+    }
+
+    /* ============================================================
+       INYECCIÓN DEL CENSO ESCOLAR AL DIAGNÓSTICO CTE (#planProblema)
+       ============================================================ */
+    function abrirModalImportarCensoCTE_() {
+      const hallazgos = [
+        {
+          id: 'movilidad',
+          titulo: '🚲 Movilidad y Trayecto Seguro (Riesgo Vial)',
+          texto: 'El 68.4% de los alumnos de la comunidad escolar enfrenta factores de riesgo vial en cruces de alta afluencia vehicular (Av. Tláhuac y Calle 11) con tiempos de traslado superiores a 40 minutos, detonando fatiga y necesidad de proyectos comunitarios de seguridad vial y movilidad sustentable.'
+        },
+        {
+          id: 'lectura',
+          titulo: '📖 Hábitos de Lectura y Uso de Pantallas',
+          texto: 'Solo el 18.2% de los estudiantes lee por placer de forma habitual, dedicando un promedio de 4.8 horas diarias a redes sociales y videojuegos en dispositivos móviles, lo cual genera fatiga visual, bajo vocabulario de comprensión profunda y dispersión en la atención sostenida.'
+        },
+        {
+          id: 'convivencia',
+          titulo: '🤝 Convivencia Pacífica y Salud Emocional',
+          texto: 'El 42.1% del alumnado reporta necesidad de fortalecer habilidades de autorregulación emocional y comunicación asertiva para prevenir tensiones en el aula y el patio escolar, demandando proyectos didácticos orientados a la empatía, el diálogo reflexivo y la mediación pacífica.'
+        },
+        {
+          id: 'alimentacion',
+          titulo: '🥗 Alimentación Saludable y Entorno Sustentable',
+          texto: 'El 56.7% de los estudiantes consume alimentos ultraprocesados y bebidas azucaradas en el trayecto escolar, derivando en baja energía matutina y una alta generación de residuos plásticos en el perímetro del plantel, requiriendo proyectos de consumo responsable y nutrición comunitaria.'
+        }
+      ];
+
+      let opcionesHtml = '<div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;">';
+      hallazgos.forEach(function (h, idx) {
+        opcionesHtml += '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;cursor:pointer;transition:all .15s ease;" onmouseover="this.style.borderColor=\'#2563eb\';this.style.background=\'#eff6ff\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.background=\'#f8fafc\'" onclick="seleccionarHallazgoCensoModal_(' + idx + ')">';
+        opcionesHtml += '  <strong style="color:var(--st90-azul);font-size:13px;display:block;margin-bottom:4px;">' + escaparHtml(h.titulo) + '</strong>';
+        opcionesHtml += '  <p style="margin:0;color:#475569;line-height:1.45;">' + escaparHtml(h.texto) + '</p>';
+        opcionesHtml += '</div>';
+      });
+      opcionesHtml += '</div>';
+
+      window.__hallazgosCensoTemp = hallazgos;
+
+      modal({
+        titulo: '📊 Censo Escolar ST90: Hallazgos de Diagnóstico CTE',
+        html: '<div style="font-size:13px;color:#334155;line-height:1.5;margin-bottom:12px;">' +
+          '<p style="margin:0 0 10px;">Selecciona el hallazgo del censo escolar que fundamenta la situación-problema de tu proyecto didáctico para inyectarlo en el campo Problemática de la Comunidad:</p>' +
+          opcionesHtml +
+        '</div>',
+        botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+      });
+    }
+
+    function seleccionarHallazgoCensoModal_(idx) {
+      const lista = window.__hallazgosCensoTemp || [];
+      const item = lista[idx];
+      if (!item) return;
+
+      const txt = document.getElementById('planProblema');
+      if (txt) {
+        const actual = txt.value.trim();
+        txt.value = actual ? (actual + '\n\n' + item.texto) : item.texto;
+        txt.focus();
+      }
+      cerrarModal();
+      toast('Hallazgo del Censo importado exitosamente a la planeación.', 'ok');
+    }
+
+    /* ============================================================
+       BANCO DE ENCUESTAS: consulta e inyeccion en #planProblema
+       ============================================================ */
+    function abrirBancoEncuestas_() {
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (!res || !res.exito) { toast((res && res.mensaje) || 'No se pudo leer el banco.', 'err'); return; }
+          if (!res.items || !res.items.length) {
+            toast('Todavía no hay encuestas guardadas. Créalas desde el Constructor de Encuestas (🛠 → Guardar encuesta en el banco).', 'err');
+            return;
+          }
+          window.__bancoEncuestasTemp = res.items;
+          var html = '<div style="font-size:13px;color:#334155;line-height:1.5;margin-bottom:12px;">Elige la encuesta cuyos resultados quieres usar como situación-problema de tu proyecto:</div>';
+          html += '<div style="display:flex;flex-direction:column;gap:10px;">';
+          res.items.forEach(function (it, i) {
+            html += '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;cursor:pointer;" onmouseover="this.style.borderColor=\'#2563eb\';this.style.background=\'#eff6ff\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.background=\'#f8fafc\'" onclick="insertarResumenBanco_(' + i + ')">';
+            html += '<strong style="color:var(--st90-azul);font-size:13px;display:block;margin-bottom:2px;">' + escaparHtml(it.encuesta) + '</strong>';
+            html += '<span style="font-size:11px;color:#64748b;">' + escaparHtml(it.guardado) + ' · ' + it.respuestas + ' respuestas</span>';
+            html += '<div style="margin:6px 0 0;color:#475569;font-size:12px;white-space:pre-line;">' + escaparHtml(it.resumen || 'Sin resumen') + '</div>';
+            html += '</div>';
+          });
+          html += '</div>';
+          modal({
+            titulo: '📊 Banco de encuestas de la escuela',
+            html: html,
+            botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+          });
+        })
+        .withFailureHandler(function (err) { toast('Error: ' + err.message, 'err'); })
+        .listarBancoEncuestasPlaneacion();
+    }
+
+    function insertarResumenBanco_(indice) {
+      var lista = window.__bancoEncuestasTemp || [];
+      var item = lista[indice];
+      if (!item) return;
+      var txt = document.getElementById('planProblema');
+      if (txt) {
+        var actual = txt.value.trim();
+        var bloque = item.encuesta + ' (' + item.respuestas + ' respuestas):\n' + (item.resumen || '');
+        txt.value = actual ? (actual + '\n\n' + bloque) : bloque;
+        txt.focus();
+      }
+      cerrarModal();
+      toast('Resultados de la encuesta insertados en el Problema de la Comunidad.', 'ok');
+    }
+
+    function determinarTrimestreSEP(fechaString) {
+      if (!fechaString) return 'Trimestre 1 (Ago - Nov)';
+      const s = String(fechaString).trim();
+      let mes = 0;
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+        // Extracción directa sin desfase UTC de zona horaria
+        mes = parseInt(s.substring(5, 7), 10);
+      } else {
+        const d = new Date(s.indexOf('T') === -1 ? (s + 'T12:00:00') : s);
+        if (!isNaN(d.getTime())) {
+          mes = d.getMonth() + 1;
+        }
+      }
+
+      // Calendario Oficial SEP Educación Secundaria:
+      // Trimestre 1: Agosto (8) a Noviembre (11)
+      // Trimestre 2: Diciembre (12) a Marzo (3)
+      // Trimestre 3: Abril (4) a Julio (7)
+      if (mes >= 8 && mes <= 11) {
+        return 'Trimestre 1 (Ago - Nov)';
+      } else if (mes === 12 || (mes >= 1 && mes <= 3)) {
+        return 'Trimestre 2 (Dic - Mar)';
+      } else if (mes >= 4 && mes <= 7) {
+        return 'Trimestre 3 (Abr - Jul)';
+      }
+      return 'Trimestre 1 (Ago - Nov)';
+    }
+
+    function calcularPeriodoSegunFecha_(fechaStr) {
+      const etiqueta = determinarTrimestreSEP(fechaStr);
+      let periodoNum = 1;
+      let rango = 'Ago - Nov';
+      if (etiqueta.indexOf('Trimestre 2') >= 0) {
+        periodoNum = 2;
+        rango = 'Dic - Mar';
+      } else if (etiqueta.indexOf('Trimestre 3') >= 0) {
+        periodoNum = 3;
+        rango = 'Abr - Jul';
+      }
+      return {
+        periodo: periodoNum,
+        etiqueta: etiqueta,
+        rango: rango,
+        badge: '🗓️ ' + etiqueta
+      };
+    }</script>

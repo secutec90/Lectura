@@ -1,0 +1,629 @@
+<script>
+/* AdminPlanJS_05 — actualizarGruposFormPlan, editarPlaneacionGeneral, cargarDatosEnFormPlan_, cerrarFormPlaneacion, guardarPlaneacionForm, abrirGestorSesiones, cerrarGestorSesiones, pintarTabsSesiones, seleccionarSesionNEM, generarGuionDesdeMomentos, ... */
+
+
+    function actualizarGruposFormPlan(grupoSeleccionado) {
+      const g = String((document.getElementById('planGrado') || {}).value || '1').trim();
+      const sel = document.getElementById('planGrupo');
+      if (!sel) return;
+
+      const letrasSet = {};
+      // 1. Extraer grupos del panel maestro actual
+      if (panelMaeUlt && Array.isArray(panelMaeUlt.grupos)) {
+        panelMaeUlt.grupos.forEach(function (grp) {
+          const gr = String(grp.grado || (grp.clave && grp.clave.split('|')[0]) || '').trim();
+          const gp = String(grp.grupo || (grp.clave && grp.clave.split('|')[1]) || '').trim().replace(/^\d+/, '').toUpperCase();
+          if (!g || gr === g) {
+            if (gp) letrasSet[gp] = true;
+          }
+        });
+      }
+      // 2. Extraer grupos de ctxPlanNEM
+      if (ctxPlanNEM && Array.isArray(ctxPlanNEM.gruposDisponibles)) {
+        ctxPlanNEM.gruposDisponibles.forEach(function (grp) {
+          const gr = String(grp.grado || '').trim();
+          const gp = String(grp.grupo || '').trim().replace(/^\d+/, '').toUpperCase();
+          if (!g || gr === g) {
+            if (gp) letrasSet[gp] = true;
+          }
+        });
+      }
+      // 3. Garantizar siempre grupos secundarios completos A, B, C, D, E, F
+      ['A', 'B', 'C', 'D', 'E', 'F'].forEach(function (l) {
+        letrasSet[l] = true;
+      });
+
+      const letras = Object.keys(letrasSet).sort();
+      sel.innerHTML = letras.map(function (l) {
+        return '<option value="' + escaparHtml(l) + '">' + escaparHtml(l) + '</option>';
+      }).join('');
+
+      let target = String(grupoSeleccionado || sel.value || 'A').trim().replace(/^\d+/, '').toUpperCase();
+      if (!letrasSet[target]) target = letras[0] || 'A';
+      sel.value = target;
+    }
+
+    function editarPlaneacionGeneral(id) {
+      const p = (listaPlanNEM || []).find(function (item) { return (item.Id || item.id) === id; });
+      if (!p) {
+        gsRun('obtenerPlaneacionCompletaNEM', tokenClase, id).then(function (res) {
+          if (res && res.planeacion) cargarDatosEnFormPlan_(res.planeacion);
+        }).catch(function (e) { toast(e.message || String(e), 'error'); });
+        return;
+      }
+      cargarDatosEnFormPlan_(p);
+    }
+
+    function cargarDatosEnFormPlan_(p) {
+      origenFormPlan = 'personal';
+      const cajaLista = document.getElementById('cajaListaPlanNEM');
+      const cajaSes = document.getElementById('cajaSesionesPlanNEM');
+      const cajaForm = document.getElementById('cajaFormPlanNEM');
+      if (cajaLista) cajaLista.classList.add('oculto');
+      if (cajaSes) cajaSes.classList.add('oculto');
+      if (cajaForm) cajaForm.classList.remove('oculto');
+
+      const tit = document.getElementById('titFormPlan');
+      if (tit) tit.textContent = 'Editar Planeación Didáctica NEM';
+      document.getElementById('planId').value = p.Id || p.id || '';
+      document.getElementById('planIdHorario').value = p.IdHorario || p.idHorario || '';
+      document.getElementById('planTitulo').value = p.Titulo || p.titulo || '';
+      const gVal = String(p.Grado || p.grado || '1').trim();
+      const gpVal = String(p.Grupo || p.grupo || 'A').trim().replace(/^\d+/, '').toUpperCase();
+      document.getElementById('planGrado').value = gVal;
+      actualizarGruposFormPlan(gpVal);
+      document.getElementById('planGrupo').value = gpVal;
+      document.getElementById('planAsignatura').value = p.Asignatura || p.asignatura || '';
+      document.getElementById('planCampoFormativo').value = p.CampoFormativo || p.campoFormativo || 'Lenguajes';
+      document.getElementById('planMetodologia').value = p.Metodologia || p.metodologia || 'Aprendizaje basado en proyectos comunitarios';
+      document.getElementById('planNumSesiones').value = p.NumSesiones || p.numSesiones || 3;
+      document.getElementById('planContenidoSintetico').value = p.ContenidoSintetico || p.contenidoSintetico || '';
+      document.getElementById('planPDA').value = p.PDA || p.pda || '';
+      document.getElementById('planProblema').value = p.ProblemaComunidad || p.problemaComunidad || '';
+      document.getElementById('planProposito').value = p.Proposito || p.proposito || '';
+
+      const feVal = p.FechaInicio || p.fechaInicio || '';
+      document.getElementById('planFechaInicio').value = feVal;
+      const perVal = p.Periodo || p.periodo || '';
+      document.getElementById('planPeriodo').value = perVal;
+      if (feVal) {
+        alCambiarFechaInicioPlan();
+      }
+
+      const ejesArr = (p.EjesArticuladores || p.ejesArticuladores || '').split(',').map(function (s) { return s.trim(); });
+      document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
+        cb.checked = ejesArr.indexOf(cb.value) >= 0;
+        cb.closest('.nem-eje-chip').classList.toggle('seleccionado', cb.checked);
+      });
+
+      poblarSelectorHorarioPlan_(p.IdHorario || p.idHorario);
+
+      actualizarEncabezadoClaseNEM_({
+        asignatura: p.Asignatura || p.asignatura || '',
+        grado: gVal,
+        grupo: gpVal,
+        fecha: feVal,
+        periodo: perVal,
+        maestro: p.Docente || (slotMaeSel && slotMaeSel.maestro)
+      });
+      actualizarCatalogoPDAParaClase_(p.Asignatura || p.asignatura, gVal);
+      irAPasoPlanNEM(1);
+    }
+
+    function cerrarFormPlaneacion() {
+      const selCampo = document.getElementById('planCampoFormativo'); if (selCampo) selCampo.disabled = false;
+      const selMet = document.getElementById('planMetodologia'); if (selMet) selMet.disabled = false;
+      const cajaForm = document.getElementById('cajaFormPlanNEM');
+      const cajaSes = document.getElementById('cajaSesionesPlanNEM');
+      const cajaLista = document.getElementById('cajaListaPlanNEM');
+      if (cajaForm) cajaForm.classList.add('oculto');
+      if (cajaSes) cajaSes.classList.add('oculto');
+
+      if (origenFormPlan === 'horario') {
+        conmutarVistaPlaneacion_('horario', document.getElementById('btnSubPlanHorario'));
+      } else {
+        if (cajaLista) cajaLista.classList.remove('oculto');
+        conmutarVistaPlaneacion_('personal', document.getElementById('btnSubPlanBancoPersonal'));
+      }
+    }
+
+    function guardarPlaneacionForm(ev) {
+      if (ev) ev.preventDefault();
+      const id = (document.getElementById('planId') || {}).value || '';
+      const idHorario = (document.getElementById('planIdHorario') || {}).value || '';
+      const titulo = (document.getElementById('planTitulo') || {}).value || '';
+      const grado = (document.getElementById('planGrado') || {}).value || '';
+      const grupo = (document.getElementById('planGrupo') || {}).value || '';
+      const asig = (document.getElementById('planAsignatura') || {}).value || '';
+      const fechaInicio = (document.getElementById('planFechaInicio') || {}).value || '';
+      const periodo = (document.getElementById('planPeriodo') || {}).value || '';
+      const campo = (document.getElementById('planCampoFormativo') || {}).value || '';
+      const met = (document.getElementById('planMetodologia') || {}).value || '';
+      const numSes = parseInt((document.getElementById('planNumSesiones') || {}).value || '3', 10);
+      const contSint = (document.getElementById('planContenidoSintetico') || {}).value || '';
+      const pda = (document.getElementById('planPDA') || {}).value || '';
+      const prob = (document.getElementById('planProblema') || {}).value || '';
+      const prop = (document.getElementById('planProposito') || {}).value || '';
+
+      const ejes = [];
+      document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]:checked').forEach(function (cb) {
+        ejes.push(cb.value);
+      });
+
+      const payload = {
+        id: id,
+        idHorario: idHorario,
+        titulo: titulo,
+        grado: grado,
+        grupo: grupo,
+        asignatura: asig,
+        fechaInicio: fechaInicio,
+        periodo: periodo,
+        campoFormativo: campo,
+        metodologia: met,
+        numSesiones: numSes,
+        ejesArticuladores: ejes.join(', '),
+        contenidoSintetico: contSint,
+        pda: pda,
+        problemaComunidad: prob,
+        proposito: prop
+      };
+
+      const btn = document.getElementById('btnGuardarPlan');
+      if (btn) btn.disabled = true;
+
+      gsRun('crearOActualizarPlaneacionNEM', tokenClase, payload).then(function (res) {
+        if (btn) btn.disabled = false;
+        toast((res && res.mensaje) || 'Planeación guardada con éxito.', 'ok');
+        cerrarFormPlaneacion();
+        cargarListaPlaneacionesNEM();
+        const idTarget = (res && (res.id || res.Id)) || payload.id;
+        if (idTarget) {
+          abrirGestorSesiones(idTarget);
+        }
+      }).catch(function (e) {
+        if (btn) btn.disabled = false;
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function abrirGestorSesiones(idPlaneacion) {
+      const idPlan = String(idPlaneacion || '').trim();
+      if (!idPlan) {
+        toast('No se especificó un ID de planeación válido.', 'error');
+        return;
+      }
+      gsRun('obtenerPlaneacionCompletaNEM', tokenClase, idPlan).then(function (res) {
+        if (!res || !res.planeacion) throw new Error('No se encontró la planeación.');
+        planActualNEM = res.planeacion;
+        sesionesActualesNEM = res.sesiones || [];
+        sesionActivaIdx = 0;
+
+        document.getElementById('cajaListaPlanNEM').classList.add('oculto');
+        document.getElementById('cajaFormPlanNEM').classList.add('oculto');
+        document.getElementById('cajaSesionesPlanNEM').classList.remove('oculto');
+
+        const tit = document.getElementById('titPlanSesiones');
+        const badge = document.getElementById('badgeEstadoPlan');
+        const meta = document.getElementById('subMetaPlanSesiones');
+        const btnAp = document.getElementById('btnAprobarPlan');
+
+        const titPlan = planActualNEM.Titulo || planActualNEM.titulo || 'Sesiones Didácticas';
+        if (tit) tit.textContent = titPlan;
+        const est = String(planActualNEM.Estado || planActualNEM.estado || 'BORRADOR').toUpperCase();
+        if (badge) {
+          badge.textContent = est;
+          badge.className = 'badge-nem ' + (est === 'APROBADO' ? 'badge-aprobado' : (est === 'PROGRAMADO' ? 'badge-programado' : 'badge-borrador'));
+        }
+        if (meta) {
+          const asig = planActualNEM.Asignatura || planActualNEM.asignatura || '';
+          const gr = planActualNEM.Grado || planActualNEM.grado || '';
+          const gp = planActualNEM.Grupo || planActualNEM.grupo || '';
+          const cmp = planActualNEM.CampoFormativo || planActualNEM.campoFormativo || '';
+          meta.textContent = asig + ' · ' + gr + '°' + gp + ' · Campo: ' + cmp + ' · ' + (sesionesActualesNEM.length) + ' sesiones de 40 min';
+        }
+        if (btnAp) {
+          btnAp.style.display = (est === 'APROBADO' || est === 'PROGRAMADO') ? 'none' : 'inline-block';
+        }
+
+        pintarTabsSesiones();
+        seleccionarSesionNEM(0);
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function cerrarGestorSesiones() {
+      document.getElementById('cajaSesionesPlanNEM').classList.add('oculto');
+      document.getElementById('cajaListaPlanNEM').classList.remove('oculto');
+      cargarListaPlaneacionesNEM();
+    }
+
+    function pintarTabsSesiones() {
+      const tabs = document.getElementById('tabsSesionesPlan');
+      if (!tabs) return;
+      let html = '';
+      sesionesActualesNEM.forEach(function (s, idx) {
+        const act = (idx === sesionActivaIdx) ? ' activa' : '';
+        const num = s.NumeroSesion || (idx + 1);
+        const est = s.Estado ? (' · ' + s.Estado) : '';
+        html += '<button type="button" class="nem-tab-sesion' + act + '" onclick="seleccionarSesionNEM(' + idx + ')">';
+        html += 'Sesión ' + num + ' (40 min)' + escaparHtml(est);
+        html += '</button>';
+      });
+      tabs.innerHTML = html;
+    }
+
+    function seleccionarSesionNEM(idx) {
+      sesionActivaIdx = idx;
+      pintarTabsSesiones();
+      const s = sesionesActualesNEM[idx];
+      const ed = document.getElementById('editorSesionActiva');
+      if (!s || !ed) return;
+      ed.classList.remove('oculto');
+
+      const tit = document.getElementById('titSesionActiva');
+      const prog = document.getElementById('progSesionActiva');
+      if (tit) tit.textContent = 'Sesión ' + (s.NumeroSesion || (idx + 1)) + ' (40 minutos)';
+      if (prog) {
+        prog.textContent = s.FechaProgramada ? ('📅 Programada para: ' + s.FechaProgramada + ' (Horario ' + (s.IdHorario || '') + ')') : 'Sin fecha asignada en horario';
+      }
+
+      document.getElementById('sesTitulo').value = s.Titulo || '';
+      document.getElementById('sesApertura').value = s.AperturaTexto || '';
+      document.getElementById('sesDesarrollo').value = s.DesarrolloTexto || '';
+      document.getElementById('sesActividad').value = s.ActividadTexto || '';
+      document.getElementById('sesCierre').value = s.CierreTexto || '';
+
+      let recArr = [];
+      try {
+        if (s.RecursosVisualesJSON) recArr = JSON.parse(s.RecursosVisualesJSON);
+      } catch (e) {}
+      const primerRec = (recArr && recArr[0]) || {};
+      document.getElementById('sesVisualUrl').value = primerRec.url || '';
+      document.getElementById('sesVisualDesc').value = primerRec.descripcionAccesible || '';
+
+      document.getElementById('sesGuionEstudiante').value = s.GuionEstudianteAccesible || '';
+
+      let gDoc = {};
+      try {
+        if (s.GuionDocenteJSON) gDoc = JSON.parse(s.GuionDocenteJSON);
+      } catch (e) {}
+      document.getElementById('sesNotasDocente').value = gDoc.notas || '';
+    }
+
+    function generarGuionDesdeMomentos() {
+      const ap = (document.getElementById('sesApertura') || {}).value || '';
+      const des = (document.getElementById('sesDesarrollo') || {}).value || '';
+      const act = (document.getElementById('sesActividad') || {}).value || '';
+      const cie = (document.getElementById('sesCierre') || {}).value || '';
+      const imgUrl = (document.getElementById('sesVisualUrl') || {}).value || '';
+      const imgDesc = (document.getElementById('sesVisualDesc') || {}).value || '';
+      const tit = (document.getElementById('sesTitulo') || {}).value || 'Sesión de Clase';
+
+      let out = '## ' + tit + '\n\n';
+      if (ap.trim()) {
+        out += '### 1. Apertura (5 min)\n' + ap.trim() + '\n\n';
+      }
+      if (des.trim()) {
+        out += '### 2. Desarrollo y Explicación (10 min)\n' + des.trim() + '\n\n';
+      }
+      if (imgDesc.trim()) {
+        out += '### Recurso Visual Accesible (DUA)\n';
+        if (imgUrl.trim()) out += '![' + imgDesc.trim() + '](' + imgUrl.trim() + ')\n';
+        out += '[Descripción auditiva: ' + imgDesc.trim() + ']\n\n';
+      }
+      if (act.trim()) {
+        out += '### 3. Actividad de Aprendizaje (20 min)\n' + act.trim() + '\n\n';
+      }
+      if (cie.trim()) {
+        out += '### 4. Cierre y Metacognición (5 min)\n' + cie.trim() + '\n';
+      }
+
+      const campo = document.getElementById('sesGuionEstudiante');
+      if (campo) {
+        campo.value = out.trim();
+        toast('Guion accesible generado con los 4 momentos NEM.', 'ok');
+      }
+    }
+
+    function guardarSesionActiva() {
+      const s = sesionesActualesNEM[sesionActivaIdx];
+      if (!s) return;
+
+      const imgUrl = ((document.getElementById('sesVisualUrl') || {}).value || '').trim();
+      const imgDesc = ((document.getElementById('sesVisualDesc') || {}).value || '').trim();
+
+      if (imgUrl && !imgDesc) {
+        toast('Regla DUA: La descripción oral de la imagen es obligatoria para garantizar accesibilidad a invidentes.', 'error');
+        return;
+      }
+
+      const recs = [];
+      if (imgDesc) {
+        recs.push({ tipo: 'imagen', url: imgUrl, descripcionAccesible: imgDesc });
+      }
+
+      let guion = ((document.getElementById('sesGuionEstudiante') || {}).value || '').trim();
+      if (!guion) {
+        generarGuionDesdeMomentos();
+        guion = ((document.getElementById('sesGuionEstudiante') || {}).value || '').trim();
+      }
+
+      const tituloSes = (document.getElementById('sesTitulo') || {}).value || '';
+      const publicarAhora = !!(document.getElementById('chkPubSesionClase') || {}).checked;
+
+      const sId = s ? (s.Id || s.id || '') : '';
+      const pId = planActualNEM ? (planActualNEM.Id || planActualNEM.id || '') : '';
+
+      const payload = {
+        id: sId,
+        idSesion: sId,
+        idPlaneacion: pId,
+        titulo: tituloSes,
+        duracionMin: 40,
+        aperturaTexto: (document.getElementById('sesApertura') || {}).value || '',
+        aperturaMin: 5,
+        desarrolloTexto: (document.getElementById('sesDesarrollo') || {}).value || '',
+        desarrolloMin: 10,
+        recursosVisualesJSON: JSON.stringify(recs),
+        actividadTexto: (document.getElementById('sesActividad') || {}).value || '',
+        actividadMin: 20,
+        cierreTexto: (document.getElementById('sesCierre') || {}).value || '',
+        cierreMin: 5,
+        guionDocenteJSON: JSON.stringify({ notas: (document.getElementById('sesNotasDocente') || {}).value || '' }),
+        guionEstudianteAccesible: guion
+      };
+
+      gsRun('guardarSesionNEM', tokenClase, payload).then(function (res) {
+        toast((res && res.mensaje) || 'Sesión guardada exitosamente.', 'ok');
+        sesionesActualesNEM[sesionActivaIdx] = Object.assign(s, payload);
+        pintarTabsSesiones();
+
+        // Si se seleccionó "Publicar ahora", publicar en el horario / Aula Hablada para los alumnos
+        const idHorarioUso = s.IdHorario || (planActualNEM && planActualNEM.IdHorario) || (slotMaeSel && slotMaeSel.idHorario);
+        const fechaUso = s.FechaProgramada || (planActualNEM && planActualNEM.FechaInicio) || (slotMaeSel && slotMaeSel.fecha) || fechaLocalClase();
+
+        if (publicarAhora && idHorarioUso && fechaUso) {
+          gsRun('guardarContenidoClase', tokenClase, {
+            idHorario: idHorarioUso,
+            fecha: fechaUso,
+            titulo: tituloSes || (planActualNEM && planActualNEM.Titulo) || 'Clase',
+            texto: guion,
+            publicado: true
+          }).then(function () {
+            toast('Contenido publicado en el Horario para los alumnos.', 'ok');
+            cargarHorarioMae();
+          }).catch(function () {});
+        }
+      }).catch(function (e) {
+        toast((e && e.message) || String(e), 'error');
+      });
+    }
+
+    function probarVozGuionSesion() {
+      const tit = (document.getElementById('sesTitulo') || {}).value || '';
+      let txt = (document.getElementById('sesGuionEstudiante') || {}).value || '';
+      if (!txt.trim()) {
+        generarGuionDesdeMomentos();
+        txt = (document.getElementById('sesGuionEstudiante') || {}).value || '';
+      }
+      if (!txt.trim()) {
+        toast('Escribe o genera el texto a leer antes de escuchar.', 'info');
+        return;
+      }
+      if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        detenerVoz();
+        toast('Audio en pausa.', 'info');
+      } else {
+        hablarTexto((tit ? (tit + '. ') : '') + txt);
+        toast('Reproduciendo texto en voz alta...', 'info');
+      }
+    }
+
+    function aprobarPlaneacionActual() {
+      if (!planActualNEM) return;
+      const pId = planActualNEM.Id || planActualNEM.id || '';
+      if (!pId) {
+        toast('No se encontró el ID de la planeación para aprobar.', 'error');
+        return;
+      }
+      confirmar('¿Deseas marcar esta planeación como APROBADA? Podrás calendarizar sus sesiones directamente en el horario.', 'Aprobar Planeación Didáctica').then(function (ok) {
+        if (!ok) return;
+        gsRun('aprobarPlaneacionNEM', tokenClase, pId).then(function (res) {
+          toast((res && res.mensaje) || 'Planeación aprobada.', 'ok');
+          planActualNEM.Estado = 'APROBADO';
+          planActualNEM.estado = 'APROBADO';
+          const badge = document.getElementById('badgeEstadoPlan');
+          if (badge) {
+            badge.textContent = 'APROBADO';
+            badge.className = 'badge-nem badge-aprobado';
+          }
+          const btnAp = document.getElementById('btnAprobarPlan');
+          if (btnAp) btnAp.style.display = 'none';
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    function abrirModalCalendarizarSesion() {
+      const s = sesionesActualesNEM[sesionActivaIdx];
+      if (!s) return;
+
+      const hoy = fechaLocalClase();
+
+      modal({
+        titulo: 'Calendarizar Sesión ' + (s.NumeroSesion || (sesionActivaIdx + 1)) + ' en Horario',
+        html: '<p class="hint" style="margin-top:0;">Asigna la fecha y el bloque de clase para esta sesión. Se publicará automáticamente en el Aula Hablada para tus alumnos.</p>' +
+          '<label for="calSesIdHorario">ID de Horario / Bloque (ej. 1, 2, 3)</label>' +
+          '<input id="calSesIdHorario" type="text" value="' + escaparHtml(s.IdHorario || '1') + '" placeholder="Número de horario o bloque">' +
+          '<label for="calSesFecha">Fecha de impartición</label>' +
+          '<input id="calSesFecha" type="date" value="' + escaparHtml(s.FechaProgramada || hoy) + '">',
+        botones: [
+          { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Calendarizar y Publicar', valor: 'ok' }
+        ],
+        capturar: function (fondo, val) {
+          if (val === null) return null;
+          return {
+            idHorario: (fondo.querySelector('#calSesIdHorario') || {}).value || '',
+            fecha: (fondo.querySelector('#calSesFecha') || {}).value || ''
+          };
+        }
+      }).then(function (datos) {
+        if (!datos || !datos.idHorario || !datos.fecha) return;
+        gsRun('calendarizarSesionNEM', tokenClase, s.Id, datos.idHorario, datos.fecha).then(function (res) {
+          toast((res && res.mensaje) || 'Sesión calendarizada en horario y disponible en Aula Hablada.', 'ok');
+          s.IdHorario = datos.idHorario;
+          s.FechaProgramada = datos.fecha;
+          s.Estado = 'PROGRAMADO';
+          const prog = document.getElementById('progSesionActiva');
+          if (prog) prog.textContent = '📅 Programada para: ' + datos.fecha + ' (Horario ' + datos.idHorario + ')';
+          pintarTabsSesiones();
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+    }
+
+    /* RENDERIZADO MULTIMODAL DUA PARA ESTUDIANTES (LEER, VER Y ESCUCHAR) */
+    function renderizarTextoClaseDUA(cont) {
+      const vis = document.getElementById('textoClaseVis');
+      if (!vis) return;
+      if (!cont || !cont.texto) {
+        vis.innerHTML = '';
+        parrafosVozAlu_ = [];
+        return;
+      }
+
+      const bruto = String(cont.texto || '').replace(/\r/g, '').trim();
+      const lineas = bruto.split('\n');
+      let html = '<div class="dua-clase-contenedor">';
+      if (cont.titulo) {
+        html += '<h2 style="font-size:20px;color:var(--st90-azul);margin:0 0 10px;">' + escaparHtml(cont.titulo) + '</h2>';
+      }
+
+      parrafosVozAlu_ = [];
+      let pIdx = 0;
+      let bloqueMomento = '';
+      let parrafosMomento = '';
+
+      function cerrarBloque() {
+        if (bloqueMomento || parrafosMomento) {
+          html += '<div class="dua-seccion-momento">';
+          if (bloqueMomento) html += '<h3>' + bloqueMomento + '</h3>';
+          html += parrafosMomento;
+          html += '</div>';
+          bloqueMomento = '';
+          parrafosMomento = '';
+        }
+      }
+
+      lineas.forEach(function (l) {
+        const linea = l.trim();
+        if (!linea) return;
+
+        if (/^###?\s+(1\.\s*Apertura|Apertura)/i.test(linea)) {
+          cerrarBloque();
+          bloqueMomento = '⏱️ 1. Apertura (5 min)';
+        } else if (/^###?\s+(2\.\s*Desarrollo|Desarrollo|Explicaci[oó]n)/i.test(linea)) {
+          cerrarBloque();
+          bloqueMomento = '📖 2. Desarrollo y Explicación (10 min)';
+        } else if (/^###?\s+(3\.\s*Actividad|Actividad|Producci[oó]n)/i.test(linea)) {
+          cerrarBloque();
+          bloqueMomento = '✍️ 3. Actividad de Aprendizaje (20 min)';
+        } else if (/^###?\s+(4\.\s*Cierre|Cierre|Metacognici[oó]n)/i.test(linea)) {
+          cerrarBloque();
+          bloqueMomento = '🎯 4. Cierre y Metacognición (5 min)';
+        } else if (/^###?\s+/i.test(linea)) {
+          cerrarBloque();
+          bloqueMomento = escaparHtml(linea.replace(/^###?\s+/, ''));
+        } else if (/^!\[(.*?)\]\((.*?)\)/.test(linea)) {
+          const m = linea.match(/^!\[(.*?)\]\((.*?)\)/);
+          const alt = m[1] || '';
+          const url = m[2] || '';
+          parrafosMomento += '<div class="dua-recurso-visual">';
+          if (url) parrafosMomento += '<img src="' + escaparHtml(url) + '" alt="' + escaparHtml(alt) + '">';
+          parrafosMomento += '</div>';
+        } else if (/^\[Descripci[oó]n auditiva:\s*(.*?)\]/i.test(linea)) {
+          const m = linea.match(/^\[Descripci[oó]n auditiva:\s*(.*?)\]/i);
+          const desc = m ? m[1] : linea;
+          parrafosMomento += '<div class="dua-desc-audio-box" role="note">';
+          parrafosMomento += '  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">';
+          parrafosMomento += '    <span class="dua-badge-audio">🔊 Descripción auditiva</span>';
+          parrafosMomento += '    <span style="font-size:12px;font-weight:700;">Accesible para voz y braille</span>';
+          parrafosMomento += '  </div>';
+          parrafosMomento += '  <p style="margin:0;">' + escaparHtml(desc) + '</p>';
+          parrafosMomento += '</div>';
+          parrafosVozAlu_.push(desc);
+        } else {
+          parrafosMomento += '<p class="dua-parrafo" data-pidx="' + pIdx + '" onclick="hablarDesdeParrafo(' + pIdx + ')">' + escaparHtml(linea) + '</p>';
+          parrafosVozAlu_.push(linea);
+          pIdx++;
+        }
+      });
+
+      cerrarBloque();
+      html += '</div>';
+      vis.innerHTML = html;
+    }
+
+    function hablarDesdeParrafo(idx) {
+      if (!parrafosVozAlu_ || !parrafosVozAlu_.length) return;
+      const sub = parrafosVozAlu_.slice(idx);
+      if (!sub.length) return;
+      detenerVoz();
+      parrafoVozActualIdx_ = idx;
+      actualizarParrafoVozEnfocado_(idx);
+      hablarTexto(sub.join('. '));
+    }
+
+    function actualizarParrafoVozEnfocado_(idx) {
+      document.querySelectorAll('#textoClaseVis .dua-parrafo').forEach(function (el) {
+        const p = parseInt(el.getAttribute('data-pidx'), 10);
+        const match = (p === idx);
+        el.classList.toggle('voz-enfocada', match);
+        if (match) {
+          try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+        }
+      });
+    }
+
+    const campoClaveClase = document.getElementById('claveClase');
+    const campoUsuarioClase = document.getElementById('usuarioClase');
+
+    /* ============================================================
+       ARQUITECTURA MODULAR "LEGO" — CONTROLADORES DEL APP SHELL
+       ============================================================ */
+    const MAPA_MODULOS_ = {
+      'planeacion': 'moduloViewPlaneacion',
+      'encuestas': 'moduloViewEncuestas',
+      'lectura': 'moduloViewLectura',
+      'asistencia': 'moduloViewAsistencia',
+      'trabajo_social': 'moduloViewTrabajoSocial',
+      'biblioteca': 'moduloViewBiblioteca',
+      'admin': 'moduloViewAdmin'
+    };
+
+    const MAPA_NAV_ITEMS_ = {
+      'planeacion': 'navModPlaneacion',
+      'encuestas': 'navModEncuestas',
+      'lectura': 'navModLectura',
+      'asistencia': 'navModAsistencia',
+      'trabajo_social': 'navModTrabajoSocial',
+      'biblioteca': 'navModBiblioteca',
+      'admin': 'navModAdmin'
+    };
+
+    let moduloActivoShell_ = 'planeacion';
+
+    function resolverClaveModulo_(param) {
+      if (!param) return 'planeacion';
+      let s = String(param).trim();
+      s = s.replace(/^(?:moduloView|navMod)/i, '');
+      s = s.replace(/([A-Z])/g, function (m) { return '_' + m.toLowerCase(); });
+      s = s.replace(/^_/, '').toLowerCase();
+      if (s === 'trabajosocial') s = 'trabajo_social';
+      return MAPA_MODULOS_[s] ? s : 'planeacion';
+    }</script>

@@ -369,36 +369,6 @@ function generarClaveAleatoriaMaestro_() {
   return p;
 }
 
-function claveDeAccesoMaestro_(f) {
-  let clave = String(f["Clave"] || "").trim();
-  if (clave) return clave;
-  const usu = String(f["Usuario"] || "").trim();
-  let c = "st90-" + (usu.replace(/[^a-z0-9]/gi, "").slice(0, 4) || "mae");
-  if (c.length < 6) c = c + "90";
-  guardarClaveVisibleMaestro_(f, c);
-  return c;
-}
-
-function guardarClaveVisibleMaestro_(f, clave) {
-  const libro = _obtenerLibro_();
-  const p = libro.getSheetByName("MaestrosClase");
-  if (!p || !f || !f._fila) return;
-  const lastCol = Math.max(p.getLastColumn(), 1);
-  const enc = p.getRange(1, 1, 1, lastCol).getValues()[0];
-  let colSalt = 0, colHash = 0, colClave = 0;
-  enc.forEach(function (h, i) {
-    const n = normalizarNombrePref_(h);
-    if (n === "salt") colSalt = i + 1;
-    if (n === "hash") colHash = i + 1;
-    if (n === "clave") colClave = i + 1;
-  });
-  const salt = Utilities.getUuid();
-  const hash = hashClave(clave, salt);
-  if (colSalt) p.getRange(f._fila, colSalt).setValue(salt);
-  if (colHash) p.getRange(f._fila, colHash).setValue(hash);
-  if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
-}
-
 function listarMaestrosClase(token) {
   exigirClaseRol_(token, ["admin"]);
   asegurarColumnaClaveMaestrosClase_();
@@ -975,49 +945,6 @@ function asegurarColumnaClaveAccesoClase_() {
   });
   if (hay) return;
   p.getRange(1, lastCol + 1).setValue("Clave").setFontWeight("bold");
-}
-
-function claveVisibleAlumno_(usuario, matricula) {
-  let u = String(usuario || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (!u) u = "alumno";
-  if (u.length < 6) {
-    const mat = String(matricula || "").replace(/\D/g, "").slice(-4);
-    u = u + (mat || "90");
-  }
-  if (u.length < 6) u = u + "90";
-  return u;
-}
-
-function guardarClaveVisibleAlumno_(f, clave) {
-  const libro = _obtenerLibro_();
-  const p = libro.getSheetByName("AccesoClaseAlumnos");
-  if (!p || !f || !f._fila) return;
-  const lastCol = Math.max(p.getLastColumn(), 1);
-  const enc = p.getRange(1, 1, 1, lastCol).getValues()[0];
-  let colSalt = 0;
-  let colHash = 0;
-  let colClave = 0;
-  enc.forEach(function (h, i) {
-    const n = normalizarNombrePref_(h);
-    if (n === "salt") colSalt = i + 1;
-    if (n === "hash") colHash = i + 1;
-    if (n === "clave") colClave = i + 1;
-  });
-  const salt = Utilities.getUuid();
-  const hash = hashClave(clave, salt);
-  if (colSalt) p.getRange(f._fila, colSalt).setValue(salt);
-  if (colHash) p.getRange(f._fila, colHash).setValue(hash);
-  if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
-}
-
-function claveDeAccesoAlumno_(f) {
-  let clave = String(f["Clave"] || "").trim();
-  if (clave) return clave;
-  const usu = String(f["Usuario"] || "").trim();
-  const mat = String(f["Matrícula"] || f["Matricula"] || "").trim();
-  clave = claveVisibleAlumno_(usu, mat);
-  guardarClaveVisibleAlumno_(f, clave);
-  return clave;
 }
 
 function alumnosConAccesoClase_(ses, grado, grupo) {

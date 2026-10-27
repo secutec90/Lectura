@@ -94,13 +94,6 @@ function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
       mensaje: "La contraseña del panel no está configurada. Ejecuta fijarClaveAdminInicial_('tu-clave') desde el editor de Apps Script."
     };
   }
-  if (claveAdminOk && esUsuAdmin && credsAdmin.esDefault) {
-    return {
-      ok: false,
-      requiereCambioClave: true,
-      mensaje: "La contraseña del panel sigue siendo la de fábrica. Cámbiala con fijarClaveAdminInicial_('tu-clave') desde el editor de Apps Script."
-    };
-  }
   if (claveAdminOk && esUsuAdmin) {
     const token = Utilities.getUuid();
     const cache = CacheService.getScriptCache();

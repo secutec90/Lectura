@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-27T15:14:37.901Z",
+  "generado": "2026-10-27T16:10:29.899Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
@@ -398,7 +398,7 @@
       "ClaseJS_04.html#script0",
       "AdminPlanJS_03.html#script0"
     ],
-    "PADRON_INCLUSION_UDEI_": [
+    "GRUPOS_CON_BAPYC_": [
       "ClaseJS_04.html#script0",
       "AdminPlanJS_03.html#script0"
     ],
@@ -5498,7 +5498,7 @@
       ]
     },
     "ClaseJS_04.html": {
-      "sha256": "9a6d80732354100bb8a17c00b2b6e6abd9ce8c6020ee352df72ed6441679a0e3",
+      "sha256": "8331a766ae00df81bdef9fc74e8f26da85d8b4eb738eaa45ddeb8d13f8d40586",
       "documentos": [
         {
           "id": "ClaseJS_04.html#script0",
@@ -5643,10 +5643,10 @@
               "linea": 541,
               "hash": "c1d0b39f96a41197528ef591424e8dede9d2797281f09a545963d84c2ba4b6a8"
             },
-            "PADRON_INCLUSION_UDEI_": {
+            "GRUPOS_CON_BAPYC_": {
               "tipo": "const",
-              "linea": 575,
-              "hash": "10133378e6f8145e9e5a831ed3b78199e35e6645161df3d98c7805821a72605e"
+              "linea": 577,
+              "hash": "ccfbecc90356f06ee1c915269be6f20389e26ed17fdeb12a810b2d2e47bdfbf9"
             }
           },
           "sentencias": []
@@ -5654,7 +5654,7 @@
       ]
     },
     "ClaseJS_05.html": {
-      "sha256": "7f049cb261f0c807df0e394116212d742408c6da7fba57a87ec0be91fc4395f7",
+      "sha256": "f4786eb5e00c18c39ff59268039c50ce4bfcfc08222a0a575ce8819b75db7456",
       "documentos": [
         {
           "id": "ClaseJS_05.html#script0",
@@ -5662,56 +5662,56 @@
             "evaluarInclusionGrupo_": {
               "tipo": "function",
               "linea": 5,
-              "hash": "1107b2c6fe6924284c0c7b5298c19661f36980a3e807cfb19a3f44de151d9e45"
+              "hash": "dadc04f6659cade66349f66c3d524246416940c267c390ec087313aff4b34e23"
             },
             "obtenerCatalogoCTE_": {
               "tipo": "function",
-              "linea": 33,
+              "linea": 31,
               "hash": "e622d66d09c2267fc0437521806f53c10bbcd5ad1e86cfb4d6d7edb8479d06e5"
             },
             "guardarCatalogoCTE_": {
               "tipo": "function",
-              "linea": 44,
+              "linea": 42,
               "hash": "85bc17bd78332d8f5be1ef8a24ac3d44ae53403bf7a2e5f63c0b8bb95101a8dc"
             },
             "abrirModalGestionCTE_": {
               "tipo": "function",
-              "linea": 50,
+              "linea": 48,
               "hash": "3c2d1bd6ae5750df0914981567706e235644d02fb4d08ea2a51a67d84b524482"
             },
             "eliminarProblemaCTEModal_": {
               "tipo": "function",
-              "linea": 154,
+              "linea": 152,
               "hash": "6292e7cea2a8463eda6b294d0f85d763039f92b7efc5c8d569fa6aa8ea7f1256"
             },
             "agregarNuevoItemCTEModal_": {
               "tipo": "function",
-              "linea": 162,
+              "linea": 160,
               "hash": "eacded5149d41ee32bc6deb19760056e3261331cf3a02b46f2c22588d8d55588"
             },
             "poblarSelectorProblemasCTE_": {
               "tipo": "function",
-              "linea": 183,
+              "linea": 181,
               "hash": "bd8996e47665ac5f3d9cc00958b30a627a2fa48813b945676fd2ea093170013d"
             },
             "alSeleccionarProblemaCTE": {
               "tipo": "function",
-              "linea": 192,
+              "linea": 190,
               "hash": "a5eb1dd48045fd7180bc09fcc6eb0a8df7ddc01a7973684df05895cb4bd55622"
             },
             "CATALOGO_SEP_FASE6_": {
               "tipo": "const",
-              "linea": 208,
+              "linea": 206,
               "hash": "b9ab1b511d3b103829f9021b79c1c471118ef7aaab1022dfbcd342045b6967fd"
             },
             "matrizCurricularActivaNEM_": {
               "tipo": "let",
-              "linea": 573,
+              "linea": 571,
               "hash": "360c1d85ee06bc6b6e2cf3e92f1d580bd2c3c260445aceebb6accf7f77dc830f"
             },
             "actualizarCatalogoPDAParaClase_": {
               "tipo": "function",
-              "linea": 575,
+              "linea": 573,
               "hash": "2386858cd2640668bf6efa2c174a353f8e39c80656ae3c3329a2a39cc46a5027"
             }
           },
@@ -9446,7 +9446,7 @@
       ]
     },
     "AdminPlanJS_03.html": {
-      "sha256": "646a7552a25c2279e84cb10178c1b074317cc7084ac3588480ae6ce37f8ef387",
+      "sha256": "27780923beaf91a958c448c2a33dca31f28b019a524a3fc4fe31dda534adaa35",
       "documentos": [
         {
           "id": "AdminPlanJS_03.html#script0",
@@ -9471,54 +9471,54 @@
               "linea": 91,
               "hash": "c1d0b39f96a41197528ef591424e8dede9d2797281f09a545963d84c2ba4b6a8"
             },
-            "PADRON_INCLUSION_UDEI_": {
+            "GRUPOS_CON_BAPYC_": {
               "tipo": "const",
-              "linea": 125,
-              "hash": "10133378e6f8145e9e5a831ed3b78199e35e6645161df3d98c7805821a72605e"
+              "linea": 127,
+              "hash": "ccfbecc90356f06ee1c915269be6f20389e26ed17fdeb12a810b2d2e47bdfbf9"
             },
             "evaluarInclusionGrupo_": {
               "tipo": "function",
-              "linea": 160,
-              "hash": "1107b2c6fe6924284c0c7b5298c19661f36980a3e807cfb19a3f44de151d9e45"
+              "linea": 129,
+              "hash": "dadc04f6659cade66349f66c3d524246416940c267c390ec087313aff4b34e23"
             },
             "obtenerCatalogoCTE_": {
               "tipo": "function",
-              "linea": 188,
+              "linea": 155,
               "hash": "e622d66d09c2267fc0437521806f53c10bbcd5ad1e86cfb4d6d7edb8479d06e5"
             },
             "guardarCatalogoCTE_": {
               "tipo": "function",
-              "linea": 199,
+              "linea": 166,
               "hash": "85bc17bd78332d8f5be1ef8a24ac3d44ae53403bf7a2e5f63c0b8bb95101a8dc"
             },
             "abrirModalGestionCTE_": {
               "tipo": "function",
-              "linea": 205,
+              "linea": 172,
               "hash": "3c2d1bd6ae5750df0914981567706e235644d02fb4d08ea2a51a67d84b524482"
             },
             "eliminarProblemaCTEModal_": {
               "tipo": "function",
-              "linea": 309,
+              "linea": 276,
               "hash": "6292e7cea2a8463eda6b294d0f85d763039f92b7efc5c8d569fa6aa8ea7f1256"
             },
             "agregarNuevoItemCTEModal_": {
               "tipo": "function",
-              "linea": 317,
+              "linea": 284,
               "hash": "eacded5149d41ee32bc6deb19760056e3261331cf3a02b46f2c22588d8d55588"
             },
             "poblarSelectorProblemasCTE_": {
               "tipo": "function",
-              "linea": 338,
+              "linea": 305,
               "hash": "bd8996e47665ac5f3d9cc00958b30a627a2fa48813b945676fd2ea093170013d"
             },
             "alSeleccionarProblemaCTE": {
               "tipo": "function",
-              "linea": 347,
+              "linea": 314,
               "hash": "a5eb1dd48045fd7180bc09fcc6eb0a8df7ddc01a7973684df05895cb4bd55622"
             },
             "CATALOGO_SEP_FASE6_": {
               "tipo": "const",
-              "linea": 363,
+              "linea": 330,
               "hash": "b9ab1b511d3b103829f9021b79c1c471118ef7aaab1022dfbcd342045b6967fd"
             }
           },

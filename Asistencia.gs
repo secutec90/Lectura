@@ -507,16 +507,65 @@ function asistenciaAlumnosGrupo(token, grado, grupo, fecha) {
   };
 }
 
+/** Turno real del grupo, tomado de la hoja Grupos. */
+function turnoDelGrupoAsi_(grado, grupo) {
+  const k = claveGrupoAsi_(grado, grupo);
+  try {
+    const g = _leerFilas_("Grupos").filter(function (f) {
+      return claveGrupoAsi_(f["Grado"], f["Grupo"]) === k;
+    })[0];
+    if (g) return turnoDe_(g["Turno"]);
+  } catch (e) {}
+  return "matutino";
+}
+
+/**
+ * Valida el pase de lista contra el padrón y el catálogo de estados.
+ * Rechaza matrículas que no pertenecen al grupo y estados fuera del catálogo,
+ * en lugar de escribir lo que llegue del cliente.
+ */
+function validarRegistrosAsistencia_(grado, grupo, registros) {
+  const estadosValidos = {};
+  ESTADOS_ALUMNO_ASI.forEach(function (e) { estadosValidos[e.id] = true; });
+  const k = claveGrupoAsi_(grado, grupo);
+  const padron = {};
+  _leerFilas_("Alumnos").forEach(function (a) {
+    if (claveGrupoAsi_(a["Grado"], a["Grupo"]) !== k) return;
+    const m = String(a["Matrícula"] || "").trim();
+    if (m) padron[m] = String(a["Nombre Completo"] || a["Nombre"] || "").trim();
+  });
+  const salida = [];
+  const vistos = {};
+  (registros || []).forEach(function (r) {
+    const mat = String((r && r.matricula) || "").trim();
+    if (!mat || vistos[mat]) return;
+    if (!padron[mat]) {
+      throw new Error("La matrícula " + mat + " no pertenece al grupo " + grado + "° " + String(grupo).toUpperCase() + ".");
+    }
+    const estado = String((r && r.estado) || "").trim().toUpperCase();
+    if (!estadosValidos[estado]) throw new Error("Estado de asistencia no válido: " + estado + ".");
+    vistos[mat] = true;
+    salida.push({
+      matricula: mat,
+      nombre: padron[mat],
+      estado: estado,
+      observacion: String((r && r.observacion) || "").trim()
+    });
+  });
+  if (!salida.length) throw new Error("No hay alumnos para guardar.");
+  return salida;
+}
+
 function guardarAsistenciaAlumnos(token, payload) {
   const sesion = sesionAsistencia_(token);
   payload = payload || {};
   const grado = String(payload.grado || "").trim();
   const grupo = String(payload.grupo || "").trim().toLowerCase();
+  if (!grado || !grupo) throw new Error("Grado y grupo son obligatorios.");
   exigirGrupoDelPrefecto_(sesion, grado, grupo);
   const fechaUso = String(payload.fecha || fechaHoyAsi_()).slice(0, 10);
-  const turno = turnoDe_(payload.turno);
-  const registros = payload.registros || [];
-  if (!registros.length) throw new Error("No hay alumnos para guardar.");
+  const turno = turnoDelGrupoAsi_(grado, grupo);
+  const registros = validarRegistrosAsistencia_(grado, grupo, payload.registros);
 
   const lock = LockService.getScriptLock();
   try {
@@ -663,16 +712,27 @@ function asistenciaMaestrosBloque(token, fecha, bloque, turno) {
 function guardarAsistenciaMaestro(token, payload) {
   const sesion = sesionAsistencia_(token);
   payload = payload || {};
-  const grado = String(payload.grado || "").trim();
-  const grupo = String(payload.grupo || "").trim().toLowerCase();
+  const idHorario = String(payload.idHorario || "").trim();
+  if (!idHorario) throw new Error("Falta el bloque de horario.");
+  const filaH = _leerFilas_("Horarios").filter(function (h) {
+    return String(h["Id"] || "").trim() === idHorario;
+  })[0];
+  if (!filaH) throw new Error("El bloque de horario no existe en la escuela.");
+
+  // Grado, grupo, turno, bloque, maestro y asignatura se toman del horario:
+  // así una prefecta no puede sobrescribir la asistencia de otro grupo.
+  const grado = String(filaH["Grado"] || "").trim();
+  const grupo = String(filaH["Grupo"] || "").trim().toLowerCase();
   exigirGrupoDelPrefecto_(sesion, grado, grupo);
   const fechaUso = String(payload.fecha || fechaHoyAsi_()).slice(0, 10);
-  const turno = turnoDe_(payload.turno);
-  const bloque = String(payload.bloque || "").trim();
-  const idHorario = String(payload.idHorario || "").trim();
-  const maestro = String(payload.maestro || "").trim();
+  const turno = turnoDe_(filaH["Turno"]);
+  const bloque = String(filaH["Bloque"] || "").trim();
+  const maestro = String(filaH["Maestro"] || "").trim();
+  const asignatura = String(filaH["Asignatura"] || "").trim();
   const estado = String(payload.estado || "").trim().toLowerCase();
-  if (!idHorario || !maestro || !estado) throw new Error("Faltan datos del maestro.");
+  const estadosMae = {};
+  ESTADOS_MAESTRO_ASI.forEach(function (e) { estadosMae[e.id] = true; });
+  if (!estado || !estadosMae[estado]) throw new Error("Estado de asistencia no válido: " + estado + ".");
   const obs = String(payload.observacion || "").trim();
 
   const lock = LockService.getScriptLock();
@@ -691,7 +751,7 @@ function guardarAsistenciaMaestro(token, payload) {
     const ts = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "America/Mexico_City", "yyyy-MM-dd HH:mm:ss");
     const filaVal = [
       fechaUso, turno, bloque, idHorario, maestro, grado, grupo,
-      String(payload.asignatura || ""), estado, sesion.nombre || sesion.rol, ts, obs
+      asignatura, estado, sesion.nombre || sesion.rol, ts, obs
     ];
     const existentes = _leerFilas_("AsistenciaMaestros");
     let filaN = 0;

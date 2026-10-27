@@ -109,7 +109,6 @@ function doGet(e) {
     return tInterfaz.evaluate()
       .setTitle("Comprensión Lectora · " + identidad.nombre + " · " + VERSION_APP)
       .addMetaTag("viewport", "width=device-width, initial-scale=1")
-      .addMetaTag("referrer", "no-referrer")
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 

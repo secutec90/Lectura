@@ -76,7 +76,6 @@
       const uEl = document.getElementById('usuarioLogin') || document.getElementById('usuarioAsiLogin');
       const usuario = (uEl ? uEl.value : '').trim();
       const clave = ((document.getElementById('clave') || {}).value || '').trim();
-      window.__st90ClaveAdmin = clave;
       const btnEntrar = document.getElementById('btnEntrar') || document.querySelector('#login button');
       const errEl = document.getElementById('errorLogin');
 

@@ -39,7 +39,7 @@ const GRUPOS_SIMULACION = {
   Vespertino: ["1F", "1G", "2F", "2G", "2H", "3F", "3G"]
 };
 
-function getCredencialesAdmin() {
+function _credencialesAdmin_() {
   const props = PropertiesService.getScriptProperties();
   return {
     usuario: props.getProperty("ADMIN_USUARIO") || OPCIONES_ADMIN.usuario,
@@ -464,7 +464,7 @@ function verificarAdmin(credenciales) {
   if (intentos >= MAX_INTENTOS_ADMIN) {
     return { autenticado: false, bloqueado: true, mensaje: "Demasiados intentos. Espera unos minutos." };
   }
-  const admin = getCredencialesAdmin();
+  const admin = _credencialesAdmin_();
   const correcto = !!credenciales && (
     (credenciales.usuario === admin.usuario && (credenciales.pass === admin.pass || credenciales.clave === admin.pass))
   );
@@ -694,7 +694,7 @@ function guardarRespuestaFormulario(datos) {
 // --------------------------------------------------------
 // Simulación de respuestas
 // --------------------------------------------------------
-function getClaveSimulacion() {
+function _claveSimulacion_() {
   return PropertiesService.getScriptProperties().getProperty("CLAVE_ESPECIAL") || "Memo#1";
 }
 
@@ -776,7 +776,7 @@ function simularRespuestasFormulario(credenciales, cantidad, passEspecial, perfi
   if (!verificarAdmin(credenciales).autenticado) {
     return { exito: false, mensaje: "Sesión no válida." };
   }
-  if (String(passEspecial) !== getClaveSimulacion()) {
+  if (String(passEspecial) !== _claveSimulacion_()) {
     return { exito: false, mensaje: "Contraseña de simulación incorrecta." };
   }
   const n = Number(cantidad);
@@ -844,7 +844,7 @@ function limpiarSimuladosFormulario(credenciales, passEspecial) {
   if (!verificarAdmin(credenciales).autenticado) {
     return { exito: false, mensaje: "Sesión no válida." };
   }
-  if (String(passEspecial) !== getClaveSimulacion()) {
+  if (String(passEspecial) !== _claveSimulacion_()) {
     return { exito: false, mensaje: "Contraseña incorrecta." };
   }
   const lock = LockService.getScriptLock();

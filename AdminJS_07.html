@@ -499,7 +499,7 @@
           const nivel = nivelPpmVivo(r);
           const matRes = String(r.matricula || '').trim();
           const celdaAlumno = matRes
-            ? '<button type="button" class="enlace-ficha-res" onclick="abrirFichaAlumno(\'' + escaparHtml(matRes) + '\')"><strong>' + escaparHtml(r.nombre) + '</strong><br><small style="color:#64748b;">Mat. ' + escaparHtml(matRes) + '</small></button>'
+            ? '<button type="button" class="enlace-ficha-res" onclick="abrirFichaAlumno(\'' + escaparHtml(jsSafe_(matRes)) + '\')"><strong>' + escaparHtml(r.nombre) + '</strong><br><small style="color:#64748b;">Mat. ' + escaparHtml(matRes) + '</small></button>'
             : '<strong>' + escaparHtml(r.nombre) + '</strong>';
           html += '<tr>' +
             '<td>' + escaparHtml(formatearFechaMostrada(r)) + '</td>' +

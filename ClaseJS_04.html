@@ -234,23 +234,23 @@
         
         if (bancoPlanActual === 'global') {
           // Acciones en Banco Global: Copiar a mi Banco y Ver Sesiones
-          html += '  <button type="button" class="nem-btn-accion nem-btn-primario" style="width:100%;text-align:center;background:#059669;border-color:#059669;" onclick="copiarProyectoGlobalAMiBanco_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\')">📥 Copiar a mi Banco Personal</button>';
-          html += '  <button type="button" class="nem-btn-accion" style="width:100%;text-align:center;" onclick="abrirGestorSesiones(\'' + escaparHtml(pId) + '\')">👁️ Explorar Sesiones (' + escaparHtml(numSes) + ')</button>';
+          html += '  <button type="button" class="nem-btn-accion nem-btn-primario" style="width:100%;text-align:center;background:#059669;border-color:#059669;" onclick="copiarProyectoGlobalAMiBanco_(\'' + escaparHtml(jsSafe_(pId)) + '\', \'' + escaparHtml(jsSafe_(pTitulo)) + '\')">📥 Copiar a mi Banco Personal</button>';
+          html += '  <button type="button" class="nem-btn-accion" style="width:100%;text-align:center;" onclick="abrirGestorSesiones(\'' + escaparHtml(jsSafe_(pId)) + '\')">👁️ Explorar Sesiones (' + escaparHtml(numSes) + ')</button>';
         } else {
           // Acciones en Banco Personal del docente creador
           html += '  <div style="display:flex;gap:6px;width:100%;">';
-          html += '    <button type="button" class="nem-btn-accion nem-btn-primario" style="flex:1;" onclick="abrirGestorSesiones(\'' + escaparHtml(pId) + '\')">Sesiones (' + escaparHtml(numSes) + ')</button>';
+          html += '    <button type="button" class="nem-btn-accion nem-btn-primario" style="flex:1;" onclick="abrirGestorSesiones(\'' + escaparHtml(jsSafe_(pId)) + '\')">Sesiones (' + escaparHtml(numSes) + ')</button>';
           if (puedeEditar) {
-            html += '    <button type="button" class="nem-btn-accion" style="flex:1;" onclick="editarPlaneacionGeneral(\'' + escaparHtml(pId) + '\')">Editar</button>';
+            html += '    <button type="button" class="nem-btn-accion" style="flex:1;" onclick="editarPlaneacionGeneral(\'' + escaparHtml(jsSafe_(pId)) + '\')">Editar</button>';
           }
           html += '  </div>';
 
           html += '  <div style="display:flex;gap:6px;width:100%;">';
           if (puedeEditar && est !== 'PUBLICADA') {
-            html += '    <button type="button" class="nem-btn-accion" style="flex:1;background:#f0fdf4;color:#166534;border-color:#bbf7d0;font-weight:700;" onclick="publicarProyectoEnGlobal_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\', ' + numSes + ', ' + comp + ')" title="Publicar este proyecto didáctico terminado al Repositorio Global Escolar">🚀 Publicar Global</button>';
+            html += '    <button type="button" class="nem-btn-accion" style="flex:1;background:#f0fdf4;color:#166534;border-color:#bbf7d0;font-weight:700;" onclick="publicarProyectoEnGlobal_(\'' + escaparHtml(jsSafe_(pId)) + '\', \'' + escaparHtml(jsSafe_(pTitulo)) + '\', ' + numSes + ', ' + comp + ')" title="Publicar este proyecto didáctico terminado al Repositorio Global Escolar">🚀 Publicar Global</button>';
           }
           if (puedeEditar) {
-            html += '    <button type="button" class="nem-btn-accion" style="color:#dc2626;border-color:#fecaca;padding:4px 8px;" onclick="eliminarProyectoPersonal_(\'' + escaparHtml(pId) + '\', \'' + escaparHtml(pTitulo) + '\')" title="Eliminar del Banco Personal">🗑️</button>';
+            html += '    <button type="button" class="nem-btn-accion" style="color:#dc2626;border-color:#fecaca;padding:4px 8px;" onclick="eliminarProyectoPersonal_(\'' + escaparHtml(jsSafe_(pId)) + '\', \'' + escaparHtml(jsSafe_(pTitulo)) + '\')" title="Eliminar del Banco Personal">🗑️</button>';
           }
           html += '  </div>';
         }

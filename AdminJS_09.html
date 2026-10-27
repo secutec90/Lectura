@@ -632,7 +632,7 @@
         cuerpo = '<div class="tema-slot">' + escaparHtml(lec.tema || 'Sin tema') + '</div>' +
           '<div class="meta-slot">' + escaparHtml(metaLecturaTrim(lec)) + '</div>' +
           '<div class="acciones-slot">' +
-            '<button type="button" onclick="verLecturaTrim(\'' + escaparHtml(idL) + '\')">Ver</button>' +
+            '<button type="button" onclick="verLecturaTrim(\'' + escaparHtml(jsSafe_(idL)) + '\')">Ver</button>' +
             '<button type="button" class="btn-secundario" onclick="abrirPickTrim(\'' + t + '\',\'' + g + '\')">Cambiar</button>' +
             '<button type="button" class="btn-secundario" onclick="quitarLecturaTrim(\'' + t + '\',\'' + g + '\')">Quitar</button>' +
           '</div>';
@@ -640,7 +640,7 @@
         cuerpo = '<div class="tema-slot">Lectura asignada</div>' +
           '<div class="meta-slot">Cargando datos del banco…</div>' +
           '<div class="acciones-slot">' +
-            '<button type="button" onclick="verLecturaTrim(\'' + escaparHtml(idL) + '\')">Ver</button>' +
+            '<button type="button" onclick="verLecturaTrim(\'' + escaparHtml(jsSafe_(idL)) + '\')">Ver</button>' +
             '<button type="button" class="btn-secundario" onclick="abrirPickTrim(\'' + t + '\',\'' + g + '\')">Cambiar</button>' +
             '<button type="button" class="btn-secundario" onclick="quitarLecturaTrim(\'' + t + '\',\'' + g + '\')">Quitar</button>' +
           '</div>';

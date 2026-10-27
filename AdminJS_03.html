@@ -178,7 +178,7 @@
         const estilo = esActivo
           ? 'background:#eff6ff;color:var(--st90-azul);font-weight:700;border:1px solid #bfdbfe;'
           : 'background:#fff;color:#1e293b;border:1px solid #e2e8f0;';
-        html += '<button type="button" style="text-align:left;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .15s;' + estilo + '" onclick="seleccionarDocenteAsi(\'' + escaparHtml(nom).replace(/'/g, "\\'") + '\')">' +
+        html += '<button type="button" style="text-align:left;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .15s;' + estilo + '" onclick="seleccionarDocenteAsi(\'' + escaparHtml(jsSafe_(nom)) + '\')">' +
           (esActivo ? '✓ ' : '') + escaparHtml(nom) +
           '</button>';
       });

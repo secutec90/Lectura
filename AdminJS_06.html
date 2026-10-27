@@ -378,7 +378,7 @@
       const lista = Object.keys(grupos).sort();
       cajaG.innerHTML = lista.map(function (g) {
         const act = seleccionChartGrupos[g] ? ' activo' : '';
-        return '<button type="button" class="chip-sel' + act + '" onclick="toggleChipChart(\'grupo\',\'' + escaparHtml(g) + '\')">' + escaparHtml(g.toUpperCase()) + '</button>';
+        return '<button type="button" class="chip-sel' + act + '" onclick="toggleChipChart(\'grupo\',\'' + escaparHtml(jsSafe_(g)) + '\')">' + escaparHtml(g.toUpperCase()) + '</button>';
       }).join('') || '<span style="color:#94a3b8;font-size:12px;">Sin grupos en el filtro actual. Elige Grado/Grupo = Todos para comparar.</span>';
     }
 

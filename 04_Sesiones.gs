@@ -41,9 +41,8 @@ function credencialesEncuestasPanel(tokenSesion) {
   try {
     const t = String(tokenSesion || "").trim();
     if (!t) return { ok: false };
-    const cache = CacheService.getScriptCache();
-    const sesion = cache.get("sesion_" + t);
-    if (!sesion) return { ok: false };
+    const sesion = obtenerSesionValida_(t);
+    if (!sesion || String(sesion.rol || "").toLowerCase() !== "admin") return { ok: false };
     const props = PropertiesService.getScriptProperties();
     return {
       ok: true,

@@ -518,7 +518,7 @@
           : Number(l.nPreguntas || 0);
 
 
-        return '<button type="button" class="card-lectura-nav' + (esActiva ? ' activa' : '') + '" onclick="seleccionarLectura(\'' + escaparHtml(l.id) + '\')">' +
+        return '<button type="button" class="card-lectura-nav' + (esActiva ? ' activa' : '') + '" onclick="seleccionarLectura(\'' + escaparHtml(jsSafe_(l.id)) + '\')">' +
           '<div class="card-lec-titulo" title="' + escaparHtml(labelTema) + '">' + escaparHtml(labelTema) + '</div>' +
           '<div class="card-lec-meta">' +
             '<span class="badge-asig ' + claseAsig + '">' + escaparHtml(labelAsig) + '</span>' +

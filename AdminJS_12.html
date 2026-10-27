@@ -70,7 +70,7 @@
         const valActual = (inputTema ? inputTema.value.trim() : '');
         contChips.innerHTML = temas.map(function (t) {
           const esSel = (valActual && valActual.toLowerCase() === t.toLowerCase());
-          return '<button type="button" class="chip-tema-nem' + (esSel ? ' seleccionado' : '') + '" onclick="seleccionarTemaSugeridoIA(\'' + escaparHtml(t).replace(/'/g, "\\'") + '\')">' +
+          return '<button type="button" class="chip-tema-nem' + (esSel ? ' seleccionado' : '') + '" onclick="seleccionarTemaSugeridoIA(\'' + escaparHtml(jsSafe_(t)) + '\')">' +
             '📌 ' + escaparHtml(t) + '</button>';
         }).join('');
       }

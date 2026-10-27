@@ -271,20 +271,20 @@
             '<td style="text-align:center;"><input type="checkbox" class="chk-alumno-fila" value="' + escaparHtml(claveSel) + '" ' + (esSelec ? 'checked' : '') + ' onchange="toggleSeleccionAlumno(\'' + escaparHtml(claveSel) + '\', this.checked)"></td>' +
             '<td><span class="matricula-badge">' + escaparHtml(matStr) + '</span></td>' +
             '<td>' +
-              '<button type="button" class="btn-nombre-ficha" onclick="abrirFichaAlumno(\'' + escaparHtml(matStr) + '\')" title="Ver ficha de ' + escaparHtml(a.nombre) + '">' +
+              '<button type="button" class="btn-nombre-ficha" onclick="abrirFichaAlumno(\'' + escaparHtml(jsSafe_(matStr)) + '\')" title="Ver ficha de ' + escaparHtml(a.nombre) + '">' +
                 '<span class="avatar-alumno">' + escaparHtml(ini) + '</span>' +
                 '<strong class="nombre-alumno-mat">' + escaparHtml(a.nombre) + '</strong>' +
               '</button>' +
             '</td>' +
             '<td style="text-align:center;"><span style="font-weight:600;color:#334155;">' + escaparHtml(gNum) + '°</span></td>' +
-            '<td style="text-align:center;"><button type="button" class="badge-grupo" data-tip="Mover de grupo" aria-label="Mover de grupo" onclick="abrirModalMoverGrupo([\'' + escaparHtml(matStr) + '\'], \'' + escaparHtml(a.nombre) + '\')">' + escaparHtml(gpoTxt) + '</button></td>' +
+            '<td style="text-align:center;"><button type="button" class="badge-grupo" data-tip="Mover de grupo" aria-label="Mover de grupo" onclick="abrirModalMoverGrupo([\'' + escaparHtml(jsSafe_(matStr)) + '\'], \'' + escaparHtml(jsSafe_(a.nombre)) + '\')">' + escaparHtml(gpoTxt) + '</button></td>' +
             '<td style="text-align:center;"><span class="st90-chip ' + (esActivo ? 'ok' : 'no') + '">' + (esActivo ? 'Activo' : 'Baja') + '</span></td>' +
             '<td><span class="dato-acc" style="color:var(--st90-azul);">' + escaparHtml(a.usuario || '—') + '</span></td>' +
             '<td>' + (a.clave ? ('<span class="dato-acc badge-pass">' + escaparHtml(a.clave) + '</span>') : '<span style="color:#94a3b8;font-size:12px;">Sin contraseña</span>') + '</td>' +
-            '<td style="text-align:center;"><button type="button" style="background:transparent;border:none;cursor:pointer;padding:0;" data-tip="Ajustar intentos" aria-label="Ajustar intentos" onclick="ajustarIntentosAlumnoIndividual(\'' + escaparHtml(matStr) + '\', ' + extraNum + ')">' + (extraNum > 0 ? '<span class="st90-chip warn">+' + extraNum + '</span>' : '<span style="color:#94a3b8;font-size:12px;">0</span>') + '</button></td>' +
+            '<td style="text-align:center;"><button type="button" style="background:transparent;border:none;cursor:pointer;padding:0;" data-tip="Ajustar intentos" aria-label="Ajustar intentos" onclick="ajustarIntentosAlumnoIndividual(\'' + escaparHtml(jsSafe_(matStr)) + '\', ' + extraNum + ')">' + (extraNum > 0 ? '<span class="st90-chip warn">+' + extraNum + '</span>' : '<span style="color:#94a3b8;font-size:12px;">0</span>') + '</button></td>' +
             '<td style="text-align:right;"><span class="acciones-fila">' +
-              htmlBtnIconoFila('Ver ficha', 'abrirFichaAlumno(\'' + escaparHtml(matStr) + '\')', '<circle cx="9" cy="8" r="2.6"/><path d="M4 19c.5-2.6 2.2-4.2 5-4.2s4.5 1.6 5 4.2"/><rect x="15" y="4.5" width="6.5" height="9" rx="1"/><path d="M16.5 7.5h3.5M16.5 10h3.5"/>') +
-              htmlBtnIconoFila('Mover de grupo', 'abrirModalMoverGrupo([\'' + escaparHtml(matStr) + '\'], \'' + escaparHtml(a.nombre) + '\')', '<circle cx="9" cy="8" r="2.6"/><path d="M4 19c.5-2.6 2.2-4.2 5-4.2s4.5 1.6 5 4.2"/><path d="M16 8h5M19 5v6"/>') +
+              htmlBtnIconoFila('Ver ficha', 'abrirFichaAlumno(\'' + escaparHtml(jsSafe_(matStr)) + '\')', '<circle cx="9" cy="8" r="2.6"/><path d="M4 19c.5-2.6 2.2-4.2 5-4.2s4.5 1.6 5 4.2"/><rect x="15" y="4.5" width="6.5" height="9" rx="1"/><path d="M16.5 7.5h3.5M16.5 10h3.5"/>') +
+              htmlBtnIconoFila('Mover de grupo', 'abrirModalMoverGrupo([\'' + escaparHtml(jsSafe_(matStr)) + '\'], \'' + escaparHtml(jsSafe_(a.nombre)) + '\')', '<circle cx="9" cy="8" r="2.6"/><path d="M4 19c.5-2.6 2.2-4.2 5-4.2s4.5 1.6 5 4.2"/><path d="M16 8h5M19 5v6"/>') +
               htmlBtnsCredencial_({
                 aleatoria: 'generarClaveUnicaAlu(\'' + jsSafe_(matStr) + '\',\'' + jsSafe_(a.nombre) + '\')',
                 editar: 'editarAccesoAlu(\'' + jsSafe_(matStr) + '\',\'' + jsSafe_(a.nombre) + '\',\'' + jsSafe_(a.usuario) + '\',\'' + jsSafe_(a.clave) + '\')',
@@ -560,7 +560,7 @@
         if (grpGrado.length) {
           htmlBotones += '<div style="margin-bottom:8px;"><strong style="font-size:12px;color:#1e40af;">' + gr + '° de secundaria:</strong><div class="modal-grupos-grid">';
           grpGrado.forEach(function (g) {
-            htmlBotones += '<button type="button" class="btn-grupo-modal" onclick="ejecutarMoverGrupoModal(\'' + escaparHtml(g.grupo) + '\')">' + escaparHtml(g.grupo.toUpperCase()) + '</button>';
+            htmlBotones += '<button type="button" class="btn-grupo-modal" onclick="ejecutarMoverGrupoModal(\'' + escaparHtml(jsSafe_(g.grupo)) + '\')">' + escaparHtml(g.grupo.toUpperCase()) + '</button>';
           });
           htmlBotones += '</div></div>';
         }

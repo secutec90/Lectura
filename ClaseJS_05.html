@@ -6,22 +6,20 @@
     const gr = String(grado || (document.getElementById('planGrado') || {}).value || '1').trim();
     const gp = String(grupo || (document.getElementById('planGrupo') || {}).value || 'A').trim().replace(/^\d+/, '').toUpperCase();
     const clave = gr + gp;
-    const alumnosBAPyC = (typeof PADRON_INCLUSION_UDEI_ !== 'undefined' && PADRON_INCLUSION_UDEI_[clave]) || [];
+    const tieneBAPyC = (typeof GRUPOS_CON_BAPYC_ !== 'undefined' && GRUPOS_CON_BAPYC_.indexOf(clave) >= 0);
     const sec = document.getElementById('secInclusionBAPyC');
     const wrapChips = document.getElementById('wrapChipsBAPyCGrupo');
     const inpAjustes = document.getElementById('planAjustesRazonables');
 
     if (!sec) return;
 
-    if (alumnosBAPyC.length > 0) {
+    if (tieneBAPyC) {
       sec.classList.remove('oculto');
       if (wrapChips) {
-        wrapChips.innerHTML = alumnosBAPyC.map(b =>
-          `<div class="nem-chip-bapyc"><span>${escaparHtml(b.tipo)}</span> ${escaparHtml(b.etiqueta)}</div>`
-        ).join('');
+        wrapChips.innerHTML = '<div class="nem-chip-bapyc"><span>BAPyC</span> Grupo con barreras para el aprendizaje, la participación y la convivencia</div>';
       }
       if (inpAjustes && (!inpAjustes.value || !inpAjustes.value.trim())) {
-        inpAjustes.value = alumnosBAPyC.map(b => `• [${b.tipo}]: ${b.ajusteSugerido}`).join('\n\n');
+        inpAjustes.value = '• Este grupo tiene alumnado que enfrenta barreras para el aprendizaje, la participación y la convivencia (BAPyC). Consulta el expediente de inclusión del grupo y describe aquí los ajustes razonables de acceso, formato y evaluación.';
       }
     } else {
       sec.classList.add('oculto');

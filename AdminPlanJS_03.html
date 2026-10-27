@@ -1,5 +1,5 @@
 <script>
-/* AdminPlanJS_03 — inferirCampoYMetodologia_, alCambiarFechaInicioPlan, alSeleccionarClaseHorarioEnPlan, CATALOGO_PROGRAMA_ANALITICO_CTE_, PADRON_INCLUSION_UDEI_, evaluarInclusionGrupo_, obtenerCatalogoCTE_, guardarCatalogoCTE_, abrirModalGestionCTE_, eliminarProblemaCTEModal_, ... */
+/* AdminPlanJS_03 — inferirCampoYMetodologia_, alCambiarFechaInicioPlan, alSeleccionarClaseHorarioEnPlan, CATALOGO_PROGRAMA_ANALITICO_CTE_, GRUPOS_CON_BAPYC_, evaluarInclusionGrupo_, obtenerCatalogoCTE_, guardarCatalogoCTE_, abrirModalGestionCTE_, eliminarProblemaCTEModal_, ... */
 
 
     function inferirCampoYMetodologia_(asig) {
@@ -121,62 +121,29 @@
     }
   ];
 
-  /* PADRÓN INSTITUCIONAL DE EDUCACIÓN INCLUSIVA (UDEI / BAPyC POR GRUPO) */
-  const PADRON_INCLUSION_UDEI_ = {
-    '1A': [
-      { tipo: 'TDAH', etiqueta: 'Déficit de Atención e Hiperactividad', ajusteSugerido: 'Consignas breves y secuenciadas, cronómetro visible de actividades (bloques de 10 min), pausas activas motrices y tiempo flexible de entrega.' },
-      { tipo: 'Discapacidad Visual Moderada', etiqueta: 'Baja Visión', ajusteSugerido: 'Macrotipos (fuente ampliada 16pt+), alto contraste en pizarrones y pantallas, descripción auditiva obligatoria de esquemas/imágenes y ubicación en la primera fila.' }
-    ],
-    '1B': [
-      { tipo: 'Dislexia / Dificultad de Lectoescritura', etiqueta: 'Dificultad Específica en Lectura', ajusteSugerido: 'Soporte auditivo con lectura en voz alta (Aula Hablada), tipografía legible sin serifa, evaluaciones orales formativas y evitar lectura forzada frente al grupo.' }
-    ],
-    '1C': [],
-    '1D': [
-      { tipo: 'Aptitudes Sobresalientes (Intelectual)', etiqueta: 'Aptitudes Sobresalientes', ajusteSugerido: 'Enriquecimiento curricular con retos de investigación de mayor profundidad, roles de co-mentoría y diversificación de productos finales.' }
-    ],
-    '1E': [],
-    '2A': [
-      { tipo: 'Hipoacusia Leve', etiqueta: 'Discapacidad Auditiva Leve', ajusteSugerido: 'Contacto visual directo del docente al exponer, material impreso o subtitulado para cualquier audio y ubicación frontal libre de interferencia sonora.' }
-    ],
-    '2B': [
-      { tipo: 'TDAH', etiqueta: 'TDAH Predominio Hiperactivo', ajusteSugerido: 'Roles activos en la dinámica de clase (reparto de materiales), organizadores gráficos visuales y retroalimentación positiva inmediata.' }
-    ],
-    '2C': [],
-    '2D': [
-      { tipo: 'Trastorno del Espectro Autista (Nivel 1)', etiqueta: 'TEA Nivel 1', ajusteSugerido: 'Rutinas predecibles de sesión, anticipación verbal de transiciones, consignas directas sin dobles sentidos y regulación de estímulos sonoros intensos.' }
-    ],
-    '2E': [],
-    '3A': [
-      { tipo: 'Baja Visión', etiqueta: 'Discapacidad Visual', ajusteSugerido: 'Archivos digitales con lector de pantalla accesible, iluminación óptima y material concreto en representaciones espaciales o matemáticas.' }
-    ],
-    '3B': [],
-    '3C': [
-      { tipo: 'Aptitudes Sobresalientes (Creativa/Artística)', etiqueta: 'Aptitudes Sobresalientes', ajusteSugerido: 'Opciones de evidenciar aprendizajes mediante proyectos audiovisuales, literarios o artísticos alternativos al texto plano.' }
-    ],
-    '3D': [],
-    '3E': []
-  };
+  /* Grupos con alumnado que enfrenta Barreras para el Aprendizaje, la Participación
+     y la Convivencia (BAPyC). Se registra únicamente el grupo: el detalle de cada caso
+     vive en el expediente de inclusión, no en el código ni en la página. */
+  const GRUPOS_CON_BAPYC_ = ['1A', '1B', '1D', '2A', '2B', '2D', '3A', '3C'];
 
   function evaluarInclusionGrupo_(grado, grupo) {
     const gr = String(grado || (document.getElementById('planGrado') || {}).value || '1').trim();
     const gp = String(grupo || (document.getElementById('planGrupo') || {}).value || 'A').trim().replace(/^\d+/, '').toUpperCase();
     const clave = gr + gp;
-    const alumnosBAPyC = (typeof PADRON_INCLUSION_UDEI_ !== 'undefined' && PADRON_INCLUSION_UDEI_[clave]) || [];
+    const tieneBAPyC = (typeof GRUPOS_CON_BAPYC_ !== 'undefined' && GRUPOS_CON_BAPYC_.indexOf(clave) >= 0);
     const sec = document.getElementById('secInclusionBAPyC');
     const wrapChips = document.getElementById('wrapChipsBAPyCGrupo');
     const inpAjustes = document.getElementById('planAjustesRazonables');
 
     if (!sec) return;
 
-    if (alumnosBAPyC.length > 0) {
+    if (tieneBAPyC) {
       sec.classList.remove('oculto');
       if (wrapChips) {
-        wrapChips.innerHTML = alumnosBAPyC.map(b =>
-          `<div class="nem-chip-bapyc"><span>${escaparHtml(b.tipo)}</span> ${escaparHtml(b.etiqueta)}</div>`
-        ).join('');
+        wrapChips.innerHTML = '<div class="nem-chip-bapyc"><span>BAPyC</span> Grupo con barreras para el aprendizaje, la participación y la convivencia</div>';
       }
       if (inpAjustes && (!inpAjustes.value || !inpAjustes.value.trim())) {
-        inpAjustes.value = alumnosBAPyC.map(b => `• [${b.tipo}]: ${b.ajusteSugerido}`).join('\n\n');
+        inpAjustes.value = '• Este grupo tiene alumnado que enfrenta barreras para el aprendizaje, la participación y la convivencia (BAPyC). Consulta el expediente de inclusión del grupo y describe aquí los ajustes razonables de acceso, formato y evaluación.';
       }
     } else {
       sec.classList.add('oculto');

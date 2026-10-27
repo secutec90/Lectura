@@ -1,10 +1,10 @@
 {
-  "generado": "2026-10-26T19:32:41.859Z",
+  "generado": "2026-10-27T13:10:49.641Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
-    "archivos": 76,
-    "documentos": 65,
+    "archivos": 82,
+    "documentos": 70,
     "simbolos": 1845,
     "sentencias_superiores": 41,
     "duplicados": 286,
@@ -58,525 +58,13 @@
     ],
     "enviar": [
       "Interfaz.html#script1",
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "FORM": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "FILTROS": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "RESPUESTAS": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "creds": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "editando": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "simulacionModal": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "modalGrafica": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "modalCategorias": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "modalAyuda": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "editandoCategoria": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "chartsResumen": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "CONFIGS_GRAFICA": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "FILTROS_DINAMICOS": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "graficaModal": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "pendienteGrafica": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "sunburstInstancia": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "vistaPaneles": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "leerNumero": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "tamanoGrafica": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "tamanoLista": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "alturaGrafica": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "TIPOS": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "PALETA_ESTABLE": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "COLORES_ASIGNADOS": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "colorDimension": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "sembrarColores": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "alternarCabecera": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "aplicarCabecera": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "cambiarVista": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "cambiarAltura": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "aplicarAltura": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "cambiarTamanoGrafica": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "cambiarTamanoLista": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "colorTextoContraste": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "pluginValores": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "dimensionDe": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "valorDe": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "construirApilada": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "esc": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "cargarFormulario": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "renderFormulario": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "crearCampo": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "aplicarDependenciasFormulario": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "aplicarCondiciones": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "otraRespuesta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_01.html#script0"
-    ],
-    "salirAdmin": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "avisoPanel": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "cargarRespuestas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "pintarMenusFiltro": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "renderMenuDesdeSelect": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "cerrarMenuFiltros": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "actualizarBotonesFiltro": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "IDS_DIMENSION_LEGADO": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "esDimensionPregunta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "mapaGruposLegado": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "dimensionesDisponibles": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "ORDEN_BARRA": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "dimensionesBarra": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "opcionesDeDimension": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "ajustarCascada": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "ICONOS_DIMENSION": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "pintarDimensiones": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "opcionesDivision": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "rolAnalitico": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "esGraficable": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "preguntasGraficables": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "pintarSelectorPregunta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "refrescarSegmentos": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "pintarFiltrosDinamicos": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "renderMenuAjustes": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "aplicarFiltrosYGraficar": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "filasFiltradas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "modoEtiquetas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "recortarEtiqueta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "partirEtiqueta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "ejeCategoriaConfig": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "escalasCartesianas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "ejeCartesiano": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "pintarResumenPanel": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_02.html#script0"
-    ],
-    "renderSunburstDirecto": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "valorFecha": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "pintarTablaRespuestas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "cambiarOrdenDesdeColumna": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "alternarBuscador": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "restablecerFiltrosTabla": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "celdaCSV": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "descargarCSVRespuestas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "imprimirRespuestas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "preguntasVisibles": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "preguntaCategoria": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "opcionesDependientes": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "ampliarGrafica": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "renderGraficaModal": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "abrirSimulacion": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "ejecutarSimulacion": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "limpiarSimulados": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "quitarPreguntasEjemplo": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "vincularHoja": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "pintarConfig": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "leerConfigFormulario": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "pintarPreguntas": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "eliminar": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "abrirModal": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "alternarAyudaPregunta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "serializarOpcionesPorPadre": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_03.html#script0"
-    ],
-    "parsearOpcionesPorPadre": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "rolesDimension": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "poblarPadresDimension": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarCamposDimension": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarJerarquiaUI": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarRolAnalitico": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarCamposTipo": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "cadenaPadresRepite": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarCondicionUI": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarValoresCondicion": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "guardarPregunta": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "guardarTodo": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "bancoModal": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "abrirBanco": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "cargarListaBanco": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_02.html#script0"
     ],
     "guardarEnBanco": [
-      "AdminEncuestas.html#script0",
       "Encuestas.gs",
-      "FormEncJS_04.html#script0"
-    ],
-    "verEncuestaDelBanco": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "volverEncuestaActual": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "abrirCategorias": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "getCategorias": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "pintarCategorias": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "guardarCategoria": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "eliminarCategoria": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
-    ],
-    "actualizarCategoriaUI": [
-      "AdminEncuestas.html#script0",
-      "FormEncJS_04.html#script0"
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
     ],
     "restaurarPpmRecomendados": [
       "06_Alumnos.gs",
@@ -1161,6 +649,518 @@
     "mover": [
       "AdminJS_09.html#script0",
       "FormEncJS_03.html#script0"
+    ],
+    "FORM": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "FILTROS": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "RESPUESTAS": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "creds": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "editando": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "simulacionModal": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "modalGrafica": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "modalCategorias": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "modalAyuda": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "editandoCategoria": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "chartsResumen": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "CONFIGS_GRAFICA": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "FILTROS_DINAMICOS": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "graficaModal": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "pendienteGrafica": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "sunburstInstancia": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "vistaPaneles": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "leerNumero": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "tamanoGrafica": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "tamanoLista": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "alturaGrafica": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "TIPOS": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "PALETA_ESTABLE": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "COLORES_ASIGNADOS": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "colorDimension": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "sembrarColores": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "alternarCabecera": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "aplicarCabecera": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "cambiarVista": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "cambiarAltura": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "aplicarAltura": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "cambiarTamanoGrafica": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "cambiarTamanoLista": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "colorTextoContraste": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "pluginValores": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "dimensionDe": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "valorDe": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "construirApilada": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "esc": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "cargarFormulario": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "renderFormulario": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "crearCampo": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_01.html#script0"
+    ],
+    "aplicarDependenciasFormulario": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "aplicarCondiciones": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "otraRespuesta": [
+      "FormEncJS_01.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "salirAdmin": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "avisoPanel": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "cargarRespuestas": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "pintarMenusFiltro": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "renderMenuDesdeSelect": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "cerrarMenuFiltros": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "actualizarBotonesFiltro": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "IDS_DIMENSION_LEGADO": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "esDimensionPregunta": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "mapaGruposLegado": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "dimensionesDisponibles": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "ORDEN_BARRA": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "dimensionesBarra": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "opcionesDeDimension": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "ajustarCascada": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "ICONOS_DIMENSION": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "pintarDimensiones": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "opcionesDivision": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "rolAnalitico": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "esGraficable": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "preguntasGraficables": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "pintarSelectorPregunta": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "refrescarSegmentos": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "pintarFiltrosDinamicos": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_02.html#script0"
+    ],
+    "renderMenuAjustes": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "aplicarFiltrosYGraficar": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "filasFiltradas": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "modoEtiquetas": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "recortarEtiqueta": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "partirEtiqueta": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "ejeCategoriaConfig": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "escalasCartesianas": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "ejeCartesiano": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "pintarResumenPanel": [
+      "FormEncJS_02.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "renderSunburstDirecto": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "valorFecha": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "pintarTablaRespuestas": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "cambiarOrdenDesdeColumna": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "alternarBuscador": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "restablecerFiltrosTabla": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "celdaCSV": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "descargarCSVRespuestas": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "imprimirRespuestas": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "preguntasVisibles": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "preguntaCategoria": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "opcionesDependientes": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "ampliarGrafica": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "renderGraficaModal": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_03.html#script0"
+    ],
+    "abrirSimulacion": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "ejecutarSimulacion": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "limpiarSimulados": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "quitarPreguntasEjemplo": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "vincularHoja": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "pintarConfig": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "leerConfigFormulario": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "pintarPreguntas": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "eliminar": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "abrirModal": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "alternarAyudaPregunta": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "serializarOpcionesPorPadre": [
+      "FormEncJS_03.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "parsearOpcionesPorPadre": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "rolesDimension": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "poblarPadresDimension": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "actualizarCamposDimension": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "actualizarJerarquiaUI": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "actualizarRolAnalitico": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "actualizarCamposTipo": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "cadenaPadresRepite": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "actualizarCondicionUI": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "actualizarValoresCondicion": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "guardarPregunta": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "guardarTodo": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "bancoModal": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "abrirBanco": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "cargarListaBanco": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_04.html#script0"
+    ],
+    "verEncuestaDelBanco": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "volverEncuestaActual": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "abrirCategorias": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "getCategorias": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "pintarCategorias": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "guardarCategoria": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "eliminarCategoria": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
+    ],
+    "actualizarCategoriaUI": [
+      "FormEncJS_04.html#script0",
+      "AdminEncJS_05.html#script0"
     ]
   },
   "archivos": {
@@ -2897,758 +2897,8 @@
       ]
     },
     "AdminEncuestas.html": {
-      "sha256": "d81feaf5700fc2f4ee45f838876dc1a89c7fc25ae79d5e5efa55aaceefb540fa",
-      "documentos": [
-        {
-          "id": "AdminEncuestas.html#script0",
-          "simbolos": {
-            "inicializarModuloEncuestas_": {
-              "tipo": "function",
-              "linea": 923,
-              "hash": "e7269cf05f3f12411a93e8fbac91c435b217748ab7e3f21ba2aa2091256965ab"
-            },
-            "conmutarSubEncuestas": {
-              "tipo": "function",
-              "linea": 950,
-              "hash": "9282aafe307615db6bfaec043737b99e0860f88f5aa86856189f0bd88f57d49a"
-            },
-            "obtenerUrlPublicaCenso_": {
-              "tipo": "function",
-              "linea": 966,
-              "hash": "01b0e1c2425e9e65defbb8aef09fe1c56c3e2871c45d9bdd7c1a93c03bdacdf6"
-            },
-            "copiarEnlacePublicoCenso": {
-              "tipo": "function",
-              "linea": 976,
-              "hash": "464b241e8a443ab3c3711356faa80da307fcdf3ab6adcb7ed6c968b4c9329c6c"
-            },
-            "abrirEncuestaPublicaNuevaPestana_": {
-              "tipo": "function",
-              "linea": 1002,
-              "hash": "2f2a52cfa92783f528c0f7f36d0089ffa0a75859d9cd2714ffa89aee35933936"
-            },
-            "abrirVistaPreviaEncuesta_": {
-              "tipo": "function",
-              "linea": 1006,
-              "hash": "671e94e2fa95fc3cf4bfc42009debce1713b6d845bd2e8cb8edfd4b327d919c1"
-            },
-            "enviarVistaPrevia_": {
-              "tipo": "function",
-              "linea": 1061,
-              "hash": "72289f49abe637948c81ca9de23e4b9e0ca6402c3ed2a2a82f2166f83eb5af6b"
-            },
-            "abrirAyudaModalEncuestas_": {
-              "tipo": "function",
-              "linea": 1104,
-              "hash": "91effec2a3a7dfeda479d1aa4c4f4813ef37765d0beeaffddb9a3cec0089d5cc"
-            },
-            "FORM": {
-              "tipo": "let",
-              "linea": 1118,
-              "hash": "945adc55faef68a93122f49361eeb463444b02688f91dd1cb3705fc479ddfc20"
-            },
-            "FILTROS": {
-              "tipo": "let",
-              "linea": 1119,
-              "hash": "cc6d87d1ff19693dc7d7402d680f926390da3c110cdf5593ef57e175e973c458"
-            },
-            "RESPUESTAS": {
-              "tipo": "let",
-              "linea": 1120,
-              "hash": "f7944a9cb85d07390f46f50665fc0a1d2ee1d964fd0fa013aa6f5c62b7e82098"
-            },
-            "creds": {
-              "tipo": "let",
-              "linea": 1121,
-              "hash": "2f34d5b6252bad1e2a52c6198849995eef64d53d7bcb4e258794cd1c66b43267"
-            },
-            "editando": {
-              "tipo": "let",
-              "linea": 1122,
-              "hash": "3eacb6227bef9991fa350ff5ba57d9276e20ce28128040c8a95baa7edcd39039"
-            },
-            "modalPreguntaBS": {
-              "tipo": "let",
-              "linea": 1123,
-              "hash": "7e8f031dbc21d1d929e697e88b5c0d5694f28adb4e35b37bb6135cc3c5cd8e4a"
-            },
-            "simulacionModal": {
-              "tipo": "let",
-              "linea": 1124,
-              "hash": "fd29526bb380438f97fd83514220f44a761c9aeb916751c631fef6321e13928e"
-            },
-            "modalGrafica": {
-              "tipo": "let",
-              "linea": 1125,
-              "hash": "ac0f1f1aedf57c3a2bf8dae5cbc71567d82c9c4df08f418f6172c7fc12b40312"
-            },
-            "modalCategorias": {
-              "tipo": "let",
-              "linea": 1126,
-              "hash": "9b1bc8f5db00b2aaad1fd29f49d8f383775fbf6a8e71f288a19c8b4e065bf9fd"
-            },
-            "modalAyuda": {
-              "tipo": "let",
-              "linea": 1127,
-              "hash": "a5e0505a137a4bcf3711543ddb62afbd7b204afe6ac650a2d3d1c2d8e5018a56"
-            },
-            "editandoCategoria": {
-              "tipo": "let",
-              "linea": 1128,
-              "hash": "5b2d608c277c2f9d2f7ce636f94d4571b226881e4f3f3867e63c1ab1806d004d"
-            },
-            "chartsResumen": {
-              "tipo": "let",
-              "linea": 1129,
-              "hash": "3e964883c58368b3893cc46b32f0bac3ca07901ad4f2516b51a89d9444960a5d"
-            },
-            "CONFIGS_GRAFICA": {
-              "tipo": "let",
-              "linea": 1130,
-              "hash": "bb0acf5a74375f9d2ffec85443791c4b249cf1e129e49a0f94a74d1572512c51"
-            },
-            "FILTROS_DINAMICOS": {
-              "tipo": "let",
-              "linea": 1131,
-              "hash": "4e6686291cc941734893e63928bc21a1a53b0f07bc79fd3213550e26de5ad1c8"
-            },
-            "graficaModal": {
-              "tipo": "let",
-              "linea": 1132,
-              "hash": "7581908f3935e053c5b09a16127607abce315a7cf82a5da4135070c961589145"
-            },
-            "pendienteGrafica": {
-              "tipo": "let",
-              "linea": 1133,
-              "hash": "8a3ce6115510403192d46dac530fdabde6ad3a6b05e442b533a929aed0aae497"
-            },
-            "sunburstInstancia": {
-              "tipo": "let",
-              "linea": 1134,
-              "hash": "9b0d0884fc817421695959653531eb1f1e51e4506816b5ab4c216127b7ff69a0"
-            },
-            "vistaPaneles": {
-              "tipo": "let",
-              "linea": 1137,
-              "hash": "e16d4c21e22fc41fc0e73348c4b01c773def3a41598468e6c430b6a035bc9f16"
-            },
-            "leerNumero": {
-              "tipo": "function",
-              "linea": 1138,
-              "hash": "e9db273979481ecf5a0cf5cff2560fc3499ac214083914369bbbfe221e9d8ba8"
-            },
-            "tamanoGrafica": {
-              "tipo": "let",
-              "linea": 1144,
-              "hash": "09a29ccab602b440842b1b4706bfdde3a271a1d7e30c829039f19992ef7fca6d"
-            },
-            "tamanoLista": {
-              "tipo": "let",
-              "linea": 1145,
-              "hash": "f037ae7fbf50ea9e2e12d4a030fff31474378027595a250d4457b8833fb41a0a"
-            },
-            "alturaGrafica": {
-              "tipo": "let",
-              "linea": 1146,
-              "hash": "71ae5a866a30f7d7881056305330ef14dce4b6c38fa056a7640c334a4b75eb51"
-            },
-            "TIPOS": {
-              "tipo": "const",
-              "linea": 1148,
-              "hash": "3220553dd7d31190ee60e8e32c17b7afe69ef6dbd598f4b20692416405efcbbf"
-            },
-            "PALETA_ESTABLE": {
-              "tipo": "const",
-              "linea": 1154,
-              "hash": "f1d5ae5e5c62b659c7403d7f858371017d3c0ab62ca0691372bb6db4ab9504e1"
-            },
-            "COLORES_ASIGNADOS": {
-              "tipo": "const",
-              "linea": 1155,
-              "hash": "6e08ce906db64974a50020d292e6c39f8262de28ea666f820dcc50d23a15a6b5"
-            },
-            "colorDimension": {
-              "tipo": "function",
-              "linea": 1157,
-              "hash": "b29c48c61c774e395f621581ea988c00a7e6ac304b7d601b116f9f1d3d34cf35"
-            },
-            "sembrarColores": {
-              "tipo": "function",
-              "linea": 1167,
-              "hash": "7f9c77774563732b6114f1f7081e74e5ac35e4314c8f86c0deb27b5ec1a76e2a"
-            },
-            "alternarCabecera": {
-              "tipo": "function",
-              "linea": 1254,
-              "hash": "a3b140266a2cf4e4c95628fa51943ecef23c21aa9c77852ec968b8317c14d17e"
-            },
-            "aplicarCabecera": {
-              "tipo": "function",
-              "linea": 1260,
-              "hash": "46b6cc5edf7a3890ad0c82ca4df26fc557f4ebe6b65534b05ea0d4192a965e3c"
-            },
-            "cambiarVista": {
-              "tipo": "function",
-              "linea": 1273,
-              "hash": "c3244c38dca4f545ac88b99690657c5651ecf2fccde66e95cdb7e7ce160cd967"
-            },
-            "cambiarAltura": {
-              "tipo": "function",
-              "linea": 1291,
-              "hash": "8f5f3bfa03854ad6c98daf7a634f7e7d0ad016edd8a58fb6f84aea3eb577fd38"
-            },
-            "aplicarAltura": {
-              "tipo": "function",
-              "linea": 1297,
-              "hash": "ad6761ac1f7a9812c020cd8260f8aff943101a2317cbfa55c0c7c31e68baf6cc"
-            },
-            "cambiarTamanoGrafica": {
-              "tipo": "function",
-              "linea": 1306,
-              "hash": "0f66a2d7ef5f0f296b89bfeb5536ad3ca084aaebf97b11e4e98f5e1cf275c4c2"
-            },
-            "cambiarTamanoLista": {
-              "tipo": "function",
-              "linea": 1312,
-              "hash": "8cae7525ae46521a73fa29287cb983ae4d002a4e949aabcb6334c48db4f2ac0e"
-            },
-            "colorTextoContraste": {
-              "tipo": "function",
-              "linea": 1320,
-              "hash": "5b47f864320de2269c49319cba903522241c916a6568b8892460c14274059d16"
-            },
-            "pluginValores": {
-              "tipo": "const",
-              "linea": 1330,
-              "hash": "b775119846579415107b9e9a8d616f49936a1930e308d54d23c14f366acd6b3c"
-            },
-            "dimensionDe": {
-              "tipo": "function",
-              "linea": 1401,
-              "hash": "21b29d6cbca4305e6251f6c33e82cd87b22451d3a232d256bb937aa0787eb8b8"
-            },
-            "valorDe": {
-              "tipo": "function",
-              "linea": 1415,
-              "hash": "357ae9cb3a3aca0d0a8106228bd4e2461e6c51b9f068cec1afb632c3d263f521"
-            },
-            "construirApilada": {
-              "tipo": "function",
-              "linea": 1425,
-              "hash": "821259293e2fd955aa8387e94a6b99475528b913630a0942f18afb9681510ec9"
-            },
-            "esc": {
-              "tipo": "function",
-              "linea": 1473,
-              "hash": "36bd23222f0a581ef06c9973e4fae25d8688b4ba0dde863a445831539cd0540e"
-            },
-            "conmutarSubTabBarra_": {
-              "tipo": "function",
-              "linea": 1478,
-              "hash": "f4d10701dbe2c90061cc1bb7647ce754032939c79947deef93db0ff1aaa1ce8f"
-            },
-            "cargarFormulario": {
-              "tipo": "function",
-              "linea": 1502,
-              "hash": "66f8950da91368d18dd30b7750c9137a1ec4dc4c0ed78a25373ab0d816fca8ce"
-            },
-            "renderFormulario": {
-              "tipo": "function",
-              "linea": 1522,
-              "hash": "90dda9a49b31cfdb3421d84c94bdd1977c2ada171573fe208b8ba2d8fbb3b379"
-            },
-            "crearCampo": {
-              "tipo": "function",
-              "linea": 1537,
-              "hash": "ea5fc9f535fd99343dfa0e6d2ca94c1c35abf80e8c3c887762524af06395d35c"
-            },
-            "aplicarDependenciasFormulario": {
-              "tipo": "function",
-              "linea": 1638,
-              "hash": "c9093c6b2c426ab14bc5a6dab297b5d3961f0684f7058493d2071ce3bf4413a8"
-            },
-            "aplicarCondiciones": {
-              "tipo": "function",
-              "linea": 1666,
-              "hash": "21fb94bda98ade65a8de14d3ac471a929cf44c296c4428f5e1dfdc4e49f93578"
-            },
-            "enviar": {
-              "tipo": "function",
-              "linea": 1688,
-              "hash": "09ed0a4143d63235654477fef03d1409af6bb6c4e2ebf2b080bf00ad32ea7564"
-            },
-            "otraRespuesta": {
-              "tipo": "function",
-              "linea": 1743,
-              "hash": "7a7a4f2d9013e6720cfa47ec40c97c482bda1e47a6039377caff13a1a919179a"
-            },
-            "entrarEncuestas": {
-              "tipo": "function",
-              "linea": 1752,
-              "hash": "23486831faa85049449e624ad7909431e9feb333528d4fa5bbac4371558d3800"
-            },
-            "salirAdmin": {
-              "tipo": "function",
-              "linea": 1779,
-              "hash": "e3aafdc7c8e5a4fd23af4aee0dc57496613f1a000d9a6209d195e3e660b9c21f"
-            },
-            "avisoPanel": {
-              "tipo": "function",
-              "linea": 1787,
-              "hash": "0bd3a19edcbc9e9219a18060612bf1c6727dcca29da75ee3501f0896cd716448"
-            },
-            "cargarRespuestas": {
-              "tipo": "function",
-              "linea": 1792,
-              "hash": "0453ad75184022a13c58dcbbf9e8f4b9666fd5938d58e03fe42fa7c5e4c0f1e8"
-            },
-            "poblarMenusTablaDatos_": {
-              "tipo": "function",
-              "linea": 1822,
-              "hash": "b9914b74d37409bd40fe643a156906c32f41984a03b0c5ddfd41f70c43bd641e"
-            },
-            "pintarMenusFiltro": {
-              "tipo": "function",
-              "linea": 1840,
-              "hash": "282e4a17738b7f5f042d3af69804f471cecb8e1521087bf19767ab18f3715aa8"
-            },
-            "renderMenuDesdeSelect": {
-              "tipo": "function",
-              "linea": 1851,
-              "hash": "7a0db00cd735b2e4017da1c56e7cd224d838f9f20e1ad97291a74b7de4cc5f8a"
-            },
-            "cerrarMenuFiltros": {
-              "tipo": "function",
-              "linea": 1874,
-              "hash": "1a88abf4843bf28b1ac28c11817c11c9b47a374c1d32a6cada91e4ad1f64cc4f"
-            },
-            "actualizarBotonesFiltro": {
-              "tipo": "function",
-              "linea": 1881,
-              "hash": "3e86d9eb77dbc34a707dd03ad9af79e0fb0368886fbd197b1e4ca49a922ea2b0"
-            },
-            "IDS_DIMENSION_LEGADO": {
-              "tipo": "const",
-              "linea": 1938,
-              "hash": "98b3317fe4c91579ddc53e489f3c2f40f906b3ad610a19eb41e1a3d560762626"
-            },
-            "esDimensionPregunta": {
-              "tipo": "function",
-              "linea": 1940,
-              "hash": "1095a607b5fff469500f319dad890ea64afdde3e3a2fd62fb3735cefa43d8631"
-            },
-            "mapaGruposLegado": {
-              "tipo": "function",
-              "linea": 1946,
-              "hash": "39ebd351269289baffc79848032d400ace818574f27ce0ff2e02fa9263a5992c"
-            },
-            "dimensionesDisponibles": {
-              "tipo": "function",
-              "linea": 1958,
-              "hash": "311866f5b1a7646e5c0a8467d86f1852f2edf10bcadf12722bdd9a8bdc587860"
-            },
-            "ORDEN_BARRA": {
-              "tipo": "const",
-              "linea": 1985,
-              "hash": "55680031af8d6ec18ff7d690716f002e4a37bc512d481b31ea0304e892d1e4e8"
-            },
-            "dimensionesBarra": {
-              "tipo": "function",
-              "linea": 1986,
-              "hash": "7d4f8897f4558344c49c9faffbe1e4026f7710c384e47bd626a80a40b297169b"
-            },
-            "opcionesDeDimension": {
-              "tipo": "function",
-              "linea": 1992,
-              "hash": "7e838d234979de6962195da30e4d770d4638559ba0f7b3a8f673256edc391834"
-            },
-            "ajustarCascada": {
-              "tipo": "function",
-              "linea": 2005,
-              "hash": "ae601945edac299fcb048fcb467bd2dab140542aeebf036aaf0b0869e0855df7"
-            },
-            "ICONOS_DIMENSION": {
-              "tipo": "const",
-              "linea": 2016,
-              "hash": "20ac8a54ab9d808762d0ac7abe807c92ff60a8ccdfe83aef543ae2d62e39b3a4"
-            },
-            "pintarDimensiones": {
-              "tipo": "function",
-              "linea": 2019,
-              "hash": "0ac8e3d4bce88bdc119c4509cb47257021f68ec977c2323f454f4290dcd2c8fc"
-            },
-            "opcionesDivision": {
-              "tipo": "function",
-              "linea": 2090,
-              "hash": "2a57c0e6c545d5223af0aa6fea0e5015cce2f397d4f3e4d2f1d72dfc2adb43ef"
-            },
-            "rolAnalitico": {
-              "tipo": "function",
-              "linea": 2095,
-              "hash": "97baabb2dad56a35f0b6ab66180c4ad333b5a81680974083627bfa9c5cd55ad2"
-            },
-            "esGraficable": {
-              "tipo": "function",
-              "linea": 2104,
-              "hash": "26de258619fa306653fd4b35d946d5113669429925350e1a99d4830e604e254f"
-            },
-            "preguntasGraficables": {
-              "tipo": "function",
-              "linea": 2112,
-              "hash": "402f59992e12d898d183c2595c18b426171b8d2ca8bdb59574ea673252c2fe87"
-            },
-            "pintarSelectorPregunta": {
-              "tipo": "function",
-              "linea": 2119,
-              "hash": "f76652d13b2dc558771a1ee8e6c5fe57586918edb3ac7685b7a22a49bd141382"
-            },
-            "refrescarSegmentos": {
-              "tipo": "function",
-              "linea": 2158,
-              "hash": "1f292d4b78aeb1ccaf9464e4ee24200d8e6207da17f79b20fa9b7b1ac7c7cf72"
-            },
-            "pintarFiltrosDinamicos": {
-              "tipo": "function",
-              "linea": 2170,
-              "hash": "d7103dd1178fc38a89ce3f0be7143ff8b485ff43198903f764f5ad35b582ffa1"
-            },
-            "renderMenuAjustes": {
-              "tipo": "function",
-              "linea": 2233,
-              "hash": "384ecd9d448af28ced5aa26da28e825faf3b8dbb6e4c7bf6660af447776438a1"
-            },
-            "limpiarFiltrosEncuestas": {
-              "tipo": "function",
-              "linea": 2295,
-              "hash": "4d17004bd16f474bbf560403db5b4c0b77ef241d925ba56d068555fec55bc600"
-            },
-            "aplicarFiltrosYGraficar": {
-              "tipo": "function",
-              "linea": 2305,
-              "hash": "98d1e3aa52427f22635b75272163dba40521288b76ee5d99fe29a5e08a3e8786"
-            },
-            "filasFiltradas": {
-              "tipo": "function",
-              "linea": 2312,
-              "hash": "d27f3221997e51e66d4ee7013f2190ae0fdc2440593aeb54a4b2830c7dbd798f"
-            },
-            "modoEtiquetas": {
-              "tipo": "function",
-              "linea": 2329,
-              "hash": "a99e799495939ccfc21131073ef0bfbb4e82644c7f1a84abf203000fbf1b0c63"
-            },
-            "recortarEtiqueta": {
-              "tipo": "function",
-              "linea": 2334,
-              "hash": "a988d1c869c726d91966826abe1af48b1efc937cc9568a829ea9ac69b1542983"
-            },
-            "partirEtiqueta": {
-              "tipo": "function",
-              "linea": 2340,
-              "hash": "83bc1fbec253fdb7b50344f29ac6197e88b2dfa17be31ecc389b62bca6a3dd72"
-            },
-            "ejeCategoriaConfig": {
-              "tipo": "function",
-              "linea": 2353,
-              "hash": "afe46b38b77bd558232deeb2d8570cdc09321d9a86d482cb8c038d4e405e28e4"
-            },
-            "escalasCartesianas": {
-              "tipo": "function",
-              "linea": 2366,
-              "hash": "bc8b4621e50bb1dc1f69bb002793522072340ca18c4b9c43b2af5991936499dc"
-            },
-            "ejeCartesiano": {
-              "tipo": "function",
-              "linea": 2373,
-              "hash": "a4dbf27784dc1a3378248a67e3d3b16adbda462ab2573fc52df7be14a94b5299"
-            },
-            "pintarResumenPanel": {
-              "tipo": "function",
-              "linea": 2377,
-              "hash": "2a1fbf53ee138ec37194f1e6258ce1c3eeb13a288d02a45a06fb249c3323c364"
-            },
-            "renderSunburstDirecto": {
-              "tipo": "function",
-              "linea": 2543,
-              "hash": "3d03f380c75cdb4997ec7bb95ce4967bee8c2b6af27e8fbe0cb017feb366056c"
-            },
-            "valorFecha": {
-              "tipo": "function",
-              "linea": 2569,
-              "hash": "7a3b9a652452f56e5f681bd3ad01b02a152457dfb782ff89c4bc4084fbe03c15"
-            },
-            "pintarTablaRespuestas": {
-              "tipo": "function",
-              "linea": 2575,
-              "hash": "54023818aba606916a41527a9916a4794f2e278e72b12b67def6b729053150df"
-            },
-            "cambiarOrdenDesdeColumna": {
-              "tipo": "function",
-              "linea": 2635,
-              "hash": "2b1f80ea1d86af3811430864514060bc6f498b7a4343a3115752f45ad0c18629"
-            },
-            "alternarBuscador": {
-              "tipo": "function",
-              "linea": 2647,
-              "hash": "dec19402436c0c49209f0453be919cf731fc0997995f9b346acf54e80dc4a064"
-            },
-            "restablecerFiltrosTabla": {
-              "tipo": "function",
-              "linea": 2654,
-              "hash": "f0ad3dbda901c11161d5dd705a2cc753510c5d106e11557a3ec363fc01efa10e"
-            },
-            "celdaCSV": {
-              "tipo": "function",
-              "linea": 2668,
-              "hash": "214b37e02b9924f41691ffcb429751ccd859161b43a0b403c71304eccbe786de"
-            },
-            "descargarCSVRespuestas": {
-              "tipo": "function",
-              "linea": 2675,
-              "hash": "b19a2e08d9b7f2fbdb23e863fa2772605db029fe5d2cb264cf725d723613841e"
-            },
-            "imprimirRespuestas": {
-              "tipo": "function",
-              "linea": 2692,
-              "hash": "c9f02c9ee3d15c67bcebd61f9bace9e7b40ba44d2ecd49b6669efb47ec8afff7"
-            },
-            "preguntasVisibles": {
-              "tipo": "function",
-              "linea": 2699,
-              "hash": "1896e24fd1c704e168c2e35e696025249d874ac42fa9828aacacf446220ddb80"
-            },
-            "preguntaCategoria": {
-              "tipo": "function",
-              "linea": 2703,
-              "hash": "743b967a28fa7783015a4e992c59aa0607fb51d159cefc9a219f51e02b1554ad"
-            },
-            "opcionesDependientes": {
-              "tipo": "function",
-              "linea": 2709,
-              "hash": "b2ee9e02b351114756e5371f2b35d7a0e83f138b146f891f29f34297fab9ce92"
-            },
-            "ampliarGrafica": {
-              "tipo": "function",
-              "linea": 2722,
-              "hash": "cc4d05b7fe910fcb0aaa303ffd505e44986aabf3a425554df2d215ddf5405079"
-            },
-            "renderGraficaModal": {
-              "tipo": "function",
-              "linea": 2737,
-              "hash": "c4162c0a8e894c665364a2ba24129fbd2b7886a84ac82d018fa52275a4726240"
-            },
-            "abrirSimulacion": {
-              "tipo": "function",
-              "linea": 2858,
-              "hash": "43f21d1411835f8756b4322abe04b63ceb988cbff80ca70a511e4942b7e5d471"
-            },
-            "ejecutarSimulacion": {
-              "tipo": "function",
-              "linea": 2862,
-              "hash": "c89ac7808a30328454a9258aef1a90bf51738e3ace2d1e9449d84be79bf1bac9"
-            },
-            "limpiarSimulados": {
-              "tipo": "function",
-              "linea": 2897,
-              "hash": "4ad3a8da4b1f893b001bd081ae74fa2de526cc02926ad93df0f3756caaf50e10"
-            },
-            "quitarPreguntasEjemplo": {
-              "tipo": "function",
-              "linea": 2917,
-              "hash": "6fec5ed60dc4ffe987f47638ec4a0a124524b4d408a4a6a862b77cc370629614"
-            },
-            "vincularHoja": {
-              "tipo": "function",
-              "linea": 2933,
-              "hash": "46b706ee99b4ca5c18c35ed4797d761a25a5c63910b37e8fcc32a8e022b5aa8c"
-            },
-            "pintarConfig": {
-              "tipo": "function",
-              "linea": 2977,
-              "hash": "cb2187dc948a628c5efc182e8d9b1a3e8bc4ba6bf6c040a02e06bac2ccc243f8"
-            },
-            "leerConfigFormulario": {
-              "tipo": "function",
-              "linea": 2990,
-              "hash": "c6d6ac808aa71a2d51f149a8a6600c591ac0d053f355f6f237a55152c258fc7b"
-            },
-            "cambiarTabConstructorEnc_": {
-              "tipo": "function",
-              "linea": 3000,
-              "hash": "608695a9dbe57a645b5c54f133daa921119cc171dcf1c01d5014b0560f3fba90"
-            },
-            "pintarPreguntas": {
-              "tipo": "function",
-              "linea": 3021,
-              "hash": "d5f187d506b2d454aa7568fae048c4de20a85847090e597e0000b331b55e2ad1"
-            },
-            "moverPreguntaEncuestas": {
-              "tipo": "function",
-              "linea": 3058,
-              "hash": "28eb6c745edc2250d613015d835230ec236e915a89e22bc66058019660ffea67"
-            },
-            "eliminar": {
-              "tipo": "function",
-              "linea": 3067,
-              "hash": "49e0bbefd1e6aff883fd491ee924980171d6e637be2c1e64273e11f07c0ac616"
-            },
-            "abrirModal": {
-              "tipo": "function",
-              "linea": 3074,
-              "hash": "63df4a46a1e049975c97fe15365107726817ebdd46d419427f2d22eaba3e7890"
-            },
-            "abrirAyudaEncuestas": {
-              "tipo": "function",
-              "linea": 3125,
-              "hash": "533bedfd7812378476d4889968e729e4545d09f70c1decec13139a1fe82429b2"
-            },
-            "alternarAyudaPregunta": {
-              "tipo": "function",
-              "linea": 3134,
-              "hash": "fc905748ebd860735e77eab014bd8b48e66ffd7b13ff269ef7a23fcb222a0f9e"
-            },
-            "serializarOpcionesPorPadre": {
-              "tipo": "function",
-              "linea": 3144,
-              "hash": "f899ad3e6b1b0836e0d01eecdd190d215f7f67d8297991d611d0418962efd35a"
-            },
-            "parsearOpcionesPorPadre": {
-              "tipo": "function",
-              "linea": 3149,
-              "hash": "c1ace3c6aa6b83e22285824dddbce7df00a2bc2f03d31532bc423841f80980c0"
-            },
-            "rolesDimension": {
-              "tipo": "function",
-              "linea": 3164,
-              "hash": "fc789039e6d424a4b4890a1849b35bc92300a601ed394badc90763d19fe61f38"
-            },
-            "poblarPadresDimension": {
-              "tipo": "function",
-              "linea": 3168,
-              "hash": "d3ba2639195e187fe4a890a191ea5a9b1a0ff04fddf22244a429985713dd6c84"
-            },
-            "actualizarCamposDimension": {
-              "tipo": "function",
-              "linea": 3184,
-              "hash": "43b45e9b97306ddc9206d8464e77fddc4c84715de23e181c8d7c8e7eb9869155"
-            },
-            "actualizarJerarquiaUI": {
-              "tipo": "function",
-              "linea": 3192,
-              "hash": "fb91578d4660237c2aa8079f3b018f84f1ce5ac93048ecec645c29e26a5b1477"
-            },
-            "actualizarRolAnalitico": {
-              "tipo": "function",
-              "linea": 3202,
-              "hash": "b04cf3b4ca222784b02bc78cceb2677497d4ffb5b6b82bdc18437ac975fd2961"
-            },
-            "actualizarCamposTipo": {
-              "tipo": "function",
-              "linea": 3216,
-              "hash": "8ed5eac615914650c0a1115e0e0ec2a80ae60c5b052ec1dc3765e77e7cea60af"
-            },
-            "cadenaPadresRepite": {
-              "tipo": "function",
-              "linea": 3246,
-              "hash": "930fb9de56cdf88c4f57d4ee50660ba8991ce1b86dbf59a0816e80f6ca61a061"
-            },
-            "actualizarCondicionUI": {
-              "tipo": "function",
-              "linea": 3258,
-              "hash": "fea00fcbe87e0a769e70873446ceec73fad4c32aa8cd1941ff951af6ffd35f64"
-            },
-            "actualizarValoresCondicion": {
-              "tipo": "function",
-              "linea": 3276,
-              "hash": "6e409b4c83b7d1ae97e17ff3e200b3fbbec682fcf0e5d361b85867595583baab"
-            },
-            "guardarPregunta": {
-              "tipo": "function",
-              "linea": 3303,
-              "hash": "418d83ce3bcf3dc3e506ab271e12abe5e09be25a9af13cf7113721a8627effaf"
-            },
-            "guardarTodo": {
-              "tipo": "function",
-              "linea": 3374,
-              "hash": "b8b5dc13eeb3362708001e17958afcfaecd0d5e36e1cdfd489bce3f0311d219b"
-            },
-            "bancoModal": {
-              "tipo": "let",
-              "linea": 3415,
-              "hash": "0ff33d9679719a6c744f1e68320a4cd6f940f551e837c772bd0d531160576552"
-            },
-            "abrirBanco": {
-              "tipo": "function",
-              "linea": 3417,
-              "hash": "55d8fa52edf12dc1161397aacecaae81a8bac69bd9d3ae723e8fe14a37ab1302"
-            },
-            "cargarListaBanco": {
-              "tipo": "function",
-              "linea": 3424,
-              "hash": "5c6a9598683ff7822e895ac61a83f3650acd88708544f5dc1fbfb565f20f98be"
-            },
-            "guardarEnBanco": {
-              "tipo": "function",
-              "linea": 3456,
-              "hash": "a5f6352754606b1361d506085052a1851114527ed4a4b46050628286e38b4a18"
-            },
-            "verEncuestaDelBanco": {
-              "tipo": "function",
-              "linea": 3470,
-              "hash": "b0010756c549d6640c250e3104fef3d4fefe3741836a99ec3f491991476572f3"
-            },
-            "volverEncuestaActual": {
-              "tipo": "function",
-              "linea": 3493,
-              "hash": "25ddf95dd49a2ef9647e0763cf6820f847715999691c2465327715583684c4fa"
-            },
-            "abrirCategorias": {
-              "tipo": "function",
-              "linea": 3499,
-              "hash": "633d320b79bf7db45b7631a5a19ee33155b06875943e864f0c370a1aace184e7"
-            },
-            "getCategorias": {
-              "tipo": "function",
-              "linea": 3504,
-              "hash": "089d884467be3d72f7820ec6d17b35b9ae4af0be6b932ad4b4e32f108a610c9e"
-            },
-            "pintarCategorias": {
-              "tipo": "function",
-              "linea": 3508,
-              "hash": "40e8835c2ab3f8fd3500c88608eaf79c355e75b25b14f338c216ab59e084ebf2"
-            },
-            "guardarCategoria": {
-              "tipo": "function",
-              "linea": 3538,
-              "hash": "7441cc9bd2ff92f039cd824bab09ecd1a9b57427be491fe164d3e39df2cdf5aa"
-            },
-            "eliminarCategoria": {
-              "tipo": "function",
-              "linea": 3554,
-              "hash": "06852f37ad940e3a9ec7a191fc9393019ac8181f16068b9d01b608b5bedb460b"
-            },
-            "actualizarCategoriaUI": {
-              "tipo": "function",
-              "linea": 3561,
-              "hash": "edbad75a6aa74a8e597cbb1e5c0c9328059b1609ea8b1a03ec3a9eabaa1df5e1"
-            }
-          },
-          "sentencias": [
-            {
-              "linea": 1180,
-              "tipo": "ExpressionStatement",
-              "texto": "document.addEventListener(\"DOMContentLoaded\", () => { modalPreguntaBS = new bootstrap.Modal(document.getElementById(\"modalPregunta\")); modal",
-              "hash": "65618f3a13db36bf4211d5d349d272912b22af891306e3735bdc16688a2574f2"
-            },
-            {
-              "linea": 1234,
-              "tipo": "ExpressionStatement",
-              "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
-              "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"
-            }
-          ]
-        }
-      ]
+      "sha256": "0a27e06e8ac2120b36f41072c7aedad783b097980a052410cbfe2ccb6030e63a",
+      "documentos": []
     },
     "AdminPlaneacion.html": {
       "sha256": "b1217753ab18f27ef807359c4fb509cd1f13cf4d70204331a3c0073fffbede80",
@@ -11389,6 +10639,814 @@
             },
             {
               "linea": 62,
+              "tipo": "ExpressionStatement",
+              "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
+              "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"
+            }
+          ]
+        }
+      ]
+    },
+    "AdminEncJS_01.html": {
+      "sha256": "c2b5d9282792d584be13ee493ac30282f8a8f74ffb285e0595813bcd47c6f158",
+      "documentos": [
+        {
+          "id": "AdminEncJS_01.html#script0",
+          "simbolos": {
+            "inicializarModuloEncuestas_": {
+              "tipo": "function",
+              "linea": 8,
+              "hash": "e7269cf05f3f12411a93e8fbac91c435b217748ab7e3f21ba2aa2091256965ab"
+            },
+            "conmutarSubEncuestas": {
+              "tipo": "function",
+              "linea": 35,
+              "hash": "9282aafe307615db6bfaec043737b99e0860f88f5aa86856189f0bd88f57d49a"
+            },
+            "obtenerUrlPublicaCenso_": {
+              "tipo": "function",
+              "linea": 51,
+              "hash": "01b0e1c2425e9e65defbb8aef09fe1c56c3e2871c45d9bdd7c1a93c03bdacdf6"
+            },
+            "copiarEnlacePublicoCenso": {
+              "tipo": "function",
+              "linea": 61,
+              "hash": "464b241e8a443ab3c3711356faa80da307fcdf3ab6adcb7ed6c968b4c9329c6c"
+            },
+            "abrirEncuestaPublicaNuevaPestana_": {
+              "tipo": "function",
+              "linea": 87,
+              "hash": "2f2a52cfa92783f528c0f7f36d0089ffa0a75859d9cd2714ffa89aee35933936"
+            },
+            "abrirVistaPreviaEncuesta_": {
+              "tipo": "function",
+              "linea": 91,
+              "hash": "671e94e2fa95fc3cf4bfc42009debce1713b6d845bd2e8cb8edfd4b327d919c1"
+            },
+            "enviarVistaPrevia_": {
+              "tipo": "function",
+              "linea": 146,
+              "hash": "72289f49abe637948c81ca9de23e4b9e0ca6402c3ed2a2a82f2166f83eb5af6b"
+            },
+            "abrirAyudaModalEncuestas_": {
+              "tipo": "function",
+              "linea": 189,
+              "hash": "91effec2a3a7dfeda479d1aa4c4f4813ef37765d0beeaffddb9a3cec0089d5cc"
+            },
+            "FORM": {
+              "tipo": "let",
+              "linea": 203,
+              "hash": "945adc55faef68a93122f49361eeb463444b02688f91dd1cb3705fc479ddfc20"
+            },
+            "FILTROS": {
+              "tipo": "let",
+              "linea": 204,
+              "hash": "cc6d87d1ff19693dc7d7402d680f926390da3c110cdf5593ef57e175e973c458"
+            },
+            "RESPUESTAS": {
+              "tipo": "let",
+              "linea": 205,
+              "hash": "f7944a9cb85d07390f46f50665fc0a1d2ee1d964fd0fa013aa6f5c62b7e82098"
+            },
+            "creds": {
+              "tipo": "let",
+              "linea": 206,
+              "hash": "2f34d5b6252bad1e2a52c6198849995eef64d53d7bcb4e258794cd1c66b43267"
+            },
+            "editando": {
+              "tipo": "let",
+              "linea": 207,
+              "hash": "3eacb6227bef9991fa350ff5ba57d9276e20ce28128040c8a95baa7edcd39039"
+            },
+            "modalPreguntaBS": {
+              "tipo": "let",
+              "linea": 208,
+              "hash": "7e8f031dbc21d1d929e697e88b5c0d5694f28adb4e35b37bb6135cc3c5cd8e4a"
+            },
+            "simulacionModal": {
+              "tipo": "let",
+              "linea": 209,
+              "hash": "fd29526bb380438f97fd83514220f44a761c9aeb916751c631fef6321e13928e"
+            },
+            "modalGrafica": {
+              "tipo": "let",
+              "linea": 210,
+              "hash": "ac0f1f1aedf57c3a2bf8dae5cbc71567d82c9c4df08f418f6172c7fc12b40312"
+            },
+            "modalCategorias": {
+              "tipo": "let",
+              "linea": 211,
+              "hash": "9b1bc8f5db00b2aaad1fd29f49d8f383775fbf6a8e71f288a19c8b4e065bf9fd"
+            },
+            "modalAyuda": {
+              "tipo": "let",
+              "linea": 212,
+              "hash": "a5e0505a137a4bcf3711543ddb62afbd7b204afe6ac650a2d3d1c2d8e5018a56"
+            },
+            "editandoCategoria": {
+              "tipo": "let",
+              "linea": 213,
+              "hash": "5b2d608c277c2f9d2f7ce636f94d4571b226881e4f3f3867e63c1ab1806d004d"
+            },
+            "chartsResumen": {
+              "tipo": "let",
+              "linea": 214,
+              "hash": "3e964883c58368b3893cc46b32f0bac3ca07901ad4f2516b51a89d9444960a5d"
+            },
+            "CONFIGS_GRAFICA": {
+              "tipo": "let",
+              "linea": 215,
+              "hash": "bb0acf5a74375f9d2ffec85443791c4b249cf1e129e49a0f94a74d1572512c51"
+            },
+            "FILTROS_DINAMICOS": {
+              "tipo": "let",
+              "linea": 216,
+              "hash": "4e6686291cc941734893e63928bc21a1a53b0f07bc79fd3213550e26de5ad1c8"
+            },
+            "graficaModal": {
+              "tipo": "let",
+              "linea": 217,
+              "hash": "7581908f3935e053c5b09a16127607abce315a7cf82a5da4135070c961589145"
+            },
+            "pendienteGrafica": {
+              "tipo": "let",
+              "linea": 218,
+              "hash": "8a3ce6115510403192d46dac530fdabde6ad3a6b05e442b533a929aed0aae497"
+            },
+            "sunburstInstancia": {
+              "tipo": "let",
+              "linea": 219,
+              "hash": "9b0d0884fc817421695959653531eb1f1e51e4506816b5ab4c216127b7ff69a0"
+            },
+            "vistaPaneles": {
+              "tipo": "let",
+              "linea": 222,
+              "hash": "e16d4c21e22fc41fc0e73348c4b01c773def3a41598468e6c430b6a035bc9f16"
+            },
+            "leerNumero": {
+              "tipo": "function",
+              "linea": 223,
+              "hash": "e9db273979481ecf5a0cf5cff2560fc3499ac214083914369bbbfe221e9d8ba8"
+            },
+            "tamanoGrafica": {
+              "tipo": "let",
+              "linea": 229,
+              "hash": "09a29ccab602b440842b1b4706bfdde3a271a1d7e30c829039f19992ef7fca6d"
+            },
+            "tamanoLista": {
+              "tipo": "let",
+              "linea": 230,
+              "hash": "f037ae7fbf50ea9e2e12d4a030fff31474378027595a250d4457b8833fb41a0a"
+            },
+            "alturaGrafica": {
+              "tipo": "let",
+              "linea": 231,
+              "hash": "71ae5a866a30f7d7881056305330ef14dce4b6c38fa056a7640c334a4b75eb51"
+            },
+            "TIPOS": {
+              "tipo": "const",
+              "linea": 233,
+              "hash": "3220553dd7d31190ee60e8e32c17b7afe69ef6dbd598f4b20692416405efcbbf"
+            },
+            "PALETA_ESTABLE": {
+              "tipo": "const",
+              "linea": 239,
+              "hash": "f1d5ae5e5c62b659c7403d7f858371017d3c0ab62ca0691372bb6db4ab9504e1"
+            },
+            "COLORES_ASIGNADOS": {
+              "tipo": "const",
+              "linea": 240,
+              "hash": "6e08ce906db64974a50020d292e6c39f8262de28ea666f820dcc50d23a15a6b5"
+            },
+            "colorDimension": {
+              "tipo": "function",
+              "linea": 242,
+              "hash": "b29c48c61c774e395f621581ea988c00a7e6ac304b7d601b116f9f1d3d34cf35"
+            },
+            "sembrarColores": {
+              "tipo": "function",
+              "linea": 252,
+              "hash": "7f9c77774563732b6114f1f7081e74e5ac35e4314c8f86c0deb27b5ec1a76e2a"
+            },
+            "alternarCabecera": {
+              "tipo": "function",
+              "linea": 266,
+              "hash": "a3b140266a2cf4e4c95628fa51943ecef23c21aa9c77852ec968b8317c14d17e"
+            },
+            "aplicarCabecera": {
+              "tipo": "function",
+              "linea": 272,
+              "hash": "46b6cc5edf7a3890ad0c82ca4df26fc557f4ebe6b65534b05ea0d4192a965e3c"
+            },
+            "cambiarVista": {
+              "tipo": "function",
+              "linea": 285,
+              "hash": "c3244c38dca4f545ac88b99690657c5651ecf2fccde66e95cdb7e7ce160cd967"
+            },
+            "cambiarAltura": {
+              "tipo": "function",
+              "linea": 303,
+              "hash": "8f5f3bfa03854ad6c98daf7a634f7e7d0ad016edd8a58fb6f84aea3eb577fd38"
+            },
+            "aplicarAltura": {
+              "tipo": "function",
+              "linea": 309,
+              "hash": "ad6761ac1f7a9812c020cd8260f8aff943101a2317cbfa55c0c7c31e68baf6cc"
+            },
+            "cambiarTamanoGrafica": {
+              "tipo": "function",
+              "linea": 318,
+              "hash": "0f66a2d7ef5f0f296b89bfeb5536ad3ca084aaebf97b11e4e98f5e1cf275c4c2"
+            },
+            "cambiarTamanoLista": {
+              "tipo": "function",
+              "linea": 324,
+              "hash": "8cae7525ae46521a73fa29287cb983ae4d002a4e949aabcb6334c48db4f2ac0e"
+            },
+            "colorTextoContraste": {
+              "tipo": "function",
+              "linea": 332,
+              "hash": "5b47f864320de2269c49319cba903522241c916a6568b8892460c14274059d16"
+            },
+            "pluginValores": {
+              "tipo": "const",
+              "linea": 342,
+              "hash": "b775119846579415107b9e9a8d616f49936a1930e308d54d23c14f366acd6b3c"
+            },
+            "dimensionDe": {
+              "tipo": "function",
+              "linea": 413,
+              "hash": "21b29d6cbca4305e6251f6c33e82cd87b22451d3a232d256bb937aa0787eb8b8"
+            },
+            "valorDe": {
+              "tipo": "function",
+              "linea": 427,
+              "hash": "357ae9cb3a3aca0d0a8106228bd4e2461e6c51b9f068cec1afb632c3d263f521"
+            },
+            "construirApilada": {
+              "tipo": "function",
+              "linea": 437,
+              "hash": "821259293e2fd955aa8387e94a6b99475528b913630a0942f18afb9681510ec9"
+            },
+            "esc": {
+              "tipo": "function",
+              "linea": 485,
+              "hash": "36bd23222f0a581ef06c9973e4fae25d8688b4ba0dde863a445831539cd0540e"
+            },
+            "conmutarSubTabBarra_": {
+              "tipo": "function",
+              "linea": 490,
+              "hash": "f4d10701dbe2c90061cc1bb7647ce754032939c79947deef93db0ff1aaa1ce8f"
+            },
+            "cargarFormulario": {
+              "tipo": "function",
+              "linea": 514,
+              "hash": "66f8950da91368d18dd30b7750c9137a1ec4dc4c0ed78a25373ab0d816fca8ce"
+            },
+            "renderFormulario": {
+              "tipo": "function",
+              "linea": 534,
+              "hash": "90dda9a49b31cfdb3421d84c94bdd1977c2ada171573fe208b8ba2d8fbb3b379"
+            },
+            "crearCampo": {
+              "tipo": "function",
+              "linea": 549,
+              "hash": "ea5fc9f535fd99343dfa0e6d2ca94c1c35abf80e8c3c887762524af06395d35c"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminEncJS_02.html": {
+      "sha256": "62b4a141cd9046dfd8b07f7c2a19c92f57aaf185a4f95109f2504489e5183139",
+      "documentos": [
+        {
+          "id": "AdminEncJS_02.html#script0",
+          "simbolos": {
+            "aplicarDependenciasFormulario": {
+              "tipo": "function",
+              "linea": 6,
+              "hash": "c9093c6b2c426ab14bc5a6dab297b5d3961f0684f7058493d2071ce3bf4413a8"
+            },
+            "aplicarCondiciones": {
+              "tipo": "function",
+              "linea": 34,
+              "hash": "21fb94bda98ade65a8de14d3ac471a929cf44c296c4428f5e1dfdc4e49f93578"
+            },
+            "enviar": {
+              "tipo": "function",
+              "linea": 56,
+              "hash": "09ed0a4143d63235654477fef03d1409af6bb6c4e2ebf2b080bf00ad32ea7564"
+            },
+            "otraRespuesta": {
+              "tipo": "function",
+              "linea": 111,
+              "hash": "7a7a4f2d9013e6720cfa47ec40c97c482bda1e47a6039377caff13a1a919179a"
+            },
+            "entrarEncuestas": {
+              "tipo": "function",
+              "linea": 120,
+              "hash": "23486831faa85049449e624ad7909431e9feb333528d4fa5bbac4371558d3800"
+            },
+            "salirAdmin": {
+              "tipo": "function",
+              "linea": 147,
+              "hash": "e3aafdc7c8e5a4fd23af4aee0dc57496613f1a000d9a6209d195e3e660b9c21f"
+            },
+            "avisoPanel": {
+              "tipo": "function",
+              "linea": 155,
+              "hash": "0bd3a19edcbc9e9219a18060612bf1c6727dcca29da75ee3501f0896cd716448"
+            },
+            "cargarRespuestas": {
+              "tipo": "function",
+              "linea": 160,
+              "hash": "0453ad75184022a13c58dcbbf9e8f4b9666fd5938d58e03fe42fa7c5e4c0f1e8"
+            },
+            "poblarMenusTablaDatos_": {
+              "tipo": "function",
+              "linea": 190,
+              "hash": "b9914b74d37409bd40fe643a156906c32f41984a03b0c5ddfd41f70c43bd641e"
+            },
+            "pintarMenusFiltro": {
+              "tipo": "function",
+              "linea": 208,
+              "hash": "282e4a17738b7f5f042d3af69804f471cecb8e1521087bf19767ab18f3715aa8"
+            },
+            "renderMenuDesdeSelect": {
+              "tipo": "function",
+              "linea": 219,
+              "hash": "7a0db00cd735b2e4017da1c56e7cd224d838f9f20e1ad97291a74b7de4cc5f8a"
+            },
+            "cerrarMenuFiltros": {
+              "tipo": "function",
+              "linea": 242,
+              "hash": "1a88abf4843bf28b1ac28c11817c11c9b47a374c1d32a6cada91e4ad1f64cc4f"
+            },
+            "actualizarBotonesFiltro": {
+              "tipo": "function",
+              "linea": 249,
+              "hash": "3e86d9eb77dbc34a707dd03ad9af79e0fb0368886fbd197b1e4ca49a922ea2b0"
+            },
+            "IDS_DIMENSION_LEGADO": {
+              "tipo": "const",
+              "linea": 306,
+              "hash": "98b3317fe4c91579ddc53e489f3c2f40f906b3ad610a19eb41e1a3d560762626"
+            },
+            "esDimensionPregunta": {
+              "tipo": "function",
+              "linea": 308,
+              "hash": "1095a607b5fff469500f319dad890ea64afdde3e3a2fd62fb3735cefa43d8631"
+            },
+            "mapaGruposLegado": {
+              "tipo": "function",
+              "linea": 314,
+              "hash": "39ebd351269289baffc79848032d400ace818574f27ce0ff2e02fa9263a5992c"
+            },
+            "dimensionesDisponibles": {
+              "tipo": "function",
+              "linea": 326,
+              "hash": "311866f5b1a7646e5c0a8467d86f1852f2edf10bcadf12722bdd9a8bdc587860"
+            },
+            "ORDEN_BARRA": {
+              "tipo": "const",
+              "linea": 353,
+              "hash": "55680031af8d6ec18ff7d690716f002e4a37bc512d481b31ea0304e892d1e4e8"
+            },
+            "dimensionesBarra": {
+              "tipo": "function",
+              "linea": 354,
+              "hash": "7d4f8897f4558344c49c9faffbe1e4026f7710c384e47bd626a80a40b297169b"
+            },
+            "opcionesDeDimension": {
+              "tipo": "function",
+              "linea": 360,
+              "hash": "7e838d234979de6962195da30e4d770d4638559ba0f7b3a8f673256edc391834"
+            },
+            "ajustarCascada": {
+              "tipo": "function",
+              "linea": 373,
+              "hash": "ae601945edac299fcb048fcb467bd2dab140542aeebf036aaf0b0869e0855df7"
+            },
+            "ICONOS_DIMENSION": {
+              "tipo": "const",
+              "linea": 384,
+              "hash": "20ac8a54ab9d808762d0ac7abe807c92ff60a8ccdfe83aef543ae2d62e39b3a4"
+            },
+            "pintarDimensiones": {
+              "tipo": "function",
+              "linea": 387,
+              "hash": "0ac8e3d4bce88bdc119c4509cb47257021f68ec977c2323f454f4290dcd2c8fc"
+            },
+            "opcionesDivision": {
+              "tipo": "function",
+              "linea": 458,
+              "hash": "2a57c0e6c545d5223af0aa6fea0e5015cce2f397d4f3e4d2f1d72dfc2adb43ef"
+            },
+            "rolAnalitico": {
+              "tipo": "function",
+              "linea": 463,
+              "hash": "97baabb2dad56a35f0b6ab66180c4ad333b5a81680974083627bfa9c5cd55ad2"
+            },
+            "esGraficable": {
+              "tipo": "function",
+              "linea": 472,
+              "hash": "26de258619fa306653fd4b35d946d5113669429925350e1a99d4830e604e254f"
+            },
+            "preguntasGraficables": {
+              "tipo": "function",
+              "linea": 480,
+              "hash": "402f59992e12d898d183c2595c18b426171b8d2ca8bdb59574ea673252c2fe87"
+            },
+            "pintarSelectorPregunta": {
+              "tipo": "function",
+              "linea": 487,
+              "hash": "f76652d13b2dc558771a1ee8e6c5fe57586918edb3ac7685b7a22a49bd141382"
+            },
+            "refrescarSegmentos": {
+              "tipo": "function",
+              "linea": 526,
+              "hash": "1f292d4b78aeb1ccaf9464e4ee24200d8e6207da17f79b20fa9b7b1ac7c7cf72"
+            },
+            "pintarFiltrosDinamicos": {
+              "tipo": "function",
+              "linea": 538,
+              "hash": "d7103dd1178fc38a89ce3f0be7143ff8b485ff43198903f764f5ad35b582ffa1"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminEncJS_03.html": {
+      "sha256": "05e247252ee021a42c50770357b79f42c2ae258c668259b5b03729dc2c12dad6",
+      "documentos": [
+        {
+          "id": "AdminEncJS_03.html#script0",
+          "simbolos": {
+            "renderMenuAjustes": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "384ecd9d448af28ced5aa26da28e825faf3b8dbb6e4c7bf6660af447776438a1"
+            },
+            "limpiarFiltrosEncuestas": {
+              "tipo": "function",
+              "linea": 67,
+              "hash": "4d17004bd16f474bbf560403db5b4c0b77ef241d925ba56d068555fec55bc600"
+            },
+            "aplicarFiltrosYGraficar": {
+              "tipo": "function",
+              "linea": 77,
+              "hash": "98d1e3aa52427f22635b75272163dba40521288b76ee5d99fe29a5e08a3e8786"
+            },
+            "filasFiltradas": {
+              "tipo": "function",
+              "linea": 84,
+              "hash": "d27f3221997e51e66d4ee7013f2190ae0fdc2440593aeb54a4b2830c7dbd798f"
+            },
+            "modoEtiquetas": {
+              "tipo": "function",
+              "linea": 101,
+              "hash": "a99e799495939ccfc21131073ef0bfbb4e82644c7f1a84abf203000fbf1b0c63"
+            },
+            "recortarEtiqueta": {
+              "tipo": "function",
+              "linea": 106,
+              "hash": "a988d1c869c726d91966826abe1af48b1efc937cc9568a829ea9ac69b1542983"
+            },
+            "partirEtiqueta": {
+              "tipo": "function",
+              "linea": 112,
+              "hash": "83bc1fbec253fdb7b50344f29ac6197e88b2dfa17be31ecc389b62bca6a3dd72"
+            },
+            "ejeCategoriaConfig": {
+              "tipo": "function",
+              "linea": 125,
+              "hash": "afe46b38b77bd558232deeb2d8570cdc09321d9a86d482cb8c038d4e405e28e4"
+            },
+            "escalasCartesianas": {
+              "tipo": "function",
+              "linea": 138,
+              "hash": "bc8b4621e50bb1dc1f69bb002793522072340ca18c4b9c43b2af5991936499dc"
+            },
+            "ejeCartesiano": {
+              "tipo": "function",
+              "linea": 145,
+              "hash": "a4dbf27784dc1a3378248a67e3d3b16adbda462ab2573fc52df7be14a94b5299"
+            },
+            "pintarResumenPanel": {
+              "tipo": "function",
+              "linea": 149,
+              "hash": "2a1fbf53ee138ec37194f1e6258ce1c3eeb13a288d02a45a06fb249c3323c364"
+            },
+            "renderSunburstDirecto": {
+              "tipo": "function",
+              "linea": 315,
+              "hash": "3d03f380c75cdb4997ec7bb95ce4967bee8c2b6af27e8fbe0cb017feb366056c"
+            },
+            "valorFecha": {
+              "tipo": "function",
+              "linea": 341,
+              "hash": "7a3b9a652452f56e5f681bd3ad01b02a152457dfb782ff89c4bc4084fbe03c15"
+            },
+            "pintarTablaRespuestas": {
+              "tipo": "function",
+              "linea": 347,
+              "hash": "54023818aba606916a41527a9916a4794f2e278e72b12b67def6b729053150df"
+            },
+            "cambiarOrdenDesdeColumna": {
+              "tipo": "function",
+              "linea": 407,
+              "hash": "2b1f80ea1d86af3811430864514060bc6f498b7a4343a3115752f45ad0c18629"
+            },
+            "alternarBuscador": {
+              "tipo": "function",
+              "linea": 419,
+              "hash": "dec19402436c0c49209f0453be919cf731fc0997995f9b346acf54e80dc4a064"
+            },
+            "restablecerFiltrosTabla": {
+              "tipo": "function",
+              "linea": 426,
+              "hash": "f0ad3dbda901c11161d5dd705a2cc753510c5d106e11557a3ec363fc01efa10e"
+            },
+            "celdaCSV": {
+              "tipo": "function",
+              "linea": 440,
+              "hash": "214b37e02b9924f41691ffcb429751ccd859161b43a0b403c71304eccbe786de"
+            },
+            "descargarCSVRespuestas": {
+              "tipo": "function",
+              "linea": 447,
+              "hash": "b19a2e08d9b7f2fbdb23e863fa2772605db029fe5d2cb264cf725d723613841e"
+            },
+            "imprimirRespuestas": {
+              "tipo": "function",
+              "linea": 464,
+              "hash": "c9f02c9ee3d15c67bcebd61f9bace9e7b40ba44d2ecd49b6669efb47ec8afff7"
+            },
+            "preguntasVisibles": {
+              "tipo": "function",
+              "linea": 471,
+              "hash": "1896e24fd1c704e168c2e35e696025249d874ac42fa9828aacacf446220ddb80"
+            },
+            "preguntaCategoria": {
+              "tipo": "function",
+              "linea": 475,
+              "hash": "743b967a28fa7783015a4e992c59aa0607fb51d159cefc9a219f51e02b1554ad"
+            },
+            "opcionesDependientes": {
+              "tipo": "function",
+              "linea": 481,
+              "hash": "b2ee9e02b351114756e5371f2b35d7a0e83f138b146f891f29f34297fab9ce92"
+            },
+            "ampliarGrafica": {
+              "tipo": "function",
+              "linea": 494,
+              "hash": "cc4d05b7fe910fcb0aaa303ffd505e44986aabf3a425554df2d215ddf5405079"
+            },
+            "renderGraficaModal": {
+              "tipo": "function",
+              "linea": 509,
+              "hash": "c4162c0a8e894c665364a2ba24129fbd2b7886a84ac82d018fa52275a4726240"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminEncJS_04.html": {
+      "sha256": "623858388982cd88ca618557d436ccb16ec2ab2119c7d7f617b501ec45745325",
+      "documentos": [
+        {
+          "id": "AdminEncJS_04.html#script0",
+          "simbolos": {
+            "abrirSimulacion": {
+              "tipo": "function",
+              "linea": 6,
+              "hash": "43f21d1411835f8756b4322abe04b63ceb988cbff80ca70a511e4942b7e5d471"
+            },
+            "ejecutarSimulacion": {
+              "tipo": "function",
+              "linea": 10,
+              "hash": "c89ac7808a30328454a9258aef1a90bf51738e3ace2d1e9449d84be79bf1bac9"
+            },
+            "limpiarSimulados": {
+              "tipo": "function",
+              "linea": 45,
+              "hash": "4ad3a8da4b1f893b001bd081ae74fa2de526cc02926ad93df0f3756caaf50e10"
+            },
+            "quitarPreguntasEjemplo": {
+              "tipo": "function",
+              "linea": 65,
+              "hash": "6fec5ed60dc4ffe987f47638ec4a0a124524b4d408a4a6a862b77cc370629614"
+            },
+            "vincularHoja": {
+              "tipo": "function",
+              "linea": 81,
+              "hash": "46b706ee99b4ca5c18c35ed4797d761a25a5c63910b37e8fcc32a8e022b5aa8c"
+            },
+            "pintarConfig": {
+              "tipo": "function",
+              "linea": 125,
+              "hash": "cb2187dc948a628c5efc182e8d9b1a3e8bc4ba6bf6c040a02e06bac2ccc243f8"
+            },
+            "leerConfigFormulario": {
+              "tipo": "function",
+              "linea": 138,
+              "hash": "c6d6ac808aa71a2d51f149a8a6600c591ac0d053f355f6f237a55152c258fc7b"
+            },
+            "cambiarTabConstructorEnc_": {
+              "tipo": "function",
+              "linea": 148,
+              "hash": "608695a9dbe57a645b5c54f133daa921119cc171dcf1c01d5014b0560f3fba90"
+            },
+            "pintarPreguntas": {
+              "tipo": "function",
+              "linea": 169,
+              "hash": "d5f187d506b2d454aa7568fae048c4de20a85847090e597e0000b331b55e2ad1"
+            },
+            "moverPreguntaEncuestas": {
+              "tipo": "function",
+              "linea": 206,
+              "hash": "28eb6c745edc2250d613015d835230ec236e915a89e22bc66058019660ffea67"
+            },
+            "eliminar": {
+              "tipo": "function",
+              "linea": 215,
+              "hash": "49e0bbefd1e6aff883fd491ee924980171d6e637be2c1e64273e11f07c0ac616"
+            },
+            "abrirModal": {
+              "tipo": "function",
+              "linea": 222,
+              "hash": "63df4a46a1e049975c97fe15365107726817ebdd46d419427f2d22eaba3e7890"
+            },
+            "abrirAyudaEncuestas": {
+              "tipo": "function",
+              "linea": 273,
+              "hash": "533bedfd7812378476d4889968e729e4545d09f70c1decec13139a1fe82429b2"
+            },
+            "alternarAyudaPregunta": {
+              "tipo": "function",
+              "linea": 282,
+              "hash": "fc905748ebd860735e77eab014bd8b48e66ffd7b13ff269ef7a23fcb222a0f9e"
+            },
+            "serializarOpcionesPorPadre": {
+              "tipo": "function",
+              "linea": 292,
+              "hash": "f899ad3e6b1b0836e0d01eecdd190d215f7f67d8297991d611d0418962efd35a"
+            },
+            "parsearOpcionesPorPadre": {
+              "tipo": "function",
+              "linea": 297,
+              "hash": "c1ace3c6aa6b83e22285824dddbce7df00a2bc2f03d31532bc423841f80980c0"
+            },
+            "rolesDimension": {
+              "tipo": "function",
+              "linea": 312,
+              "hash": "fc789039e6d424a4b4890a1849b35bc92300a601ed394badc90763d19fe61f38"
+            },
+            "poblarPadresDimension": {
+              "tipo": "function",
+              "linea": 316,
+              "hash": "d3ba2639195e187fe4a890a191ea5a9b1a0ff04fddf22244a429985713dd6c84"
+            },
+            "actualizarCamposDimension": {
+              "tipo": "function",
+              "linea": 332,
+              "hash": "43b45e9b97306ddc9206d8464e77fddc4c84715de23e181c8d7c8e7eb9869155"
+            },
+            "actualizarJerarquiaUI": {
+              "tipo": "function",
+              "linea": 340,
+              "hash": "fb91578d4660237c2aa8079f3b018f84f1ce5ac93048ecec645c29e26a5b1477"
+            },
+            "actualizarRolAnalitico": {
+              "tipo": "function",
+              "linea": 350,
+              "hash": "b04cf3b4ca222784b02bc78cceb2677497d4ffb5b6b82bdc18437ac975fd2961"
+            },
+            "actualizarCamposTipo": {
+              "tipo": "function",
+              "linea": 364,
+              "hash": "8ed5eac615914650c0a1115e0e0ec2a80ae60c5b052ec1dc3765e77e7cea60af"
+            },
+            "cadenaPadresRepite": {
+              "tipo": "function",
+              "linea": 394,
+              "hash": "930fb9de56cdf88c4f57d4ee50660ba8991ce1b86dbf59a0816e80f6ca61a061"
+            },
+            "actualizarCondicionUI": {
+              "tipo": "function",
+              "linea": 406,
+              "hash": "fea00fcbe87e0a769e70873446ceec73fad4c32aa8cd1941ff951af6ffd35f64"
+            },
+            "actualizarValoresCondicion": {
+              "tipo": "function",
+              "linea": 424,
+              "hash": "6e409b4c83b7d1ae97e17ff3e200b3fbbec682fcf0e5d361b85867595583baab"
+            },
+            "guardarPregunta": {
+              "tipo": "function",
+              "linea": 451,
+              "hash": "418d83ce3bcf3dc3e506ab271e12abe5e09be25a9af13cf7113721a8627effaf"
+            },
+            "guardarTodo": {
+              "tipo": "function",
+              "linea": 522,
+              "hash": "b8b5dc13eeb3362708001e17958afcfaecd0d5e36e1cdfd489bce3f0311d219b"
+            },
+            "bancoModal": {
+              "tipo": "let",
+              "linea": 563,
+              "hash": "0ff33d9679719a6c744f1e68320a4cd6f940f551e837c772bd0d531160576552"
+            },
+            "abrirBanco": {
+              "tipo": "function",
+              "linea": 565,
+              "hash": "55d8fa52edf12dc1161397aacecaae81a8bac69bd9d3ae723e8fe14a37ab1302"
+            },
+            "cargarListaBanco": {
+              "tipo": "function",
+              "linea": 572,
+              "hash": "5c6a9598683ff7822e895ac61a83f3650acd88708544f5dc1fbfb565f20f98be"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminEncJS_05.html": {
+      "sha256": "52f1ae38316dde32ead5fdaaa8be9b2741ca2ff9f24fd03a9ca45827fff39afb",
+      "documentos": [
+        {
+          "id": "AdminEncJS_05.html#script0",
+          "simbolos": {
+            "guardarEnBanco": {
+              "tipo": "function",
+              "linea": 5,
+              "hash": "a5f6352754606b1361d506085052a1851114527ed4a4b46050628286e38b4a18"
+            },
+            "verEncuestaDelBanco": {
+              "tipo": "function",
+              "linea": 19,
+              "hash": "b0010756c549d6640c250e3104fef3d4fefe3741836a99ec3f491991476572f3"
+            },
+            "volverEncuestaActual": {
+              "tipo": "function",
+              "linea": 42,
+              "hash": "25ddf95dd49a2ef9647e0763cf6820f847715999691c2465327715583684c4fa"
+            },
+            "abrirCategorias": {
+              "tipo": "function",
+              "linea": 48,
+              "hash": "633d320b79bf7db45b7631a5a19ee33155b06875943e864f0c370a1aace184e7"
+            },
+            "getCategorias": {
+              "tipo": "function",
+              "linea": 53,
+              "hash": "089d884467be3d72f7820ec6d17b35b9ae4af0be6b932ad4b4e32f108a610c9e"
+            },
+            "pintarCategorias": {
+              "tipo": "function",
+              "linea": 57,
+              "hash": "40e8835c2ab3f8fd3500c88608eaf79c355e75b25b14f338c216ab59e084ebf2"
+            },
+            "guardarCategoria": {
+              "tipo": "function",
+              "linea": 87,
+              "hash": "7441cc9bd2ff92f039cd824bab09ecd1a9b57427be491fe164d3e39df2cdf5aa"
+            },
+            "eliminarCategoria": {
+              "tipo": "function",
+              "linea": 103,
+              "hash": "06852f37ad940e3a9ec7a191fc9393019ac8181f16068b9d01b608b5bedb460b"
+            },
+            "actualizarCategoriaUI": {
+              "tipo": "function",
+              "linea": 110,
+              "hash": "edbad75a6aa74a8e597cbb1e5c0c9328059b1609ea8b1a03ec3a9eabaa1df5e1"
+            }
+          },
+          "sentencias": []
+        }
+      ]
+    },
+    "AdminEncJS_Arranque.html": {
+      "sha256": "79185f1fb32c5479ca8aeb7a4fd7758204a6fbacd9c3a6901ca5ce4a7ee821e0",
+      "documentos": [
+        {
+          "id": "AdminEncJS_Arranque.html#script0",
+          "simbolos": {},
+          "sentencias": [
+            {
+              "linea": 5,
+              "tipo": "ExpressionStatement",
+              "texto": "document.addEventListener(\"DOMContentLoaded\", () => { modalPreguntaBS = new bootstrap.Modal(document.getElementById(\"modalPregunta\")); modal",
+              "hash": "65618f3a13db36bf4211d5d349d272912b22af891306e3735bdc16688a2574f2"
+            },
+            {
+              "linea": 59,
               "tipo": "ExpressionStatement",
               "texto": "window.addEventListener(\"message\", function (ev) { const origen = String(ev.origin || \"\"); const origenValido = origen === \"https://script.g",
               "hash": "2c97caf9b4b126c96c10882e8d6f5984a9a3ac5206a30127e17075333429159a"

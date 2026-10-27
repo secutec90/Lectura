@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-27T14:46:43.166Z",
+  "generado": "2026-10-27T15:12:08.767Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
@@ -1500,7 +1500,7 @@
       ]
     },
     "ClaseLogica.gs": {
-      "sha256": "43dbbac9c27e76e6e2c8ceb142f91b3bbc1677b51f0632f5b41e41da6a1c4590",
+      "sha256": "ff6da4b40b7e9fcaeac9aad4f6cc639626e19e0f017b14ed69170ecd456034f1",
       "documentos": [
         {
           "id": "ClaseLogica.gs",
@@ -1790,10 +1790,10 @@
               "linea": 1709,
               "hash": "be4ee398d63f3b5cdc307e95745da3763e9a432d056417789a066540ceb8de82"
             },
-            "sembrarContenidoPrueba1C": {
+            "_sembrarContenidoPrueba1C_": {
               "tipo": "function",
               "linea": 1829,
-              "hash": "b9529be71e7d717088e69932c50ad32b089b573b43eb2de4ef61bc6594308bee"
+              "hash": "ff68979c129040aabbc2e50151c451af82cbb49fd18c0b2e66127dfca2ca5f46"
             }
           },
           "sentencias": []
@@ -2905,7 +2905,7 @@
       "documentos": []
     },
     "Encuestas.gs": {
-      "sha256": "ebcfe0fffb1b84bb49e57f10e93ffd130cf0c7856ceb79e0b3cb68da2e485e70",
+      "sha256": "6ea59db9ad5421cc23ca7cea0c5f796fd1099e1bc7cb907a8740d5cfc4590058",
       "documentos": [
         {
           "id": "Encuestas.gs",
@@ -2948,7 +2948,7 @@
             "OPCIONES_ADMIN": {
               "tipo": "const",
               "linea": 35,
-              "hash": "34cbf7e446a7ca37b1ace977caf08927207d8990be20437c95c1546a80fd9270"
+              "hash": "1be322c082ea4f7755c0001507d2bdcae8ce9372eaac0b4b86c8a0d987b110a8"
             },
             "GRUPOS_SIMULACION": {
               "tipo": "const",
@@ -3098,141 +3098,141 @@
             "verificarAdmin": {
               "tipo": "function",
               "linea": 446,
-              "hash": "16c4e286c900680e80aa152db953a1b688aecd9f7e6e38188923674b0331668c"
+              "hash": "9901b0c4e6f019b95a526bb4e3faf524bb5913ff375a1b7f22f1e445c483d8fa"
             },
             "guardarFormulario": {
               "tipo": "function",
-              "linea": 476,
+              "linea": 479,
               "hash": "8736495fb1ad3ad0a6e02b25cad6401c20b089ad7193f904216b62a2890fe978"
             },
             "_actualizarCabecerasRespuestas_": {
               "tipo": "function",
-              "linea": 595,
+              "linea": 598,
               "hash": "bf66a3526f0b6aa4121292e11f9215e71865bbac5300331e4d77729dc89d096a"
             },
             "valorRespuesta": {
               "tipo": "function",
-              "linea": 610,
+              "linea": 613,
               "hash": "34aad7e52908bd47db64e6792ac74d923ee6f178203e51147dd695ca6a7265f1"
             },
             "condicionVisible": {
               "tipo": "function",
-              "linea": 615,
+              "linea": 618,
               "hash": "f0f0631bea2c89fc5a552454a745f33b428f550e5847e4b7150bad30040d8b38"
             },
             "validarRespuestas": {
               "tipo": "function",
-              "linea": 630,
+              "linea": 633,
               "hash": "a409b2d98f7a6457ae68f28abf1e32fc4687560ded621c2b54db3abe1d2d6f70"
             },
             "guardarRespuestaFormulario": {
               "tipo": "function",
-              "linea": 666,
+              "linea": 669,
               "hash": "6d9c268d4f5796c4c1669be19cf2c9d68aa542098abce66cb1412e24386b3fa9"
             },
             "_claveSimulacion_": {
               "tipo": "function",
-              "linea": 697,
-              "hash": "60e6dcc9f566a01eee3369c67662dd6e43d19a70b649d0d76c9f78596013ce52"
+              "linea": 700,
+              "hash": "62058fb4f272b7ff36497f4f6d6894265ee937102b6fb488b4c55bf1367e7fdf"
             },
             "elegirPonderado": {
               "tipo": "function",
-              "linea": 701,
+              "linea": 704,
               "hash": "b465c7e92706787a85d73a19fc4b083613e0964a453016562ac8296d5a73cce0"
             },
             "crearPesosSimulacion": {
               "tipo": "function",
-              "linea": 715,
+              "linea": 718,
               "hash": "2f8f70ad941ef1a56c17ba1e8c5c6f8a2471a6eb24dc1fffd16270abf77df3aa"
             },
             "valorSimulado": {
               "tipo": "function",
-              "linea": 729,
+              "linea": 732,
               "hash": "0078a197c5e7c71830c3db9725ba22a27432613ff4a64fdedd7a2037a9beb623"
             },
             "simularRespuestasFormulario": {
               "tipo": "function",
-              "linea": 775,
-              "hash": "3b6b85709c44379fdb16c273c9d46485132eec672f5fc73e09ba802315b411fb"
+              "linea": 778,
+              "hash": "bf59a34105e1809c1c35fed7bc6505d19d25cb8955c246a5d297a20ac475d9b1"
             },
             "limpiarSimuladosFormulario": {
               "tipo": "function",
-              "linea": 843,
-              "hash": "3035da01032192d32e47035f39a575be2158ef37658f4047c5fb46c74cb78cd1"
+              "linea": 847,
+              "hash": "9cfb759ced46a762fcb228ad46039cdd026f116a9ced8e1c963611807c66a81d"
             },
             "_obtenerRespuestasFormulario_": {
               "tipo": "function",
-              "linea": 873,
+              "linea": 878,
               "hash": "49ca9e9a7d9821cfef6eb9323375ee89ddc88bd7e9e267cf1e5178d1d12bca28"
             },
             "obtenerRespuestasFormularioJSON": {
               "tipo": "function",
-              "linea": 904,
+              "linea": 909,
               "hash": "f81bde8ceaae705ff97726889a91bcaa7c887da72e61b71df6119b22b2ad70ab"
             },
             "DEMO_JERARQUIA": {
               "tipo": "const",
-              "linea": 912,
+              "linea": 917,
               "hash": "cc55055673cb4ec06d85852f4e8bf9d47320c9ba89adcc53e26a8ca5cbbe1669"
             },
             "_instalarJerarquiaDemo_": {
               "tipo": "function",
-              "linea": 941,
+              "linea": 946,
               "hash": "d5940e13ccb918cbb35db9d31249eb51aeb24a12cf0a8068e1cb7190c161c1e2"
             },
             "quitarJerarquiaDemo": {
               "tipo": "function",
-              "linea": 965,
+              "linea": 970,
               "hash": "4f88fa474796f07c1d0fb8a6ab24bf906c86dd7f27083364edcf8ebae4020fd7"
             },
             "_prepararHojasDeLibro_": {
               "tipo": "function",
-              "linea": 974,
+              "linea": 979,
               "hash": "251f0582befff08ab7e0cc2f4bc6e4905acca655a91d933e618fab59ff0f033a"
             },
             "vincularYPrepararHoja": {
               "tipo": "function",
-              "linea": 999,
+              "linea": 1004,
               "hash": "bab55f3a93ee3e7e0c21bdb70f2b8c38f7d6a4e531064ea7371df8b7454b2842"
             },
             "HOJA_BANCO": {
               "tipo": "const",
-              "linea": 1061,
+              "linea": 1066,
               "hash": "3f13234ea93bdeed50bc2d01284fc8b3d3ed8f878cc90890c99d34ed373d01c8"
             },
             "HOJA_BANCO_RESPUESTAS": {
               "tipo": "const",
-              "linea": 1062,
+              "linea": 1067,
               "hash": "879998a35f1de50468641e53ee582f04cc7d76f59a0dd2f8a19c4750c8b3c722"
             },
             "_getHojaBanco_": {
               "tipo": "function",
-              "linea": 1064,
+              "linea": 1069,
               "hash": "a1cf798c60423389c3593611af654495c65c38260815c1f5994f378a35518d49"
             },
             "_getHojaBancoRespuestas_": {
               "tipo": "function",
-              "linea": 1075,
+              "linea": 1080,
               "hash": "76f71f3d88f74e19011e069d9ad443619cd65e9f5bbe3d4474d6a7b72e7d5341"
             },
             "resumenBanco_": {
               "tipo": "function",
-              "linea": 1087,
+              "linea": 1092,
               "hash": "062ac9d41ff0a2399f2010135159c0ddc765c3b341720b8432279284d1ee97e4"
             },
             "guardarEnBanco": {
               "tipo": "function",
-              "linea": 1108,
+              "linea": 1113,
               "hash": "e97f61f2c20b2487147f8829fffcd906df6dba90f848d00af2e206347dcb15ef"
             },
             "listarBanco": {
               "tipo": "function",
-              "linea": 1143,
+              "linea": 1148,
               "hash": "94fbcf2b5ab4c3d73353b39e7fccb94f8167cbcf32af7ef4daa3cbc39947240d"
             },
             "obtenerDelBanco": {
               "tipo": "function",
-              "linea": 1172,
+              "linea": 1177,
               "hash": "95e9fb261e844f948680ecc2cffa323faf8d1b8c68b67b0330da1d64b2be4e97"
             }
           },
@@ -3261,7 +3261,7 @@
       ]
     },
     "00_Constantes.gs": {
-      "sha256": "c1327eb4bb933e6f77778bf44df2bd015740d67aeb96fc6cac41b1686d7ec0f1",
+      "sha256": "a4bbf39f982da256d2c2a73ab872fd770e7184dbcf922fcb2d903b87cc732501",
       "documentos": [
         {
           "id": "00_Constantes.gs",
@@ -3281,59 +3281,54 @@
               "linea": 8,
               "hash": "8da0caff7ad6140f9042ffbe61865dd8c79a21ddee3c2e72eb80801ffb857bb9"
             },
-            "CLAVE_ADMIN_DEFAULT": {
-              "tipo": "const",
-              "linea": 9,
-              "hash": "566a7ffef943ca7b8cb9920bc697e791bbe889a75a653bccb6aa3bf1da9e2629"
-            },
             "USUARIO_ADMIN_ASISTENCIA": {
               "tipo": "const",
-              "linea": 10,
+              "linea": 9,
               "hash": "e74ff3cfbb7b9cacc8b35b41f89d5fada6a41201f30f7a7782b8ea2ff88c4bb5"
             },
             "URL_SITIO_ALUMNO_DEFAULT": {
               "tipo": "const",
-              "linea": 11,
+              "linea": 10,
               "hash": "d371050f6ba58e7248958bf5ac21a2aaf112c8b631b1fae9c84daaead9dfd65c"
             },
             "URL_SITIO_DOCENTE_DEFAULT": {
               "tipo": "const",
-              "linea": 12,
+              "linea": 11,
               "hash": "11fd51449db55d78525d5c090cff7c209e604e193222d80fd8a0d708552f831e"
             },
             "ID_DEPLOY_ASISTENCIA": {
               "tipo": "const",
-              "linea": 14,
+              "linea": 13,
               "hash": "50b1488c422afa063c8cdb9495f08363801ce240b26eb069062776ea92e1f21d"
             },
             "ID_DEPLOY_CLASE": {
               "tipo": "const",
-              "linea": 16,
+              "linea": 15,
               "hash": "e8330d46e09f14e3dfa71c934aeebdb897fb6e16397e69ea50eea4bb2eb041a2"
             },
             "ASIGNATURAS_DEFAULT": {
               "tipo": "const",
-              "linea": 18,
+              "linea": 17,
               "hash": "0d2ce1200cb2bb305bf118f58c3866ad94aa0d19384cb97491f9a8e27210a614"
             },
             "ESPECIFICACIONES_GRADO": {
               "tipo": "const",
-              "linea": 27,
+              "linea": 26,
               "hash": "efa4441de3dfe91680ae0b0c0e3d1fe8e2d1e5c69f5137372c9925513f3396a9"
             },
             "PESO_COMPRENSION": {
               "tipo": "const",
-              "linea": 54,
+              "linea": 53,
               "hash": "c4760fd97545db897b039cbfdfdc4b6e375e8d4bb0617d71e63109e6827262b6"
             },
             "PESO_VELOCIDAD": {
               "tipo": "const",
-              "linea": 55,
+              "linea": 54,
               "hash": "3f5d270f4abecaf995197855bbe0e9592b7d9ec0ebcabd914f303b44958d687b"
             },
             "ENCABEZADOS": {
               "tipo": "const",
-              "linea": 57,
+              "linea": 56,
               "hash": "cde17f594128765b823bf5097f228666ff97bd1c8cea5109ec29e68f46da2427"
             }
           },
@@ -3459,7 +3454,7 @@
       ]
     },
     "03_Setup.gs": {
-      "sha256": "363cb90dc07430a49a85bd9582928ee709d82a0e19471c196839d7408eed0c56",
+      "sha256": "3af92074489700c31b4ab87c560fe7f81d4a322a4fd463e9d62e62f13bbf80be",
       "documentos": [
         {
           "id": "03_Setup.gs",
@@ -3472,12 +3467,12 @@
             "_verificarYCrearPestanas_": {
               "tipo": "function",
               "linea": 27,
-              "hash": "aedca8ef3a0927cd0da73d40263614a89c4c901c888888ff50beadd110664569"
+              "hash": "8f285d126f98f8bd236a49dbab2f4478da378676818479ca37f91ed0c5b4a473"
             },
-            "migrarLecturasSiEsAntiguo": {
+            "_migrarLecturasSiEsAntiguo_": {
               "tipo": "function",
               "linea": 54,
-              "hash": "5534cba2d1ccefd5f8513a31e47847e70ae301aa69817dccc909da473c48e564"
+              "hash": "0090da5edc1f2a2a2a719a2c985a08811a3e5bb4e2183d8c207c6051a1b4a790"
             },
             "_migrarAlumnosSiEsAntiguo_": {
               "tipo": "function",
@@ -3504,10 +3499,10 @@
               "linea": 272,
               "hash": "8d0deb6a8cf9e8b6c4c31a7c210637b88fad37ca36fd41bdcf6a6906762639b6"
             },
-            "asegurarConfig": {
+            "_asegurarConfig_": {
               "tipo": "function",
               "linea": 296,
-              "hash": "cc31ab875ec458c895d68e7924db4f06aa3358c0e237a6aec81bb97ae8943ddc"
+              "hash": "56e9addc686928a645cce441f605776085e5b189bef4b4cb40e2fbdbf06d363d"
             },
             "sanitizarUrlSitio_": {
               "tipo": "function",
@@ -3595,7 +3590,7 @@
       ]
     },
     "04_Sesiones.gs": {
-      "sha256": "c48fd375658b8fad0e1f794955025e95a788455d0cff9514f426179308d0f58f",
+      "sha256": "5fddf56031315974a90824b3c3f69c6f90cd3797592b852f4f56ba39313ccf0f",
       "documentos": [
         {
           "id": "04_Sesiones.gs",
@@ -3608,191 +3603,196 @@
             "obtenerCredencialesAdminAutoritativas_": {
               "tipo": "function",
               "linea": 15,
-              "hash": "800dce23b55f6942f2c82dcf2d34915ce8e1ff7adad43ea3647b73cff19b7920"
+              "hash": "8af07c64775336868e1d6dbefa414e7e45bc6dd17aeda09c918a53e731f7f51a"
+            },
+            "fijarClaveAdminInicial_": {
+              "tipo": "function",
+              "linea": 31,
+              "hash": "e1f2d51d90784cf12fbd3454111b4455ab195924db49a346a23da2bdf564ecd5"
             },
             "credencialesEncuestasPanel": {
               "tipo": "function",
-              "linea": 40,
-              "hash": "b730409b686ab0af5e0e8e39307063f3550438a00875a5a731d0e3494e42fc00"
+              "linea": 48,
+              "hash": "2bdf6b45dc489bc6734c8cab2ecff1ad927efbde65764533e261339e15a38ed3"
             },
             "claveEsDefault": {
               "tipo": "function",
-              "linea": 57,
+              "linea": 64,
               "hash": "2d4045bd69f8d5df042e6dcbe9d93e7928dd3ba79f4d13dff0d8b03624fa949a"
             },
             "esUsuarioAdminAsistencia_": {
               "tipo": "function",
-              "linea": 62,
+              "linea": 69,
               "hash": "572ad3e5ece3bcfbc79db4f69dd085ed5e15c2ef297da68b8bf51b36e846d125"
             },
             "iniciarSesionUnificada": {
               "tipo": "function",
-              "linea": 67,
-              "hash": "e12fc0a91849a2abb4a08c7a3136765fdebf8a6972f75fefe7d402b7a8907170"
+              "linea": 74,
+              "hash": "8030b8c56a849dde954df8bfbc8499af1326d4f2fff86326210355b12fe00640"
             },
             "iniciarSesionAdmin": {
               "tipo": "function",
-              "linea": 282,
+              "linea": 301,
               "hash": "8f76f0fc1c60c2f665fae302153031facefd32b4b7ba185629c307efdd5a1715"
             },
             "revocarTokenSesion": {
               "tipo": "function",
-              "linea": 286,
+              "linea": 305,
               "hash": "e24feddf42772f1802f5c598d3b2fa248a8ac9c42e6329eae4fc91ad50257b94"
             },
             "cerrarSesionAlumno": {
               "tipo": "function",
-              "linea": 336,
+              "linea": 355,
               "hash": "5654ea434aefbc97702ee9fd0e3346611d588368d181e53f3f1921ee14398f7e"
             },
             "cerrarSesionAdmin": {
               "tipo": "function",
-              "linea": 340,
+              "linea": 359,
               "hash": "2e4238b51d64239b6aca922014ca087fb48d92cc31fea28d51a6cdc25c9fd90a"
             },
             "ROLES_VALIDOS_SISTEMA_": {
               "tipo": "const",
-              "linea": 344,
+              "linea": 363,
               "hash": "ec224ca41f32c1eea7135d903b2fde89d0e6297b71bbdb99732d047108fbb09d"
             },
             "obtenerSesionValida_": {
               "tipo": "function",
-              "linea": 346,
+              "linea": 365,
               "hash": "10434b5883b4de83b925ac15ebddc80fcf59ced710591aa2eb4b5fb1e6a31b47"
             },
             "exigirRoles_": {
               "tipo": "function",
-              "linea": 364,
+              "linea": 383,
               "hash": "2d4aa4b1661fd56b72d5a81efc03b450be91b034a01d35c4bb3891bca12b144d"
             },
             "exigirAdmin": {
               "tipo": "function",
-              "linea": 377,
+              "linea": 396,
               "hash": "028e19d9f49643f317940451f9b7ad4fcd7b9f7f324248265ce5c0aaa5981993"
             },
             "adminRestablecerClaveConsola_": {
               "tipo": "function",
-              "linea": 399,
+              "linea": 418,
               "hash": "ad8d402eb463005829cd04a029736414b9fbd85b63abc18c07e676730dc3c24d"
             },
             "AREAS_APOYO": {
               "tipo": "const",
-              "linea": 415,
+              "linea": 434,
               "hash": "48ff4fa81519531b6661e06e14519973ff6ff2cc0f4e179ac7e5a6fa9d18812c"
             },
             "areaApoyoValida_": {
               "tipo": "function",
-              "linea": 425,
+              "linea": 444,
               "hash": "cd28d5bf2d3a26ab55ead613d7fffc7dd5ee940f3405f5cbb3bf27b6a29ef836"
             },
             "generarClaveAleatoriaApoyo_": {
               "tipo": "function",
-              "linea": 433,
+              "linea": 452,
               "hash": "74da48d3fa0a1a4c8f8932921a309b67431a95e70a5c7a13950e180844040b2f"
             },
             "usuariosOcupadosApoyo_": {
               "tipo": "function",
-              "linea": 444,
+              "linea": 463,
               "hash": "c4d15c78710a4fb063822ad8ed116c7df89304047b238ce5c0171f3530f41091"
             },
             "usuarioApoyoLibre_": {
               "tipo": "function",
-              "linea": 465,
+              "linea": 484,
               "hash": "2fcb3394d38e758147c90897a8def91fadced486213cfd091538ae528c9132e8"
             },
             "buscarPersonalApoyoLogin_": {
               "tipo": "function",
-              "linea": 478,
+              "linea": 497,
               "hash": "3c2d608547abbc95d214e4453cb61f7309383259d87466571c80a4aa90e28f8e"
             },
             "listarPersonalApoyo": {
               "tipo": "function",
-              "linea": 520,
+              "linea": 539,
               "hash": "368b45f68fa65d37d96306aeb2a12821b06936936593f1e8fa6ec6ff16819e4a"
             },
             "altaPersonalApoyo": {
               "tipo": "function",
-              "linea": 542,
+              "linea": 561,
               "hash": "1de3214991dc644772ebcd7fa1ca10649ab9647bb52438ce4882f081d9500b8b"
             },
             "asignarClavePersonalApoyo": {
               "tipo": "function",
-              "linea": 568,
+              "linea": 587,
               "hash": "c944cf65f3140278b179a279093819af3f83abc54664e3bbb36f7f43f3a12f8f"
             },
             "generarClavePersonalApoyo": {
               "tipo": "function",
-              "linea": 614,
+              "linea": 633,
               "hash": "69115283c395cfeb73f36fc317e0e5e417918d6f51b3dd91c6e8ee575422e59f"
             },
             "generarClavesPersonalApoyo": {
               "tipo": "function",
-              "linea": 619,
+              "linea": 638,
               "hash": "cef2ae279d3b8428edb8d57a1cf6e3c871196f8b33c6d196abf9928e326ed16a"
             },
             "cambiarClaveAdmin": {
               "tipo": "function",
-              "linea": 638,
+              "linea": 657,
               "hash": "aecfd443ea401ffc0e6a6b668b1bbfbdc689ac1c028d534c0483a4b47103409f"
             },
             "_urlHojaCalculo_": {
               "tipo": "function",
-              "linea": 658,
+              "linea": 677,
               "hash": "f0c7b355f6006b65dbe56e3fa56eb7b4883d6c9d890448c7c17b272ecd7f6ef7"
             },
             "aJsonSeguro": {
               "tipo": "function",
-              "linea": 666,
+              "linea": 685,
               "hash": "4fef88ff3e8d38bb12fe1cc36e85d8ba8256172f4f049ceb200309ce66422d18"
             },
             "urlAdmin": {
               "tipo": "function",
-              "linea": 675,
+              "linea": 694,
               "hash": "d093496730391a0fd75816fce2f58634b152c81e7fe64299abd6790744d2959b"
             },
             "urlAdminPub": {
               "tipo": "function",
-              "linea": 680,
+              "linea": 699,
               "hash": "79518e48df0aee680a19982ac6d2db68df9b24d76fdf0e7c399c42573f53d48e"
             },
             "urlDocentePub": {
               "tipo": "function",
-              "linea": 684,
+              "linea": 703,
               "hash": "34e176a5c5e12b828ccb59790b1fa82d83e96e102f0cece8ff88aae3f623c3d5"
             },
             "urlAlumnoPub": {
               "tipo": "function",
-              "linea": 689,
+              "linea": 708,
               "hash": "aa035dc81434190f079e11fa7c0111a681f23fa360e4ff3e7b877040c9f80293"
             },
             "urlDestinoAlumno_": {
               "tipo": "function",
-              "linea": 694,
+              "linea": 713,
               "hash": "59863c4f8255df3ef321b7010c36c70b41acdb3ffdc565f5b2528dac18044eff"
             },
             "esVistaAsistencia_": {
               "tipo": "function",
-              "linea": 702,
+              "linea": 721,
               "hash": "40f076038870839e362311557f2c3b32a5d947ecba7f290fb3784a04292638fa"
             },
             "urlAsistenciaPub": {
               "tipo": "function",
-              "linea": 710,
+              "linea": 729,
               "hash": "4d8e42cc22437cea6e49574d200d48a12c68f459030d09b4b735d258da3149f2"
             },
             "esVistaClaseMaestro_": {
               "tipo": "function",
-              "linea": 719,
+              "linea": 738,
               "hash": "d48811312da3bf565bc4c35d5f8c52e4af89a8f22fcbaf4c1055aa7e471f9996"
             },
             "esVistaClase_": {
               "tipo": "function",
-              "linea": 724,
+              "linea": 743,
               "hash": "137aaa0b20b5ab25cbb0b8314c9a78d86aeaac3fc795b57343322a3a988b2ae3"
             },
             "urlClasePub": {
               "tipo": "function",
-              "linea": 736,
+              "linea": 755,
               "hash": "54f7ccea77409b676d9d0a37e0c11a7a802b11a142439f45777bf99b087e7a89"
             }
           },
@@ -4440,7 +4440,7 @@
       ]
     },
     "09_IA.gs": {
-      "sha256": "48e7314907ad9dcee6c5571660884e8763f81a77a2673f5997883d9df175de16",
+      "sha256": "c61cf16c54c7d671cf621b6a4b5c58cc751fb1b97219f950aa44df59e58db032",
       "documentos": [
         {
           "id": "09_IA.gs",
@@ -4500,10 +4500,10 @@
               "linea": 269,
               "hash": "76338e403a21ac919a30f14c9af1daf06f62dcda84289ae3c236b720c2172a4f"
             },
-            "pedirRecomendacionAlumnoDeepSeek": {
+            "_pedirRecomendacionAlumnoDeepSeek_": {
               "tipo": "function",
               "linea": 300,
-              "hash": "e9518abe7c56abae0d798a4e99310d94ecd34f24d8247a1bdfe85b3976fb45d7"
+              "hash": "59d43e7a797d188520afca71b9d6fbbeba41090a6839ca08d10923d37ffbe5c4"
             }
           },
           "sentencias": []
@@ -4511,7 +4511,7 @@
       ]
     },
     "10_Resultados.gs": {
-      "sha256": "de0c371978006a0bb31f3aa772df6b2d58f40124c221abf9672e3aac1ea97f99",
+      "sha256": "979414c4e1209b62eadf1472ac6e818140f7374a07c1906e464dfc7d9ff87571",
       "documentos": [
         {
           "id": "10_Resultados.gs",
@@ -4529,7 +4529,7 @@
             "guardarResultadosExamen": {
               "tipo": "function",
               "linea": 34,
-              "hash": "922204d6fa79839268824bb4765514cee6d64673acdaf9db586831fa9e007e1d"
+              "hash": "ecfa1d9624dbabc026ec1ed14a776ad16fac5974d43bb77a321e693450ac20a8"
             },
             "buscarResultadoPrevioEnHoja_": {
               "tipo": "function",

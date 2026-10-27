@@ -1,11 +1,11 @@
 {
-  "generado": "2026-10-27T17:59:51.376Z",
+  "generado": "2026-10-27T18:06:39.196Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
     "archivos": 82,
     "documentos": 70,
-    "simbolos": 1844,
+    "simbolos": 1846,
     "sentencias_superiores": 41,
     "duplicados": 286,
     "documentos_con_error": 0
@@ -1169,7 +1169,7 @@
       "documentos": []
     },
     "Asistencia.gs": {
-      "sha256": "2e61de820e3660e4c74d7a305c99fc32f43073cef7eced5895835f96c9e2e3a4",
+      "sha256": "d37b80fe74ede75ce6bcee91abd9746107ebed460bf5c0f22e081390bee2cfb3",
       "documentos": [
         {
           "id": "Asistencia.gs",
@@ -1294,209 +1294,219 @@
               "linea": 456,
               "hash": "e712834adcc5f6e9d10f0d84a1071bcecc4ae2de2178c75e3445221a3a218bea"
             },
+            "turnoDelGrupoAsi_": {
+              "tipo": "function",
+              "linea": 511,
+              "hash": "382c0320972c5af45bd22eb1cd9d80dc0161716a7e0ed2adb84c7521c1fa070e"
+            },
+            "validarRegistrosAsistencia_": {
+              "tipo": "function",
+              "linea": 527,
+              "hash": "3cabd82a8ac16285d239aed36aaa2bb6b96734db73cafa348a588162e32181c8"
+            },
             "guardarAsistenciaAlumnos": {
               "tipo": "function",
-              "linea": 510,
-              "hash": "dae881398b1581a7f72c4ade574602a67606f2314e12a708b93b7c9bf6775d26"
+              "linea": 559,
+              "hash": "8487c0454341772b41f3db181864bda1db496f40f816d0adbae28e94ef5d7976"
             },
             "guardarAsistenciaGrupo": {
               "tipo": "function",
-              "linea": 578,
+              "linea": 627,
               "hash": "d9d3b51f50722b557c07f64111fecd7eb18859dade77103dae89d6d9ad1f967d"
             },
             "asistenciaMaestrosBloque": {
               "tipo": "function",
-              "linea": 598,
+              "linea": 647,
               "hash": "f98d83d7f73ef24b230be94b37643e5674627a926e543eb6f0ea1649d79a5131"
             },
             "guardarAsistenciaMaestro": {
               "tipo": "function",
-              "linea": 663,
-              "hash": "71bdac22bf7c3fa4f8806d2afa3ef7dae7bd679cfa0d6349a09c124e94279dfa"
+              "linea": 712,
+              "hash": "ce73238ad74b3fb22893963aed3c70033d803a0d4afe06ff9ff7056eb4ae77a9"
             },
             "catalogoReporteAsistencia": {
               "tipo": "function",
-              "linea": 720,
+              "linea": 780,
               "hash": "657369884f2371c9ec410b118d711f3d6a35445deae80afa8e64bff5412c1273"
             },
             "vacioContAsiAlu_": {
               "tipo": "function",
-              "linea": 783,
+              "linea": 843,
               "hash": "4a3229389cf3ae0798d7114bc0bd0885ad93ed416861e14372e204ff4345802c"
             },
             "vacioContAsiMae_": {
               "tipo": "function",
-              "linea": 787,
+              "linea": 847,
               "hash": "26b666e840fb46fafec6e55f6f155f270932f06c5c4cdb7941e8311afef51221"
             },
             "sumarContAsi_": {
               "tipo": "function",
-              "linea": 791,
+              "linea": 851,
               "hash": "c1b9fbb44cc764e8b8d383091f76aa992e44dd7bfbba4bd36e3b4ca5e2efae20"
             },
             "pctDe_": {
               "tipo": "function",
-              "linea": 798,
+              "linea": 858,
               "hash": "93bbbf9f3b2daad6efe869f2a5300ac2cf7c91a5db423fd08773409ea8e4170d"
             },
             "etiquetaHoraAsi_": {
               "tipo": "function",
-              "linea": 803,
+              "linea": 863,
               "hash": "06140fdb119027cb4bce7755a8a4786bfd9161c987005c3acece1a129bf5f94a"
             },
             "mapaHorasHorario_": {
               "tipo": "function",
-              "linea": 810,
+              "linea": 870,
               "hash": "e8a16b34899f25dd1850b1ee0aadf25b03148f96c37948daff90d11557ef2c5b"
             },
             "horaDeFilaMae_": {
               "tipo": "function",
-              "linea": 833,
+              "linea": 893,
               "hash": "1178aa698673294eeeaf31e1c057635f02184fb2ee7ce360080e33201ca0017b"
             },
             "normalizarGruposPayload_": {
               "tipo": "function",
-              "linea": 847,
+              "linea": 907,
               "hash": "b6072b0474cd6d3a4a3ae64bf8efa6840ad7d6b17b24917bab58514b99d63664"
             },
             "clavesFiltroRepAsi_": {
               "tipo": "function",
-              "linea": 877,
+              "linea": 937,
               "hash": "488530b626821f757df5d9e9efeb2744f09beb27e5b0e4c57a094d744ca7ffad"
             },
             "reporteAsistencia": {
               "tipo": "function",
-              "linea": 904,
+              "linea": 964,
               "hash": "8ea13a0c3b0cf09622f6700281ece682db10fe3aeacde846661532559ad1bb89"
             },
             "reporteAsistenciaAlumnos_": {
               "tipo": "function",
-              "linea": 967,
+              "linea": 1027,
               "hash": "50641b852842eb4b064eb01a5e113f1233a238f3c10983fbc9e5b8045a8fa6c4"
             },
             "reporteAsistenciaMaestros_": {
               "tipo": "function",
-              "linea": 1132,
+              "linea": 1192,
               "hash": "cb72ab7d8a0fbacfd793cc9f1c7e6615650456acaa4ff082867cf40fb745760b"
             },
             "asegurarColumnaClavePrefectos_": {
               "tipo": "function",
-              "linea": 1292,
+              "linea": 1352,
               "hash": "c378e5d6cdf4f1b88931201cfdacbae2fa1e76898188b10561f1deaa549f4850"
             },
             "listarPrefectos": {
               "tipo": "function",
-              "linea": 1309,
+              "linea": 1369,
               "hash": "f6f34a15d8937d87e4e2d06a5cc873bf464619f118b7cf5ace5170709d1751d4"
             },
             "altaPrefecto": {
               "tipo": "function",
-              "linea": 1336,
+              "linea": 1396,
               "hash": "ba56b15311419e5555da75c7403d78cbb2f00494beced37a11e47af18b240a2f"
             },
             "asignarClavePrefecto": {
               "tipo": "function",
-              "linea": 1359,
+              "linea": 1419,
               "hash": "7b764f1c16cbf1099a30c7d6f3bed92e8df634a42a7b1d831ff2280d495e12a2"
             },
             "generarClavePrefecto": {
               "tipo": "function",
-              "linea": 1403,
+              "linea": 1463,
               "hash": "43f9d0fdd1692b8ad3f1f6a061381d18b2f7b8a4b213e37a4d4e9b42406bc1d1"
             },
             "generarClavesPrefectos": {
               "tipo": "function",
-              "linea": 1407,
+              "linea": 1467,
               "hash": "12d2152539e3388edf106215aa6c9955b4165d1017583997ed0a33dcdef8435f"
             },
             "guardarAsignacionPrefecto": {
               "tipo": "function",
-              "linea": 1428,
+              "linea": 1488,
               "hash": "d2daa1e74c1f44a5a85d107c2a13cf7511f17873ba582f2c256d6e8df44e361f"
             },
             "xmlAttr_": {
               "tipo": "function",
-              "linea": 1478,
+              "linea": 1538,
               "hash": "315d6e0eacafd5e5d4c3a4e0df74996260cb436d0b422d95a7c0d07fa928ade8"
             },
             "xmlHijos_": {
               "tipo": "function",
-              "linea": 1484,
+              "linea": 1544,
               "hash": "0510b5550479409a5bf4d8f0e9773cdaf586c2711fb0489937d4fa204b48ac69"
             },
             "xmlMapaId_": {
               "tipo": "function",
-              "linea": 1489,
+              "linea": 1549,
               "hash": "ac6621e9e7d9779754a4bd239229b3c224cd252f55d1f7b6230c6c26906f50d2"
             },
             "diasDeBitsAsi_": {
               "tipo": "function",
-              "linea": 1501,
+              "linea": 1561,
               "hash": "29a98bd29c31ef82e724a57440f1dfe8bac47c8ae18698b7e0b0ad7f9b62dd20"
             },
             "partirIdsAsi_": {
               "tipo": "function",
-              "linea": 1511,
+              "linea": 1571,
               "hash": "8735434b6b2b1efb44f85ceea9c82608c7e1a17c449c4b63b73c18b6a40ed922"
             },
             "turnoDesdeHoraAsi_": {
               "tipo": "function",
-              "linea": 1515,
+              "linea": 1575,
               "hash": "1e66b03a77463eeb15c8037e3556d308d0cc469bf326df7b0b960a318fcdda3a"
             },
             "gradoGrupoDeClaseAsi_": {
               "tipo": "function",
-              "linea": 1520,
+              "linea": 1580,
               "hash": "f9f6eb3f126c2ee32671c9dd480b558ccc0998ec68f05ee65c49a8672bd948f2"
             },
             "importarHorarioAsc": {
               "tipo": "function",
-              "linea": 1531,
+              "linea": 1591,
               "hash": "23d5cb58e501f834c48d646f8cf7df2945baccb4c5e36c3854276bfb2348a9f2"
             },
             "catalogoPrefectasDemo_": {
               "tipo": "function",
-              "linea": 1650,
+              "linea": 1710,
               "hash": "1d79ddb302ae89c959a9471e979026323d8d87438c625053d06bad7e9d040561"
             },
             "sembrarPrefectasDemo_": {
               "tipo": "function",
-              "linea": 1664,
+              "linea": 1724,
               "hash": "73e2ff5a7a36d70ccd2e06cc7ad8b76aef3133eac5acb10d64d905eb35dfc49a"
             },
             "fechasLaboralesAsi_": {
               "tipo": "function",
-              "linea": 1757,
+              "linea": 1817,
               "hash": "d85510feb902a05521b1b1134e911b5c2f03199d92b856ab7c483cbe7632f30f"
             },
             "enteroAsi_": {
               "tipo": "function",
-              "linea": 1776,
+              "linea": 1836,
               "hash": "2b552538f093a694936f667f8d93aabdc4404bfcf07d0b5a125d25431c1970e5"
             },
             "estadoAluDemo_": {
               "tipo": "function",
-              "linea": 1787,
+              "linea": 1847,
               "hash": "557fabe8ddb5cf59e5b1acff5d498265cc378db220fa82c7cea19dfc56ffa2d3"
             },
             "obsAluDemo_": {
               "tipo": "function",
-              "linea": 1804,
+              "linea": 1864,
               "hash": "00efbc99fc004b767e54869ead966ee6bc2ba70cb16ccf164566e543725584d4"
             },
             "estadoMaeDemo_": {
               "tipo": "function",
-              "linea": 1813,
+              "linea": 1873,
               "hash": "9fa150aa0ab0849e6bcf179e96bd21a830638e2a101b13d905c7353d63e8855d"
             },
             "obsMaeDemo_": {
               "tipo": "function",
-              "linea": 1820,
+              "linea": 1880,
               "hash": "8ccf09a5abc1213178dd7807553eaf4fd4de44280c521eb644e5be633749fcd2"
             },
             "sembrarAsistenciaDemo": {
               "tipo": "function",
-              "linea": 1840,
+              "linea": 1900,
               "hash": "80d370c400615c1fd00473aa0473d4868e204bf3665786482f442c8ea7a67d59"
             }
           },

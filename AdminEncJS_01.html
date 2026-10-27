@@ -1,0 +1,647 @@
+<script>
+/* AdminEncJS_01 — inicializarModuloEncuestas_, conmutarSubEncuestas, obtenerUrlPublicaCenso_, copiarEnlacePublicoCenso, abrirEncuestaPublicaNuevaPestana_, abrirVistaPreviaEncuesta_, enviarVistaPrevia_, abrirAyudaModalEncuestas_ */
+
+
+  // -------------------------------------------------------------
+  // Puente con el panel principal Admin.html de Lectura
+  // -------------------------------------------------------------
+  function inicializarModuloEncuestas_() {
+    try {
+      if (typeof token !== 'undefined' && token) {
+        creds = { token: token };
+      }
+      const c = document.getElementById("constructor");
+      if (c) c.classList.remove("d-none");
+      const lc = document.getElementById("loginCard");
+      if (lc) lc.classList.add("d-none");
+      
+      try { if (typeof renderMenuAjustes === "function") renderMenuAjustes(); } catch(eAj) {}
+
+      if (!RESPUESTAS) {
+        cargarRespuestas();
+      } else {
+        setTimeout(function() {
+          try {
+            if (typeof redimensionarGraficas === 'function') redimensionarGraficas();
+            if (typeof aplicarAltura === 'function') aplicarAltura();
+          } catch(eR) {}
+        }, 100);
+      }
+    } catch(eInit) {
+      console.warn("inicializarModuloEncuestas_: ", eInit);
+    }
+  }
+
+  function conmutarSubEncuestas(sub, btn) {
+    if (btn) {
+      document.querySelectorAll('#menuEncTabs .ribbon-btn').forEach(function(b) { b.classList.remove('activo'); });
+      btn.classList.add('activo');
+    }
+    const tabBtn = document.getElementById('subtab-' + sub);
+    if (tabBtn) {
+      try {
+        const bsTab = new bootstrap.Tab(tabBtn);
+        bsTab.show();
+      } catch(eT) {
+        tabBtn.click();
+      }
+    }
+  }
+
+  function obtenerUrlPublicaCenso_() {
+    const URL_DEPLOY_CANONICA = 'https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec';
+    let base = (typeof URL_BASE_APP !== 'undefined' && URL_BASE_APP) ? String(URL_BASE_APP) : '';
+    base = base.replace(/^[\s"']+|[\s"']+$/g, '').split('?')[0].replace(/\/+$/, '');
+    if (!base || base.indexOf('https://script.google.com/macros/') !== 0) {
+      base = URL_DEPLOY_CANONICA;
+    }
+    return base + '?pagina=censo';
+  }
+
+  function copiarEnlacePublicoCenso() {
+    const url = obtenerUrlPublicaCenso_();
+    const inp = document.getElementById('inputUrlPublicaCenso');
+    if (inp) inp.value = url;
+    const feedbackBoton = function() {
+      const btn = document.getElementById('btnCopiarEnlaceModal');
+      if (btn) {
+        const prev = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check2-all"></i> ¡Copiado!';
+        setTimeout(function() { btn.innerHTML = prev; }, 2000);
+      }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function() {
+        feedbackBoton();
+        if (typeof toast === 'function') toast('Enlace de encuesta copiado al portapapeles', 'exito');
+      }).catch(function() {
+        if (inp) { inp.select(); document.execCommand('copy'); feedbackBoton(); }
+        else prompt('Copia el enlace para compartir la encuesta con los alumnos:', url);
+      });
+    } else {
+      if (inp) { inp.select(); document.execCommand('copy'); feedbackBoton(); }
+      else prompt('Copia el enlace para compartir la encuesta con los alumnos:', url);
+    }
+  }
+
+  function abrirEncuestaPublicaNuevaPestana_() {
+    window.open(obtenerUrlPublicaCenso_(), '_blank', 'noopener');
+  }
+
+  function abrirVistaPreviaEncuesta_() {
+    try {
+      const url = obtenerUrlPublicaCenso_();
+      const inp = document.getElementById('inputUrlPublicaCenso');
+      if (inp) inp.value = url;
+      const lnk = document.getElementById('btnAbrirEncuestaPestana');
+      if (lnk) lnk.href = url;
+
+      // Sincronizar cabecera y preguntas desde FORM / RESPUESTAS o inputs del editor si fueron modificados
+      if ((!FORM || !FORM.preguntas || !FORM.preguntas.length) && RESPUESTAS && RESPUESTAS.preguntas) {
+        FORM = { config: RESPUESTAS.config || {}, preguntas: RESPUESTAS.preguntas || [] };
+      }
+      const c = Object.assign({}, (RESPUESTAS && RESPUESTAS.config) || {}, (FORM && FORM.config) || {});
+      const valInput = function(id, fallback) {
+        const el = document.getElementById(id);
+        return (el && el.value !== '') ? el.value : (fallback || '');
+      };
+      FORM.config = {
+        escuela: valInput('cfg_escuela', c.escuela || 'Secundaria Técnica 90'),
+        subtitulo: valInput('cfg_subtitulo', c.subtitulo || ''),
+        titulo: valInput('cfg_titulo', c.titulo || 'Encuesta Diagnóstica'),
+        introduccion: valInput('cfg_introduccion', c.introduccion || ''),
+        boton: valInput('cfg_boton', c.boton || 'Enviar Encuesta'),
+        exitoTitulo: valInput('cfg_exitoTitulo', c.exitoTitulo || 'Registro guardado'),
+        otroBoton: valInput('cfg_otroBoton', c.otroBoton || 'Registrar otra respuesta'),
+        exitoTexto: valInput('cfg_exitoTexto', c.exitoTexto || 'Gracias por responder.'),
+        nota: valInput('cfg_nota', c.nota || ''),
+        gruposPorTurno: c.gruposPorTurno,
+        categorias: c.categorias
+      };
+
+      const tEsc = document.getElementById('tituloEscuela');
+      const sEsc = document.getElementById('subtituloEscuela');
+      const tForm = document.getElementById('tituloFormulario');
+      if (tEsc) tEsc.textContent = FORM.config.escuela || 'Encuesta';
+      if (sEsc) sEsc.textContent = FORM.config.subtitulo || '';
+      if (tForm) tForm.textContent = FORM.config.titulo || '';
+
+      renderFormulario();
+      const fDin = document.getElementById('formDinamico');
+      const pExito = document.getElementById('panelExito');
+      const eForm = document.getElementById('errorForm');
+      if (fDin) fDin.classList.remove('d-none');
+      if (pExito) pExito.classList.add('d-none');
+      if (eForm) eForm.classList.add('d-none');
+
+      const modalEl = document.getElementById('modalVistaPreviaEncuesta');
+      if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(modalEl).show();
+      }
+    } catch (ePrev) {
+      console.warn('abrirVistaPreviaEncuesta_: ', ePrev);
+    }
+  }
+
+  function enviarVistaPrevia_(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const respuestas = {};
+    const faltan = [];
+    (FORM.preguntas || []).forEach(p => {
+      const wrap = document.querySelector('#modalVistaPreviaEncuesta [data-id="' + p.id + '"]') || document.querySelector('[data-id="' + p.id + '"]');
+      const oculto = wrap && wrap.classList.contains('d-none');
+      let valor = '';
+      if (p.tipo === 'multiple') {
+        valor = Array.from(document.querySelectorAll('#campo_' + p.id + ' input:checked')).map(i => i.value);
+      } else if (p.tipo === 'escala') {
+        const check = document.querySelector('#campo_' + p.id + ' input:checked');
+        valor = check ? check.value : '';
+      } else {
+        const el = document.getElementById('campo_' + p.id);
+        valor = el ? el.value : '';
+      }
+      respuestas[p.id] = valor;
+      const vacio = p.tipo === 'multiple' ? valor.length === 0 : String(valor).trim() === '';
+      if (p.obligatoria && vacio && !oculto) faltan.push(p.etiqueta);
+    });
+
+    const caja = document.getElementById('errorForm');
+    if (faltan.length) {
+      if (caja) {
+        caja.textContent = 'Falta responder: ' + faltan.join(', ') + '.';
+        caja.classList.remove('d-none');
+      }
+      return;
+    }
+    if (caja) caja.classList.add('d-none');
+
+    const pNombre = (typeof preguntaCategoria === 'function') ? preguntaCategoria('nombre') : null;
+    let nombre = pNombre ? String(respuestas[pNombre.id] || '').trim() : '';
+    if (!nombre) nombre = Object.keys(respuestas).map(k => respuestas[k]).find(v => typeof v === 'string' && v.trim() !== '') || 'Alumno';
+    const exTexto = document.getElementById('exitoTexto');
+    if (exTexto) exTexto.textContent = ((FORM.config && FORM.config.exitoTexto) || 'Tus respuestas se han registrado correctamente, {nombre}.').replace('{nombre}', nombre);
+    const fDin = document.getElementById('formDinamico');
+    const pEx = document.getElementById('panelExito');
+    if (fDin) fDin.classList.add('d-none');
+    if (pEx) pEx.classList.remove('d-none');
+  }
+
+  function abrirAyudaModalEncuestas_() {
+    try {
+      const modalEl = document.getElementById('modalAyuda');
+      if (modalEl) {
+        const mAyuda = new bootstrap.Modal(modalEl);
+        mAyuda.show();
+      }
+    } catch(eM) {
+      console.warn("abrirAyudaModalEncuestas_: ", eM);
+    }
+  }
+
+
+// ESTADO GLOBAL Y VARIABLES
+  let FORM = { config: {}, preguntas: [] };
+  let FILTROS = {};            // dimId -> valor elegido ("TODOS" implícito)
+  let RESPUESTAS = null;
+  let creds = null;
+  let editando = -1;
+  let modalPreguntaBS = null;
+  let simulacionModal = null;
+  let modalGrafica = null;
+  let modalCategorias = null;
+  let modalAyuda = null;
+  let editandoCategoria = null;
+  let chartsResumen = [];
+  let CONFIGS_GRAFICA = {};
+  let FILTROS_DINAMICOS = [];
+  let graficaModal = null;
+  let pendienteGrafica = null;
+  let sunburstInstancia = null;
+
+  // AJUSTES VISUALES CON PERSISTENCIA
+  let vistaPaneles = "ambos";
+  function leerNumero(clave, defecto) {
+    try {
+      const v = Number(localStorage.getItem(clave));
+      return isFinite(v) && v > 0 ? v : defecto;
+    } catch (e) { return defecto; }
+  }
+  let tamanoGrafica = leerNumero("tamanoGrafica", 11);
+  let tamanoLista = leerNumero("tamanoLista", 12);
+  let alturaGrafica = leerNumero("alturaGrafica", 320);
+
+  const TIPOS = {
+    texto: "Texto corto", parrafo: "Párrafo", unica: "Opción única", multiple: "Opción múltiple",
+    numero: "Número", fecha: "Fecha", sino: "Sí / No", escala: "Escala"
+  };
+
+  // SISTEMA DE ASIGNACIÓN ESTABLE DE COLORES
+  const PALETA_ESTABLE = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#ec4899", "#64748b"];
+  const COLORES_ASIGNADOS = {};
+
+  function colorDimension(dimId, etiqueta) {
+    if (!COLORES_ASIGNADOS[dimId]) COLORES_ASIGNADOS[dimId] = {};
+    const mapa = COLORES_ASIGNADOS[dimId];
+    if (!mapa[etiqueta]) {
+      const idx = Object.keys(mapa).length;
+      mapa[etiqueta] = PALETA_ESTABLE[idx % PALETA_ESTABLE.length];
+    }
+    return mapa[etiqueta];
+  }
+
+  function sembrarColores(filas, preguntas) {
+    (preguntas || []).forEach(p => {
+      const valores = [];
+      filas.forEach(f => {
+        const v = (f.respuestas || {})[p.id];
+        if (v && valores.indexOf(v) === -1) valores.push(v);
+      });
+      valores.sort().forEach(val => colorDimension(p.id, val));
+    });
+    colorDimension("turno", "Matutino");
+    colorDimension("turno", "Vespertino");
+  }
+
+  // GESTIÓN DE LAYOUT, ALTURA Y ZOOM
+  function alternarCabecera() {
+    const cabecera = document.querySelector(".header-banner");
+    if (!cabecera) return;
+    aplicarCabecera(!cabecera.classList.contains("d-none"));
+  }
+
+  function aplicarCabecera(ocultar) {
+    const cabecera = document.querySelector(".header-banner");
+    if (cabecera) cabecera.classList.toggle("d-none", ocultar);
+    const icono = document.getElementById("iconoCabecera");
+    const btn = document.getElementById("btnCabecera");
+    if (icono) icono.className = ocultar ? "bi bi-chevron-double-down" : "bi bi-chevron-double-up";
+    if (btn) {
+      btn.title = ocultar ? "Mostrar cabecera" : "Ocultar cabecera";
+      btn.setAttribute("aria-label", btn.title);
+    }
+    try { localStorage.setItem("cabeceraOculta", ocultar ? "1" : "0"); } catch (e) {}
+  }
+
+  function cambiarVista(modo) {
+    vistaPaneles = modo;
+    const colG = document.getElementById("colGraficaPrincipal");
+    const colT = document.getElementById("colTotales");
+    if (!colG || !colT) return;
+    const verG = modo !== "lista";
+    const verT = modo !== "grafica";
+    colG.className = (verG && verT) ? "col-12 col-lg-6" : "col-12";
+    colT.className = (verG && verT) ? "col-12 col-lg-6" : "col-12";
+    colG.classList.toggle("d-none", !verG);
+    colT.classList.toggle("d-none", !verT);
+
+    [["btnVistaGrafica", "grafica"], ["btnVistaLista", "lista"], ["btnVistaAmbos", "ambos"]].forEach(([id, m]) => {
+      const b = document.getElementById(id);
+      if (b) b.className = "btn ribbon-tab " + (vistaPaneles === m ? "active" : "btn-outline-secondary");
+    });
+  }
+
+  function cambiarAltura(delta) {
+    alturaGrafica = Math.max(220, Math.min(580, alturaGrafica + delta));
+    try { localStorage.setItem("alturaGrafica", String(alturaGrafica)); } catch (err) {}
+    aplicarAltura();
+  }
+
+  function aplicarAltura() {
+    const cont = document.querySelector("#colGraficaPrincipal .chart-container");
+    if (cont) cont.style.height = alturaGrafica + "px";
+    const lista = document.querySelector("#colTotales .table-responsive");
+    if (lista) lista.style.maxHeight = alturaGrafica + "px";
+    if (chartsResumen.length) chartsResumen.forEach(c => c.resize());
+    if (sunburstInstancia) sunburstInstancia.resize();
+  }
+
+  function cambiarTamanoGrafica(delta) {
+    tamanoGrafica = Math.max(8, Math.min(18, tamanoGrafica + delta));
+    try { localStorage.setItem("tamanoGrafica", String(tamanoGrafica)); } catch (err) {}
+    pintarResumenPanel();
+  }
+
+  function cambiarTamanoLista(delta) {
+    tamanoLista = Math.max(9, Math.min(18, tamanoLista + delta));
+    try { localStorage.setItem("tamanoLista", String(tamanoLista)); } catch (err) {}
+    const tabla = document.getElementById("tablaTotales");
+    if (tabla) tabla.style.fontSize = tamanoLista + "px";
+  }
+
+  // Elige blanco o gris oscuro segun el fondo de la rebanada
+  function colorTextoContraste(fondo) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(String(fondo || ""));
+    if (!m) return "#ffffff";
+    const n = parseInt(m[1], 16);
+    const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    const luz = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luz > 0.62 ? "#1f2937" : "#ffffff";
+  }
+
+  // Dibuja el valor de cada barra, rebanada o punto (incluidas las apiladas)
+  const pluginValores = {
+    id: "valores",
+    afterDatasetsDraw(chart) {
+      const tipo = chart.config.type;
+      if (["bar", "pie", "doughnut", "line"].indexOf(tipo) === -1) return;
+      const ctx = chart.ctx;
+      const pct = !!(chart.data.datasets[0] && chart.data.datasets[0]._pct);
+      const formato = v => pct ? Number(v).toFixed(1) + "%" : String(v);
+      const horizontal = chart.options.indexAxis === "y";
+      const sc = chart.options.scales || {};
+      const apilada = !!((sc.x && sc.x.stacked) || (sc.y && sc.y.stacked));
+      ctx.save();
+      ctx.font = "600 " + Math.max(9, tamanoGrafica - 1) + "px 'Segoe UI', sans-serif";
+
+      chart.data.datasets.forEach((ds, di) => {
+        const meta = chart.getDatasetMeta(di);
+        if (!meta || !meta.data) return;
+        meta.data.forEach((el, i) => {
+          const valor = ds.data[i];
+          if (valor == null || Number(valor) === 0) return;
+
+          if (tipo === "pie" || tipo === "doughnut") {
+            const ang = (el.endAngle || 0) - (el.startAngle || 0);
+            if (ang < 0.18) return;
+            const radio = tipo === "doughnut" ? ((el.innerRadius + el.outerRadius) / 2) : el.outerRadius * 0.62;
+            const medio = (el.startAngle + el.endAngle) / 2;
+            const color = Array.isArray(ds.backgroundColor) ? ds.backgroundColor[i] : ds.backgroundColor;
+            ctx.fillStyle = colorTextoContraste(color);
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(formato(valor), el.x + Math.cos(medio) * radio, el.y + Math.sin(medio) * radio);
+            return;
+          }
+
+          if (tipo === "line") {
+            ctx.fillStyle = "#334155";
+            ctx.textAlign = i === 0 ? "left" : (i === meta.data.length - 1 ? "right" : "center");
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formato(valor), el.x, el.y - 8);
+            return;
+          }
+
+          if (apilada) {
+            const alto = Math.abs((el.base || 0) - (el.y || 0));
+            const ancho = Math.abs((el.base || 0) - (el.x || 0));
+            if (horizontal && ancho < 18) return;
+            if (!horizontal && alto < 14) return;
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            if (horizontal) ctx.fillText(formato(valor), ((el.base || 0) + el.x) / 2, el.y);
+            else ctx.fillText(formato(valor), el.x, ((el.base || 0) + el.y) / 2);
+            return;
+          }
+
+          ctx.fillStyle = "#334155";
+          if (horizontal) {
+            ctx.textAlign = "left";
+            ctx.textBaseline = "middle";
+            ctx.fillText(formato(valor), el.x + 6, el.y);
+          } else {
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formato(valor), el.x, el.y - 6);
+          }
+        });
+      });
+      ctx.restore();
+    }
+  };
+
+  function dimensionDe(id) {
+    const dim = dimensionesDisponibles().filter(d => d.id === id)[0];
+    if (dim) {
+      return {
+        id: dim.id,
+        etiqueta: dim.etiqueta,
+        opciones: dim.opciones || [],
+        padre: dim.padre || "",
+        opcionesPorPadre: dim.opcionesPorPadre || null
+      };
+    }
+    return preguntasVisibles().find(p => p.id === id);
+  }
+
+  function valorDe(fila, id) {
+    const r = fila.respuestas || {};
+    if (id === "origen") return fila.origen || "Real";
+    if (id === "turno") return r.turno || "";
+    if (id === "grado") return String(r.grupo || "").charAt(0);
+    if (id === "grupo") return r.grupo || "";
+    return r[id];
+  }
+
+  // Datasets de una barra apilada: una serie por cada valor de "Segmentar por"
+  function construirApilada(filas, labels, dimId, segId, usarPct, baseTotal, totalN) {
+    const dim = dimensionDe(dimId);
+    const esMultiple = !!(dim && dim.tipo === "multiple");
+    const matriz = {};
+    labels.forEach(l => { matriz[l] = {}; });
+
+    filas.forEach(f => {
+      const bruto = valorDe(f, dimId);
+      if (bruto == null || bruto === "") return;
+      const cats = esMultiple ? String(bruto).split(";").map(s => s.trim()).filter(Boolean) : [String(bruto)];
+      const seg = String(valorDe(f, segId) || "");
+      if (!seg) return;
+      cats.forEach(cat => {
+        if (!matriz[cat]) return;
+        matriz[cat][seg] = (matriz[cat][seg] || 0) + 1;
+      });
+    });
+
+    const segDim = dimensionDe(segId);
+    const presentes = [];
+    ((segDim && segDim.opciones) || []).forEach(s => {
+      if (labels.some(l => matriz[l][s])) presentes.push(s);
+    });
+    Object.keys(matriz).forEach(l => Object.keys(matriz[l]).forEach(s => {
+      if (presentes.indexOf(s) === -1) presentes.push(s);
+    }));
+
+    const totalPorCat = {};
+    labels.forEach(l => {
+      totalPorCat[l] = Object.keys(matriz[l]).reduce((a, k) => a + matriz[l][k], 0);
+    });
+
+    const datasets = presentes.map(seg => ({
+      label: seg,
+      data: labels.map(l => {
+        const n = matriz[l][seg] || 0;
+        if (!usarPct) return n;
+        const base = baseTotal === "total" ? (totalN || 1) : (totalPorCat[l] || 1);
+        return Number(((n / base) * 100).toFixed(1));
+      }),
+      backgroundColor: colorDimension(segId, seg),
+      borderColor: "#ffffff",
+      borderWidth: 1,
+      _pct: usarPct
+    }));
+
+    return { labels: labels, datasets: datasets };
+  }
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  // FORMULARIO PÚBLICO
+  function conmutarSubTabBarra_(destino) {
+    const esDatos = destino === "#paneRespuestas";
+    const esForm = destino === "#paneFormulario";
+    const bg = document.getElementById("barraGraficas");
+    const bd = document.getElementById("barraDatos");
+    const bf = document.getElementById("barraFormulario");
+    if (bg) bg.classList.toggle("d-none", esDatos || esForm);
+    if (bd) bd.classList.toggle("d-none", !esDatos);
+    if (bf) bf.classList.toggle("d-none", !esForm);
+    if (destino === "#paneResumen") {
+      if (!RESPUESTAS) cargarRespuestas();
+      else pintarResumenPanel();
+    }
+    if (esDatos) {
+      poblarMenusTablaDatos_();
+      if (RESPUESTAS) pintarTablaRespuestas();
+    }
+    if (esForm) {
+      pintarConfig();
+      pintarPreguntas();
+      pintarCategorias();
+    }
+  }
+
+  function cargarFormulario() {
+    google.script.run
+      .withSuccessHandler(f => {
+        FORM = f || { config: {}, preguntas: [] };
+        const c = FORM.config || {};
+        const tEsc = document.getElementById("tituloEscuela");
+        const sEsc = document.getElementById("subtituloEscuela");
+        const tForm = document.getElementById("tituloFormulario");
+        if (tEsc) tEsc.textContent = c.escuela || "Encuesta";
+        if (sEsc) sEsc.textContent = c.subtitulo || "";
+        if (tForm) tForm.textContent = c.titulo || "";
+        if (document.getElementById("campos")) renderFormulario();
+        pintarConfig();
+        pintarPreguntas();
+        pintarCategorias();
+      })
+      .withFailureHandler(err => console.warn("Error al cargar formulario: " + err.message))
+      .obtenerFormulario();
+  }
+
+  function renderFormulario() {
+    const c = FORM.config || {};
+    document.getElementById("introduccion").textContent = c.introduccion || "";
+    document.getElementById("nota").textContent = c.nota || "";
+    document.getElementById("textoBoton").textContent = c.boton || "Enviar Encuesta";
+    document.getElementById("exitoTitulo").textContent = c.exitoTitulo || "Registro guardado";
+    document.getElementById("textoOtro").textContent = c.otroBoton || "Registrar otra respuesta";
+
+    const cont = document.getElementById("campos");
+    if (!cont) return;
+    cont.innerHTML = "";
+    (FORM.preguntas || []).forEach(p => cont.appendChild(crearCampo(p)));
+    aplicarDependenciasFormulario();
+  }
+
+  function crearCampo(p) {
+    const wrap = document.createElement("div");
+    wrap.className = "mb-3";
+    wrap.setAttribute("data-id", p.id);
+    const label = document.createElement("label");
+    label.className = "form-label fw-semibold";
+    label.setAttribute("for", "campo_" + p.id);
+    label.textContent = p.etiqueta + (p.obligatoria ? " *" : "");
+    wrap.appendChild(label);
+
+    if (p.ayuda) {
+      const ayuda = document.createElement("div");
+      ayuda.className = "form-text mb-1";
+      ayuda.textContent = p.ayuda;
+      wrap.appendChild(ayuda);
+    }
+
+    const extra = p.extra || {};
+    let control;
+
+    if (p.tipo === "parrafo") {
+      control = document.createElement("textarea");
+      control.className = "form-control";
+      control.id = "campo_" + p.id;
+      control.rows = 3;
+      control.placeholder = p.placeholder || "";
+      if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
+    } else if (p.tipo === "unica" || p.tipo === "sino") {
+      control = document.createElement("select");
+      control.className = "form-select";
+      control.id = "campo_" + p.id;
+      const vacia = document.createElement("option");
+      vacia.value = "";
+      vacia.disabled = true;
+      vacia.selected = true;
+      vacia.textContent = "-- Selecciona una opción --";
+      control.appendChild(vacia);
+      const opciones = p.tipo === "sino" ? ["Sí", "No"] : (p.opciones || []);
+      opciones.forEach(o => {
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        control.appendChild(op);
+      });
+    } else if (p.tipo === "multiple") {
+      control = document.createElement("div");
+      control.className = "d-flex flex-column gap-1";
+      control.id = "campo_" + p.id;
+      (p.opciones || []).forEach((o, i) => {
+        const id = "campo_" + p.id + "_" + i;
+        const div = document.createElement("div");
+        div.className = "form-check";
+        const input = document.createElement("input");
+        input.className = "form-check-input";
+        input.type = "checkbox";
+        input.id = id;
+        input.value = o;
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.setAttribute("for", id);
+        lab.textContent = o;
+        div.appendChild(input);
+        div.appendChild(lab);
+        control.appendChild(div);
+      });
+    } else if (p.tipo === "escala") {
+      control = document.createElement("div");
+      control.className = "d-flex flex-wrap gap-3 align-items-center";
+      control.id = "campo_" + p.id;
+      const min = Number(extra.escalaMin || 1);
+      const max = Number(extra.escalaMax || 5);
+      for (let n = min; n <= max; n++) {
+        const div = document.createElement("div");
+        div.className = "form-check";
+        const input = document.createElement("input");
+        input.className = "form-check-input";
+        input.type = "radio";
+        input.name = "campo_" + p.id;
+        input.id = "campo_" + p.id + "_" + n;
+        input.value = String(n);
+        const lab = document.createElement("label");
+        lab.className = "form-check-label";
+        lab.setAttribute("for", input.id);
+        lab.textContent = String(n);
+        div.appendChild(input);
+        div.appendChild(lab);
+        control.appendChild(div);
+      }
+    } else {
+      control = document.createElement("input");
+      control.type = p.tipo === "numero" ? "number" : (p.tipo === "fecha" ? "date" : "text");
+      control.className = "form-control";
+      control.id = "campo_" + p.id;
+      control.placeholder = p.placeholder || "";
+      if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
+    }
+    wrap.appendChild(control);
+    return wrap;
+  }</script>

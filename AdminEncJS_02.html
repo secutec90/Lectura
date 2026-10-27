@@ -1,0 +1,599 @@
+<script>
+/* AdminEncJS_02 — aplicarDependenciasFormulario, aplicarCondiciones, enviar, otraRespuesta, entrarEncuestas, salirAdmin, avisoPanel, cargarRespuestas */
+
+
+  // Cascada genérica del formulario público: cualquier pregunta con extra.padre
+  function aplicarDependenciasFormulario() {
+    (FORM.preguntas || []).forEach(p => {
+      // Compatibilidad: si es `grupo` sin padre declarado, depende de `turno`
+      const padre = (p.extra && p.extra.padre) || (p.id === "grupo" ? "turno" : "");
+      if (!padre) return;
+      const selPadre = document.getElementById("campo_" + padre);
+      const selHijo = document.getElementById("campo_" + p.id);
+      if (!selPadre || !selHijo) return;
+
+      const actualizar = () => {
+        const valor = selPadre.value;
+        const opciones = opcionesDependientes(p, valor);
+        selHijo.innerHTML = '<option value="" disabled selected>-- Selecciona --</option>';
+        opciones.forEach(op => {
+          const o = document.createElement("option");
+          o.value = op;
+          o.textContent = op;
+          selHijo.appendChild(o);
+        });
+        selHijo.disabled = !valor || !opciones.length;
+      };
+
+      selPadre.addEventListener("change", actualizar);
+      actualizar();
+    });
+    aplicarCondiciones();
+  }
+
+  function aplicarCondiciones() {
+    (FORM.preguntas || []).forEach(p => {
+      const c = p.extra && p.extra.condicion;
+      if (!c || !c.pregunta) return;
+      const wrap = document.querySelector('[data-id="' + p.id + '"]');
+      if (!wrap) return;
+      const ref = document.getElementById("campo_" + c.pregunta);
+      const val = ref ? ref.value : "";
+      let visible = true;
+      if (c.operador === "igual") visible = String(val) === String(c.valor);
+      else if (c.operador === "distinto") visible = String(val) !== String(c.valor);
+      else if (c.operador === "vacio") visible = val === "";
+      else if (c.operador === "no_vacio") visible = val !== "";
+      wrap.classList.toggle("d-none", !visible);
+      const control = wrap.querySelector("select, input, textarea");
+      if (control) {
+        control.required = visible && !!p.obligatoria;
+        if (!visible) control.value = "";
+      }
+    });
+  }
+
+  function enviar(e) {
+    e.preventDefault();
+    const respuestas = {};
+    const faltan = [];
+    (FORM.preguntas || []).forEach(p => {
+      const wrap = document.querySelector('[data-id="' + p.id + '"]');
+      const oculto = wrap && wrap.classList.contains("d-none");
+      let valor = "";
+      if (p.tipo === "multiple") {
+        valor = Array.from(document.querySelectorAll("#campo_" + p.id + " input:checked")).map(i => i.value);
+      } else if (p.tipo === "escala") {
+        const check = document.querySelector("#campo_" + p.id + " input:checked");
+        valor = check ? check.value : "";
+      } else {
+        const el = document.getElementById("campo_" + p.id);
+        valor = el ? el.value : "";
+      }
+      respuestas[p.id] = valor;
+      const vacio = p.tipo === "multiple" ? valor.length === 0 : String(valor).trim() === "";
+      if (p.obligatoria && vacio && !oculto) faltan.push(p.etiqueta);
+    });
+
+    if (faltan.length) {
+      const caja = document.getElementById("errorForm");
+      caja.textContent = "Falta responder: " + faltan.join(", ") + ".";
+      caja.classList.remove("d-none");
+      return;
+    }
+
+    const btn = document.getElementById("btnEnviar");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill"></i> ' + (FORM.config.boton || "Enviar");
+        if (res && res.exito) {
+          const pNombre = preguntaCategoria("nombre");
+          let nombre = pNombre ? String(respuestas[pNombre.id] || "").trim() : "";
+          if (!nombre) nombre = Object.keys(respuestas).map(k => respuestas[k]).find(v => typeof v === "string" && v.trim() !== "") || "";
+          document.getElementById("exitoTexto").textContent = (FORM.config.exitoTexto || "").replace("{nombre}", nombre);
+          document.getElementById("formDinamico").classList.add("d-none");
+          document.getElementById("panelExito").classList.remove("d-none");
+        } else {
+          alert("Error: " + (res.mensaje || "No se pudo guardar"));
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error de conexión: " + err.message);
+      })
+      .guardarRespuestaFormulario({ respuestas: respuestas });
+  }
+
+  function otraRespuesta() {
+    document.getElementById("formDinamico").reset();
+    aplicarDependenciasFormulario();
+    document.getElementById("formDinamico").classList.remove("d-none");
+    document.getElementById("panelExito").classList.add("d-none");
+    document.getElementById("errorForm").classList.add("d-none");
+  }
+
+  // AUTENTICACIÓN Y DASHBOARD
+  function entrarEncuestas(e) {
+    e.preventDefault();
+    const usuario = document.getElementById("adminUser").value.trim();
+    const pass = document.getElementById("adminPass").value.trim();
+    const btn = document.getElementById("btnLogin");
+    btn.disabled = true;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        btn.disabled = false;
+        if (res && res.autenticado) {
+          creds = { usuario: usuario, pass: pass };
+          document.getElementById("loginCard").classList.add("d-none");
+          document.getElementById("constructor").classList.remove("d-none");
+          cargarRespuestas();
+        } else {
+          document.getElementById("errorLogin").textContent = "Usuario o contraseña incorrectos.";
+          document.getElementById("errorLogin").classList.remove("d-none");
+        }
+      })
+      .withFailureHandler(err => {
+        btn.disabled = false;
+        alert("Error: " + err.message);
+      })
+      .verificarAdmin({ usuario: usuario, pass: pass });
+  }
+
+  function salirAdmin() {
+    creds = null;
+    RESPUESTAS = null;
+    document.getElementById("constructor").classList.add("d-none");
+    document.getElementById("loginCard").classList.remove("d-none");
+  }
+
+  // Aviso en la línea de estado del panel (no bloquea con alert)
+  function avisoPanel(texto) {
+    const el = document.getElementById("resumenFiltros");
+    if (el) el.textContent = texto;
+  }
+
+  function cargarRespuestas() {
+    if (!creds) return;
+    avisoPanel("Cargando datos…");
+    if (typeof barraProgresoSt90 === "function") barraProgresoSt90("cargando");
+    google.script.run
+      .withSuccessHandler(crudo => {
+        if (typeof barraProgresoSt90 === "function") barraProgresoSt90("exito");
+        let res = null;
+        try { res = (typeof crudo === "string") ? JSON.parse(crudo) : crudo; }
+        catch (err) { avisoPanel("La respuesta del servidor no se pudo leer. Recarga la página."); return; }
+        if (!res) { avisoPanel("El servidor no devolvió datos. Vuelve a recargar."); return; }
+        if (!res.autenticado) { avisoPanel("La sesión no es válida. Vuelve a iniciar sesión."); return; }
+        try {
+          RESPUESTAS = res;
+          if (res.config || res.preguntas) FORM = { config: res.config || {}, preguntas: res.preguntas || [] };
+          sembrarColores(res.filas, res.preguntas);
+          pintarMenusFiltro();
+          pintarResumenPanel();
+          pintarTablaRespuestas();
+          aplicarAltura();
+        } catch (err) {
+          console.error("cargarRespuestas: " + (err && err.stack ? err.stack : err));
+          avisoPanel("No se pudieron pintar los datos: " + (err && err.message ? err.message : err));
+        }
+      })
+      .withFailureHandler(err => avisoPanel("Error de conexión: " + err.message))
+      .obtenerRespuestasFormularioJSON(creds);
+  }
+
+  // GESTIÓN DE FILTROS Y DIMENSIONES
+  function poblarMenusTablaDatos_() {
+    const selCampo = document.getElementById("tablaCampoOrden");
+    if (selCampo) {
+      const previo = selCampo.value || "fecha";
+      selCampo.innerHTML = '<option value="fecha">Fecha / Hora</option><option value="origen">Origen</option>';
+      preguntasVisibles().forEach(p => {
+        const op = document.createElement("option");
+        op.value = p.id;
+        op.textContent = p.etiqueta;
+        selCampo.appendChild(op);
+      });
+      if (Array.from(selCampo.options).some(o => o.value === previo)) selCampo.value = previo;
+    }
+    renderMenuDesdeSelect("tablaCampoOrden", "menuTablaCampo");
+    renderMenuDesdeSelect("tablaDireccionOrden", "menuTablaDireccion");
+    renderMenuDesdeSelect("tablaLimiteTop", "menuTablaTop");
+  }
+
+  function pintarMenusFiltro() {
+    renderMenuDesdeSelect("ordenGrafica", "menuOrden");
+    try { if (typeof renderMenuAjustes === "function") renderMenuAjustes(); } catch(e) {}
+    poblarMenusTablaDatos_();
+    pintarDimensiones();
+    pintarSelectorPregunta();
+    refrescarSegmentos();
+    pintarFiltrosDinamicos();
+    actualizarBotonesFiltro();
+  }
+
+  function renderMenuDesdeSelect(idSelect, idMenu) {
+    const sel = document.getElementById(idSelect);
+    const menu = document.getElementById(idMenu);
+    if (!sel || !menu) return;
+    menu.innerHTML = "";
+    Array.from(sel.options).forEach(op => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "dropdown-item" + (op.value === sel.value ? " active" : "");
+      btn.textContent = op.textContent;
+      btn.addEventListener("click", () => {
+        sel.value = op.value;
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+        renderMenuDesdeSelect(idSelect, idMenu);
+        actualizarBotonesFiltro();
+      });
+      li.appendChild(btn);
+      menu.appendChild(li);
+    });
+  }
+
+  // Cierra el menú de filtros al elegir: en móvil tapa la gráfica
+  function cerrarMenuFiltros() {
+    const btn = document.getElementById("btnFiltrosDinamicos");
+    if (!btn || typeof bootstrap === "undefined" || !bootstrap.Dropdown) return;
+    const inst = bootstrap.Dropdown.getInstance(btn) || bootstrap.Dropdown.getOrCreateInstance(btn);
+    if (inst) inst.hide();
+  }
+
+  function actualizarBotonesFiltro() {
+    const selOrden = document.getElementById("ordenGrafica");
+    const btnOrden = document.getElementById("btn-filtroOrden");
+    if (selOrden && btnOrden) {
+      const texto = selOrden.options[selOrden.selectedIndex] ? selOrden.options[selOrden.selectedIndex].textContent : selOrden.value;
+      btnOrden.title = "Orden: " + texto;
+      btnOrden.setAttribute("aria-label", btnOrden.title);
+      const activo = selOrden.value !== "desc";
+      btnOrden.classList.toggle("btn-outline-primary", activo);
+      btnOrden.classList.toggle("btn-outline-secondary", !activo);
+    }
+
+    // Contador de filtros activos en el botón único
+    let filtrosActivos = 0;
+    (FILTROS_DINAMICOS || []).forEach(f => {
+      const s = document.getElementById("filtro_" + f.id);
+      if (s && s.value !== "TODOS") filtrosActivos++;
+    });
+    const badgeF = document.getElementById("badgeFiltrosDinamicos");
+    const btnF = document.getElementById("btnFiltrosDinamicos");
+    if (badgeF) {
+      badgeF.textContent = String(filtrosActivos);
+      badgeF.classList.toggle("d-none", filtrosActivos === 0);
+    }
+    if (btnF) {
+      btnF.classList.toggle("btn-outline-primary", filtrosActivos > 0);
+      btnF.classList.toggle("btn-outline-secondary", filtrosActivos === 0);
+      btnF.title = filtrosActivos > 0 ? "Filtros por pregunta: " + filtrosActivos + " activo(s)" : "Filtros por pregunta";
+      btnF.setAttribute("aria-label", btnF.title);
+    }
+
+    const btnCampo = document.getElementById("btn-tablaCampo");
+    const selCampo = document.getElementById("tablaCampoOrden");
+    if (btnCampo && selCampo) {
+      const actC = selCampo.value !== "fecha";
+      btnCampo.classList.toggle("btn-outline-primary", actC);
+      btnCampo.classList.toggle("btn-outline-secondary", !actC);
+    }
+    const btnDir = document.getElementById("btn-tablaDireccion");
+    const selDir = document.getElementById("tablaDireccionOrden");
+    if (btnDir && selDir) {
+      const actD = selDir.value !== "asc";
+      btnDir.classList.toggle("btn-outline-primary", actD);
+      btnDir.classList.toggle("btn-outline-secondary", !actD);
+    }
+    const btnTop = document.getElementById("btn-tablaTop");
+    const selTop = document.getElementById("tablaLimiteTop");
+    if (btnTop && selTop) {
+      const actT = selTop.value !== "TODOS";
+      btnTop.classList.toggle("btn-outline-primary", actT);
+      btnTop.classList.toggle("btn-outline-secondary", !actT);
+    }
+  }
+
+  // ========================================================
+  // Dimensiones de segmentación (jerarquía universal)
+  // ========================================================
+  const IDS_DIMENSION_LEGADO = ["turno", "grupo"];
+
+  function esDimensionPregunta(p) {
+    if (!p) return false;
+    if (p.extra && p.extra.esDimension === true) return true;
+    return IDS_DIMENSION_LEGADO.indexOf(p.id) !== -1;
+  }
+
+  function mapaGruposLegado() {
+    const crudo = (RESPUESTAS && RESPUESTAS.config && RESPUESTAS.config.gruposPorTurno) ||
+                  (FORM.config && FORM.config.gruposPorTurno) || "{}";
+    try {
+      const mapa = JSON.parse(crudo);
+      return (mapa && typeof mapa === "object") ? mapa : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Lista de dimensiones disponibles: preguntas marcadas + derivadas + origen
+  function dimensionesDisponibles() {
+    const preguntas = preguntasVisibles();
+    const lista = [];
+    preguntas.forEach(p => {
+      if (!esDimensionPregunta(p)) return;
+      const extra = p.extra || {};
+      // Compatibilidad: encuestas antiguas no tienen extra.padre en `grupo`
+      const padre = extra.padre || (p.id === "grupo" ? "turno" : "");
+      lista.push({
+        id: p.id,
+        etiqueta: p.etiqueta,
+        opciones: p.opciones || [],
+        padre: padre,
+        opcionesPorPadre: extra.opcionesPorPadre || null
+      });
+    });
+    // Grado derivado: solo para encuestas que siguen usando `grupo`
+    if (preguntas.some(p => p.id === "grupo") && !lista.some(d => d.id === "grado")) {
+      lista.push({ id: "grado", etiqueta: "Grado", opciones: ["1", "2", "3"], padre: "", opcionesPorPadre: null, derivada: true });
+    }
+    if (!lista.some(d => d.id === "origen")) {
+      lista.push({ id: "origen", etiqueta: "Origen", opciones: ["Real", "Simulado"], padre: "", opcionesPorPadre: null, virtual: true });
+    }
+    return lista;
+  }
+
+  // Filtros fijos de la barra, en este orden: Turno, Grado, Grupo
+  const ORDEN_BARRA = ["turno", "grado", "grupo"];
+  function dimensionesBarra() {
+    const todas = dimensionesDisponibles();
+    return ORDEN_BARRA.map(id => todas.filter(d => d.id === id)[0]).filter(Boolean);
+  }
+
+  // Opciones de una dimensión según el valor del padre
+  function opcionesDeDimension(dim, valorPadre) {
+    if (!dim) return [];
+    if (dim.opcionesPorPadre && valorPadre && dim.opcionesPorPadre[valorPadre]) {
+      return dim.opcionesPorPadre[valorPadre].slice();
+    }
+    if (dim.id === "grupo" && valorPadre) {
+      const mapa = mapaGruposLegado();
+      if (mapa[valorPadre]) return mapa[valorPadre].slice();
+    }
+    return (dim.opciones || []).slice();
+  }
+
+  // Si el padre cambia, los hijos con valor inválido vuelven a "Todos"
+  function ajustarCascada() {
+    dimensionesBarra().forEach(d => {
+      if (!d.padre) return;
+      const valorPadre = FILTROS[d.padre] || "TODOS";
+      if (valorPadre === "TODOS") { FILTROS[d.id] = "TODOS"; return; }
+      const opciones = opcionesDeDimension(d, valorPadre);
+      const actual = FILTROS[d.id];
+      if (actual && actual !== "TODOS" && opciones.indexOf(actual) === -1) FILTROS[d.id] = "TODOS";
+    });
+  }
+
+  const ICONOS_DIMENSION = { turno: "bi-people", grado: "bi-123", grupo: "bi-grid-3x3-gap", origen: "bi-database" };
+
+  // Barra: un botón por dimensión, con su menú de valores
+  function pintarDimensiones() {
+    const cont = document.getElementById("filtrosDimensiones");
+    if (!cont) return;
+    cont.innerHTML = "";
+    ajustarCascada();
+
+    dimensionesBarra().forEach(d => {
+      const valor = FILTROS[d.id] || "TODOS";
+      const valorPadre = d.padre ? (FILTROS[d.padre] || "TODOS") : null;
+      const bloqueado = !!(d.padre && valorPadre === "TODOS");
+      const opciones = bloqueado ? [] : opcionesDeDimension(d, valorPadre);
+      const activo = valor !== "TODOS";
+
+      const wrap = document.createElement("div");
+      wrap.className = "dropdown";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn ribbon-tab " + (activo ? "btn-outline-primary" : "btn-outline-secondary");
+      btn.setAttribute("data-bs-toggle", "dropdown");
+      btn.setAttribute("aria-expanded", "false");
+      const icono = ICONOS_DIMENSION[d.id] || "bi-funnel";
+      btn.innerHTML = '<i class="bi ' + icono + '"></i><span class="ribbon-label">' + d.etiqueta + '</span>';
+      btn.title = d.etiqueta + ": " + (activo ? valor : "Todos");
+      btn.setAttribute("aria-label", btn.title);
+
+      const menu = document.createElement("ul");
+      menu.className = "dropdown-menu";
+
+      const liTodos = document.createElement("li");
+      const bTodos = document.createElement("button");
+      bTodos.type = "button";
+      bTodos.className = "dropdown-item" + (valor === "TODOS" ? " active" : "");
+      bTodos.textContent = "Todos";
+      bTodos.addEventListener("click", () => {
+        FILTROS[d.id] = "TODOS";
+        pintarMenusFiltro();
+        aplicarFiltrosYGraficar();
+      });
+      liTodos.appendChild(bTodos);
+      menu.appendChild(liTodos);
+
+      if (bloqueado) {
+        const aviso = document.createElement("li");
+        aviso.className = "dropdown-header";
+        aviso.textContent = "Elige antes otra dimensión";
+        menu.appendChild(aviso);
+      } else {
+        opciones.forEach(op => {
+          const li = document.createElement("li");
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "dropdown-item" + (valor === op ? " active" : "");
+          b.textContent = op;
+          b.addEventListener("click", () => {
+            FILTROS[d.id] = op;
+            pintarMenusFiltro();
+            aplicarFiltrosYGraficar();
+          });
+          li.appendChild(b);
+          menu.appendChild(li);
+        });
+      }
+
+      wrap.appendChild(btn);
+      wrap.appendChild(menu);
+      cont.appendChild(wrap);
+    });
+  }
+
+  // Dimensiones con las que se puede dividir una gráfica apilada
+  function opcionesDivision() {
+    return dimensionesBarra().map(d => ({ id: d.id, etiqueta: d.etiqueta }));
+  }
+
+  // Rol analítico efectivo: usa extra.rol y, si no existe, lo infiere (datos previos a la v48)
+  function rolAnalitico(p) {
+    const e = (p && p.extra) || {};
+    if (e.rol) return e.rol;
+    if (e.padre || e.esDimension === true) return "dimension";
+    if (p.tipo === "texto" || p.tipo === "parrafo") return "identidad";
+    return "metrica";
+  }
+
+  // Una pregunta se ofrece para graficar si su rol no es identidad y no está desmarcada
+  function esGraficable(p) {
+    if (!p) return false;
+    if (rolAnalitico(p) === "identidad") return false;
+    const g = p.extra && p.extra.graficable;
+    return typeof g === "boolean" ? g : true;
+  }
+
+  // Preguntas del esquema que el panel puede graficar, en su orden
+  function preguntasGraficables() {
+    return preguntasVisibles()
+      .filter(esGraficable)
+      .sort((a, b) => (a.orden || 0) - (b.orden || 0));
+  }
+
+  // El título de la tarjeta es el selector: al elegir una pregunta se grafican sus opciones
+  function pintarSelectorPregunta() {
+    const sel = document.getElementById("dimensionGrafica");
+    const menu = document.getElementById("menuPreguntaGrafica");
+    if (!sel) return;
+    const preguntas = preguntasGraficables();
+    const actual = (sel.value && preguntas.some(p => p.id === sel.value)) ? sel.value : (preguntas[0] ? preguntas[0].id : "");
+    sel.innerHTML = preguntas.map(p => '<option value="' + p.id + '">' + esc(p.etiqueta) + '</option>').join("");
+    if (actual) sel.value = actual;
+    if (!menu) return;
+
+    if (!preguntas.length) {
+      menu.innerHTML = '<li><div class="px-3 py-2 small text-muted">No hay preguntas graficables. Marca «¿Permitir graficar en el panel?» al editar una pregunta.</div></li>';
+      return;
+    }
+
+    const item = (p) => {
+      const activo = p.id === actual;
+      return '<li><button type="button" class="dropdown-item d-flex justify-content-between align-items-center gap-2' + (activo ? ' active' : '') + '" data-pregunta="' + esc(p.id) + '">' +
+        '<span class="text-truncate">' + esc(p.etiqueta) + '</span>' +
+        (activo ? '<i class="bi bi-check2"></i>' : '') + '</button></li>';
+    };
+    const dims = preguntas.filter(p => rolAnalitico(p) === "dimension");
+    const mets = preguntas.filter(p => rolAnalitico(p) !== "dimension");
+    const partes = [];
+    if (dims.length) partes.push('<li><h6 class="dropdown-header">Dimensiones (Eje X)</h6></li>' + dims.map(item).join(""));
+    if (mets.length) partes.push('<li><h6 class="dropdown-header">Métricas (Eje Y)</h6></li>' + mets.map(item).join(""));
+    menu.innerHTML = partes.join('<li><hr class="dropdown-divider"></li>');
+
+    menu.querySelectorAll("button[data-pregunta]").forEach(b => {
+      b.addEventListener("click", () => {
+        sel.value = b.dataset.pregunta;
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+        pintarSelectorPregunta();
+        aplicarFiltrosYGraficar();
+      });
+    });
+  }
+
+  // "División": solo se usa en barras apiladas y rayos solares
+  function refrescarSegmentos() {
+    const selSeg = document.getElementById("segmentoGrafica");
+    if (!selSeg) return;
+    const prev = selSeg.value;
+    const lista = opcionesDivision();
+    selSeg.innerHTML = lista.map(o => '<option value="' + o.id + '">' + esc(o.etiqueta) + '</option>').join("");
+    if (prev && lista.some(o => o.id === prev)) selSeg.value = prev;
+    else if (lista.length) selSeg.value = lista[0].id;
+  }
+
+  // Un solo botón "Filtros": el menú contiene los 4 filtros base y una fila por pregunta de opción
+  // Menú de preguntas: solo filtros (los base tienen su propio icono en la barra)
+  function pintarFiltrosDinamicos() {
+    const cont = document.getElementById("filtrosPreguntas");
+    if (!cont) return;
+
+    const previos = {};
+    (FILTROS_DINAMICOS || []).forEach(f => {
+      const s = document.getElementById("filtro_" + f.id);
+      if (s) previos[f.id] = s.value;
+    });
+
+    cont.innerHTML = "";
+
+    // Las preguntas marcadas como dimensión viven en la barra, no en este menú
+    FILTROS_DINAMICOS = preguntasVisibles().filter(p =>
+      ["unica", "multiple", "sino", "escala"].includes(p.tipo) &&
+      !esDimensionPregunta(p) && p.id !== "grado"
+    );
+
+    if (!FILTROS_DINAMICOS.length) {
+      cont.innerHTML = '<div class="text-muted small p-2">Este formulario no tiene preguntas de opción.</div>';
+      actualizarBotonesFiltro();
+      return;
+    }
+
+    FILTROS_DINAMICOS.forEach(f => {
+      const fila = document.createElement("div");
+      fila.className = "filtro-fila";
+
+      const lbl = document.createElement("label");
+      lbl.className = "form-label small fw-semibold text-secondary mb-1 flex-grow-1 pregunta-etiqueta";
+      lbl.setAttribute("for", "filtro_" + f.id);
+      lbl.textContent = f.etiqueta;
+      lbl.title = f.etiqueta;
+
+      const sel = document.createElement("select");
+      sel.className = "form-select form-select-sm";
+      sel.id = "filtro_" + f.id;
+      const todas = document.createElement("option");
+      todas.value = "TODOS";
+      todas.textContent = "Todos (sin filtro)";
+      sel.appendChild(todas);
+      (f.opciones || []).forEach(o => {
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        sel.appendChild(op);
+      });
+      if (previos[f.id] && Array.prototype.some.call(sel.options, o => o.value === previos[f.id])) {
+        sel.value = previos[f.id];
+      }
+      sel.addEventListener("change", () => {
+        aplicarFiltrosYGraficar();
+        cerrarMenuFiltros();
+      });
+
+      fila.appendChild(lbl);
+      fila.appendChild(sel);
+      cont.appendChild(fila);
+    });
+
+    actualizarBotonesFiltro();
+  }</script>

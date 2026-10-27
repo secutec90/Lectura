@@ -1,0 +1,627 @@
+<script>
+/* AdminEncJS_03 — renderMenuAjustes, limpiarFiltrosEncuestas, aplicarFiltrosYGraficar, filasFiltradas, modoEtiquetas, recortarEtiqueta, partirEtiqueta, ejeCategoriaConfig */
+
+
+  function renderMenuAjustes() {
+    const menu = document.getElementById("menuAjustesGrafica");
+    if (!menu) return;
+    refrescarSegmentos();
+    const grupos = [
+      { titulo: "Tipo de gráfica", icono: "bi-bar-chart", sel: document.getElementById("tipoGrafica") },
+      { titulo: "Valores", icono: "bi-123", sel: document.getElementById("valoresGrafica") },
+      { titulo: "Base porcentual", icono: "bi-percent", sel: document.getElementById("modoPorcentaje") },
+      { titulo: "Etiquetas del eje", icono: "bi-type", sel: document.getElementById("etiquetasGrafica") }
+    ];
+    menu.innerHTML = grupos.map(g => {
+      if (!g.sel) return "";
+      const items = Array.from(g.sel.options).map(op => {
+        const activo = op.value === g.sel.value;
+        return `<li><button type="button" class="dropdown-item d-flex justify-content-between align-items-center ${activo ? "active" : ""}" data-sel="${g.sel.id}" data-val="${op.value}">
+          ${esc(op.textContent)} ${activo ? '<i class="bi bi-check2 ms-2"></i>' : ""}
+        </button></li>`;
+      }).join("");
+      return `<li><h6 class="dropdown-header"><i class="bi ${g.icono} me-1"></i>${g.titulo}</h6></li>${items}<li><hr class="dropdown-divider"></li>`;
+    }).join("");
+
+    menu.querySelectorAll("button[data-sel]").forEach(b => {
+      b.addEventListener("click", () => {
+        const s = document.getElementById(b.dataset.sel);
+        s.value = b.dataset.val;
+        s.dispatchEvent(new Event("change", { bubbles: true }));
+        renderMenuAjustes();
+      });
+    });
+
+    // División: solo aparece en barras apiladas y rayos solares
+    const tipoSel = document.getElementById("tipoGrafica");
+    const sSel = document.getElementById("segmentoGrafica");
+    const requiereDivision = !!(tipoSel && sSel && ["stacked", "stackedVertical"].indexOf(tipoSel.value) !== -1);
+    if (requiereDivision) {
+      const li = document.createElement("li");
+      const cab = document.createElement("h6");
+      cab.className = "dropdown-header";
+      cab.innerHTML = '<i class="bi bi-pie-chart me-1"></i>División de las barras';
+      const cont = document.createElement("div");
+      cont.className = "px-2 pb-2";
+      const sel = document.createElement("select");
+      sel.className = "form-select form-select-sm";
+      opcionesDivision().forEach(o => {
+        const op = document.createElement("option");
+        op.value = o.id;
+        op.textContent = o.etiqueta;
+        if (o.id === sSel.value) op.selected = true;
+        sel.appendChild(op);
+      });
+      sel.addEventListener("change", () => {
+        sSel.value = sel.value;
+        sSel.dispatchEvent(new Event("change", { bubbles: true }));
+        renderMenuAjustes();
+      });
+      cont.appendChild(sel);
+      li.appendChild(cab);
+      li.appendChild(cont);
+      menu.appendChild(li);
+    }
+  }
+
+  function limpiarFiltrosEncuestas() {
+    FILTROS = {};
+    (FILTROS_DINAMICOS || []).forEach(f => {
+      const s = document.getElementById("filtro_" + f.id);
+      if (s) s.value = "TODOS";
+    });
+    pintarMenusFiltro();
+    aplicarFiltrosYGraficar();
+  }
+
+  function aplicarFiltrosYGraficar() {
+    renderMenuAjustes();
+    pintarResumenPanel();
+    pintarTablaRespuestas();
+    actualizarBotonesFiltro();
+  }
+
+  function filasFiltradas() {
+    const activas = dimensionesBarra().filter(d => FILTROS[d.id] && FILTROS[d.id] !== "TODOS");
+    return ((RESPUESTAS && RESPUESTAS.filas) || []).filter(f => {
+      for (const d of activas) {
+        if (String(valorDe(f, d.id) || "") !== FILTROS[d.id]) return false;
+      }
+      for (const fld of FILTROS_DINAMICOS) {
+        const s = document.getElementById("filtro_" + fld.id);
+        if (s && s.value !== "TODOS" && String((f.respuestas || {})[fld.id] || "") !== s.value) return false;
+      }
+      return true;
+    });
+  }
+
+  // RENDERIZADO DE GRÁFICAS Y RESUMEN
+
+  // ---- Distribución de las etiquetas del eje de categorías ----
+  function modoEtiquetas() {
+    const sel = document.getElementById("etiquetasGrafica");
+    return (sel && sel.value) || "multilinea";
+  }
+
+  function recortarEtiqueta(texto, max) {
+    const t = String(texto || "");
+    return t.length > max ? t.slice(0, max - 1) + "…" : t;
+  }
+
+  // Parte el texto en líneas de hasta max caracteres, sin cortar palabras
+  function partirEtiqueta(texto, max) {
+    const palabras = String(texto || "").split(/\s+/).filter(Boolean);
+    const lineas = [];
+    let actual = "";
+    palabras.forEach(p => {
+      if (!actual) { actual = p; return; }
+      if ((actual + " " + p).length <= max) actual += " " + p;
+      else { lineas.push(actual); actual = p; }
+    });
+    if (actual) lineas.push(actual);
+    return lineas.length ? lineas : [String(texto || "")];
+  }
+
+  function ejeCategoriaConfig(labels, tamano) {
+    const modo = modoEtiquetas();
+    const cfg = { grid: { display: false }, ticks: { autoSkip: false, font: { size: tamano } } };
+    if (modo === "auto") return cfg;
+    cfg.ticks.maxRotation = 0;
+    cfg.ticks.minRotation = 0;
+    cfg.ticks.callback = function (valor, indice) {
+      const texto = (this && typeof this.getLabelForValue === "function") ? this.getLabelForValue(valor) : labels[indice];
+      return modo === "recortadas" ? recortarEtiqueta(texto, 18) : partirEtiqueta(texto, 16);
+    };
+    return cfg;
+  }
+
+  function escalasCartesianas(labels, tamano, tipo) {
+    const cat = ejeCategoriaConfig(labels, tamano);
+    const valor = { beginAtZero: true, ticks: { font: { size: tamano } } };
+    return ejeCartesiano(tipo) === "y" ? { x: valor, y: cat } : { x: cat, y: valor };
+  }
+
+  // Barras horizontales (bar, stacked) usan el eje Y como eje de categorías
+  function ejeCartesiano(tipoGrafica) {
+    return (tipoGrafica === "bar" || tipoGrafica === "stacked") ? "y" : "x";
+  }
+
+  function pintarResumenPanel() {
+    chartsResumen.forEach(c => c.destroy());
+    chartsResumen = [];
+    if (sunburstInstancia) { sunburstInstancia.dispose(); sunburstInstancia = null; }
+
+    const filas = filasFiltradas();
+    const totalN = filas.length;
+    document.getElementById("badgeGrafica1").textContent = `${totalN} respuestas`;
+    document.getElementById("resumenFiltros").textContent = totalN
+      ? `Mostrando ${totalN} de ${((RESPUESTAS && RESPUESTAS.filas) || []).length} registros`
+      : "Sin respuestas todavía · usa 🛠 → Simular respuestas";
+
+    const barra = dimensionesBarra().map(d => d.id);
+    const graficables = preguntasGraficables();
+    const dimId = document.getElementById("dimensionGrafica").value
+      || (graficables[0] ? graficables[0].id : "")
+      || barra[0]
+      || "origen";
+    const dim = dimensionDe(dimId);
+
+    if (!dim) return;
+
+    document.getElementById("tituloGrafica1").textContent = dim.etiqueta;
+    document.getElementById("tituloTotales").textContent = "Totales por " + dim.etiqueta;
+
+    const tipo = document.getElementById("tipoGrafica").value;
+    const modoVal = document.getElementById("valoresGrafica").value;
+    const modoPct = document.getElementById("modoPorcentaje").value;
+    const orden = document.getElementById("ordenGrafica").value;
+
+    // Resumen estadístico
+    // Segmentación de la tabla y de la gráfica apilada (la misma)
+    const selSegTabla = document.getElementById("segmentoGrafica");
+    let segId = selSegTabla ? selSegTabla.value : "turno";
+    if (barra.indexOf(segId) === -1) segId = barra[0] || "turno";
+    if (segId === dim.id) segId = barra.filter(id => id !== dim.id)[0] || "origen";
+
+    const conteo = {};
+    const matriz = {};
+    const esMultiple = !!(dim.tipo === "multiple");
+    filas.forEach(f => {
+      const bruto = valorDe(f, dim.id);
+      if (bruto == null || bruto === "") return;
+      const valores = esMultiple ? String(bruto).split(";").map(s => s.trim()).filter(Boolean) : [String(bruto)];
+      valores.forEach(v => {
+        conteo[v] = (conteo[v] || 0) + 1;
+        if (!matriz[v]) matriz[v] = {};
+        const seg = String(valorDe(f, segId) || "Sin dato");
+        matriz[v][seg] = (matriz[v][seg] || 0) + 1;
+      });
+    });
+    // En opción múltiple un registro cuenta varias veces: el 100 % es la suma de conteos
+    const sumaConteos = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0);
+    const basePct = (esMultiple && sumaConteos > 0) ? sumaConteos : totalN;
+
+    let pares = Object.keys(conteo).map(k => ({
+      label: k, cantidad: conteo[k], segmentos: matriz[k] || {}
+    }));
+
+    if (orden === "desc") pares.sort((a, b) => b.cantidad - a.cantidad);
+    else if (orden === "asc") pares.sort((a, b) => a.cantidad - b.cantidad);
+
+    // Segmentos de la tabla: los mismos que los de la gráfica
+    const segDim = dimensionDe(segId);
+    const segmentos = [];
+    ((segDim && segDim.opciones) || []).forEach(s => {
+      if (Object.keys(matriz).some(k => matriz[k][s])) segmentos.push(s);
+    });
+    Object.keys(matriz).forEach(k => Object.keys(matriz[k]).forEach(s => {
+      if (segmentos.indexOf(s) === -1) segmentos.push(s);
+    }));
+
+    // Tabla de Totales (una columna por segmento, más Total, % y Acum.)
+    const theadFila = document.querySelector("#tablaTotales thead tr");
+    if (theadFila) {
+      theadFila.innerHTML = '<th>Categoría</th>' +
+        segmentos.map(s => '<th class="text-end">' + esc(s) + '</th>').join("") +
+        '<th class="text-end">Total</th>' +
+        '<th class="text-end">%</th>' +
+        '<th class="text-end">Acum.</th>';
+    }
+
+    const tbody = document.querySelector("#tablaTotales tbody");
+    tbody.innerHTML = "";
+    let acum = 0;
+    pares.forEach(p => {
+      const pct = basePct > 0 ? (p.cantidad / basePct) * 100 : 0;
+      acum += pct;
+      tbody.innerHTML += `
+        <tr>
+          <td><span class="d-inline-block rounded-circle me-2" style="width:.55rem;height:.55rem;background:${colorDimension(dim.id, p.label)}"></span>${esc(p.label)}</td>
+          ${segmentos.map(s => '<td class="text-end text-muted">' + ((p.segmentos && p.segmentos[s]) || 0) + '</td>').join("")}
+          <td class="text-end fw-bold">${p.cantidad}</td>
+          <td class="text-end text-muted">${pct.toFixed(1)}%</td>
+          <td class="text-end text-muted">${acum.toFixed(1)}%</td>
+        </tr>
+      `;
+    });
+
+    const canvas = document.getElementById("grafica1");
+    const contSun = document.getElementById("graficaSunburst");
+
+    if (tipo === "sunburst") {
+      canvas.classList.add("d-none");
+      contSun.classList.remove("d-none");
+      renderSunburstDirecto(filas, dim);
+      return;
+    }
+
+    canvas.classList.remove("d-none");
+    contSun.classList.add("d-none");
+
+    if (typeof Chart === "undefined") {
+      avisoPanel("No se pudo cargar Chart.js; revisa la conexión y recarga la página.");
+      return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    const esApilada = tipo === "stacked" || tipo === "stackedVertical";
+    const esVert = tipo === "stackedVertical" || tipo === "barVertical";
+
+    if (esApilada) {
+      const usarPct = modoVal === "porcentaje";
+      const selSeg = document.getElementById("segmentoGrafica");
+      let segId = selSeg ? selSeg.value : "turno";
+      if (!segId || segId === dim.id) segId = (dim.id === "turno") ? "origen" : "turno";
+      const apilada = construirApilada(filas, pares.map(p => p.label), dim.id, segId, usarPct, modoPct, basePct);
+      const ejeValor = {
+        stacked: true, beginAtZero: true, max: usarPct ? 100 : undefined,
+        ticks: { precision: usarPct ? 1 : 0, callback: v => usarPct ? v + "%" : v }
+      };
+      const ejeCat = Object.assign({ stacked: true }, ejeCategoriaConfig(apilada.labels, tamanoGrafica));
+      chartsResumen.push(new Chart(ctx, {
+        type: "bar",
+        data: { labels: apilada.labels, datasets: apilada.datasets },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: tamanoGrafica } } } },
+          scales: esVert ? { x: ejeCat, y: ejeValor } : { x: ejeValor, y: ejeCat }
+        }
+      }));
+    } else {
+      const datos = pares.map(p => modoVal === "porcentaje" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);
+      const colores = pares.map(p => colorDimension(dim.id, p.label));
+      chartsResumen.push(new Chart(ctx, {
+        type: tipo === "barVertical" ? "bar" : tipo,
+        data: {
+          labels: pares.map(p => p.label),
+          datasets: [{ data: datos, backgroundColor: colores, borderRadius: 5, _pct: modoVal === "porcentaje" }]
+        },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: tipo === "bar" ? { right: 40 } : { top: 20 } },
+          plugins: { legend: { display: tipo === "pie" || tipo === "doughnut" } },
+          scales: (tipo === "pie" || tipo === "doughnut") ? {} : escalasCartesianas(pares.map(p => p.label), tamanoGrafica, tipo)
+        }
+      }));
+    }
+  }
+
+  function renderSunburstDirecto(filas, dim) {
+    const cont = document.getElementById("graficaSunburst");
+    sunburstInstancia = echarts.init(cont);
+    const raiz = { name: "Total", children: [] };
+    filas.forEach(f => {
+      const ruta = [String(valorDe(f, "turno")), String(valorDe(f, dim.id))].filter(Boolean);
+      let act = raiz;
+      ruta.forEach(nodo => {
+        let n = act.children.find(c => c.name === nodo);
+        if (!n) { n = { name: nodo, value: 0, children: [] }; act.children.push(n); }
+        n.value++;
+        act = n;
+      });
+    });
+    sunburstInstancia.setOption({
+      series: [{
+        type: "sunburst",
+        data: raiz.children,
+        radius: ["12%", "92%"],
+        label: { rotate: "radial", fontSize: tamanoGrafica }
+      }]
+    });
+  }
+
+  // TABLA DE DATOS RESPONSIVA Y ORDENABLE AL VUELO
+  // "dd/MM/yyyy HH:mm" -> milisegundos (ordena cronologicamente, no como texto)
+  function valorFecha(texto) {
+    const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/.exec(String(texto || ""));
+    if (!m) return 0;
+    return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4]), Number(m[5])).getTime();
+  }
+
+  function pintarTablaRespuestas() {
+    const thead = document.querySelector("#tablaRespuestas thead");
+    const tbody = document.querySelector("#tablaRespuestas tbody");
+    if (!thead || !tbody) return;
+    const preguntas = preguntasVisibles();
+    const busqueda = (document.getElementById("buscadorTexto").value || "").toLowerCase().trim();
+    const campo = document.getElementById("tablaCampoOrden").value;
+    const dir = document.getElementById("tablaDireccionOrden").value;
+    const topVal = (document.getElementById("tablaLimiteTop") && document.getElementById("tablaLimiteTop").value) || "TODOS";
+
+    thead.innerHTML = `<tr>
+      <th class="sortable" onclick="cambiarOrdenDesdeColumna('fecha')">Fecha / Hora ⬍</th>
+      <th class="sortable" onclick="cambiarOrdenDesdeColumna('origen')">Origen ⬍</th>
+      ${preguntas.map(p => `<th class="sortable" onclick="cambiarOrdenDesdeColumna('${p.id}')">${esc(p.etiqueta)} ⬍</th>`).join("")}
+    </tr>`;
+
+    let filas = filasFiltradas().filter(f => {
+      if (!busqueda) return true;
+      const texto = [f.fecha, f.origen].concat(preguntas.map(p => (f.respuestas || {})[p.id])).join(" ").toLowerCase();
+      return texto.includes(busqueda);
+    });
+
+    if (campo === "fecha") {
+      filas.sort((a, b) => {
+        const fa = valorFecha(a.fecha), fb = valorFecha(b.fecha);
+        return dir === "asc" ? fa - fb : fb - fa;
+      });
+    } else {
+      const dato = (f) => campo === "origen" ? f.origen : (f.respuestas || {})[campo];
+      filas.sort((a, b) => {
+        const va = dato(a), vb = dato(b);
+        const na = Number(va), nb = Number(vb);
+        const numericos = String(va).trim() !== "" && String(vb).trim() !== "" && !isNaN(na) && !isNaN(nb);
+        if (numericos) return dir === "asc" ? na - nb : nb - na;
+        return dir === "asc" ? String(va).localeCompare(String(vb), "es") : String(vb).localeCompare(String(va), "es");
+      });
+    }
+
+    const totalFiltradas = filas.length;
+    if (topVal !== "TODOS" && !isNaN(Number(topVal)) && Number(topVal) > 0) {
+      filas = filas.slice(0, Number(topVal));
+    }
+
+    tbody.innerHTML = filas.map(f => `
+      <tr>
+        <td>${esc(f.fecha)}</td>
+        <td><span class="badge ${f.origen === 'Simulado' ? 'bg-secondary' : 'bg-success'}">${esc(f.origen || 'Real')}</span></td>
+        ${preguntas.map(p => {
+          const val = (f.respuestas || {})[p.id] || "";
+          if (p.id === "turno") {
+            return `<td><span class="badge ${val === 'Matutino' ? 'bg-primary' : 'bg-warning text-dark'}">${esc(val)}</span></td>`;
+          }
+          return `<td>${esc(val)}</td>`;
+        }).join("")}
+      </tr>
+    `).join("");
+
+    document.getElementById("contadorRespuestas").textContent = totalFiltradas !== filas.length ? `Mostrando ${filas.length} de ${totalFiltradas} registros` : `Mostrando ${filas.length} registros`;
+  }
+
+  function cambiarOrdenDesdeColumna(col) {
+    const selCampo = document.getElementById("tablaCampoOrden");
+    const selDir = document.getElementById("tablaDireccionOrden");
+    if (selCampo.value === col) {
+      selDir.value = selDir.value === "asc" ? "desc" : "asc";
+    } else {
+      selCampo.value = col;
+      selDir.value = "asc";
+    }
+    pintarTablaRespuestas();
+  }
+
+  function alternarBuscador() {
+    const input = document.getElementById("buscadorTexto");
+    input.classList.toggle("d-none");
+    if (!input.classList.contains("d-none")) input.focus();
+    else { input.value = ""; pintarTablaRespuestas(); }
+  }
+
+  function restablecerFiltrosTabla() {
+    const inputB = document.getElementById("buscadorTexto");
+    if (inputB) { inputB.value = ""; inputB.classList.add("d-none"); }
+    document.getElementById("tablaCampoOrden").value = "fecha";
+    document.getElementById("tablaDireccionOrden").value = "asc";
+    const selTop = document.getElementById("tablaLimiteTop");
+    if (selTop) selTop.value = "TODOS";
+    poblarMenusTablaDatos_();
+    actualizarBotonesFiltro();
+    pintarTablaRespuestas();
+  }
+
+  // EXPORTACIONES CSV Y PDF
+  // Escapa una celda de CSV y neutraliza formulas al abrir el archivo en Excel
+  function celdaCSV(valor) {
+    let s = String(valor == null ? "" : valor);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    if (/[";\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function descargarCSVRespuestas() {
+    const filas = filasFiltradas();
+    if (!filas.length) { alert("No hay datos para exportar."); return; }
+    const preguntas = preguntasVisibles();
+    const cabecera = ["Fecha", "Origen"].concat(preguntas.map(p => p.etiqueta));
+    const lineas = [cabecera.map(celdaCSV).join(";")];
+    filas.forEach(f => {
+      lineas.push([f.fecha, f.origen || "Real"].concat(preguntas.map(p => (f.respuestas || {})[p.id] || "")).map(celdaCSV).join(";"));
+    });
+    const blob = new Blob(["\uFEFF" + lineas.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `censo_export_${Date.now()}.csv`;
+    a.click();
+  }
+
+  function imprimirRespuestas() {
+    const cont = document.getElementById("printHeader");
+    cont.innerHTML = `<strong>${FORM.config.escuela || "Reporte"}</strong> - Generado: ${new Date().toLocaleString()}`;
+    window.print();
+  }
+
+  // AUXILIARES DEL ESQUEMA
+  function preguntasVisibles() {
+    return ((RESPUESTAS && RESPUESTAS.preguntas) || FORM.preguntas || []).filter(p => p.activa !== false);
+  }
+
+  function preguntaCategoria(tipo) {
+    return preguntasVisibles().find(p => (p.extra?.categoria || p.id).toLowerCase() === tipo.toLowerCase());
+  }
+
+  // Opciones dependientes de una pregunta según el valor de su padre.
+  // Usa extra.opcionesPorPadre; si no existe, hereda el mapa legado de grupos por turno.
+  function opcionesDependientes(pregunta, valorPadre) {
+    if (!pregunta || !valorPadre) return [];
+    const extra = pregunta.extra || {};
+    if (extra.opcionesPorPadre && extra.opcionesPorPadre[valorPadre]) {
+      return extra.opcionesPorPadre[valorPadre].slice();
+    }
+    if (pregunta.id === "grupo") {
+      const mapa = mapaGruposLegado();
+      if (mapa[valorPadre]) return mapa[valorPadre].slice();
+    }
+    return (pregunta.opciones || []).slice();
+  }
+  // ZOOM Y MODAL DE GRÁFICA AMPLIADA
+  function ampliarGrafica(e, id) {
+    // Solo amplía el lienzo: los controles de la cabecera (selector, filtros,
+    // ajustes) no deben abrir el modal. Y si el botón pulsado ya se repintó,
+    // queda suelto del DOM y closest() no lo reconoce: por eso isConnected.
+    const t = e && e.target;
+    if (t && (t.isConnected === false || (t.closest && t.closest(".dropdown, button, select, input, label, a")))) return;
+    if (e) e.stopPropagation();
+    const tipo = document.getElementById("tipoGrafica").value;
+    const dimId = document.getElementById("dimensionGrafica").value || "turno";
+    pendienteGrafica = { tipo: tipo, dimId: dimId };
+    const titulo = document.getElementById("tituloGrafica1")?.textContent || "Resultados";
+    document.getElementById("modalGraficaTitulo").textContent = "Gráfica Detallada — " + titulo;
+    if (modalGrafica) modalGrafica.show();
+  }
+
+  function renderGraficaModal(estado) {
+    const filas = filasFiltradas();
+    const dimId = estado.dimId || document.getElementById("dimensionGrafica").value || "turno";
+    const dim = dimensionDe(dimId);
+    if (!dim) return;
+
+    const tipo = estado.tipo || document.getElementById("tipoGrafica").value;
+    const canvasWrap = document.getElementById("modalGraficaCanvasWrap");
+    const canvas = document.getElementById("modalGraficaCanvas");
+    const contSun = document.getElementById("modalGraficaSunburst");
+
+    if (tipo === "sunburst") {
+      canvasWrap.classList.add("d-none");
+      contSun.classList.remove("d-none");
+      if (graficaModal && typeof graficaModal.dispose === "function") graficaModal.dispose();
+      graficaModal = echarts.init(contSun);
+      const raiz = { name: "Total", children: [] };
+      filas.forEach(f => {
+        const ruta = [String(valorDe(f, "turno")), String(valorDe(f, dim.id))].filter(Boolean);
+        let act = raiz;
+        ruta.forEach(nodo => {
+          let n = act.children.find(c => c.name === nodo);
+          if (!n) { n = { name: nodo, value: 0, children: [] }; act.children.push(n); }
+          n.value++;
+          act = n;
+        });
+      });
+      graficaModal.setOption({
+        series: [{
+          type: "sunburst",
+          data: raiz.children,
+          radius: ["15%", "90%"],
+          label: { rotate: "radial", fontSize: tamanoGrafica + 2 }
+        }]
+      });
+      return;
+    }
+
+    canvasWrap.classList.remove("d-none");
+    contSun.classList.add("d-none");
+
+    const conteo = {};
+    const porTurno = {};
+    filas.forEach(f => {
+      const v = valorDe(f, dim.id);
+      if (v == null || v === "") return;
+      const valores = (dim.tipo === "multiple") ? String(v).split(";").map(s => s.trim()).filter(Boolean) : [String(v)];
+      valores.forEach(item => {
+        conteo[item] = (conteo[item] || 0) + 1;
+        if (!porTurno[item]) porTurno[item] = { Matutino: 0, Vespertino: 0 };
+        const turnoFila = (f.respuestas || {}).turno === "Vespertino" ? "Vespertino" : "Matutino";
+        porTurno[item][turnoFila]++;
+      });
+    });
+    const sumaConteosModal = Object.keys(conteo).reduce((a, k) => a + conteo[k], 0);
+    const basePct = (dim.tipo === "multiple" && sumaConteosModal > 0) ? sumaConteosModal : filas.length;
+
+    let pares = Object.keys(conteo).map(k => ({
+      label: k, cantidad: conteo[k], matutino: porTurno[k].Matutino, vespertino: porTurno[k].Vespertino
+    }));
+    const orden = document.getElementById("ordenGrafica").value;
+    if (orden === "desc") pares.sort((a, b) => b.cantidad - a.cantidad);
+    else if (orden === "asc") pares.sort((a, b) => a.cantidad - b.cantidad);
+
+    const modoVal = document.getElementById("valoresGrafica").value;
+    const modoPct = document.getElementById("modoPorcentaje").value;
+    const totalN = filas.length;
+    const esApilada = tipo === "stacked" || tipo === "stackedVertical";
+    const esVert = tipo === "stackedVertical" || tipo === "barVertical";
+
+    const ctx = canvas.getContext("2d");
+    if (graficaModal && typeof graficaModal.destroy === "function") graficaModal.destroy();
+
+    if (esApilada) {
+      const usarPct = modoVal === "porcentaje";
+      const selSeg = document.getElementById("segmentoGrafica");
+      let segId = selSeg ? selSeg.value : "turno";
+      if (!segId || segId === dim.id) segId = (dim.id === "turno") ? "origen" : "turno";
+      const apilada = construirApilada(filas, pares.map(p => p.label), dim.id, segId, usarPct, modoPct, basePct);
+      const ejeValor = {
+        stacked: true, beginAtZero: true, max: usarPct ? 100 : undefined,
+        ticks: { precision: usarPct ? 1 : 0, callback: v => usarPct ? v + "%" : v, font: { size: tamanoGrafica + 1 } }
+      };
+      const ejeCat = Object.assign({ stacked: true }, ejeCategoriaConfig(apilada.labels, tamanoGrafica + 1));
+      graficaModal = new Chart(ctx, {
+        type: "bar",
+        data: { labels: apilada.labels, datasets: apilada.datasets },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: tamanoGrafica + 1 } } } },
+          scales: esVert ? { x: ejeCat, y: ejeValor } : { x: ejeValor, y: ejeCat }
+        }
+      });
+    } else {
+      const datos = pares.map(p => modoVal === "porcentaje" && basePct > 0 ? (p.cantidad / basePct * 100) : p.cantidad);
+      const colores = pares.map(p => colorDimension(dim.id, p.label));
+      graficaModal = new Chart(ctx, {
+        type: tipo === "barVertical" ? "bar" : tipo,
+        data: {
+          labels: pares.map(p => p.label),
+          datasets: [{ data: datos, backgroundColor: colores, borderRadius: 6, _pct: modoVal === "porcentaje" }]
+        },
+        plugins: [pluginValores],
+        options: {
+          indexAxis: ejeCartesiano(tipo),
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: tipo === "bar" ? { right: 46 } : { top: 24 } },
+          plugins: {
+            legend: { display: tipo === "pie" || tipo === "doughnut", labels: { font: { size: tamanoGrafica + 1 } } }
+          },
+          scales: (tipo === "pie" || tipo === "doughnut") ? {} : escalasCartesianas(pares.map(p => p.label), tamanoGrafica + 1, tipo)
+        }
+      });
+    }
+  }</script>

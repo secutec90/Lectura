@@ -1,0 +1,76 @@
+<script>
+/* AdminEncJS_Arranque — sentencias de nivel superior en su orden original */
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    modalPreguntaBS = new bootstrap.Modal(document.getElementById("modalPregunta"));
+    modalGrafica = new bootstrap.Modal(document.getElementById("modalGrafica"));
+    modalCategorias = new bootstrap.Modal(document.getElementById("modalCategorias"));
+    simulacionModal = new bootstrap.Modal(document.getElementById("modalSimulacion"));
+    modalAyuda = new bootstrap.Modal(document.getElementById("modalAyuda"));
+
+    const elFormDin = document.getElementById("formDinamico");
+    if (elFormDin) elFormDin.addEventListener("change", aplicarCondiciones);
+
+    document.getElementById("modalGrafica").addEventListener("shown.bs.modal", () => {
+      if (!pendienteGrafica) return;
+      const estado = pendienteGrafica;
+      pendienteGrafica = null;
+      renderGraficaModal(estado);
+    });
+
+    document.getElementById("modalGrafica").addEventListener("hidden.bs.modal", () => {
+      if (!graficaModal) return;
+      if (typeof graficaModal.destroy === "function") graficaModal.destroy();
+      else if (typeof graficaModal.dispose === "function") graficaModal.dispose();
+      graficaModal = null;
+    });
+
+    try {
+      if (localStorage.getItem("cabeceraOculta") === "1") aplicarCabecera(true);
+    } catch (e) {}
+
+    window.addEventListener("resize", () => { if (sunburstInstancia) sunburstInstancia.resize(); });
+
+    document.addEventListener("shown.bs.tab", e => {
+      const destino = e && e.target ? e.target.getAttribute("data-bs-target") : "";
+      if (destino === "#paneResumen" || destino === "#paneRespuestas" || destino === "#paneFormulario") {
+        conmutarSubTabBarra_(destino);
+      }
+    });
+
+    const btnAjustes = document.getElementById("btn-ajustesGrafica");
+    if (btnAjustes) {
+      btnAjustes.addEventListener("click", () => {
+        try { if (typeof renderMenuAjustes === "function") renderMenuAjustes(); } catch(e) {}
+      });
+    }
+    const menuAjustes = document.getElementById("menuAjustesGrafica");
+    if (menuAjustes && menuAjustes.parentElement) {
+      menuAjustes.parentElement.addEventListener("show.bs.dropdown", renderMenuAjustes);
+    }
+    try { if (typeof renderMenuAjustes === "function") renderMenuAjustes(); } catch(e) {}
+
+
+    cargarFormulario();
+  });
+
+  // ACCESO DIRECTO DESDE EL PANEL DOCENTE (misma sesión, sin volver a pedir contraseña)
+  window.addEventListener("message", function (ev) {
+    const origen = String(ev.origin || "");
+    const origenValido = origen === "https://script.google.com" ||
+      /^https:\/\/([a-z0-9-]+\.)*googleusercontent\.com$/.test(origen) ||
+      /^https:\/\/([a-z0-9-]+\.)*google\.com$/.test(origen);
+    if (!origenValido) return;
+    const datos = ev.data || {};
+    if (!datos || datos.tipo !== "accesoPanelEncuestas" || !datos.usuario || !datos.clave) return;
+    const campoUsuario = document.getElementById("adminUser");
+    const campoClave = document.getElementById("adminPass");
+    if (campoUsuario) campoUsuario.value = String(datos.usuario);
+    if (campoClave) campoClave.value = String(datos.clave);
+    const tabAdmin = document.getElementById("tabAdmin");
+    if (tabAdmin && typeof bootstrap !== "undefined" && bootstrap.Tab) {
+      bootstrap.Tab.getOrCreateInstance(tabAdmin).show();
+    }
+    if (typeof entrar === "function") entrar({ preventDefault: function () {} });
+  });</script>

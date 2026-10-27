@@ -1,0 +1,119 @@
+<script>
+/* AdminEncJS_05 — guardarEnBanco, verEncuestaDelBanco, volverEncuestaActual, abrirCategorias, getCategorias, pintarCategorias, guardarCategoria, eliminarCategoria */
+
+
+  function guardarEnBanco() {
+    if (!creds) { alert("Inicia sesión de administrador."); return; }
+    const n = ((RESPUESTAS && RESPUESTAS.filas) || []).length;
+    if (!confirm("¿Guardar en el banco la encuesta actual con " + n + " respuestas?")) return;
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!res || !res.exito) { alert((res && res.mensaje) || "No se pudo guardar en el banco."); return; }
+        alert("Guardado en el banco: " + res.id + " (" + res.total + " respuestas).");
+        cargarListaBanco();
+      })
+      .withFailureHandler(err => alert("Error: " + err.message))
+      .guardarEnBanco(creds);
+  }
+
+  function verEncuestaDelBanco(id) {
+    google.script.run
+      .withSuccessHandler(crudo => {
+        let res = null;
+        try { res = JSON.parse(crudo); } catch (e) { res = null; }
+        if (!res || !res.exito) { alert((res && res.mensaje) || "No se pudo abrir la encuesta."); return; }
+        RESPUESTAS = { autenticado: true, config: res.config || {}, preguntas: res.preguntas || [], filas: res.filas || [], banco: id };
+        FILTROS = {};
+        try {
+          sembrarColores(RESPUESTAS.filas, RESPUESTAS.preguntas);
+          pintarMenusFiltro();
+          pintarResumenPanel();
+          pintarTablaRespuestas();
+        } catch (err) {
+          console.error("verEncuestaDelBanco: " + err);
+        }
+        if (bancoModal) bancoModal.hide();
+        avisoPanel("Viendo encuesta del banco: " + ((res.config && res.config.titulo) || id) + " · " + RESPUESTAS.filas.length + " respuestas · ↻ para volver a la actual");
+      })
+      .withFailureHandler(err => alert("Error: " + err.message))
+      .obtenerDelBanco(creds, id);
+  }
+
+  function volverEncuestaActual() {
+    if (bancoModal) bancoModal.hide();
+    cargarRespuestas();
+  }
+
+  // CATEGORÍAS JERÁRQUICAS
+  function abrirCategorias() {
+    pintarCategorias();
+    if (modalCategorias) modalCategorias.show();
+  }
+
+  function getCategorias() {
+    try { return JSON.parse(FORM.config.categorias || "[]"); } catch (e) { return []; }
+  }
+
+  function pintarCategorias() {
+    const cats = getCategorias();
+    const lista = document.getElementById("listaCategorias");
+    const selPadre = document.getElementById("catPadre");
+    if (lista) {
+      lista.innerHTML = cats.length ? "" : '<li class="list-group-item text-muted small text-center">No hay categorías definidas.</li>';
+      cats.forEach((c, i) => {
+        lista.innerHTML += `
+          <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+            <div>
+              <span class="fw-semibold">${esc(c.nombre)}</span>
+              ${c.padre ? `<small class="text-muted ms-2">(Hija de: ${esc(c.padre)})</small>` : ''}
+            </div>
+            <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="eliminarCategoria(${i})"><i class="bi bi-trash"></i></button>
+          </li>
+        `;
+      });
+    }
+    if (selPadre) {
+      selPadre.innerHTML = '<option value="">(Ninguna - Nivel Principal)</option>';
+      cats.forEach(c => {
+        selPadre.innerHTML += `<option value="${esc(c.nombre)}">${esc(c.nombre)}</option>`;
+      });
+    }
+    const dl = document.getElementById("datalistCategorias");
+    if (dl) {
+      dl.innerHTML = cats.map(c => `<option value="${esc(c.nombre)}"></option>`).join("");
+    }
+  }
+
+  function guardarCategoria(e) {
+    e.preventDefault();
+    const nombre = document.getElementById("catNombre").value.trim();
+    const padre = document.getElementById("catPadre").value;
+    if (!nombre) return;
+    const cats = getCategorias();
+    if (cats.some(c => c.nombre.toLowerCase() === nombre.toLowerCase())) {
+      alert("Ya existe una categoría con ese nombre.");
+      return;
+    }
+    cats.push({ nombre: nombre, padre: padre || "" });
+    FORM.config.categorias = JSON.stringify(cats);
+    document.getElementById("catNombre").value = "";
+    pintarCategorias();
+  }
+
+  function eliminarCategoria(idx) {
+    const cats = getCategorias();
+    cats.splice(idx, 1);
+    FORM.config.categorias = JSON.stringify(cats);
+    pintarCategorias();
+  }
+
+  function actualizarCategoriaUI() {
+    const catNombre = document.getElementById("p_categoria").value.trim();
+    const cats = getCategorias();
+    const cat = cats.find(c => c.nombre.toLowerCase() === catNombre.toLowerCase());
+    const selPadre = document.getElementById("p_categoriaPadre");
+    if (selPadre && cat && cat.padre) {
+      selPadre.innerHTML = `<option value="${esc(cat.padre)}">${esc(cat.padre)}</option>`;
+    }
+  }
+  </script>

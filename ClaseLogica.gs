@@ -1323,6 +1323,19 @@ function horarioBaseSecundariaParaGrupo_(grado, grupo) {
   return out;
 }
 
+/**
+ * Carga inicial del horario oficial, SOLO si la hoja está completamente vacía.
+ *
+ * Antes esta función decidía que el horario "no era oficial" cuando tenía menos
+ * de 500 filas o no contenía los nombres MIGUEL o KRISTEL, y entonces borraba la
+ * hoja con clearContents() para reescribir las 600 clases estáticas. Se llamaba
+ * al abrir el panel de cualquier maestro, así que un horario legítimo de otro
+ * plantel o una importación parcial se destruían con un clic normal, arrastrando
+ * además las referencias de ContenidosClase y AsistenciaMaestros.
+ *
+ * Ahora es estrictamente aditiva: si la hoja tiene una sola fila de datos, no
+ * hace nada. Nunca borra y nunca sobrescribe.
+ */
 function sembrarHorarioDemoSiVacio_() {
   const libro = _obtenerLibro_();
   if (!libro) return;
@@ -1334,20 +1347,15 @@ function sembrarHorarioDemoSiVacio_() {
   }
   if (!p) return;
 
+  // Si ya hay datos, se respeta lo que haya: esta función no es correctiva.
+  if (p.getLastRow() > 1) return;
+
   const filasOficiales = typeof obtenerFilasHorarioOficialAsc_ === "function" ? obtenerFilasHorarioOficialAsc_() : [];
   if (!filasOficiales || !filasOficiales.length) return;
 
-  const filasExistentes = _leerFilas_("Horarios");
-  const esOficialCompleto = filasExistentes.length >= 500 && filasExistentes.some(function (f) {
-    const m = String(f["Maestro"] || "").toUpperCase();
-    return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
-  });
-  if (esOficialCompleto) return;
-
-  // Sembrar las 600 clases reales del archivo oficial Horario.xml (aSc Timetables)
-  p.clearContents();
-  p.appendRow(ENCABEZADOS.Horarios);
-  p.getRange(2, 1, filasOficiales.length, ENCABEZADOS.Horarios.length).setValues(filasOficiales);
+  if (p.getLastRow() === 0) p.appendRow(ENCABEZADOS.Horarios);
+  const filaInicio = p.getLastRow() + 1;
+  p.getRange(filaInicio, 1, filasOficiales.length, ENCABEZADOS.Horarios.length).setValues(filasOficiales);
   SpreadsheetApp.flush();
 }
 

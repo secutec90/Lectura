@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-27T13:10:49.641Z",
+  "generado": "2026-10-27T14:40:14.601Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
@@ -2905,7 +2905,7 @@
       "documentos": []
     },
     "Encuestas.gs": {
-      "sha256": "bb5c942eec32d498d140cfb206457b84722d3782c070ccb4fa01a52ee6be401c",
+      "sha256": "8a17894c01f17043643bea174cc372e1d8b988259a4178af5962c6765b7dd335",
       "documentos": [
         {
           "id": "Encuestas.gs",
@@ -2955,10 +2955,10 @@
               "linea": 37,
               "hash": "8eb27c192574fc205e7cb11d77ac6334668ef405e5f3db52a6e32d8b6170b025"
             },
-            "getCredencialesAdmin": {
+            "_credencialesAdmin_": {
               "tipo": "function",
               "linea": 42,
-              "hash": "c08853187fbba90ce3d4f4df0f0865606ed3a37571d81f3dcfbd6eaefb482d59"
+              "hash": "2bc7c45e55e06776479379015d640f8cc638bf874ac5bc60e278e682dd0a9b69"
             },
             "idDesdeTexto": {
               "tipo": "function",
@@ -3098,7 +3098,7 @@
             "verificarAdmin": {
               "tipo": "function",
               "linea": 446,
-              "hash": "75ac5bb5584cf6383dc47ce129b71408c83127ad8f10909f7cff3656c7fe4a29"
+              "hash": "16c4e286c900680e80aa152db953a1b688aecd9f7e6e38188923674b0331668c"
             },
             "guardarFormulario": {
               "tipo": "function",
@@ -3130,10 +3130,10 @@
               "linea": 666,
               "hash": "54b8dcc57174774d18280927c4bcda1c881477853cce73c46ca2fdc68265790d"
             },
-            "getClaveSimulacion": {
+            "_claveSimulacion_": {
               "tipo": "function",
               "linea": 697,
-              "hash": "b707287b272a088d31d3b8dbb23a81d58cf1c81c8468b49a76d7cd4430641b29"
+              "hash": "60e6dcc9f566a01eee3369c67662dd6e43d19a70b649d0d76c9f78596013ce52"
             },
             "elegirPonderado": {
               "tipo": "function",
@@ -3153,12 +3153,12 @@
             "simularRespuestasFormulario": {
               "tipo": "function",
               "linea": 775,
-              "hash": "45eda7fe715e50ff70e1a97ca5502653fca694f136011c379d6a2ef6e64bdcf6"
+              "hash": "9a7f2ef99a467be2fd8444046b6b077a89f05b570553a2efea6aa67b2a8b0764"
             },
             "limpiarSimuladosFormulario": {
               "tipo": "function",
               "linea": 843,
-              "hash": "bf08c293064e1ee7df7b493ea903b6bec696899522c30af37e0f845f77e4a435"
+              "hash": "afde105b5211111295a12d1994a8b9b2c0e8cd28c1df3db290ce248d868c1170"
             },
             "obtenerRespuestasFormulario": {
               "tipo": "function",
@@ -3595,7 +3595,7 @@
       ]
     },
     "04_Sesiones.gs": {
-      "sha256": "fe000926050f94dc08b9bea5bc58b4de24d43a01200a8d0a55cb6b29fc2d3f80",
+      "sha256": "41b403f36fdf9e644fd26969d35b2441dedf5fc592cd137b471a7c75da906dc9",
       "documentos": [
         {
           "id": "04_Sesiones.gs",
@@ -3613,186 +3613,186 @@
             "credencialesEncuestasPanel": {
               "tipo": "function",
               "linea": 40,
-              "hash": "6b71443da12d7edc5025944c38f812a3a27b683e1b50fd251c4456b3aabd5290"
+              "hash": "b730409b686ab0af5e0e8e39307063f3550438a00875a5a731d0e3494e42fc00"
             },
             "claveEsDefault": {
               "tipo": "function",
-              "linea": 58,
+              "linea": 57,
               "hash": "2d4045bd69f8d5df042e6dcbe9d93e7928dd3ba79f4d13dff0d8b03624fa949a"
             },
             "esUsuarioAdminAsistencia_": {
               "tipo": "function",
-              "linea": 63,
+              "linea": 62,
               "hash": "572ad3e5ece3bcfbc79db4f69dd085ed5e15c2ef297da68b8bf51b36e846d125"
             },
             "iniciarSesionUnificada": {
               "tipo": "function",
-              "linea": 68,
+              "linea": 67,
               "hash": "68ad670aee2a7820545d9c2d47d1b7b03ed1de645c72fca1bf46d96a3b054b47"
             },
             "iniciarSesionAdmin": {
               "tipo": "function",
-              "linea": 283,
+              "linea": 282,
               "hash": "8f76f0fc1c60c2f665fae302153031facefd32b4b7ba185629c307efdd5a1715"
             },
             "revocarTokenSesion": {
               "tipo": "function",
-              "linea": 287,
+              "linea": 286,
               "hash": "e24feddf42772f1802f5c598d3b2fa248a8ac9c42e6329eae4fc91ad50257b94"
             },
             "cerrarSesionAlumno": {
               "tipo": "function",
-              "linea": 337,
+              "linea": 336,
               "hash": "5654ea434aefbc97702ee9fd0e3346611d588368d181e53f3f1921ee14398f7e"
             },
             "cerrarSesionAdmin": {
               "tipo": "function",
-              "linea": 341,
+              "linea": 340,
               "hash": "2e4238b51d64239b6aca922014ca087fb48d92cc31fea28d51a6cdc25c9fd90a"
             },
             "ROLES_VALIDOS_SISTEMA_": {
               "tipo": "const",
-              "linea": 345,
+              "linea": 344,
               "hash": "ec224ca41f32c1eea7135d903b2fde89d0e6297b71bbdb99732d047108fbb09d"
             },
             "obtenerSesionValida_": {
               "tipo": "function",
-              "linea": 347,
+              "linea": 346,
               "hash": "10434b5883b4de83b925ac15ebddc80fcf59ced710591aa2eb4b5fb1e6a31b47"
             },
             "exigirRoles_": {
               "tipo": "function",
-              "linea": 365,
+              "linea": 364,
               "hash": "2d4aa4b1661fd56b72d5a81efc03b450be91b034a01d35c4bb3891bca12b144d"
             },
             "exigirAdmin": {
               "tipo": "function",
-              "linea": 378,
+              "linea": 377,
               "hash": "028e19d9f49643f317940451f9b7ad4fcd7b9f7f324248265ce5c0aaa5981993"
             },
             "adminRestablecerClaveConsola_": {
               "tipo": "function",
-              "linea": 400,
+              "linea": 399,
               "hash": "ad8d402eb463005829cd04a029736414b9fbd85b63abc18c07e676730dc3c24d"
             },
             "AREAS_APOYO": {
               "tipo": "const",
-              "linea": 416,
+              "linea": 415,
               "hash": "48ff4fa81519531b6661e06e14519973ff6ff2cc0f4e179ac7e5a6fa9d18812c"
             },
             "areaApoyoValida_": {
               "tipo": "function",
-              "linea": 426,
+              "linea": 425,
               "hash": "cd28d5bf2d3a26ab55ead613d7fffc7dd5ee940f3405f5cbb3bf27b6a29ef836"
             },
             "generarClaveAleatoriaApoyo_": {
               "tipo": "function",
-              "linea": 434,
+              "linea": 433,
               "hash": "74da48d3fa0a1a4c8f8932921a309b67431a95e70a5c7a13950e180844040b2f"
             },
             "usuariosOcupadosApoyo_": {
               "tipo": "function",
-              "linea": 445,
+              "linea": 444,
               "hash": "c10b8727038c2a67ee59715035e1847b652342777872519bd8f97c1a4a357f0f"
             },
             "usuarioApoyoLibre_": {
               "tipo": "function",
-              "linea": 466,
+              "linea": 465,
               "hash": "2fcb3394d38e758147c90897a8def91fadced486213cfd091538ae528c9132e8"
             },
             "buscarPersonalApoyoLogin_": {
               "tipo": "function",
-              "linea": 479,
+              "linea": 478,
               "hash": "a03dc5606932b51bbd8148cf6cb76f77c691d1076c133da2996583b3029a2f52"
             },
             "listarPersonalApoyo": {
               "tipo": "function",
-              "linea": 521,
+              "linea": 520,
               "hash": "03b80f55f8527e685d985ec96f305bef6a0fb926adf2c27dfa648db26b7ea617"
             },
             "altaPersonalApoyo": {
               "tipo": "function",
-              "linea": 543,
+              "linea": 542,
               "hash": "6f4daace6c833672ed6c90c205ce8de234453757441b018f858a0035c22bdada"
             },
             "asignarClavePersonalApoyo": {
               "tipo": "function",
-              "linea": 569,
+              "linea": 568,
               "hash": "505183a2538bc7a7f2cf52bd38ffacd4fb5bfc0123fed522ad1b627fdfc48575"
             },
             "generarClavePersonalApoyo": {
               "tipo": "function",
-              "linea": 615,
+              "linea": 614,
               "hash": "69115283c395cfeb73f36fc317e0e5e417918d6f51b3dd91c6e8ee575422e59f"
             },
             "generarClavesPersonalApoyo": {
               "tipo": "function",
-              "linea": 620,
+              "linea": 619,
               "hash": "18abc21ba902530739925eca6b617667bdc3c86594f5ca2eea61cd2db90ccd51"
             },
             "cambiarClaveAdmin": {
               "tipo": "function",
-              "linea": 639,
+              "linea": 638,
               "hash": "aecfd443ea401ffc0e6a6b668b1bbfbdc689ac1c028d534c0483a4b47103409f"
             },
             "urlHojaCalculo": {
               "tipo": "function",
-              "linea": 659,
+              "linea": 658,
               "hash": "f522339910e7bbba9ae1a06c15b0e46a823cfe2d11bb21b7b2d2e38e6fbc847f"
             },
             "aJsonSeguro": {
               "tipo": "function",
-              "linea": 667,
+              "linea": 666,
               "hash": "4fef88ff3e8d38bb12fe1cc36e85d8ba8256172f4f049ceb200309ce66422d18"
             },
             "urlAdmin": {
               "tipo": "function",
-              "linea": 676,
+              "linea": 675,
               "hash": "d093496730391a0fd75816fce2f58634b152c81e7fe64299abd6790744d2959b"
             },
             "urlAdminPub": {
               "tipo": "function",
-              "linea": 681,
+              "linea": 680,
               "hash": "79518e48df0aee680a19982ac6d2db68df9b24d76fdf0e7c399c42573f53d48e"
             },
             "urlDocentePub": {
               "tipo": "function",
-              "linea": 685,
+              "linea": 684,
               "hash": "34e176a5c5e12b828ccb59790b1fa82d83e96e102f0cece8ff88aae3f623c3d5"
             },
             "urlAlumnoPub": {
               "tipo": "function",
-              "linea": 690,
+              "linea": 689,
               "hash": "aa035dc81434190f079e11fa7c0111a681f23fa360e4ff3e7b877040c9f80293"
             },
             "urlDestinoAlumno_": {
               "tipo": "function",
-              "linea": 695,
+              "linea": 694,
               "hash": "59863c4f8255df3ef321b7010c36c70b41acdb3ffdc565f5b2528dac18044eff"
             },
             "esVistaAsistencia_": {
               "tipo": "function",
-              "linea": 703,
+              "linea": 702,
               "hash": "40f076038870839e362311557f2c3b32a5d947ecba7f290fb3784a04292638fa"
             },
             "urlAsistenciaPub": {
               "tipo": "function",
-              "linea": 711,
+              "linea": 710,
               "hash": "4d8e42cc22437cea6e49574d200d48a12c68f459030d09b4b735d258da3149f2"
             },
             "esVistaClaseMaestro_": {
               "tipo": "function",
-              "linea": 720,
+              "linea": 719,
               "hash": "d48811312da3bf565bc4c35d5f8c52e4af89a8f22fcbaf4c1055aa7e471f9996"
             },
             "esVistaClase_": {
               "tipo": "function",
-              "linea": 725,
+              "linea": 724,
               "hash": "137aaa0b20b5ab25cbb0b8314c9a78d86aeaac3fc795b57343322a3a988b2ae3"
             },
             "urlClasePub": {
               "tipo": "function",
-              "linea": 737,
+              "linea": 736,
               "hash": "54f7ccea77409b676d9d0a37e0c11a7a802b11a142439f45777bf99b087e7a89"
             }
           },
@@ -5493,7 +5493,7 @@
       ]
     },
     "ClaseJS_04.html": {
-      "sha256": "9aa490104d5682061f1eab8f203ba6d6bc440f3ed2e1db81bba068031b67d425",
+      "sha256": "9a6d80732354100bb8a17c00b2b6e6abd9ce8c6020ee352df72ed6441679a0e3",
       "documentos": [
         {
           "id": "ClaseJS_04.html#script0",
@@ -5581,7 +5581,7 @@
             "pintarGridPlaneaciones": {
               "tipo": "function",
               "linea": 159,
-              "hash": "e85c750ffcb72413bff0560d6a02006dcd4bfcb18e44e3044dad9635a9e99f19"
+              "hash": "ae539efee2d4eb8c1a7d55fb07d40a32a53d5586c490f16777c762fd5f6deab1"
             },
             "copiarProyectoGlobalAMiBanco_": {
               "tipo": "function",
@@ -6264,7 +6264,7 @@
       ]
     },
     "AdminJS_01.html": {
-      "sha256": "ca9a208f0b88b1607e530ee8fcf16dc19fd0adebfe1ef3adbd7aa1e79f75b881",
+      "sha256": "f6eeae8f3baebfaf32fa5929c40dcf9c4a9360dd2f04da5cf1f6b2facc0574e0",
       "documentos": [
         {
           "id": "AdminJS_01.html#script0",
@@ -6542,116 +6542,116 @@
             "entrar": {
               "tipo": "function",
               "linea": 75,
-              "hash": "388c30b3b76a95229fc0c58e42620135d6da0eff51499a7ddb43c92dc458bc25"
+              "hash": "7cd480b1edd5d43e8eabf3d7868757bfaeef2ab204869a240bd9827292e05998"
             },
             "cerrarSesion": {
               "tipo": "function",
-              "linea": 204,
+              "linea": 203,
               "hash": "cbac7585596f5d60b3df1cd77ef4ec9f4735cea48d3f16421a25948df4a396a7"
             },
             "irAVistaAlumno": {
               "tipo": "function",
-              "linea": 214,
+              "linea": 213,
               "hash": "9cf61dabde76329313a0963bf99b8442add990cb1f60f769fed8f90eb1f89f4a"
             },
             "irAlumno": {
               "tipo": "function",
-              "linea": 228,
+              "linea": 227,
               "hash": "9e82c15f69d2ab62a31b05d81efe7f3d0623e1f8f0009f9304d60ce4b4ca2b84"
             },
             "recargar": {
               "tipo": "function",
-              "linea": 232,
+              "linea": 231,
               "hash": "21f284e55e5a79e08a865d52d351be24d6675a1a20ae8685ac0d9a74480197e1"
             },
             "mostrarCintaN3_": {
               "tipo": "function",
-              "linea": 306,
+              "linea": 305,
               "hash": "92c2a63c055dea8a2289953c4147f7a7524f0bd20add4d66487d6184e5aea0df"
             },
             "limpiarActivoBotones_": {
               "tipo": "function",
-              "linea": 311,
+              "linea": 310,
               "hash": "a12c9c517d3a307cbd14259bdbd9f4431991d2a5e416555b51d1208748dbc8ca"
             },
             "ocultarCuerposModulo_": {
               "tipo": "function",
-              "linea": 317,
+              "linea": 316,
               "hash": "1b9a2256d7fec79a0eb8aabfc0be0dd4ee9d480873fc1d57baa95e1a32862901"
             },
             "cerrarSubN2_": {
               "tipo": "function",
-              "linea": 332,
+              "linea": 331,
               "hash": "95adb1f06dff498bd527f65c3270f8f648cf60305e6c3f6b70f7f91e3dce9f32"
             },
             "subPlanActual": {
               "tipo": "var",
-              "linea": 386,
+              "linea": 385,
               "hash": "a38963da12b1c2902ae782255d3bba31cdae65942c742cf96004758190b02de1"
             },
             "iniciarCintaSinSeleccion_": {
               "tipo": "function",
-              "linea": 388,
+              "linea": 387,
               "hash": "eb6763c414a42b1f0eb5a5655490b0f9c2faa84c9fb2cca97ae9c852b5dbe475"
             },
             "tabN1Actual": {
               "tipo": "var",
-              "linea": 411,
+              "linea": 410,
               "hash": "9225b44a410aeead6e9fc7cd3f8ad7917897a67e9e979242103303e2f9c535fe"
             },
             "hayCuerpoN1_": {
               "tipo": "function",
-              "linea": 413,
+              "linea": 412,
               "hash": "9b5664950ff7bbf7bdcdf61ebbafd00265d64ce0099fe20a513dcb30b4a6edb8"
             },
             "tab": {
               "tipo": "function",
-              "linea": 421,
+              "linea": 420,
               "hash": "3b141d20b7264f8fc363e6540f7e523278400a989bff5c6511b2672a65c6574e"
             },
             "aplicarTab": {
               "tipo": "function",
-              "linea": 462,
+              "linea": 461,
               "hash": "dbe7c34e07de99781e961b76e9d45d737d3530927112ae5a9e5fe212709b42eb"
             },
             "subUsuActual": {
               "tipo": "var",
-              "linea": 544,
+              "linea": 543,
               "hash": "d7043e34130e4b15a7e5d6159cce2c284f5fe6637f23f86a4853fae5d6ad3150"
             },
             "subAsiActual": {
               "tipo": "var",
-              "linea": 545,
+              "linea": 544,
               "hash": "4a855b0c35f3a753f919005f2adfcd02e72ad61766781da33585fd562057c095"
             },
             "fechaAsiEtiquetaManual": {
               "tipo": "var",
-              "linea": 546,
+              "linea": 545,
               "hash": "dc8000d8eb870ce10d7afede978bed9ca466a6ff3ed586d9e89d414c65b9414b"
             },
             "periodoRepEtiquetaManual": {
               "tipo": "var",
-              "linea": 547,
+              "linea": 546,
               "hash": "8c247f9676e2f149ef34fc390535538cd5bed1eee38c5720e9671a3ad7533dac"
             },
             "modoPeriodoRepAsi": {
               "tipo": "var",
-              "linea": 548,
+              "linea": 547,
               "hash": "c539bbb34904682a340e2e26fad12674b9400248ce7ec5e970e44deda7a0f934"
             },
             "nTrimRepAsi": {
               "tipo": "var",
-              "linea": 549,
+              "linea": 548,
               "hash": "65d4de7d070f95ebddea567d059ff9043962943a806fc9e17b03b145d70464d2"
             },
             "aplicarSubUsu": {
               "tipo": "function",
-              "linea": 551,
+              "linea": 550,
               "hash": "340cadc360029049218232ef341bbc424d8dfe1b15404d8b1a32afa6897486cc"
             },
             "pedirDesbloqueoAsistencia": {
               "tipo": "function",
-              "linea": 617,
+              "linea": 616,
               "hash": "f1cf6c9225ac58163df9f3fb988c8478dffe046f0857c8c46d73a5af449961cb"
             }
           },
@@ -6856,7 +6856,7 @@
       ]
     },
     "AdminJS_03.html": {
-      "sha256": "09e4d8bf5762e06b81a9a03b9fa671b9b23061a1dab73e47a33bdc4c15d513dd",
+      "sha256": "df29c189fbdd4b67f34f0d26a5219eda1f347276439001d591f42ba9494947f0",
       "documentos": [
         {
           "id": "AdminJS_03.html#script0",
@@ -6914,7 +6914,7 @@
             "poblarListaDocentesAsiDd": {
               "tipo": "function",
               "linea": 167,
-              "hash": "f835005e9b3e68a26d968795b943b1b0e5ede60c3a898b9db23d070afb07919b"
+              "hash": "5fddcb6498f4cf0cd6757d0a40312420857eb3f49beda9a1117d81b39fa7ed3d"
             },
             "seleccionarDocenteAsi": {
               "tipo": "function",
@@ -7509,7 +7509,7 @@
       ]
     },
     "AdminJS_06.html": {
-      "sha256": "2902bae1c1d7b3dece0f098cdb6898dc5875243375fdcb66f29944e82b224cb4",
+      "sha256": "50861b1fb835e7e466f3dfb929df0bd1e9b8acab75445f3b8e748e05e32b1c94",
       "documentos": [
         {
           "id": "AdminJS_06.html#script0",
@@ -7627,7 +7627,7 @@
             "pintarChipsChart": {
               "tipo": "function",
               "linea": 360,
-              "hash": "2cb8a71cefde9716e380311cc8ab62badbfd7bbb97c85fc29d3dd350bcf018ae"
+              "hash": "096c981ce18fbdc5ccb38337ab5936bd028c7af76b21713476c0101c2faef883"
             },
             "toggleChipChart": {
               "tipo": "function",
@@ -7730,7 +7730,7 @@
       ]
     },
     "AdminJS_07.html": {
-      "sha256": "7d3cd505d4aec8daf1e8a46a6b5d97857f55f684750c8357ee62ecc72575cc91",
+      "sha256": "fd812c0d79a8247ff8a61148453b13b50febe82d1810160f896488cabdf400a8",
       "documentos": [
         {
           "id": "AdminJS_07.html#script0",
@@ -7808,7 +7808,7 @@
             "pintarResultados": {
               "tipo": "function",
               "linea": 422,
-              "hash": "76e54d34c02149b645d11e01029ff810b164c4f7d595f77751466ce238dd1735"
+              "hash": "f4aac637fc3a4b71a70226d0fac89feaa91978538ea1f6fc55b12365e07de723"
             },
             "aplicarVistaColsNivelesRes": {
               "tipo": "function",
@@ -7886,7 +7886,7 @@
       ]
     },
     "AdminJS_08.html": {
-      "sha256": "8bd11a28a0b424c5422b05d72aa6eabcfd33e90e29994b8ac77d34daa2625804",
+      "sha256": "6050b16893b92bb861ecea035448d6851d9a2f91d7fd48537fba08c2a200e573",
       "documentos": [
         {
           "id": "AdminJS_08.html#script0",
@@ -7979,7 +7979,7 @@
             "pintarAlumnos": {
               "tipo": "function",
               "linea": 120,
-              "hash": "3f058ba23167734343ec8171b3b961cb4af9bb39292f3b8c9ca64632dc6af9c6"
+              "hash": "abd25ffc2e49a75b668981c7baf437a093a66dbf2c9dd39a0fe2ccbaadedee46"
             },
             "fichaAlumnoActual": {
               "tipo": "let",
@@ -8049,7 +8049,7 @@
             "abrirModalMoverGrupo": {
               "tipo": "function",
               "linea": 553,
-              "hash": "c5a3065089a8d232588cb8d37e39d4171c449583d567a298cb1b7a7b27545da1"
+              "hash": "a49b62cbbf5e393b5d04a46a065b2939300762c699af55f0ce529a342d131913"
             },
             "ejecutarMoverGrupoModal": {
               "tipo": "function",
@@ -8087,7 +8087,7 @@
       ]
     },
     "AdminJS_09.html": {
-      "sha256": "88006b275529cb289fec7e1db0215bbd3187d30ad2f338844c15acad389d6e1f",
+      "sha256": "c3bac57ece35952841fc590d2809ccfac0e6a720f902f77582d1458992ae6d4d",
       "documentos": [
         {
           "id": "AdminJS_09.html#script0",
@@ -8290,7 +8290,7 @@
             "htmlSlotTrim": {
               "tipo": "function",
               "linea": 627,
-              "hash": "dcf1307e1d406f0c0779efa4e8e4a7b443991be6e245f7887d88b81d9ae1c935"
+              "hash": "6eaa7abf76772d430412b03c5ea437e1bce6b60e0807676f9003dd4ef432699d"
             },
             "pintarPanelTrimestral": {
               "tipo": "function",
@@ -8303,7 +8303,7 @@
       ]
     },
     "AdminJS_10.html": {
-      "sha256": "93d767408dc464cfcd595135b52b0ee7bf1895724f082a6f78ac40289f517def",
+      "sha256": "3fbe1f903f8371b900d85bfb807bd70cfbb04eda7e8486d15d4e76a20a712f2a",
       "documentos": [
         {
           "id": "AdminJS_10.html#script0",
@@ -8481,7 +8481,7 @@
             "pintarLecturas": {
               "tipo": "function",
               "linea": 488,
-              "hash": "c04a5b38a5be68d802019f0b3217cff83ed966d731485915b77d1720f8f66181"
+              "hash": "379cba2e78b47dfe7dc681185d3fa55933f1b6f201a38c917a057e2e6c86932f"
             },
             "marcarEditorDirty": {
               "tipo": "function",
@@ -8655,7 +8655,7 @@
       ]
     },
     "AdminJS_12.html": {
-      "sha256": "d81e4030c1d44ac68502b46b1b2a578ac2b6ced730768887806589c606f560d2",
+      "sha256": "850261feb511e9b7317eb940d66c840314e84e8f061931a2277652f30e1c6f29",
       "documentos": [
         {
           "id": "AdminJS_12.html#script0",
@@ -8673,7 +8673,7 @@
             "actualizarSugerenciasTemasIA": {
               "tipo": "function",
               "linea": 51,
-              "hash": "4bb655cd6dd7b309402c69a5b87c76dcd68e73118bc2c0113f0d71165018f036"
+              "hash": "686913284e6ba972cadd2ffe6aaed5da05dde5da6ed27daf6e0b3982b80eb3a9"
             },
             "seleccionarTemaSugeridoIA": {
               "tipo": "function",
@@ -9300,7 +9300,7 @@
       ]
     },
     "AdminPlanJS_02.html": {
-      "sha256": "549b3cea76096e44c908c2d973ad90349f07fea5c29a93f0b354cfb299b2e780",
+      "sha256": "babcff8b40f28c7dae050c0af764f02aaaad9a06ffcd0c94c822b58cb61f1932",
       "documentos": [
         {
           "id": "AdminPlanJS_02.html#script0",
@@ -9388,7 +9388,7 @@
             "pintarGridPlaneaciones": {
               "tipo": "function",
               "linea": 302,
-              "hash": "e85c750ffcb72413bff0560d6a02006dcd4bfcb18e44e3044dad9635a9e99f19"
+              "hash": "ae539efee2d4eb8c1a7d55fb07d40a32a53d5586c490f16777c762fd5f6deab1"
             },
             "copiarProyectoGlobalAMiBanco_": {
               "tipo": "function",

@@ -546,7 +546,7 @@ function listarPersonalApoyo(token) {
       nombre: String(f["Nombre"] || "").trim(),
       usuario: String(f["Usuario"] || "").trim(),
       area: String(f["Área"] || "").trim(),
-      clave: String(f["Clave"] || "").trim(),
+      clave: "",
       activo: String(f["Activo"] || "SI").trim().toUpperCase() !== "NO"
     };
   });
@@ -577,7 +577,7 @@ function altaPersonalApoyo(token, nombre, usuario, area, clave) {
   const salt = Utilities.getUuid();
   const libro = _obtenerLibro_();
   const p = libro.getSheetByName("PersonalApoyo");
-  p.appendRow([id, celdaSegura_(nombre), celdaSegura_(usuarioUso), celdaSegura_(area), salt, hashClave(clave, salt), "SI", celdaSegura_(clave)]);
+  p.appendRow([id, celdaSegura_(nombre), celdaSegura_(usuarioUso), celdaSegura_(area), salt, hashClave(clave, salt), "SI", ""]);
   const lastRow = p.getLastRow();
   p.getRange(lastRow, 8).setNumberFormat("@");
   SpreadsheetApp.flush();
@@ -624,7 +624,7 @@ function asignarClavePersonalApoyo(token, id, usuario, clave, area) {
     const salt = Utilities.getUuid();
     if (colSalt) p.getRange(f._fila, colSalt).setValue(salt);
     if (colHash) p.getRange(f._fila, colHash).setValue(hashClave(clave, salt));
-    if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue(clave);
+    if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
   }
   SpreadsheetApp.flush();
   return { ok: true, mensaje: "Datos actualizados para " + String(f["Nombre"] || "") + "." };

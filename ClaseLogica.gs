@@ -396,7 +396,7 @@ function guardarClaveVisibleMaestro_(f, clave) {
   const hash = hashClave(clave, salt);
   if (colSalt) p.getRange(f._fila, colSalt).setValue(salt);
   if (colHash) p.getRange(f._fila, colHash).setValue(hash);
-  if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue(clave);
+  if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
 }
 
 function listarMaestrosClase(token) {
@@ -426,13 +426,11 @@ function listarMaestrosClase(token) {
     const info = infoHorarios[nomNorm] || { grupos: {}, asignaturas: {} };
     const gruposList = Object.keys(info.grupos).sort();
     const asigList = Object.keys(info.asignaturas).sort();
-    const clave = claveDeAccesoMaestro_(f);
-
     return {
       id: String(f["Id"] || ""),
       nombre: String(f["Nombre"] || ""),
       usuario: String(f["Usuario"] || ""),
-      clave: clave,
+      clave: "",
       grupos: gruposList,
       asignaturas: asigList,
       activo: String(f["Activo"] || "SI").toUpperCase() !== "NO"
@@ -501,7 +499,7 @@ function generarClavesMaestrosClase(token, modo, maestroId) {
       p.getRange(f._fila, colSalt).setValue(salt);
       p.getRange(f._fila, colHash).setValue(hash);
       p.getRange(f._fila, colActivo).setValue("SI");
-      p.getRange(f._fila, colClave).setNumberFormat("@").setValue(claveNueva);
+      p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
       contador++;
     });
 
@@ -548,7 +546,7 @@ function asignarClaveMaestroClase(token, id, usuario, clave) {
   p.getRange(fila._fila, colSalt).setValue(salt);
   p.getRange(fila._fila, colHash).setValue(hash);
   p.getRange(fila._fila, colActivo).setValue("SI");
-  p.getRange(fila._fila, colClave).setNumberFormat("@").setValue(claveUso);
+  p.getRange(fila._fila, colClave).setNumberFormat("@").setValue("");
 
   return { ok: true, usuario: usu, clave: claveUso, mensaje: "Acceso listo para " + fila["Nombre"] + ". Usuario: " + usu + " · Contraseña: " + claveUso };
 }
@@ -629,7 +627,7 @@ function listarAlumnosParaClase(token, grado, grupo) {
       grupoEtq: etq,
       grupoClave: claveGrupoAsi_(gr, gp),
       usuario: acc ? String(acc["Usuario"] || "") : "",
-      clave: acc ? claveDeAccesoAlumno_(acc) : "",
+      clave: "",
       conClave: !!(acc && (String(acc["Hash"] || "").trim() || String(acc["Clave"] || "").trim() || String(acc["Usuario"] || "").trim())),
       activo: acc ? String(acc["Activo"] || "SI").toUpperCase() !== "NO" : false
     };
@@ -674,11 +672,11 @@ function asignarClaveAlumnoClase(token, matricula, usuario, clave) {
   const grupo = String(alu["Grupo"] || "").trim().toLowerCase();
   if (previa) {
     p.getRange(previa._fila, 1, 1, ENCABEZADOS.AccesoClaseAlumnos.length).setValues([[
-      celdaSegura_(mat), celdaSegura_(nombre), celdaSegura_(grado), celdaSegura_(grupo), celdaSegura_(usu), salt, hash, "SI", celdaSegura_(claveUso)
+      celdaSegura_(mat), celdaSegura_(nombre), celdaSegura_(grado), celdaSegura_(grupo), celdaSegura_(usu), salt, hash, "SI", ""
     ]]);
     p.getRange(previa._fila, 9).setNumberFormat("@");
   } else {
-    p.appendRow([celdaSegura_(mat), celdaSegura_(nombre), celdaSegura_(grado), celdaSegura_(grupo), celdaSegura_(usu), salt, hash, "SI", celdaSegura_(claveUso)]);
+    p.appendRow([celdaSegura_(mat), celdaSegura_(nombre), celdaSegura_(grado), celdaSegura_(grupo), celdaSegura_(usu), salt, hash, "SI", ""]);
     p.getRange(p.getLastRow(), 9).setNumberFormat("@");
   }
   return { ok: true, usuario: usu, clave: claveUso, mensaje: "Acceso listo. Usuario: " + usu + " · Contraseña: " + claveUso };
@@ -796,7 +794,7 @@ function generarClavesAlumnosClase(token, grado, grupo, modo, matriculaEspecific
         sheetAcc.getRange(previa._fila, colSalt).setValue(salt);
         sheetAcc.getRange(previa._fila, colHash).setValue(hash);
         sheetAcc.getRange(previa._fila, colActivo).setValue("SI");
-        sheetAcc.getRange(previa._fila, colClave).setNumberFormat("@").setValue(claveNueva);
+        sheetAcc.getRange(previa._fila, colClave).setNumberFormat("@").setValue("");
         contador++;
       } else {
         const filaData = new Array(lastCol);
@@ -809,7 +807,7 @@ function generarClavesAlumnosClase(token, grado, grupo, modo, matriculaEspecific
         filaData[colSalt - 1] = salt;
         filaData[colHash - 1] = hash;
         filaData[colActivo - 1] = "SI";
-        filaData[colClave - 1] = claveNueva;
+        filaData[colClave - 1] = "";
         nuevasFilas.push(filaData);
         contador++;
       }
@@ -1009,7 +1007,7 @@ function guardarClaveVisibleAlumno_(f, clave) {
   const hash = hashClave(clave, salt);
   if (colSalt) p.getRange(f._fila, colSalt).setValue(salt);
   if (colHash) p.getRange(f._fila, colHash).setValue(hash);
-  if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue(clave);
+  if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
 }
 
 function claveDeAccesoAlumno_(f) {
@@ -1044,12 +1042,11 @@ function alumnosConAccesoClase_(ses, grado, grupo) {
   }).map(function (f) {
     const gr = String(f["Grado"] || "").trim();
     const gpf = String(f["Grupo"] || "").trim().toLowerCase();
-    const clave = claveDeAccesoAlumno_(f);
     return {
       matricula: String(f["Matrícula"] || f["Matricula"] || "").trim(),
       nombre: String(f["Nombre"] || ""),
       usuario: String(f["Usuario"] || ""),
-      clave: clave,
+      clave: "",
       grado: gr,
       grupo: gpf,
       grupoClave: claveGrupoAsi_(gr, gpf),

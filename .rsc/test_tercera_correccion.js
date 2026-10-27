@@ -317,11 +317,13 @@ console.log("--- SUITE 1: SEC-A02-01 — Credenciales no expuestas a personal es
   const tApo = "tok_apo_001";
   ctx.__cache["sesion_" + tApo] = JSON.stringify({ rol: "apoyo", apoyoId: "APO_1", nombre: "Apoyo Uno" });
 
-  // 1.1 Administrador sí recibe credenciales para gestión de cuentas
+  // 1.1 El administrador recibe la cuenta, pero ya no la contraseña en claro:
+  // la clave se muestra una sola vez al generarla y en la hoja solo queda el hash.
   const resAdmin = ctx.panelResumen(tAdmin);
   assert(resAdmin && resAdmin.ok && resAdmin.alumnos.length > 0, "panelResumen funciona para admin");
   const aluAdmin = resAdmin.alumnos.find(a => a.matricula === "MAT_001");
-  assert(aluAdmin && aluAdmin.clave === "clavePlana123", "Admin sí tiene visibilidad de claves para administración escolar");
+  assert(aluAdmin && aluAdmin.clave === "", "El panel no expone la contraseña en claro, tampoco para el administrador");
+  assert(aluAdmin && typeof aluAdmin.usuario === "string", "El administrador sigue viendo el usuario de la cuenta");
 
   // Función de inspección profunda contra credenciales, hashes y sales
   function inspeccionarCredenciales(obj, path = "") {

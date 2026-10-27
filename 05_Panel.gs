@@ -490,7 +490,7 @@ function enriquecerAlumnosConAcceso_(alumnos) {
       if (!mat) return;
       mapa[mat] = {
         usuario: String(f["Usuario"] || "").trim(),
-        clave: String(f["Clave"] || "").trim()
+        clave: ""
       };
     });
   } catch (eAcc) {}

@@ -1283,7 +1283,7 @@ function listarPrefectos(token) {
         id: id,
         nombre: String(f["Nombre"] || "").trim(),
         usuario: String(f["Usuario"] || "").trim(),
-        clave: String(f["Clave"] || "").trim(),
+        clave: "",
         activo: String(f["Activo"] || "SI").trim().toUpperCase(),
         grupos: grupos
       };
@@ -1309,7 +1309,7 @@ function altaPrefecto(token, nombre, clave, usuario) {
   const salt = Utilities.getUuid();
   const libro = _obtenerLibro_();
   asegurarColumnaClavePrefectos_();
-  libro.getSheetByName("Prefectos").appendRow([id, celdaSegura_(nombre), celdaSegura_(usuarioUso), salt, hashClave(clave, salt), "SI", celdaSegura_(clave)]);
+  libro.getSheetByName("Prefectos").appendRow([id, celdaSegura_(nombre), celdaSegura_(usuarioUso), salt, hashClave(clave, salt), "SI", ""]);
   SpreadsheetApp.flush();
   return { ok: true, id: id, usuario: usuarioUso, clave: clave, mensaje: "Prefecta " + nombre + " creada. Usuario: " + usuarioUso };
 }
@@ -1352,7 +1352,7 @@ function asignarClavePrefecto(token, id, usuario, clave) {
     const salt = Utilities.getUuid();
     if (colSalt) p.getRange(f._fila, colSalt).setValue(salt);
     if (colHash) p.getRange(f._fila, colHash).setValue(hashClave(clave, salt));
-    if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue(clave);
+    if (colClave) p.getRange(f._fila, colClave).setNumberFormat("@").setValue("");
   }
   SpreadsheetApp.flush();
   return { ok: true, mensaje: "Datos actualizados para " + String(f["Nombre"] || "") + "." };

@@ -7,10 +7,20 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <!-- st90-build <?= typeof version !== 'undefined' ? version : 'v303' ?> -->
+  <script>
+    window.addEventListener('error', function (ev) {
+      try {
+        var d = document.getElementById('diagLogin');
+        if (d) d.textContent = 'ERROR JS: ' + (ev.message || 'desconocido');
+      } catch (e) {}
+    });
+  </script>
   <?!= include('ComunCSS') ?>
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
   <?!= include('AdminCSS') ?>
+  <?!= include('AdminPlaneacionCSS') ?>
+  <?!= include('AdminEncuestasCSS') ?>
 </head>
 <body class="<?= (typeof modoVista !== 'undefined') ? ('modo-' + modoVista) : ((typeof soloAsistencia !== 'undefined' && soloAsistencia) ? 'solo-asi modo-asistencia' : 'modo-admin') ?> <?= (typeof soloAsistencia !== 'undefined' && soloAsistencia) ? 'solo-asi' : '' ?>">
   <!-- LOGIN UNIFICADO -->
@@ -39,6 +49,7 @@
         <button type="button" id="btnEntrar" class="btn-entrar-unificado" onclick="entrar()">Entrar al Sistema</button>
       </div>
       <p id="errorLogin" style="color:var(--st90-rojo);text-align:center;margin-top:10px;font-weight:600;min-height:20px;"></p>
+        <p id="diagLogin" style="color:#64748b;text-align:center;font-size:11px;min-height:14px;"></p>
     </div>
     <div class="login-accesos-rapidos oculto">
       <p class="tit-rapidos">Enlaces directos:</p>
@@ -401,8 +412,24 @@
     const URL_ADMIN = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlAdmin !== 'undefined' ? urlAdmin : '') ?>);
     const URL_DOCENTE = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlDocente !== 'undefined' ? urlDocente : '') ?>);
     const MODO_VISTA = limpiarComillasScriptlet_(<?= JSON.stringify(typeof modoVista !== 'undefined' ? modoVista : (soloAsistencia ? 'asistencia' : 'admin')) ?>);
+  let urlAlumno = limpiarComillasScriptlet_(<?= JSON.stringify(urlAlumno || '') ?>);
+  const URL_ASISTENCIA = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlAsistencia !== 'undefined' ? urlAsistencia : '') ?>);
+  const SOLO_ASISTENCIA = <?= (typeof soloAsistencia !== 'undefined' && soloAsistencia) ? 'true' : 'false' ?>;
   </script>
   <?!= include('ComunJS') ?>
+  <?!= include('AdminPlanJS_01') ?>
+  <?!= include('AdminPlanJS_02') ?>
+  <?!= include('AdminPlanJS_03') ?>
+  <?!= include('AdminPlanJS_04') ?>
+  <?!= include('AdminPlanJS_05') ?>
+  <?!= include('AdminPlanJS_06') ?>
+  <?!= include('AdminPlanJS_Arranque') ?>
+  <?!= include('AdminEncJS_01') ?>
+  <?!= include('AdminEncJS_02') ?>
+  <?!= include('AdminEncJS_03') ?>
+  <?!= include('AdminEncJS_04') ?>
+  <?!= include('AdminEncJS_05') ?>
+  <?!= include('AdminEncJS_Arranque') ?>
     <?!= include('AdminJS_01') ?>
   <?!= include('AdminJS_02') ?>
   <?!= include('AdminJS_03') ?>

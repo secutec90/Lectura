@@ -29,9 +29,6 @@
     let filtroGpAlcanceSel = [];
     let resultadosAdminListos = false;
     let resultadosAdminPendiente = null;
-    let urlAlumno = limpiarComillasScriptlet_(<?= JSON.stringify(urlAlumno || '') ?>);
-    const URL_ASISTENCIA = limpiarComillasScriptlet_(<?= JSON.stringify(typeof urlAsistencia !== 'undefined' ? urlAsistencia : '') ?>);
-    const SOLO_ASISTENCIA = <?= (typeof soloAsistencia !== 'undefined' && soloAsistencia) ? 'true' : 'false' ?>;
     let hojaDatosDesbloqueada = true;
     let asistenciaDesbloqueada = SOLO_ASISTENCIA || (MODO_VISTA === 'admin');
     /* Contraseña de la hoja retirada: acceso permanente. */

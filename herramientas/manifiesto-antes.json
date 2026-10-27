@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-27T18:06:39.196Z",
+  "generado": "2026-10-27T18:13:42.942Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
@@ -3428,7 +3428,7 @@
       ]
     },
     "02_Rutas.gs": {
-      "sha256": "c1b6ef0c613c0a33671238c53c39f8f7d38237b94602cc760318c9c8311230c9",
+      "sha256": "4adefe03f4ef773cad8b386d3bce6d4e5cc0f17cc90b1602f434e63a09336610",
       "documentos": [
         {
           "id": "02_Rutas.gs",
@@ -3436,21 +3436,21 @@
             "doGet": {
               "tipo": "function",
               "linea": 4,
-              "hash": "5c3cbffa9c507531e78e64ef397d95f06e3ef884d1e3611e91fea0e8b59e50a5"
+              "hash": "0b947134739e391e847f1ae26498d027a4db4123ad63236cdb7737c3e675afc2"
             },
             "rellenarPlantillaAdmin_": {
               "tipo": "function",
-              "linea": 138,
+              "linea": 137,
               "hash": "c585dcde7048345a89ae21a329e5601ad2252c90c702c33e712c4f7fcf33f807"
             },
             "evaluarPlantillaAdmin_": {
               "tipo": "function",
-              "linea": 153,
+              "linea": 152,
               "hash": "cd1260d4927ff7cd100c83bd5d7c3baaca656d6a679894482641aea7cf4f5316"
             },
             "include": {
               "tipo": "function",
-              "linea": 162,
+              "linea": 161,
               "hash": "41511ebdde87cad98c8d162a9d9940a71c2596e192c203fc36d3d12845a559ee"
             }
           },

@@ -1,11 +1,11 @@
 {
-  "generado": "2026-10-27T17:40:44.786Z",
+  "generado": "2026-10-27T17:52:09.574Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
     "archivos": 82,
     "documentos": 70,
-    "simbolos": 1841,
+    "simbolos": 1843,
     "sentencias_superiores": 41,
     "duplicados": 286,
     "documentos_con_error": 0
@@ -2682,7 +2682,7 @@
       ]
     },
     "PlaneacionNEM.gs": {
-      "sha256": "1552de28a9250b304b99c6acb2da96a5816d4ea7b7c7d05c3c14908c573e370e",
+      "sha256": "3ef5b38f159f31e92195d799de31b2ca984a846ac28278a5526b27e07a0edff9",
       "documentos": [
         {
           "id": "PlaneacionNEM.gs",
@@ -2697,74 +2697,84 @@
               "linea": 51,
               "hash": "5804a46868b743b5e6d9b37b7e9fecca155cf93c27c9926c64218df6c2ba25ed"
             },
+            "exigirPropietarioPlaneacion_": {
+              "tipo": "function",
+              "linea": 127,
+              "hash": "06b5766853a8b24eae3f86c95b1968049e855d13163cde89d3743a20d7b3d592"
+            },
+            "exigirLecturaPlaneacion_": {
+              "tipo": "function",
+              "linea": 141,
+              "hash": "661b24d59d078306da4aa1b95eae656c75e2f7703dc3cb25239d8068b92144c7"
+            },
             "crearOActualizarPlaneacionNEM": {
               "tipo": "function",
-              "linea": 120,
+              "linea": 149,
               "hash": "083f72a32f685c235d360b66ad2e783be2db7b59ea08ee9eac180d15c2bc34ab"
             },
             "desglosarSesionesInicialesNEM_": {
               "tipo": "function",
-              "linea": 256,
+              "linea": 285,
               "hash": "21aefb2e99d6d1da2c979190f1b407b8d04076d1ade9a7d1bed59cd6d711a370"
             },
             "listarPlaneacionesNEM": {
               "tipo": "function",
-              "linea": 303,
+              "linea": 332,
               "hash": "ff1f7f9776445303ffb39771289b1993447f70eff845a4db29042bf4aafc657b"
             },
             "clonarPlaneacionAGlobal": {
               "tipo": "function",
-              "linea": 458,
-              "hash": "22ff34b86caf6fac7007dc0c48ea19c0b7addbaad95b0e9f51c4fa53157fe627"
+              "linea": 487,
+              "hash": "9fb883b7e3e56c6f1379ea46bdb3f70ef9c0392fcfb56706082d8f64aae7278f"
             },
             "publicarPlaneacionEnRepositorio": {
               "tipo": "function",
-              "linea": 563,
+              "linea": 593,
               "hash": "7b855ae4786319e95c01636300225056edf49a6e71dbee60fafcfeb47a94ea96"
             },
             "eliminarPlaneacionNEM": {
               "tipo": "function",
-              "linea": 621,
+              "linea": 651,
               "hash": "71413e1cb0a464dfda71dfbb03ec297651abf2e72f6d6a690017b978aa8c145e"
             },
             "obtenerPlaneacionCompletaNEM": {
               "tipo": "function",
-              "linea": 667,
-              "hash": "dd6cbe74cfa627e49056f0718b1390eeaa0645dc27485d4ba60c3275080a7dfa"
+              "linea": 697,
+              "hash": "b50e8fd8473c1213581802575ecdb229907bf5bfe6cab5de25a87d0f556ff87d"
             },
             "guardarSesionNEM": {
               "tipo": "function",
-              "linea": 846,
-              "hash": "c0b27c827fed2813a5090dd3b042e7a6b35fcd94fe9689d2174df8e3d1a164e9"
+              "linea": 877,
+              "hash": "125394fafd768497288bfa7dd2c073a25b58a2452496e1c2bfe81171c5f30126"
             },
             "aprobarPlaneacionNEM": {
               "tipo": "function",
-              "linea": 937,
-              "hash": "7a7226ea5c3e5e810ef99eb5d868af09120ad12107378839195a4d3f0074a97e"
+              "linea": 973,
+              "hash": "7706ff35dfee9fad504428a73c17327d00e9f2ab8b8ba85b6ecad59d81f34c4c"
             },
             "calendarizarSesionNEM": {
               "tipo": "function",
-              "linea": 972,
-              "hash": "d0bff619956d4e606ea9ba713fdf06a4bbce8af8f3f15360a17fc6aedee3a15f"
+              "linea": 1009,
+              "hash": "24f98506976efbb1c04327d08758bb31bbe7916b83c4810253fae0b42df86889"
             },
             "asistirDisenoProyectoNEM": {
               "tipo": "function",
-              "linea": 1033,
+              "linea": 1074,
               "hash": "07b960dc5896a33dede319dec0b87845583c215115a8b14f20466279ef8b7d29"
             },
             "asistirDesgloseSesionesNEM": {
               "tipo": "function",
-              "linea": 1128,
+              "linea": 1169,
               "hash": "c31f116279dafb3e0dc181180430d8efe01354806de30055837dd4951910500e"
             },
             "ID_LIBRO_BANCO_ENCUESTAS": {
               "tipo": "const",
-              "linea": 1225,
+              "linea": 1266,
               "hash": "bd2c3deb132284ef5abbcab13e4c320a3869fdff5ffcbe7f21549a94a669ebaa"
             },
             "listarBancoEncuestasPlaneacion": {
               "tipo": "function",
-              "linea": 1227,
+              "linea": 1268,
               "hash": "8b9419059a51141dd09b94c076cb942ba9a56933356df399e6ca5b93f6380b2a"
             }
           },

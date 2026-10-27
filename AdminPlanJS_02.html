@@ -551,48 +551,167 @@
     /* ============================================================
        BANCO DE ENCUESTAS: consulta e inyeccion en #planProblema
        ============================================================ */
-    function abrirBancoEncuestas_() {
-      google.script.run
-        .withSuccessHandler(function (res) {
-          if (!res || !res.exito) { toast((res && res.mensaje) || 'No se pudo leer el banco.', 'err'); return; }
-          if (!res.items || !res.items.length) {
-            toast('Todavía no hay encuestas guardadas. Créalas desde el Constructor de Encuestas (🛠 → Guardar encuesta en el banco).', 'err');
-            return;
-          }
-          window.__bancoEncuestasTemp = res.items;
-          var html = '<div style="font-size:13px;color:#334155;line-height:1.5;margin-bottom:12px;">Elige la encuesta cuyos resultados quieres usar como situación-problema de tu proyecto:</div>';
-          html += '<div style="display:flex;flex-direction:column;gap:10px;">';
-          res.items.forEach(function (it, i) {
-            html += '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:10px;cursor:pointer;" onmouseover="this.style.borderColor=\'#2563eb\';this.style.background=\'#eff6ff\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.background=\'#f8fafc\'" onclick="insertarResumenBanco_(' + i + ')">';
-            html += '<strong style="color:var(--st90-azul);font-size:13px;display:block;margin-bottom:2px;">' + escaparHtml(it.encuesta) + '</strong>';
-            html += '<span style="font-size:11px;color:#64748b;">' + escaparHtml(it.guardado) + ' · ' + it.respuestas + ' respuestas</span>';
-            html += '<div style="margin:6px 0 0;color:#475569;font-size:12px;white-space:pre-line;">' + escaparHtml(it.resumen || 'Sin resumen') + '</div>';
-            html += '</div>';
-          });
-          html += '</div>';
-          modal({
-            titulo: '📊 Banco de encuestas de la escuela',
-            html: html,
-            botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
-          });
-        })
-        .withFailureHandler(function (err) { toast('Error: ' + err.message, 'err'); })
-        .listarBancoEncuestasPlaneacion();
+    /* ============================================================
+       DIRECTORIO DE ENCUESTAS
+       Lista las encuestas registradas (con su asignatura, grado y trimestre),
+       permite generar un resumen con IA y traerlo a la planeación.
+       ============================================================ */
+    function _opcionesFiltroDirEnc_(id, etiqueta, valores) {
+      var html = '<select id="' + id + '" style="font-size:12px;padding:4px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#334155;">';
+      html += '<option value="">' + etiqueta + ': todas</option>';
+      valores.forEach(function (v) {
+        html += '<option value="' + escaparHtml(v) + '">' + escaparHtml(v) + '</option>';
+      });
+      return html + '</select>';
     }
 
-    function insertarResumenBanco_(indice) {
-      var lista = window.__bancoEncuestasTemp || [];
-      var item = lista[indice];
-      if (!item) return;
-      var txt = document.getElementById('planProblema');
-      if (txt) {
-        var actual = txt.value.trim();
-        var bloque = item.encuesta + ' (' + item.respuestas + ' respuestas):\n' + (item.resumen || '');
-        txt.value = actual ? (actual + '\n\n' + bloque) : bloque;
-        txt.focus();
+    function abrirBancoEncuestas_() {
+      var tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : tokenClase;
+      if (!tk) { toast('Vuelve a iniciar sesión para consultar el directorio.', 'err'); return; }
+      gsRun('listarDirectorioEncuestas', tk).then(function (res) {
+        if (!res || !res.ok) { toast((res && res.mensaje) || 'No se pudo leer el directorio.', 'err'); return; }
+        var items = res.items || [];
+        if (!items.length) {
+          toast('Todavía no hay encuestas registradas. Vincula la hoja de una encuesta desde Administración → Encuestas.', 'err');
+          return;
+        }
+        window.__dirEncuestas = items;
+        var asigs = [], grados = [], trims = [];
+        items.forEach(function (it) {
+          if (it.asignatura && asigs.indexOf(it.asignatura) < 0) asigs.push(it.asignatura);
+          if (it.grado && grados.indexOf(it.grado) < 0) grados.push(it.grado);
+          if (it.trimestre && trims.indexOf(it.trimestre) < 0) trims.push(it.trimestre);
+        });
+        var html =
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">' +
+            _opcionesFiltroDirEnc_('dirFAsig', 'Asignatura', asigs) +
+            _opcionesFiltroDirEnc_('dirFGrado', 'Grado', grados) +
+            _opcionesFiltroDirEnc_('dirFTrim', 'Trimestre', trims) +
+          '</div>' +
+          '<div id="dirLista" style="max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px;"></div>' +
+          '<div id="dirDetalle" style="margin-top:12px;"></div>';
+        modal({
+          titulo: '📊 Directorio de encuestas',
+          html: html,
+          clase: 'st90-modal-ancho',
+          botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+        });
+        ['dirFAsig', 'dirFGrado', 'dirFTrim'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.addEventListener('change', pintarListaDirEnc_);
+        });
+        pintarListaDirEnc_();
+      }).catch(function (e) {
+        toast('Error al leer el directorio: ' + ((e && e.message) || e), 'err');
+      });
+    }
+
+    function pintarListaDirEnc_() {
+      var cont = document.getElementById('dirLista');
+      if (!cont) return;
+      var items = window.__dirEncuestas || [];
+      var fa = (document.getElementById('dirFAsig') || {}).value || '';
+      var fg = (document.getElementById('dirFGrado') || {}).value || '';
+      var ft = (document.getElementById('dirFTrim') || {}).value || '';
+      var filtrados = items.filter(function (it) {
+        if (fa && it.asignatura !== fa) return false;
+        if (fg && it.grado !== fg) return false;
+        if (ft && it.trimestre !== ft) return false;
+        return true;
+      });
+      if (!filtrados.length) {
+        cont.innerHTML = '<p style="font-size:12px;color:#64748b;margin:0;">Ninguna encuesta coincide con el filtro.</p>';
+        return;
       }
-      cerrarModal();
-      toast('Resultados de la encuesta insertados en el Problema de la Comunidad.', 'ok');
+      cont.innerHTML = filtrados.map(function (it) {
+        var meta = [it.asignatura, it.grado, it.trimestre, it.grupo].filter(Boolean).join(' · ') || 'Sin clasificar';
+        var tiene = it.resumen ? ' · con resumen' : '';
+        return '<button type="button" onclick="seleccionarDirEnc_(\'' + escaparHtml(it.hojaId) + '\')" ' +
+          'style="text-align:left;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:9px 10px;cursor:pointer;width:100%;">' +
+          '<strong style="display:block;color:var(--st90-azul);font-size:12.5px;">' + escaparHtml(it.nombre) + '</strong>' +
+          '<span style="font-size:11px;color:#64748b;">' + escaparHtml(meta) + ' · ' + it.respuestas + ' respuestas' + tiene + '</span>' +
+        '</button>';
+      }).join('');
+    }
+
+    function seleccionarDirEnc_(hojaId) {
+      var it = (window.__dirEncuestas || []).filter(function (x) { return x.hojaId === hojaId; })[0];
+      if (!it) return;
+      window.__dirSel = it;
+      var det = document.getElementById('dirDetalle');
+      if (!det) return;
+      var resumenHtml = it.resumen
+        ? '<div style="white-space:pre-line;font-size:12.5px;color:#334155;background:#f1f5f9;border-radius:8px;padding:10px;max-height:190px;overflow:auto;">' + escaparHtml(it.resumen) + '</div>'
+        : '<p style="font-size:12px;color:#64748b;margin:0;">Esta encuesta todavía no tiene resumen de IA.</p>';
+      det.innerHTML =
+        '<div style="border-top:1px solid #e2e8f0;padding-top:10px;">' +
+          '<strong style="font-size:13px;color:var(--st90-azul);">' + escaparHtml(it.nombre) + '</strong>' +
+          '<div style="font-size:11.5px;color:#64748b;margin:2px 0 8px;">' +
+            escaparHtml(it.hojaNombre || '') + ' · ' + it.respuestas + ' respuestas · ' + it.preguntas + ' preguntas' +
+          '</div>' +
+          resumenHtml +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center;">' +
+            '<input id="dirAsig" placeholder="Asignatura" value="' + escaparHtml(it.asignatura || '') + '" style="font-size:12px;padding:4px 8px;border:1px solid #cbd5e1;border-radius:6px;width:130px;">' +
+            '<input id="dirGrado" placeholder="Grado" value="' + escaparHtml(it.grado || '') + '" style="font-size:12px;padding:4px 8px;border:1px solid #cbd5e1;border-radius:6px;width:80px;">' +
+            '<input id="dirTrim" placeholder="Trimestre" value="' + escaparHtml(it.trimestre || '') + '" style="font-size:12px;padding:4px 8px;border:1px solid #cbd5e1;border-radius:6px;width:100px;">' +
+            '<button type="button" class="btn-outline-custom" style="font-size:11px;padding:4px 9px;" onclick="guardarDatosDirEnc_()">💾 Guardar datos</button>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">' +
+            '<button type="button" class="btn-outline-custom" style="font-size:11px;padding:4px 9px;" onclick="generarResumenDirEnc_(\'' + escaparHtml(it.hojaId) + '\')">🤖 Generar resumen con IA</button>' +
+            '<button type="button" class="btn-outline-custom" style="font-size:11px;padding:4px 9px;" onclick="insertarResumenDirEnc_()">📋 Insertar en la planeación</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function guardarDatosDirEnc_() {
+      var it = window.__dirSel;
+      if (!it) return;
+      var tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : tokenClase;
+      var datos = {
+        asignatura: ((document.getElementById('dirAsig') || {}).value || '').trim(),
+        grado: ((document.getElementById('dirGrado') || {}).value || '').trim(),
+        trimestre: ((document.getElementById('dirTrim') || {}).value || '').trim()
+      };
+      gsRun('guardarMetadatosDirectorioEncuesta', tk, it.hojaId, datos).then(function (res) {
+        if (!res || !res.ok) { toast((res && res.mensaje) || 'No se pudieron guardar los datos.', 'err'); return; }
+        it.asignatura = datos.asignatura;
+        it.grado = datos.grado;
+        it.trimestre = datos.trimestre;
+        seleccionarDirEnc_(it.hojaId);
+        toast('Datos de la encuesta guardados.', 'ok');
+      }).catch(function (e) {
+        toast('Error al guardar: ' + ((e && e.message) || e), 'err');
+      });
+    }
+
+    function generarResumenDirEnc_(hojaId) {
+      var tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : tokenClase;
+      toast('Generando el resumen con IA… puede tardar unos segundos.', 'ok');
+      gsRun('generarResumenEncuestaIA', tk, hojaId).then(function (res) {
+        if (!res || !res.ok) { toast((res && res.mensaje) || 'No se pudo generar el resumen.', 'err'); return; }
+        var it = (window.__dirEncuestas || []).filter(function (x) { return x.hojaId === hojaId; })[0];
+        if (it) { it.resumen = res.resumen; if (res.total) it.respuestas = res.total; }
+        seleccionarDirEnc_(hojaId);
+        toast('Resumen generado y guardado en el directorio.', 'ok');
+      }).catch(function (e) {
+        toast('Error al generar el resumen: ' + ((e && e.message) || e), 'err');
+      });
+    }
+
+    function insertarResumenDirEnc_() {
+      var it = window.__dirSel;
+      if (!it) return;
+      var txt = document.getElementById('planProblema');
+      if (!txt) { toast('No encontré el campo del problema de la comunidad.', 'err'); return; }
+      var etiqueta = [it.asignatura, it.grado, it.trimestre].filter(Boolean).join(', ');
+      var bloque = 'Diagnóstico de la encuesta «' + it.nombre + '» (' + it.respuestas + ' respuestas)' +
+        (etiqueta ? ' — ' + etiqueta : '') + ':\n' + (it.resumen || 'Sin resumen generado.');
+      var actual = txt.value.trim();
+      txt.value = actual ? (actual + '\n\n' + bloque) : bloque;
+      txt.focus();
+      var fondo = document.querySelector('.st90-modal-fondo');
+      if (fondo) fondo.remove();
+      toast('Resumen insertado en el Problema de la Comunidad. Revísalo y ajústalo.', 'ok');
     }
 
     function determinarTrimestreSEP(fechaString) {

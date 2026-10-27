@@ -102,6 +102,21 @@ function _getLibro_() {
   if (_libroCache) return _libroCache;
 
   const props = PropertiesService.getScriptProperties();
+
+  // La hoja vinculada de la encuesta manda: es donde viven sus respuestas.
+  const idEncuestas = String(props.getProperty("HOJA_ENCUESTAS_ID") || "").trim();
+  if (idEncuestas) {
+    try {
+      const libroEnc = _abrirLibroPorId_(idEncuestas);
+      // Solo se usa si de verdad es una hoja de encuestas preparada.
+      if (libroEnc && libroEnc.getSheetByName("Formulario")) {
+        _libroCache = libroEnc;
+        _libroOrigen = "propiedad HOJA_ENCUESTAS_ID";
+        return _libroCache;
+      }
+    } catch (eEnc) { /* si falla, sigue la cascada normal */ }
+  }
+
   const idProp = String(props.getProperty("HOJA_ID") || "").trim();
   if (idProp) {
     _libroCache = _abrirLibroPorId_(idProp);
@@ -1044,6 +1059,21 @@ function vincularYPrepararHoja(credenciales, urlOId) {
     PropertiesService.getScriptProperties().setProperty("HOJA_ENCUESTAS_ID", id);
     _olvidarLibro_();
     const activo = _getLibro_();
+    try {
+      const meta = _metadatosDeEncuesta_(libro);
+      const conteos = _conteosDeEncuesta_(libro);
+      _registrarDirectorioEncuesta_({
+        hojaId: id,
+        hojaNombre: libro.getName(),
+        nombre: meta.nombre || libro.getName(),
+        asignatura: meta.asignatura,
+        grado: meta.grado,
+        trimestre: meta.trimestre,
+        grupo: meta.grupo,
+        preguntas: conteos.preguntas,
+        respuestas: conteos.respuestas
+      });
+    } catch (eDir) { console.error("directorio al vincular: " + eDir); }
     return {
       exito: true,
       id: id,

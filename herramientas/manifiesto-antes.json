@@ -1,11 +1,11 @@
 {
-  "generado": "2026-10-27T15:12:08.767Z",
+  "generado": "2026-10-27T15:14:37.901Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
     "archivos": 82,
     "documentos": 70,
-    "simbolos": 1845,
+    "simbolos": 1846,
     "sentencias_superiores": 41,
     "duplicados": 286,
     "documentos_con_error": 0
@@ -1169,7 +1169,7 @@
       "documentos": []
     },
     "Asistencia.gs": {
-      "sha256": "d5f79320991492d6902d89dd2bc545e9803a364ec23ce03fd828de211b4a0789",
+      "sha256": "8bb35a693de39f47d976dcf8a2cd6d29dcafcdb7bb1bd0a34d0916a4528d0965",
       "documentos": [
         {
           "id": "Asistencia.gs",
@@ -1387,7 +1387,7 @@
             "altaPrefecto": {
               "tipo": "function",
               "linea": 1294,
-              "hash": "d6994c4ec785b54a09888356e6a138da43e9bd5c0242142ec3baf1eae50588bd"
+              "hash": "8d6eef9658b05e9c803d9e41b0e3332a069aa9016459fdfe517bd885bd1ea7b4"
             },
             "asignarClavePrefecto": {
               "tipo": "function",
@@ -1500,7 +1500,7 @@
       ]
     },
     "ClaseLogica.gs": {
-      "sha256": "ff6da4b40b7e9fcaeac9aad4f6cc639626e19e0f017b14ed69170ecd456034f1",
+      "sha256": "b958d598109c7622efe0f3db867552151be378dc50b44a84122e28318949a53b",
       "documentos": [
         {
           "id": "ClaseLogica.gs",
@@ -1618,7 +1618,7 @@
             "asignarClaveAlumnoClase": {
               "tipo": "function",
               "linea": 643,
-              "hash": "207d9d25cc292cf7c92e2f50709fcf22c65a81183f54f18bdb241a3abb8d3292"
+              "hash": "1dd9e23badd293bf73a1604c6b94267b5328eef6748be46f680d82986da0030a"
             },
             "generarClaveAleatoriaAlumno_": {
               "tipo": "function",
@@ -3337,7 +3337,7 @@
       ]
     },
     "01_Hoja.gs": {
-      "sha256": "61eca985c56252ec54cf4558f342055fee101b4b693827c497e8c94b5722d75b",
+      "sha256": "fdb344cba76be346dc1969d9ed6977d9ea3a1bfe03b04da83b5518f94c2de6d0",
       "documentos": [
         {
           "id": "01_Hoja.gs",
@@ -3397,24 +3397,29 @@
               "linea": 24,
               "hash": "f18a7cccb4e82e91276827290a71f4e334684e29bd6c511586f648ac94130a06"
             },
+            "celdaSegura_": {
+              "tipo": "function",
+              "linea": 35,
+              "hash": "554d53ab44714098730e7c2715b62528b70fefd360af24207c133d471c033921"
+            },
             "invalidarCachesDatos_": {
               "tipo": "function",
-              "linea": 30,
+              "linea": 40,
               "hash": "5787d29a275bbf31dcb4b8c81254fe614c35a03c0627fdeda58f886914f5de56"
             },
             "_obtenerLibro_": {
               "tipo": "function",
-              "linea": 44,
+              "linea": 54,
               "hash": "7c35c241b28d29bd0d3314d959c1ac1b1e4ca64e9ac748f4fa1b0cf5aed02f2c"
             },
             "vincularHojaCalculo": {
               "tipo": "function",
-              "linea": 116,
+              "linea": 126,
               "hash": "9b6d5fccabc88ba0e5daddea5d0d42e8e986837c8d3378dc13f24a78d4bbb514"
             },
             "_obtenerPestana_": {
               "tipo": "function",
-              "linea": 157,
+              "linea": 167,
               "hash": "534ab684cc1a59eaa3cf3738b2ab109158b1d3658565ecc0ad285a3deca80a8c"
             }
           },
@@ -3590,7 +3595,7 @@
       ]
     },
     "04_Sesiones.gs": {
-      "sha256": "5fddf56031315974a90824b3c3f69c6f90cd3797592b852f4f56ba39313ccf0f",
+      "sha256": "e6b4ff3f9249d6cc47cbdbbda1bdf2f33ea2928fc0102a89961975d273e7badd",
       "documentos": [
         {
           "id": "04_Sesiones.gs",
@@ -3713,7 +3718,7 @@
             "altaPersonalApoyo": {
               "tipo": "function",
               "linea": 561,
-              "hash": "1de3214991dc644772ebcd7fa1ca10649ab9647bb52438ce4882f081d9500b8b"
+              "hash": "84c63e25df99638c883e7b179a137e58c6d8c42c4f914d9af46119956a4cc7b8"
             },
             "asignarClavePersonalApoyo": {
               "tipo": "function",
@@ -3912,7 +3917,7 @@
       ]
     },
     "06_Alumnos.gs": {
-      "sha256": "74f97403b37ae0a60cec02d6e33f35685d84bf0bddf1c9578f738586d30bbf92",
+      "sha256": "e4cf90adace0857344eeeecfa451428a3ba283b6e7c4c163d1ded1438c0cbb00",
       "documentos": [
         {
           "id": "06_Alumnos.gs",
@@ -3995,7 +4000,7 @@
             "altaAlumno": {
               "tipo": "function",
               "linea": 245,
-              "hash": "7172669ab89d029f6e8aa165ac645c9797e7f8a5fd6e343382af125939537a6c"
+              "hash": "90c9f0cae2b0dd6a929cef740a67b5005b03d8ddfe0c5fba1f6bced7ed3ba3f4"
             },
             "bajaAlumno": {
               "tipo": "function",
@@ -4668,7 +4673,7 @@
       ]
     },
     "12_Importacion.gs": {
-      "sha256": "61991cf4d7f97eaff95db626a6680a73fd56cf317e8b4d0c222074690ef9cc5b",
+      "sha256": "bcc1b09dd7673922912070fa61851263d9f398327525f4f413a4a83fc5b60c1d",
       "documentos": [
         {
           "id": "12_Importacion.gs",
@@ -4721,7 +4726,7 @@
             "importarAlumnosDesdeExcel": {
               "tipo": "function",
               "linea": 217,
-              "hash": "82fcbf0bf8d358cba7b5de0b0fc4134e6b7b5cc92bf9d08e28414771f2f76eee"
+              "hash": "172143e40c67b33cc8eb6c25e172611962bef12c161b3e4afea725c3551a1016"
             },
             "_formatearHojasDeLectura_": {
               "tipo": "function",

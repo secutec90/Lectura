@@ -577,7 +577,7 @@ function altaPersonalApoyo(token, nombre, usuario, area, clave) {
   const salt = Utilities.getUuid();
   const libro = _obtenerLibro_();
   const p = libro.getSheetByName("PersonalApoyo");
-  p.appendRow([id, nombre, usuarioUso, area, salt, hashClave(clave, salt), "SI", clave]);
+  p.appendRow([id, celdaSegura_(nombre), celdaSegura_(usuarioUso), celdaSegura_(area), salt, hashClave(clave, salt), "SI", celdaSegura_(clave)]);
   const lastRow = p.getLastRow();
   p.getRange(lastRow, 8).setNumberFormat("@");
   SpreadsheetApp.flush();

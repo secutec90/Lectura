@@ -231,7 +231,7 @@ function importarAlumnosDesdeExcel(token, datosBase64) {
       grupo = String(grupo || "").trim().toLowerCase();
       grado = String(grado || grupo.charAt(0)).trim().charAt(0);
       if (!nom) continue;
-      p.appendRow([mat, nom, grado, grupo, "SI", 0]);
+      p.appendRow([celdaSegura_(mat), celdaSegura_(nom), celdaSegura_(grado), celdaSegura_(grupo), "SI", 0]);
       agregados++;
     }
     invalidarCachesDatos_();

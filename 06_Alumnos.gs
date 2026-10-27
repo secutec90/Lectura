@@ -246,8 +246,8 @@ function altaAlumno(token, datos) {
   exigirAdmin(token);
   const p = _obtenerLibro_().getSheetByName("Alumnos");
   p.appendRow([
-    String(datos.matricula), String(datos.nombre),
-    String(datos.grado), String(datos.grupo).toLowerCase(),
+    celdaSegura_(datos.matricula), celdaSegura_(datos.nombre),
+    celdaSegura_(datos.grado), celdaSegura_(String(datos.grupo).toLowerCase()),
     "SI", Number(datos.intentosExtra || 0)
   ]);
   invalidarCachesDatos_();

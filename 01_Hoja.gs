@@ -27,6 +27,16 @@ function cachePutJson_(clave, obj, segundos) {
   } catch (e) {}
 }
 
+/**
+ * Neutraliza la inyección de fórmulas en Sheets: si un texto empieza por = + - @
+ * (o por tabulador / retorno de carro), se antepone un apóstrofo para que la hoja
+ * lo trate como texto y no lo evalúe. Se aplica solo a campos de texto libre.
+ */
+function celdaSegura_(valor) {
+  const s = String(valor == null ? "" : valor);
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+}
+
 function invalidarCachesDatos_() {
   memoAlumnos_ = null;
   memoResultados_ = null;

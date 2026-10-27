@@ -674,11 +674,11 @@ function asignarClaveAlumnoClase(token, matricula, usuario, clave) {
   const grupo = String(alu["Grupo"] || "").trim().toLowerCase();
   if (previa) {
     p.getRange(previa._fila, 1, 1, ENCABEZADOS.AccesoClaseAlumnos.length).setValues([[
-      mat, nombre, grado, grupo, usu, salt, hash, "SI", claveUso
+      celdaSegura_(mat), celdaSegura_(nombre), celdaSegura_(grado), celdaSegura_(grupo), celdaSegura_(usu), salt, hash, "SI", celdaSegura_(claveUso)
     ]]);
     p.getRange(previa._fila, 9).setNumberFormat("@");
   } else {
-    p.appendRow([mat, nombre, grado, grupo, usu, salt, hash, "SI", claveUso]);
+    p.appendRow([celdaSegura_(mat), celdaSegura_(nombre), celdaSegura_(grado), celdaSegura_(grupo), celdaSegura_(usu), salt, hash, "SI", celdaSegura_(claveUso)]);
     p.getRange(p.getLastRow(), 9).setNumberFormat("@");
   }
   return { ok: true, usuario: usu, clave: claveUso, mensaje: "Acceso listo. Usuario: " + usu + " · Contraseña: " + claveUso };

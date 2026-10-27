@@ -1309,7 +1309,7 @@ function altaPrefecto(token, nombre, clave, usuario) {
   const salt = Utilities.getUuid();
   const libro = _obtenerLibro_();
   asegurarColumnaClavePrefectos_();
-  libro.getSheetByName("Prefectos").appendRow([id, nombre, usuarioUso, salt, hashClave(clave, salt), "SI", clave]);
+  libro.getSheetByName("Prefectos").appendRow([id, celdaSegura_(nombre), celdaSegura_(usuarioUso), salt, hashClave(clave, salt), "SI", celdaSegura_(clave)]);
   SpreadsheetApp.flush();
   return { ok: true, id: id, usuario: usuarioUso, clave: clave, mensaje: "Prefecta " + nombre + " creada. Usuario: " + usuarioUso };
 }

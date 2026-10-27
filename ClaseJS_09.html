@@ -188,11 +188,11 @@
       if (typeof gsRun === 'function' && tokenClase) {
         gsRun('guardarAsistenciaGrupo', tokenClase, g, grp, f, listaAsistenciaMemoria_).then(function (res) {
           toast((res && res.mensaje) || 'Asistencia de ' + g + '° ' + grp + ' guardada en Asistencia.gs.', 'ok');
-        }).catch(function () {
-          toast('Pase de lista de ' + g + '° ' + grp + ' registrado exitosamente.', 'ok');
+        }).catch(function (err) {
+          toast('No se pudo guardar la asistencia: ' + ((err && err.message) || 'error de conexión'), 'error');
         });
       } else {
-        toast('Pase de lista de ' + g + '° ' + grp + ' registrado exitosamente (' + listaAsistenciaMemoria_.length + ' alumnos).', 'ok');
+        toast('Sin sesión activa: la asistencia de ' + g + '° ' + grp + ' no se guardó.', 'error');
       }
     }
 

@@ -20,7 +20,12 @@ var ESTADOS_MAESTRO_ASI = [
 ];
 
 function sesionAsistencia_(token) {
-  const ses = obtenerSesionValida_(token);
+  let ses = obtenerSesionValida_(token);
+  if (!ses) {
+    // La vista de Clase emite su propio token (clase_<token>); se acepta aquí
+    // para que el docente pueda pasar lista desde su módulo de asistencia.
+    try { ses = sesionClase_(token); } catch (eClase) { ses = null; }
+  }
   if (!ses) {
     throw new Error("Sesión inválida o expirada");
   }
@@ -28,7 +33,7 @@ function sesionAsistencia_(token) {
   if (rol === "admin") {
     return ses;
   }
-  if (rol === "prefecto" || rol === "apoyo") {
+  if (rol === "prefecto" || rol === "apoyo" || rol === "maestro" || rol === "docente") {
     return ses;
   }
   throw new Error("Acceso denegado: rol sin permisos de asistencia (" + rol + ")");
@@ -202,6 +207,17 @@ function exigirGrupoDelPrefecto_(sesion, grado, grupo) {
     asignados = asignacionesPrefecto_(sesion.prefectoId);
   } else if (sesion.rol === "apoyo") {
     asignados = asignacionesApoyo_(sesion.apoyoId);
+  } else if (sesion.rol === "maestro" || sesion.rol === "docente") {
+    // Un docente solo pasa lista de los grupos que tiene en su horario.
+    const nom = normalizarNombrePref_(sesion.maestroNombre || sesion.nombre || "");
+    const imparte = _leerFilas_("Horarios").some(function (h) {
+      if (normalizarNombrePref_(h["Maestro"] || "") !== nom) return false;
+      const hg = String(h["Grado"] || "").trim();
+      const hgp = normalizarGrupoLetra_(hg, String(h["Grupo"] || "").trim().toLowerCase());
+      return claveGrupoAsi_(hg, hgp) === k;
+    });
+    if (imparte) return;
+    throw new Error("Ese grupo no está en tu horario.");
   }
   for (let i = 0; i < asignados.length; i++) {
     if (claveGrupoAsi_(asignados[i].grado, asignados[i].grupo) === k) return;
@@ -551,6 +567,32 @@ function guardarAsistenciaAlumnos(token, payload) {
       try { lock.releaseLock(); } catch (e) {}
     }
   }
+}
+
+/**
+ * Pase de lista rápido desde el módulo de Asistencia de la vista de Clase.
+ * Recibe la lista en memoria del docente y la traduce al contrato de
+ * guardarAsistenciaAlumnos. Antes esta llamada apuntaba a una función que
+ * nunca existió, así que el botón "Guardar" no guardaba nada.
+ */
+function guardarAsistenciaGrupo(token, grado, grupo, fecha, lista) {
+  if (!Array.isArray(lista) || !lista.length) throw new Error("No hay alumnos para guardar.");
+  const registros = lista.map(function (a) {
+    return {
+      matricula: String((a && (a.matricula || a["Matrícula"])) || "").trim(),
+      nombre: String((a && (a.nombre || a["Nombre"] || a["Nombre Completo"])) || "").trim(),
+      estado: String((a && (a.estado || a["Estado"])) || "P").trim(),
+      observacion: String((a && (a.observacion || a["Observación"])) || "").trim()
+    };
+  }).filter(function (r) { return r.matricula; });
+  if (!registros.length) throw new Error("La lista no tiene matrículas válidas.");
+
+  return guardarAsistenciaAlumnos(token, {
+    grado: String(grado || "").trim(),
+    grupo: String(grupo || "").trim().toLowerCase(),
+    fecha: String(fecha || "").trim(),
+    registros: registros
+  });
 }
 
 function asistenciaMaestrosBloque(token, fecha, bloque, turno) {

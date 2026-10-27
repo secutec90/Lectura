@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-27T16:21:13.645Z",
+  "generado": "2026-10-27T17:40:44.786Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
@@ -1500,7 +1500,7 @@
       ]
     },
     "ClaseLogica.gs": {
-      "sha256": "37356509637d860300ace14067c94ca8caa4966588676773565e8d03487fcd64",
+      "sha256": "7a3535e422eb67b917ea3a4c7901475949771f3efdbac3cd85ee0aef75ffa0fb",
       "documentos": [
         {
           "id": "ClaseLogica.gs",
@@ -1742,32 +1742,32 @@
             },
             "sembrarHorarioDemoSiVacio_": {
               "tipo": "function",
-              "linea": 1326,
-              "hash": "4209404ebd2768be2dced429aaee9b0c5d8560b043e438e8257c42e5e4e5f694"
+              "linea": 1339,
+              "hash": "d7ae0b46f4d2e59d51df910e6285935eb58b15c8bc4027f36812e46ca7041eca"
             },
             "horarioMaestroClase": {
               "tipo": "function",
-              "linea": 1354,
+              "linea": 1362,
               "hash": "fba2996105f21a7f1c824becca37a4a6dca3292920ccd41150dc8553596fbf34"
             },
             "guardarContenidoClase": {
               "tipo": "function",
-              "linea": 1484,
+              "linea": 1492,
               "hash": "9f64cd9b4195e34ad2c5ab318183ae1921acd993dfab487387eb2803be0e1c3b"
             },
             "contextoClaseAlumno": {
               "tipo": "function",
-              "linea": 1542,
+              "linea": 1550,
               "hash": "c4ae6c2cbc64db1200de5a7084a134e528e7a89d12ba2890e678a3847401a63d"
             },
             "textoPruebaAsignaturaClase_": {
               "tipo": "function",
-              "linea": 1633,
+              "linea": 1641,
               "hash": "be4ee398d63f3b5cdc307e95745da3763e9a432d056417789a066540ceb8de82"
             },
             "_sembrarContenidoPrueba1C_": {
               "tipo": "function",
-              "linea": 1753,
+              "linea": 1761,
               "hash": "ff68979c129040aabbc2e50151c451af82cbb49fd18c0b2e66127dfca2ca5f46"
             }
           },

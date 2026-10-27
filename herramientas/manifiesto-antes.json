@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-27T16:10:29.899Z",
+  "generado": "2026-10-27T16:15:21.298Z",
   "motor": "acorn 8.19.0",
   "raiz": "G:\\Mi unidad\\PROYECTOS\\Lectura",
   "resumen": {
@@ -1169,7 +1169,7 @@
       "documentos": []
     },
     "Asistencia.gs": {
-      "sha256": "8bb35a693de39f47d976dcf8a2cd6d29dcafcdb7bb1bd0a34d0916a4528d0965",
+      "sha256": "d1e3a11712d363b476aded77cbec8f0d6aef87d16ec8512ea70a90c34855ea96",
       "documentos": [
         {
           "id": "Asistencia.gs",
@@ -1382,17 +1382,17 @@
             "listarPrefectos": {
               "tipo": "function",
               "linea": 1267,
-              "hash": "1aa44abcde9a251592fefaaac9a8deac969ed7d6734a10d8ce15e6d057f30968"
+              "hash": "f6f34a15d8937d87e4e2d06a5cc873bf464619f118b7cf5ace5170709d1751d4"
             },
             "altaPrefecto": {
               "tipo": "function",
               "linea": 1294,
-              "hash": "8d6eef9658b05e9c803d9e41b0e3332a069aa9016459fdfe517bd885bd1ea7b4"
+              "hash": "ba56b15311419e5555da75c7403d78cbb2f00494beced37a11e47af18b240a2f"
             },
             "asignarClavePrefecto": {
               "tipo": "function",
               "linea": 1317,
-              "hash": "253f53c2bcbbf85a9942024c909e9047eb1249a8d9f16c7197d845863aa9e1d2"
+              "hash": "7b764f1c16cbf1099a30c7d6f3bed92e8df634a42a7b1d831ff2280d495e12a2"
             },
             "generarClavePrefecto": {
               "tipo": "function",
@@ -1500,7 +1500,7 @@
       ]
     },
     "ClaseLogica.gs": {
-      "sha256": "b958d598109c7622efe0f3db867552151be378dc50b44a84122e28318949a53b",
+      "sha256": "63e8b635c53f0ada743b3a5368248fbe660651e3546878970f0342f939f8ebc7",
       "documentos": [
         {
           "id": "ClaseLogica.gs",
@@ -1583,216 +1583,216 @@
             "guardarClaveVisibleMaestro_": {
               "tipo": "function",
               "linea": 382,
-              "hash": "eab88b428e4ab415be23434914766ad4bbe12e2d3077d06f01fa707d46cf3759"
+              "hash": "3b6b0bc69f1f09d88c9c7483ee07a2acc74d731f7156cfe41219337fcf689e63"
             },
             "listarMaestrosClase": {
               "tipo": "function",
               "linea": 402,
-              "hash": "c3b5ad993632e1c435e8bda6d14b06ffc4b1c84649dbda07092e029288f2b28a"
+              "hash": "08317680afbe24eb7ff10b9cfd477c6eb772f63c79ff47af4f1d9f907a22708f"
             },
             "generarClavesMaestrosClase": {
               "tipo": "function",
-              "linea": 449,
-              "hash": "c75f45f50033939c08b3fe4d1879e0b2259e19e6071ef0337fbd9d9bb07bc03a"
+              "linea": 447,
+              "hash": "3f846552840527ac96d0325d5aecf3c36b58dee55a526ed91b2ea0b2c5c9d1bd"
             },
             "asignarClaveMaestroClase": {
               "tipo": "function",
-              "linea": 520,
-              "hash": "a48472cb714bbb356d2fe30a0376b8d903d8966b5fcb30204634cfaf29fe32ce"
+              "linea": 518,
+              "hash": "8975e2f478fb07489176ab8982ed9fbca54f2b58afe4c0a751b7d9272449c545"
             },
             "normalizarGrupoLetra_": {
               "tipo": "function",
-              "linea": 556,
+              "linea": 554,
               "hash": "a80e80d73640676a1bbc325b8d0d5d096acfb9efef7e202b42dbcbbd733b5e92"
             },
             "coincideGrupoClase_": {
               "tipo": "function",
-              "linea": 565,
+              "linea": 563,
               "hash": "2cbff7f497d64adb3dcb21417ed86440cd72e7a595ac25cc98198ed0dcb0e9ce"
             },
             "listarAlumnosParaClase": {
               "tipo": "function",
-              "linea": 593,
-              "hash": "1ad62f3993a818cefe85c1ed1ba517fe6986d87bf473bf4a91e07a914b5d7707"
+              "linea": 591,
+              "hash": "5cc116f6d97b99fff156e995e5630beb1533963d56a6954a2971c46df2ffc551"
             },
             "asignarClaveAlumnoClase": {
               "tipo": "function",
-              "linea": 643,
-              "hash": "1dd9e23badd293bf73a1604c6b94267b5328eef6748be46f680d82986da0030a"
+              "linea": 641,
+              "hash": "6c57e26c6b8bea6dc0de6546f59b6b8147784fd95b4fa89513b3055dbe485605"
             },
             "generarClaveAleatoriaAlumno_": {
               "tipo": "function",
-              "linea": 687,
+              "linea": 685,
               "hash": "50f04bb26220b9b7c6d59843f2a10b0ff7ca25d56aa60f0d67a14b2eaad556e8"
             },
             "generarClavesAlumnosClase": {
               "tipo": "function",
-              "linea": 700,
-              "hash": "e8637504aef1714796fc6062400d1c4d9f36a6ab02ed02a77cbb4708a333f553"
+              "linea": 698,
+              "hash": "3b7cb98e8c7c0d2b6bdf4029d7bd6db6b9d5419c35e75ff0d67497c32a35d5a6"
             },
             "filaHorarioClase_": {
               "tipo": "function",
-              "linea": 840,
+              "linea": 838,
               "hash": "d00f72e0d2a8a018e41f0270055a4c01d2acc9bb4f4f6142d6f7877eef3ccd8f"
             },
             "horarioDeMaestroClase_": {
               "tipo": "function",
-              "linea": 856,
+              "linea": 854,
               "hash": "4f4c3de90b6398fc9f60318c666f024f1f3a4125b2b96a2372a787e64cf62f94"
             },
             "horarioDeGrupoClase_": {
               "tipo": "function",
-              "linea": 874,
+              "linea": 872,
               "hash": "28dc0519740637dce3062910ada1621c1babaae166d373d5b665e88fbe396e54"
             },
             "claseEnCursoDe_": {
               "tipo": "function",
-              "linea": 892,
+              "linea": 890,
               "hash": "7997d6e4c3c3694df07c0a22fd60fd77eceb0a09fe93bfb23db112857f10ac52"
             },
             "buscarContenidoClase_": {
               "tipo": "function",
-              "linea": 910,
+              "linea": 908,
               "hash": "7b1bbc40f4ddda2142af85cddb8c29fbf410b277b79a042bdef37f172aad2f0d"
             },
             "contenidoDeSlotClase_": {
               "tipo": "function",
-              "linea": 945,
+              "linea": 943,
               "hash": "78ebcf63e8ae2a092dc3886e7c8b9ea200c4c483d4eeff8c348e2a738c3b6c5b"
             },
             "asegurarColumnaClaveAccesoClase_": {
               "tipo": "function",
-              "linea": 966,
+              "linea": 964,
               "hash": "c61c7ba0e7b77766f7791563ecac83a1daea615dffc07cb1880d4fdbc23f7205"
             },
             "claveVisibleAlumno_": {
               "tipo": "function",
-              "linea": 982,
+              "linea": 980,
               "hash": "7a4cc338730d16300e355fb362e91bdbe1e5ba085ee2177c1dbf508624745606"
             },
             "guardarClaveVisibleAlumno_": {
               "tipo": "function",
-              "linea": 993,
-              "hash": "a974549337179f0f9253ecbc9000e996772c3d2776b9f03f32c862717be9bdb0"
+              "linea": 991,
+              "hash": "97af85542d38af8b6cf7983b7e3feff8b1a4b81d017830ce905528dd972b094c"
             },
             "claveDeAccesoAlumno_": {
               "tipo": "function",
-              "linea": 1015,
+              "linea": 1013,
               "hash": "c54b6e28e6bd166dcdea542b7dfed134074ec57006fb722f7404d5a8a97056e6"
             },
             "alumnosConAccesoClase_": {
               "tipo": "function",
-              "linea": 1025,
-              "hash": "2c069a984e0d53c61131c51ba4a12c3fd6a7b9558c03fa932047c2be901d2c42"
+              "linea": 1023,
+              "hash": "6a912121227615d0c79444910d77c2ed4c1cbd51f6fc62475aeacd8b546aa6f8"
             },
             "etiquetaGrupoClase_": {
               "tipo": "function",
-              "linea": 1064,
+              "linea": 1061,
               "hash": "9df5d688529b9b8b4c8bbb3fc70e3a60af2ca58c16df8cf697e63d87704ee3a1"
             },
             "gruposDeSesionClase_": {
               "tipo": "function",
-              "linea": 1071,
+              "linea": 1068,
               "hash": "88623ac1c976222b36604afe9691cf6c82d48fae89628a54e0c77aa24cc5e58f"
             },
             "alumnosDeGrupoClase_": {
               "tipo": "function",
-              "linea": 1116,
+              "linea": 1113,
               "hash": "07bdc7cb72fdf9d309b08060f209f7cbde38440780232a86c16825a336843826"
             },
             "isoFechaClase_": {
               "tipo": "function",
-              "linea": 1132,
+              "linea": 1129,
               "hash": "0f63e98449ec207f63484f52fa6029d0847612a599ed92d3bc5ea216287972a3"
             },
             "lunesSemanaClase_": {
               "tipo": "function",
-              "linea": 1139,
+              "linea": 1136,
               "hash": "ed668982a8a5b8d8da34fdc65bc50e1746bf159b4869d28552b4b09ceca00eb8"
             },
             "diasSemanaClase_": {
               "tipo": "function",
-              "linea": 1147,
+              "linea": 1144,
               "hash": "7cba2c629345dee221653c6c8dddbf9cb8574a9fe648ec0d6a9087ed8af953fe"
             },
             "diasPeriodoClase_": {
               "tipo": "function",
-              "linea": 1166,
+              "linea": 1163,
               "hash": "25ffd0c3adce797acbc91a115ec4306372eaa663d5ca774acb51e1d7920d6dff"
             },
             "etiquetaSemanaClase_": {
               "tipo": "function",
-              "linea": 1203,
+              "linea": 1200,
               "hash": "81310497704860b66d6107a97e58533084ad457ca215d18db274a4751455a56b"
             },
             "horarioSemanaDeGrupoClase_": {
               "tipo": "function",
-              "linea": 1213,
+              "linea": 1210,
               "hash": "dc60a2ece75c042d1a26f68b950434f9716630134e9c253d2fbe418d0f36ee2b"
             },
             "idHorarioClase_": {
               "tipo": "function",
-              "linea": 1254,
+              "linea": 1251,
               "hash": "5e19cf3f116f265a834187d1bed8aeeb1ad87e269d8421010a56dabf0887185f"
             },
             "fechaIsoClase_": {
               "tipo": "function",
-              "linea": 1260,
+              "linea": 1257,
               "hash": "8803b9c10f46413f464ee2c758fc4fd71f8b945301afa48b3d6eb18ad3783d36"
             },
             "claveAltContenidoClase_": {
               "tipo": "function",
-              "linea": 1287,
+              "linea": 1284,
               "hash": "fe579f802254ef636efcd973c9d5843020d9607a4116c95b2947f255192b1cd9"
             },
             "mapaContenidosClase_": {
               "tipo": "function",
-              "linea": 1296,
+              "linea": 1293,
               "hash": "a8b5659658259ea421eb59fa288f110d1b59a11f1d616ac9b7a018e016d4644e"
             },
             "contenidoDeMapaClase_": {
               "tipo": "function",
-              "linea": 1318,
+              "linea": 1315,
               "hash": "7b7d179da1f693bea3851a2c71dddc6fe90201d1ecd62f2b13b5e59d7005ab1c"
             },
             "bloquesEstandarSecundaria_": {
               "tipo": "function",
-              "linea": 1327,
+              "linea": 1324,
               "hash": "c40cbec37f26a9fe009229026a3451e5fa6a5bd81504b3de920f5a9d73a06d2c"
             },
             "horarioBaseSecundariaParaGrupo_": {
               "tipo": "function",
-              "linea": 1340,
+              "linea": 1337,
               "hash": "390657fff4dc04729de4f16fedf68c5507de45c10dc5baa2263da39a15abad45"
             },
             "sembrarHorarioDemoSiVacio_": {
               "tipo": "function",
-              "linea": 1402,
+              "linea": 1399,
               "hash": "4209404ebd2768be2dced429aaee9b0c5d8560b043e438e8257c42e5e4e5f694"
             },
             "horarioMaestroClase": {
               "tipo": "function",
-              "linea": 1430,
+              "linea": 1427,
               "hash": "fba2996105f21a7f1c824becca37a4a6dca3292920ccd41150dc8553596fbf34"
             },
             "guardarContenidoClase": {
               "tipo": "function",
-              "linea": 1560,
+              "linea": 1557,
               "hash": "9f64cd9b4195e34ad2c5ab318183ae1921acd993dfab487387eb2803be0e1c3b"
             },
             "contextoClaseAlumno": {
               "tipo": "function",
-              "linea": 1618,
+              "linea": 1615,
               "hash": "c4ae6c2cbc64db1200de5a7084a134e528e7a89d12ba2890e678a3847401a63d"
             },
             "textoPruebaAsignaturaClase_": {
               "tipo": "function",
-              "linea": 1709,
+              "linea": 1706,
               "hash": "be4ee398d63f3b5cdc307e95745da3763e9a432d056417789a066540ceb8de82"
             },
             "_sembrarContenidoPrueba1C_": {
               "tipo": "function",
-              "linea": 1829,
+              "linea": 1826,
               "hash": "ff68979c129040aabbc2e50151c451af82cbb49fd18c0b2e66127dfca2ca5f46"
             }
           },
@@ -3595,7 +3595,7 @@
       ]
     },
     "04_Sesiones.gs": {
-      "sha256": "e6b4ff3f9249d6cc47cbdbbda1bdf2f33ea2928fc0102a89961975d273e7badd",
+      "sha256": "0b560fd6ebf2ad04ca82fb30edfc98c9eecbad619c7c3fc6cc9d409df5e1f496",
       "documentos": [
         {
           "id": "04_Sesiones.gs",
@@ -3713,17 +3713,17 @@
             "listarPersonalApoyo": {
               "tipo": "function",
               "linea": 539,
-              "hash": "368b45f68fa65d37d96306aeb2a12821b06936936593f1e8fa6ec6ff16819e4a"
+              "hash": "1203aa3ba476e059fc7ea32ee4720d70ac626e065d4113eceff5d963b308b542"
             },
             "altaPersonalApoyo": {
               "tipo": "function",
               "linea": 561,
-              "hash": "84c63e25df99638c883e7b179a137e58c6d8c42c4f914d9af46119956a4cc7b8"
+              "hash": "0dc768278bef5390e9ed771432e2e3588f930a857468b3ab7ed0e6b7e6cdbee8"
             },
             "asignarClavePersonalApoyo": {
               "tipo": "function",
               "linea": 587,
-              "hash": "c944cf65f3140278b179a279093819af3f83abc54664e3bbb36f7f43f3a12f8f"
+              "hash": "c80cdee0ed59aeabcbca8afed314ca36fa3fae3db64cb2658fe18c3aed62614d"
             },
             "generarClavePersonalApoyo": {
               "tipo": "function",
@@ -3806,7 +3806,7 @@
       ]
     },
     "05_Panel.gs": {
-      "sha256": "00c476ad71dbae85e0a014144451e7ccb6333808c0958257670d266d8a69bc84",
+      "sha256": "83f3440a8c11e8bcefeaf45170eac7c2241641b63959c145b4caa5764c2d51c0",
       "documentos": [
         {
           "id": "05_Panel.gs",
@@ -3839,7 +3839,7 @@
             "enriquecerAlumnosConAcceso_": {
               "tipo": "function",
               "linea": 484,
-              "hash": "95e94bd7f5e02a89cb901f9c26196f1addaaffd9d7933fa474dd251a93ce87ff"
+              "hash": "da3a05be9578c61582d0e6c0793851638fe2ccec469ec75a426059a1851b6a6c"
             },
             "_leerAlumnosResumen_": {
               "tipo": "function",

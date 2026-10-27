@@ -117,6 +117,35 @@ function contextoInicialPlaneacionNEM(token) {
 /**
  * Crea o actualiza una Planeación Didáctica NEM (en borrador o en revisión).
  */
+/**
+ * Propiedad de una planeación didáctica.
+ *
+ * El administrador puede operar sobre cualquiera; un docente solo sobre las
+ * suyas. Las planeaciones antiguas sin propietario declarado se dejan pasar
+ * para no romper datos heredados.
+ */
+function exigirPropietarioPlaneacion_(ses, filaPlan) {
+  if (!filaPlan) throw new Error("Planeación no encontrada.");
+  if (String((ses && ses.rol) || "").toLowerCase() === "admin") return true;
+  const dueno = normalizarNombrePref_(filaPlan["DocentePropietario"] || filaPlan["docentepropietario"] || filaPlan["Docente"] || filaPlan["docente"] || "");
+  if (!dueno) return true;
+  const yo = normalizarNombrePref_((ses && (ses.maestroNombre || ses.nombre)) || "");
+  if (dueno !== yo) throw new Error("No tienes autorización para modificar la planeación de otro docente.");
+  return true;
+}
+
+/**
+ * Lectura de una planeación: además de la propia, se permite leer lo ya
+ * publicado en el repositorio escolar, pero nunca el borrador de otro docente.
+ */
+function exigirLecturaPlaneacion_(ses, filaPlan) {
+  if (!filaPlan) throw new Error("Planeación no encontrada.");
+  if (String((ses && ses.rol) || "").toLowerCase() === "admin") return true;
+  const estado = String(filaPlan["Estado"] || filaPlan["estado"] || "BORRADOR").toUpperCase();
+  if (estado === "PUBLICADA" || estado === "APROBADO" || estado === "TERMINADA") return true;
+  return exigirPropietarioPlaneacion_(ses, filaPlan);
+}
+
 function crearOActualizarPlaneacionNEM(token, datos) {
   const ses = exigirClaseRol_(token, ["admin", "maestro"]);
   if (!datos || typeof datos !== "object") throw new Error("Datos de planeación no proporcionados.");
@@ -474,6 +503,7 @@ function clonarPlaneacionAGlobal(token, idPlaneacionOriginal) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idOriginal;
   })[0];
   if (!original) throw new Error("Planeación didáctica original no encontrada.");
+  exigirLecturaPlaneacion_(ses, original);
 
   const sesionesOriginales = _leerFilas_("SesionesNEM").filter(function (s) {
     return String(s["IdPlaneacion"] || s["idplaneacion"] || s["IDPLANEACION"] || "").trim() === idOriginal;
@@ -678,6 +708,7 @@ function obtenerPlaneacionCompletaNEM(token, idPlaneacion) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan;
   })[0];
   if (!pFila) throw new Error("Planeación no encontrada.");
+  exigirLecturaPlaneacion_(ses, pFila);
 
   const sesionesFilas = _leerFilas_("SesionesNEM").filter(function (s) {
     return String(s["IdPlaneacion"] || s["idplaneacion"] || s["IDPLANEACION"] || "").trim() === idPlan;
@@ -858,6 +889,11 @@ function guardarSesionNEM(token, payloadSesion) {
   const filas = _leerFilas_("SesionesNEM");
   const previa = filas.filter(function (s) { return String(s["Id"] || s["id"] || s["ID"] || "").trim() === idSes; })[0];
   if (!previa) throw new Error("Sesión no encontrada.");
+  const idPlanReal = String(previa["IdPlaneacion"] || previa["idplaneacion"] || previa["IDPLANEACION"] || idPlan).trim();
+  const planDeLaSesion = _leerFilas_("PlaneacionesNEM").filter(function (p) {
+    return String(p["Id"] || p["id"] || p["ID"] || "").trim() === idPlanReal;
+  })[0];
+  exigirPropietarioPlaneacion_(ses, planDeLaSesion);
 
   const titulo = String(payloadSesion.titulo || payloadSesion.Titulo || previa["Titulo"] || previa["titulo"] || "").trim();
   const numSes = Number(payloadSesion.numeroSesion || payloadSesion.NumeroSesion || previa["NumeroSesion"] || previa["numerosesion"] || 1);
@@ -944,6 +980,7 @@ function aprobarPlaneacionNEM(token, idPlaneacion) {
   const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) { return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan; })[0];
   if (!previa) throw new Error("Planeación no encontrada.");
+  exigirPropietarioPlaneacion_(ses, previa);
 
   // Validaciones mínimas pedagógicas
   if (!previa["ContenidoSintetico"] && !previa["contenidosintetico"] && !previa["PDA"] && !previa["pda"]) {
@@ -984,6 +1021,10 @@ function calendarizarSesionNEM(token, idSesion, idHorario, fecha) {
   const filasSes = _leerFilas_("SesionesNEM");
   const sesion = filasSes.filter(function (s) { return String(s["Id"] || s["id"] || s["ID"] || "").trim() === idSes; })[0];
   if (!sesion) throw new Error("Sesión no encontrada.");
+  const planDeSesion = _leerFilas_("PlaneacionesNEM").filter(function (p) {
+    return String(p["Id"] || p["id"] || p["ID"] || "").trim() === String(sesion["IdPlaneacion"] || sesion["idplaneacion"] || sesion["IDPLANEACION"] || "").trim();
+  })[0];
+  exigirPropietarioPlaneacion_(ses, planDeSesion);
 
   const filaH = _leerFilas_("Horarios").filter(function (f) {
     return idHorarioClase_(f["Id"] || f["id"] || f["ID"]) === idH;

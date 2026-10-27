@@ -438,7 +438,7 @@ console.log("\n--- PRUEBAS PUNTO B: completarBancoLecturas_ ---");
   console.log("PASS B3: Reconstrucción forzada autorizada en PRUEBAS ejecutada correctamente");
 }
 
-// Test B4: migrarLecturasSiEsAntiguo() llama completarBancoLecturas_(false) sin borrar Preguntas
+// Test B4: _migrarLecturasSiEsAntiguo_() llama completarBancoLecturas_(false) sin borrar Preguntas
 {
   const encLecViejo = ["EncabezadoViejo", "Col2"];
   const encPreg = ["ID Lectura", "Orden", "Enunciado", "Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Respuesta correcta", "Nivel"];
@@ -453,10 +453,10 @@ console.log("\n--- PRUEBAS PUNTO B: completarBancoLecturas_ ---");
     }
   });
 
-  run('migrarLecturasSiEsAntiguo()');
+  run('_migrarLecturasSiEsAntiguo_()');
   const pPreg = bookSheets["Preguntas"];
   if (pPreg._clearCount > 0) {
-    console.error("FAIL B4: migrarLecturasSiEsAntiguo causó borrado de Preguntas en producción!");
+    console.error("FAIL B4: _migrarLecturasSiEsAntiguo_ causó borrado de Preguntas en producción!");
     process.exit(1);
   }
   const pregGuardada = pPreg._data.find(f => f[0] === "LEC_EXISTENTE");
@@ -464,7 +464,7 @@ console.log("\n--- PRUEBAS PUNTO B: completarBancoLecturas_ ---");
     console.error("FAIL B4: Pregunta existente fue borrada durante migración!");
     process.exit(1);
   }
-  console.log("PASS B4: migrarLecturasSiEsAntiguo() migra legítimamente preservando Preguntas existentes");
+  console.log("PASS B4: _migrarLecturasSiEsAntiguo_() migra legítimamente preservando Preguntas existentes");
 }
 
 // ==========================================
@@ -560,7 +560,7 @@ console.log("\n--- PRUEBAS PUNTO C: escribirConfig_ ---");
   console.log("PASS C3: Claves permitidas (IDENTIDAD_NOMBRE, URL_SITIO_ALUMNO) se actualizan e insertan correctamente");
 }
 
-// Test C4: asegurarConfig() inicializa Config sin intentar escribir credenciales sensibles
+// Test C4: _asegurarConfig_() inicializa Config sin intentar escribir credenciales sensibles
 {
   const { eval: run, bookSheets } = crearEmulador({
     initialSheets: {
@@ -568,7 +568,7 @@ console.log("\n--- PRUEBAS PUNTO C: escribirConfig_ ---");
     }
   });
 
-  run('asegurarConfig()');
+  run('_asegurarConfig_()');
   const pCfg = bookSheets["Config"];
   
   const hasClaveAdmin = pCfg._data.some(f => f[0] === "CLAVE_ADMIN");
@@ -577,18 +577,18 @@ console.log("\n--- PRUEBAS PUNTO C: escribirConfig_ ---");
   const hasEsDef = pCfg._data.some(f => f[0] === "CLAVE_ADMIN_ES_DEFAULT");
 
   if (hasClaveAdmin || hasSalt || hasHash || hasEsDef) {
-    console.error("FAIL C4: asegurarConfig() escribió credenciales sensibles a la hoja Config!");
+    console.error("FAIL C4: _asegurarConfig_() escribió credenciales sensibles a la hoja Config!");
     process.exit(1);
   }
 
   const hasIntentos = pCfg._data.some(f => f[0] === "INTENTOS_DEFAULT");
   const hasAsig = pCfg._data.some(f => f[0] === "ASIGNATURAS");
   if (!hasIntentos || !hasAsig) {
-    console.error("FAIL C4: asegurarConfig() no escribió parámetros legítimos!");
+    console.error("FAIL C4: _asegurarConfig_() no escribió parámetros legítimos!");
     process.exit(1);
   }
 
-  console.log("PASS C4: asegurarConfig() ejecuta limpiamente sin escribir credenciales sensibles en Config");
+  console.log("PASS C4: _asegurarConfig_() ejecuta limpiamente sin escribir credenciales sensibles en Config");
 }
 
 console.log("\n=== TODAS LAS PRUEBAS DE LOS PUNTOS A, B Y C PASARON EXITOSAMENTE (100% OK) ===");

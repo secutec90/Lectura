@@ -32,7 +32,7 @@ const CONFIG_POR_DEFECTO = {
   categorias: "[]"
 };
 
-const OPCIONES_ADMIN = { usuario: "Admin", pass: "Admin-dev" };
+const OPCIONES_ADMIN = { usuario: "", pass: "" };
 
 const GRUPOS_SIMULACION = {
   Matutino: ["1A", "1B", "1C", "1D", "1E", "2A", "2B", "2C", "2D", "2E", "3A", "3B", "3C", "3D", "3E"],
@@ -465,6 +465,9 @@ function verificarAdmin(credenciales) {
     return { autenticado: false, bloqueado: true, mensaje: "Demasiados intentos. Espera unos minutos." };
   }
   const admin = _credencialesAdmin_();
+  if (!admin.usuario || !admin.pass) {
+    return { autenticado: false, bloqueado: false, mensaje: "El acceso con usuario y contraseña no está configurado. Usa la sesión del panel." };
+  }
   const correcto = !!credenciales && (
     (credenciales.usuario === admin.usuario && (credenciales.pass === admin.pass || credenciales.clave === admin.pass))
   );
@@ -695,7 +698,7 @@ function guardarRespuestaFormulario(datos) {
 // Simulación de respuestas
 // --------------------------------------------------------
 function _claveSimulacion_() {
-  return PropertiesService.getScriptProperties().getProperty("CLAVE_ESPECIAL") || "Memo#1";
+  return String(PropertiesService.getScriptProperties().getProperty("CLAVE_ESPECIAL") || "").trim();
 }
 
 function elegirPonderado(opciones, pesos) {
@@ -776,8 +779,9 @@ function simularRespuestasFormulario(credenciales, cantidad, passEspecial, perfi
   if (!verificarAdmin(credenciales).autenticado) {
     return { exito: false, mensaje: "Sesión no válida." };
   }
-  if (String(passEspecial) !== _claveSimulacion_()) {
-    return { exito: false, mensaje: "Contraseña de simulación incorrecta." };
+  const claveSimulacion = _claveSimulacion_();
+  if (!claveSimulacion || String(passEspecial) !== claveSimulacion) {
+    return { exito: false, mensaje: "La simulación no está configurada o la clave es incorrecta." };
   }
   const n = Number(cantidad);
   if (!Number.isInteger(n) || n < 1 || n > 500) {
@@ -844,8 +848,9 @@ function limpiarSimuladosFormulario(credenciales, passEspecial) {
   if (!verificarAdmin(credenciales).autenticado) {
     return { exito: false, mensaje: "Sesión no válida." };
   }
-  if (String(passEspecial) !== _claveSimulacion_()) {
-    return { exito: false, mensaje: "Contraseña incorrecta." };
+  const claveSimulacion = _claveSimulacion_();
+  if (!claveSimulacion || String(passEspecial) !== claveSimulacion) {
+    return { exito: false, mensaje: "La simulación no está configurada o la clave es incorrecta." };
   }
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(30000)) {

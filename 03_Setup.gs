@@ -37,10 +37,10 @@ function _verificarYCrearPestanas_() {
       creo = true;
     }
   });
-  migrarLecturasSiEsAntiguo();
+  _migrarLecturasSiEsAntiguo_();
   _migrarAlumnosSiEsAntiguo_();
   _repararResultadosSiEsNecesario_();
-  asegurarConfig();
+  _asegurarConfig_();
   asegurarColumnaIntentosGrupo();
   asegurarColumnaTurnoGrupo();
   asegurarColumnaNivelPreguntas();
@@ -51,7 +51,7 @@ function _verificarYCrearPestanas_() {
   if (creo) _formatearHojasDeLectura_();
 }
 
-function migrarLecturasSiEsAntiguo() {
+function _migrarLecturasSiEsAntiguo_() {
   const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Lecturas");
@@ -61,14 +61,14 @@ function migrarLecturasSiEsAntiguo() {
   const col1 = String(enc[0] || "").trim();
   
   if (col1 !== ENCABEZADOS.Lecturas[0]) {
-    Logger.log("migrarLecturasSiEsAntiguo: estructura de encabezado desconocida (" + col1 + "). Migración detenida sin modificar datos.");
+    Logger.log("_migrarLecturasSiEsAntiguo_: estructura de encabezado desconocida (" + col1 + "). Migración detenida sin modificar datos.");
     return;
   }
   
   if (p.getLastRow() >= 2) {
     const filas = _leerFilas_("Lecturas");
     if (!filas || filas.length === 0) {
-      Logger.log("migrarLecturasSiEsAntiguo: no se pudieron interpretar las filas existentes en Lecturas. Operación cancelada.");
+      Logger.log("_migrarLecturasSiEsAntiguo_: no se pudieron interpretar las filas existentes en Lecturas. Operación cancelada.");
       return;
     }
     const validas = filas.filter(function (l) {
@@ -79,7 +79,7 @@ function migrarLecturasSiEsAntiguo() {
       return id && asig && tema && grado;
     });
     if (validas.length === 0) {
-      Logger.log("migrarLecturasSiEsAntiguo: datos ambiguos o ninguna fila reconocida en Lecturas (" + filas.length + " filas existentes). Se conservan los registros existentes sin modificaciones.");
+      Logger.log("_migrarLecturasSiEsAntiguo_: datos ambiguos o ninguna fila reconocida en Lecturas (" + filas.length + " filas existentes). Se conservan los registros existentes sin modificaciones.");
       return;
     }
     const needCols = ENCABEZADOS.Lecturas.length;
@@ -293,7 +293,7 @@ function buscarIdLecturaPorTema_(grado, asig, tema, intento) {
   return "BANCO_" + g + "_" + (asig || "Español").substring(0, 3) + "_" + (tema || "Lectura").substring(0, 10);
 }
 
-function asegurarConfig() {
+function _asegurarConfig_() {
   const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Config");

@@ -404,7 +404,7 @@ function guardarResultadosExamen(datos) {
 
     let recomendacion = "";
     try {
-      recomendacion = pedirRecomendacionAlumnoDeepSeek(payloadIa);
+      recomendacion = _pedirRecomendacionAlumnoDeepSeek_(payloadIa);
       if (recomendacion) {
         const colRec = enc.indexOf("Recomendación") + 1;
         if (colRec > 0) p.getRange(filaGuardada, colRec).setValue(recomendacion);

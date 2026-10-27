@@ -354,7 +354,7 @@ console.log("\n--- TEST 2: A-01 — Aislamiento estricto de siembras demo ---");
     "sembrarAsistenciaDemo bloquea libro si ID real != ID configurado, incluso para admin");
 }
 
-// 2.3 sembrarContenidoPrueba1C: Bloqueo en PRODUCCION con y sin token
+// 2.3 _sembrarContenidoPrueba1C_: Bloqueo en PRODUCCION con y sin token
 {
   const ID_PROD = "1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU";
   const ctx = crearContexto({
@@ -368,17 +368,17 @@ console.log("\n--- TEST 2: A-01 — Aislamiento estricto de siembras demo ---");
   });
 
   let errSinToken = null;
-  try { ctx.sembrarContenidoPrueba1C(); } catch (e) { errSinToken = e; }
+  try { ctx._sembrarContenidoPrueba1C_(); } catch (e) { errSinToken = e; }
   assert(errSinToken && errSinToken.message.includes("PRUEBAS"),
-    "sembrarContenidoPrueba1C sin token en PRODUCCIÓN es bloqueada");
+    "_sembrarContenidoPrueba1C_ sin token en PRODUCCIÓN es bloqueada");
 
   let errConAdmin = null;
-  try { ctx.sembrarContenidoPrueba1C("tok_admin"); } catch (e) { errConAdmin = e; }
+  try { ctx._sembrarContenidoPrueba1C_("tok_admin"); } catch (e) { errConAdmin = e; }
   assert(errConAdmin && errConAdmin.message.includes("PRUEBAS"),
-    "sembrarContenidoPrueba1C CON TOKEN ADMIN en PRODUCCIÓN es bloqueada");
+    "_sembrarContenidoPrueba1C_ CON TOKEN ADMIN en PRODUCCIÓN es bloqueada");
 }
 
-// 2.4 sembrarContenidoPrueba1C: Bloqueo si ID real != ID configurado
+// 2.4 _sembrarContenidoPrueba1C_: Bloqueo si ID real != ID configurado
 {
   const ID_TEST = "1TEST_BOOK_AUTHORIZED_999999999999999";
   const ctx = crearContexto({
@@ -392,9 +392,9 @@ console.log("\n--- TEST 2: A-01 — Aislamiento estricto de siembras demo ---");
   });
 
   let err = null;
-  try { ctx.sembrarContenidoPrueba1C("tok_admin"); } catch (e) { err = e; }
+  try { ctx._sembrarContenidoPrueba1C_("tok_admin"); } catch (e) { err = e; }
   assert(err && err.message.includes("no coincide"),
-    "sembrarContenidoPrueba1C bloquea libro si ID real != ID configurado para admin");
+    "_sembrarContenidoPrueba1C_ bloquea libro si ID real != ID configurado para admin");
 }
 
 // ==============================================================================
@@ -736,14 +736,14 @@ console.log("\n--- TEST 5: M-02 — Migración segura y no destructiva de Lectur
   });
 
   const pSheet = ctx.__sheets["Lecturas"];
-  ctx.migrarLecturasSiEsAntiguo();
+  ctx._migrarLecturasSiEsAntiguo_();
 
   assert(pSheet._clearCount === 0,
-    "migrarLecturasSiEsAntiguo NUNCA borra la hoja con clearContents ante filas incompletas o temporales");
+    "_migrarLecturasSiEsAntiguo_ NUNCA borra la hoja con clearContents ante filas incompletas o temporales");
   assert(pSheet._data.length === 3,
-    "migrarLecturasSiEsAntiguo conserva íntegras las 3 filas existentes en Lecturas");
+    "_migrarLecturasSiEsAntiguo_ conserva íntegras las 3 filas existentes en Lecturas");
   assert(ctx.__logs.some(l => l.includes("datos ambiguos o ninguna fila reconocida")),
-    "migrarLecturasSiEsAntiguo registra un diagnóstico claro en Logger sin modificar datos");
+    "_migrarLecturasSiEsAntiguo_ registra un diagnóstico claro en Logger sin modificar datos");
 }
 
 // 5.2 Estructura de encabezado desconocida: no renombrar ni borrar
@@ -759,7 +759,7 @@ console.log("\n--- TEST 5: M-02 — Migración segura y no destructiva de Lectur
   });
 
   const pSheet = ctx.__sheets["Lecturas"];
-  ctx.migrarLecturasSiEsAntiguo();
+  ctx._migrarLecturasSiEsAntiguo_();
 
   assert(pSheet.name === "Lecturas",
     "No se renombra la hoja Lecturas ante encabezados desconocidos (se conserva el nombre)");

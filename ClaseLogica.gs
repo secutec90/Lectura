@@ -1826,7 +1826,7 @@ function textoPruebaAsignaturaClase_(asig, indiceDia, maestro, fecha, bloque) {
  *    sea accesible, que su ID real no sea el libro de producción y que coincida
  *    con el ID autorizado.
  */
-function sembrarContenidoPrueba1C(token) {
+function _sembrarContenidoPrueba1C_(token) {
   const props = PropertiesService.getScriptProperties();
   const entorno = String(props.getProperty("ENTORNO") || "").trim().toUpperCase();
   const idConfig = String(props.getProperty("HOJA_ID") || "").trim();
@@ -1841,17 +1841,17 @@ function sembrarContenidoPrueba1C(token) {
 
   // Tanto con token como sin token, la siembra demo está estrictamente restringida al entorno y libro de pruebas autorizado.
   if (entorno !== "PRUEBAS") {
-    throw new Error("Acceso denegado: sembrarContenidoPrueba1C está estrictamente restringida a ENTORNO=PRUEBAS.");
+    throw new Error("Acceso denegado: _sembrarContenidoPrueba1C_ está estrictamente restringida a ENTORNO=PRUEBAS.");
   }
   if (!idConfig || idConfig === ID_PRODUCCION) {
-    throw new Error("Acceso denegado: sembrarContenidoPrueba1C requiere un ID de libro de pruebas explícito y no puede ser el libro de producción.");
+    throw new Error("Acceso denegado: _sembrarContenidoPrueba1C_ requiere un ID de libro de pruebas explícito y no puede ser el libro de producción.");
   }
 
   const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo abrir la hoja.");
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
   if (idReal === ID_PRODUCCION) {
-    throw new Error("BLOQUEO DE SEGURIDAD: sembrarContenidoPrueba1C no puede ejecutarse sobre el libro de producción.");
+    throw new Error("BLOQUEO DE SEGURIDAD: _sembrarContenidoPrueba1C_ no puede ejecutarse sobre el libro de producción.");
   }
   if (!idReal || idReal !== idConfig) {
     throw new Error("BLOQUEO DE SEGURIDAD: el libro abierto (" + idReal + ") no coincide con el libro de pruebas configurado (" + idConfig + ").");

@@ -297,7 +297,7 @@ function _historialAlumnoParaReporte_(matricula, tokenExcluir) {
   };
 }
 
-function pedirRecomendacionAlumnoDeepSeek(payload) {
+function _pedirRecomendacionAlumnoDeepSeek_(payload) {
   const clave = obtenerClaveDeepSeek_();
   if (!clave) return "";
   try {

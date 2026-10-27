@@ -18,18 +18,26 @@ function obtenerCredencialesAdminAutoritativas_() {
   let salt = String(props.getProperty("CLAVE_ADMIN_SALT") || "").trim();
   let esDef = String(props.getProperty("CLAVE_ADMIN_ES_DEFAULT") || "").trim();
   if (!hash || !salt) {
-    salt = Utilities.getUuid();
-    hash = hashClave(CLAVE_ADMIN_DEFAULT, salt);
-    esDef = "1";
-    try {
-      props.setProperties({
-        CLAVE_ADMIN_SALT: salt,
-        CLAVE_ADMIN_HASH: hash,
-        CLAVE_ADMIN_ES_DEFAULT: "1"
-      });
-    } catch (eProps) {}
+    return { configurada: false, hash: "", salt: "", esDefault: false };
   }
   return { configurada: true, hash: hash, salt: salt, esDefault: (esDef === "1") };
+}
+
+/**
+ * Fija la contraseña del panel. Se ejecuta MANUALMENTE desde el editor de Apps Script:
+ * el guion bajo final la hace privada, así que no es invocable desde la web.
+ *   fijarClaveAdminInicial_("una-clave-larga")
+ */
+function fijarClaveAdminInicial_(nuevaClave) {
+  const clave = String(nuevaClave || "").trim();
+  if (clave.length < 10) throw new Error("La contraseña debe tener al menos 10 caracteres.");
+  const salt = Utilities.getUuid();
+  PropertiesService.getScriptProperties().setProperties({
+    CLAVE_ADMIN_SALT: salt,
+    CLAVE_ADMIN_HASH: hashClave(clave, salt),
+    CLAVE_ADMIN_ES_DEFAULT: "0"
+  });
+  return "Contraseña del panel actualizada.";
 }
 
 /**
@@ -44,11 +52,10 @@ function credencialesEncuestasPanel(tokenSesion) {
     const sesion = obtenerSesionValida_(t);
     if (!sesion || String(sesion.rol || "").toLowerCase() !== "admin") return { ok: false };
     const props = PropertiesService.getScriptProperties();
-    return {
-      ok: true,
-      usuario: props.getProperty("ENCUESTAS_USUARIO") || "Admin",
-      clave: props.getProperty("ENCUESTAS_CLAVE") || "Admin-dev"
-    };
+    const usuario = String(props.getProperty("ENCUESTAS_USUARIO") || "").trim();
+    const clave = String(props.getProperty("ENCUESTAS_CLAVE") || "").trim();
+    if (!usuario || !clave) return { ok: false };
+    return { ok: true, usuario: usuario, clave: clave };
   } catch (e) {
     return { ok: false };
   }
@@ -76,12 +83,24 @@ function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
 
   // 1. Administrador (fuente autoritativa: ScriptProperties)
   const credsAdmin = obtenerCredencialesAdminAutoritativas_();
+  const esUsuAdmin = !usu || esUsuarioAdminAsistencia_(usu);
   let claveAdminOk = false;
   if (credsAdmin.configurada) {
     claveAdminOk = (hashClave(claveIngresada, credsAdmin.salt) === credsAdmin.hash);
+  } else if (esUsuAdmin) {
+    return {
+      ok: false,
+      requiereConfiguracion: true,
+      mensaje: "La contraseña del panel no está configurada. Ejecuta fijarClaveAdminInicial_('tu-clave') desde el editor de Apps Script."
+    };
   }
-
-  const esUsuAdmin = !usu || esUsuarioAdminAsistencia_(usu);
+  if (claveAdminOk && esUsuAdmin && credsAdmin.esDefault) {
+    return {
+      ok: false,
+      requiereCambioClave: true,
+      mensaje: "La contraseña del panel sigue siendo la de fábrica. Cámbiala con fijarClaveAdminInicial_('tu-clave') desde el editor de Apps Script."
+    };
+  }
   if (claveAdminOk && esUsuAdmin) {
     const token = Utilities.getUuid();
     const cache = CacheService.getScriptCache();

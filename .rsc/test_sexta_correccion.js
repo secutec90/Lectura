@@ -236,7 +236,7 @@ function crearContextoPruebas(opts = {}) {
         getUrl: () => "https://script.google.com/macros/s/AKfycbz_test/exec"
       })
     },
-    pedirRecomendacionAlumnoDeepSeek: () => "",
+    _pedirRecomendacionAlumnoDeepSeek_: () => "",
     cacheStore: cacheStore,
     hojas: hojas,
     libroMock: libroMock

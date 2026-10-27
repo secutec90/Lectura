@@ -66,14 +66,14 @@ function valoresHojaSinEncabezadosGordos_(p, skipNombres) {
   return { enc: enc, filas: filas };
 }
 
-function leerResultadosDeTodasLasPestanas() {
+function _leerResultadosDeTodasLasPestanas_() {
   if (memoResultados_) return memoResultados_;
   const cacheados = cacheGetResultados_();
   if (cacheados) {
     memoResultados_ = cacheados;
     return cacheados;
   }
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return [];
   const vistos = {}, out = [];
   const skipGordos = { "Segundos por pregunta": true };
@@ -221,7 +221,7 @@ function importarAlumnosDesdeExcel(token, datosBase64) {
   try {
     const texto = Utilities.newBlob(Utilities.base64Decode(datosBase64)).getDataAsString("UTF-8");
     const filas = Utilities.parseCsv(texto);
-    const p = obtenerLibro().getSheetByName("Alumnos");
+    const p = _obtenerLibro_().getSheetByName("Alumnos");
     let agregados = 0;
     for (let i = 1; i < filas.length; i++) {
       if (!filas[i] || filas[i].length < 3) continue;
@@ -242,8 +242,8 @@ function importarAlumnosDesdeExcel(token, datosBase64) {
 /**********************************************************************
  * HOJAS — FORMATO
  **********************************************************************/
-function formatearHojasDeLectura() {
-  const libro = obtenerLibro();
+function _formatearHojasDeLectura_() {
+  const libro = _obtenerLibro_();
   const lec = libro.getSheetByName("Lecturas");
   if (lec) {
     lec.setFrozenRows(1);

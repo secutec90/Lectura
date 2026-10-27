@@ -28,7 +28,7 @@ function ppmObjetivoDeTodos() {
     };
   });
   try {
-    const extra = JSON.parse(leerConfig("PPM_OBJETIVO", "{}") || "{}");
+    const extra = JSON.parse(_leerConfig_("PPM_OBJETIVO", "{}") || "{}");
     Object.keys(extra || {}).forEach(function (g) {
       if (extra[g] && (extra[g].ppmMin || extra[g].ppmMax || extra[g].ppmObjetivo)) {
         base[g] = {
@@ -75,11 +75,11 @@ function guardarPpmObjetivo(token, json) {
 /**********************************************************************
  * ALUMNOS / GRUPOS / INTENTOS
  **********************************************************************/
-function obtenerGruposPorGrado(grado) {
+function _obtenerGruposPorGrado_(grado) {
   const g = normalizarGradoServer(grado);
   let res = [];
   try {
-    const todos = leerAlumnosResumen();
+    const todos = _leerAlumnosResumen_();
     res = uniq(todos.filter(function (a) {
       const ga = normalizarGradoServer(a.grado) || normalizarGradoServer(a.grupo);
       return (!g || ga === g) && String(a.activo).toUpperCase() !== "NO";
@@ -94,7 +94,7 @@ function obtenerGruposPorGrado(grado) {
 function obtenerAlumnosPorGrupo(grupo) {
   const g = String(grupo || "").trim().toLowerCase();
   let todos = [];
-  try { todos = leerAlumnosResumen(); } catch (e) { return []; }
+  try { todos = _leerAlumnosResumen_(); } catch (e) { return []; }
   return todos
     .filter(function (a) {
       return String(a.grupo).trim().toLowerCase() === g && String(a.activo).toUpperCase() !== "NO";
@@ -113,7 +113,7 @@ function obtenerAlumnosPorGrupo(grupo) {
 function catalogoLoginPorGrado(grado) {
   const g = normalizarGradoServer(grado);
   let todos = [];
-  try { todos = leerAlumnosResumen(); } catch (e) { todos = []; }
+  try { todos = _leerAlumnosResumen_(); } catch (e) { todos = []; }
   const activos = todos.filter(function (a) {
     const ga = normalizarGradoServer(a.grado) || normalizarGradoServer(a.grupo);
     return (!g || ga === g) && String(a.activo).toUpperCase() !== "NO";
@@ -129,16 +129,16 @@ function catalogoLoginPorGrado(grado) {
   };
 }
 
-function buscarAlumno(matricula) {
+function _buscarAlumno_(matricula) {
   const m = String(matricula || "").trim().toLowerCase();
   if (!m) return null;
-  const todos = leerAlumnosResumen();
+  const todos = _leerAlumnosResumen_();
   let l = todos.filter(function (a) {
     return String(a.matricula).trim().toLowerCase() === m;
   });
   if (!l.length) {
     try {
-      const acc = leerFilas("AccesoClaseAlumnos");
+      const acc = _leerFilas_("AccesoClaseAlumnos");
       for (let i = 0; i < acc.length; i++) {
         const f = acc[i];
         const u = String(f["Usuario"] || "").trim().toLowerCase();
@@ -175,8 +175,8 @@ function buscarAlumno(matricula) {
   return null;
 }
 
-function filaAlumnoPorMatricula(matricula, grupo) {
-  const filas = leerFilas("Alumnos");
+function _filaAlumnoPorMatricula_(matricula, grupo) {
+  const filas = _leerFilas_("Alumnos");
   const mat = String(matricula || "").trim();
   const gru = String(grupo || "").trim().toLowerCase();
   if (!mat) return null;
@@ -195,17 +195,17 @@ function filaAlumnoPorMatricula(matricula, grupo) {
   return a || null;
 }
 
-function contarIntentosAlumno(matricula) {
+function _contarIntentosAlumno_(matricula) {
   const mBuscada = String(matricula || "").trim().toLowerCase();
   if (!mBuscada) return 0;
-  return leerResultadosDeTodasLasPestanas().filter(function (r) {
+  return _leerResultadosDeTodasLasPestanas_().filter(function (r) {
     return String(r.matricula || "").trim().toLowerCase() === mBuscada;
   }).length;
 }
 
 function intentosPermitidosDe(alumno) {
   const extraAlumno = Number(alumno["Intentos extra"] || alumno.extra || 0);
-  const base = Number(leerConfig("INTENTOS_DEFAULT", "1"));
+  const base = Number(_leerConfig_("INTENTOS_DEFAULT", "1"));
   const extraGrupo = extraGrupoDe_(alumno["Grupo"] || alumno.grupo);
   return base + extraAlumno + extraGrupo;
 }
@@ -244,7 +244,7 @@ function consultarCupoAlumno(matricula) {
 
 function altaAlumno(token, datos) {
   exigirAdmin(token);
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   p.appendRow([
     String(datos.matricula), String(datos.nombre),
     String(datos.grado), String(datos.grupo).toLowerCase(),
@@ -256,18 +256,18 @@ function altaAlumno(token, datos) {
 
 function bajaAlumno(token, matricula) {
   exigirAdmin(token);
-  const a = filaAlumnoPorMatricula(matricula);
+  const a = _filaAlumnoPorMatricula_(matricula);
   if (!a) throw new Error("No existe ese alumno.");
-  obtenerLibro().getSheetByName("Alumnos").getRange(a._fila, 5).setValue("NO");
+  _obtenerLibro_().getSheetByName("Alumnos").getRange(a._fila, 5).setValue("NO");
   invalidarCachesDatos_();
   return { ok: true, mensaje: "Alumno dado de baja." };
 }
 
 function reactivarAlumno(token, matricula) {
   exigirAdmin(token);
-  const a = filaAlumnoPorMatricula(matricula);
+  const a = _filaAlumnoPorMatricula_(matricula);
   if (!a) throw new Error("No existe ese alumno.");
-  obtenerLibro().getSheetByName("Alumnos").getRange(a._fila, 5).setValue("SI");
+  _obtenerLibro_().getSheetByName("Alumnos").getRange(a._fila, 5).setValue("SI");
   invalidarCachesDatos_();
   return { ok: true, mensaje: "Alumno reactivado con éxito." };
 }
@@ -281,9 +281,9 @@ function celdaAlumno(fila, claves) {
 
 function eliminarAlumno(token, matricula, grupo) {
   exigirAdmin(token);
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   if (!p || p.getLastRow() < 2) throw new Error("No hay alumnos registrados.");
-  const filas = leerFilas("Alumnos");
+  const filas = _leerFilas_("Alumnos");
   const mat = String(matricula || "").trim();
   const gru = String(grupo || "").trim().toLowerCase();
   let a = null;
@@ -306,9 +306,9 @@ function eliminarAlumnosMultiples(token, matriculas) {
   exigirAdmin(token);
   const items = (typeof matriculas === "string") ? JSON.parse(matriculas) : matriculas;
   if (!Array.isArray(items) || !items.length) throw new Error("No se seleccionaron alumnos.");
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   if (!p || p.getLastRow() < 2) return { ok: true, mensaje: "Sin alumnos." };
-  const filas = leerFilas("Alumnos");
+  const filas = _leerFilas_("Alumnos");
   const matsSet = {};
   const pares = {};
   items.forEach(function (m) {
@@ -343,13 +343,13 @@ function eliminarAlumnosMultiples(token, matriculas) {
   return { ok: true, mensaje: items.length + " alumno(s) eliminado(s) de la base de datos." };
 }
 
-function cambiarGrupoAlumno(token, matricula, grupoNuevo) {
+function _cambiarGrupoAlumno_(token, matricula, grupoNuevo) {
   exigirAdmin(token);
-  const a = filaAlumnoPorMatricula(matricula);
+  const a = _filaAlumnoPorMatricula_(matricula);
   if (!a) throw new Error("No existe ese alumno.");
   const g = String(grupoNuevo).trim().toLowerCase();
   const gradoNum = normalizarGradoServer(g) || String(a["Grado"]) || "1";
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   p.getRange(a._fila, 3).setValue(gradoNum);
   p.getRange(a._fila, 4).setValue(g);
   invalidarCachesDatos_();
@@ -361,9 +361,9 @@ function cambiarGrupoAlumnosMultiples(token, matriculas, grupoNuevo) {
   if (!Array.isArray(matriculas) || !matriculas.length) throw new Error("No se seleccionaron alumnos.");
   const g = String(grupoNuevo).trim().toLowerCase();
   const gradoNum = normalizarGradoServer(g) || "1";
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   if (!p || p.getLastRow() < 2) return { ok: true };
-  const filas = leerFilas("Alumnos");
+  const filas = _leerFilas_("Alumnos");
   const matsSet = {};
   matriculas.forEach(function (m) { matsSet[String(m).trim()] = true; });
   
@@ -387,7 +387,7 @@ function cambiarGrupoAlumnosMultiples(token, matriculas, grupoNuevo) {
 
 function asignarIntentosExtra(token, matricula, extra) {
   const ses = exigirRoles_(token, ["admin", "docente", "prefecto"]);
-  const a = filaAlumnoPorMatricula(matricula);
+  const a = _filaAlumnoPorMatricula_(matricula);
   if (!a) throw new Error("No existe ese alumno.");
 
   const rol = String(ses.rol || "").toLowerCase();
@@ -398,7 +398,7 @@ function asignarIntentosExtra(token, matricula, extra) {
     const maestroId = String(ses.maestroId || "");
     const nombreDoc = String(ses.nombre || "").toLowerCase();
     try {
-      leerFilas("Horarios").forEach(function (h) {
+      _leerFilas_("Horarios").forEach(function (h) {
         const m = String(h["Maestro"] || "").toLowerCase();
         if (m === nombreDoc || (maestroId && String(h["Id Maestro"] || "") === maestroId)) {
           const k = String(h["Grado"] || "") + String(h["Grupo"] || "").toUpperCase();
@@ -413,7 +413,7 @@ function asignarIntentosExtra(token, matricula, extra) {
     const prefId = String(ses.prefectoId || "");
     const gruposPrefecto = {};
     try {
-      leerFilas("PrefectoGrupos").forEach(function (f) {
+      _leerFilas_("PrefectoGrupos").forEach(function (f) {
         if (String(f["Id prefecto"] || "") === prefId) {
           const k = String(f["Grado"] || "") + String(f["Grupo"] || "").toUpperCase();
           gruposPrefecto[k] = true;
@@ -425,7 +425,7 @@ function asignarIntentosExtra(token, matricula, extra) {
     }
   }
 
-  obtenerLibro().getSheetByName("Alumnos").getRange(a._fila, 6).setValue(Number(extra || 0));
+  _obtenerLibro_().getSheetByName("Alumnos").getRange(a._fila, 6).setValue(Number(extra || 0));
   invalidarCachesDatos_();
   return { ok: true, mensaje: "Intentos extra actualizados." };
 }
@@ -433,9 +433,9 @@ function asignarIntentosExtra(token, matricula, extra) {
 function asignarIntentosExtraAlumnosMultiples(token, matriculas, extra) {
   exigirAdmin(token);
   if (!Array.isArray(matriculas) || !matriculas.length) throw new Error("No se seleccionaron alumnos.");
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   if (!p || p.getLastRow() < 2) return { ok: true };
-  const filas = leerFilas("Alumnos");
+  const filas = _leerFilas_("Alumnos");
   const matsSet = {};
   matriculas.forEach(function (m) { matsSet[String(m).trim()] = true; });
   const nExtra = Number(extra || 0);
@@ -466,7 +466,7 @@ function generarAlumnosSimuladosAdmin(token) {
 
 function vaciarMatriculaAdmin(token) {
   exigirAdmin(token);
-  const p = obtenerLibro().getSheetByName("Alumnos");
+  const p = _obtenerLibro_().getSheetByName("Alumnos");
   if (p) {
     p.clearContents();
     p.getRange(1, 1, 1, ENCABEZADOS.Alumnos.length).setValues([ENCABEZADOS.Alumnos]).setFontWeight("bold");
@@ -477,14 +477,14 @@ function vaciarMatriculaAdmin(token) {
 
 function altaGrupo(token, grado, grupo) {
   exigirAdmin(token);
-  obtenerLibro().getSheetByName("Grupos").appendRow([String(grado), String(grupo).toLowerCase(), "SI", 0]);
+  _obtenerLibro_().getSheetByName("Grupos").appendRow([String(grado), String(grupo).toLowerCase(), "SI", 0]);
   return { ok: true, mensaje: "Grupo creado." };
 }
 
 function asignarIntentosExtraGrupo(token, grupo, extra) {
   exigirAdmin(token);
-  const filas = leerFilas("Grupos");
-  const p = obtenerLibro().getSheetByName("Grupos");
+  const filas = _leerFilas_("Grupos");
+  const p = _obtenerLibro_().getSheetByName("Grupos");
   let ok = false;
   filas.forEach(function (g) {
     if (String(g["Grupo"]).toLowerCase() === String(grupo).toLowerCase()) {
@@ -503,7 +503,7 @@ function guardarIntentosDefault(token, valor) {
 }
 
 function sembrarGrupos_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Grupos");
   if (!p) return;
@@ -535,7 +535,7 @@ function uniq(lista) {
  * DATOS DE PRUEBA Y BANCO
  **********************************************************************/
 function asegurarDatosDePrueba_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const ID_PRODUCCION = "1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU";
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
@@ -548,14 +548,14 @@ function asegurarDatosDePrueba_() {
 }
 
 function generarAlumnosSimulados_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const ID_PRODUCCION = "1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU";
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
   if (idReal === ID_PRODUCCION) {
     throw new Error("BLOQUEO DE SEGURIDAD: generarAlumnosSimulados no puede ejecutarse sobre el libro de producción.");
   }
-  verificarYCrearPestanas();
+  _verificarYCrearPestanas_();
   const nm = ["Juan","Pedro","Luis","Carlos","Omar","Alejandro","Jorge","Miguel","Angel","David"];
   const nf = ["Mariana","Sofia","Maria","Laura","Elena","Ana","Gabriela","Camila","Fernanda","Lucia"];
   const ap = ["Martinez","Lopez","Perez","Rodriguez","Gomez","Sanchez","Hernandez","Diaz","Garcia","Flores"];
@@ -592,7 +592,7 @@ function temasBancoPorAsignatura() {
 }
 
 function completarBancoLecturas_(forzar) {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const props = PropertiesService.getScriptProperties();
   const entorno = String(props.getProperty("ENTORNO") || "").trim().toUpperCase();
@@ -613,7 +613,7 @@ function completarBancoLecturas_(forzar) {
   }
 
   let p = libro.getSheetByName("Lecturas");
-  if (!p) { verificarYCrearPestanas(); p = libro.getSheetByName("Lecturas"); }
+  if (!p) { _verificarYCrearPestanas_(); p = libro.getSheetByName("Lecturas"); }
   if (!p) return;
   if (!forzar && p.getLastRow() >= 2) return;
 
@@ -648,7 +648,7 @@ function completarBancoLecturas_(forzar) {
         pPreg.getRange(2, 1, filasPreg.length, ENCABEZADOS.Preguntas.length).setValues(filasPreg);
       }
     }
-    formatearHojasDeLectura();
+    _formatearHojasDeLectura_();
     return;
   }
 
@@ -710,7 +710,7 @@ function completarBancoLecturas_(forzar) {
     }
   }
 
-  formatearHojasDeLectura();
+  _formatearHojasDeLectura_();
 }
 
 function filaLectura(item) {

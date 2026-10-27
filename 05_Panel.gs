@@ -11,7 +11,7 @@ function panelResumen(token) {
   let lecturas = [];
 
   try {
-    libro = obtenerLibro();
+    libro = _obtenerLibro_();
   } catch (e) {
     errorApertura = String(e.message || e);
   }
@@ -19,20 +19,20 @@ function panelResumen(token) {
     errorApertura = ultimoErrorAperturaLibro;
   }
 
-  try { alumnos = enriquecerAlumnosConAcceso_(leerAlumnosResumen() || []); } catch (eAlu) {
+  try { alumnos = enriquecerAlumnosConAcceso_(_leerAlumnosResumen_() || []); } catch (eAlu) {
     errorApertura = errorApertura || ("Alumnos: " + eAlu.message);
   }
-  try { grupos = leerGruposDesdeLibro(libro, alumnos); } catch (eG) {
+  try { grupos = _leerGruposDesdeLibro_(libro, alumnos); } catch (eG) {
     grupos = gruposRespaldo();
   }
-  try { lecturas = leerLecturasResumen() || []; } catch (eL) {}
+  try { lecturas = _leerLecturasResumen_() || []; } catch (eL) {}
 
   if (rol === "docente") {
     const gruposDocente = {};
     const maestroId = String(ses.maestroId || "");
     const nombreDoc = String(ses.nombre || "").toLowerCase();
     try {
-      leerFilas("Horarios").forEach(function (h) {
+      _leerFilas_("Horarios").forEach(function (h) {
         const m = String(h["Maestro"] || "").toLowerCase();
         if (m === nombreDoc || (maestroId && String(h["Id Maestro"] || "") === maestroId)) {
           const k = String(h["Grado"] || "") + String(h["Grupo"] || "").toUpperCase();
@@ -63,7 +63,7 @@ function panelResumen(token) {
     const prefId = String(ses.prefectoId || "");
     const asignados = {};
     try {
-      leerFilas("PrefectoGrupos").forEach(function (f) {
+      _leerFilas_("PrefectoGrupos").forEach(function (f) {
         if (String(f["Id prefecto"] || "") === prefId) {
           const k = String(f["Grado"] || "") + String(f["Grupo"] || "").toUpperCase();
           asignados[k] = true;
@@ -96,7 +96,7 @@ function panelResumen(token) {
     const apoyoId = String(ses.apoyoId || "").trim();
     if (apoyoId) {
       try {
-        leerFilas("ApoyoGrupos").forEach(function (f) {
+        _leerFilas_("ApoyoGrupos").forEach(function (f) {
           const idFila = String(f["Id apoyo"] || f["Id personal"] || "").trim();
           if (idFila && idFila === apoyoId) {
             const k = String(f["Grado"] || "") + String(f["Grupo"] || "").toUpperCase();
@@ -131,7 +131,7 @@ function panelResumen(token) {
     }
   }
 
-  const urlLibro = urlHojaCalculo();
+  const urlLibro = _urlHojaCalculo_();
 
   const payload = {
     ok: true,
@@ -151,7 +151,7 @@ function panelResumen(token) {
       pestanas: []
     },
     config: {
-      intentos: leerConfig("INTENTOS_DEFAULT", "1"),
+      intentos: _leerConfig_("INTENTOS_DEFAULT", "1"),
       asignaturas: ASIGNATURAS_DEFAULT.slice(),
       especificaciones: especificacionesDeTodos(),
       ppmObjetivo: ppmObjetivoDeTodos(),
@@ -182,7 +182,7 @@ function leerGruposHoja_() {
     memoGrupos_ = cacheados;
     return cacheados;
   }
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro && libro.getSheetByName("Grupos");
   const grupos = [];
   if (p && p.getLastRow() >= 2) {
@@ -222,7 +222,7 @@ function extraGrupoDe_(grupo) {
   return 0;
 }
 
-function leerGruposDesdeLibro(libro, alumnos) {
+function _leerGruposDesdeLibro_(libro, alumnos) {
   let grupos = leerGruposHoja_().slice();
   if (alumnos && alumnos.length) {
     const gruposMap = {};
@@ -244,7 +244,7 @@ function leerGruposDesdeLibro(libro, alumnos) {
   return grupos.length ? grupos : gruposRespaldo();
 }
 
-function extraerAlumnosDePestana(p) {
+function _extraerAlumnosDePestana_(p) {
   if (!p) return [];
   const nombreHoja = p.getName().trim();
   const nomHojaNorm = nombreHoja.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -485,7 +485,7 @@ function enriquecerAlumnosConAcceso_(alumnos) {
   const mapa = {};
   try {
     asegurarColumnaClaveAccesoClase_();
-    leerFilas("AccesoClaseAlumnos").forEach(function (f) {
+    _leerFilas_("AccesoClaseAlumnos").forEach(function (f) {
       const mat = String(f["Matrícula"] || f["Matricula"] || "").trim();
       if (!mat) return;
       mapa[mat] = {
@@ -502,7 +502,7 @@ function enriquecerAlumnosConAcceso_(alumnos) {
   return alumnos || [];
 }
 
-function leerAlumnosResumen() {
+function _leerAlumnosResumen_() {
   if (memoAlumnos_) return memoAlumnos_;
   const cacheados = cacheGetJson_("alumnos_resumen");
   if (cacheados && cacheados.length) {
@@ -510,7 +510,7 @@ function leerAlumnosResumen() {
     return cacheados;
   }
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return [];
 
   let alumnos = [];
@@ -564,7 +564,7 @@ function leerAlumnosResumen() {
   }
 
   if (pestanaAlumnos && alumnos.length === 0) {
-    const alusAlumnos = extraerAlumnosDePestana(pestanaAlumnos);
+    const alusAlumnos = _extraerAlumnosDePestana_(pestanaAlumnos);
     if (alusAlumnos.length) {
       alumnos = alumnos.concat(alusAlumnos);
     }
@@ -575,7 +575,7 @@ function leerAlumnosResumen() {
     libro.getSheets().forEach(function (h) {
       const nomNorm = h.getName().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
       if (["config", "lecturas", "preguntas", "resultados", "resumen", "lecturas_prev", "alumnos", "grupos", "prefectos", "prefectogrupos", "horarios", "asistenciaalumnos", "asistenciamaestros"].indexOf(nomNorm) >= 0) return;
-      const extraidos = extraerAlumnosDePestana(h);
+      const extraidos = _extraerAlumnosDePestana_(h);
       if (extraidos.length) alumnos = alumnos.concat(extraidos);
     });
   }
@@ -614,11 +614,11 @@ function normalizarGradoServer(v) {
   return m ? m[1] : "";
 }
 
-function leerGruposResumen() {
+function _leerGruposResumen_() {
   const grupos = leerGruposHoja_().slice();
 
   // Si hay alumnos, asegurarse de que todos sus grupos aparezcan en la lista
-  const alumnos = leerAlumnosResumen();
+  const alumnos = _leerAlumnosResumen_();
   if (alumnos.length) {
     const gruposMap = {};
     grupos.forEach(function (g) { gruposMap[g.grupo] = true; });
@@ -644,7 +644,7 @@ function leerGruposResumen() {
   return grupos;
 }
 
-function leerLecturasResumen() {
+function _leerLecturasResumen_() {
   return leerLecturasIndice_().map(function (l) {
     return {
       id: String(l["ID Lectura"] || ""),
@@ -691,8 +691,8 @@ function fusionarNivelesDesdeJson_(preguntas, jsonRaw) {
   return preguntas || [];
 }
 
-function inspeccionarNivelesPreguntas() {
-  const lecturas = leerFilas("Lecturas");
+function _inspeccionarNivelesPreguntas_() {
+  const lecturas = _leerFilas_("Lecturas");
   let jsonCon = 0, jsonSin = 0, muestraJson = "";
   lecturas.forEach(function (l) {
     let json = [];
@@ -703,10 +703,10 @@ function inspeccionarNivelesPreguntas() {
       if (!muestraJson && pr && pr.p) muestraJson = String(pr.p).substring(0, 80) + " | nivel=" + String(pr.nivel || "");
     });
   });
-  const hoja = leerFilas("Preguntas");
+  const hoja = _leerFilas_("Preguntas");
   let hojaCon = 0, hojaSin = 0, enc = [];
   try {
-    const p = obtenerLibro().getSheetByName("Preguntas");
+    const p = _obtenerLibro_().getSheetByName("Preguntas");
     if (p) enc = p.getRange(1, 1, 1, Math.max(p.getLastColumn(), 1)).getValues()[0];
   } catch (eEnc) {}
   hoja.forEach(function (row) {
@@ -731,13 +731,13 @@ function sincronizarNivelesHojaDesdeJson(token) {
   SpreadsheetApp.flush();
   reconstruirHojaPreguntasDesdeJson_();
   SpreadsheetApp.flush();
-  return inspeccionarNivelesPreguntas();
+  return _inspeccionarNivelesPreguntas_();
 }
 
-function detalleLecturas(token) {
+function _detalleLecturas_(token) {
   exigirAdmin(token);
-  asegurarSetup();
-  const filas = leerFilas("Lecturas");
+  _asegurarSetup_();
+  const filas = _leerFilas_("Lecturas");
   let mapaPreg = null;
   return filas.map(function (l) {
     const id = String(l["ID Lectura"] || "");
@@ -784,13 +784,13 @@ function detalleUnaLectura(token, id) {
 
 function detalleResultados(token) {
   exigirAdmin(token);
-  const resultados = leerResultadosDeTodasLasPestanas();
+  const resultados = _leerResultadosDeTodasLasPestanas_();
   return { ok: true, resultados: resultados };
 }
 
 function listaLecturasAdmin(token) {
   exigirAdmin(token);
-  return { ok: true, lecturas: leerLecturasResumen() };
+  return { ok: true, lecturas: _leerLecturasResumen_() };
 }
 
 function valoresHoja_(p, maxCols) {
@@ -802,8 +802,8 @@ function valoresHoja_(p, maxCols) {
   return p.getRange(1, 1, lastR, cols).getValues();
 }
 
-function leerFilas(nombre) {
-  const libro = obtenerLibro();
+function _leerFilas_(nombre) {
+  const libro = _obtenerLibro_();
   if (!libro) return [];
   let p = libro.getSheetByName(nombre);
   if (!p) {

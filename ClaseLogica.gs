@@ -89,12 +89,12 @@ function usuarioClaseLibre_(deseado, ignorarTipo, ignorarClave) {
   let base = slugUsuarioClase_(deseado);
   if (!base || esUsuarioAdminAsistencia_(base)) base = "usuario";
   const usados = {};
-  leerFilas("MaestrosClase").forEach(function (f) {
+  _leerFilas_("MaestrosClase").forEach(function (f) {
     if (ignorarTipo === "maestro" && String(f["Id"] || "") === String(ignorarClave || "")) return;
     const u = normalizarNombrePref_(f["Usuario"] || "");
     if (u) usados[u] = true;
   });
-  leerFilas("AccesoClaseAlumnos").forEach(function (f) {
+  _leerFilas_("AccesoClaseAlumnos").forEach(function (f) {
     if (ignorarTipo === "alumno" && String(f["Matrícula"] || "") === String(ignorarClave || "")) return;
     const u = normalizarNombrePref_(f["Usuario"] || "");
     if (u) usados[u] = true;
@@ -262,7 +262,7 @@ function cerrarSesionClase(token) {
 function buscarMaestroClaseLogin_(usuario, clave) {
   const uBus = normalizarNombrePref_(usuario);
   const claveIng = String(clave || "").trim();
-  const filas = leerFilas("MaestrosClase");
+  const filas = _leerFilas_("MaestrosClase");
   for (let i = 0; i < filas.length; i++) {
     const f = filas[i];
     if (String(f["Activo"] || "SI").toUpperCase() === "NO") continue;
@@ -288,7 +288,7 @@ function buscarMaestroClaseLogin_(usuario, clave) {
 function buscarAlumnoClaseLogin_(usuario, clave) {
   const uBus = normalizarNombrePref_(usuario);
   const claveIng = String(clave || "").trim();
-  const filas = leerFilas("AccesoClaseAlumnos");
+  const filas = _leerFilas_("AccesoClaseAlumnos");
   for (let i = 0; i < filas.length; i++) {
     const f = filas[i];
     if (String(f["Activo"] || "SI").toUpperCase() === "NO") continue;
@@ -315,18 +315,18 @@ function buscarAlumnoClaseLogin_(usuario, clave) {
 
 function sincronizarMaestrosClase(token) {
   exigirClaseRol_(token, ["admin"]);
-  verificarYCrearPestanas();
+  _verificarYCrearPestanas_();
   const nombres = {};
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     const n = String(f["Maestro"] || "").trim();
     if (n) nombres[n] = true;
   });
-  const existentes = leerFilas("MaestrosClase");
+  const existentes = _leerFilas_("MaestrosClase");
   const porNombre = {};
   existentes.forEach(function (f) {
     porNombre[normalizarNombrePref_(f["Nombre"] || "")] = f;
   });
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("MaestrosClase");
   const enc = ENCABEZADOS.MaestrosClase;
   let alta = 0;
@@ -339,11 +339,11 @@ function sincronizarMaestrosClase(token) {
     p.appendRow([id, nom, usuario, "", "", "SI"]);
     alta++;
   });
-  return { ok: true, alta: alta, total: leerFilas("MaestrosClase").length, mensaje: alta ? ("Se agregaron " + alta + " maestros del horario.") : "Los maestros del horario ya estaban dados de alta." };
+  return { ok: true, alta: alta, total: _leerFilas_("MaestrosClase").length, mensaje: alta ? ("Se agregaron " + alta + " maestros del horario.") : "Los maestros del horario ya estaban dados de alta." };
 }
 
 function asegurarColumnaClaveMaestrosClase_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("MaestrosClase");
   if (!p) return;
@@ -380,7 +380,7 @@ function claveDeAccesoMaestro_(f) {
 }
 
 function guardarClaveVisibleMaestro_(f, clave) {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("MaestrosClase");
   if (!p || !f || !f._fila) return;
   const lastCol = Math.max(p.getLastColumn(), 1);
@@ -404,7 +404,7 @@ function listarMaestrosClase(token) {
   asegurarColumnaClaveMaestrosClase_();
 
   const infoHorarios = {};
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     const nom = normalizarNombrePref_(f["Maestro"] || "");
     if (!nom) return;
     if (!infoHorarios[nom]) {
@@ -421,7 +421,7 @@ function listarMaestrosClase(token) {
     }
   });
 
-  const maestros = leerFilas("MaestrosClase").map(function (f) {
+  const maestros = _leerFilas_("MaestrosClase").map(function (f) {
     const nomNorm = normalizarNombrePref_(f["Nombre"] || "");
     const info = infoHorarios[nomNorm] || { grupos: {}, asignaturas: {} };
     const gruposList = Object.keys(info.grupos).sort();
@@ -458,12 +458,12 @@ function generarClavesMaestrosClase(token, modo, maestroId) {
   }
 
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     const p = libro.getSheetByName("MaestrosClase");
     if (!p) throw new Error("No se encontró la pestaña MaestrosClase.");
 
     const idFilt = String(maestroId || "").trim();
-    const filas = leerFilas("MaestrosClase").filter(function (f) {
+    const filas = _leerFilas_("MaestrosClase").filter(function (f) {
       if (String(f["Activo"] || "SI").toUpperCase() === "NO") return false;
       if (modo === "maestro") {
         return String(f["Id"] || "").trim() === idFilt;
@@ -523,9 +523,9 @@ function asignarClaveMaestroClase(token, id, usuario, clave) {
   const claveUso = String(clave || "").trim();
   if (claveUso.length < 6) throw new Error("La contraseña debe tener al menos 6 caracteres.");
   const idUso = String(id || "").trim();
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("MaestrosClase");
-  const filas = leerFilas("MaestrosClase");
+  const filas = _leerFilas_("MaestrosClase");
   const fila = filas.filter(function (f) { return String(f["Id"] || "") === idUso; })[0];
   if (!fila) throw new Error("No se encontró al maestro.");
   const usu = usuarioClaseLibre_(usuario || fila["Usuario"] || fila["Nombre"], "maestro", idUso);
@@ -598,16 +598,16 @@ function listarAlumnosParaClase(token, grado, grupo) {
   let gruposOk = null;
   if (ses.rol === "maestro") {
     gruposOk = {};
-    leerFilas("Horarios").forEach(function (f) {
+    _leerFilas_("Horarios").forEach(function (f) {
       if (normalizarNombrePref_(f["Maestro"] || "") !== normalizarNombrePref_(ses.maestroNombre || "")) return;
       gruposOk[claveGrupoAsi_(f["Grado"], f["Grupo"])] = true;
     });
   }
   const accesos = {};
-  leerFilas("AccesoClaseAlumnos").forEach(function (f) {
+  _leerFilas_("AccesoClaseAlumnos").forEach(function (f) {
     accesos[String(f["Matrícula"] || f["Matricula"] || "").trim()] = f;
   });
-  const alumnos = leerFilas("Alumnos").filter(function (a) {
+  const alumnos = _leerFilas_("Alumnos").filter(function (a) {
     if (String(a["Activo"] || "SI").toUpperCase() === "NO") return false;
     const gr = String(a["Grado"] || "").trim();
     const gp = String(a["Grupo"] || "").trim();
@@ -647,14 +647,14 @@ function asignarClaveAlumnoClase(token, matricula, usuario, clave) {
   const claveUso = String(clave || "").trim();
   if (!mat) throw new Error("Falta la matrícula.");
   if (claveUso.length < 6) throw new Error("La contraseña debe tener al menos 6 caracteres.");
-  const alu = leerFilas("Alumnos").filter(function (a) {
+  const alu = _leerFilas_("Alumnos").filter(function (a) {
     return String(a["Matrícula"] || a["Matricula"] || "").trim() === mat;
   })[0];
   if (!alu) throw new Error("No se encontró al alumno.");
   if (ses.rol === "maestro") {
     const k = claveGrupoAsi_(alu["Grado"], alu["Grupo"]);
     let okG = false;
-    leerFilas("Horarios").forEach(function (f) {
+    _leerFilas_("Horarios").forEach(function (f) {
       if (normalizarNombrePref_(f["Maestro"] || "") !== normalizarNombrePref_(ses.maestroNombre || "")) return;
       if (claveGrupoAsi_(f["Grado"], f["Grupo"]) === k) okG = true;
     });
@@ -663,9 +663,9 @@ function asignarClaveAlumnoClase(token, matricula, usuario, clave) {
   const usu = usuarioClaseLibre_(usuario || alu["Nombre Completo"] || mat, "alumno", mat);
   const salt = Utilities.getUuid();
   const hash = hashClave(claveUso, salt);
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("AccesoClaseAlumnos");
-  const filas = leerFilas("AccesoClaseAlumnos");
+  const filas = _leerFilas_("AccesoClaseAlumnos");
   const previa = filas.filter(function (f) {
     return String(f["Matrícula"] || f["Matricula"] || "").trim() === mat;
   })[0];
@@ -709,14 +709,14 @@ function generarClavesAlumnosClase(token, grado, grupo, modo, matriculaEspecific
   }
 
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     const sheetAcc = libro.getSheetByName("AccesoClaseAlumnos");
     if (!sheetAcc) throw new Error("No se encontró la pestaña AccesoClaseAlumnos.");
 
     let gruposOk = null;
     if (ses.rol === "maestro") {
       gruposOk = {};
-      leerFilas("Horarios").forEach(function (f) {
+      _leerFilas_("Horarios").forEach(function (f) {
         if (normalizarNombrePref_(f["Maestro"] || "") !== normalizarNombrePref_(ses.maestroNombre || "")) return;
         gruposOk[claveGrupoAsi_(f["Grado"], f["Grupo"])] = true;
       });
@@ -726,7 +726,7 @@ function generarClavesAlumnosClase(token, grado, grupo, modo, matriculaEspecific
     const gpFilt = String(grupo || "").trim();
     const matFilt = String(matriculaEspecifica || "").trim();
 
-    const alumnos = leerFilas("Alumnos").filter(function (a) {
+    const alumnos = _leerFilas_("Alumnos").filter(function (a) {
       if (String(a["Activo"] || "SI").toUpperCase() === "NO") return false;
       const mat = String(a["Matrícula"] || a["Matricula"] || "").trim();
       const gr = String(a["Grado"] || "").trim();
@@ -746,7 +746,7 @@ function generarClavesAlumnosClase(token, grado, grupo, modo, matriculaEspecific
       return { ok: false, total: 0, mensaje: "No se encontraron alumnos para el grado/grupo seleccionado." };
     }
 
-    const filasAcc = leerFilas("AccesoClaseAlumnos");
+    const filasAcc = _leerFilas_("AccesoClaseAlumnos");
     const accPorMat = {};
     filasAcc.forEach(function (f) {
       const m = String(f["Matrícula"] || f["Matricula"] || "").trim();
@@ -859,7 +859,7 @@ function horarioDeMaestroClase_(nombreMaestro, fecha) {
   const dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
   const dia = dias[d.getDay()];
   const lista = [];
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     if (normalizarNombrePref_(f["Maestro"] || "") !== nom) return;
     const h = filaHorarioClase_(f);
     if (h.dia && h.dia !== dia && h.dia !== "todos") return;
@@ -877,7 +877,7 @@ function horarioDeGrupoClase_(grado, grupo, fecha) {
   const dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
   const dia = dias[d.getDay()];
   const lista = [];
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     if (claveGrupoAsi_(f["Grado"], f["Grupo"]) !== k) return;
     const h = filaHorarioClase_(f);
     if (h.dia && h.dia !== dia && h.dia !== "todos") return;
@@ -911,7 +911,7 @@ function buscarContenidoClase_(h, fecha) {
   if (!h) return null;
   const fe = fechaIsoClase_(fecha || fechaHoyAsi_());
   const dia = String(h.dia || "").trim();
-  const filas = leerFilas("ContenidosClase").filter(function (f) {
+  const filas = _leerFilas_("ContenidosClase").filter(function (f) {
     return String(f["Publicado"] || "SI").toUpperCase() !== "NO";
   });
   function coincide(f, exigirFecha) {
@@ -944,7 +944,7 @@ function buscarContenidoClase_(h, fecha) {
 
 function contenidoDeSlotClase_(h, fecha) {
   const fe = String(fecha || fechaHoyAsi_());
-  const filas = leerFilas("ContenidosClase");
+  const filas = _leerFilas_("ContenidosClase");
   let hit = null;
   filas.forEach(function (f) {
     const idH = idHorarioClase_(f["Id horario"]);
@@ -964,7 +964,7 @@ function contenidoDeSlotClase_(h, fecha) {
 }
 
 function asegurarColumnaClaveAccesoClase_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("AccesoClaseAlumnos");
   if (!p) return;
@@ -991,7 +991,7 @@ function claveVisibleAlumno_(usuario, matricula) {
 }
 
 function guardarClaveVisibleAlumno_(f, clave) {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("AccesoClaseAlumnos");
   if (!p || !f || !f._fila) return;
   const lastCol = Math.max(p.getLastColumn(), 1);
@@ -1029,12 +1029,12 @@ function alumnosConAccesoClase_(ses, grado, grupo) {
   let gruposOk = null;
   if (ses && ses.rol === "maestro") {
     gruposOk = {};
-    leerFilas("Horarios").forEach(function (f) {
+    _leerFilas_("Horarios").forEach(function (f) {
       if (normalizarNombrePref_(f["Maestro"] || "") !== normalizarNombrePref_(ses.maestroNombre || "")) return;
       gruposOk[claveGrupoAsi_(f["Grado"], f["Grupo"])] = true;
     });
   }
-  return leerFilas("AccesoClaseAlumnos").filter(function (f) {
+  return _leerFilas_("AccesoClaseAlumnos").filter(function (f) {
     if (String(f["Activo"] || "SI").toUpperCase() === "NO") return false;
     const gr = String(f["Grado"] || "").trim();
     const gpf = String(f["Grupo"] || "").trim().toLowerCase();
@@ -1070,7 +1070,7 @@ function etiquetaGrupoClase_(grado, grupo) {
 
 function gruposDeSesionClase_(ses) {
   const mapa = {};
-  let filasH = leerFilas("Horarios");
+  let filasH = _leerFilas_("Horarios");
   const esOficialCompleto = filasH && filasH.length >= 500 && filasH.some(function (f) {
     const m = String(f["Maestro"] || "").toUpperCase();
     return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
@@ -1116,7 +1116,7 @@ function gruposDeSesionClase_(ses) {
 function alumnosDeGrupoClase_(grado, grupo) {
   const k = claveGrupoAsi_(grado, grupo);
   if (!String(grado || "").trim() || !String(grupo || "").trim()) return [];
-  return leerFilas("Alumnos").filter(function (a) {
+  return _leerFilas_("Alumnos").filter(function (a) {
     if (String(a["Activo"] || "SI").toUpperCase() === "NO") return false;
     return claveGrupoAsi_(a["Grado"], a["Grupo"]) === k;
   }).map(function (a) {
@@ -1216,7 +1216,7 @@ function horarioSemanaDeGrupoClase_(grado, grupo) {
     lunes: [], martes: [], miercoles: [], jueves: [], viernes: [], sabado: [], domingo: [], todos: []
   };
 
-  let filasH = leerFilas("Horarios");
+  let filasH = _leerFilas_("Horarios");
   const esOficialCompleto = filasH && filasH.length >= 500 && filasH.some(function (f) {
     const m = String(f["Maestro"] || "").toUpperCase();
     return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
@@ -1295,7 +1295,7 @@ function claveAltContenidoClase_(grado, grupo, asig, bloque, fecha) {
 
 function mapaContenidosClase_() {
   const mapa = {};
-  leerFilas("ContenidosClase").forEach(function (f) {
+  _leerFilas_("ContenidosClase").forEach(function (f) {
     const idH = idHorarioClase_(f["Id horario"]);
     const feF = fechaIsoClase_(f["Fecha"]);
     const c = {
@@ -1400,12 +1400,12 @@ function horarioBaseSecundariaParaGrupo_(grado, grupo) {
 }
 
 function sembrarHorarioDemoSiVacio_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   let p = libro.getSheetByName("Horarios");
   if (!p) p = libro.getSheetByName("Horario");
   if (!p) {
-    verificarYCrearPestanas();
+    _verificarYCrearPestanas_();
     p = libro.getSheetByName("Horarios");
   }
   if (!p) return;
@@ -1413,7 +1413,7 @@ function sembrarHorarioDemoSiVacio_() {
   const filasOficiales = typeof obtenerFilasHorarioOficialAsc_ === "function" ? obtenerFilasHorarioOficialAsc_() : [];
   if (!filasOficiales || !filasOficiales.length) return;
 
-  const filasExistentes = leerFilas("Horarios");
+  const filasExistentes = _leerFilas_("Horarios");
   const esOficialCompleto = filasExistentes.length >= 500 && filasExistentes.some(function (f) {
     const m = String(f["Maestro"] || "").toUpperCase();
     return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
@@ -1562,7 +1562,7 @@ function guardarContenidoClase(token, payload) {
   payload = payload || {};
   const idHorario = String(payload.idHorario || "").trim();
   if (!idHorario) throw new Error("Falta la clase del horario.");
-  const filaH = leerFilas("Horarios").filter(function (f) {
+  const filaH = _leerFilas_("Horarios").filter(function (f) {
     return idHorarioClase_(f["Id"]) === idHorarioClase_(idHorario);
   })[0];
   if (!filaH) throw new Error("No se encontró esa hora en el horario.");
@@ -1584,9 +1584,9 @@ function guardarContenidoClase(token, payload) {
   }
   let locked = true;
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     const p = libro.getSheetByName("ContenidosClase");
-    const filas = leerFilas("ContenidosClase");
+    const filas = _leerFilas_("ContenidosClase");
     let previa = filas.filter(function (f) {
       return idHorarioClase_(f["Id horario"]) === idHorarioClase_(idHorario) && fechaIsoClase_(f["Fecha"]) === fechaIsoClase_(fecha);
     })[0];
@@ -1847,7 +1847,7 @@ function sembrarContenidoPrueba1C(token) {
     throw new Error("Acceso denegado: sembrarContenidoPrueba1C requiere un ID de libro de pruebas explícito y no puede ser el libro de producción.");
   }
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo abrir la hoja.");
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
   if (idReal === ID_PRODUCCION) {
@@ -1876,7 +1876,7 @@ function sembrarContenidoPrueba1C(token) {
   const indiceDia = { lunes: 0, martes: 1, miercoles: 2, jueves: 3, viernes: 4 };
   const existentes = {};
   const existentesAlt = {};
-  leerFilas("ContenidosClase").forEach(function (f) {
+  _leerFilas_("ContenidosClase").forEach(function (f) {
     const idH = idHorarioClase_(f["Id horario"]);
     const fe = fechaIsoClase_(f["Fecha"]);
     if (idH && fe) existentes[idH + "|" + fe] = f;
@@ -1887,7 +1887,7 @@ function sembrarContenidoPrueba1C(token) {
   let actualizados = 0;
   const asignaturas = {};
   const vistos = {};
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     if (etiquetaGrupoClase_(f["Grado"], f["Grupo"]) !== "1C") return;
     const h = filaHorarioClase_(f);
     const idH = h.idHorario || [h.dia, h.bloque, h.grado, h.grupo, h.asignatura].join("|");

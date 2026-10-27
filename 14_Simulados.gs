@@ -52,23 +52,23 @@ function ponerValorEnc_(fila, enc, nombres, valor) {
 
 function cargarResultadosSimulados(token) {
   if (arguments.length > 0) exigirAdmin(token);
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo abrir la hoja de cálculo.");
 
-  let p = libro.getSheetByName("Resultados") || obtenerPestana("resultados");
+  let p = libro.getSheetByName("Resultados") || _obtenerPestana_("resultados");
   if (!p) {
     p = libro.insertSheet("Resultados");
     p.appendRow(ENCABEZADOS.Resultados);
     p.getRange(1, 1, 1, ENCABEZADOS.Resultados.length).setFontWeight("bold");
   }
 
-  const alumnos = leerAlumnosResumen().filter(function (a) {
+  const alumnos = _leerAlumnosResumen_().filter(function (a) {
     return String(a.activo || "SI").toUpperCase() !== "NO" && (a.nombre || a.matricula);
   });
   if (!alumnos.length) throw new Error("No hay alumnos en la hoja para simular resultados.");
 
   let lecturas = [];
-  try { lecturas = leerLecturasResumen() || []; } catch (eLec) { lecturas = []; }
+  try { lecturas = _leerLecturasResumen_() || []; } catch (eLec) { lecturas = []; }
 
   if (p.getLastRow() < 1) {
     p.appendRow(ENCABEZADOS.Resultados);

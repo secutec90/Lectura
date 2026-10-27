@@ -65,7 +65,7 @@ function esUsuarioAdminAsistencia_(usuario) {
 }
 
 function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
-  try { asegurarSetup(); } catch (eSetup) {}
+  try { _asegurarSetup_(); } catch (eSetup) {}
   const usu = String(usuario || "").trim();
   const claveIngresada = String(clave || "").trim();
   const vista = String(vistaSolicitada || "").toLowerCase().trim();
@@ -260,7 +260,7 @@ function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
 
   // 6. Diagnóstico de ayuda si es alumno sin clave asignada aún
   try {
-    const alusMat = leerFilas("Alumnos").filter(function(a) {
+    const alusMat = _leerFilas_("Alumnos").filter(function(a) {
       const m = normalizarNombrePref_(a["Matrícula"] || a["Matricula"] || "");
       const u = normalizarNombrePref_(usu);
       return m === u;
@@ -444,7 +444,7 @@ function generarClaveAleatoriaApoyo_() {
 function usuariosOcupadosApoyo_(ignorarId) {
   const usados = {};
   function marcar(hoja, campoId) {
-    leerFilas(hoja).forEach(function (f) {
+    _leerFilas_(hoja).forEach(function (f) {
       if (hoja === "PersonalApoyo" && ignorarId && String(f[campoId] || "") === String(ignorarId)) return;
       const u = normalizarNombrePref_(f["Usuario"] || "");
       if (u) usados[u] = true;
@@ -454,7 +454,7 @@ function usuariosOcupadosApoyo_(ignorarId) {
   try { marcar("Prefectos", "Id"); } catch (e2) {}
   try { marcar("MaestrosClase", "Id"); } catch (e3) {}
   try {
-    leerFilas("AccesoClaseAlumnos").forEach(function (f) {
+    _leerFilas_("AccesoClaseAlumnos").forEach(function (f) {
       const u = normalizarNombrePref_(f["Usuario"] || "");
       if (u) usados[u] = true;
     });
@@ -476,8 +476,8 @@ function usuarioApoyoLibre_(deseado, ignorarId) {
 }
 
 function buscarPersonalApoyoLogin_(usuario, clave) {
-  verificarYCrearPestanas();
-  const filas = leerFilas("PersonalApoyo");
+  _verificarYCrearPestanas_();
+  const filas = _leerFilas_("PersonalApoyo");
   const nom = normalizarNombrePref_(usuario);
   if (!nom || !String(clave || "").trim()) return null;
   const candidatos = [];
@@ -520,8 +520,8 @@ function buscarPersonalApoyoLogin_(usuario, clave) {
 function listarPersonalApoyo(token) {
   const sesion = sesionAsistencia_(token);
   if (sesion.rol !== "admin") throw new Error("Solo el administrador puede ver el personal de apoyo.");
-  verificarYCrearPestanas();
-  const lista = leerFilas("PersonalApoyo").map(function (f) {
+  _verificarYCrearPestanas_();
+  const lista = _leerFilas_("PersonalApoyo").map(function (f) {
     return {
       id: String(f["Id"] || "").trim(),
       nombre: String(f["Nombre"] || "").trim(),
@@ -549,14 +549,14 @@ function altaPersonalApoyo(token, nombre, usuario, area, clave) {
   if (!nombre) throw new Error("Escribe el nombre de la persona.");
   if (!clave) clave = generarClaveAleatoriaApoyo_();
   if (clave.length < 6) throw new Error("La clave debe tener al menos 6 caracteres.");
-  verificarYCrearPestanas();
+  _verificarYCrearPestanas_();
   const usuarioUso = usuarioApoyoLibre_(usuario || nombre);
   if (esUsuarioAdminAsistencia_(usuarioUso)) {
     throw new Error("Ese usuario está reservado para el administrador.");
   }
   const id = "A" + String(new Date().getTime()).slice(-8);
   const salt = Utilities.getUuid();
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("PersonalApoyo");
   p.appendRow([id, nombre, usuarioUso, area, salt, hashClave(clave, salt), "SI", clave]);
   const lastRow = p.getLastRow();
@@ -573,11 +573,11 @@ function asignarClavePersonalApoyo(token, id, usuario, clave, area) {
   clave = String(clave || "").trim();
   if (!id) throw new Error("Falta el identificador.");
   if (clave && clave.length < 6) throw new Error("La clave debe tener al menos 6 caracteres.");
-  verificarYCrearPestanas();
-  const libro = obtenerLibro();
+  _verificarYCrearPestanas_();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("PersonalApoyo");
   if (!p) throw new Error("No se encontró la hoja PersonalApoyo.");
-  const filas = leerFilas("PersonalApoyo");
+  const filas = _leerFilas_("PersonalApoyo");
   let f = null;
   filas.forEach(function (row) {
     if (String(row["Id"] || "").trim() === id) f = row;
@@ -619,7 +619,7 @@ function generarClavePersonalApoyo(token, id) {
 function generarClavesPersonalApoyo(token) {
   const sesion = sesionAsistencia_(token);
   if (sesion.rol !== "admin") throw new Error("Solo el administrador puede generar claves.");
-  const filas = leerFilas("PersonalApoyo").filter(function (f) {
+  const filas = _leerFilas_("PersonalApoyo").filter(function (f) {
     return String(f["Activo"] || "SI").toUpperCase() !== "NO";
   });
   if (!filas.length) return { ok: false, total: 0, mensaje: "No hay personal de apoyo activo." };
@@ -655,9 +655,9 @@ function cambiarClaveAdmin(token, nueva) {
   return { ok: true, mensaje: "Contraseña actualizada correctamente." };
 }
 
-function urlHojaCalculo() {
+function _urlHojaCalculo_() {
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     if (libro) return libro.getUrl();
   } catch (e) {}
   return URL_HOJA_DEFAULT;

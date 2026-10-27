@@ -72,7 +72,7 @@ function normalizarCfgTrimestral_(raw) {
 }
 
 function leerCfgTrimestral_() {
-  const raw = leerConfig("LECTURAS_TRIMESTRALES", "");
+  const raw = _leerConfig_("LECTURAS_TRIMESTRALES", "");
   if (!raw) return cfgTrimestralPorDefecto_();
   return normalizarCfgTrimestral_(raw);
 }
@@ -114,7 +114,7 @@ function esResultadoTrimestralDe_(r, cfg, t) {
 function contarIntentosSorteo_(matricula, resultados, cfg) {
   const m = String(matricula || "").trim().toLowerCase();
   const c = cfg || leerCfgTrimestral_();
-  const todos = resultados || leerResultadosDeTodasLasPestanas() || [];
+  const todos = resultados || _leerResultadosDeTodasLasPestanas_() || [];
   let n = 0;
   todos.forEach(function (r) {
     if (String(r.matricula || "").trim().toLowerCase() !== m) return;
@@ -127,7 +127,7 @@ function contarIntentosSorteo_(matricula, resultados, cfg) {
 function contarIntentosTrimestrales_(matricula, resultados, cfg, t) {
   const m = String(matricula || "").trim().toLowerCase();
   const c = cfg || leerCfgTrimestral_();
-  const todos = resultados || leerResultadosDeTodasLasPestanas() || [];
+  const todos = resultados || _leerResultadosDeTodasLasPestanas_() || [];
   let n = 0;
   todos.forEach(function (r) {
     if (String(r.matricula || "").trim().toLowerCase() !== m) return;
@@ -325,10 +325,10 @@ function paqueteLecturaTrimestral_(alumno, resultados) {
   return pack;
 }
 
-function obtenerLecturasTrimestrales(token) {
+function _obtenerLecturasTrimestrales_(token) {
   exigirAdmin(token);
   const cfg = leerCfgTrimestral_();
-  const todos = leerResultadosDeTodasLasPestanas() || [];
+  const todos = _leerResultadosDeTodasLasPestanas_() || [];
   const intentosRegistrados = { "1": 0, "2": 0, "3": 0 };
   todos.forEach(function (r) {
     ["1", "2", "3"].forEach(function (t) {
@@ -339,7 +339,7 @@ function obtenerLecturasTrimestrales(token) {
 }
 
 function resumenCalendarioTrimestral(token) {
-  return obtenerLecturasTrimestrales(token);
+  return _obtenerLecturasTrimestrales_(token);
 }
 
 function limpiarIntentosTrimestrales(token, trimestre) {
@@ -349,7 +349,7 @@ function limpiarIntentosTrimestrales(token, trimestre) {
   const cfg = leerCfgTrimestral_();
   const ids = {};
   idsLecturasTrimestre_(cfg, t).forEach(function (id) { ids[id] = true; });
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo abrir la hoja de datos.");
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -452,15 +452,15 @@ function construirLecturaTrimestralMuestra_(item) {
 
 function sembrarBancoTrimestral(token, reemplazar) {
   exigirAdmin(token);
-  asegurarSetup();
+  _asegurarSetup_();
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
     const catalogo = catalogoMuestraTrimestral_();
-    const p = obtenerLibro().getSheetByName("Lecturas");
+    const p = _obtenerLibro_().getSheetByName("Lecturas");
     if (!p) throw new Error("No se encontró la hoja de Lecturas.");
     const idsYa = {};
-    leerFilas("Lecturas").forEach(function (l) {
+    _leerFilas_("Lecturas").forEach(function (l) {
       idsYa[String(l["ID Lectura"] || "")] = true;
     });
     let creadas = 0;
@@ -484,7 +484,7 @@ function sembrarBancoTrimestral(token, reemplazar) {
       }
     });
     escribirConfig_("LECTURAS_TRIMESTRALES", JSON.stringify(cfg));
-    formatearHojasDeLectura();
+    _formatearHojasDeLectura_();
     SpreadsheetApp.flush();
     return {
       ok: true,
@@ -531,7 +531,7 @@ function panelAlumno(matricula, tokenAlumno) {
 function fichaAlumnoAdmin(token, matricula) {
   const ses = exigirRoles_(token, ["admin", "docente", "prefecto", "apoyo"]);
   const rol = String(ses.rol || "").toLowerCase();
-  const a = filaAlumnoPorMatricula(matricula);
+  const a = _filaAlumnoPorMatricula_(matricula);
   if (!a) throw new Error("No existe ese alumno.");
   const kAlu = String(a["Grado"] || "") + String(a["Grupo"] || "").toUpperCase();
 
@@ -540,7 +540,7 @@ function fichaAlumnoAdmin(token, matricula) {
     const maestroId = String(ses.maestroId || "");
     const nombreDoc = String(ses.nombre || "").toLowerCase();
     try {
-      leerFilas("Horarios").forEach(function (h) {
+      _leerFilas_("Horarios").forEach(function (h) {
         const m = String(h["Maestro"] || "").toLowerCase();
         if (m === nombreDoc || (maestroId && String(h["Id Maestro"] || "") === maestroId)) {
           const k = String(h["Grado"] || "") + String(h["Grupo"] || "").toUpperCase();
@@ -555,7 +555,7 @@ function fichaAlumnoAdmin(token, matricula) {
     const prefId = String(ses.prefectoId || "");
     const gruposPrefecto = {};
     try {
-      leerFilas("PrefectoGrupos").forEach(function (f) {
+      _leerFilas_("PrefectoGrupos").forEach(function (f) {
         if (String(f["Id prefecto"] || "") === prefId) {
           const k = String(f["Grado"] || "") + String(f["Grupo"] || "").toUpperCase();
           gruposPrefecto[k] = true;
@@ -572,7 +572,7 @@ function fichaAlumnoAdmin(token, matricula) {
     }
     const gruposApoyo = {};
     try {
-      leerFilas("ApoyoGrupos").forEach(function (f) {
+      _leerFilas_("ApoyoGrupos").forEach(function (f) {
         const idFila = String(f["Id apoyo"] || f["Id personal"] || "").trim();
         if (idFila && idFila === apoyoId) {
           const k = String(f["Grado"] || "") + String(f["Grupo"] || "").toUpperCase();
@@ -607,14 +607,14 @@ function iniciarEvaluacionAlumno(matricula, modo, tokenSesion) {
     }
   } else if (["admin", "docente"].indexOf(rol) >= 0) {
     if (rol === "docente") {
-      const aFila = filaAlumnoPorMatricula(mat);
+      const aFila = _filaAlumnoPorMatricula_(mat);
       if (!aFila) throw new Error("No existe ese alumno.");
       const kAlu = String(aFila["Grado"] || "") + String(aFila["Grupo"] || "").toUpperCase();
       const gruposDocente = {};
       const maestroId = String(ses.maestroId || "");
       const nombreDoc = String(ses.nombre || "").toLowerCase();
       try {
-        leerFilas("Horarios").forEach(function (h) {
+        _leerFilas_("Horarios").forEach(function (h) {
           const m = String(h["Maestro"] || "").toLowerCase();
           if (m === nombreDoc || (maestroId && String(h["Id Maestro"] || "") === maestroId)) {
             const k = String(h["Grado"] || "") + String(h["Grupo"] || "").toUpperCase();
@@ -630,10 +630,10 @@ function iniciarEvaluacionAlumno(matricula, modo, tokenSesion) {
     throw new Error("Acceso denegado: rol no autorizado para iniciar evaluaciones.");
   }
 
-  const alumno = buscarAlumno(mat);
+  const alumno = _buscarAlumno_(mat);
   if (!alumno) return { ok: false, mensaje: "No se encontró al alumno." };
   if (String(alumno["Activo"]).toUpperCase() === "NO") return { ok: false, mensaje: "Este alumno no está activo." };
-  const todos = leerResultadosDeTodasLasPestanas() || [];
+  const todos = _leerResultadosDeTodasLasPestanas_() || [];
   const cfgT = leerCfgTrimestral_();
   const MODALIDADES_VALIDAS = ["sorteo", "trimestral"];
   if (modo === undefined || modo === null || String(modo).trim() === "") {
@@ -670,7 +670,7 @@ function iniciarEvaluacionAlumno(matricula, modo, tokenSesion) {
 
   const sorteo = esTrimestral
     ? paqueteLecturaTrimestral_(alumno, todos)
-    : sortearLectura(String(alumno["Grado"]), String(alumno["Matrícula"]), todos);
+    : _sortearLectura_(String(alumno["Grado"]), String(alumno["Matrícula"]), todos);
   if (!sorteo.ok) return sorteo;
 
   const spec = especificacionesDeGrado(alumno["Grado"]);
@@ -724,14 +724,14 @@ function iniciarEvaluacionAlumno(matricula, modo, tokenSesion) {
   };
 }
 
-function sortearLectura(grado, matricula, resultadosYaLeidos) {
+function _sortearLectura_(grado, matricula, resultadosYaLeidos) {
   const activas = lecturasActivasDeGrado_(grado);
   if (!activas.length) return { ok: false, mensaje: "No hay lecturas para este grado." };
 
   let pool = activas;
   let excluidas = 0;
   if (matricula) {
-    const todos = resultadosYaLeidos || leerResultadosDeTodasLasPestanas() || [];
+    const todos = resultadosYaLeidos || _leerResultadosDeTodasLasPestanas_() || [];
     const excl = exclusionLecturasDeResultados_(matricula, todos);
     pool = activas.filter(function (l) { return !lecturaYaPresentada_(l, excl); });
     excluidas = activas.length - pool.length;

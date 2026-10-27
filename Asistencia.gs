@@ -47,7 +47,7 @@ function slugUsuarioPref_(nombre) {
 function usuarioPrefLibre_(deseado, ignorarId) {
   let base = slugUsuarioPref_(deseado);
   if (!base || esUsuarioAdminAsistencia_(base)) base = "prefecta";
-  const filas = leerFilas("Prefectos");
+  const filas = _leerFilas_("Prefectos");
   const usados = {};
   filas.forEach(function (f) {
     if (ignorarId && String(f["Id"] || "").trim() === String(ignorarId)) return;
@@ -64,7 +64,7 @@ function usuarioPrefLibre_(deseado, ignorarId) {
 }
 
 function asegurarColumnaUsuarioPrefectos_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Prefectos");
   if (!p) return;
@@ -84,7 +84,7 @@ function asegurarColumnaUsuarioPrefectos_() {
     p.getRange(1, 3).setValue("Usuario").setFontWeight("bold");
     SpreadsheetApp.flush();
   }
-  const filas = leerFilas("Prefectos");
+  const filas = _leerFilas_("Prefectos");
   const usados = {};
   filas.forEach(function (f) {
     const u = normalizarNombrePref_(f["Usuario"] || "");
@@ -124,7 +124,7 @@ function coincideUsuarioPref_(fila, nom) {
 
 function buscarPrefectoLogin_(clave, nombre) {
   asegurarColumnaUsuarioPrefectos_();
-  const filas = leerFilas("Prefectos");
+  const filas = _leerFilas_("Prefectos");
   const nom = normalizarNombrePref_(nombre);
   if (!nom || !String(clave || "").trim()) return null;
   const candidatos = [];
@@ -212,7 +212,7 @@ function exigirGrupoDelPrefecto_(sesion, grado, grupo) {
 function asignacionesPrefecto_(prefectoId) {
   const id = String(prefectoId || "").trim();
   if (!id) return [];
-  return leerFilas("PrefectoGrupos").filter(function (f) {
+  return _leerFilas_("PrefectoGrupos").filter(function (f) {
     return String(f["Id prefecto"] || "").trim() === id;
   }).map(function (f) {
     return {
@@ -227,7 +227,7 @@ function asignacionesApoyo_(apoyoId) {
   const id = String(apoyoId || "").trim();
   if (!id) return [];
   try {
-    return leerFilas("ApoyoGrupos").filter(function (f) {
+    return _leerFilas_("ApoyoGrupos").filter(function (f) {
       const idFila = String(f["Id apoyo"] || f["Id personal"] || "").trim();
       return idFila && idFila === id;
     }).map(function (f) {
@@ -305,7 +305,7 @@ function fechaCortaAsi_(v) {
 }
 
 function asegurarColumnaObservacionAsi_(libroOpt) {
-  const libro = libroOpt || obtenerLibro();
+  const libro = libroOpt || _obtenerLibro_();
   if (!libro) {
     throw new Error("No se pudo obtener el libro de cálculo para asegurar columnas de observación de asistencia.");
   }
@@ -334,7 +334,7 @@ function bloquesDesdeHorarios_(grupos, fecha) {
   const d = new Date(String(fecha || fechaHoyAsi_()) + "T12:00:00");
   const dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
   const dia = dias[d.getDay()];
-  const filas = leerFilas("Horarios");
+  const filas = _leerFilas_("Horarios");
   const mapaBloque = {};
   const mapaMaestros = {};
   filas.forEach(function (f) {
@@ -386,7 +386,7 @@ function asistenciaContexto(token, fecha) {
     mapaGruposVisibles[claveGrupoAsi_(g.grado, g.grupo)] = true;
   });
 
-  const todosAlumnos = leerAlumnosResumen() || [];
+  const todosAlumnos = _leerAlumnosResumen_() || [];
   const alumnosAutorizados = todosAlumnos.filter(function (a) {
     if (String(a.activo || "SI").toUpperCase() === "NO") return false;
     const k = claveGrupoAsi_(a.grado, a.grupo);
@@ -451,12 +451,12 @@ function asistenciaAlumnosGrupo(token, grado, grupo, fecha) {
       break;
     }
   }
-  const alumnos = (leerAlumnosResumen() || []).filter(function (a) {
+  const alumnos = (_leerAlumnosResumen_() || []).filter(function (a) {
     if (String(a.activo || "SI").toUpperCase() === "NO") return false;
     return String(a.grado || "").trim() === gr && String(a.grupo || "").trim().toLowerCase() === g;
   });
   const previos = {};
-  leerFilas("AsistenciaAlumnos").forEach(function (f) {
+  _leerFilas_("AsistenciaAlumnos").forEach(function (f) {
     if (fechaCortaAsi_(f["Fecha"]) !== fechaUso) return;
     if (turnoDe_(f["Turno"]) !== turno) return;
     const mat = String(f["Matrícula"] || f["Matricula"] || "").trim();
@@ -510,13 +510,13 @@ function guardarAsistenciaAlumnos(token, payload) {
   }
   let locked = true;
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     if (!libro) throw new Error("No se pudo abrir la hoja.");
-    verificarYCrearPestanas();
+    _verificarYCrearPestanas_();
     asegurarColumnaObservacionAsi_();
     const p = libro.getSheetByName("AsistenciaAlumnos");
     const enc = ENCABEZADOS.AsistenciaAlumnos;
-    const existentes = leerFilas("AsistenciaAlumnos");
+    const existentes = _leerFilas_("AsistenciaAlumnos");
     const indice = {};
     existentes.forEach(function (f) {
       if (fechaCortaAsi_(f["Fecha"]) !== fechaUso) return;
@@ -566,7 +566,7 @@ function asistenciaMaestrosBloque(token, fecha, bloque, turno) {
   const dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
   const dia = dias[d.getDay()];
 
-  const filasH = leerFilas("Horarios").filter(function (f) {
+  const filasH = _leerFilas_("Horarios").filter(function (f) {
     const grado = String(f["Grado"] || "").trim();
     const grupo = String(f["Grupo"] || "").trim().toLowerCase();
     if (!claves[claveGrupoAsi_(grado, grupo)]) return false;
@@ -579,7 +579,7 @@ function asistenciaMaestrosBloque(token, fecha, bloque, turno) {
   });
 
   const previos = {};
-  leerFilas("AsistenciaMaestros").forEach(function (f) {
+  _leerFilas_("AsistenciaMaestros").forEach(function (f) {
     if (fechaCortaAsi_(f["Fecha"]) !== fechaUso) return;
     if (String(f["Bloque"] || "").trim() !== bloqueUso) return;
     const idh = String(f["Id horario"] || "").trim();
@@ -641,9 +641,9 @@ function guardarAsistenciaMaestro(token, payload) {
   }
   let locked = true;
   try {
-    verificarYCrearPestanas();
+    _verificarYCrearPestanas_();
     asegurarColumnaObservacionAsi_();
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     const p = libro.getSheetByName("AsistenciaMaestros");
     const enc = ENCABEZADOS.AsistenciaMaestros;
     const ts = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "America/Mexico_City", "yyyy-MM-dd HH:mm:ss");
@@ -651,7 +651,7 @@ function guardarAsistenciaMaestro(token, payload) {
       fechaUso, turno, bloque, idHorario, maestro, grado, grupo,
       String(payload.asignatura || ""), estado, sesion.nombre || sesion.rol, ts, obs
     ];
-    const existentes = leerFilas("AsistenciaMaestros");
+    const existentes = _leerFilas_("AsistenciaMaestros");
     let filaN = 0;
     let obsPrev = "";
     for (let i = 0; i < existentes.length; i++) {
@@ -680,7 +680,7 @@ function catalogoReporteAsistencia(token) {
   const grupos = gruposVisiblesAsistencia_(sesion);
   const claves = {};
   grupos.forEach(function (g) { claves[claveGrupoAsi_(g.grado, g.grupo)] = true; });
-  const alumnos = (leerAlumnosResumen() || []).filter(function (a) {
+  const alumnos = (_leerAlumnosResumen_() || []).filter(function (a) {
     if (String(a.activo || "SI").toUpperCase() === "NO") return false;
     return claves[claveGrupoAsi_(a.grado, a.grupo)];
   }).map(function (a) {
@@ -695,7 +695,7 @@ function catalogoReporteAsistencia(token) {
     return String(a.nombre).localeCompare(String(b.nombre), "es");
   });
   const maestrosMap = {};
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     const gr = String(f["Grado"] || "").trim();
     const gp = String(f["Grupo"] || "").trim().toLowerCase();
     if (!claves[claveGrupoAsi_(gr, gp)]) return;
@@ -768,7 +768,7 @@ function etiquetaHoraAsi_(bloque, ini, fin) {
 function mapaHorasHorario_() {
   const porId = {};
   const porBloque = {};
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     const id = String(f["Id"] || "").trim();
     const bloque = String(f["Bloque"] || "").trim();
     const ini = formatearHoraAsi_(f["Hora inicio"]);
@@ -923,7 +923,7 @@ function reporteAsistencia(token, payload) {
 }
 
 function reporteAsistenciaAlumnos_(sesion, claves, ini, fin, grado, grupo, matricula, tipo) {
-  const filas = leerFilas("AsistenciaAlumnos").filter(function (f) {
+  const filas = _leerFilas_("AsistenciaAlumnos").filter(function (f) {
     const fe = fechaCortaAsi_(f["Fecha"]);
     if (fe < ini || fe > fin) return false;
     const gr = String(f["Grado"] || "").trim();
@@ -1088,7 +1088,7 @@ function reporteAsistenciaAlumnos_(sesion, claves, ini, fin, grado, grupo, matri
 }
 
 function reporteAsistenciaMaestros_(sesion, claves, ini, fin, grado, grupo, maestro) {
-  const filas = leerFilas("AsistenciaMaestros").filter(function (f) {
+  const filas = _leerFilas_("AsistenciaMaestros").filter(function (f) {
     const fe = fechaCortaAsi_(f["Fecha"]);
     if (fe < ini || fe > fin) return false;
     const gr = String(f["Grado"] || "").trim();
@@ -1248,7 +1248,7 @@ function reporteAsistenciaMaestros_(sesion, claves, ini, fin, grado, grupo, maes
 }
 
 function asegurarColumnaClavePrefectos_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Prefectos");
   if (!p) return;
@@ -1269,10 +1269,10 @@ function listarPrefectos(token) {
   if (sesion.rol !== "admin") throw new Error("Solo el administrador puede ver prefectos.");
   asegurarColumnaUsuarioPrefectos_();
   asegurarColumnaClavePrefectos_();
-  const asig = leerFilas("PrefectoGrupos");
+  const asig = _leerFilas_("PrefectoGrupos");
   return {
     ok: true,
-    prefectos: leerFilas("Prefectos").map(function (f) {
+    prefectos: _leerFilas_("Prefectos").map(function (f) {
       const id = String(f["Id"] || "").trim();
       const grupos = asig.filter(function (a) {
         return String(a["Id prefecto"] || "").trim() === id;
@@ -1299,7 +1299,7 @@ function altaPrefecto(token, nombre, clave, usuario) {
   usuario = String(usuario || "").trim();
   if (!nombre) throw new Error("Escribe el nombre del prefecto.");
   if (clave.length < 6) throw new Error("La clave debe tener al menos 6 caracteres.");
-  verificarYCrearPestanas();
+  _verificarYCrearPestanas_();
   asegurarColumnaUsuarioPrefectos_();
   const usuarioUso = usuarioPrefLibre_(usuario || nombre);
   if (esUsuarioAdminAsistencia_(usuarioUso)) {
@@ -1307,7 +1307,7 @@ function altaPrefecto(token, nombre, clave, usuario) {
   }
   const id = "P" + String(new Date().getTime()).slice(-8);
   const salt = Utilities.getUuid();
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   asegurarColumnaClavePrefectos_();
   libro.getSheetByName("Prefectos").appendRow([id, nombre, usuarioUso, salt, hashClave(clave, salt), "SI", clave]);
   SpreadsheetApp.flush();
@@ -1322,13 +1322,13 @@ function asignarClavePrefecto(token, id, usuario, clave) {
   clave = String(clave || "").trim();
   if (!id) throw new Error("Falta el identificador.");
   if (clave && clave.length < 6) throw new Error("La clave debe tener al menos 6 caracteres.");
-  verificarYCrearPestanas();
+  _verificarYCrearPestanas_();
   asegurarColumnaUsuarioPrefectos_();
   asegurarColumnaClavePrefectos_();
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("Prefectos");
   if (!p) throw new Error("No se encontró la hoja Prefectos.");
-  const filas = leerFilas("Prefectos");
+  const filas = _leerFilas_("Prefectos");
   let f = null;
   filas.forEach(function (row) {
     if (String(row["Id"] || "").trim() === id) f = row;
@@ -1367,7 +1367,7 @@ function generarClavesPrefectos(token) {
   if (sesion.rol !== "admin") throw new Error("Solo el administrador puede generar claves.");
   asegurarColumnaUsuarioPrefectos_();
   asegurarColumnaClavePrefectos_();
-  const filas = leerFilas("Prefectos").filter(function (f) {
+  const filas = _leerFilas_("Prefectos").filter(function (f) {
     return String(f["Activo"] || "SI").toUpperCase() !== "NO";
   });
   if (!filas.length) return { ok: false, total: 0, mensaje: "No hay prefectas activas." };
@@ -1398,10 +1398,10 @@ function guardarAsignacionPrefecto(token, prefectoId, grupos) {
   }
   let locked = true;
   try {
-    verificarYCrearPestanas();
-    const libro = obtenerLibro();
+    _verificarYCrearPestanas_();
+    const libro = _obtenerLibro_();
     const p = libro.getSheetByName("PrefectoGrupos");
-    const filas = leerFilas("PrefectoGrupos");
+    const filas = _leerFilas_("PrefectoGrupos");
     const conservar = [];
     filas.forEach(function (f) {
       if (String(f["Id prefecto"] || "").trim() === prefectoId) return;
@@ -1575,11 +1575,11 @@ function importarHorarioAsc(token, xmlTexto, turnoForzado) {
 
   if (!filasNuevas.length) throw new Error("El XML no trae cards (clases colocadas en el horario).");
 
-  verificarYCrearPestanas();
-  const libro = obtenerLibro();
+  _verificarYCrearPestanas_();
+  const libro = _obtenerLibro_();
   const p = libro.getSheetByName("Horarios");
   const enc = ENCABEZADOS.Horarios;
-  const viejas = leerFilas("Horarios").filter(function (f) {
+  const viejas = _leerFilas_("Horarios").filter(function (f) {
     return turnoDe_(f["Turno"]) !== turno;
   }).map(function (f) {
     return enc.map(function (h) { return f[h] == null ? "" : f[h]; });
@@ -1642,7 +1642,7 @@ function sembrarPrefectasDemo_(token) {
     throw new Error("Acceso denegado: sembrarPrefectasDemo requiere un ID de libro de pruebas explícito y no puede ser el libro de producción.");
   }
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo abrir la hoja.");
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
   if (idReal === ID_PRODUCCION) {
@@ -1652,7 +1652,7 @@ function sembrarPrefectasDemo_(token) {
     throw new Error("BLOQUEO DE SEGURIDAD: el libro abierto (" + idReal + ") no coincide con el libro de pruebas configurado (" + idConfig + ").");
   }
 
-  verificarYCrearPestanas();
+  _verificarYCrearPestanas_();
   const pPref = libro.getSheetByName("Prefectos");
   const pAsig = libro.getSheetByName("PrefectoGrupos");
   if (!pPref || !pAsig) throw new Error("No se encontraron las pestañas de prefectura.");
@@ -1661,7 +1661,7 @@ function sembrarPrefectasDemo_(token) {
   const idsDemo = {};
   demo.forEach(function (d) { idsDemo[d.id] = true; });
 
-  const prefs = leerFilas("Prefectos").filter(function (f) {
+  const prefs = _leerFilas_("Prefectos").filter(function (f) {
     return !idsDemo[String(f["Id"] || "").trim()];
   });
   const filasPref = prefs.map(function (f) {
@@ -1684,7 +1684,7 @@ function sembrarPrefectasDemo_(token) {
     pPref.getRange(2, 1, filasPref.length, ENCABEZADOS.Prefectos.length).setValues(filasPref);
   }
 
-  const asigs = leerFilas("PrefectoGrupos").filter(function (f) {
+  const asigs = _leerFilas_("PrefectoGrupos").filter(function (f) {
     return !idsDemo[String(f["Id prefecto"] || "").trim()];
   });
   const filasAsig = asigs.map(function (f) {
@@ -1816,7 +1816,7 @@ function sembrarAsistenciaDemo(token) {
     throw new Error("Acceso denegado: sembrarAsistenciaDemo requiere un ID de libro de pruebas explícito y no puede ser el libro de producción.");
   }
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo abrir la hoja.");
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
   if (idReal === ID_PRODUCCION) {
@@ -1847,16 +1847,16 @@ function sembrarAsistenciaDemo(token) {
     mapaTurno[claveGrupoAsi_(g.grado, g.grupo)] = turnoDe_(g.turno);
   });
   const mapaPref = {};
-  leerFilas("PrefectoGrupos").forEach(function (f) {
+  _leerFilas_("PrefectoGrupos").forEach(function (f) {
     const k = claveGrupoAsi_(f["Grado"], f["Grupo"]);
     mapaPref[k] = String(f["Id prefecto"] || "").trim();
   });
   const mapaNomPref = {};
-  leerFilas("Prefectos").forEach(function (f) {
+  _leerFilas_("Prefectos").forEach(function (f) {
     mapaNomPref[String(f["Id"] || "").trim()] = String(f["Nombre"] || "").trim();
   });
 
-  const alumnos = (leerAlumnosResumen() || []).filter(function (a) {
+  const alumnos = (_leerAlumnosResumen_() || []).filter(function (a) {
     return String(a.activo || "SI").toUpperCase() !== "NO";
   });
   const filasAlu = [];
@@ -1888,7 +1888,7 @@ function sembrarAsistenciaDemo(token) {
 
   const filasMae = [];
   const vistos = {};
-  leerFilas("Horarios").forEach(function (f) {
+  _leerFilas_("Horarios").forEach(function (f) {
     const diaFila = String(f["Dia"] || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const grado = String(f["Grado"] || "").trim();
     const grupo = String(f["Grupo"] || "").trim().toLowerCase();

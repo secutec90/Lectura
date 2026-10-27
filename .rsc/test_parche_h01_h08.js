@@ -5,7 +5,7 @@ const assert = require('assert');
 console.log('=== INICIANDO SUITE DE PRUEBAS LOCALES H-01 A H-08 ===\n');
 
 // Read source files
-const codigoSrc = fs.readFileSync('Codigo.gs', 'utf8');
+const codigoSrc = require("./_cargar_codigo.js")();
 const asistenciaSrc = fs.readFileSync('Asistencia.gs', 'utf8');
 const claseLogicaSrc = fs.readFileSync('ClaseLogica.gs', 'utf8');
 
@@ -86,7 +86,12 @@ function createMockContext(opts = {}) {
     Logger: { log: () => {} },
     Utilities: {
       getUuid: () => 'uuid-' + Math.random().toString(36).slice(2, 8),
-      formatDate: (d, tz, fmt) => '2026-09-21'
+      formatDate: (d, tz, fmt) => '2026-09-21',
+      DigestAlgorithm: { SHA_256: 'SHA_256' },
+      Charset: { UTF_8: 'UTF-8' },
+      computeDigest: (alg, texto) => Array.from(
+        require('crypto').createHash('sha256').update(String(texto), 'utf8').digest()
+      ).map(b => (b > 127 ? b - 256 : b))
     },
     PropertiesService: {
       getScriptProperties: () => ({

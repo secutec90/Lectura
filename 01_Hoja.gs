@@ -41,7 +41,7 @@ function invalidarCachesDatos_() {
   } catch (e) {}
 }
 
-function obtenerLibro() {
+function _obtenerLibro_() {
   const props = PropertiesService.getScriptProperties();
   let entorno = String(props.getProperty("ENTORNO") || "").trim().toUpperCase();
   let idConfig = String(props.getProperty("HOJA_ID") || "").trim();
@@ -154,8 +154,8 @@ function vincularHojaCalculo(token, idOUrl) {
   }
 }
 
-function obtenerPestana(nombre) {
-  const libro = obtenerLibro();
+function _obtenerPestana_(nombre) {
+  const libro = _obtenerLibro_();
   if (!libro) return null;
   let p = libro.getSheetByName(nombre);
   if (p) return p;

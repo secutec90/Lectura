@@ -8,7 +8,7 @@ console.log("=== INICIANDO VALIDACIÓN DE PUNTOS A, B Y C (ST90) ===");
 const files = ["Codigo.gs", "Asistencia.gs", "ClaseLogica.gs"];
 files.forEach(f => {
   const p = path.join(__dirname, "..", f);
-  const code = fs.readFileSync(p, "utf8");
+  const code = String(p).includes("Codigo.gs") ? require("./_cargar_codigo.js")() : fs.readFileSync(p, "utf8");
   try {
     new vm.Script(code, { filename: f });
     console.log(`[SYNTAX OK] ${f}`);
@@ -187,7 +187,7 @@ function crearEmulador(opts = {}) {
   const ctx = vm.createContext(sandbox);
 
   // Cargar archivos en contexto
-  const codigoSrc = fs.readFileSync(path.join(__dirname, "..", "Codigo.gs"), "utf8");
+  const codigoSrc = require("./_cargar_codigo.js")();
   const asistenciaSrc = fs.readFileSync(path.join(__dirname, "..", "Asistencia.gs"), "utf8");
   const claseLogicaSrc = fs.readFileSync(path.join(__dirname, "..", "ClaseLogica.gs"), "utf8");
   

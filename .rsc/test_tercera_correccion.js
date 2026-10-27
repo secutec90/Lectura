@@ -20,7 +20,7 @@ console.log("===================================================================
 // Verificación sintáctica
 ["Codigo.gs", "Asistencia.gs", "ClaseLogica.gs"].forEach(f => {
   const p = path.join(__dirname, "..", f);
-  const code = fs.readFileSync(p, "utf8");
+  const code = String(p).includes("Codigo.gs") ? require("./_cargar_codigo.js")() : fs.readFileSync(p, "utf8");
   try {
     new vm.Script(code, { filename: f });
     console.log(`[SYNTAX CHECK PASS] ${f}`);
@@ -275,7 +275,7 @@ function crearContextoPruebas(opts = {}) {
   const context = vm.createContext(sandbox);
   ["Codigo.gs", "Asistencia.gs", "ClaseLogica.gs"].forEach(f => {
     const p = path.join(__dirname, "..", f);
-    const code = fs.readFileSync(p, "utf8");
+    const code = String(p).includes("Codigo.gs") ? require("./_cargar_codigo.js")() : fs.readFileSync(p, "utf8");
     vm.runInContext(code, context, { filename: f });
   });
 

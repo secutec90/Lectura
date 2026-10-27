@@ -53,7 +53,7 @@ function contextoInicialPlaneacionNEM(token) {
   const catalogo = catalogoCurricularNEM_();
   let asignaciones = [];
 
-  let todasHoras = leerFilas("Horarios");
+  let todasHoras = _leerFilas_("Horarios");
   const esOficialCompleto = todasHoras.length >= 500 && todasHoras.some(function (f) {
     const m = String(f["Maestro"] || "").toUpperCase();
     return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
@@ -159,17 +159,17 @@ function crearOActualizarPlaneacionNEM(token, datos) {
   let locked = true;
 
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     if (!libro) {
       throw new Error("No se pudo conectar a la base de datos de Google Sheets (ID: 1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU). " + (typeof ultimoErrorAperturaLibro !== 'undefined' ? ultimoErrorAperturaLibro : ''));
     }
     let pPlan = libro.getSheetByName("PlaneacionesNEM");
     if (!pPlan) {
-      verificarYCrearPestanas();
+      _verificarYCrearPestanas_();
       pPlan = libro.getSheetByName("PlaneacionesNEM");
     }
 
-    const filasPlan = leerFilas("PlaneacionesNEM");
+    const filasPlan = _leerFilas_("PlaneacionesNEM");
     let idPlan = String(datos.id || "").trim();
     let previa = null;
 
@@ -316,11 +316,11 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
   const filtroTrimestre = String(opts.trimestre || opts.periodo || "").trim();
   const filtroDocente = String(opts.docente || "").trim();
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (libro && !libro.getSheetByName("PlaneacionesNEM")) {
-    verificarYCrearPestanas();
+    _verificarYCrearPestanas_();
   }
-  const filas = leerFilas("PlaneacionesNEM");
+  const filas = _leerFilas_("PlaneacionesNEM");
   const nomDoc = normalizarNombrePref_(ses.maestroNombre || ses.nombre || "");
 
   const filtradas = filas.filter(function (f) {
@@ -351,7 +351,7 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
     return true;
   });
 
-  const sesionesTodas = leerFilas("SesionesNEM");
+  const sesionesTodas = _leerFilas_("SesionesNEM");
 
   const out = filtradas.map(function (p) {
     const id = String(p["Id"] || p["id"] || p["ID"] || "").trim();
@@ -460,22 +460,22 @@ function clonarPlaneacionAGlobal(token, idPlaneacionOriginal) {
   const idOriginal = String(idPlaneacionOriginal || "").trim();
   if (!idOriginal) throw new Error("ID de planeación a clonar no especificado.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   let pPlan = libro.getSheetByName("PlaneacionesNEM");
   let pSes = libro.getSheetByName("SesionesNEM");
   if (!pPlan || !pSes) {
-    verificarYCrearPestanas();
+    _verificarYCrearPestanas_();
     pPlan = libro.getSheetByName("PlaneacionesNEM");
     pSes = libro.getSheetByName("SesionesNEM");
   }
 
-  const filasPlan = leerFilas("PlaneacionesNEM");
+  const filasPlan = _leerFilas_("PlaneacionesNEM");
   const original = filasPlan.filter(function (f) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idOriginal;
   })[0];
   if (!original) throw new Error("Planeación didáctica original no encontrada.");
 
-  const sesionesOriginales = leerFilas("SesionesNEM").filter(function (s) {
+  const sesionesOriginales = _leerFilas_("SesionesNEM").filter(function (s) {
     return String(s["IdPlaneacion"] || s["idplaneacion"] || s["IDPLANEACION"] || "").trim() === idOriginal;
   });
 
@@ -565,9 +565,9 @@ function publicarPlaneacionEnRepositorio(token, idPlaneacion) {
   const idPlan = String(idPlaneacion || "").trim();
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const pPlan = libro.getSheetByName("PlaneacionesNEM");
-  const filasPlan = leerFilas("PlaneacionesNEM");
+  const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan;
   })[0];
@@ -580,7 +580,7 @@ function publicarPlaneacionEnRepositorio(token, idPlaneacion) {
   }
 
   // Validar sesiones
-  const sesiones = leerFilas("SesionesNEM").filter(function (s) {
+  const sesiones = _leerFilas_("SesionesNEM").filter(function (s) {
     return String(s["IdPlaneacion"] || s["idplaneacion"] || s["IDPLANEACION"] || "").trim() === idPlan;
   });
 
@@ -623,11 +623,11 @@ function eliminarPlaneacionNEM(token, idPlaneacion) {
   const idPlan = String(idPlaneacion || "").trim();
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const pPlan = libro.getSheetByName("PlaneacionesNEM");
   const pSes = libro.getSheetByName("SesionesNEM");
 
-  const filasPlan = leerFilas("PlaneacionesNEM");
+  const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan;
   })[0];
@@ -640,7 +640,7 @@ function eliminarPlaneacionNEM(token, idPlaneacion) {
   }
 
   // Eliminar sesiones asociadas de abajo hacia arriba
-  const filasSes = leerFilas("SesionesNEM");
+  const filasSes = _leerFilas_("SesionesNEM");
   const aEliminarSes = filasSes.filter(function (s) {
     return String(s["IdPlaneacion"] || s["idplaneacion"] || s["IDPLANEACION"] || "").trim() === idPlan;
   });
@@ -669,17 +669,17 @@ function obtenerPlaneacionCompletaNEM(token, idPlaneacion) {
   const idPlan = String(idPlaneacion || "").trim();
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (libro && !libro.getSheetByName("PlaneacionesNEM")) {
-    verificarYCrearPestanas();
+    _verificarYCrearPestanas_();
   }
 
-  const pFila = leerFilas("PlaneacionesNEM").filter(function (f) {
+  const pFila = _leerFilas_("PlaneacionesNEM").filter(function (f) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan;
   })[0];
   if (!pFila) throw new Error("Planeación no encontrada.");
 
-  const sesionesFilas = leerFilas("SesionesNEM").filter(function (s) {
+  const sesionesFilas = _leerFilas_("SesionesNEM").filter(function (s) {
     return String(s["IdPlaneacion"] || s["idplaneacion"] || s["IDPLANEACION"] || "").trim() === idPlan;
   });
 
@@ -851,11 +851,11 @@ function guardarSesionNEM(token, payloadSesion) {
   const idPlan = String(payloadSesion.idPlaneacion || payloadSesion.IdPlaneacion || "").trim();
   if (!idSes || !idPlan) throw new Error("ID de sesión e ID de planeación son obligatorios.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const pSes = libro.getSheetByName("SesionesNEM");
   if (!pSes) throw new Error("La hoja SesionesNEM no existe.");
 
-  const filas = leerFilas("SesionesNEM");
+  const filas = _leerFilas_("SesionesNEM");
   const previa = filas.filter(function (s) { return String(s["Id"] || s["id"] || s["ID"] || "").trim() === idSes; })[0];
   if (!previa) throw new Error("Sesión no encontrada.");
 
@@ -939,9 +939,9 @@ function aprobarPlaneacionNEM(token, idPlaneacion) {
   const idPlan = String(idPlaneacion || "").trim();
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const pPlan = libro.getSheetByName("PlaneacionesNEM");
-  const filasPlan = leerFilas("PlaneacionesNEM");
+  const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) { return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan; })[0];
   if (!previa) throw new Error("Planeación no encontrada.");
 
@@ -979,13 +979,13 @@ function calendarizarSesionNEM(token, idSesion, idHorario, fecha) {
   if (!idH) throw new Error("Bloque de horario no especificado.");
   if (!fe) throw new Error("Fecha escolar no especificada.");
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const pSes = libro.getSheetByName("SesionesNEM");
-  const filasSes = leerFilas("SesionesNEM");
+  const filasSes = _leerFilas_("SesionesNEM");
   const sesion = filasSes.filter(function (s) { return String(s["Id"] || s["id"] || s["ID"] || "").trim() === idSes; })[0];
   if (!sesion) throw new Error("Sesión no encontrada.");
 
-  const filaH = leerFilas("Horarios").filter(function (f) {
+  const filaH = _leerFilas_("Horarios").filter(function (f) {
     return idHorarioClase_(f["Id"] || f["id"] || f["ID"]) === idH;
   })[0];
   if (!filaH) throw new Error("El bloque de horario indicado no existe en la escuela.");

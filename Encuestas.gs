@@ -79,11 +79,11 @@ function extraerIdHoja(urlOId) {
   return "";
 }
 
-function abrirLibroPorId(id) {
+function _abrirLibroPorId_(id) {
   return SpreadsheetApp.openById(String(id || "").trim());
 }
 
-// Lee Configuracion.hojaId directamente del contenedor (sin pasar por getLibro)
+// Lee Configuracion.hojaId directamente del contenedor (sin pasar por _getLibro_)
 function leerHojaIdDeConfiguracion(libro) {
   try {
     const hoja = libro.getSheetByName(HOJA_CONFIG);
@@ -98,13 +98,13 @@ function leerHojaIdDeConfiguracion(libro) {
   return "";
 }
 
-function getLibro() {
+function _getLibro_() {
   if (_libroCache) return _libroCache;
 
   const props = PropertiesService.getScriptProperties();
   const idProp = String(props.getProperty("HOJA_ID") || "").trim();
   if (idProp) {
-    _libroCache = abrirLibroPorId(idProp);
+    _libroCache = _abrirLibroPorId_(idProp);
     _libroOrigen = "propiedad HOJA_ID";
     return _libroCache;
   }
@@ -113,7 +113,7 @@ function getLibro() {
   if (contenedor) {
     const idConfig = leerHojaIdDeConfiguracion(contenedor);
     if (idConfig && idConfig !== contenedor.getId()) {
-      _libroCache = abrirLibroPorId(idConfig);
+      _libroCache = _abrirLibroPorId_(idConfig);
       _libroOrigen = "Configuracion.hojaId";
       return _libroCache;
     }
@@ -123,7 +123,7 @@ function getLibro() {
   }
 
   if (HOJA_ID_FIJA) {
-    _libroCache = abrirLibroPorId(HOJA_ID_FIJA);
+    _libroCache = _abrirLibroPorId_(HOJA_ID_FIJA);
     _libroOrigen = "HOJA_ID_FIJA";
     return _libroCache;
   }
@@ -131,33 +131,33 @@ function getLibro() {
   throw new Error("No se encontró la hoja de datos. Vincula una desde el panel o define HOJA_ID.");
 }
 
-function getInfoLibro() {
-  const libro = getLibro();
+function _getInfoLibro_() {
+  const libro = _getLibro_();
   return { id: libro.getId(), nombre: libro.getName(), origen: _libroOrigen };
 }
 
-function olvidarLibro() {
+function _olvidarLibro_() {
   _libroCache = null;
   _libroOrigen = "";
 }
 
 // Ejecutar una vez desde el editor para autorizar el acceso a la hoja.
 function autorizar() {
-  return "OK: " + getLibro().getName();
+  return "OK: " + _getLibro_().getName();
 }
 
 // --------------------------------------------------------
 // Hojas
 // --------------------------------------------------------
-function getHojaFormulario(libro) {
-  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : getLibro();
+function _getHojaFormulario_(libro) {
+  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : _getLibro_();
   let hoja = ss.getSheetByName(HOJA_FORMULARIO);
   if (!hoja) {
     hoja = ss.insertSheet(HOJA_FORMULARIO);
     hoja.appendRow(["id", "tipo", "etiqueta", "ayuda", "placeholder", "obligatoria",
                     "opciones", "orden", "activa", "columna", "extra"]);
     hoja.getRange(1, 1, 1, COLUMNAS_FORMULARIO).setFontWeight("bold").setBackground("#f3f4f6");
-    sembrarMovilidad(hoja);
+    _sembrarMovilidad_(hoja);
   }
   return hoja;
 }
@@ -216,7 +216,7 @@ const PREGUNTAS_MOVILIDAD = [
 
 const IDS_DEMO = ["nombre", "area", "satisfaccion", "comentarios"];
 
-function sembrarMovilidad(hoja) {
+function _sembrarMovilidad_(hoja) {
   const filas = PREGUNTAS_MOVILIDAD.map((p, i) => [
     p.id, p.tipo, p.etiqueta, p.ayuda || "", p.placeholder || "",
     !!p.obligatoria, JSON.stringify(p.opciones || []), i + 1, true, p.columna,
@@ -226,8 +226,8 @@ function sembrarMovilidad(hoja) {
 }
 
 // Reemplaza las preguntas demo de las primeras versiones por las de movilidad.
-function migrarDemoAMovilidad() {
-  const hoja = getHojaFormulario();
+function _migrarDemoAMovilidad_() {
+  const hoja = _getHojaFormulario_();
   const last = hoja.getLastRow();
   if (last < 2) return false;
   const ids = hoja.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0] || ""));
@@ -235,21 +235,21 @@ function migrarDemoAMovilidad() {
   if (!esDemo) return false;
 
   hoja.getRange(2, 1, last - 1, COLUMNAS_FORMULARIO).clearContent();
-  sembrarMovilidad(hoja);
+  _sembrarMovilidad_(hoja);
 
-  const cfg = getHojaConfig();
+  const cfg = _getHojaConfig_();
   const filas = Object.keys(CONFIG_POR_DEFECTO).map(k => [k, CONFIG_POR_DEFECTO[k]]);
   const lastCfg = cfg.getLastRow();
   if (lastCfg > 1) cfg.getRange(2, 1, lastCfg - 1, 2).clearContent();
   cfg.getRange(2, 1, filas.length, 2).setValues(filas);
 
-  try { actualizarCabecerasRespuestas(); } catch (e) { console.error("cabeceras: " + e); }
+  try { _actualizarCabecerasRespuestas_(); } catch (e) { console.error("cabeceras: " + e); }
 
   return true;
 }
 
-function getHojaConfig(libro) {
-  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : getLibro();
+function _getHojaConfig_(libro) {
+  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : _getLibro_();
   let hoja = ss.getSheetByName(HOJA_CONFIG);
   if (!hoja) {
     hoja = ss.insertSheet(HOJA_CONFIG);
@@ -261,12 +261,12 @@ function getHojaConfig(libro) {
   return hoja;
 }
 
-function getHojaRespuestas(libro) {
-  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : getLibro();
+function _getHojaRespuestas_(libro) {
+  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : _getLibro_();
   let hoja = ss.getSheetByName(HOJA_RESPUESTAS);
   if (!hoja) {
     hoja = ss.insertSheet(HOJA_RESPUESTAS);
-    const preguntas = leerPreguntas(false, ss.getSheetByName(HOJA_FORMULARIO) || getHojaFormulario(ss));
+    const preguntas = leerPreguntas(false, ss.getSheetByName(HOJA_FORMULARIO) || _getHojaFormulario_(ss));
     let maximo = 2;
     preguntas.forEach(p => { if (p.columna > maximo) maximo = p.columna; });
     const fila = new Array(maximo).fill("");
@@ -283,7 +283,7 @@ function getHojaRespuestas(libro) {
 // Lectura del esquema
 // --------------------------------------------------------
 function leerConfigEncuestas(libro) {
-  const hoja = getHojaConfig(libro);
+  const hoja = _getHojaConfig_(libro);
   const valores = hoja.getDataRange().getValues();
   const config = {};
   Object.keys(CONFIG_POR_DEFECTO).forEach(k => { config[k] = CONFIG_POR_DEFECTO[k]; });
@@ -295,7 +295,7 @@ function leerConfigEncuestas(libro) {
 }
 
 function leerPreguntas(soloActivas, hoja) {
-  const fuente = hoja || getHojaFormulario();
+  const fuente = hoja || _getHojaFormulario_();
   const valores = fuente.getDataRange().getValues();
   const preguntas = [];
   for (let i = 1; i < valores.length; i++) {
@@ -433,9 +433,9 @@ function validarPregunta(p) {
 // --------------------------------------------------------
 function obtenerFormulario() {
   try {
-    migrarDemoAMovilidad();
+    _migrarDemoAMovilidad_();
   } catch (error) {
-    console.error("migrarDemoAMovilidad: " + (error && error.stack ? error.stack : error));
+    console.error("_migrarDemoAMovilidad_: " + (error && error.stack ? error.stack : error));
   }
   return { config: leerConfigEncuestas(), preguntas: leerPreguntas(true) };
 }
@@ -478,7 +478,7 @@ function guardarFormulario(credenciales, config, preguntas) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(30000)) return { exito: false, mensaje: "El sistema está ocupado." };
   try {
-    const hoja = getHojaFormulario();
+    const hoja = _getHojaFormulario_();
     const existentes = leerPreguntas(false);
     const porId = {};
     existentes.forEach(p => { porId[p.id] = p; });
@@ -576,13 +576,13 @@ function guardarFormulario(credenciales, config, preguntas) {
     hoja.getRange(2, 1, Math.max(hoja.getLastRow(), 2), COLUMNAS_FORMULARIO).clearContent();
     if (filas.length) hoja.getRange(2, 1, filas.length, COLUMNAS_FORMULARIO).setValues(filas);
 
-    const hojaConfig = getHojaConfig();
+    const hojaConfig = _getHojaConfig_();
     const claves = Object.keys(CONFIG_POR_DEFECTO);
     const valores = claves.map(k => [k, String((config || {})[k] != null ? config[k] : (CONFIG_POR_DEFECTO[k] || ""))]);
     hojaConfig.getRange(2, 1, Math.max(hojaConfig.getLastRow(), 2), 2).clearContent();
     hojaConfig.getRange(2, 1, valores.length, 2).setValues(valores);
 
-    actualizarCabecerasRespuestas();
+    _actualizarCabecerasRespuestas_();
     return { exito: true, formulario: obtenerFormulario() };
   } catch (error) {
     console.error("guardarFormulario: " + (error && error.stack ? error.stack : error));
@@ -592,8 +592,8 @@ function guardarFormulario(credenciales, config, preguntas) {
   }
 }
 
-function actualizarCabecerasRespuestas(libro) {
-  const hoja = getHojaRespuestas(libro);
+function _actualizarCabecerasRespuestas_(libro) {
+  const hoja = _getHojaRespuestas_(libro);
   const preguntas = leerPreguntas(false, libro ? libro.getSheetByName(HOJA_FORMULARIO) : null);
   let maximo = 2;
   preguntas.forEach(p => { if (p.columna > maximo) maximo = p.columna; });
@@ -672,7 +672,7 @@ function guardarRespuestaFormulario(datos) {
     const problema = validarRespuestas(preguntas, respuestas);
     if (problema) return { exito: false, mensaje: problema };
 
-    const hoja = getHojaRespuestas();
+    const hoja = _getHojaRespuestas_();
     let maximo = 2;
     preguntas.forEach(p => { if (p.columna > maximo) maximo = p.columna; });
     const fila = new Array(maximo).fill("");
@@ -798,7 +798,7 @@ function simularRespuestasFormulario(credenciales, cantidad, passEspecial, perfi
     if (!preguntas.length) {
       return { exito: false, mensaje: "No hay preguntas activas." };
     }
-    const hoja = getHojaRespuestas();
+    const hoja = _getHojaRespuestas_();
     let maximo = 2;
     preguntas.forEach(p => { if (p.columna > maximo) maximo = p.columna; });
     const pesos = perfil === "uniforme" ? null : crearPesosSimulacion(preguntas);
@@ -852,7 +852,7 @@ function limpiarSimuladosFormulario(credenciales, passEspecial) {
     return { exito: false, mensaje: "El sistema está ocupado. Intenta de nuevo." };
   }
   try {
-    const hoja = getHojaRespuestas();
+    const hoja = _getHojaRespuestas_();
     const valores = hoja.getDataRange().getValues();
     let borradas = 0;
     for (let i = valores.length - 1; i >= 1; i--) {
@@ -870,9 +870,9 @@ function limpiarSimuladosFormulario(credenciales, passEspecial) {
   }
 }
 
-function obtenerRespuestasFormulario(credenciales) {
+function _obtenerRespuestasFormulario_(credenciales) {
   if (!verificarAdmin(credenciales).autenticado) return { autenticado: false };
-  const hoja = getHojaRespuestas();
+  const hoja = _getHojaRespuestas_();
   const preguntas = leerPreguntas(false);
   const valores = hoja.getDataRange().getValues();
   const filas = [];
@@ -896,13 +896,13 @@ function obtenerRespuestasFormulario(credenciales) {
     preguntas.forEach(p => { if (p.columna) objeto.respuestas[p.id] = f[p.columna - 1]; });
     filas.push(objeto);
   }
-  return { autenticado: true, hoja: getInfoLibro(), config: leerConfigEncuestas(), preguntas: preguntas, filas: filas };
+  return { autenticado: true, hoja: _getInfoLibro_(), config: leerConfigEncuestas(), preguntas: preguntas, filas: filas };
 }
 
 // Variante del panel: entrega el mismo contenido como cadena JSON.
 // google.script.run devuelve null cuando el objeto es grande; una cadena viaja igual.
 function obtenerRespuestasFormularioJSON(credenciales) {
-  const datos = obtenerRespuestasFormulario(credenciales);
+  const datos = _obtenerRespuestasFormulario_(credenciales);
   try { return JSON.stringify(datos); } catch (error) { return JSON.stringify({ autenticado: false, mensaje: String(error) }); }
 }
 
@@ -938,7 +938,7 @@ const DEMO_JERARQUIA = [
 ];
 
 // Marca Turno -> Grupo como jerarquía y añade el ejemplo de tres niveles
-function instalarJerarquiaDemo(credenciales) {
+function _instalarJerarquiaDemo_(credenciales) {
   if (!verificarAdmin(credenciales).autenticado) return { exito: false, mensaje: "Sesión no válida." };
   const activas = leerPreguntas(true);
 
@@ -971,24 +971,24 @@ function quitarJerarquiaDemo(credenciales) {
 // --------------------------------------------------------
 // Vinculación de una hoja desde el panel
 // --------------------------------------------------------
-function prepararHojasDeLibro(libro) {
+function _prepararHojasDeLibro_(libro) {
   const creadas = [];
   const nombres = libro.getSheets().map(h => h.getName());
 
   if (nombres.indexOf(HOJA_FORMULARIO) === -1) {
-    getHojaFormulario(libro);
+    _getHojaFormulario_(libro);
     creadas.push(HOJA_FORMULARIO);
   }
   if (nombres.indexOf(HOJA_CONFIG) === -1) {
-    getHojaConfig(libro);
+    _getHojaConfig_(libro);
     creadas.push(HOJA_CONFIG);
   }
   if (nombres.indexOf(HOJA_RESPUESTAS) === -1) {
-    getHojaRespuestas(libro);
+    _getHojaRespuestas_(libro);
     creadas.push(HOJA_RESPUESTAS);
   } else {
     try {
-      actualizarCabecerasRespuestas(libro);
+      _actualizarCabecerasRespuestas_(libro);
     } catch (error) {
       console.error("cabeceras al vincular: " + error);
     }
@@ -1008,7 +1008,7 @@ function vincularYPrepararHoja(credenciales, urlOId) {
 
   let libro = null;
   try {
-    libro = abrirLibroPorId(id);
+    libro = _abrirLibroPorId_(id);
   } catch (error) {
     const texto = String((error && error.message) || error);
     const sinPermiso = /permission|denied|autoriz|access|permiso/i.test(texto);
@@ -1035,16 +1035,16 @@ function vincularYPrepararHoja(credenciales, urlOId) {
   }
 
   try {
-    const creadas = prepararHojasDeLibro(libro);
+    const creadas = _prepararHojasDeLibro_(libro);
     PropertiesService.getScriptProperties().setProperty("HOJA_ENCUESTAS_ID", id);
-    olvidarLibro();
-    const activo = getLibro();
+    _olvidarLibro_();
+    const activo = _getLibro_();
     return {
       exito: true,
       id: id,
       nombre: activo.getName(),
       hojasCreadas: creadas,
-      hoja: getInfoLibro(),
+      hoja: _getInfoLibro_(),
       config: leerConfigEncuestas(),
       preguntas: leerPreguntas(true)
     };
@@ -1061,8 +1061,8 @@ function vincularYPrepararHoja(credenciales, urlOId) {
 const HOJA_BANCO = "BancoEncuestas";
 const HOJA_BANCO_RESPUESTAS = "BancoRespuestas";
 
-function getHojaBanco(libro) {
-  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : getLibro();
+function _getHojaBanco_(libro) {
+  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : _getLibro_();
   let hoja = ss.getSheetByName(HOJA_BANCO);
   if (!hoja) {
     hoja = ss.insertSheet(HOJA_BANCO);
@@ -1072,8 +1072,8 @@ function getHojaBanco(libro) {
   return hoja;
 }
 
-function getHojaBancoRespuestas(libro) {
-  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : getLibro();
+function _getHojaBancoRespuestas_(libro) {
+  const ss = (libro && typeof libro.getSheetByName === "function") ? libro : _getLibro_();
   let hoja = ss.getSheetByName(HOJA_BANCO_RESPUESTAS);
   if (!hoja) {
     hoja = ss.insertSheet(HOJA_BANCO_RESPUESTAS);
@@ -1110,14 +1110,14 @@ function guardarEnBanco(credenciales) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(30000)) return { exito: false, mensaje: "El sistema está ocupado. Intenta de nuevo." };
   try {
-    const datos = obtenerRespuestasFormulario(credenciales);
+    const datos = _obtenerRespuestasFormulario_(credenciales);
     if (!datos.autenticado) return { exito: false, mensaje: "Sesión no válida." };
     const filas = datos.filas || [];
     const activas = (datos.preguntas || []).filter(p => p.activa);
     const id = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd-HHmmss");
     const resumen = resumenBanco_(datos.preguntas || [], filas);
 
-    getHojaBanco().appendRow([
+    _getHojaBanco_().appendRow([
       id,
       new Date(),
       String((datos.config && datos.config.titulo) || "Encuesta"),
@@ -1127,7 +1127,7 @@ function guardarEnBanco(credenciales) {
       JSON.stringify({ config: datos.config, preguntas: datos.preguntas })
     ]);
 
-    const hojaResp = getHojaBancoRespuestas();
+    const hojaResp = _getHojaBancoRespuestas_();
     const cuerpo = filas.map(f => [id, f.fecha || "", f.origen || "Real", JSON.stringify(f.respuestas || {})]);
     if (cuerpo.length) hojaResp.getRange(hojaResp.getLastRow() + 1, 1, cuerpo.length, 4).setValues(cuerpo);
     return { exito: true, id: id, total: filas.length, resumen: resumen };
@@ -1143,7 +1143,7 @@ function guardarEnBanco(credenciales) {
 function listarBanco(credenciales) {
   try {
     if (!verificarAdmin(credenciales).autenticado) return JSON.stringify({ exito: false, mensaje: "Sesión no válida." });
-    const hoja = getHojaBanco();
+    const hoja = _getHojaBanco_();
     const vals = hoja.getDataRange().getValues();
     const items = [];
     for (let i = 1; i < vals.length; i++) {
@@ -1175,7 +1175,7 @@ function obtenerDelBanco(credenciales, id) {
     const objetivo = String(id || "").trim();
     if (!objetivo) return JSON.stringify({ exito: false, mensaje: "Falta el identificador de la encuesta." });
 
-    const vals = getHojaBanco().getDataRange().getValues();
+    const vals = _getHojaBanco_().getDataRange().getValues();
     let esquema = null;
     for (let i = 1; i < vals.length; i++) {
       if (String(vals[i][0]) === objetivo) { esquema = String(vals[i][6] || ""); break; }
@@ -1184,7 +1184,7 @@ function obtenerDelBanco(credenciales, id) {
 
     const datos = JSON.parse(esquema) || {};
     const filas = [];
-    const filasHoja = getHojaBancoRespuestas().getDataRange().getValues();
+    const filasHoja = _getHojaBancoRespuestas_().getDataRange().getValues();
     for (let i = 1; i < filasHoja.length; i++) {
       if (String(filasHoja[i][0]) !== objetivo) continue;
       let respuestas = {};

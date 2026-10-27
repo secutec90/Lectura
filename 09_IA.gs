@@ -4,7 +4,7 @@
 function obtenerClaveDeepSeek_() {
   const deProps = PropertiesService.getScriptProperties().getProperty("DEEPSEEK_KEY");
   if (deProps && deProps.trim()) return deProps.trim();
-  const deSheet = leerConfig("DEEPSEEK_KEY", "");
+  const deSheet = _leerConfig_("DEEPSEEK_KEY", "");
   if (deSheet && deSheet.trim()) {
     try {
       PropertiesService.getScriptProperties().setProperty("DEEPSEEK_KEY", deSheet.trim());
@@ -65,7 +65,7 @@ function probarConexionDeepSeek(token) {
 
 function crearRespaldoLibro(token) {
   exigirAdmin(token);
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) throw new Error("No se pudo obtener el libro de cálculo.");
   const idLibro = libro.getId();
   const archivo = DriveApp.getFileById(idLibro);
@@ -81,7 +81,7 @@ function crearRespaldoLibro(token) {
   };
 }
 
-function pedirNivelesLoteDeepSeek(clave, lote) {
+function _pedirNivelesLoteDeepSeek_(clave, lote) {
   if (!clave || !lote || !lote.length) return [];
   try {
     const lista = lote.map(function (x, i) {
@@ -124,10 +124,10 @@ function pedirNivelesLoteDeepSeek(clave, lote) {
 
 function clasificarNivelesTodasLasPreguntas(token) {
   exigirAdmin(token);
-  asegurarSetup();
+  _asegurarSetup_();
   asegurarColumnaNivelPreguntas();
 
-  const lecturas = leerFilas("Lecturas");
+  const lecturas = _leerFilas_("Lecturas");
   const clave = obtenerClaveDeepSeek_();
   const mapaBanco = mapaNivelesBanco_();
   const t0 = Date.now();
@@ -167,7 +167,7 @@ function clasificarNivelesTodasLasPreguntas(token) {
   if (clave && dudosos.length) {
     for (let i = 0; i < dudosos.length && (Date.now() - t0) < 240000; i += TAM) {
       const lote = dudosos.slice(i, i + TAM);
-      const niveles = pedirNivelesLoteDeepSeek(clave, lote);
+      const niveles = _pedirNivelesLoteDeepSeek_(clave, lote);
       lote.forEach(function (it, k) {
         const n = niveles[k];
         if (!n) return;
@@ -190,7 +190,7 @@ function clasificarNivelesTodasLasPreguntas(token) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    const p = obtenerLibro().getSheetByName("Lecturas");
+    const p = _obtenerLibro_().getSheetByName("Lecturas");
     const enc = p.getRange(1, 1, 1, Math.max(p.getLastColumn(), 1)).getValues()[0]
       .map(function (h) { return String(h || "").trim(); });
     const colJson = enc.indexOf("Preguntas JSON") + 1;
@@ -266,10 +266,10 @@ function desgloseNivelesComprension(preguntas, respuestas) {
   return hay ? out : null;
 }
 
-function historialAlumnoParaReporte(matricula, tokenExcluir) {
+function _historialAlumnoParaReporte_(matricula, tokenExcluir) {
   let propios = [];
   try {
-    const todos = leerResultadosDeTodasLasPestanas() || [];
+    const todos = _leerResultadosDeTodasLasPestanas_() || [];
     propios = todos.filter(function (r) {
       if (String(r.matricula || "").trim().toLowerCase() !== String(matricula || "").trim().toLowerCase()) {
         return false;

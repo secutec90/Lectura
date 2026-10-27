@@ -11,7 +11,7 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
   }
-  try { asegurarSetup(); } catch (eSetup) {}
+  try { _asegurarSetup_(); } catch (eSetup) {}
   
   const urlApp = ScriptApp.getService().getUrl();
   const urlSitioAlumno = urlSitioAlumno_();
@@ -82,7 +82,7 @@ function doGet(e) {
       try {
         const ses = obtenerSesionValida_(tokenParam);
         if (ses && String(ses.rol || "").toLowerCase() === "alumno" && String(ses.matricula || "").trim().toLowerCase() === matParam.toLowerCase()) {
-          const alu = buscarAlumno(matParam);
+          const alu = _buscarAlumno_(matParam);
           if (alu) {
             matAuto = String(alu["Matrícula"]);
             tokenAuto = tokenParam;

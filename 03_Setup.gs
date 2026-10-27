@@ -1,11 +1,11 @@
 /**********************************************************************
  * SETUP (con caché corto)
  **********************************************************************/
-function asegurarSetup() {
+function _asegurarSetup_() {
   const cache = CacheService.getScriptCache();
   if (cache.get("setup_ok") === "1") return { ok: true, cached: true };
 
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return { ok: false, error: "Libro no accesible" };
 
   const faltantes = [];
@@ -16,7 +16,7 @@ function asegurarSetup() {
   });
 
   if (faltantes.length > 0) {
-    Logger.log("asegurarSetup: pestañas faltantes en el libro: " + faltantes.join(", "));
+    Logger.log("_asegurarSetup_: pestañas faltantes en el libro: " + faltantes.join(", "));
     return { ok: false, faltantes: faltantes };
   }
 
@@ -24,8 +24,8 @@ function asegurarSetup() {
   return { ok: true };
 }
 
-function verificarYCrearPestanas() {
-  const libro = obtenerLibro();
+function _verificarYCrearPestanas_() {
+  const libro = _obtenerLibro_();
   if (!libro) return;
   let creo = false;
   Object.keys(ENCABEZADOS).forEach(function (nombre) {
@@ -38,8 +38,8 @@ function verificarYCrearPestanas() {
     }
   });
   migrarLecturasSiEsAntiguo();
-  migrarAlumnosSiEsAntiguo();
-  repararResultadosSiEsNecesario();
+  _migrarAlumnosSiEsAntiguo_();
+  _repararResultadosSiEsNecesario_();
   asegurarConfig();
   asegurarColumnaIntentosGrupo();
   asegurarColumnaTurnoGrupo();
@@ -48,11 +48,11 @@ function verificarYCrearPestanas() {
   asegurarColumnaUsuarioPrefectos_();
   asegurarColumnaClavePrefectos_();
   asegurarColumnaClaveAccesoClase_();
-  if (creo) formatearHojasDeLectura();
+  if (creo) _formatearHojasDeLectura_();
 }
 
 function migrarLecturasSiEsAntiguo() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Lecturas");
   if (!p) return;
@@ -66,7 +66,7 @@ function migrarLecturasSiEsAntiguo() {
   }
   
   if (p.getLastRow() >= 2) {
-    const filas = leerFilas("Lecturas");
+    const filas = _leerFilas_("Lecturas");
     if (!filas || filas.length === 0) {
       Logger.log("migrarLecturasSiEsAntiguo: no se pudieron interpretar las filas existentes en Lecturas. Operación cancelada.");
       return;
@@ -92,8 +92,8 @@ function migrarLecturasSiEsAntiguo() {
   }
 }
 
-function migrarAlumnosSiEsAntiguo() {
-  const libro = obtenerLibro();
+function _migrarAlumnosSiEsAntiguo_() {
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Alumnos");
   if (!p || p.getLastRow() < 1) return;
@@ -114,12 +114,12 @@ function migrarAlumnosSiEsAntiguo() {
   }
 }
 
-function repararResultadosSiEsNecesario() {
-  return unificarEstructuraResultados();
+function _repararResultadosSiEsNecesario_() {
+  return _unificarEstructuraResultados_();
 }
 
-function unificarEstructuraResultados() {
-  const libro = obtenerLibro();
+function _unificarEstructuraResultados_() {
+  const libro = _obtenerLibro_();
   if (!libro) return { ok: false, mensaje: "No se pudo abrir la hoja de cálculo." };
   let p = libro.getSheetByName("Resultados");
   if (!p) {
@@ -266,7 +266,7 @@ function unificarEstructuraResultados() {
 
 function repararResultadosAdmin(token) {
   exigirAdmin(token);
-  return unificarEstructuraResultados();
+  return _unificarEstructuraResultados_();
 }
 
 function buscarIdLecturaPorTema_(grado, asig, tema, intento) {
@@ -280,7 +280,7 @@ function buscarIdLecturaPorTema_(grado, asig, tema, intento) {
   }
 
   try {
-    const lecs = leerFilas("Lecturas");
+    const lecs = _leerFilas_("Lecturas");
     for (let i = 0; i < lecs.length; i++) {
       const lTema = String(lecs[i]["Tema"] || "").trim().toLowerCase();
       const lGrado = String(lecs[i]["Grado"] || "").trim();
@@ -294,7 +294,7 @@ function buscarIdLecturaPorTema_(grado, asig, tema, intento) {
 }
 
 function asegurarConfig() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Config");
   if (!p) return;
@@ -304,7 +304,7 @@ function asegurarConfig() {
       ["ASIGNATURAS", ASIGNATURAS_DEFAULT.join("|")]
     ]);
   }
-  if (!leerConfig("PPM_OBJETIVO", "")) {
+  if (!_leerConfig_("PPM_OBJETIVO", "")) {
     const base = {};
     Object.keys(ESPECIFICACIONES_GRADO).forEach(function (g) {
       base[g] = {
@@ -315,11 +315,11 @@ function asegurarConfig() {
     });
     escribirConfig_("PPM_OBJETIVO", JSON.stringify(base));
   }
-  if (!leerConfig("LECTURAS_TRIMESTRALES", "")) {
+  if (!_leerConfig_("LECTURAS_TRIMESTRALES", "")) {
     escribirConfig_("LECTURAS_TRIMESTRALES", JSON.stringify(cfgTrimestralPorDefecto_()));
   }
-  const sitioAlumno = String(leerConfig("URL_SITIO_ALUMNO", "") || "").replace(/\?.*$/, "").replace(/\/+$/, "");
-  const sitioDocente = String(leerConfig("URL_SITIO_DOCENTE", "") || "").replace(/\?.*$/, "").replace(/\/+$/, "");
+  const sitioAlumno = String(_leerConfig_("URL_SITIO_ALUMNO", "") || "").replace(/\?.*$/, "").replace(/\/+$/, "");
+  const sitioDocente = String(_leerConfig_("URL_SITIO_DOCENTE", "") || "").replace(/\?.*$/, "").replace(/\/+$/, "");
   if (!sitioAlumno || sitioAlumno === "https://sites.google.com/view/lec90") {
     escribirConfig_("URL_SITIO_ALUMNO", URL_SITIO_ALUMNO_DEFAULT);
   }
@@ -337,25 +337,25 @@ function sanitizarUrlSitio_(url, respaldo) {
 }
 
 function urlSitioAlumno_() {
-  return sanitizarUrlSitio_(leerConfig("URL_SITIO_ALUMNO", ""), URL_SITIO_ALUMNO_DEFAULT);
+  return sanitizarUrlSitio_(_leerConfig_("URL_SITIO_ALUMNO", ""), URL_SITIO_ALUMNO_DEFAULT);
 }
 
 function urlSitioDocente_() {
-  return sanitizarUrlSitio_(leerConfig("URL_SITIO_DOCENTE", ""), URL_SITIO_DOCENTE_DEFAULT);
+  return sanitizarUrlSitio_(_leerConfig_("URL_SITIO_DOCENTE", ""), URL_SITIO_DOCENTE_DEFAULT);
 }
 
 function nombreEscuela_() {
-  const n = String(leerConfig("IDENTIDAD_NOMBRE", "") || "").trim();
+  const n = String(_leerConfig_("IDENTIDAD_NOMBRE", "") || "").trim();
   return n || NOMBRE_ESCUELA;
 }
 
 function pieLectura_() {
-  const p = String(leerConfig("IDENTIDAD_PIE", "") || "").trim();
+  const p = String(_leerConfig_("IDENTIDAD_PIE", "") || "").trim();
   return p || "Plan de Estudio NEM";
 }
 
 function logoEscuela_() {
-  const l = String(leerConfig("IDENTIDAD_LOGO", "") || "").trim();
+  const l = String(_leerConfig_("IDENTIDAD_LOGO", "") || "").trim();
   if (l && /^data:image\/(png|jpe?g|webp);base64,/i.test(l) && l.length <= 50000) return l;
   return "";
 }
@@ -410,7 +410,7 @@ function guardarUrlsSitio(token, urlAlumno, urlDocente) {
 }
 
 function asegurarColumnaIntentosGrupo() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Grupos");
   if (!p) return;
@@ -420,7 +420,7 @@ function asegurarColumnaIntentosGrupo() {
 }
 
 function asegurarColumnaTurnoGrupo() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Grupos");
   if (!p) return;
@@ -431,7 +431,7 @@ function asegurarColumnaTurnoGrupo() {
 }
 
 function asegurarColumnaNivelPreguntas() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Preguntas");
   if (!p) return;
@@ -453,7 +453,7 @@ function mapaConfig_() {
     return cacheados;
   }
   const mapa = {};
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return mapa;
   const p = libro.getSheetByName("Config");
   if (!p || p.getLastRow() < 2) return mapa;
@@ -467,7 +467,7 @@ function mapaConfig_() {
   return mapa;
 }
 
-function leerConfig(clave, respaldo) {
+function _leerConfig_(clave, respaldo) {
   const mapa = mapaConfig_();
   if (mapa && Object.prototype.hasOwnProperty.call(mapa, clave)) return mapa[clave];
   return respaldo;
@@ -492,7 +492,7 @@ function escribirConfig_(clave, valor) {
   if (CLAVES_RESTRINGIDAS[claveNorm]) {
     throw new Error("Acceso denegado: la clave de configuración '" + clave + "' es sensible y está estrictamente restringida.");
   }
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Config");
   if (!p) return;

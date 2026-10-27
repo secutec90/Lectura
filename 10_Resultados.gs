@@ -32,7 +32,7 @@ function calcularCalificaciones(palabras, tiempoLectura, aciertos, totalPregunta
 }
 
 function guardarResultadosExamen(datos) {
-  asegurarSetup();
+  _asegurarSetup_();
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   let locked = true;
@@ -139,12 +139,12 @@ function guardarResultadosExamen(datos) {
     }
 
     // 6. Validar existencia y estado del alumno
-    const alumno = buscarAlumno(mat);
+    const alumno = _buscarAlumno_(mat);
     if (!alumno) throw new Error("Alumno no encontrado.");
     if (String(alumno["Activo"] || "SI").toUpperCase() === "NO") throw new Error("Este alumno no está activo.");
 
     // 7. Validar número de intento y cupo disponible ANTES de consumir el token
-    const todosRes = (leerResultadosDeTodasLasPestanas() || []).filter(function (r) {
+    const todosRes = (_leerResultadosDeTodasLasPestanas_() || []).filter(function (r) {
       const rTok = String(r.tokenExamen || r["Token Examen"] || "").trim();
       return !rTok || rTok !== tokenRecibido;
     });
@@ -193,13 +193,13 @@ function guardarResultadosExamen(datos) {
     const pme = calcularPme(calc.ppm, calc.comprension);
     const tiempos = resumenTiemposPregunta(tiemposPregunta);
     const desglose = desgloseNivelesComprension(preguntas, respuestas);
-    const historial = historialAlumnoParaReporte(mat, tokenRecibido);
+    const historial = _historialAlumnoParaReporte_(mat, tokenRecibido);
     let deltaGlobal = null;
     if (historial.n && historial.promedioGlobal != null) {
       deltaGlobal = Math.round((calc.global - historial.promedioGlobal) * 10) / 10;
     }
 
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     const p = libro.getSheetByName("Resultados");
     if (!p) throw new Error("No se encontró la pestaña Resultados.");
 
@@ -457,7 +457,7 @@ function guardarResultadosExamen(datos) {
 
 function buscarResultadoPrevioEnHoja_(mat, tokenRecibido, datos) {
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     if (!libro) return null;
     const p = libro.getSheetByName("Resultados");
     if (!p || p.getLastRow() < 2) return null;
@@ -610,7 +610,7 @@ function calcularHistorialDesdeFilasPrevias_(mat, filasPrevias, enc, globalActua
 
   // 1. Incluir primero resultados de pestañas históricas archivadas si existen
   try {
-    const libro = obtenerLibro();
+    const libro = _obtenerLibro_();
     if (libro && typeof libro.getSheets === "function") {
       const hojas = libro.getSheets();
       for (let s = 0; s < hojas.length; s++) {
@@ -750,7 +750,7 @@ function reconstruirResultadoDesdeFila_(row, enc, mat, idLectura, datos, filasPr
 
   let alumno = null;
   try {
-    alumno = buscarAlumno(rowMat);
+    alumno = _buscarAlumno_(rowMat);
   } catch (eAlu) {}
 
   let lectura = null;
@@ -848,7 +848,7 @@ function reconstruirResultadoDesdeFila_(row, enc, mat, idLectura, datos, filasPr
       histData = calcularHistorialDesdeFilasPrevias_(rowMat, filasPrevias, enc, global, tokenExcluir);
     } else {
       const tokEx = tokenExcluir || (datos && datos.tokenExamen) || (idxToken >= 0 ? String(row[idxToken] || "").trim() : "");
-      const h = historialAlumnoParaReporte(rowMat, tokEx);
+      const h = _historialAlumnoParaReporte_(rowMat, tokEx);
       if (h) {
         let delta = null;
         if (h.n && h.promedioGlobal != null) {

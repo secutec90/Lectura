@@ -17,7 +17,7 @@ console.log("===================================================================
 console.log("ST90 — CUARTA REVISIÓN ACOTADA: PRUEBAS LOCALES DE SEGURIDAD");
 console.log("================================================================================");
 
-const CODIGO_GS = fs.readFileSync(path.join(__dirname, "..", "Codigo.gs"), "utf8");
+const CODIGO_GS = require("./_cargar_codigo.js")();
 const ASISTENCIA_GS = fs.readFileSync(path.join(__dirname, "..", "Asistencia.gs"), "utf8");
 const CLASE_LOGICA_GS = fs.readFileSync(path.join(__dirname, "..", "ClaseLogica.gs"), "utf8");
 

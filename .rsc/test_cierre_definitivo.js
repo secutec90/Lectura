@@ -37,12 +37,14 @@ console.log("[EMULACIÓN] Dependencias Google Apps Script simuladas en memoria")
 console.log("[AVISO] La integración real con Google Apps Script NO está probada aquí");
 console.log("--------------------------------------------------------------------------------");
 
-const CODIGO_GS = fs.readFileSync(path.join(__dirname, "..", "Codigo.gs"), "utf8");
+const CODIGO_GS = require("./_cargar_codigo.js")();
 const ASISTENCIA_GS = fs.readFileSync(path.join(__dirname, "..", "Asistencia.gs"), "utf8");
 const CLASE_LOGICA_GS = fs.readFileSync(path.join(__dirname, "..", "ClaseLogica.gs"), "utf8");
 const PLANEACION_NEM_GS = fs.readFileSync(path.join(__dirname, "..", "PlaneacionNEM.gs"), "utf8");
 const HORARIO_OFICIAL_GS = fs.readFileSync(path.join(__dirname, "..", "HorarioOficial.gs"), "utf8");
-const CLASE_HTML = fs.readFileSync(path.join(__dirname, "..", "Clase.html"), "utf8");
+const CLASE_HTML = [fs.readFileSync(path.join(__dirname, "..", "Clase.html"), "utf8")]
+  .concat(fs.readdirSync(path.join(__dirname, "..")).filter(f => /^ClaseJS_.*\.html$/.test(f)).sort()
+    .map(f => fs.readFileSync(path.join(__dirname, "..", f), "utf8"))).join("\n");
 
 function verificarSintaxis(codigo, nombre) {
   try {

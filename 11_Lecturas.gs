@@ -3,7 +3,7 @@
  **********************************************************************/
 function guardarLecturaBanco(token, lectura) {
   exigirAdmin(token);
-  asegurarSetup();
+  _asegurarSetup_();
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);
   try {
@@ -23,7 +23,7 @@ function guardarLecturaBanco(token, lectura) {
       contarPalabras(texto), JSON.stringify(preguntas),
       String((lectura && lectura.activa) || "SI"), "DOCENTE"
     ];
-    const p = obtenerLibro().getSheetByName("Lecturas");
+    const p = _obtenerLibro_().getSheetByName("Lecturas");
     const exist = buscarLecturaPorId(id);
     if (exist) p.getRange(exist._fila, 1, 1, ENCABEZADOS.Lecturas.length).setValues([fila]);
     else p.appendRow(fila);
@@ -39,7 +39,7 @@ function cambiarActivaLectura(token, id, activa) {
   const l = buscarLecturaPorId(id);
   if (!l) throw new Error("No se encontró esa lectura.");
   const v = (activa === true || activa === "SI" || activa === "true") ? "SI" : "NO";
-  obtenerLibro().getSheetByName("Lecturas").getRange(l._fila, 8).setValue(v);
+  _obtenerLibro_().getSheetByName("Lecturas").getRange(l._fila, 8).setValue(v);
   invalidarCachesDatos_();
   return { ok: true, mensaje: v === "SI" ? "Lectura activada." : "Lectura ocultada." };
 }
@@ -48,12 +48,12 @@ function eliminarLectura(token, id) {
   exigirAdmin(token);
   const l = buscarLecturaPorId(id);
   if (!l) throw new Error("No se encontró esa lectura.");
-  const p = obtenerLibro().getSheetByName("Lecturas");
+  const p = _obtenerLibro_().getSheetByName("Lecturas");
   p.deleteRow(l._fila);
   
-  const pPreg = obtenerLibro().getSheetByName("Preguntas");
+  const pPreg = _obtenerLibro_().getSheetByName("Preguntas");
   if (pPreg && pPreg.getLastRow() >= 2) {
-    const filasPreg = leerFilas("Preguntas");
+    const filasPreg = _leerFilas_("Preguntas");
     const filasConservar = filasPreg.filter(function (x) {
       return String(x["ID Lectura"]) !== String(id);
     });
@@ -78,31 +78,31 @@ function eliminarLectura(token, id) {
 
 function generarLecturaAdmin(token, grado, asignatura, tema) {
   exigirAdmin(token);
-  asegurarSetup();
+  _asegurarSetup_();
   const spec = especificacionesDeGrado(grado);
-  const paquete = generarPaqueteIaOLocal(grado, asignatura, tema, spec);
+  const paquete = _generarPaqueteIaOLocal_(grado, asignatura, tema, spec);
   const id = "LEC_" + Date.now();
-  obtenerLibro().getSheetByName("Lecturas").appendRow([
+  _obtenerLibro_().getSheetByName("Lecturas").appendRow([
     id, String(grado), asignatura, tema, paquete.texto,
     contarPalabras(paquete.texto), JSON.stringify(paquete.preguntas), "SI", paquete.origen
   ]);
   reemplazarPreguntasDeLectura_(id, paquete.preguntas || []);
-  formatearHojasDeLectura();
+  _formatearHojasDeLectura_();
   return { ok: true, id: id, palabras: contarPalabras(paquete.texto), origen: paquete.origen };
 }
 
-function generarPaqueteIaOLocal(grado, asignatura, tema, spec) {
+function _generarPaqueteIaOLocal_(grado, asignatura, tema, spec) {
   const clave = obtenerClaveDeepSeek_();
   if (clave) {
     try {
-      const ia = pedirLecturaDeepSeek(clave, grado, asignatura, tema, spec);
+      const ia = _pedirLecturaDeepSeek_(clave, grado, asignatura, tema, spec);
       if (ia) return ia;
     } catch (e) { Logger.log(e.message); }
   }
   return lecturaLocalAdministrador(grado, asignatura, tema, spec);
 }
 
-function pedirLecturaDeepSeek(clave, grado, asignatura, tema, spec) {
+function _pedirLecturaDeepSeek_(clave, grado, asignatura, tema, spec) {
   const instruccion = "Eres un especialista pedagógico de la " + NOMBRE_ESCUELA + " y experto en diseño psicométrico y reactivos de evaluación de comprensión lectora (Fase 6: Educación Secundaria - NEM).\n" +
     "Genera UNA lectura de comprensión contextualizada, formativa y profunda para alumnos de " + grado + "° de secundaria, en la asignatura \"" + asignatura + "\", sobre el tema / PDA: \"" + tema + "\".\n\n" +
     "Especificaciones pedagógicas y del texto:\n" +
@@ -448,7 +448,7 @@ function auditarLecturaItem(grado, texto, preguntas) {
   return { ok: problemas.length === 0, problemas: problemas, spec: spec, palabras: pal, nPreguntas: nP };
 }
 
-function revisarLecturaDeepSeek(clave, grado, asignatura, tema, spec, textoActual) {
+function _revisarLecturaDeepSeek_(clave, grado, asignatura, tema, spec, textoActual) {
   const instruccion = "Eres un especialista pedagógico de la " + NOMBRE_ESCUELA + " (Fase 6 NEM).\n" +
     "Revisa y reescribe UNA lectura de comprensión para " + grado + "° de secundaria, asignatura \"" + asignatura + "\", tema / PDA: \"" + tema + "\".\n" +
     "El texto actual puede estar corto, largo, mal partido o no corresponder al tema. Debes entregar un texto NUEVO o AJUSTADO que sí trate el tema y cumpla las especificaciones.\n\n" +
@@ -493,7 +493,7 @@ function revisarLecturaDeepSeek(clave, grado, asignatura, tema, spec, textoActua
 }
 
 function reconstruirHojaPreguntasDesdeJson_() {
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return;
   const p = libro.getSheetByName("Preguntas");
   if (!p) return;
@@ -504,7 +504,7 @@ function reconstruirHojaPreguntasDesdeJson_() {
   const idReal = typeof libro.getId === "function" ? String(libro.getId() || "").trim() : "";
   const esProd = (entorno === "PRODUCCION") || (idReal === ID_PRODUCCION);
 
-  const lecturas = leerFilas("Lecturas");
+  const lecturas = _leerFilas_("Lecturas");
   const matriz = [];
   lecturas.forEach(function (l) {
     const id = String(l["ID Lectura"] || "");
@@ -524,7 +524,7 @@ function reconstruirHojaPreguntasDesdeJson_() {
   if (esProd) {
     // EN PRODUCCIÓN: Nunca ejecutar p.clearContents() destructivo.
     // Preservar preguntas existentes; actualizar por clave (ID Lectura + Num) o anexar faltantes.
-    const filasExistentes = leerFilas("Preguntas") || [];
+    const filasExistentes = _leerFilas_("Preguntas") || [];
     if (matriz.length === 0 && filasExistentes.length > 0) {
       Logger.log("reconstruirHojaPreguntasDesdeJson_: En producción no se borran preguntas existentes cuando la matriz generada está vacía.");
       return;
@@ -557,12 +557,12 @@ function reconstruirHojaPreguntasDesdeJson_() {
 
 function ajustarLecturasAEspecificaciones(token) {
   exigirAdmin(token);
-  asegurarSetup();
+  _asegurarSetup_();
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    const p = obtenerLibro().getSheetByName("Lecturas");
-    const lecturas = leerFilas("Lecturas");
+    const p = _obtenerLibro_().getSheetByName("Lecturas");
+    const lecturas = _leerFilas_("Lecturas");
     const clave = obtenerClaveDeepSeek_();
     const t0 = Date.now();
     const reporte = { ok: true, revisadas: 0, cumplian: 0, actualizadas: 0, conIA: 0, detalle: [] };
@@ -588,7 +588,7 @@ function ajustarLecturasAEspecificaciones(token) {
       const spec = especificacionesDeGrado(grado);
       let pack = null;
       if (clave && (Date.now() - t0) < 240000) {
-        try { pack = revisarLecturaDeepSeek(clave, grado, asig, tema, spec, texto); } catch (e) { pack = null; }
+        try { pack = _revisarLecturaDeepSeek_(clave, grado, asig, tema, spec, texto); } catch (e) { pack = null; }
       }
       if (pack) {
         reporte.conIA++;
@@ -627,7 +627,7 @@ function ajustarLecturasAEspecificaciones(token) {
     });
 
     reconstruirHojaPreguntasDesdeJson_();
-    formatearHojasDeLectura();
+    _formatearHojasDeLectura_();
     return reporte;
   } finally {
     lock.releaseLock();

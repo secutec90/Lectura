@@ -25,7 +25,7 @@ function preguntasDeLectura(lecturaOId) {
   }
   const id = fila ? String(fila["ID Lectura"] || "") : String(lecturaOId || "");
   if (!id) return [];
-  const deHoja = leerFilas("Preguntas")
+  const deHoja = _leerFilas_("Preguntas")
     .filter(function (p) { return String(p["ID Lectura"]) === String(id); })
     .sort(function (a, b) { return Number(a["Orden"] || 0) - Number(b["Orden"] || 0); })
     .map(preguntaDesdeFilaHoja).filter(Boolean);
@@ -33,7 +33,7 @@ function preguntasDeLectura(lecturaOId) {
 }
 
 function mapaPreguntasPorId() {
-  const p = obtenerLibro().getSheetByName("Preguntas");
+  const p = _obtenerLibro_().getSheetByName("Preguntas");
   if (!p || p.getLastRow() < 2) return {};
   const valores = p.getDataRange().getValues();
   if (valores.length < 2) return {};
@@ -82,9 +82,9 @@ function mapaPreguntasPorId() {
 function reemplazarPreguntasDeLectura_(id, preguntas) {
   const idStr = String(id || "").trim();
   if (!idStr) throw new Error("Falta el identificador de la lectura.");
-  const p = obtenerLibro().getSheetByName("Preguntas");
+  const p = _obtenerLibro_().getSheetByName("Preguntas");
   if (!p) return;
-  const filas = leerFilas("Preguntas");
+  const filas = _leerFilas_("Preguntas");
   const filasConservar = filas.filter(function (x) {
     return String(x["ID Lectura"]) !== idStr;
   });
@@ -139,7 +139,7 @@ function mezclar(lista) {
 function buscarLecturaPorId(id) {
   const buscado = String(id || "").trim();
   if (!buscado) return null;
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   if (!libro) return null;
   const p = libro.getSheetByName("Lecturas");
   if (!p || p.getLastRow() < 2) return null;
@@ -226,7 +226,7 @@ function leerLecturasIndice_() {
     memoLecturasIdx_ = cacheados;
     return cacheados;
   }
-  const libro = obtenerLibro();
+  const libro = _obtenerLibro_();
   const p = libro && libro.getSheetByName("Lecturas");
   if (!p || p.getLastRow() < 2) {
     memoLecturasIdx_ = [];
@@ -349,7 +349,7 @@ function adjuntarInformesEvaluaciones_(crono, alumno, permitidos, spec) {
 function construirPanelAlumno_(matricula, opciones) {
   const opts = opciones || {};
   const vozDocente = opts.voz === "docente";
-  const alumno = buscarAlumno(matricula);
+  const alumno = _buscarAlumno_(matricula);
   if (!alumno) return { ok: false, mensaje: "No se encontró al alumno." };
   const activo = String(alumno["Activo"]).toUpperCase() !== "NO";
   if (!opts.incluirInactivos && !activo) return { ok: false, mensaje: "Este alumno no está activo." };
@@ -358,7 +358,7 @@ function construirPanelAlumno_(matricula, opciones) {
   const grado = String(alumno["Grado"]);
   const extra = Number(alumno["Intentos extra"] || 0);
   const permitidos = intentosPermitidosDe(alumno);
-  const todos = leerResultadosDeTodasLasPestanas() || [];
+  const todos = _leerResultadosDeTodasLasPestanas_() || [];
   const cfgT = leerCfgTrimestral_();
   const excl = exclusionLecturasDeResultados_(matricula, todos);
   const usados = contarIntentosSorteo_(matricula, todos, cfgT);

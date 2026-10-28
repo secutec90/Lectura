@@ -421,7 +421,7 @@
                 <div class="nem-catalogo-dos-col">
                   <!-- Columna Izquierda: Contenido Central -->
                   <div>
-                    <label for="selContenidoSinteticoNEM" style="font-size:11.5px;font-weight:700;color:#166534;margin-bottom:4px;display:block;">
+                    <label for="selContenidoSinteticoNEM" style="font-size:11.5px;font-weight:700;color:#166534;margin:0 0 4px;display:flex;align-items:center;height:24px;">
                       1. Elegir Contenido Central del Programa Sintético SEP:
                     </label>
                     <select id="selContenidoSinteticoNEM" class="nem-select-sintetico" onchange="alSeleccionarContenidoSinteticoNEM()">
@@ -434,12 +434,12 @@
 
                   <!-- Columna Derecha: PDA Oficiales, Buscador y Checklist -->
                   <div>
-                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:6px;margin:0 0 4px;height:24px;flex-wrap:nowrap;">
                       <label style="font-size:11.5px;font-weight:700;color:#166534;margin:0;">
                         2. PDA de este grado:
                       </label>
-                      <button type="button" id="btnBuscarPDA" title="Buscar PDA" onclick="alternarBuscadorPDA_()" style="border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:2px 3px;">🔍</button>
-                      <button type="button" id="btnArticulacionPDA" title="Ver progresión en otros grados" onclick="alternarArticulacionOtrosGrados_()" style="border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:2px 3px;">👁️</button>
+                      <button type="button" id="btnBuscarPDA" title="Buscar PDA" onclick="alternarBuscadorPDA_()" style="border:0;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;height:22px;">🔍</button>
+                      <button type="button" id="btnArticulacionPDA" title="Ver progresión en otros grados" onclick="alternarArticulacionOtrosGrados_()" style="border:0;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;height:22px;">👁️</button>
                       <div style="display:flex;align-items:center;gap:4px;margin-left:auto;">
                         <span id="badgeConteoPDAs" class="nem-badge-count" aria-live="polite">0 seleccionados</span>
                         <button type="button" class="btn-secundario" style="font-size:10px;padding:1px 6px;cursor:pointer;" onclick="marcarTodosPDAsGrado_(true)">Todos</button>
@@ -450,7 +450,7 @@
                     <input type="text" id="buscarPDANEM" class="nem-input-filter oculto" placeholder="Filtrar PDA por palabras clave…" oninput="filtrarListaPDAsDOM_()" style="margin-bottom:6px;">
 
                     <!-- Contenedor interactivo del selector de PDA -->
-                    <div id="listaPDAsCheckboxNEM" class="nem-lista-pda-scroll">
+                    <div id="listaPDAsCheckboxNEM">
                       <span style="font-size:11px;color:#64748b;">Selecciona un contenido a la izquierda para ver sus PDA oficiales.</span>
                     </div>
 

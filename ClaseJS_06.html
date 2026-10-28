@@ -88,7 +88,7 @@
     }).join('');
 
     cont.innerHTML =
-      '<select id="selPDANEM" onchange="elegirPDANEM_(this)" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12.5px;background:#fff;color:#334155;">' +
+      '<select id="selPDANEM" class="nem-select-sintetico" onchange="elegirPDANEM_(this)" style="width:100%;">' +
         '<option value="">' + (disp.length ? 'Selecciona un PDA para agregarlo…' : 'Sin PDA que coincidan con el filtro') + '</option>' +
         opciones +
       '</select>' +

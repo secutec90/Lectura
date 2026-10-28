@@ -809,4 +809,59 @@
   .horario-toolbar-shell.plegada > .nav-semana-box,
   .horario-toolbar-shell.plegada > .horario-sep-v { display: none; }
   .horario-toolbar-shell.plegada { justify-content: flex-end; min-height: 28px; }
+
+  /* ===== Cinta grande: estilo ribbon visible ===== */
+  .horario-toolbar-shell {
+    padding: 8px 10px 6px !important;
+    background: linear-gradient(#fbfcfe, #eef2f7) !important;
+    border: 1px solid #d5dbe3 !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 1px 0 #ffffff;
+    gap: 6px 10px !important;
+  }
+  .horario-toolbar-shell .ribbon-btn {
+    min-width: 76px !important;
+    max-width: 108px !important;
+    padding: 7px 9px 5px !important;
+    gap: 4px !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+  }
+  .horario-toolbar-shell .ribbon-btn:hover {
+    background: #e6edf5 !important;
+    border-color: #c7d2e0 !important;
+  }
+  .horario-toolbar-shell .ribbon-btn.activo,
+  .horario-toolbar-shell .ribbon-btn.activo:hover {
+    background: #fff6c7 !important;
+    border-color: #eab308 !important;
+  }
+  .horario-toolbar-shell .ribbon-btn svg {
+    width: 23px !important;
+    height: 23px !important;
+  }
+  .horario-toolbar-shell .ribbon-btn .ribbon-label {
+    font-size: 10.5px !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+    max-width: 100px !important;
+  }
+  .horario-toolbar-shell > .horario-toolbar-bloque,
+  .horario-toolbar-shell > .nav-semana-box {
+    gap: 2px !important;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  .horario-sep-v,
+  .horario-toolbar-shell > .nav-semana-box,
+  .horario-toolbar-shell > .horario-toolbar-bloque:nth-child(3) {
+    border-left: 1px solid #cfd8e3 !important;
+    padding-left: 10px !important;
+  }
+  .horario-toolbar-shell > .horario-toolbar-bloque:last-child {
+    border-left: 1px solid #cfd8e3 !important;
+    padding-left: 10px !important;
+    margin-left: auto !important;
+  }
 </style>

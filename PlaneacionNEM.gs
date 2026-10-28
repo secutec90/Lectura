@@ -1353,6 +1353,15 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
     4: "titulo, campo formativo, metodologia, contenido curricular, PDA, problema comunitario, diagnostico y ajustes razonables"
   };
   const noMencionar = prohibidos[n] || prohibidos[1];
+  // Campos que aceptan texto libre. El resto son selects, números o fechas:
+  // para ellos solo tiene sentido indicar el valor, no redactar contenido.
+  const editablesPorPaso = {
+    1: "Titulo del proyecto",
+    2: "Contenido curricular sintetico, PDA oficiales",
+    3: "Problema de la comunidad, Diagnostico del grupo, Ajustes razonables (DUA)",
+    4: "Proposito, Producto final, Evaluacion"
+  };
+  const editables = editablesPorPaso[n] || editablesPorPaso[1];
   const escritos = etiquetas
     .filter(function (p) { return String(p[1] || "").trim(); })
     .map(function (p) { return "- " + p[0] + ": " + String(p[1]).trim().slice(0, 600); })
@@ -1370,6 +1379,8 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
     "Revisas únicamente estos campos de la sección: " + nombresCampos + ".\n" +
     "PROHIBIDO mencionar, evaluar o sugerir cambios sobre: " + noMencionar + ".\n" +
     "Esos campos no forman parte de esta revision y el docente los trabaja en otra seccion. Si tu sugerencia los necesita, no la escribas.\n" +
+    "Solo redacta texto para estos campos, que son los editables: " + editables + ".\n" +
+    "Los demas campos de la seccion son selecciones, numeros o fechas: no admiten texto libre, asi que para ellos indica unicamente el valor concreto que deberian llevar.\n" +
     "Devuelve texto plano en español de México, sin markdown, con estas tres partes y exactamente estos encabezados:\n" +
     "OBSERVACIONES: una o dos frases sobre lo que ya está bien y lo que falta.\n" +
     "AJUSTES: dos o tres sugerencias concretas y aplicables en el aula.\n" +

@@ -327,19 +327,19 @@
               <div class="nem-stepper-header" role="tablist">
                 <button type="button" class="nem-step-tab activo" onclick="irAPasoPlanNEM(1)" id="tabPasoPlan1" role="tab" aria-selected="true">
                   <span class="step-num">1</span>
-                  <span class="step-txt">Metadatos & Ejes</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(1);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span>
+                  <span class="step-txt">Metadatos & Ejes</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(1);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span><span class="nem-ayuda-paso" title="Asistente de IA de esta sección" onclick="event.stopPropagation(); abrirAsistentePasoNEM_(1);" style="margin-left:4px;font-size:12px;opacity:.8;cursor:pointer;">🤖</span>
                 </button>
                 <button type="button" class="nem-step-tab" onclick="irAPasoPlanNEM(2)" id="tabPasoPlan2" role="tab" aria-selected="false">
                   <span class="step-num">2</span>
-                  <span class="step-txt">Contenidos & PDA</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(2);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span>
+                  <span class="step-txt">Contenidos & PDA</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(2);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span><span class="nem-ayuda-paso" title="Asistente de IA de esta sección" onclick="event.stopPropagation(); abrirAsistentePasoNEM_(2);" style="margin-left:4px;font-size:12px;opacity:.8;cursor:pointer;">🤖</span>
                 </button>
                 <button type="button" class="nem-step-tab" onclick="irAPasoPlanNEM(3)" id="tabPasoPlan3" role="tab" aria-selected="false">
                   <span class="step-num">3</span>
-                  <span class="step-txt">Diagnóstico & DUA</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(3);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span>
+                  <span class="step-txt">Diagnóstico & DUA</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(3);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span><span class="nem-ayuda-paso" title="Asistente de IA de esta sección" onclick="event.stopPropagation(); abrirAsistentePasoNEM_(3);" style="margin-left:4px;font-size:12px;opacity:.8;cursor:pointer;">🤖</span>
                 </button>
                 <button type="button" class="nem-step-tab" onclick="irAPasoPlanNEM(4)" id="tabPasoPlan4" role="tab" aria-selected="false">
                   <span class="step-num">4</span>
-                  <span class="step-txt">Propósito & IA</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(4);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span>
+                  <span class="step-txt">Propósito & IA</span><span class="nem-ayuda-paso" title="Ayuda de esta sección" onclick="event.stopPropagation(); abrirAyudaPasoPlan_(4);" style="margin-left:6px;font-size:11px;opacity:.65;cursor:pointer;">❓</span><span class="nem-ayuda-paso" title="Asistente de IA de esta sección" onclick="event.stopPropagation(); abrirAsistentePasoNEM_(4);" style="margin-left:4px;font-size:12px;opacity:.8;cursor:pointer;">🤖</span>
                 </button>
               </div>
 
@@ -389,7 +389,6 @@
                 </div>
               </div>
 
-                <button type="button" class="nem-btn-accion" style="font-size:11.5px;margin-bottom:8px;" onclick="abrirAsistentePasoNEM_(1)" title="Analizar esta sección con IA">🤖 Asistente IA de esta sección</button>
 <div class="nem-step-nav-footer">
                   <span class="hint" style="font-size:11px;">Paso 1 de 4: Estructura Curricular General y Ejes Articuladores</span>
                   <button type="button" class="nem-btn-accion nem-btn-primario" onclick="irAPasoPlanNEM(2)">
@@ -464,7 +463,6 @@
                 </div>
               </div>
 
-                <button type="button" class="nem-btn-accion" style="font-size:11.5px;margin-bottom:8px;" onclick="abrirAsistentePasoNEM_(2)" title="Analizar esta sección con IA">🤖 Asistente IA de esta sección</button>
 <div class="nem-step-nav-footer">
                   <button type="button" class="nem-btn-accion" onclick="irAPasoPlanNEM(1)">
                     ← Volver a Metadatos
@@ -533,7 +531,6 @@
                   </div>
                 </div>
 
-                <button type="button" class="nem-btn-accion" style="font-size:11.5px;margin-bottom:8px;" onclick="abrirAsistentePasoNEM_(3)" title="Analizar esta sección con IA">🤖 Asistente IA de esta sección</button>
 <div class="nem-step-nav-footer">
                   <button type="button" class="nem-btn-accion" onclick="irAPasoPlanNEM(2)">
                     ← Volver a Contenidos & PDA
@@ -561,7 +558,6 @@
                   <textarea id="planProposito" rows="4" style="min-height:90px;width:100%;resize:vertical !important;overflow-y:auto !important;" placeholder="Define qué aprenderán los estudiantes, para qué lo aprenderán y cuál será el producto integrador o evidencia central de aprendizaje..."></textarea>
                 </div>
 
-                <button type="button" class="nem-btn-accion" style="font-size:11.5px;margin-bottom:8px;" onclick="abrirAsistentePasoNEM_(4)" title="Analizar esta sección con IA">🤖 Asistente IA de esta sección</button>
 <div class="nem-step-nav-footer">
                   <button type="button" class="nem-btn-accion" onclick="irAPasoPlanNEM(3)">
                     ← Volver a Diagnóstico CTE

@@ -1353,29 +1353,59 @@
   /* Sugerencias de título a partir de los contenidos oficiales de la asignatura y grado. */
   function poblarSugerenciasTituloNEM_() {
     var sel = document.getElementById('selTituloSugeridoNEM');
-    if (!sel || sel.dataset.listo === '1') return;
-    var contenidos = [];
+    if (!sel) return;
+    var grado = String((document.getElementById('planGrado') || {}).value || '').trim();
+    var elegido = String((document.getElementById('selContenidoSinteticoNEM') || {}).value || '').trim();
+
+    var todos = [];
+    var pdaElegido = [];
     try {
       if (typeof matrizCurricularActivaNEM_ !== 'undefined' && matrizCurricularActivaNEM_ &&
           Array.isArray(matrizCurricularActivaNEM_.contenidos)) {
-        contenidos = matrizCurricularActivaNEM_.contenidos
+        todos = matrizCurricularActivaNEM_.contenidos
           .map(function (x) { return String((x && x.contenido) || '').trim(); })
           .filter(Boolean);
+        if (elegido) {
+          var cObj = matrizCurricularActivaNEM_.contenidos.filter(function (x) {
+            return String((x && x.contenido) || '').trim() === elegido;
+          })[0];
+          if (cObj && typeof obtenerPDAsDeContenidoYGrado_ === 'function') {
+            pdaElegido = obtenerPDAsDeContenidoYGrado_(cObj, grado || '1').slice(0, 4);
+          }
+        }
       }
     } catch (e) {}
+
+    function opcion(txt) {
+      return '<option value="' + escaparHtml(txt) + '">' + escaparHtml(txt) + '</option>';
+    }
+
     var html = '<option value="">💡 Sugerencias del programa SEP…</option>';
     var vistos = {};
-    contenidos.forEach(function (t) {
-      var completo = String(t).trim();
-      if (!completo || vistos[completo]) return;
-      vistos[completo] = true;
-      html += '<option value="' + escaparHtml(completo) + '" title="' + escaparHtml(completo) + '">' + escaparHtml(completo) + '</option>';
-    });
-    if (contenidos.length === 0) {
+    if (elegido) {
+      html += '<optgroup label="Del contenido elegido">' + opcion(elegido) + '</optgroup>';
+      vistos[elegido] = true;
+    }
+    if (pdaElegido.length) {
+      html += '<optgroup label="PDA de ese contenido">';
+      pdaElegido.forEach(function (t) {
+        var k = String(t).trim();
+        if (!k || vistos[k]) return;
+        vistos[k] = true;
+        html += opcion(k);
+      });
+      html += '</optgroup>';
+    }
+    var otros = todos.filter(function (t) { return !vistos[t]; });
+    if (otros.length) {
+      html += '<optgroup label="Otros contenidos de la asignatura">';
+      otros.forEach(function (t) { html += opcion(t); });
+      html += '</optgroup>';
+    }
+    if (!todos.length) {
       html += '<option value="">Sin catálogo cargado: elige primero la asignatura y el grado</option>';
     }
     sel.innerHTML = html;
-    sel.dataset.listo = '1';
   }
 
   function usarTituloSugeridoNEM_(sel) {

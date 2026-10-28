@@ -924,4 +924,59 @@
     gap: 2px;
   }
   .btn-segment { padding: 5px 11px; font-size: 11.5px; border-radius: 6px; }
+
+  /* ===== Ribbon del horario: icono + etiqueta, una sola fila ===== */
+  .horario-toolbar-shell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .horario-toolbar-shell > .horario-toolbar-fila { display: contents; }
+  .horario-toolbar-shell > .horario-toolbar-fila > .horario-toolbar-bloque,
+  .horario-toolbar-shell > .horario-toolbar-fila > .nav-semana-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .horario-toolbar-shell > .horario-toolbar-fila > .horario-toolbar-bloque + .horario-toolbar-bloque,
+  .horario-toolbar-shell > .horario-toolbar-fila > .nav-semana-box {
+    border-left: 1px solid #e2e8f0;
+    padding-left: 10px;
+  }
+  .filtro-chip-btn {
+    flex-direction: column;
+    gap: 2px;
+    min-width: 58px;
+    height: auto;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 10.5px;
+  }
+  .filtro-chip-btn:hover { background: #f1f5f9; }
+  .filtro-chip-btn .chip-label { font-size: 10.5px; font-weight: 600; }
+  .btn-toolbar-accion {
+    flex-direction: column;
+    gap: 2px;
+    height: auto;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 10.5px;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+  .btn-toolbar-accion.btn-xml-destacado,
+  .btn-toolbar-accion.btn-ayuda-amber {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .btn-toolbar-accion.btn-xml-destacado { color: #0369a1; }
+  .btn-toolbar-accion.btn-xml-destacado:hover { background: #e0f2fe; }
+  .btn-toolbar-accion.btn-ayuda-amber { color: #b45309; }
+  .btn-toolbar-accion.btn-ayuda-amber:hover { background: #fef3c7; }
+  .horario-toolbar-shell > .horario-toolbar-fila > .horario-toolbar-bloque:last-child { margin-left: auto; }
 </style>

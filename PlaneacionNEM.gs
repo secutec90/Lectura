@@ -1317,23 +1317,35 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
   }
 
   const d = datos || {};
-  const etiquetas = [
-    ["Título", d.titulo],
-    ["Campo formativo", d.campoFormativo],
-    ["Metodología", d.metodologia],
-    ["Grado", d.grado],
-    ["Grupo", d.grupo],
-    ["Sesiones", d.sesiones],
-    ["Temporalidad", d.temporalidad],
-    ["Contenido sintético", d.contenido],
-    ["PDA", d.pda],
-    ["Problema comunitario", d.problema],
-    ["Diagnóstico del grupo", d.diagnostico],
-    ["Ajustes razonables", d.ajustes],
-    ["Propósito", d.proposito],
-    ["Producto final", d.producto],
-    ["Evaluación", d.evaluacion]
-  ];
+  // Solo se envía lo que corresponde a la sección revisada: el asistente no
+  // debe pedir cambios en campos de otras secciones del esbozo.
+  const camposPorPaso = {
+    1: [
+      ["Título del proyecto", d.titulo],
+      ["Campo formativo", d.campoFormativo],
+      ["Metodología sociocrítica", d.metodologia],
+      ["Grado", d.grado],
+      ["Grupo", d.grupo],
+      ["Número de sesiones", d.sesiones],
+      ["Temporalidad", d.temporalidad]
+    ],
+    2: [
+      ["Contenido curricular sintético", d.contenido],
+      ["PDA oficiales", d.pda]
+    ],
+    3: [
+      ["Problema de la comunidad", d.problema],
+      ["Diagnóstico del grupo", d.diagnostico],
+      ["Ajustes razonables (DUA)", d.ajustes]
+    ],
+    4: [
+      ["Propósito", d.proposito],
+      ["Producto final", d.producto],
+      ["Evaluación", d.evaluacion]
+    ]
+  };
+  const etiquetas = camposPorPaso[n] || camposPorPaso[1];
+  const nombresCampos = etiquetas.map(function (p) { return p[0]; }).join(", ");
   const escritos = etiquetas
     .filter(function (p) { return String(p[1] || "").trim(); })
     .map(function (p) { return "- " + p[0] + ": " + String(p[1]).trim().slice(0, 600); })
@@ -1348,7 +1360,8 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
 
   const instruccion =
     "Eres asesor curricular de una secundaria técnica en México y experto en la Nueva Escuela Mexicana, Fase 6.\n" +
-    "Revisas " + (focos[n] || "una planeación didáctica") + ".\n" +
+    "Revisas únicamente estos campos de la sección: " + nombresCampos + ".\n" +
+    "No evalúes ni pidas cambios en campos de otras secciones del formulario; si algo no está en esta lista, no es asunto de esta revisión.\n" +
     "Devuelve texto plano en español de México, sin markdown, con estas tres partes y exactamente estos encabezados:\n" +
     "OBSERVACIONES: una o dos frases sobre lo que ya está bien y lo que falta.\n" +
     "AJUSTES: dos o tres sugerencias concretas y aplicables en el aula.\n" +

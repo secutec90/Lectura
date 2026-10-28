@@ -1346,6 +1346,13 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
   };
   const etiquetas = camposPorPaso[n] || camposPorPaso[1];
   const nombresCampos = etiquetas.map(function (p) { return p[0]; }).join(", ");
+  const prohibidos = {
+    1: "contenido curricular, PDA, problema comunitario, diagnostico del grupo, ajustes razonables, proposito, producto final y evaluacion",
+    2: "titulo, campo formativo, metodologia, sesiones, temporalidad, problema comunitario, ajustes razonables, proposito, producto final y evaluacion",
+    3: "titulo, campo formativo, metodologia, contenido curricular, PDA, proposito, producto final y evaluacion",
+    4: "titulo, campo formativo, metodologia, contenido curricular, PDA, problema comunitario, diagnostico y ajustes razonables"
+  };
+  const noMencionar = prohibidos[n] || prohibidos[1];
   const escritos = etiquetas
     .filter(function (p) { return String(p[1] || "").trim(); })
     .map(function (p) { return "- " + p[0] + ": " + String(p[1]).trim().slice(0, 600); })
@@ -1361,7 +1368,8 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
   const instruccion =
     "Eres asesor curricular de una secundaria técnica en México y experto en la Nueva Escuela Mexicana, Fase 6.\n" +
     "Revisas únicamente estos campos de la sección: " + nombresCampos + ".\n" +
-    "No evalúes ni pidas cambios en campos de otras secciones del formulario; si algo no está en esta lista, no es asunto de esta revisión.\n" +
+    "PROHIBIDO mencionar, evaluar o sugerir cambios sobre: " + noMencionar + ".\n" +
+    "Esos campos no forman parte de esta revision y el docente los trabaja en otra seccion. Si tu sugerencia los necesita, no la escribas.\n" +
     "Devuelve texto plano en español de México, sin markdown, con estas tres partes y exactamente estos encabezados:\n" +
     "OBSERVACIONES: una o dos frases sobre lo que ya está bien y lo que falta.\n" +
     "AJUSTES: dos o tres sugerencias concretas y aplicables en el aula.\n" +
@@ -1397,5 +1405,5 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
   }
 
   if (!texto) return { ok: false, mensaje: "La IA no devolvió texto. Inténtalo de nuevo." };
-  return { ok: true, texto: texto };
+  return { ok: true, texto: texto, campos: nombresCampos };
 }

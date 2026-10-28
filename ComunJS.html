@@ -1309,7 +1309,8 @@
         return '<option value="' + d[0] + '"' + (d[0] === predef ? ' selected' : '') + '>' + escaparHtml(d[1]) + '</option>';
       }).join('');
       box.innerHTML =
-        '<p style="margin:0 0 8px;color:#475569;">Esta revisión cubre solo los campos de esta sección. Edita el texto si quieres y elige con <strong>Agregar en</strong> a qué campo del esbozo se envía. Nada se guarda hasta que pulses el botón.</p>' +
+        '<p style="margin:0 0 6px;color:#475569;">Edita el texto si quieres y elige con <strong>Agregar en</strong> a qué campo se envía. Nada se guarda hasta que pulses el botón.</p>' +
+        '<p style="margin:0 0 8px;font-size:11px;color:#64748b;">Campos analizados: ' + escaparHtml(res.campos || 'los de esta sección') + '</p>' +
         '<textarea id="iaPasoTexto" style="width:100%;max-width:100%;min-height:180px;max-height:38vh;resize:vertical;font-size:12.5px;line-height:1.5;padding:9px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;overflow:auto;">'
           + escaparHtml(res.texto) + '</textarea>' +
         '<div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">' +

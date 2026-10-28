@@ -434,31 +434,28 @@
 
                   <!-- Columna Derecha: PDA Oficiales, Buscador y Checklist -->
                   <div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
                       <label style="font-size:11.5px;font-weight:700;color:#166534;margin:0;">
                         2. PDA de este grado:
                       </label>
-                      <div style="display:flex;align-items:center;gap:4px;">
+                      <button type="button" id="btnBuscarPDA" title="Buscar PDA" onclick="alternarBuscadorPDA_()" style="border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:2px 3px;">🔍</button>
+                      <button type="button" id="btnArticulacionPDA" title="Ver progresión en otros grados" onclick="alternarArticulacionOtrosGrados_()" style="border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:2px 3px;">👁️</button>
+                      <div style="display:flex;align-items:center;gap:4px;margin-left:auto;">
                         <span id="badgeConteoPDAs" class="nem-badge-count" aria-live="polite">0 seleccionados</span>
                         <button type="button" class="btn-secundario" style="font-size:10px;padding:1px 6px;cursor:pointer;" onclick="marcarTodosPDAsGrado_(true)">Todos</button>
                         <button type="button" class="btn-secundario" style="font-size:10px;padding:1px 6px;cursor:pointer;" onclick="marcarTodosPDAsGrado_(false)">Limpiar</button>
                       </div>
                     </div>
 
-                    <input type="text" id="buscarPDANEM" class="nem-input-filter" placeholder="🔍 Filtrar PDA por palabras clave..." oninput="filtrarListaPDAsDOM_()">
+                    <input type="text" id="buscarPDANEM" class="nem-input-filter oculto" placeholder="Filtrar PDA por palabras clave…" oninput="filtrarListaPDAsDOM_()" style="margin-bottom:6px;">
 
-                    <!-- Contenedor interactivo de tarjetas de PDA -->
+                    <!-- Contenedor interactivo del selector de PDA -->
                     <div id="listaPDAsCheckboxNEM" class="nem-lista-pda-scroll">
                       <span style="font-size:11px;color:#64748b;">Selecciona un contenido a la izquierda para ver sus PDA oficiales.</span>
                     </div>
 
-                    <!-- Articulación con otros grados -->
-                    <div id="wrapArticulacionOtrosGradosNEM" style="margin-top:5px;">
-                      <button type="button" class="nem-btn-articulacion" onclick="alternarArticulacionOtrosGrados_()">
-                        👁️ Ver progresión en otros grados (Consulta de articulación)
-                      </button>
-                      <div id="cajaArticulacionOtrosGrados" class="nem-box-articulacion oculto"></div>
-                    </div>
+                    <!-- Articulación con otros grados (se abre con el icono del ojo) -->
+                    <div id="cajaArticulacionOtrosGrados" class="nem-box-articulacion oculto" style="margin-top:6px;"></div>
                   </div>
                 </div>
               </div>

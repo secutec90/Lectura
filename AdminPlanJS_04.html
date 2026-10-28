@@ -229,6 +229,14 @@
   function filtrarListaPDAsDOM_() {
     _pintarSelectorPDANEM_((document.getElementById('buscarPDANEM') || {}).value || '');
   }
+  function alternarBuscadorPDA_() {
+    const inp = document.getElementById('buscarPDANEM');
+    if (!inp) return;
+    const estabaOculto = inp.classList.contains('oculto');
+    inp.classList.toggle('oculto');
+    if (estabaOculto) setTimeout(function () { inp.focus(); }, 30);
+  }
+
 
   function alternarArticulacionOtrosGrados_() {
     const c = document.getElementById('cajaArticulacionOtrosGrados');

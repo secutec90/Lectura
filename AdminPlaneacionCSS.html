@@ -925,31 +925,27 @@
   }
   .btn-segment { padding: 5px 11px; font-size: 11.5px; border-radius: 6px; }
 
-  /* ===== Ribbon del horario: icono + etiqueta, una sola fila ===== */
+  /* ===== Ribbon del horario: icono + etiqueta en una fila ===== */
   .horario-toolbar-shell {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    overflow-x: auto;
+    gap: 6px 10px;
+    width: 100%;
   }
-  .horario-toolbar-shell > .horario-toolbar-fila { display: contents; }
-  .horario-toolbar-shell .horario-toolbar-bloque,
-  .horario-toolbar-shell .nav-semana-box {
+  .horario-toolbar-shell > .horario-toolbar-bloque,
+  .horario-toolbar-shell > .nav-semana-box {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     flex: 0 0 auto;
   }
-  .horario-toolbar-shell #n3Clases { order: 1; }
-  .horario-toolbar-shell .nav-semana-box { order: 2; border-left: 1px solid #e2e8f0; padding-left: 10px; }
-  .horario-toolbar-shell .horario-toolbar-fila:last-child > .horario-toolbar-bloque {
-    order: 3;
+  .horario-toolbar-shell > .nav-semana-box,
+  .horario-toolbar-shell > .horario-toolbar-bloque:nth-child(3) {
     border-left: 1px solid #e2e8f0;
     padding-left: 10px;
   }
-  .horario-toolbar-shell .horario-toolbar-fila:first-child > .horario-toolbar-bloque:last-child {
-    order: 4;
+  .horario-toolbar-shell > .horario-toolbar-bloque:last-child {
     margin-left: auto;
     border-left: 1px solid #e2e8f0;
     padding-left: 10px;

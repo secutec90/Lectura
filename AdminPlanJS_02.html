@@ -571,10 +571,6 @@
       gsRun('listarDirectorioEncuestas', tk).then(function (res) {
         if (!res || !res.ok) { toast((res && res.mensaje) || 'No se pudo leer el directorio.', 'err'); return; }
         var items = res.items || [];
-        if (!items.length) {
-          toast('Todavía no hay encuestas registradas. Vincula la hoja de una encuesta desde Administración → Encuestas.', 'err');
-          return;
-        }
         window.__dirEncuestas = items;
         var asigs = [], grados = [], trims = [];
         items.forEach(function (it) {
@@ -583,12 +579,13 @@
           if (it.trimestre && trims.indexOf(it.trimestre) < 0) trims.push(it.trimestre);
         });
         var html =
-          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;">' +
             _opcionesFiltroDirEnc_('dirFAsig', 'Asignatura', asigs) +
             _opcionesFiltroDirEnc_('dirFGrado', 'Grado', grados) +
             _opcionesFiltroDirEnc_('dirFTrim', 'Trimestre', trims) +
+            '<button type="button" class="btn-outline-custom" style="font-size:11px;padding:4px 9px;margin-left:auto;" onclick="sembrarDemoDirEnc_()">🧪 Crear encuestas de prueba</button>' +
           '</div>' +
-          '<div id="dirLista" style="max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px;"></div>' +
+          '<select id="dirSelect" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12.5px;color:#334155;background:#fff;"></select>' +
           '<div id="dirDetalle" style="margin-top:12px;"></div>';
         modal({
           titulo: '📊 Directorio de encuestas',
@@ -600,6 +597,10 @@
           var el = document.getElementById(id);
           if (el) el.addEventListener('change', pintarListaDirEnc_);
         });
+        var selDir = document.getElementById('dirSelect');
+        if (selDir) selDir.addEventListener('change', function () {
+          if (this.value) seleccionarDirEnc_(this.value);
+        });
         pintarListaDirEnc_();
       }).catch(function (e) {
         toast('Error al leer el directorio: ' + ((e && e.message) || e), 'err');
@@ -607,8 +608,8 @@
     }
 
     function pintarListaDirEnc_() {
-      var cont = document.getElementById('dirLista');
-      if (!cont) return;
+      var sel = document.getElementById('dirSelect');
+      if (!sel) return;
       var items = window.__dirEncuestas || [];
       var fa = (document.getElementById('dirFAsig') || {}).value || '';
       var fg = (document.getElementById('dirFGrado') || {}).value || '';
@@ -620,18 +621,34 @@
         return true;
       });
       if (!filtrados.length) {
-        cont.innerHTML = '<p style="font-size:12px;color:#64748b;margin:0;">Ninguna encuesta coincide con el filtro.</p>';
+        sel.innerHTML = '<option value="">' + (items.length ? 'Ninguna encuesta coincide con el filtro' : 'Todavía no hay encuestas registradas') + '</option>';
+        var det0 = document.getElementById('dirDetalle');
+        if (det0) det0.innerHTML = items.length ? '' : '<p style="font-size:12px;color:#64748b;margin:6px 0 0;">Vincula la hoja de una encuesta desde Administración → Encuestas, o crea las de prueba con el botón de arriba.</p>';
         return;
       }
-      cont.innerHTML = filtrados.map(function (it) {
+      sel.innerHTML = '<option value="">Selecciona una encuesta…</option>' + filtrados.map(function (it) {
         var meta = [it.asignatura, it.grado, it.trimestre, it.grupo].filter(Boolean).join(' · ') || 'Sin clasificar';
-        var tiene = it.resumen ? ' · con resumen' : '';
-        return '<button type="button" onclick="seleccionarDirEnc_(\'' + escaparHtml(it.hojaId) + '\')" ' +
-          'style="text-align:left;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:9px 10px;cursor:pointer;width:100%;">' +
-          '<strong style="display:block;color:var(--st90-azul);font-size:12.5px;">' + escaparHtml(it.nombre) + '</strong>' +
-          '<span style="font-size:11px;color:#64748b;">' + escaparHtml(meta) + ' · ' + it.respuestas + ' respuestas' + tiene + '</span>' +
-        '</button>';
+        var etiqueta = it.nombre + '  —  ' + meta + '  (' + it.respuestas + ' respuestas' + (it.resumen ? ', con resumen' : '') + ')';
+        return '<option value="' + escaparHtml(it.hojaId) + '">' + escaparHtml(etiqueta) + '</option>';
       }).join('');
+    }
+
+    function sembrarDemoDirEnc_() {
+      var tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : tokenClase;
+      toast('Creando encuestas de prueba…', 'ok');
+      gsRun('sembrarEncuestasDemo', tk).then(function (res) {
+        if (!res || !res.ok) { toast((res && res.mensaje) || 'No se pudieron crear.', 'err'); return; }
+        toast(res.mensaje || 'Encuestas de prueba creadas.', 'ok');
+        gsRun('listarDirectorioEncuestas', tk).then(function (r2) {
+          if (!r2 || !r2.ok) return;
+          window.__dirEncuestas = r2.items || [];
+          var det = document.getElementById('dirDetalle');
+          if (det) det.innerHTML = '';
+          pintarListaDirEnc_();
+        });
+      }).catch(function (e) {
+        toast('Error al crear las encuestas: ' + ((e && e.message) || e), 'err');
+      });
     }
 
     function seleccionarDirEnc_(hojaId) {

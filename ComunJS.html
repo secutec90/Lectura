@@ -1277,12 +1277,13 @@
       capturar: function (fondo, valor) {
         if (valor !== 'agregar') return valor;
         var ta = fondo.querySelector('#iaPasoTexto');
-        return { accion: 'agregar', texto: ta ? String(ta.value || '') : '' };
+        var sel = fondo.querySelector('#iaPasoDestino');
+        return { accion: 'agregar', texto: ta ? String(ta.value || '') : '', destino: sel ? String(sel.value || '') : '' };
       }
     });
 
     promesa.then(function (r) {
-      if (r && r.accion === 'agregar') _aplicarSugerenciaNEM_(n, r.texto);
+      if (r && r.accion === 'agregar') _aplicarSugerenciaNEM_(n, r.texto, r.destino);
     });
 
     gsRun('asistirPasoPlaneacionNEM', tk, n, _datosPlaneacionParaIA_()).then(function (res) {
@@ -1294,23 +1295,42 @@
           + '</p>';
         return;
       }
+      var destinos = [
+        ['planTitulo', 'Título del proyecto'],
+        ['planContenidoSintetico', 'Contenido sintético'],
+        ['planPDA', 'PDA oficiales'],
+        ['planProblema', 'Problema de la comunidad'],
+        ['planAjustesRazonables', 'Ajustes razonables (DUA)'],
+        ['planProposito', 'Propósito'],
+        ['sesNotasDocente', 'Notas de sesión']
+      ];
+      var predef = DESTINO_SUGERENCIA_NEM_[n] || 'planProposito';
+      var opcionesDestino = destinos.map(function (d) {
+        return '<option value="' + d[0] + '"' + (d[0] === predef ? ' selected' : '') + '>' + escaparHtml(d[1]) + '</option>';
+      }).join('');
       box.innerHTML =
         '<p style="margin:0 0 8px;color:#475569;">Revisa la propuesta y edítala si quieres. Nada se guarda hasta que pulses el botón.</p>' +
-        '<textarea id="iaPasoTexto" style="width:100%;min-height:190px;font-size:12.5px;line-height:1.5;padding:9px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'
-          + escaparHtml(res.texto) + '</textarea>';
+        '<textarea id="iaPasoTexto" style="width:100%;max-width:100%;min-height:180px;max-height:38vh;resize:vertical;font-size:12.5px;line-height:1.5;padding:9px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;overflow:auto;">'
+          + escaparHtml(res.texto) + '</textarea>' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">' +
+          '<label for="iaPasoDestino" style="font-size:11.5px;font-weight:700;color:#475569;">Agregar en:</label>' +
+          '<select id="iaPasoDestino" style="font-size:12px;padding:5px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#334155;max-width:100%;">' +
+            opcionesDestino +
+          '</select>' +
+        '</div>';
     }).catch(function (e) {
       var box = document.getElementById('iaPasoBox');
       if (box) box.innerHTML = '<p style="color:#b91c1c;margin:0;">Error: ' + escaparHtml((e && e.message) || e) + '</p>';
     });
   }
 
-  function _aplicarSugerenciaNEM_(n, texto) {
+  function _aplicarSugerenciaNEM_(n, texto, destinoElegido) {
     texto = String(texto || '').trim();
     if (!texto) { toast('No hay sugerencia que agregar.', 'err'); return; }
-    var destinoId = DESTINO_SUGERENCIA_NEM_[n] || 'planProposito';
+    var destinoId = String(destinoElegido || '').trim() || DESTINO_SUGERENCIA_NEM_[n] || 'planProposito';
     var destino = document.getElementById(destinoId);
     if (!destino) { toast('No encontré el campo de destino en esta pantalla.', 'err'); return; }
-    if (n === 1) {
+    if (destinoId === 'planTitulo') {
       var primera = texto.split('\n').map(function (l) { return l.trim(); }).filter(Boolean)[0] || '';
       primera = primera.replace(/^OBSERVACIONES:\s*/i, '').trim();
       if (primera.length > 140) primera = primera.slice(0, 140);

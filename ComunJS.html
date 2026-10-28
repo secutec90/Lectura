@@ -1134,6 +1134,7 @@
         + '<li><strong>Sesiones y temporalidad</strong> → definen cuántos apartados tendrá el desglose de sesiones.</li>'
         + '</ul>'
         + '<p><strong>Qué se llena solo y por qué.</strong> El campo formativo y la metodología se autoseleccionan desde el catálogo SEP Fase 6 al abrir la planeación desde una clase del horario: la asignatura ya está definida y la NEM no permite separarla de su campo.</p>'
+        + '<p><strong>De dónde salen las sugerencias de título.</strong> Debajo del título hay una lista con los contenidos oficiales de esa asignatura y ese grado del programa sintético (Fase 6). La SEP no publica títulos de proyecto: publica contenidos y PDA, así que la lista te ofrece esos contenidos como punto de partida y tú nombras el proyecto. Puedes escribir un título propio o elegir una sugerencia y editarla.</p>'
     },
     2: {
       titulo: 'Paso 2 · Contenidos & PDA',
@@ -1286,11 +1287,19 @@
         '<p style="margin:0 0 8px;color:#475569;">Revisa la propuesta y edítala si quieres. Nada se guarda hasta que pulses el botón.</p>' +
         '<textarea id="iaPasoTexto" style="width:100%;min-height:190px;font-size:12.5px;line-height:1.5;padding:9px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'
           + escaparHtml(res.texto) + '</textarea>' +
-        '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
-          '<button type="button" onclick="_cerrarModalNEM_()" style="font-size:12px;padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">Descartar</button>' +
-          '<button type="button" onclick="agregarSugerenciaPasoNEM_(' + n + ')" style="font-size:12px;padding:6px 12px;border:0;border-radius:6px;background:#0e7490;color:#fff;font-weight:700;cursor:pointer;">'
-            + escaparHtml(ETIQUETA_AGREGAR_NEM_[n] || 'Agregar') + '</button>' +
-        '</div>';
+        '';
+
+      var barra = document.querySelector('.st90-modal-fondo .acciones');
+      if (barra && !document.getElementById('btnAgregarSugNEM')) {
+        var btnAdd = document.createElement('button');
+        btnAdd.id = 'btnAgregarSugNEM';
+        btnAdd.type = 'button';
+        btnAdd.textContent = ETIQUETA_AGREGAR_NEM_[n] || 'Agregar';
+        btnAdd.title = 'Agrega esta sugerencia al campo de la seccion. Podras editarla antes de guardar.';
+        btnAdd.style.cssText = 'font-size:12px;padding:6px 12px;border:0;border-radius:6px;background:#0e7490;color:#fff;font-weight:700;cursor:pointer;margin-right:8px;';
+        btnAdd.onclick = function () { agregarSugerenciaPasoNEM_(n); };
+        barra.insertBefore(btnAdd, barra.firstChild);
+      }
     }).catch(function (e) {
       var box = document.getElementById('iaPasoBox');
       if (box) box.innerHTML = '<p style="color:#b91c1c;margin:0;">Error: ' + escaparHtml((e && e.message) || e) + '</p>';
@@ -1320,6 +1329,45 @@
     try { destino.focus(); } catch (e) {}
     _cerrarModalNEM_();
     toast('Sugerencia agregada. Revísala y ajústala antes de guardar.', 'ok');
+  }
+
+
+  /* Sugerencias de título a partir de los contenidos oficiales de la asignatura y grado. */
+  function poblarSugerenciasTituloNEM_() {
+    var sel = document.getElementById('selTituloSugeridoNEM');
+    if (!sel || sel.dataset.listo === '1') return;
+    var contenidos = [];
+    try {
+      if (typeof matrizCurricularActivaNEM_ !== 'undefined' && matrizCurricularActivaNEM_ &&
+          Array.isArray(matrizCurricularActivaNEM_.contenidos)) {
+        contenidos = matrizCurricularActivaNEM_.contenidos
+          .map(function (x) { return String((x && x.contenido) || '').trim(); })
+          .filter(Boolean);
+      }
+    } catch (e) {}
+    var html = '<option value="">💡 Sugerencias del programa SEP…</option>';
+    var vistos = {};
+    contenidos.forEach(function (t) {
+      var corto = t.length > 72 ? t.slice(0, 72).replace(/[,;:]\s*\S*$/, '') + '…' : t;
+      if (vistos[corto]) return;
+      vistos[corto] = true;
+      html += '<option value="' + escaparHtml(corto) + '">' + escaparHtml(corto) + '</option>';
+    });
+    if (contenidos.length === 0) {
+      html += '<option value="">Sin catálogo cargado: elige primero la asignatura y el grado</option>';
+    }
+    sel.innerHTML = html;
+    sel.dataset.listo = '1';
+  }
+
+  function usarTituloSugeridoNEM_(sel) {
+    var v = String((sel && sel.value) || '').trim();
+    if (!v) return;
+    var inp = document.getElementById('planTitulo');
+    if (!inp) return;
+    inp.value = v;
+    inp.focus();
+    toast('Sugerencia aplicada al título. Puedes editarla.', 'ok');
   }
 
 </script>

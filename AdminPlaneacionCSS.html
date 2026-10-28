@@ -928,19 +928,29 @@
   /* ===== Ribbon del horario: icono + etiqueta, una sola fila ===== */
   .horario-toolbar-shell {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    overflow-x: auto;
   }
   .horario-toolbar-shell > .horario-toolbar-fila { display: contents; }
-  .horario-toolbar-shell > .horario-toolbar-fila > .horario-toolbar-bloque,
-  .horario-toolbar-shell > .horario-toolbar-fila > .nav-semana-box {
+  .horario-toolbar-shell .horario-toolbar-bloque,
+  .horario-toolbar-shell .nav-semana-box {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex: 0 0 auto;
   }
-  .horario-toolbar-shell > .horario-toolbar-fila > .horario-toolbar-bloque + .horario-toolbar-bloque,
-  .horario-toolbar-shell > .horario-toolbar-fila > .nav-semana-box {
+  .horario-toolbar-shell #n3Clases { order: 1; }
+  .horario-toolbar-shell .nav-semana-box { order: 2; border-left: 1px solid #e2e8f0; padding-left: 10px; }
+  .horario-toolbar-shell .horario-toolbar-fila:last-child > .horario-toolbar-bloque {
+    order: 3;
+    border-left: 1px solid #e2e8f0;
+    padding-left: 10px;
+  }
+  .horario-toolbar-shell .horario-toolbar-fila:first-child > .horario-toolbar-bloque:last-child {
+    order: 4;
+    margin-left: auto;
     border-left: 1px solid #e2e8f0;
     padding-left: 10px;
   }
@@ -967,16 +977,10 @@
     font-size: 10.5px;
     font-weight: 600;
     border-radius: 8px;
-  }
-  .btn-toolbar-accion.btn-xml-destacado,
-  .btn-toolbar-accion.btn-ayuda-amber {
-    background: transparent;
-    border-color: transparent;
     box-shadow: none;
   }
-  .btn-toolbar-accion.btn-xml-destacado { color: #0369a1; }
+  .btn-toolbar-accion.btn-xml-destacado { color: #0369a1; background: transparent; border-color: transparent; }
   .btn-toolbar-accion.btn-xml-destacado:hover { background: #e0f2fe; }
-  .btn-toolbar-accion.btn-ayuda-amber { color: #b45309; }
+  .btn-toolbar-accion.btn-ayuda-amber { color: #b45309; background: transparent; border-color: transparent; }
   .btn-toolbar-accion.btn-ayuda-amber:hover { background: #fef3c7; }
-  .horario-toolbar-shell > .horario-toolbar-fila > .horario-toolbar-bloque:last-child { margin-left: auto; }
 </style>

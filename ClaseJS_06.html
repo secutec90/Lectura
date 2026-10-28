@@ -562,7 +562,7 @@
       if (tit) tit.textContent = 'Nueva Planeación Didáctica NEM';
       document.getElementById('planId').value = '';
       document.getElementById('planIdHorario').value = prefill.idHorario || (slotMaeSel && slotMaeSel.idHorario) || '';
-      document.getElementById('planTitulo').value = prefill.tituloSugerido || ((asigUso ? asigUso + ' · ' : '') + grUso + '°' + gpUso + ' (' + perInfo.etiqueta + ')');
+      document.getElementById('planTitulo').value = prefill.tituloSugerido || '';
       document.getElementById('planGrado').value = grUso;
       actualizarGruposFormPlan(gpUso);
       document.getElementById('planGrupo').value = gpUso;

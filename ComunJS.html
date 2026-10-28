@@ -1111,4 +1111,104 @@
   function ponerClaveMaeAdmin(id, nombre, usuario, clave) { return clavesDocentes.editar(id, nombre, usuario, clave); }
   function ponerClaveMae(id, usuario, clave) { return clavesDocentes.editar(id, '', usuario, clave); }
   function copiarCredencialMae(usuario, clave) { return clavesDocentes.copiar(usuario, clave); }
+
+  /* ============================================================
+     AYUDA CONTEXTUAL DE LA PLANEACIÓN NEM
+     Explica, por sección, dónde está el usuario, por qué la
+     arquitectura es así, cómo fluye la información y por qué
+     algunos campos se llenan solos. Base: NEM, Fase 6.
+     ============================================================ */
+
+  var AYUDA_PASOS_PLAN_NEM_ = {
+    1: {
+      titulo: 'Paso 1 · Metadatos & Ejes',
+      html: ''
+        + '<p><strong>Dónde estás.</strong> Primer paso del esbozo de planeación. Aquí se define la identidad del proyecto: qué se va a trabajar, con qué enfoque y en cuántas sesiones. Nada de esto se repite en los pasos siguientes; los demás pasos heredan estos datos.</p>'
+        + '<p><strong>Por qué está así.</strong> La NEM organiza la Fase 6 en cuatro campos formativos y asigna a cada disciplina un campo y una metodología sociocrítica. Por eso el campo formativo y la metodología aparecen bloqueados: los determina la asignatura del horario, no una elección libre. Si se cambiaran, la planeación quedaría desalineada del programa sintético.</p>'
+        + '<p><strong>Cómo fluye la información.</strong></p>'
+        + '<ul>'
+        + '<li><strong>Título</strong>: nombra el proyecto comunitario; se usa en la lista de planeaciones y en el reporte.</li>'
+        + '<li><strong>Campo formativo</strong> → decide qué disciplinas y contenidos son elegibles en el paso 2.</li>'
+        + '<li><strong>Metodología</strong> → define la estructura de las sesiones que se esbozan en el paso 4 (ABP, indagación STEAM, proyectos comunitarios o aprendizaje servicio).</li>'
+        + '<li><strong>Grado</strong> → filtra el catálogo de contenidos y los PDA oficiales del paso 2. Cambiar el grado cambia por completo las opciones.</li>'
+        + '<li><strong>Sesiones y temporalidad</strong> → definen cuántos apartados tendrá el desglose de sesiones.</li>'
+        + '</ul>'
+        + '<p><strong>Qué se llena solo y por qué.</strong> El campo formativo y la metodología se autoseleccionan desde el catálogo SEP Fase 6 al abrir la planeación desde una clase del horario: la asignatura ya está definida y la NEM no permite separarla de su campo.</p>'
+    },
+    2: {
+      titulo: 'Paso 2 · Contenidos & PDA',
+      html: ''
+        + '<p><strong>Dónde estás.</strong> Segundo paso: se elige el contenido del programa sintético y los procesos de desarrollo de aprendizaje (PDA) que se van a trabajar. Es el puente entre el currículo oficial y la planeación concreta.</p>'
+        + '<p><strong>Por qué está así.</strong> El catálogo no es una lista libre: es el oficial de la Fase 6. Primero se elige el contenido central y solo después se muestran los PDA que corresponden a ese contenido y a ese grado. Al revés no tendría sentido curricular: un PDA sin contenido de origen queda descontextualizado.</p>'
+        + '<p><strong>Cómo fluye la información.</strong></p>'
+        + '<ul>'
+        + '<li><strong>Contenido central</strong> → filtra los PDA disponibles del grado y alimenta el campo de texto «Contenido Curricular Sintético».</li>'
+        + '<li><strong>PDA seleccionados</strong> → se agregan a la lista (pueden ser varios) y se vuelcan en el campo «PDA Oficial(es)» con el formato <em>• [1° Grado] texto</em>, que es el que se guarda.</li>'
+        + '<li>Ambos campos de texto siguen siendo editables: puedes adaptar la redacción sin perder el vínculo con el catálogo.</li>'
+        + '<li><strong>Articulación vertical</strong> (icono del ojo): muestra qué se trabaja del mismo contenido en los otros grados; es solo consulta y no se agrega a esta planeación.</li>'
+        + '</ul>'
+        + '<p><strong>Qué se llena solo y por qué.</strong> La lista de contenidos depende de la asignatura y del grado elegidos en el paso 1; el primer contenido aparece preseleccionado para que el formulario nunca quede vacío. Los PDA sí son una elección explícita: son el compromiso de aprendizaje del proyecto.</p>'
+    },
+    3: {
+      titulo: 'Paso 3 · Diagnóstico & DUA',
+      html: ''
+        + '<p><strong>Dónde estás.</strong> Tercer paso: el contexto del proyecto. Recoge el diagnóstico del Consejo Técnico Escolar y los ajustes de inclusión. Es lo que Justifica por qué ese proyecto es pertinente para ese grupo.</p>'
+        + '<p><strong>Por qué está así.</strong> La NEM pide que la planeación parta de la realidad de la comunidad y no del contenido aislado. El diagnóstico va antes del propósito porque el propósito debe responder a un problema real, no al revés. El módulo DUA aparece condicionado al grupo: solo se muestra cuando hay estudiantes que requieren ajustes.</p>'
+        + '<p><strong>Cómo fluye la información.</strong></p>'
+        + '<ul>'
+        + '<li><strong>Problema de la comunidad</strong> → alimenta el propósito del paso 4 y el producto final.</li>'
+        + '<li><strong>Diagnóstico del grupo</strong> → sostiene los ajustes razonables.</li>'
+        + '<li><strong>Chips BAPyC</strong> → provienen del padrón de inclusión del grupo. La alerta «⚠️ BAPyC detectadas en grupo» solo indica que hay estudiantes con barreras registradas; no muestra nombres ni diagnósticos.</li>'
+        + '<li><strong>Ajustes razonables (DUA)</strong> → son la respuesta educativa a esas barreras; se retoman al esbozar las sesiones.</li>'
+        + '</ul>'
+        + '<p><strong>Qué se llena solo y por qué.</strong> Los chips de BAPyC y la alerta se cargan desde el padrón del grupo al abrir la planeación. Es información agregada: el sistema no expone datos personales de salud ni de canalización.</p>'
+    },
+    4: {
+      titulo: 'Paso 4 · Propósito & IA',
+      html: ''
+        + '<p><strong>Dónde estás.</strong> Último paso: el cierre del esbozo. Se redacta el propósito, el producto final, la evaluación y el desglose de sesiones. Todo lo anterior se convierte aquí en la secuencia didáctica.</p>'
+        + '<p><strong>Por qué está así.</strong> La NEM evalúa por procesos y productos ligados a la comunidad; por eso el propósito y el producto final se piden juntos y la evaluación se plantea formativa. El desglose de sesiones va al final porque necesita el número de sesiones del paso 1, el contenido del paso 2 y el diagnóstico del paso 3.</p>'
+        + '<p><strong>Cómo fluye la información.</strong></p>'
+        + '<ul>'
+        + '<li><strong>Propósito</strong> → se redacta sobre el problema comunitario del paso 3.</li>'
+        + '<li><strong>Producto final</strong> → debe ser coherente con el PDA y con la metodología elegidos.</li>'
+        + '<li><strong>Esbozo de sesiones</strong> → toma la temporalidad del paso 1 y los ajustes DUA del paso 3.</li>'
+        + '<li><strong>Asistente de IA</strong> → redacta propuestas usando lo ya escrito; nunca sustituye tu decisión: todo lo que devuelve se puede editar.</li>'
+        + '<li>Al guardar, todos los pasos se escriben en un mismo registro de la hoja <em>PlaneacionesNEM</em>.</li>'
+        + '</ul>'
+        + '<p><strong>Qué se llena solo y por qué.</strong> Las sugerencias de la IA se generan a partir de los pasos 1 a 3 y del catálogo; si falta información, la sugerencia será genérica. Si la IA no está configurada, el formulario sigue siendo utilizable por completo.</p>'
+    }
+  };
+
+  var AYUDA_INCLUSION_ = {
+    titulo: 'Inclusión: UDEI, DUA y BAPyC',
+    html: ''
+      + '<p><strong>UDEI</strong> — unidad de educación inclusiva del plantel. Es el registro institucional donde se concentran los estudiantes que requieren apoyos o ajustes. En esta planeación solo se usa de forma agregada, por grupo: no muestra nombres, diagnósticos ni canalizaciones.</p>'
+      + '<p><strong>DUA</strong> — Diseño Universal para el Aprendizaje. Enfoque que propone planear desde el inicio para la diversidad: múltiples formas de representar la información, de expresar lo aprendido y de motivarse. No es «adaptar para uno»: es diseñar para todos.</p>'
+      + '<p><strong>BAPyC</strong> — Barreras para el Aprendizaje, la Participación y la Convivencia. No son déficits del alumno, sino obstáculos del contexto escolar, didáctico o familiar que limitan su aprendizaje y su participación. Los chips del grupo indican qué tipos de barrera están registrados.</p>'
+      + '<p><strong>⚠️ BAPyC detectadas en grupo</strong> — aviso de que en este grupo hay estudiantes con barreras registradas en el padrón. Sirve para que la planeación contemple ajustes desde el diseño, no como reacción posterior.</p>'
+      + '<p><strong>Ajustes razonables.</strong> Son las modificaciones concretas de acceso, materiales, tiempos o formas de evaluación que eliminan esas barreras. Deben ser específicos y aplicables en el aula; se escriben en el campo de ajustes y se retoman al esbozar las sesiones.</p>'
+  };
+
+  function _abrirAyudaNEM_(titulo, html) {
+    if (typeof modal !== 'function') return;
+    modal({
+      titulo: titulo,
+      html: '<div style="font-size:12.5px;line-height:1.55;color:#334155;max-height:65vh;overflow:auto;text-align:left;">' +
+        '<style>#st90AyudaNEM ul{margin:6px 0 10px 18px;padding:0;}#st90AyudaNEM li{margin-bottom:5px;}</style>' +
+        '<div id="st90AyudaNEM">' + html + '</div></div>',
+      botones: [{ texto: 'Entendido', valor: true }]
+    });
+  }
+
+  function abrirAyudaPasoPlan_(paso) {
+    var d = AYUDA_PASOS_PLAN_NEM_[Number(paso)];
+    if (!d) return;
+    _abrirAyudaNEM_(d.titulo, d.html);
+  }
+
+  function abrirAyudaInclusion_() {
+    _abrirAyudaNEM_(AYUDA_INCLUSION_.titulo, AYUDA_INCLUSION_.html);
+  }
+
 </script>

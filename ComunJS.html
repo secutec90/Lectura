@@ -1266,12 +1266,23 @@
     var tk = _tokenPlaneacionIA_();
     if (!tk) { toast('Vuelve a iniciar sesión para usar el asistente.', 'err'); return; }
 
-    modal({
+    var promesa = modal({
       titulo: '🤖 Asistente IA · ' + (NOMBRES_PASO_NEM_[n] || 'Planeación'),
       html: '<div id="iaPasoBox" style="font-size:12.5px;line-height:1.5;color:#334155;min-height:70px;">'
-        + 'Analizando lo que escribiste en esta sección…'
-        + '</div>',
-      botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+        + 'Analizando lo que escribiste en esta sección…</div>',
+      botones: [
+        { texto: 'Cerrar', clase: 'btn-secundario', valor: '' },
+        { texto: ETIQUETA_AGREGAR_NEM_[n] || 'Agregar', clase: 'nem-btn-primario', valor: 'agregar' }
+      ],
+      capturar: function (fondo, valor) {
+        if (valor !== 'agregar') return valor;
+        var ta = fondo.querySelector('#iaPasoTexto');
+        return { accion: 'agregar', texto: ta ? String(ta.value || '') : '' };
+      }
+    });
+
+    promesa.then(function (r) {
+      if (r && r.accion === 'agregar') _aplicarSugerenciaNEM_(n, r.texto);
     });
 
     gsRun('asistirPasoPlaneacionNEM', tk, n, _datosPlaneacionParaIA_()).then(function (res) {
@@ -1286,36 +1297,19 @@
       box.innerHTML =
         '<p style="margin:0 0 8px;color:#475569;">Revisa la propuesta y edítala si quieres. Nada se guarda hasta que pulses el botón.</p>' +
         '<textarea id="iaPasoTexto" style="width:100%;min-height:190px;font-size:12.5px;line-height:1.5;padding:9px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'
-          + escaparHtml(res.texto) + '</textarea>' +
-        '';
-
-      var barra = document.querySelector('.st90-modal-fondo .acciones');
-      if (barra && !document.getElementById('btnAgregarSugNEM')) {
-        var btnAdd = document.createElement('button');
-        btnAdd.id = 'btnAgregarSugNEM';
-        btnAdd.type = 'button';
-        btnAdd.textContent = ETIQUETA_AGREGAR_NEM_[n] || 'Agregar';
-        btnAdd.title = 'Agrega esta sugerencia al campo de la seccion. Podras editarla antes de guardar.';
-        btnAdd.style.cssText = 'font-size:12px;padding:6px 12px;border:0;border-radius:6px;background:#0e7490;color:#fff;font-weight:700;cursor:pointer;margin-right:8px;';
-        btnAdd.onclick = function () { agregarSugerenciaPasoNEM_(n); };
-        barra.insertBefore(btnAdd, barra.firstChild);
-      }
+          + escaparHtml(res.texto) + '</textarea>';
     }).catch(function (e) {
       var box = document.getElementById('iaPasoBox');
       if (box) box.innerHTML = '<p style="color:#b91c1c;margin:0;">Error: ' + escaparHtml((e && e.message) || e) + '</p>';
     });
   }
 
-  function agregarSugerenciaPasoNEM_(paso) {
-    var n = Number(paso) || 1;
-    var ta = document.getElementById('iaPasoTexto');
-    var texto = ta ? String(ta.value || '').trim() : '';
+  function _aplicarSugerenciaNEM_(n, texto) {
+    texto = String(texto || '').trim();
     if (!texto) { toast('No hay sugerencia que agregar.', 'err'); return; }
-
     var destinoId = DESTINO_SUGERENCIA_NEM_[n] || 'planProposito';
     var destino = document.getElementById(destinoId);
     if (!destino) { toast('No encontré el campo de destino en esta pantalla.', 'err'); return; }
-
     if (n === 1) {
       var primera = texto.split('\n').map(function (l) { return l.trim(); }).filter(Boolean)[0] || '';
       primera = primera.replace(/^OBSERVACIONES:\s*/i, '').trim();
@@ -1325,10 +1319,14 @@
       var actual = String(destino.value || '').trim();
       destino.value = actual ? (actual + '\n\n' + texto) : texto;
     }
-
     try { destino.focus(); } catch (e) {}
-    _cerrarModalNEM_();
     toast('Sugerencia agregada. Revísala y ajústala antes de guardar.', 'ok');
+  }
+
+  function agregarSugerenciaPasoNEM_(paso) {
+    var ta = document.getElementById('iaPasoTexto');
+    _aplicarSugerenciaNEM_(Number(paso) || 1, ta ? ta.value : '');
+    _cerrarModalNEM_();
   }
 
 

@@ -1211,4 +1211,115 @@
     _abrirAyudaNEM_(AYUDA_INCLUSION_.titulo, AYUDA_INCLUSION_.html);
   }
 
+
+  /* ============================================================
+     ASISTENTE DE IA POR SECCIÓN DEL ESBOZO NEM
+     Analiza lo escrito en la sección, propone ajustes y conceptos,
+     y permite aceptarlos con un botón. El docente decide.
+     ============================================================ */
+
+  var NOMBRES_PASO_NEM_ = { 1: 'Metadatos & Ejes', 2: 'Contenidos & PDA', 3: 'Diagnóstico & DUA', 4: 'Propósito & IA' };
+  var DESTINO_SUGERENCIA_NEM_ = { 1: 'planTitulo', 2: 'planPDA', 3: 'planAjustesRazonables', 4: 'planProposito' };
+  var ETIQUETA_AGREGAR_NEM_ = { 1: 'Usar como título', 2: 'Agregar a los PDA', 3: 'Agregar a los ajustes', 4: 'Agregar al propósito' };
+
+  function _datosPlaneacionParaIA_() {
+    function v(id) {
+      var el = document.getElementById(id);
+      return el ? String(el.value || '').trim() : '';
+    }
+    return {
+      titulo: v('planTitulo'),
+      campoFormativo: v('planCampoFormativo'),
+      metodologia: v('planMetodologia'),
+      grado: v('planGrado'),
+      grupo: v('planGrupo'),
+      sesiones: v('planSesiones'),
+      temporalidad: v('planTemporalidad'),
+      contenido: v('planContenidoSintetico'),
+      pda: v('planPDA'),
+      problema: v('planProblema'),
+      diagnostico: v('planDiagnostico'),
+      ajustes: v('planAjustesRazonables'),
+      proposito: v('planProposito'),
+      producto: v('planProductoFinal'),
+      evaluacion: v('planEvaluacion')
+    };
+  }
+
+  function _tokenPlaneacionIA_() {
+    if (typeof getTokenPlan_ === 'function') {
+      try { var t = getTokenPlan_(); if (t) return t; } catch (e) {}
+    }
+    if (typeof tokenClase !== 'undefined' && tokenClase) return tokenClase;
+    if (typeof token !== 'undefined' && token) return token;
+    return '';
+  }
+
+  function _cerrarModalNEM_() {
+    var fondo = document.querySelector('.st90-modal-fondo');
+    if (fondo) fondo.remove();
+  }
+
+  function abrirAsistentePasoNEM_(paso) {
+    var n = Number(paso) || 1;
+    var tk = _tokenPlaneacionIA_();
+    if (!tk) { toast('Vuelve a iniciar sesión para usar el asistente.', 'err'); return; }
+
+    modal({
+      titulo: '🤖 Asistente IA · ' + (NOMBRES_PASO_NEM_[n] || 'Planeación'),
+      html: '<div id="iaPasoBox" style="font-size:12.5px;line-height:1.5;color:#334155;min-height:70px;">'
+        + 'Analizando lo que escribiste en esta sección…'
+        + '</div>',
+      botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+    });
+
+    gsRun('asistirPasoPlaneacionNEM', tk, n, _datosPlaneacionParaIA_()).then(function (res) {
+      var box = document.getElementById('iaPasoBox');
+      if (!box) return;
+      if (!res || !res.ok) {
+        box.innerHTML = '<p style="color:#b91c1c;margin:0;">'
+          + escaparHtml((res && (res.mensaje || res.error)) || 'No se pudo analizar la sección.')
+          + '</p>';
+        return;
+      }
+      box.innerHTML =
+        '<p style="margin:0 0 8px;color:#475569;">Revisa la propuesta y edítala si quieres. Nada se guarda hasta que pulses el botón.</p>' +
+        '<textarea id="iaPasoTexto" style="width:100%;min-height:190px;font-size:12.5px;line-height:1.5;padding:9px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;">'
+          + escaparHtml(res.texto) + '</textarea>' +
+        '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
+          '<button type="button" onclick="_cerrarModalNEM_()" style="font-size:12px;padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">Descartar</button>' +
+          '<button type="button" onclick="agregarSugerenciaPasoNEM_(' + n + ')" style="font-size:12px;padding:6px 12px;border:0;border-radius:6px;background:#0e7490;color:#fff;font-weight:700;cursor:pointer;">'
+            + escaparHtml(ETIQUETA_AGREGAR_NEM_[n] || 'Agregar') + '</button>' +
+        '</div>';
+    }).catch(function (e) {
+      var box = document.getElementById('iaPasoBox');
+      if (box) box.innerHTML = '<p style="color:#b91c1c;margin:0;">Error: ' + escaparHtml((e && e.message) || e) + '</p>';
+    });
+  }
+
+  function agregarSugerenciaPasoNEM_(paso) {
+    var n = Number(paso) || 1;
+    var ta = document.getElementById('iaPasoTexto');
+    var texto = ta ? String(ta.value || '').trim() : '';
+    if (!texto) { toast('No hay sugerencia que agregar.', 'err'); return; }
+
+    var destinoId = DESTINO_SUGERENCIA_NEM_[n] || 'planProposito';
+    var destino = document.getElementById(destinoId);
+    if (!destino) { toast('No encontré el campo de destino en esta pantalla.', 'err'); return; }
+
+    if (n === 1) {
+      var primera = texto.split('\n').map(function (l) { return l.trim(); }).filter(Boolean)[0] || '';
+      primera = primera.replace(/^OBSERVACIONES:\s*/i, '').trim();
+      if (primera.length > 140) primera = primera.slice(0, 140);
+      destino.value = primera;
+    } else {
+      var actual = String(destino.value || '').trim();
+      destino.value = actual ? (actual + '\n\n' + texto) : texto;
+    }
+
+    try { destino.focus(); } catch (e) {}
+    _cerrarModalNEM_();
+    toast('Sugerencia agregada. Revísala y ajústala antes de guardar.', 'ok');
+  }
+
 </script>

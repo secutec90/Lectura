@@ -1297,3 +1297,92 @@ function listarBancoEncuestasPlaneacion() {
     };
   }
 }
+
+/**
+ * ASISTENTE DE IA POR SECCIÓN DEL ESBOZO NEM
+ * Analiza lo que el docente escribió en la sección indicada y devuelve
+ * observaciones, ajustes sugeridos y conceptos que puede agregar.
+ * No modifica nada: el docente decide si acepta la sugerencia.
+ */
+function asistirPasoPlaneacionNEM(token, paso, datos) {
+  exigirClaseRol_(token, ["admin", "maestro"]);
+  const n = Number(paso) || 1;
+  const clave = typeof obtenerClaveDeepSeek_ === "function" ? obtenerClaveDeepSeek_() : "";
+  if (!clave) {
+    return {
+      ok: false,
+      sinClave: true,
+      mensaje: "No hay clave de DeepSeek configurada. Puedes seguir llenando los campos a mano o pedir al administrador que la registre en Configuración."
+    };
+  }
+
+  const d = datos || {};
+  const etiquetas = [
+    ["Título", d.titulo],
+    ["Campo formativo", d.campoFormativo],
+    ["Metodología", d.metodologia],
+    ["Grado", d.grado],
+    ["Grupo", d.grupo],
+    ["Sesiones", d.sesiones],
+    ["Temporalidad", d.temporalidad],
+    ["Contenido sintético", d.contenido],
+    ["PDA", d.pda],
+    ["Problema comunitario", d.problema],
+    ["Diagnóstico del grupo", d.diagnostico],
+    ["Ajustes razonables", d.ajustes],
+    ["Propósito", d.proposito],
+    ["Producto final", d.producto],
+    ["Evaluación", d.evaluacion]
+  ];
+  const escritos = etiquetas
+    .filter(function (p) { return String(p[1] || "").trim(); })
+    .map(function (p) { return "- " + p[0] + ": " + String(p[1]).trim().slice(0, 600); })
+    .join("\n");
+
+  const focos = {
+    1: "la identidad del proyecto: título, campo formativo, metodología sociocrítica y alcance",
+    2: "el contenido curricular y los procesos de desarrollo de aprendizaje (PDA) elegidos",
+    3: "el diagnóstico comunitario, el del grupo y los ajustes razonables (DUA)",
+    4: "el propósito, el producto final, la evaluación y el esbozo de sesiones"
+  };
+
+  const instruccion =
+    "Eres asesor curricular de una secundaria técnica en México y experto en la Nueva Escuela Mexicana, Fase 6.\n" +
+    "Revisas " + (focos[n] || "una planeación didáctica") + ".\n" +
+    "Devuelve texto plano en español de México, sin markdown, con estas tres partes y exactamente estos encabezados:\n" +
+    "OBSERVACIONES: una o dos frases sobre lo que ya está bien y lo que falta.\n" +
+    "AJUSTES: dos o tres sugerencias concretas y aplicables en el aula.\n" +
+    "CONCEPTOS: dos a cuatro conceptos, ejes articuladores o acciones que podría agregar.\n" +
+    "Reglas: no inventes datos que no estén en lo escrito; si un campo está vacío, dilo y propón qué escribir; máximo 200 palabras.\n\n" +
+    "Lo que el docente escribió en esta sección:\n" +
+    (escritos || "(todavía no ha escrito nada en esta sección)");
+
+  let texto = "";
+  try {
+    const respuesta = UrlFetchApp.fetch(URL_BASE_DEEPSEEK, {
+      method: "post",
+      contentType: "application/json",
+      headers: { Authorization: "Bearer " + clave },
+      payload: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: "Das retroalimentación curricular breve, concreta y verificable. No inventas datos." },
+          { role: "user", content: instruccion }
+        ],
+        temperature: 0.4,
+        max_tokens: 700
+      }),
+      muteHttpExceptions: true
+    });
+    if (respuesta.getResponseCode() < 200 || respuesta.getResponseCode() >= 300) {
+      return { ok: false, mensaje: "La IA respondió con error HTTP " + respuesta.getResponseCode() + "." };
+    }
+    const j = JSON.parse(respuesta.getContentText());
+    texto = String(((j.choices || [])[0] || {}).message ? j.choices[0].message.content : "").trim();
+  } catch (e) {
+    return { ok: false, mensaje: "No se pudo contactar a la IA: " + (e && e.message ? e.message : e) };
+  }
+
+  if (!texto) return { ok: false, mensaje: "La IA no devolvió texto. Inténtalo de nuevo." };
+  return { ok: true, texto: texto };
+}

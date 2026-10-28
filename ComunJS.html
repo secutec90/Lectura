@@ -1346,10 +1346,10 @@
     var html = '<option value="">💡 Sugerencias del programa SEP…</option>';
     var vistos = {};
     contenidos.forEach(function (t) {
-      var corto = t.length > 72 ? t.slice(0, 72).replace(/[,;:]\s*\S*$/, '') + '…' : t;
-      if (vistos[corto]) return;
-      vistos[corto] = true;
-      html += '<option value="' + escaparHtml(corto) + '">' + escaparHtml(corto) + '</option>';
+      var completo = String(t).trim();
+      if (!completo || vistos[completo]) return;
+      vistos[completo] = true;
+      html += '<option value="' + escaparHtml(completo) + '" title="' + escaparHtml(completo) + '">' + escaparHtml(completo) + '</option>';
     });
     if (contenidos.length === 0) {
       html += '<option value="">Sin catálogo cargado: elige primero la asignatura y el grado</option>';

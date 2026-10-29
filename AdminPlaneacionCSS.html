@@ -864,4 +864,34 @@
     padding-left: 10px !important;
     margin-left: auto !important;
   }
+
+  /* ===== Etiquetas de grupo (estilo Office) ===== */
+  .horario-toolbar-shell > .horario-toolbar-bloque,
+  .horario-toolbar-shell > .nav-semana-box {
+    position: relative !important;
+    padding-bottom: 14px !important;
+  }
+  .horario-toolbar-shell > .horario-toolbar-bloque::after,
+  .horario-toolbar-shell > .nav-semana-box::after {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    text-align: center;
+    font-size: 8.5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Filtros del horario"]::after { content: "Filtros"; }
+  .horario-toolbar-shell > .nav-semana-box::after { content: "Periodo"; }
+  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Modo de vista"]::after { content: "Vista"; }
+  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Orientación del horario"]::after { content: "Orientación"; }
+  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Acciones del horario"]::after { content: "Acciones"; }
+  .horario-toolbar-shell > .horario-sep-v {
+    width: 1px !important;
+    align-self: stretch;
+    background: #cfd8e3 !important;
+    margin: 2px 4px 14px !important;
+  }
 </style>

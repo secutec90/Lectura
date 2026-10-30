@@ -2,6 +2,14 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Plantilla Maestra de Orquestación]
+- **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear plantilla base reutilizable para proyectos nuevos con antigravity, deepseek y cursor`
+- **Cambios Realizados:**
+  - Se creó `PLANTILLA_ORQUESTACION_MULTIAGENTE.md` como estándar y guía completa para iniciar cualquier proyecto nuevo bajo la arquitectura multi-agente.
+  - Incluye: roles inmutables, ciclo de 4 tiempos, portabilidad multi-PC, prompts de arranque listos para copiar/pegar y plantilla en blanco de `ESTADO_COORDINACION.md`.
+- **Archivos Afectados:** `PLANTILLA_ORQUESTACION_MULTIAGENTE.md`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Se deja documentado el estándar corporativo para que cualquier nuevo repositorio pueda replicar este mismo flujo de trabajo sin fricción.
+
 ### 🛠️ [2026-10-29] - [Gobernanza y Sincronización Tripartita]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(orquestacion): formalizar gobernanza de despliegues y contrato vivo para deepseek y cursor`
 - **Cambios Realizados:**

@@ -111,32 +111,32 @@
       padding: 6px 10px; font-size: 12px; min-height: 0; width: auto; margin: 0;
     }
     .cal-nav {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
-      margin: 0 0 14px; text-align: center; width: 100%;
+      display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px;
+      margin: 0 0 10px; padding: 2px 4px; text-align: center; width: 100%;
     }
     #txtAluPassConteo, #contMaeClase {
       display: none !important;
     }
     .cal-filtros-grupo {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: nowrap;
     }
-    .cal-filtros-grupo .ribbon-btn {
+    .cal-nav .ribbon-btn {
       position: relative;
-      min-width: 44px; min-height: 38px; padding: 2px 8px; margin: 0;
-      border: 1px solid var(--st90-borde); border-radius: 8px; background: #fff;
+      min-width: 44px; min-height: 38px; padding: 2px 6px; margin: 0;
+      border: 1px solid transparent; border-radius: 6px; background: transparent;
       display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all .15s ease;
+      cursor: pointer; transition: all .15s ease; width: auto;
     }
-    .cal-filtros-grupo .ribbon-btn:hover {
-      background: #f8fafc; border-color: #cbd5e1;
+    .cal-nav .ribbon-btn:hover {
+      background: #e2e8f0; border-color: #cbd5e1;
     }
-    .cal-filtros-grupo .ribbon-btn.activo {
-      border-color: #94a3b8; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    .cal-nav .ribbon-btn.activo {
+      background: #fff; border-color: #94a3b8; box-shadow: 0 1px 2px rgba(0,0,0,.05);
     }
-    .cal-filtros-grupo .ribbon-btn svg {
-      width: 16px; height: 16px; display: block; color: var(--st90-azul); pointer-events: none;
+    .cal-nav .ribbon-btn svg {
+      width: 18px; height: 18px; display: block; pointer-events: none;
     }
-    .cal-filtros-grupo .ribbon-btn .ribbon-label {
+    .cal-nav .ribbon-btn .ribbon-label {
       font-size: 11px; font-weight: 700; color: #1e293b; margin-top: 1px;
       white-space: nowrap; line-height: 1.1; pointer-events: none;
     }
@@ -182,48 +182,21 @@
       display: inline-flex;
       align-items: center;
     }
-    .cal-ayuda-wrap .btn-ayuda {
-      min-width: 44px; min-height: 38px; padding: 2px 8px; margin: 0;
-      border: 1px solid var(--st90-borde); border-radius: 8px; background: #fff;
-      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all .15s ease;
-      color: #ca8a04 !important;
-    }
-    .cal-ayuda-wrap .btn-ayuda svg {
-      width: 16px; height: 16px; display: block; color: #ca8a04 !important;
-    }
-    .cal-ayuda-wrap .btn-ayuda .ribbon-label {
-      font-size: 11px; font-weight: 700; color: #a16207 !important; margin-top: 1px;
-      white-space: nowrap; line-height: 1.1;
-    }
-    .cal-ayuda-wrap .btn-ayuda:hover {
-      background: #fefce8 !important;
-      border-color: #fde047 !important;
-    }
     .cal-nav-rango {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: nowrap;
     }
-    .cal-nav strong {
-      color: var(--st90-azul); font-size: 14px;
+    .cal-nav strong, .cal-nav .rango-fecha-badge {
+      color: var(--st90-azul); font-size: 13px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-weight: 800; letter-spacing: .02em; padding: 0 4px;
-    }
-    .cal-nav button {
-      width: auto; min-height: 0; padding: 8px 12px; font-size: 14px; margin: 0;
+      font-weight: 800; letter-spacing: .02em; padding: 3px 8px;
+      background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px;
+      white-space: nowrap; line-height: 1.2;
     }
     .cal-modo-grupo {
-      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-      background: #eef2f7; padding: 3px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: nowrap;
     }
-    .btn-cal-modo {
-      border: 0; background: transparent; color: #475569; font-size: 13px; font-weight: 700;
-      padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all .15s ease;
-    }
-    .btn-cal-modo:hover {
-      background: #e2e8f0; color: #0f172a;
-    }
-    .btn-cal-modo.activo {
-      background: #fff; color: var(--st90-azul); box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    .horario-sep-v {
+      display: inline-block; width: 1px; height: 26px; background: #cbd5e1; margin: 0 4px; flex-shrink: 0;
     }
     .cal-clase { overflow-x: auto; margin: 0 0 8px; }
     /* Scroll visible y explícito únicamente para la vista Mes Horizontal */

@@ -1278,41 +1278,114 @@
     var destinoNatural = DESTINO_SUGERENCIA_NEM_[n] || 'planProposito';
     var nombreCampoNatural = NOMBRE_DESTINO_AMIGABLE_[destinoNatural] || 'tu planeación';
 
-    var btnTextoInicial = n === 1 ? '✓ Usar este Título' : (ETIQUETA_AGREGAR_NEM_[n] || '✓ Aplicar Sugerencia');
+    var btnTextoInicial = '✓ Aplicar Sugerencia';
+    if (n === 1) btnTextoInicial = '✓ Usar este Título';
+    else if (n === 2) btnTextoInicial = '✓ Insertar seleccionados en PDA';
+    else if (n === 3) btnTextoInicial = '✓ Insertar en Diagnóstico y DUA';
+    else if (n === 4) btnTextoInicial = '✓ Insertar en Propósito y Producto';
 
     var promesa = modal({
       titulo: '🤖 Asistente Pedagógico · Paso ' + n + ': ' + (NOMBRES_PASO_NEM_[n] || 'Planeación'),
+      clase: 'ia-modal',
       html: '<div id="iaPasoBox" style="font-size:12.5px;line-height:1.5;color:#334155;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;text-align:center;">'
         + '<div style="font-size:22px;margin-bottom:8px;">⏳</div>'
-        + '<strong style="color:var(--st90-azul);font-size:13.5px;">' + (n === 1 ? 'Generando propuestas de títulos para tu proyecto…' : 'Revisando lo que llevas redactado…') + '</strong>'
+        + '<strong style="color:var(--st90-azul);font-size:13.5px;">' + (n === 1 ? 'Generando propuestas de títulos para tu proyecto…' : 'Analizando contexto curricular…') + '</strong>'
         + '<span style="font-size:11.5px;color:#64748b;margin-top:4px;">El asistente adaptará la respuesta a la Nueva Escuela Mexicana (Fase 6).</span>'
         + '</div>',
       botones: [
         { texto: 'Cancelar', clase: 'btn-secundario', valor: '' },
-        { texto: btnTextoInicial, clase: 'nem-btn-primario', valor: 'agregar' }
+        { texto: btnTextoInicial, clase: 'ia-btn-primario', valor: 'insertar' }
       ],
       capturar: function (fondo, valor) {
-        if (valor !== 'agregar') return valor;
-        // Para paso 1, capturar el radio seleccionado o el texto libre
-        var radioElegido = fondo.querySelector('input[name="iaOpcionTitulo"]:checked');
-        var textoFinal = '';
-        if (radioElegido) {
-          textoFinal = radioElegido.value;
-        } else {
-          var ta = fondo.querySelector('#iaPasoTexto');
-          textoFinal = ta ? String(ta.value || '') : '';
+        if (valor !== 'insertar') return valor;
+        
+        // PASO 1: Radio de título o texto
+        if (n === 1) {
+          var radioElegido = fondo.querySelector('input[name="iaOpcionTitulo"]:checked');
+          var textoTitulo = radioElegido ? radioElegido.value : ((fondo.querySelector('#iaPasoTexto') || {}).value || '');
+          return { accion: 'paso1', texto: textoTitulo };
         }
+        
+        // PASO 2: Checkboxes de PDA
+        if (n === 2) {
+          var checks = fondo.querySelectorAll('input[name="iaPda"]:checked');
+          var marcados = [];
+          for (var i = 0; i < checks.length; i++) {
+            var spanTxt = checks[i].parentElement ? checks[i].parentElement.querySelector('.ia-check-texto') : null;
+            if (spanTxt && spanTxt.textContent) marcados.push(spanTxt.textContent.trim());
+          }
+          return { accion: 'paso2', pdas: marcados };
+        }
+
+        // PASO 3: Bloques independientes de Problema y DUA
+        if (n === 3) {
+          var chkProb = fondo.querySelector('#iaChkProblema');
+          var chkDua = fondo.querySelector('#iaChkDua');
+          var txtProbEl = fondo.querySelector('#iaTxtProblema');
+          var txtDuaEl = fondo.querySelector('#iaTxtDua');
+          return {
+            accion: 'paso3',
+            usarProblema: chkProb ? chkProb.checked : false,
+            problema: txtProbEl ? txtProbEl.textContent.trim() : '',
+            usarDua: chkDua ? chkDua.checked : false,
+            dua: txtDuaEl ? txtDuaEl.textContent.trim() : ''
+          };
+        }
+
+        // PASO 4: Bloques de Propósito y Producto Central
+        if (n === 4) {
+          var chkProp = fondo.querySelector('#iaChkProposito');
+          var chkProd = fondo.querySelector('#iaChkProducto');
+          var txtPropEl = fondo.querySelector('#iaTxtProposito');
+          var txtProdEl = fondo.querySelector('#iaTxtProducto');
+          return {
+            accion: 'paso4',
+            usarProposito: chkProp ? chkProp.checked : false,
+            proposito: txtPropEl ? txtPropEl.textContent.trim() : '',
+            usarProducto: chkProd ? chkProd.checked : false,
+            producto: txtProdEl ? txtProdEl.textContent.trim() : ''
+          };
+        }
+
+        // Fallback general
+        var ta = fondo.querySelector('#iaPasoTexto');
         var sel = fondo.querySelector('#iaPasoDestino');
         return {
-          accion: 'agregar',
-          texto: textoFinal,
+          accion: 'general',
+          texto: ta ? String(ta.value || '') : '',
           destino: (sel && sel.value) ? String(sel.value) : destinoNatural
         };
       }
     });
 
     promesa.then(function (r) {
-      if (r && r.accion === 'agregar') _aplicarSugerenciaNEM_(n, r.texto, r.destino);
+      if (!r) return;
+      if (r.accion === 'paso1') {
+        _aplicarSugerenciaNEM_(1, r.texto, 'planTitulo');
+      } else if (r.accion === 'paso2') {
+        if (!r.pdas || !r.pdas.length) { toast('No seleccionaste ningún PDA para insertar.', 'err'); return; }
+        var textoUnido = r.pdas.join('\n\n');
+        _aplicarSugerenciaNEM_(2, textoUnido, 'planPDA');
+      } else if (r.accion === 'paso3') {
+        var inserto = false;
+        if (r.usarProblema && r.problema) {
+          _aplicarSugerenciaNEM_(3, r.problema, 'planProblema');
+          inserto = true;
+        }
+        if (r.usarDua && r.dua) {
+          _aplicarSugerenciaNEM_(3, r.dua, 'planAjustesRazonables');
+          inserto = true;
+        }
+        if (!inserto) toast('No marcaste ninguna casilla para insertar.', 'err');
+      } else if (r.accion === 'paso4') {
+        var partes = [];
+        if (r.usarProposito && r.proposito) partes.push(r.proposito);
+        if (r.usarProducto && r.producto) partes.push('Producto Central Tangible:\n' + r.producto);
+        if (!partes.length) { toast('No marcaste ninguna casilla para insertar.', 'err'); return; }
+        _aplicarSugerenciaNEM_(4, partes.join('\n\n'), 'planProposito');
+      } else if (r.accion === 'general') {
+        _aplicarSugerenciaNEM_(n, r.texto, r.destino);
+      }
     });
 
     gsRun('asistirPasoPlaneacionNEM', tk, n, _datosPlaneacionParaIA_()).then(function (res) {
@@ -1326,39 +1399,120 @@
         return;
       }
 
-      // CASO ESPECIAL PASO 1: PROPUESTAS LIMPIAS DE TÍTULOS CON UN CLIC
+      // PASO 1: PROPUESTAS DE TÍTULOS
       if (n === 1 && res.esPaso1 && Array.isArray(res.titulos) && res.titulos.length) {
         var radiosHtml = res.titulos.map(function (tit, idx) {
           var checked = idx === 0 ? ' checked' : '';
-          return '<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;margin-bottom:6px;background:#fff;border:1px solid #cbd5e1;border-radius:8px;cursor:pointer;transition:all .15s ease;">'
-            + '<input type="radio" name="iaOpcionTitulo" value="' + escaparHtml(tit) + '"' + checked + ' style="margin-top:2px;">'
-            + '<span style="font-size:12.5px;color:#0f172a;font-weight:600;line-height:1.35;">' + escaparHtml(tit) + '</span>'
+          return '<label class="ia-check">'
+            + '<input type="radio" class="ia-check-input" name="iaOpcionTitulo" value="' + escaparHtml(tit) + '"' + checked + '>'
+            + '<span class="ia-check-texto">' + escaparHtml(tit) + '</span>'
             + '</label>';
         }).join('');
 
         box.innerHTML =
-          '<div style="text-align:left;font-size:12px;line-height:1.45;">'
-            + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">'
-              + '<span style="background:var(--st90-azul);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">1</span>'
-              + '<strong style="color:#0f172a;font-size:12.5px;">Elige el título que más te guste para tu proyecto:</strong>'
-            + '</div>'
-            + '<div style="margin-bottom:8px;">' + radiosHtml + '</div>'
+          '<div style="text-align:left;">'
+            + '<div class="ia-encabezado">Títulos recomendados · elige el que prefieras</div>'
+            + '<div class="ia-lista">' + radiosHtml + '</div>'
             + (res.consejo ? (
-              '<div style="margin-top:6px;padding:7px 10px;background:#f8fafc;border-left:3px solid var(--st90-azul);border-radius:0 6px 6px 0;font-size:11px;color:#475569;">'
-                + '💡 <strong>Consejo:</strong> ' + escaparHtml(res.consejo)
-              + '</div>'
+              '<div class="ia-consejo"><b>Consejo:</b> ' + escaparHtml(res.consejo) + '</div>'
             ) : '')
-            + '<div style="margin-top:10px;padding:8px 10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;display:flex;align-items:center;gap:8px;">'
-              + '<span style="font-size:16px;">✨</span>'
-              + '<span style="font-size:11px;color:#166534;">'
-                + 'Al hacer clic en <strong>"✓ Usar este Título"</strong>, el nombre seleccionado se colocará automáticamente en el campo de Título de tu planeación.'
-              + '</span>'
-            + '</div>'
           + '</div>';
         return;
       }
 
-      // CASOS PASOS 2, 3 Y 4 (O FALLBACK PASO 1): TEXTO DE REDACCIÓN / RETROALIMENTACIÓN
+      // PASO 2: SELECCIÓN DE PDA CON CASILLAS
+      if (n === 2 && res.esPaso2 && Array.isArray(res.pdas) && res.pdas.length) {
+        var checksPdaHtml = res.pdas.map(function (pdaTxt, idx) {
+          return '<label class="ia-check">'
+            + '<input type="checkbox" class="ia-check-input" name="iaPda" value="' + idx + '" checked>'
+            + '<span class="ia-check-texto">' + escaparHtml(pdaTxt) + '</span>'
+            + '</label>';
+        }).join('');
+
+        box.innerHTML =
+          '<div style="text-align:left;">'
+            + '<div class="ia-encabezado">PDA recomendados · marca los que quieras</div>'
+            + '<div class="ia-lista">' + checksPdaHtml + '</div>'
+            + (res.consejo ? (
+              '<div class="ia-consejo"><b>Consejo:</b> ' + escaparHtml(res.consejo) + '</div>'
+            ) : '')
+          + '</div>';
+        return;
+      }
+
+      // PASO 3: BLOQUES INDEPENDIENTES DE PROBLEMA Y DUA
+      if (n === 3 && res.esPaso3 && (res.problema || res.dua)) {
+        var htmlBloques = '<div style="text-align:left;">'
+          + '<div class="ia-encabezado">Diagnóstico y ajustes · marca los que quieras</div>';
+
+        if (res.problema) {
+          htmlBloques +=
+            '<div class="ia-bloque ia-bloque--problema">'
+              + '<div class="ia-bloque-cab">'
+                + '<input type="checkbox" class="ia-check-input" id="iaChkProblema" checked>'
+                + '<label class="ia-bloque-titulo" for="iaChkProblema">Problema de la comunidad</label>'
+              + '</div>'
+              + '<p class="ia-bloque-texto" id="iaTxtProblema">' + escaparHtml(res.problema) + '</p>'
+            + '</div>';
+        }
+
+        if (res.dua) {
+          htmlBloques +=
+            '<div class="ia-bloque ia-bloque--dua">'
+              + '<div class="ia-bloque-cab">'
+                + '<input type="checkbox" class="ia-check-input" id="iaChkDua" checked>'
+                + '<label class="ia-bloque-titulo" for="iaChkDua">Ajustes razonables (DUA)</label>'
+              + '</div>'
+              + '<p class="ia-bloque-texto" id="iaTxtDua">' + escaparHtml(res.dua) + '</p>'
+            + '</div>';
+        }
+
+        if (res.consejo) {
+          htmlBloques += '<div class="ia-consejo"><b>Consejo:</b> ' + escaparHtml(res.consejo) + '</div>';
+        }
+        htmlBloques += '</div>';
+
+        box.innerHTML = htmlBloques;
+        return;
+      }
+
+      // PASO 4: BLOQUES DE PROPÓSITO FORMATIVO Y PRODUCTO CENTRAL TANGIBLE
+      if (n === 4 && res.esPaso4 && (res.proposito || res.producto)) {
+        var htmlPaso4 = '<div style="text-align:left;">'
+          + '<div class="ia-encabezado">Propósito y Producto · marca lo que quieras incluir</div>';
+
+        if (res.proposito) {
+          htmlPaso4 +=
+            '<div class="ia-bloque ia-bloque--proposito">'
+              + '<div class="ia-bloque-cab">'
+                + '<input type="checkbox" class="ia-check-input" id="iaChkProposito" checked>'
+                + '<label class="ia-bloque-titulo" for="iaChkProposito">Propósito Formativo del Proyecto</label>'
+              + '</div>'
+              + '<p class="ia-bloque-texto" id="iaTxtProposito">' + escaparHtml(res.proposito) + '</p>'
+            + '</div>';
+        }
+
+        if (res.producto) {
+          htmlPaso4 +=
+            '<div class="ia-bloque ia-bloque--producto">'
+              + '<div class="ia-bloque-cab">'
+                + '<input type="checkbox" class="ia-check-input" id="iaChkProducto" checked>'
+                + '<label class="ia-bloque-titulo" for="iaChkProducto">Producto Central Tangible (Evidencia)</label>'
+              + '</div>'
+              + '<p class="ia-bloque-texto" id="iaTxtProducto">' + escaparHtml(res.producto) + '</p>'
+            + '</div>';
+        }
+
+        if (res.consejo) {
+          htmlPaso4 += '<div class="ia-consejo"><b>Consejo:</b> ' + escaparHtml(res.consejo) + '</div>';
+        }
+        htmlPaso4 += '</div>';
+
+        box.innerHTML = htmlPaso4;
+        return;
+      }
+
+      // FALLBACK GENERAL: TEXTO DE REDACCIÓN DIRECTA
       var destinos = [
         ['planTitulo', 'Título del Proyecto'],
         ['planPDA', 'PDA oficiales'],
@@ -1375,20 +1529,13 @@
 
       box.innerHTML =
         '<div style="text-align:left;font-size:12px;line-height:1.45;">'
-          + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">'
-            + '<span style="background:var(--st90-azul);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">1</span>'
-            + '<strong style="color:#0f172a;font-size:12.5px;">Propuesta sugerida para tu planeación:</strong>'
-          + '</div>'
-          + '<p style="margin:0 0 8px;font-size:11px;color:#64748b;">Puedes leerla y ajustarla directamente aquí si deseas cambiar alguna palabra:</p>'
+          + '<div class="ia-encabezado">Propuesta sugerida para tu planeación</div>'
+          + '<p style="margin:0 0 8px;font-size:11px;color:#64748b;">Puedes afinar el texto aquí antes de insertarlo:</p>'
           + '<textarea id="iaPasoTexto" style="width:100%;max-width:100%;min-height:160px;max-height:36vh;resize:vertical;font-size:12px;line-height:1.5;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box;background:#f8fafc;color:#1e293b;font-family:inherit;">'
             + escaparHtml(res.texto) + '</textarea>'
 
-          + '<div style="margin-top:10px;padding:8px 10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;display:flex;align-items:flex-start;gap:8px;">'
-            + '<span style="font-size:16px;line-height:1;">💡</span>'
-            + '<div style="font-size:11px;color:#166534;line-height:1.4;">'
-              + 'Al pulsar el botón azul <strong>"' + escaparHtml(ETIQUETA_AGREGAR_NEM_[n] || 'Copiar') + '"</strong>, este texto se insertará automáticamente en tu campo de <strong>' + escaparHtml(nombreCampoNatural) + '</strong>.'
-              + ' Si ya tenías algo escrito, se añadirá al final sin borrar nada.'
-            + '</div>'
+          + '<div class="ia-consejo" style="margin-top:10px;">'
+            + '💡 Al pulsar el botón azul, este texto se insertará en tu campo de <b>' + escaparHtml(nombreCampoNatural) + '</b>.'
           + '</div>'
 
           + '<details style="margin-top:10px;font-size:11px;color:#64748b;">'
@@ -1498,33 +1645,4 @@
     inp.focus();
     toast('Sugerencia aplicada al título. Puedes editarla.', 'ok');
   }
-
-
-  function plegarCintaHorario() {
-    var caja = document.getElementById('navCalClase');
-    if (!caja) return;
-    var plegada = caja.classList.toggle('plegada');
-    try { localStorage.setItem('st90_cinta_horario', plegada ? '1' : '0'); } catch (e) {}
-    var b = document.getElementById('btnPlegarCinta');
-    if (b) {
-      b.textContent = plegada ? '⌄' : '⌃';
-      b.setAttribute('aria-expanded', plegada ? 'false' : 'true');
-      b.title = plegada ? 'Mostrar la barra del horario' : 'Ocultar la barra del horario';
-    }
-  }
-
-  (function () {
-    function aplicar() {
-      var caja = document.getElementById('navCalClase');
-      if (!caja) return;
-      var v = '0';
-      try { v = localStorage.getItem('st90_cinta_horario') || '0'; } catch (e) {}
-      if (v !== '1') return;
-      caja.classList.add('plegada');
-      var b = document.getElementById('btnPlegarCinta');
-      if (b) { b.textContent = '⌄'; b.setAttribute('aria-expanded', 'false'); }
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', aplicar);
-    else aplicar();
-  })();
 </script>

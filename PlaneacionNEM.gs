@@ -1368,42 +1368,113 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
     .join("\n");
 
   const focos = {
-    1: "la identidad del proyecto: título, campo formativo, metodología sociocrítica y alcance",
+    1: "la identidad del proyecto: proponer títulos formativos atractivos según la metodología sociocrítica",
     2: "el contenido curricular y los procesos de desarrollo de aprendizaje (PDA) elegidos",
     3: "el diagnóstico comunitario, el del grupo y los ajustes razonables (DUA)",
     4: "el propósito, el producto final, la evaluación y el esbozo de sesiones"
   };
 
-  const instruccion =
-    "Eres asesor curricular de una secundaria técnica en México y experto en la Nueva Escuela Mexicana, Fase 6.\n" +
-    "Revisas únicamente estos campos de la sección: " + nombresCampos + ".\n" +
-    "PROHIBIDO mencionar, evaluar o sugerir cambios sobre: " + noMencionar + ".\n" +
-    "Esos campos no forman parte de esta revision y el docente los trabaja en otra seccion. Si tu sugerencia los necesita, no la escribas.\n" +
-    "Solo redacta texto para estos campos, que son los editables: " + editables + ".\n" +
-    "Los demas campos de la seccion son selecciones, numeros o fechas: no admiten texto libre, asi que para ellos indica unicamente el valor concreto que deberian llevar.\n" +
-    "Devuelve texto plano en español de México, sin markdown, con estas tres partes y exactamente estos encabezados:\n" +
-    "OBSERVACIONES: una o dos frases sobre lo que ya está bien y lo que falta.\n" +
-    "AJUSTES: dos o tres sugerencias concretas y aplicables en el aula.\n" +
-    "CONCEPTOS: dos a cuatro conceptos, ejes articuladores o acciones que podría agregar.\n" +
-    "Reglas: no inventes datos que no estén en lo escrito; si un campo está vacío, dilo y propón qué escribir; máximo 200 palabras.\n\n" +
-    "Lo que el docente escribió en esta sección:\n" +
-    (escritos || "(todavía no ha escrito nada en esta sección)");
+  let instruccion = "";
+  if (n === 1) {
+    instruccion =
+      "Eres un asesor pedagógico de la " + (typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90") + " experto en la Fase 6 de la Nueva Escuela Mexicana.\n" +
+      "El docente está en el Paso 1 configurando los datos generales de su proyecto escolar:\n" +
+      (escritos || "- No ha llenado datos aún") + "\n\n" +
+      "TAREA OBLIGATORIA:\n" +
+      "Debes devolver ÚNICAMENTE un objeto JSON válido con este formato exacto:\n" +
+      "{\n" +
+      "  \"titulos\": [\n" +
+      "    \"Propuesta corta 1 (enfocada en indagación/comunidad, max 10 palabras)\",\n" +
+      "    \"Propuesta corta 2 (creativa y atractiva para adolescentes, max 10 palabras)\",\n" +
+      "    \"Propuesta corta 3 (centrada en la metodología o problema, max 10 palabras)\"\n" +
+      "  ],\n" +
+      "  \"consejo\": \"Una sola frase breve orientando al docente sobre el alcance del proyecto (máximo 30 palabras).\"\n" +
+      "}\n" +
+      "Reglas: Los títulos NO deben repetir nombre de la materia, ni grado, ni grupo (ej. NO poner 'Español 1A'). Deben ser títulos reales de proyectos (ej. 'Guardianes del agua: Voces y acciones comunitarias'). NO agregues texto fuera del JSON.";
+  } else if (n === 2) {
+    instruccion =
+      "Eres un asesor curricular de la " + (typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90") + " experto en la Fase 6 de la Nueva Escuela Mexicana.\n" +
+      "El docente está en el Paso 2 seleccionando Contenidos y Procesos de Desarrollo de Aprendizaje (PDA):\n" +
+      (escritos || "- No ha llenado datos aún") + "\n\n" +
+      "TAREA OBLIGATORIA:\n" +
+      "Debes devolver ÚNICAMENTE un objeto JSON válido con este formato exacto:\n" +
+      "{\n" +
+      "  \"pdas\": [\n" +
+      "    \"Texto completo del PDA oficial o adaptación situada prioritaria 1\",\n" +
+      "    \"Texto completo del PDA oficial o adaptación situada prioritaria 2\",\n" +
+      "    \"Texto completo del PDA oficial o adaptación situada prioritaria 3\"\n" +
+      "  ],\n" +
+      "  \"consejo\": \"Una orientación concisa para vincular estos PDA con la realidad del alumno (máximo 35 palabras).\"\n" +
+      "}\n" +
+      "Reglas: Devuelve entre 2 y 3 PDA claros, rigurosos y directamente aplicables al aula. NO agregues texto fuera del JSON.";
+  } else if (n === 3) {
+    instruccion =
+      "Eres un asesor pedagógico de la " + (typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90") + " experto en inclusión educativa (DUA / UDEI) y Programa Analítico.\n" +
+      "El docente está en el Paso 3 definiendo Diagnóstico Comunitario y Ajustes Razonables:\n" +
+      (escritos || "- No ha llenado datos aún") + "\n\n" +
+      "TAREA OBLIGATORIA:\n" +
+      "Debes devolver ÚNICAMENTE un objeto JSON válido con este formato exacto:\n" +
+      "{\n" +
+      "  \"problema\": \"Redacción clara y situada de una problemática escolar o comunitaria concreta detonadora del proyecto (máximo 50 palabras).\",\n" +
+      "  \"dua\": \"Dos adecuaciones metodológicas o ajustes razonables DUA concretos y aplicables (apoyos visuales, tiempos flexibles, lectura guiada, etc., máximo 50 palabras).\",\n" +
+      "  \"consejo\": \"Una sugerencia pedagógica de vinculación comunitaria o inclusión (máximo 30 palabras).\"\n" +
+      "}\n" +
+      "Reglas: Redacción directa y lista para usarse, sin encabezados como 'OBSERVACIONES:' o 'AJUSTES:'. NO agregues texto fuera del JSON.";
+  } else if (n === 4) {
+    instruccion =
+      "Eres un asesor pedagógico de la " + (typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90") + " experto en la Fase 6 de la Nueva Escuela Mexicana y evaluación formativa.\n" +
+      "El docente está en el Paso 4 definiendo el Propósito Central y el Producto Integrador de su proyecto:\n" +
+      (escritos || "- No ha llenado datos aún") + "\n\n" +
+      "TAREA OBLIGATORIA:\n" +
+      "Debes devolver ÚNICAMENTE un objeto JSON válido con este formato exacto:\n" +
+      "{\n" +
+      "  \"proposito\": \"Redacción pedagógica clara de qué aprenderán los alumnos, para qué y cómo se vincula con su realidad (iniciar con verbo en infinitivo, máximo 50 palabras).\",\n" +
+      "  \"producto\": \"Descripción concreta de la evidencia central tangible que elaborarán (ej. periódico mural, podcast escolar, infografía comunitaria, debate público, etc., máximo 35 palabras).\",\n" +
+      "  \"consejo\": \"Una recomendación concisa para la evaluación formativa o socialización comunitaria (máximo 30 palabras).\"\n" +
+      "}\n" +
+      "Reglas: Redacción directa, limpia y lista para usarse, sin encabezados como 'OBSERVACIONES:' o 'AJUSTES:'. NO agregues texto fuera del JSON.";
+  } else {
+    instruccion =
+      "Eres asesor curricular de una secundaria técnica en México y experto en la Nueva Escuela Mexicana, Fase 6.\n" +
+      "Revisas únicamente estos campos de la sección: " + nombresCampos + ".\n" +
+      "PROHIBIDO mencionar, evaluar o sugerir cambios sobre: " + noMencionar + ".\n" +
+      "Esos campos no forman parte de esta revision y el docente los trabaja en otra seccion. Si tu sugerencia los necesita, no la escribas.\n" +
+      "Solo redacta texto para estos campos, que son los editables: " + editables + ".\n" +
+      "Los demas campos de la seccion son selecciones, numeros o fechas: no admiten texto libre, asi que para ellos indica unicamente el valor concreto que deberian llevar.\n" +
+      "Devuelve texto plano en español de México, sin markdown, con estas tres partes y exactamente estos encabezados:\n" +
+      "OBSERVACIONES: una o dos frases sobre lo que ya está bien y lo que falta.\n" +
+      "AJUSTES: dos o tres sugerencias concretas y aplicables en el aula.\n" +
+      "CONCEPTOS: dos a cuatro conceptos, ejes articuladores o acciones que podría agregar.\n" +
+      "Reglas: no inventes datos que no estén en lo escrito; si un campo está vacío, dilo y propón qué escribir; máximo 200 palabras.\n\n" +
+      "Lo que el docente escribió en esta sección:\n" +
+      (escritos || "(todavía no ha escrito nada en esta sección)");
+  }
 
   let texto = "";
+  let titulosArray = null;
+  let pdasArray = null;
+  let problemaPropuesto = "";
+  let duaPropuesto = "";
+  let propositoPropuesto = "";
+  let productoPropuesto = "";
+  let consejoGenerado = "";
   try {
+    const payloadReq = {
+      model: "deepseek-chat",
+      messages: [
+        { role: "system", content: "Das apoyo curricular claro, breve y aplicable al aula mexicana de secundaria. Devuelves únicamente lo solicitado." },
+        { role: "user", content: instruccion }
+      ],
+      temperature: 0.4,
+      max_tokens: 700
+    };
+    if (n >= 1 && n <= 4) payloadReq.response_format = { type: "json_object" };
+
     const respuesta = UrlFetchApp.fetch(URL_BASE_DEEPSEEK, {
       method: "post",
       contentType: "application/json",
       headers: { Authorization: "Bearer " + clave },
-      payload: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-          { role: "system", content: "Das retroalimentación curricular breve, concreta y verificable. No inventas datos." },
-          { role: "user", content: instruccion }
-        ],
-        temperature: 0.4,
-        max_tokens: 700
-      }),
+      payload: JSON.stringify(payloadReq),
       muteHttpExceptions: true
     });
     if (respuesta.getResponseCode() < 200 || respuesta.getResponseCode() >= 300) {
@@ -1411,8 +1482,44 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
     }
     const j = JSON.parse(respuesta.getContentText());
     texto = String(((j.choices || [])[0] || {}).message ? j.choices[0].message.content : "").trim();
+
+    if (n >= 1 && n <= 4) {
+      try {
+        const parsedT = JSON.parse(texto.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim());
+        if (n === 1 && parsedT && Array.isArray(parsedT.titulos)) {
+          titulosArray = parsedT.titulos.map(function(t){ return String(t).trim(); }).filter(Boolean);
+          consejoGenerado = String(parsedT.consejo || "").trim();
+        } else if (n === 2 && parsedT && Array.isArray(parsedT.pdas)) {
+          pdasArray = parsedT.pdas.map(function(p){ return String(p).trim(); }).filter(Boolean);
+          consejoGenerado = String(parsedT.consejo || "").trim();
+        } else if (n === 3 && parsedT) {
+          problemaPropuesto = String(parsedT.problema || "").trim();
+          duaPropuesto = String(parsedT.dua || "").trim();
+          consejoGenerado = String(parsedT.consejo || "").trim();
+        } else if (n === 4 && parsedT) {
+          propositoPropuesto = String(parsedT.proposito || "").trim();
+          productoPropuesto = String(parsedT.producto || "").trim();
+          consejoGenerado = String(parsedT.consejo || "").trim();
+        }
+      } catch (errParse) {
+        // Fallback a texto
+      }
+    }
   } catch (e) {
     return { ok: false, mensaje: "No se pudo contactar a la IA: " + (e && e.message ? e.message : e) };
+  }
+
+  if (n === 1 && titulosArray && titulosArray.length) {
+    return { ok: true, esPaso1: true, titulos: titulosArray, consejo: consejoGenerado, campos: nombresCampos };
+  }
+  if (n === 2 && pdasArray && pdasArray.length) {
+    return { ok: true, esPaso2: true, pdas: pdasArray, consejo: consejoGenerado, campos: nombresCampos };
+  }
+  if (n === 3 && (problemaPropuesto || duaPropuesto)) {
+    return { ok: true, esPaso3: true, problema: problemaPropuesto, dua: duaPropuesto, consejo: consejoGenerado, campos: nombresCampos };
+  }
+  if (n === 4 && (propositoPropuesto || productoPropuesto)) {
+    return { ok: true, esPaso4: true, proposito: propositoPropuesto, producto: productoPropuesto, consejo: consejoGenerado, campos: nombresCampos };
   }
 
   if (!texto) return { ok: false, mensaje: "La IA no devolvió texto. Inténtalo de nuevo." };

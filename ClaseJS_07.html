@@ -181,7 +181,10 @@
         const act = (idx === sesionActivaIdx) ? ' activa' : '';
         const num = s.NumeroSesion || (idx + 1);
         const est = s.Estado ? (' · ' + s.Estado) : '';
-        html += '<button type="button" class="nem-tab-sesion' + act + '" onclick="seleccionarSesionNEM(' + idx + ')">';
+        const estado = String(s.Estado || '').toUpperCase();
+        const claseEstado = estado.indexOf('APROB') >= 0 ? ' aprobada'
+                          : estado.indexOf('BORRAD') >= 0 ? ' borrador' : '';
+        html += '<button type="button" class="nem-tab-sesion' + act + claseEstado + '" onclick="seleccionarSesionNEM(' + idx + ')">';
         html += 'Sesión ' + num + ' (40 min)' + escaparHtml(est);
         html += '</button>';
       });

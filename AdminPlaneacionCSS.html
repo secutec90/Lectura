@@ -745,43 +745,30 @@
           border-radius: 999px;
         }
       
-  /* ===== Ribbon del horario: una sola fila centrada al estilo de las demás UI ST90 ===== */
+  /* Barra contextual del horario — ST90 §2 (N3 centrado) y §7 (cinta transparente) */
   .horario-toolbar-shell {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    width: 100% !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 4px 0 8px !important;
-    margin: 0 auto 14px !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 10px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0 auto 14px;
+    width: 100%;
   }
   .horario-toolbar-shell > .horario-toolbar-bloque,
   .horario-toolbar-shell > .nav-semana-box {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 4px !important;
-    flex: 0 0 auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
-  .horario-toolbar-shell .ribbon-btn .ribbon-label {
-    color: #334155 !important;
-    font-weight: 600 !important;
-  }
-  .horario-toolbar-shell .ribbon-btn.activo .ribbon-label,
-  .horario-toolbar-shell .ribbon-btn.activa .ribbon-label {
-    color: var(--st90-azul) !important;
-    font-weight: 800 !important;
-  }
-  .horario-toolbar-shell .btn-ayuda.ribbon-btn .ribbon-label {
-    color: #b45309 !important;
+  .horario-toolbar-shell > .horario-sep-v {
+    width: 1px;
+    align-self: stretch;
+    background: #e2e8f0;
+    margin: 4px 6px;
   }
 
   /* Iconos de ayuda y asistente en el stepper: compactos y en una fila */
@@ -790,108 +777,286 @@
   .nem-step-tab .step-txt { overflow: hidden; text-overflow: ellipsis; }
   .nem-ayuda-paso { display: inline-block; vertical-align: middle; line-height: 1; flex: 0 0 auto; }
 
-  /* Cinta plegable */
-  .horario-plegar {
-    margin-left: 8px;
-    flex: 0 0 auto;
-    width: 26px; height: 26px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
+  /* ============================================================
+     FASE 3 — Catálogo SEP a dos columnas
+     ============================================================ */
+  .nem-catalogo-dos-col {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+
+  .nem-catalogo-dos-col > div > label,
+  .nem-catalogo-dos-col > div > .nem-catalogo-col-titulo {
+    display: block;
+    min-height: 18px;
+    margin-bottom: 6px;
+  }
+
+  /* Lista de PDA: recupera caja y scroll (el contenedor perdió la clase nem-lista-pda-scroll) */
+  #listaPDAsCheckboxNEM {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 8px;
     background: #ffffff;
-    color: #475569;
-    cursor: pointer;
-    font-size: 12px;
-    line-height: 1;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .horario-plegar:hover { background: #f1f5f9; }
-  .horario-toolbar-shell.plegada > .horario-toolbar-bloque,
-  .horario-toolbar-shell.plegada > .nav-semana-box,
-  .horario-toolbar-shell.plegada > .horario-sep-v { display: none; }
-  .horario-toolbar-shell.plegada { justify-content: flex-end; min-height: 28px; }
-
-  /* ===== Cinta grande: estilo ribbon visible ===== */
-  .horario-toolbar-shell {
-    padding: 8px 10px 6px !important;
-    background: linear-gradient(#fbfcfe, #eef2f7) !important;
-    border: 1px solid #d5dbe3 !important;
-    border-radius: 10px !important;
-    box-shadow: inset 0 1px 0 #ffffff;
-    gap: 6px 10px !important;
-  }
-  .horario-toolbar-shell .ribbon-btn {
-    min-width: 76px !important;
-    max-width: 108px !important;
-    padding: 7px 9px 5px !important;
-    gap: 4px !important;
-    border: 1px solid transparent !important;
-    border-radius: 8px !important;
-    background: transparent !important;
-  }
-  .horario-toolbar-shell .ribbon-btn:hover {
-    background: #e6edf5 !important;
-    border-color: #c7d2e0 !important;
-  }
-  .horario-toolbar-shell .ribbon-btn.activo,
-  .horario-toolbar-shell .ribbon-btn.activo:hover {
-    background: #fff6c7 !important;
-    border-color: #eab308 !important;
-  }
-  .horario-toolbar-shell .ribbon-btn svg {
-    width: 23px !important;
-    height: 23px !important;
-  }
-  .horario-toolbar-shell .ribbon-btn .ribbon-label {
-    font-size: 10.5px !important;
-    line-height: 1.15 !important;
-    white-space: normal !important;
-    max-width: 100px !important;
-  }
-  .horario-toolbar-shell > .horario-toolbar-bloque,
-  .horario-toolbar-shell > .nav-semana-box {
-    gap: 2px !important;
-    padding-top: 2px;
-    padding-bottom: 2px;
-  }
-  .horario-sep-v,
-  .horario-toolbar-shell > .nav-semana-box,
-  .horario-toolbar-shell > .horario-toolbar-bloque:nth-child(3) {
-    border-left: 1px solid #cfd8e3 !important;
-    padding-left: 10px !important;
-  }
-  .horario-toolbar-shell > .horario-toolbar-bloque:last-child {
-    border-left: 1px solid #cfd8e3 !important;
-    padding-left: 10px !important;
-    margin-left: auto !important;
+    box-sizing: border-box;
   }
 
-  /* ===== Etiquetas de grupo (estilo Office) ===== */
-  .horario-toolbar-shell > .horario-toolbar-bloque,
-  .horario-toolbar-shell > .nav-semana-box {
-    position: relative !important;
-    padding-bottom: 14px !important;
+  /* Buscador y selector del catálogo con la misma altura */
+  #buscarPDANEM,
+  .nem-select-sintetico {
+    min-height: 36px;
+    box-sizing: border-box;
   }
-  .horario-toolbar-shell > .horario-toolbar-bloque::after,
-  .horario-toolbar-shell > .nav-semana-box::after {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    text-align: center;
-    font-size: 8.5px;
-    letter-spacing: .06em;
+
+  /* ============================================================
+     FASE 3 — Módulo de inclusión UDEI / DUA (faltaba en Admin)
+     ============================================================ */
+  .nem-inclusion-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+  }
+
+  .nem-inclusion-header-single {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .nem-badge-udei {
+    background: #d97706;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
     text-transform: uppercase;
-    color: #94a3b8;
-    pointer-events: none;
-    white-space: nowrap;
+    letter-spacing: .04em;
   }
-  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Filtros del horario"]::after { content: "Filtros"; }
-  .horario-toolbar-shell > .nav-semana-box::after { content: "Periodo"; }
-  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Modo de vista"]::after { content: "Vista"; }
-  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Orientación del horario"]::after { content: "Orientación"; }
-  .horario-toolbar-shell > .horario-toolbar-bloque[aria-label="Acciones del horario"]::after { content: "Acciones"; }
-  .horario-toolbar-shell > .horario-sep-v {
-    width: 1px !important;
-    align-self: stretch;
-    background: #cfd8e3 !important;
-    margin: 2px 4px 14px !important;
+
+  .nem-badge-bapyc-alert {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* Chips de BAPyC detectadas */
+  #wrapChipsBAPyCGrupo {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  #wrapChipsBAPyCGrupo > span,
+  .nem-chip-bapyc {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #fcd34d;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #92400e;
+    line-height: 1.4;
+  }
+
+  /* Campo de ajustes razonables */
+  #planAjustesRazonables {
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #334155;
+    background: #ffffff;
+    box-sizing: border-box;
+  }
+  #planAjustesRazonables:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, .18);
+  }
+
+  /* ============================================================
+     FASE 3 — Botones de navegación inferior
+     ============================================================ */
+  .nem-step-nav-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 16px;
+    margin-top: 22px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .nem-btn-accion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    font-size: 12.5px;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .nem-btn-accion:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+  /* Primario: color plano, sin degradado ni sombra */
+  .nem-btn-accion.nem-btn-primario {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+    box-shadow: none;
+  }
+  .nem-btn-accion.nem-btn-primario:hover {
+    background: #0369a1;
+    border-color: #0369a1;
+  }
+
+  .nem-btn-accion:focus-visible,
+  .nem-btn-accion.nem-btn-primario:focus-visible {
+    outline: 2px solid #0284c7;
+    outline-offset: 2px;
+  }
+
+  .nem-btn-accion:disabled,
+  .nem-btn-accion[disabled] {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* ============================================================
+     FASE 4 — Pestañas de sesiones didácticas
+     ============================================================ */
+  .nem-sesiones-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 14px;
+  }
+
+  .nem-tab-sesion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .nem-tab-sesion:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+  .nem-tab-sesion.activa {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+  }
+
+  .nem-tab-sesion.aprobada { border-color: #86efac; color: #15803d; background: #f0fdf4; }
+  .nem-tab-sesion.borrador { border-style: dashed; color: #64748b; }
+
+  .nem-tab-sesion.activa.aprobada,
+  .nem-tab-sesion.activa.borrador {
+    background: #0284c7;
+    border-color: #0284c7;
+    border-style: solid;
+    color: #ffffff;
+  }
+
+  .nem-tab-sesion:focus-visible {
+    outline: 2px solid #0284c7;
+    outline-offset: 2px;
+  }
+
+  /* ============================================================
+     FASE 4 — Barra de iDevices modulares
+     ============================================================ */
+  .idevice-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+    margin: 0 0 12px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+  }
+
+  .idevice-bar > span {
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    color: #64748b !important;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-right: 2px;
+  }
+
+  .idevice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .idevice-btn:hover { background: #eff6ff; border-color: #93c5fd; }
+  .idevice-btn:active { background: #dbeafe; }
+  .idevice-btn:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
+
+  /* Variantes semánticas (requieren la clase en el marcado) */
+  .idevice-btn--lectura  { border-color: #a5b4fc; color: #4338ca; }
+  .idevice-btn--lectura:hover  { background: #eef2ff; border-color: #818cf8; }
+
+  .idevice-btn--pregunta { border-color: #fcd34d; color: #b45309; }
+  .idevice-btn--pregunta:hover { background: #fffbeb; border-color: #f59e0b; }
+
+  .idevice-btn--reto     { border-color: #86efac; color: #15803d; }
+  .idevice-btn--reto:hover     { background: #f0fdf4; border-color: #4ade80; }
+
+  /* ============================================================
+     FASE 4 — Botón azul del encabezado de sesión
+     ============================================================ */
+  .nem-btn-accion--azul {
+    background: #ffffff;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
+  }
+  .nem-btn-accion--azul:hover {
+    background: #eff6ff !important;
+    border-color: #2563eb !important;
   }
 </style>

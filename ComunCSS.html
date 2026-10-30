@@ -1489,5 +1489,130 @@
     max-height: 58px !important;
     box-sizing: border-box !important;
   }
+
+  /* ============================================================
+     Asistente IA — Pasos 2 y 3 (casillas y bloques)
+     ESTILO_UI_ST90 §4: sin tooltips, color semántico ST90
+     ============================================================ */
+  .st90-modal.ia-modal { max-width: 620px; width: 94%; }
+
+  .ia-encabezado {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #0e7490;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin: 0 0 10px;
+  }
+
+  .ia-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 52vh;
+    overflow-y: auto;
+    padding: 2px;
+  }
+
+  /* --- Casilla de selección (Paso 2 y cabeceras del Paso 3) --- */
+  .ia-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    padding: 8px 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .ia-check:hover { background: #eef2f7; border-color: #b6c2d2; }
+
+  .ia-check-input {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: #0e7490;
+    cursor: pointer;
+  }
+  .ia-check-input:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
+
+  .ia-check-texto {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #334155;
+  }
+  .ia-check-input:checked + .ia-check-texto {
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  /* --- Bloques del Paso 3 --- */
+  .ia-bloque {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 0 0 8px;
+  }
+  .ia-bloque--problema { border-left-color: #0284c7; }
+  .ia-bloque--dua      { border-left-color: #f59e0b; }
+  .ia-bloque--proposito { border-left-color: #0e7490; }
+  .ia-bloque--producto  { border-left-color: #10b981; }
+
+  .ia-bloque-cab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 6px;
+  }
+  .ia-bloque-titulo {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+  }
+  .ia-bloque-texto {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #334155;
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  /* --- Consejo y mensajes --- */
+  .ia-consejo {
+    margin: 10px 0 0;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #78350f;
+  }
+  .ia-consejo b { color: #92400e; }
+
+  .ia-vacio {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0;
+  }
+
+  /* --- Botón primario del pie del modal --- */
+  .st90-modal .acciones .ia-btn-primario {
+    background: #0e7490;
+    color: #ffffff;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .st90-modal .acciones .ia-btn-primario:hover { background: #155e75; }
 </style>
 

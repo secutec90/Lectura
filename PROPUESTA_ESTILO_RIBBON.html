@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propuesta de estilo Ribbon · Suite Escolar ST90</title>
+<style>
+  :root{
+    --rb-bg:#eef1f5;
+    --rb-panel:#ffffff;
+    --rb-border:#d5dbe3;
+    --rb-border-soft:#e6ebf1;
+    --rb-text:#1f2937;
+    --rb-muted:#6b7280;
+    --rb-accent:#0e7490;
+    --rb-accent-dark:#155e75;
+    --rb-accent-soft:#e0f2fe;
+    --rb-hover:#e6edf5;
+    --rb-active-tab:#0e7490;
+    --rb-warn:#b45309;
+    --rb-ok:#15803d;
+    --rb-shadow:0 1px 2px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    color:var(--rb-text);
+    background:#f7f9fb;
+    font-size:14px;
+  }
+  .doc{max-width:1240px;margin:0 auto;padding:28px 22px 80px}
+  h1{font-size:24px;margin:0 0 6px;color:#0f172a}
+  h2{font-size:18px;margin:38px 0 10px;color:#0f172a;border-bottom:2px solid var(--rb-border-soft);padding-bottom:6px}
+  h3{font-size:14px;margin:22px 0 8px;color:#334155;text-transform:uppercase;letter-spacing:.04em}
+  p{line-height:1.6;color:#334155;margin:8px 0}
+  .lead{color:var(--rb-muted);font-size:14.5px}
+  code{background:#e8eef5;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .nota{background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 14px;border-radius:6px;margin:14px 0;font-size:13.5px;color:#78350f}
+  .nota b{color:#92400e}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+  th,td{border:1px solid var(--rb-border);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;color:#475569}
+  .si{color:var(--rb-ok);font-weight:600}
+  .no{color:#b91c1c;font-weight:600}
+
+  /* ================= MAQUETA ================= */
+  .app{
+    border:1px solid var(--rb-border);
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--rb-panel);
+    box-shadow:0 6px 24px rgba(15,23,42,.08);
+  }
+  .app-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    background:#1e4b63;color:#fff;padding:8px 14px;font-size:13px;
+  }
+  .app-bar .titulo{font-weight:700;display:flex;align-items:center;gap:8px}
+  .app-bar .der{font-size:12px;opacity:.85}
+
+  /* pestañas de menú */
+  .rb-tabs{
+    display:flex;align-items:stretch;gap:2px;
+    background:#f7f9fb;border-bottom:1px solid var(--rb-border);
+    padding:0 8px;
+  }
+  .rb-tab{
+    border:0;background:transparent;padding:9px 16px;
+    font-size:13.5px;font-weight:600;color:#475569;cursor:pointer;
+    border-bottom:3px solid transparent;border-radius:6px 6px 0 0;
+  }
+  .rb-tab:hover{background:#e9eef4}
+  .rb-tab.activo{color:var(--rb-accent);border-bottom-color:var(--rb-accent);background:#fff}
+
+  /* cinta */
+  .rb-ribbon{
+    display:flex;align-items:stretch;
+    background:linear-gradient(#fbfcfe,#f2f5f9);
+    border-bottom:1px solid var(--rb-border);
+    padding:6px 8px 4px;gap:0;overflow-x:auto;
+  }
+  .rb-group{
+    display:flex;align-items:flex-start;gap:2px;
+    padding:0 10px;position:relative;
+    border-right:1px solid var(--rb-border-soft);
+  }
+  .rb-group:last-child{border-right:0}
+  .rb-group .rb-glabel{
+    position:absolute;bottom:-2px;left:0;right:0;text-align:center;
+    font-size:9.5px;color:#94a3b8;letter-spacing:.03em;
+  }
+  .rb-row{display:flex;align-items:flex-start;gap:2px;padding-bottom:12px}
+
+  /* botón grande */
+  .rb-btn{
+    border:1px solid transparent;background:transparent;border-radius:6px;
+    min-width:74px;max-width:96px;padding:5px 6px 4px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    color:#1f2937;font-size:11px;line-height:1.15;text-align:center;
+    transition:background .12s ease,border-color .12s ease;
+  }
+  .rb-btn .ico{font-size:24px;line-height:1}
+  .rb-btn .lbl{max-width:88px;overflow:hidden;text-overflow:ellipsis}
+  .rb-btn:hover{background:var(--rb-hover);border-color:#c7d2e0}
+  .rb-btn.activo{background:#fff6c7;border-color:#eab308}
+  .rb-btn.destacado{background:var(--rb-accent-soft);border-color:#7cc4e0;color:var(--rb-accent-dark)}
+
+  /* botón pequeño (fila de dos) */
+  .rb-btn.chico{
+    flex-direction:row;min-width:0;max-width:none;
+    padding:4px 8px;font-size:11.5px;gap:6px;justify-content:flex-start;
+  }
+  .rb-btn.chico .ico{font-size:15px}
+
+  .rb-col{display:flex;flex-direction:column;gap:1px}
+
+  /* botón con desplegable */
+  .rb-split{display:flex;align-items:stretch}
+  .rb-split .caret{
+    border:1px solid transparent;background:transparent;border-radius:6px;
+    width:15px;cursor:pointer;color:#64748b;font-size:9px;
+  }
+  .rb-split .caret:hover{background:var(--rb-hover);border-color:#c7d2e0}
+
+  /* selector dentro de la cinta */
+  .rb-select{
+    border:1px solid #b9c4d2;border-radius:6px;background:#fff;
+    font-size:12px;padding:5px 8px;min-width:150px;color:#1f2937;
+  }
+
+  /* área de contenido */
+  .contenido{padding:16px;background:#fff;min-height:180px}
+  .demo-tabla{width:100%;border-collapse:collapse;font-size:12.5px}
+  .demo-tabla th{background:#f1f5f9;border:1px solid var(--rb-border);padding:6px 8px;text-align:left}
+  .demo-tabla td{border:1px solid var(--rb-border-soft);padding:6px 8px;color:#475569}
+
+  /* muestras sueltas */
+  .muestra{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;
+    background:#f2f5f9;border:1px solid var(--rb-border);border-radius:10px;padding:14px}
+  .swatches{display:flex;flex-wrap:wrap;gap:10px}
+  .sw{width:120px;border:1px solid var(--rb-border);border-radius:8px;overflow:hidden;background:#fff}
+  .sw .color{height:46px}
+  .sw .datos{padding:6px 8px;font-size:11px;color:#475569}
+  .sw .datos b{display:block;color:#1f2937;font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <h1>Propuesta de estilo «Ribbon» para la Suite Escolar ST90</h1>
+  <p class="lead">Documento de revisión. No se ha aplicado nada al sistema en vivo: todo lo que ves aquí es una maqueta para que decidas.</p>
+
+  <h2>1. Qué toma de tu imagen de referencia</h2>
+  <p>La imagen que enviaste es la cinta de <b>aSc Horarios</b>: un menú de pestañas arriba y una cinta de botones grandes con el icono encima y la etiqueta debajo, agrupados con separadores verticales finos. Eso es lo que propongo adoptar, con ajustes para web:</p>
+  <table>
+    <tr><th>Elemento de la referencia</th><th>Se copia</th><th>Ajuste para ST90</th></tr>
+    <tr><td>Barra de pestañas de menú</td><td class="si">Sí</td><td>Se conserva, pero con la paleta teal de ST90 en la pestaña activa</td></tr>
+    <tr><td>Botones grandes icono + etiqueta</td><td class="si">Sí</td><td>Iconos SVG en lugar de bitmap, para que escalen y pesen poco</td></tr>
+    <tr><td>Separadores verticales por grupo</td><td class="si">Sí</td><td>Más finos y claros, con etiqueta de grupo discreta</td></tr>
+    <tr><td>Botón activo en amarillo</td><td class="si">Sí</td><td>Se mantiene el amarillo solo para el modo activo</td></tr>
+    <tr><td>Botones con flecha de desplegable</td><td class="si">Sí</td><td>Solo donde de verdad hay opciones (guardar como, generar, exportar)</td></tr>
+    <tr><td>Alturas fijas y densidad de escritorio</td><td class="no">Parcial</td><td>En móvil la cinta se convierte en fila deslizable</td></tr>
+  </table>
+
+  <div class="nota">
+    <b>Criterio de diseño:</b> la referencia es de escritorio y muy densa. Copiarla tal cual en un teléfono sería un error, porque los docentes y prefectas la usan desde el celular. La propuesta conserva la <i>jerarquía</i> de la referencia —pestañas, grupos, acciones grandes— pero con desplazamiento horizontal y tamaños táctiles en pantallas pequeñas.
+  </div>
+
+  <h2>2. Maqueta funcional</h2>
+  <p>Los botones responden al puntero. Prueba pasar el ratón y cambiar de pestaña.</p>
+
+  <div class="app">
+    <div class="app-bar">
+      <span class="titulo">🏫 Secundaria Técnica 90 · Suite Escolar</span>
+      <span class="der">Admin · Profr. — v417</span>
+    </div>
+
+    <div class="rb-tabs">
+      <button class="rb-tab activo" onclick="tab(this)">Principal</button>
+      <button class="rb-tab" onclick="tab(this)">Planeación</button>
+      <button class="rb-tab" onclick="tab(this)">Asistencia</button>
+      <button class="rb-tab" onclick="tab(this)">Encuestas</button>
+      <button class="rb-tab" onclick="tab(this)">Reportes</button>
+      <button class="rb-tab" onclick="tab(this)">Opciones</button>
+      <button class="rb-tab" onclick="tab(this)">Ayuda</button>
+    </div>
+
+    <div class="rb-ribbon">
+      <div class="rb-group">
+        <div class="rb-row">
+          <button class="rb-btn"><span class="ico">📄</span><span class="lbl">Nueva planeación</span></button>
+          <div class="rb-split">
+            <button class="rb-btn"><span class="ico">📂</span><span class="lbl">Abrir</span></button>
+            <button class="caret" title="Más opciones">▼</button>
+          </div>
+          <div class="rb-split">
+            <button class="rb-btn"><span class="ico">💾</span><span class="lbl">Guardar</span></button>
+            <button class="caret" title="Más opciones">▼</button>
+          </div>
+          <button class="rb-btn"><span class="ico">🖨️</span><span class="lbl">Imprimir</span></button>
+        </div>
+        <span class="rb-glabel">ARCHIVO</span>
+      </div>
+
+      <div class="rb-group">
+        <div class="rb-row">
+          <button class="rb-btn"><span class="ico">📚</span><span class="lbl">Asignaturas</span></button>
+          <button class="rb-btn"><span class="ico">👥</span><span class="lbl">Grupos</span></button>
+          <button class="rb-btn"><span class="ico">🗓️</span><span class="lbl">Horario</span></button>
+        </div>
+        <span class="rb-glabel">CATÁLOGOS</span>
+      </div>
+
+      <div class="rb-group">
+        <div class="rb-row">
+          <button class="rb-btn activo"><span class="ico">📝</span><span class="lbl">Planeación NEM</span></button>
+          <div class="rb-col">
+            <button class="rb-btn chico"><span class="ico">📊</span><span class="lbl">Directorio de encuestas</span></button>
+            <button class="rb-btn chico"><span class="ico">🤖</span><span class="lbl">Asistente IA</span></button>
+          </div>
+        </div>
+        <span class="rb-glabel">PLANEACIÓN</span>
+      </div>
+
+      <div class="rb-group">
+        <div class="rb-row">
+          <button class="rb-btn"><span class="ico">✅</span><span class="lbl">Pase de lista</span></button>
+          <button class="rb-btn"><span class="ico">⚠️</span><span class="lbl">Incidencias</span></button>
+          <button class="rb-btn"><span class="ico">📈</span><span class="lbl">Resumen</span></button>
+        </div>
+        <span class="rb-glabel">ASISTENCIA</span>
+      </div>
+
+      <div class="rb-group">
+        <div class="rb-row">
+          <select class="rb-select">
+            <option>1° A · Español</option>
+            <option>1° B · Matemáticas</option>
+            <option>2° A · Tecnología</option>
+          </select>
+          <button class="rb-btn"><span class="ico">📥</span><span class="lbl">Importar</span></button>
+        </div>
+        <span class="rb-glabel">CONTEXTO</span>
+      </div>
+    </div>
+
+    <div class="contenido">
+      <table class="demo-tabla">
+        <tr><th>Asignatura</th><th>Grupo</th><th>Trimestre</th><th>Avance</th></tr>
+        <tr><td>Español</td><td>1° A</td><td>Trimestre 1</td><td>3 de 5 sesiones</td></tr>
+        <tr><td>Matemáticas</td><td>2° B</td><td>Trimestre 1</td><td>5 de 5 sesiones</td></tr>
+        <tr><td>Tecnología</td><td>3° C</td><td>Trimestre 2</td><td>Sin iniciar</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>3. Componentes de la propuesta</h2>
+  <h3>Botón grande (acción principal)</h3>
+  <div class="muestra">
+    <button class="rb-btn"><span class="ico">📄</span><span class="lbl">Normal</span></button>
+    <button class="rb-btn activo"><span class="ico">📝</span><span class="lbl">Activo</span></button>
+    <button class="rb-btn destacado"><span class="ico">🤖</span><span class="lbl">Destacado</span></button>
+    <button class="rb-btn"><span class="ico">📂</span><span class="lbl">Con desplegable ▼</span></button>
+  </div>
+  <p>74–96 px de ancho, icono de 24 px, etiqueta de 11 px en máximo dos líneas. El estado activo tiñe el fondo, nunca rellena de color saturado.</p>
+
+  <h3>Botón chico (acciones secundarias apiladas)</h3>
+  <div class="muestra">
+    <div class="rb-col">
+      <button class="rb-btn chico"><span class="ico">📊</span><span class="lbl">Directorio de encuestas</span></button>
+      <button class="rb-btn chico"><span class="ico">🤖</span><span class="lbl">Asistente IA</span></button>
+    </div>
+  </div>
+
+  <h3>Colores</h3>
+  <div class="swatches">
+    <div class="sw"><div class="color" style="background:#0e7490"></div><div class="datos"><b>--rb-accent</b>#0e7490</div></div>
+    <div class="sw"><div class="color" style="background:#e0f2fe"></div><div class="datos"><b>--rb-accent-soft</b>#e0f2fe</div></div>
+    <div class="sw"><div class="color" style="background:#f2f5f9"></div><div class="datos"><b>--rb-bg</b>#f2f5f9</div></div>
+    <div class="sw"><div class="color" style="background:#d5dbe3"></div><div class="datos"><b>--rb-border</b>#d5dbe3</div></div>
+    <div class="sw"><div class="color" style="background:#fff6c7"></div><div class="datos"><b>Activo</b>#fff6c7</div></div>
+    <div class="sw"><div class="color" style="background:#1f2937"></div><div class="datos"><b>--rb-text</b>#1f2937</div></div>
+  </div>
+
+  <h2>4. Cómo se aplicaría a cada pantalla</h2>
+  <table>
+    <tr><th>Pantalla actual</th><th>Ribbon propuesto</th><th>Esfuerzo</th></tr>
+    <tr><td>Admin · panel principal</td><td>Menú de 7 pestañas + cinta con grupos Archivo, Catálogos, Planeación, Asistencia y Contexto</td><td>Alto</td></tr>
+    <tr><td>Admin · Planeación NEM (stepper de 4 pasos)</td><td>Se conserva el stepper. La cinta superior agrupa Guardar, IA, Ayuda y Vista previa</td><td>Medio</td></tr>
+    <tr><td>Admin · Asistencia / prefectura</td><td>Cinta con Pase de lista, Incidencias, Resumen y Contexto</td><td>Medio</td></tr>
+    <tr><td>Admin · Encuestas (constructor)</td><td>Cinta con Formulario, Banco, Directorio, Importar y Publicar</td><td>Medio</td></tr>
+    <tr><td>Clase · horario semanal</td><td>La barra actual (Fecha, Grupo, Asignatura, Alumno + vista) pasa a ser el grupo «Contexto» con botones grandes</td><td>Bajo</td></tr>
+    <tr><td>Censo y alumno (público)</td><td class="no">No aplicar</td><td>—</td></tr>
+  </table>
+
+  <div class="nota">
+    <b>Importante:</b> el censo y la vista del alumno son formularios públicos y deben seguir siendo simples. Meterles una cinta los haría más lentos y confusos en celular.
+  </div>
+
+  <h2>5. Plan de migración</h2>
+  <table>
+    <tr><th>Fase</th><th>Qué se hace</th><th>Riesgo</th></tr>
+    <tr><td>1</td><td>Tokens y hoja de estilos nueva, sin tocar pantallas (<code>RibbonCSS</code>)</td><td>Nulo</td></tr>
+    <tr><td>2</td><td>Convertir la barra de Clase · horario a cinta (piloto aislado)</td><td>Bajo</td></tr>
+    <tr><td>3</td><td>Panel Admin: pestañas + cinta de Planeación</td><td>Medio</td></tr>
+    <tr><td>4</td><td>Asistencia y Encuestas</td><td>Medio</td></tr>
+    <tr><td>5</td><td>Retirar estilos viejos y unificar</td><td>Bajo</td></tr>
+  </table>
+
+  <h3>Riesgos que veo</h3>
+  <ul style="line-height:1.7;color:#334155">
+    <li><b>Densidad en celular.</b> Mitigación: la cinta se vuelve deslizable y los botones conservan 40 px de alto mínimo.</li>
+    <li><b>Peso visual.</b> Una cinta grande come 90–110 px de pantalla. Mitigación: colapsable, recordando el estado por usuario.</li>
+    <li><b>Regresión funcional.</b> Cada cambio de marcado puede romper un <code>onclick</code>. Mitigación: migrar pantalla por pantalla con verificación de sintaxis y clics probados.</li>
+    <li><b>Iconos.</b> Los de la referencia son bitmap con color. En web conviene un set SVG; si se usan emojis se pierde formalidad.</li>
+  </ul>
+
+  <h2>6. Qué necesito de ti para continuar</h2>
+  <ul style="line-height:1.8;color:#334155">
+    <li>¿Te gusta la cinta con <b>pestañas arriba</b>, o prefieres solo una cinta por pantalla sin menú global?</li>
+    <li>¿Los <b>iconos</b> deben ser SVG de color (como la referencia) o aceptas emojis por ahora?</li>
+    <li>¿Empezamos por el <b>piloto de Clase · horario</b> (rápido y reversible) o prefieres el panel Admin completo?</li>
+    <li>¿La cinta debe poder <b>colapsarse</b> para ganar espacio vertical?</li>
+  </ul>
+
+</div>
+
+<script>
+  function tab(boton){
+    document.querySelectorAll('.rb-tab').forEach(function(b){ b.classList.remove('activo'); });
+    boton.classList.add('activo');
+  }
+</script>
+</body>
+</html>

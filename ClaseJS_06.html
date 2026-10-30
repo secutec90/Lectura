@@ -243,17 +243,17 @@
       }
 
       const p = res.propuesta || {};
-      const htmlModal = '<div style="font-size:13px;line-height:1.5;color:#334155;">' +
+      const htmlModal = '<div style="font-size:13px;line-height:1.5;color:#334155;max-width:100%;box-sizing:border-box;">' +
         '<div style="background:#eff6ff;padding:8px 12px;border-radius:6px;border:1px solid #bfdbfe;margin-bottom:12px;">' +
           '<strong style="color:#1e40af;">Justificación Pedagógica:</strong> ' + escaparHtml(p.justificacion || 'Articulación situada según los PDA seleccionados.') +
         '</div>' +
         '<div style="margin-bottom:10px;">' +
           '<label style="font-weight:700;display:block;margin-bottom:4px;color:#1e293b;">Problema o Situación de la Comunidad sugerido:</label>' +
-          '<textarea id="modIAProblema" style="width:100%;box-sizing:border-box;min-height:70px;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;">' + escaparHtml(p.problemaComunidad || '') + '</textarea>' +
+          '<textarea id="modIAProblema" style="width:100%;max-width:100%;box-sizing:border-box;min-height:75px;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12.5px;line-height:1.45;resize:vertical;overflow-y:auto;">' + escaparHtml(p.problemaComunidad || '') + '</textarea>' +
         '</div>' +
         '<div style="margin-bottom:10px;">' +
           '<label style="font-weight:700;display:block;margin-bottom:4px;color:#1e293b;">Propósito del Proyecto y Producto Central sugeridos:</label>' +
-          '<textarea id="modIAProposito" style="width:100%;box-sizing:border-box;min-height:75px;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;">' +
+          '<textarea id="modIAProposito" style="width:100%;max-width:100%;box-sizing:border-box;min-height:90px;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12.5px;line-height:1.45;resize:vertical;overflow-y:auto;">' +
             escaparHtml((p.proposito || '') + (p.productoFinal ? ('\n\nProducto Final Central: ' + p.productoFinal) : '')) +
           '</textarea>' +
         '</div>' +
@@ -266,6 +266,7 @@
 
       modal({
         titulo: '✨ Propuesta Pedagógica Situada (NEM Fase 6)',
+        clase: 'ia-modal',
         html: htmlModal,
         botones: [
           { texto: 'Cancelar', clase: 'btn-secundario', valor: false },

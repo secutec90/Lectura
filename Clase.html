@@ -205,49 +205,73 @@
         <div class="tarjeta">
           <p class="hint oculto" id="txtDiaMae" style="display:none;margin:0;"></p>
           <div id="wrapCalendarioMae">
-            <div class="cal-nav" id="navCalClase">
+            <div class="cal-nav cinta-n3" id="navCalClase">
               <div class="cal-filtros-grupo" id="n3Clases" role="group" aria-label="Filtros del horario">
-                <button type="button" class="ribbon-btn" id="btnClaseFecha" onclick="abrirCalendarioFechaClase(event)" aria-label="Fecha">
+                <button type="button" class="ribbon-btn ribbon-ico-azul" id="btnClaseFecha" onclick="abrirCalendarioFechaClase(event)" aria-label="Fecha">
                   <input type="date" id="fechaMaeClase" class="filtro-date-hidden" onchange="alCambiarFechaClase()" aria-label="Fecha" tabindex="-1">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
                   <span class="ribbon-label">Fecha</span>
                 </button>
-                <div class="ribbon-btn ribbon-btn-select-wrap" id="btnClaseGrupo">
+                <div class="ribbon-btn ribbon-btn-select-wrap ribbon-ico-verde" id="btnClaseGrupo">
                   <select id="selGrupoClase" class="filtro-select-overlay" onchange="cambiarGrupoClase()" aria-label="Grupo">
                     <option value="">Elige grupo…</option>
                   </select>
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg>
                   <span class="ribbon-label">Grupo</span>
                 </div>
-                <div class="ribbon-btn ribbon-btn-select-wrap" id="btnClaseAlumno">
-                  <select id="selAluClase" class="filtro-select-overlay" onchange="cambiarAlumnoClase()" aria-label="Alumno">
-                    <option value="">Elige alumno…</option>
-                  </select>
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                  <span class="ribbon-label">Alumno</span>
-                </div>
-                <div class="ribbon-btn ribbon-btn-select-wrap" id="btnClaseAsig">
+                <div class="ribbon-btn ribbon-btn-select-wrap ribbon-ico-morado" id="btnClaseAsig">
                   <select id="selAsigClase" class="filtro-select-overlay" onchange="cambiarAsignaturaClase()" aria-label="Asignatura">
                     <option value="">Todas las del grupo</option>
                   </select>
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                   <span class="ribbon-label">Asignatura</span>
                 </div>
+                <div class="ribbon-btn ribbon-btn-select-wrap ribbon-ico-celeste" id="btnClaseAlumno">
+                  <select id="selAluClase" class="filtro-select-overlay" onchange="cambiarAlumnoClase()" aria-label="Alumno">
+                    <option value="">Elige alumno…</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  <span class="ribbon-label">Alumno</span>
+                </div>
               </div>
-              <div class="cal-modo-grupo" role="group" aria-label="Filtro de vista de horario">
-                <button type="button" class="btn-cal-modo" id="btnModoDia" onclick="cambiarModoCal('dia')">Día</button>
-                <button type="button" class="btn-cal-modo activo" id="btnModoSemana" onclick="cambiarModoCal('semana')">Semana</button>
-                <button type="button" class="btn-cal-modo" id="btnModoMes" onclick="cambiarModoCal('mes')">Mes</button>
-              </div>
-              <div class="cal-nav-rango">
-                <button type="button" class="btn-secundario" onclick="moverCalClase(-1)" aria-label="Anterior">◀</button>
+              <div class="cal-nav-rango" role="group" aria-label="Navegación de fechas">
+                <button type="button" class="ribbon-btn ribbon-ico-celeste" onclick="moverCalClase(-1)" aria-label="Anterior">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                  <span class="ribbon-label">Anterior</span>
+                </button>
                 <strong id="txtSemanaClase">--/---/--&gt;--/---/--</strong>
-                <button type="button" class="btn-secundario" onclick="moverCalClase(1)" aria-label="Siguiente">▶</button>
-                <button type="button" class="btn-secundario" onclick="irHoyClase()">Hoy</button>
+                <button type="button" class="ribbon-btn ribbon-ico-celeste" onclick="moverCalClase(1)" aria-label="Siguiente">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="ribbon-label">Siguiente</span>
+                </button>
+                <button type="button" class="ribbon-btn ribbon-ico-teal" onclick="irHoyClase()" aria-label="Hoy">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+                  <span class="ribbon-label">Hoy</span>
+                </button>
               </div>
-              <div class="cal-modo-grupo" role="group" aria-label="Orientación del horario">
-                <button type="button" class="btn-cal-modo activo" id="btnOriH" onclick="cambiarOrientacionCal('h')" title="Días en columnas">Horizontal</button>
-                <button type="button" class="btn-cal-modo" id="btnOriV" onclick="cambiarOrientacionCal('v')" title="Días en filas">Vertical</button>
+              <div class="cal-filtros-grupo" role="group" aria-label="Filtro de vista de horario">
+                <button type="button" class="ribbon-btn ribbon-ico-azul btn-cal-modo" id="btnModoDia" onclick="cambiarModoCal('dia')" aria-label="Vista por día">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><line x1="12" y1="14" x2="12" y2="18"/></svg>
+                  <span class="ribbon-label">Día</span>
+                </button>
+                <button type="button" class="ribbon-btn ribbon-ico-azul btn-cal-modo activo" id="btnModoSemana" onclick="cambiarModoCal('semana')" aria-label="Vista por semana">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M9 10v12M15 10v12"/></svg>
+                  <span class="ribbon-label">Semana</span>
+                </button>
+                <button type="button" class="ribbon-btn ribbon-ico-azul btn-cal-modo" id="btnModoMes" onclick="cambiarModoCal('mes')" aria-label="Vista por mes">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M3 16h18M9 10v12M15 10v12"/></svg>
+                  <span class="ribbon-label">Mes</span>
+                </button>
+              </div>
+              <div class="cal-filtros-grupo" role="group" aria-label="Orientación del horario">
+                <button type="button" class="ribbon-btn ribbon-ico-indigo btn-cal-modo activo" id="btnOriH" onclick="cambiarOrientacionCal('h')" aria-label="Horizontal">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>
+                  <span class="ribbon-label">Horizontal</span>
+                </button>
+                <button type="button" class="ribbon-btn ribbon-ico-indigo btn-cal-modo" id="btnOriV" onclick="cambiarOrientacionCal('v')" aria-label="Vertical">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+                  <span class="ribbon-label">Vertical</span>
+                </button>
               </div>
               <div class="cal-ayuda-wrap">
                 <button type="button" class="btn-ayuda ribbon-btn ribbon-ico-ambar" onclick="abrirAyuda('claseHorario')" aria-label="Ayuda">

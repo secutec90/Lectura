@@ -203,9 +203,7 @@
                   <span class="ribbon-label">Ayuda</span>
                 </button>
               </div>
-            
-                <button type="button" id="btnPlegarCinta" class="horario-plegar" onclick="plegarCintaHorario()" title="Mostrar u ocultar la barra del horario" aria-label="Mostrar u ocultar la barra del horario" aria-expanded="true">⌃</button>
-              </div>
+            </div>
             <div id="listaSlotsMae" class="cal-clase"></div>
           </div>
         </div>
@@ -629,23 +627,23 @@
                   <p id="progSesionActiva" style="margin:4px 0 0;font-size:12px;color:#64748b;font-weight:600;"></p>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                  <button type="button" class="nem-btn-accion btn-soft-primary" onclick="abrirModalLibrosSEP_()" id="btnVincularLibroSEP" title="Consultar Libros de Texto Gratuitos SEP Fase 6 y vincular páginas">
+                  <button type="button" class="nem-btn-accion btn-soft-primary" onclick="abrirModalLibrosSEP_()" id="btnVincularLibroSEP">
                     📚 Vincular Libro SEP Fase 6
                   </button>
-                  <button type="button" class="nem-btn-accion" onclick="abrirModalCalendarizarSesion()" id="btnCalSesion" style="border-color:#3b82f6;color:#1d4ed8;">📅 Calendarizar en Horario</button>
+                  <button type="button" class="nem-btn-accion nem-btn-accion--azul" onclick="abrirModalCalendarizarSesion()" id="btnCalSesion">📅 Calendarizar en Horario</button>
                 </div>
               </div>
 
               <!-- BARRA DE HERRAMIENTAS IDEVICES MODULARES (TIPO EXELOGIC / EXELearning) -->
               <div class="idevice-bar">
-                <span style="font-size:11px;font-weight:800;color:var(--app-muted);text-transform:uppercase;letter-spacing:0.04em;">iDevices Modulares:</span>
-                <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('lectura')" title="Insertar bloque de lectura guiada con narración de voz">
+                <span>iDevices Modulares:</span>
+                <button type="button" class="idevice-btn idevice-btn--lectura" onclick="insertariDeviceSesion_('lectura')">
                   🎧 Lectura Guiada (Audio DUA)
                 </button>
-                <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('pregunta')" title="Insertar pregunta formativa detonadora con retroalimentación">
+                <button type="button" class="idevice-btn idevice-btn--pregunta" onclick="insertariDeviceSesion_('pregunta')">
                   ❓ Pregunta Formativa
                 </button>
-                <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('reto')" title="Insertar reto situado comunitario o desafío práctico">
+                <button type="button" class="idevice-btn idevice-btn--reto" onclick="insertariDeviceSesion_('reto')">
                   🏆 Desafío Práctico Situado
                 </button>
               </div>

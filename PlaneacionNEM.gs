@@ -349,7 +349,15 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
   if (libro && !libro.getSheetByName("PlaneacionesNEM")) {
     _verificarYCrearPestanas_();
   }
-  const filas = _leerFilas_("PlaneacionesNEM");
+  let filas = _leerFilas_("PlaneacionesNEM");
+  if (!filas || filas.length === 0) {
+    try {
+      sembrarPlaneacionesDemoNEM(token);
+      filas = _leerFilas_("PlaneacionesNEM");
+    } catch (eSem) {
+      Logger.log("Error al auto-sembrar proyectos demo: " + eSem);
+    }
+  }
   const nomDoc = normalizarNombrePref_(ses.maestroNombre || ses.nombre || "");
 
   const filtradas = filas.filter(function (f) {

@@ -2,6 +2,15 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Planeación Didáctica: Horario Oficial por Defecto y Auto-Siembra de Proyectos Demo]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): restaurar vista inicial de horario oficial y auto-sembrar proyectos demo en banco personal`
+- **Cambios Realizados:**
+  - Restaurada la vista inicial de Planeación Didáctica a **Horario Oficial** (`conmutarVistaPlaneacion_('horario')`) en `AdminPlanJS_06.html:inicializarModuloPlaneacion_()` para que al ingresar al módulo se despliegue directamente el calendario semanal de clases aSc con sus bloques y asignaturas clicables.
+  - Incorporada la auto-siembra preventiva en `PlaneacionNEM.gs:listarPlaneacionesNEM()`: si la base de datos de planeaciones está vacía, se invoca automáticamente `sembrarPlaneacionesDemoNEM()` para que el docente o administrador disponga de proyectos de muestra inmediatamente al acceder a su Banco Personal o Global sin ver pantallas vacías en 0.
+  - Verificada la integridad del manifiesto (0 errores en 75 documentos) y desplegado en Google Apps Script a la versión `@514`.
+- **Archivos Afectados:** `AdminPlanJS_06.html`, `PlaneacionNEM.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Restablece el flujo de trabajo natural del docente (acceder a Planeación ➔ ver su Horario/Calendario ➔ seleccionar clase/asignatura o abrir Banco de proyectos).
+
 ### 🛠️ [2026-10-29] - [Sincronización de Despliegues: Google Sites inicio a build-510]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(deploy): sincronizar despliegue embebido en google sites a version @512 build-510`
 - **Cambios Realizados:**

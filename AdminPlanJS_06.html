@@ -686,7 +686,7 @@
     const vistaMae = document.getElementById('vistaMae');
     if (vistaMae) vistaMae.classList.remove('oculto');
     if (typeof conmutarVistaPlaneacion_ === 'function') {
-      conmutarVistaPlaneacion_('personal', document.getElementById('btnSubPlanBancoPersonal'));
+      conmutarVistaPlaneacion_('horario', document.getElementById('btnSubPlanHorario'));
     }
     if (typeof cargarContextoPlaneacionNEM === 'function') {
       cargarContextoPlaneacionNEM();

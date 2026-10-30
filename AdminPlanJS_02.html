@@ -411,12 +411,16 @@
     /* ============================================================
        OPERACIONES COLEGIALES: CLONAR, PUBLICAR Y ELIMINAR PLANEACIONES
        ============================================================ */
+    function cargarBancoPlaneaciones_() {
+      cargarListaPlaneacionesNEM(true);
+    }
+
     function sembrarDemoPlaneaciones_() {
       toast('Generando proyectos didácticos de prueba…', 'info');
       gsRun('sembrarPlaneacionesDemoNEM', tokenClase).then(function (res) {
         if (res && res.ok) {
           toast(res.mensaje || 'Proyectos de prueba creados exitosamente.', 'ok');
-          cargarBancoPlaneaciones_();
+          cargarListaPlaneacionesNEM(true);
         } else {
           toast((res && res.mensaje) || 'No se pudieron generar los proyectos demo.', 'err');
         }

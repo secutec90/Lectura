@@ -1217,6 +1217,134 @@
   .idevice-container:hover {
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   }
+
+  /* ============================================================
+     FASE 6 · TARJETAS iDEVICE — DESACOPLAMIENTO CSS
+     DeepSeek · Las clases .idevice-card* son ganchos de script
+     (btn.closest('.idevice-card')) y, además, deben sostener la tarjeta
+     por sí solas: el visor de clase (Clase.html) no carga
+     AdminPlaneacionCSS, así que ahí no existe .idevice-btn.
+     ============================================================ */
+
+  /* --- 1 · Contenedor de bloque --- */
+  .idevice-card {
+    position: relative;
+    display: block;
+    margin: 12px 0;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-lg);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+    break-inside: avoid;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .idevice-card:hover {
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+  /* En Admin la tarjeta viaja con .idevice-container: ahí el relleno lo
+     aportan .idevice-header y .idevice-body, no la tarjeta. */
+  .idevice-card.idevice-container {
+    margin: 16px 0;
+    padding: 0;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  }
+
+  /* --- 2 · Variantes temáticas --- */
+  .idevice-card-audio {
+    border-left: 5px solid var(--app-primary);
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 58%);
+  }
+  .idevice-card-pregunta {
+    border-left: 5px solid #10b981;
+    background: linear-gradient(180deg, #f7fdfa 0%, #ffffff 58%);
+  }
+  .idevice-card-reto {
+    border-left: 5px solid #f59e0b;
+    background: linear-gradient(180deg, #fffdf7 0%, #ffffff 58%);
+  }
+
+  .idevice-card.idevice-card-audio > .idevice-header    { background: #f0f7ff; color: var(--app-primary-dark); }
+  .idevice-card.idevice-card-pregunta > .idevice-header { background: #ecfdf5; color: #065f46; }
+  .idevice-card.idevice-card-reto > .idevice-header     { background: #fffbeb; color: #92400e; }
+
+  .idevice-card.idevice-card-audio .idevice-tag    { background: #dbeafe; color: var(--app-primary-dark); }
+  .idevice-card.idevice-card-pregunta .idevice-tag { background: #a7f3d0; color: #065f46; }
+  .idevice-card.idevice-card-reto .idevice-tag     { background: #fde68a; color: #92400e; }
+
+  /* La barra de audio estrena acento propio en la variante de voz */
+  .idevice-card-audio .idevice-audio-bar {
+    background: #f0f7ff;
+    border-color: #bfdbfe;
+  }
+
+  /* --- 3 · Campos del formulario (contrato Fase 6) --- */
+  .idevice-campo-titulo {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 6px;
+    font-weight: 600;
+    padding: 6px 8px;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+  }
+  .idevice-campo-cuerpo {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    padding: 8px;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+  }
+  /* Refuerzo tipográfico y de foco (no altera el contrato anterior) */
+  .idevice-campo-titulo,
+  .idevice-campo-cuerpo {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--app-text);
+    background: #ffffff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .idevice-campo-titulo::placeholder,
+  .idevice-campo-cuerpo::placeholder { color: #94a3b8; }
+  .idevice-campo-titulo:focus,
+  .idevice-campo-cuerpo:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  /* AdminCSS aplica min-height:180px a todo textarea: el cuerpo del
+     iDevice necesita dos renglones, no media pantalla. */
+  .idevice-campo-cuerpo { min-height: 56px; }
+
+  /* --- 4 · Botonera de respaldo para el visor de clase --- */
+  .idevice-card:not(.idevice-container) .idevice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  .idevice-card:not(.idevice-container) .idevice-btn:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: var(--app-primary-dark);
+  }
+  .idevice-card:not(.idevice-container) .idevice-btn:focus-visible {
+    outline: 2px solid #0284c7;
+    outline-offset: 2px;
+  }
+
   .idevice-header {
     display: flex;
     justify-content: space-between;

@@ -1,12 +1,12 @@
-# ENTREGA_DEEPSEEK — FASE 5 · Rediseño Ribbon estilo aSc Horarios 2027
+# ENTREGA_DEEPSEEK — FASES 5 y 6 · Ribbon aSc Horarios + Tarjetas iDevice
 
 | Campo | Valor |
 | :--- | :--- |
 | **Agente** | DeepSeek — Diseñador UI/UX & Especialista CSS |
-| **Fase** | 5 — Rediseño visual del ribbon y sustitución de iconos SVG |
-| **Fecha** | 2026-10-29 · 19:41 (America/Mexico_City) |
-| **Estado** | **ENTREGADO — pendiente de auditoría de ensamble (Antigravity)** |
-| **Archivos tocados** | `ComunCSS.html` · `Admin.html` |
+| **Fase** | 5 — cerrada · **6 — Desacoplamiento CSS y pulido de tarjetas iDevice (activa)** |
+| **Fecha** | 2026-10-29 · 19:41 (Fase 5) y 20:05 (Fase 6) · America/Mexico_City |
+| **Estado** | **ENTREGADO** · Fase 5 aprobada por Antigravity · Fase 6 pendiente de auditoría |
+| **Archivos tocados** | `ComunCSS.html` (Fases 5 y 6) · `Admin.html` (Fase 5) |
 | **Archivos prohibidos respetados** | `*.gs`, `AdminJS_*`, `AdminPlanJS_*`, `AdminEncJS_*`, `ComunJS`, `AdminCSS.html`, `AdminPlaneacionCSS.html`, `AdminEncuestasCSS.html`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md` |
 | **Gobernanza** | Sin `git commit`, sin `git push`, sin `clasp push/deploy` |
 
@@ -391,3 +391,210 @@ Verificación automática contra los archivos reales (2026-10-29, 19:52 America/
 | Números de línea del §5 | **corregidos** (estaban +1: apuntaban al `<span>`, no al `<button>`) |
 | Conteo de SVG monocromáticos previos (§7) | **corregido**: 33, no 32 |
 | `id=` / `onclick=` / scriptlets | 104 / 64 / 56 — sin cambio |
+
+---
+
+# PARTE II — FASE 6 · Tarjetas iDevice
+
+## 12. Encargo y diagnóstico
+
+La partitura §5 de `ESTADO_COORDINACION.md` asignó a DeepSeek cerrar el hueco detectado en la auditoría cruzada:
+
+- `.idevice-card`, `.idevice-card-audio`, `.idevice-card-pregunta` y `.idevice-card-reto` eran **solo ganchos de script** (`btn.closest('.idevice-card')`) sin una sola regla CSS en el proyecto.
+- `AdminPlanJS_06.html` inyectaba los campos con `style.cssText`, saltándose el sistema de diseño.
+- Consecuencia real: en el **visor de clase** (`Clase.html`, que incluye solo `ComunCSS` y `ClaseCSS`) las tarjetas se dibujaban como un `div` desnudo, porque `.idevice-container` y `.idevice-btn` viven en `ComunCSS`/`AdminPlaneacionCSS` y `Clase.html` no carga el segundo.
+
+## 13. CSS entregado (`ComunCSS.html`, líneas 1221–1346)
+
+Insertado dentro de la sección **BLOQUES MODULARES iDEVICES**, justo después de `.idevice-container:hover` y antes de `.idevice-header`.
+
+```css
+  /* ============================================================
+     FASE 6 · TARJETAS iDEVICE — DESACOPLAMIENTO CSS
+     DeepSeek · Las clases .idevice-card* son ganchos de script
+     (btn.closest('.idevice-card')) y, además, deben sostener la tarjeta
+     por sí solas: el visor de clase (Clase.html) no carga
+     AdminPlaneacionCSS, así que ahí no existe .idevice-btn.
+     ============================================================ */
+
+  /* --- 1 · Contenedor de bloque --- */
+  .idevice-card {
+    position: relative;
+    display: block;
+    margin: 12px 0;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-lg);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+    break-inside: avoid;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .idevice-card:hover {
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+  /* En Admin la tarjeta viaja con .idevice-container: ahí el relleno lo
+     aportan .idevice-header y .idevice-body, no la tarjeta. */
+  .idevice-card.idevice-container {
+    margin: 16px 0;
+    padding: 0;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  }
+
+  /* --- 2 · Variantes temáticas --- */
+  .idevice-card-audio {
+    border-left: 5px solid var(--app-primary);
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 58%);
+  }
+  .idevice-card-pregunta {
+    border-left: 5px solid #10b981;
+    background: linear-gradient(180deg, #f7fdfa 0%, #ffffff 58%);
+  }
+  .idevice-card-reto {
+    border-left: 5px solid #f59e0b;
+    background: linear-gradient(180deg, #fffdf7 0%, #ffffff 58%);
+  }
+
+  .idevice-card.idevice-card-audio > .idevice-header    { background: #f0f7ff; color: var(--app-primary-dark); }
+  .idevice-card.idevice-card-pregunta > .idevice-header { background: #ecfdf5; color: #065f46; }
+  .idevice-card.idevice-card-reto > .idevice-header     { background: #fffbeb; color: #92400e; }
+
+  .idevice-card.idevice-card-audio .idevice-tag    { background: #dbeafe; color: var(--app-primary-dark); }
+  .idevice-card.idevice-card-pregunta .idevice-tag { background: #a7f3d0; color: #065f46; }
+  .idevice-card.idevice-card-reto .idevice-tag     { background: #fde68a; color: #92400e; }
+
+  /* La barra de audio estrena acento propio en la variante de voz */
+  .idevice-card-audio .idevice-audio-bar {
+    background: #f0f7ff;
+    border-color: #bfdbfe;
+  }
+
+  /* --- 3 · Campos del formulario (contrato Fase 6) --- */
+  .idevice-campo-titulo {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 6px;
+    font-weight: 600;
+    padding: 6px 8px;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+  }
+  .idevice-campo-cuerpo {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    padding: 8px;
+    border: 1px solid var(--app-border);
+    border-radius: 4px;
+  }
+  /* Refuerzo tipográfico y de foco (no altera el contrato anterior) */
+  .idevice-campo-titulo,
+  .idevice-campo-cuerpo {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--app-text);
+    background: #ffffff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .idevice-campo-titulo::placeholder,
+  .idevice-campo-cuerpo::placeholder { color: #94a3b8; }
+  .idevice-campo-titulo:focus,
+  .idevice-campo-cuerpo:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  /* AdminCSS aplica min-height:180px a todo textarea: el cuerpo del
+     iDevice necesita dos renglones, no media pantalla. */
+  .idevice-campo-cuerpo { min-height: 56px; }
+
+  /* --- 4 · Botonera de respaldo para el visor de clase --- */
+  .idevice-card:not(.idevice-container) .idevice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  .idevice-card:not(.idevice-container) .idevice-btn:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: var(--app-primary-dark);
+  }
+  .idevice-card:not(.idevice-container) .idevice-btn:focus-visible {
+    outline: 2px solid #0284c7;
+    outline-offset: 2px;
+  }
+```
+
+## 14. Contrato con Cursor (Fase 6, punto 2 de la partitura)
+
+En `AdminPlanJS_06.html`, dentro de `pintarTarjetaIDevice_`:
+
+```javascript
+// antes
+titulo.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;';
+cuerpo.style.cssText = 'width:100%;box-sizing:border-box;resize:vertical;';
+
+// después
+titulo.className = 'idevice-campo-titulo';
+cuerpo.className = 'idevice-campo-cuerpo';
+```
+
+Los valores del contrato están cubiertos uno a uno:
+
+| Declaración exigida | `.idevice-campo-titulo` | `.idevice-campo-cuerpo` |
+| :--- | :---: | :---: |
+| `width: 100%` | ✅ | ✅ |
+| `box-sizing: border-box` | ✅ | ✅ |
+| `margin-bottom: 6px` | ✅ | — |
+| `font-weight: 600` | ✅ | — |
+| `padding` | `6px 8px` ✅ | `8px` ✅ |
+| `border: 1px solid var(--app-border)` | ✅ | ✅ |
+| `border-radius: 4px` | ✅ | ✅ |
+| `resize: vertical` | — | ✅ |
+
+## 15. Decisiones técnicas
+
+1. **`.idevice-card` es autosuficiente, no un simple refuerzo.** Se le dieron fondo, borde, radio, sombra, `overflow: hidden` y `break-inside: avoid`, porque en `Clase.html` es la única clase de la tarjeta. En Admin convive con `.idevice-container` y el resultado es idéntico.
+2. **Sin `:has()`.** Para evitar doble relleno en Admin se usa `.idevice-card.idevice-container { padding: 0; }`: ahí el relleno lo aportan `.idevice-header` y `.idevice-body`. En Clase, sin contenedor, la tarjeta aplica `padding: 14px 16px`.
+3. **`min-height: 56px` en el cuerpo.** `AdminCSS.html` (línea 515) aplica `textarea { min-height: 180px }` a *todo* textarea; el cuerpo del iDevice se estiraba a media pantalla (detectado en el render de prueba). La regla lo acota a dos renglones sin tocar el global.
+4. **Misma paleta que la Fase 4.** `.idevice-card-pregunta` usa el verde de `.idevice-pregunta` y `.idevice-card-reto` el ámbar de `.idevice-desafio`, con lo que Admin (clases antiguas) y Clase (clases nuevas) se ven igual.
+5. **Botonera de respaldo acotada.** `.idevice-card:not(.idevice-container) .idevice-btn` da estilo al botón Quitar / Escuchar solo cuando no existe `AdminPlaneacionCSS`; en Admin no altera nada (mayor especificidad, pero excluido por `:not`).
+6. **Cero `!important`, cero cambios de ID, cero JavaScript, cero archivos `.gs`.**
+
+## 16. Verificación
+
+| Comprobación | Resultado |
+| :--- | :--- |
+| Diff de `ComunCSS.html` vs copia previa | **−0 / +128 líneas** (puramente aditivo) |
+| Llaves `{` / `}` en el archivo | **338 / 338** — balanceadas |
+| Bloque Fase 5 (ribbon) | **intacto** (`FASE 5 · ESTILO aSc HORARIOS 2027` presente) |
+| Render Admin (ComunCSS + AdminCSS + AdminPlaneacionCSS) | ✅ tarjeta con acento, encabezado teñido, campos de 2 renglones |
+| Render Clase (solo ComunCSS) | ✅ tarjeta completa con botón Quitar y acento por tipo |
+| IDs y `onclick` | sin cambio (esta fase no toca `Admin.html`) |
+
+Evidencia: `evidencia_fase6/fase6_tarjetas_admin.png` y `evidencia_fase6/fase6_tarjetas_clase.png`.
+
+## 17. Rollback
+
+```
+C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS_pre_fase6.html   (estado justo antes de la Fase 6)
+C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS.html            (estado previo a la Fase 5)
+```
+
+Restaurar la primera sobre `ComunCSS.html` revierte solo la Fase 6 y conserva el ribbon.
+
+## 18. Pendiente detectado (para una Fase 7, no ejecutado)
+
+`ClaseJS_08.html` sigue construyendo las tarjetas con `innerHTML` lleno de `style="..."` en línea y sin `.idevice-header`, `.idevice-body` ni `.idevice-campo-*`. La tarjeta ya se ve correcta gracias a `.idevice-card`, pero su tipografía y sus campos no están unificados con Admin. Eso es territorio de Cursor: requiere sustituir el `innerHTML` por nodos con las clases del contrato. No lo toqué.

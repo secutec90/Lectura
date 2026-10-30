@@ -131,7 +131,7 @@
       if (ev) ev.preventDefault();
       const id = (document.getElementById('planId') || {}).value || '';
       const idHorario = (document.getElementById('planIdHorario') || {}).value || '';
-      const titulo = (document.getElementById('planTitulo') || {}).value || '';
+      const titulo = String((document.getElementById('planTitulo') || {}).value || '').trim();
       const grado = (document.getElementById('planGrado') || {}).value || '';
       const grupo = (document.getElementById('planGrupo') || {}).value || '';
       const asig = (document.getElementById('planAsignatura') || {}).value || '';
@@ -145,6 +145,21 @@
       const prob = (document.getElementById('planProblema') || {}).value || '';
       const prop = (document.getElementById('planProposito') || {}).value || '';
 
+      if (!titulo) {
+        toast('Por favor escribe el título del proyecto didáctico en la Etapa 1.', 'error');
+        if (typeof irAPasoPlanNEM === 'function') irAPasoPlanNEM(1);
+        const titInp = document.getElementById('planTitulo');
+        if (titInp) titInp.focus();
+        return;
+      }
+
+      let grVal = String(grado || '').trim();
+      let gpVal = String(grupo || '').trim().replace(/^\d+/, '').toUpperCase();
+      let asigVal = String(asig || '').trim();
+      if (!grVal) grVal = '1';
+      if (!gpVal) gpVal = 'A';
+      if (!asigVal) asigVal = (typeof ctxPlanNEM !== 'undefined' && ctxPlanNEM && ctxPlanNEM.asignaturas && ctxPlanNEM.asignaturas[0]) || 'Español';
+
       const ejes = [];
       document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]:checked').forEach(function (cb) {
         ejes.push(cb.value);
@@ -154,9 +169,9 @@
         id: id,
         idHorario: idHorario,
         titulo: titulo,
-        grado: grado,
-        grupo: grupo,
-        asignatura: asig,
+        grado: grVal,
+        grupo: gpVal,
+        asignatura: asigVal,
         fechaInicio: fechaInicio,
         periodo: periodo,
         campoFormativo: campo,
@@ -172,12 +187,14 @@
       const btn = document.getElementById('btnGuardarPlan');
       if (btn) btn.disabled = true;
 
-      gsRun('crearOActualizarPlaneacionNEM', tokenClase, payload).then(function (res) {
+      const tk = tokenClase || (typeof getTokenPlan_ === 'function' ? getTokenPlan_() : '') || (typeof token !== 'undefined' ? token : '');
+
+      gsRun('crearOActualizarPlaneacionNEM', tk, payload).then(function (res) {
         if (btn) btn.disabled = false;
         toast((res && res.mensaje) || 'Planeación guardada con éxito.', 'ok');
         cerrarFormPlaneacion();
         if (typeof conmutarBancoPlaneacion_ === 'function') conmutarBancoPlaneacion_('personal');
-        else if (typeof cargarListaPlaneacionesNEM === 'function') cargarListaPlaneacionesNEM(true);
+        if (typeof cargarListaPlaneacionesNEM === 'function') cargarListaPlaneacionesNEM(true);
         const idTarget = (res && (res.id || res.Id)) || payload.id;
         if (idTarget) {
           abrirGestorSesiones(idTarget);

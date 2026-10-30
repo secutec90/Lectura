@@ -372,7 +372,7 @@
       titulo.setAttribute('aria-label', 'Título del bloque');
       titulo.placeholder = meta.phTitulo;
       titulo.value = datos.titulo || '';
-      titulo.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;';
+      titulo.className = 'idevice-campo-titulo';
       const cuerpo = document.createElement('textarea');
       cuerpo.setAttribute('data-campo', 'cuerpo');
       cuerpo.id = 'txt_' + idUnico;
@@ -380,7 +380,7 @@
       cuerpo.setAttribute('aria-label', 'Contenido del bloque');
       cuerpo.placeholder = meta.phCuerpo;
       cuerpo.value = datos.cuerpo || '';
-      cuerpo.style.cssText = 'width:100%;box-sizing:border-box;resize:vertical;';
+      cuerpo.className = 'idevice-campo-cuerpo';
       titulo.addEventListener('input', marcarIDevicesTocados_);
       cuerpo.addEventListener('input', marcarIDevicesTocados_);
       body.appendChild(titulo);
@@ -685,19 +685,11 @@
     tokenClase = getTokenPlan_();
     const vistaMae = document.getElementById('vistaMae');
     if (vistaMae) vistaMae.classList.remove('oculto');
-    const tabClases = document.getElementById('tabClases');
-    const tabPlaneacion = document.getElementById('tabPlaneacion');
-    if (tabClases) tabClases.classList.add('oculto');
-    if (tabPlaneacion) tabPlaneacion.classList.add('oculto');
-    document.querySelectorAll('#menuPlanTabs .ribbon-btn').forEach(function (b) { b.classList.remove('activo', 'activa'); });
-    window.subPlanActual = '';
-    if (typeof subPlanActual !== 'undefined') subPlanActual = '';
-
+    if (typeof conmutarVistaPlaneacion_ === 'function') {
+      conmutarVistaPlaneacion_('personal', document.getElementById('btnSubPlanBancoPersonal'));
+    }
     if (typeof cargarContextoPlaneacionNEM === 'function') {
       cargarContextoPlaneacionNEM();
-    }
-    if (typeof cargarListaPlaneacionesNEM === 'function') {
-      cargarListaPlaneacionesNEM();
     }
   }
 

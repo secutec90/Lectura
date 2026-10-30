@@ -7,140 +7,55 @@
 
 **Estado del buzón:** entregado el 2026-10-29 (America/Monterrey).
 **Agente:** Cursor, ingeniero frontend.
-**Sprint:** Planeación didáctica — iDevices dinámicos y validación de los cuatro momentos.
-**Archivos de trabajo:** `AdminPlanJS_06.html`, `AdminPlaneacion.html`.
+**Fase:** 6 — Desacoplamiento CSS y pulido de tarjetas iDevice.
+**Archivo de trabajo:** `AdminPlanJS_06.html`.
+**Función tocada:** `pintarTarjetaIDevice_`.
 
-**Nota para Antigravity:** este código ya está aplicado en esos dos archivos. La copia de abajo es la referencia de auditoría, no un reemplazo para pegar de un tirón. No hubo `git commit`, `git push` ni `clasp push`.
-
-**Revisión del 2026-10-29, 19:48:** el bloque JavaScript del apartado 2 omite dos huecos del fuente. No sustituye a `AdminPlanJS_06.html`.
-
-- Entre `eliminarIDeviceCard_` y `pintarTarjetaIDevice_` sigue `eliminarLegoCard_`.
-- Entre `probarAudioIDevice_` y el cierre `engancharGuardadoSesionIDevice_` siguen `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_`.
-- El marcado del apartado 1 muestra ahora las cuatro áreas de texto completas, con `style` y `placeholder`. La versión anterior las recortaba.
+**Nota para Antigravity:** el cambio ya está en el fuente. Este buzón trae solo el fragmento de esa función. No reemplaza el archivo. No hubo `git commit`, `git push` ni `clasp push`. Los estilos de `.idevice-campo-titulo` y `.idevice-campo-cuerpo` los entrega DeepSeek en `ComunCSS.html`.
 
 ---
 
 ## 1. Informe
 
-El guardado de la sesión activa ya no sale con los cuatro momentos vacíos, y los iDevices viajan dentro del guion que escucha el alumno.
+Dentro de `pintarTarjetaIDevice_` se quitaron los dos `style.cssText` de los campos de la tarjeta. El título usa `idevice-campo-titulo` y el cuerpo usa `idevice-campo-cuerpo`, como fija la partitura de la fase 6.
 
-Al insertar Lectura, Pregunta o Reto, la tarjeta entra en `#contenedorIDevicesDinamicos` con id `idevice_` más la marca de tiempo, botón Quitar y los campos de título y texto. Al guardar, o al regenerar el guion, ese contenido se escribe en `#sesGuionEstudiante`, entre las marcas `--- iDevices de la sesión ---` y `--- fin iDevices ---`. Al volver a abrir la sesión, las tarjetas se reconstruyen desde ese bloque, así que editar un texto no lo pierde.
+El resto de la función quedó igual: id `idevice_` más marca de tiempo, `data-tipo`, botón Quitar, escucha de Web Speech en lectura, y el aviso de cambios al escribir. Hasta que DeepSeek publique las reglas, el ancho y el borde de esos dos campos dependen de `ComunCSS.html`.
 
-Si falta Apertura, Desarrollo, Actividad o Cierre, el campo se marca, recibe el foco y aparece el toast azul de la esquina (`#st90-toast`, sin clase `.error`). El guardado se detiene, y con él la opción Publicar ahora, porque ambas salen de `guardarSesionActiva()`.
+### Funciones adyacentes, sin cambios
 
-Los identificadores que lee el editor siguen siendo `#sesApertura`, `#sesDesarrollo`, `#sesActividad` y `#sesCierre`. El nombre del contrato quedó como `data-alias` (`planApertura`, `planDesarrollo`, `planActividad`, `planCierre`) para no romper el guardado de `AdminPlanJS_05.html`, que lee los id `ses*`.
+Siguen en `AdminPlanJS_06.html` y no se reescribieron:
 
-La sintaxis del script quedó revisada con `node --check`. El panel en vivo no se ejerció: corre en el despliegue de Apps Script.
+- `eliminarIDeviceCard_`
+- `eliminarLegoCard_`
+- `insertariDeviceSesion_`
+- `serializarIDevicesSesion_`
+- `volcarIDevicesEnGuion_`
+- `rehidratarIDevicesDesdeGuion_`
+- `validarMomentosSesionAntesDeGuardar_`
+- `probarAudioIDevice_`
+- `conmutarVistaPlaneacion_`
+- `abrirFormNuevaPlaneacionNEM`
+- `inicializarModuloPlaneacion_`
+- el cierre `engancharGuardadoSesionIDevice_`
 
-### Contrato del DOM
+No se tocó `AdminPlaneacion.html`, ningún `.gs` ni el CSS.
 
-| Pieza | Selector | Quién lo usa |
-| --- | --- | --- |
-| Contenedor de tarjetas | `#contenedorIDevicesDinamicos` | `insertariDeviceSesion_`, `serializarIDevicesSesion_`, `rehidratarIDevicesDesdeGuion_` |
-| Guion accesible | `#sesGuionEstudiante` | `volcarIDevicesEnGuion_`. El backend lo persiste como `guionEstudianteAccesible` |
-| Momentos | `#sesApertura`, `#sesDesarrollo`, `#sesActividad`, `#sesCierre` | Validación. Alias: `data-alias="planApertura"` y equivalentes |
-| Alta de bloques | `.idevice-btn--lectura`, `.idevice-btn--pregunta`, `.idevice-btn--reto` | `onclick="insertariDeviceSesion_('lectura'|'pregunta'|'reto')"` ya presente en `AdminPlaneacion.html` |
-| Guardar | botón que llama `guardarSesionActiva()` | El cierre envuelve esa función |
+### Líneas sustituidas
 
-Clases de estilo que ya tienen regla en `ComunCSS.html` o `AdminPlaneacionCSS.html`: `.idevice-btn`, `.idevice-container`, `.idevice-header`, `.idevice-tag`, `.idevice-body`, `.idevice-audio-bar`, `.idevice-lectura`, `.idevice-pregunta`, `.idevice-desafio`. `.idevice-card` y `.idevice-card-audio` no tienen regla CSS: sirven de gancho para `querySelector` y para el contrato del sprint. La tarjeta se ve por `.idevice-container` y la variante de color. No se inventaron clases nuevas ni se tocaron archivos `.gs`.
-
-### Formato serializado
-
-```text
---- iDevices de la sesión ---
-#### Lectura guiada: Título
-Párrafo que se lee en voz alta.
-
-#### Pregunta formativa: Título
-Retroalimentación.
-
-#### Desafío práctico: Título
-Instrucciones.
---- fin iDevices ---
+```javascript
+titulo.className = 'idevice-campo-titulo';
+cuerpo.className = 'idevice-campo-cuerpo';
 ```
 
-Una tarjeta sin título y sin cuerpo no entra al guion. El lector acepta la etiqueta nueva (`Lectura guiada`) y el nombre anterior (`lectura guiada`), para no perder bloques ya guardados.
-
-### Qué hace cada controlador
-
-- `pintarTarjetaIDevice_(tipo, datos)` arma la tarjeta, el id único y el botón Quitar.
-- `insertariDeviceSesion_(tipo)` la agrega al contenedor, enfoca el título y avisa con toast.
-- `eliminarIDeviceCard_(btn)` quita la tarjeta `.idevice-card` y devuelve el foco a la barra.
-- `serializarIDevicesSesion_()` y `volcarIDevicesEnGuion_()` escriben o reemplazan el bloque marcado dentro de `#sesGuionEstudiante`.
-- `rehidratarIDevicesDesdeGuion_()` reconstruye las tarjetas al elegir sesión y deja la bandera de cambios en falso.
-- `validarMomentosSesionAntesDeGuardar_()` exige los cuatro momentos, marca el vacío y muestra el toast ST90.
-- El cierre inmediato `engancharGuardadoSesionIDevice_` envuelve `guardarSesionActiva`, `generarGuionDesdeMomentos` y `seleccionarSesionNEM` sin reescribir `AdminPlanJS_05.html`. No es una función para llamar después: corre una sola vez al cargar el script.
-
-### Ajustes de marcado en `AdminPlaneacion.html`
-
-```html
-<div id="contenedorIDevicesDinamicos" aria-live="polite" aria-label="Bloques iDevice de la sesión"></div>
-<textarea id="sesApertura" data-alias="planApertura" aria-required="true" style="min-height:75px;" placeholder="Pregunta generadora, reto cognitivo o anécdota detonadora que conecte con la experiencia de los alumnos..."></textarea>
-<textarea id="sesDesarrollo" data-alias="planDesarrollo" aria-required="true" style="min-height:90px;" placeholder="Explicación directa del docente o contenido clave. Redacta de forma explicativa, fluida y con lenguaje claro..."></textarea>
-<textarea id="sesActividad" data-alias="planActividad" aria-required="true" style="min-height:90px;" placeholder="Instrucciones paso a paso de la actividad de aprendizaje que los alumnos realizarán durante la clase..."></textarea>
-<textarea id="sesCierre" data-alias="planCierre" aria-required="true" style="min-height:75px;" placeholder="Preguntas de reflexión metacognitiva: ¿Qué descubrimos hoy? ¿Cómo se aplica a nuestra vida comunitaria?..."></textarea>
-```
-
-Esas cuatro líneas son las del fuente, en `AdminPlaneacion.html`. Lo añadido fue `data-alias`, `aria-required="true"` y, en el contenedor, `aria-live` y `aria-label`.
+Antes eran `titulo.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;'` y `cuerpo.style.cssText = 'width:100%;box-sizing:border-box;resize:vertical;'`.
 
 ---
 
-## 2. Controladores JS
+## 2. Fragmento
 
-Ubicación en el fuente: `AdminPlanJS_06.html`, dentro del `<script>` ya incluido por `Admin.html` después de `AdminPlanJS_05`. El cierre se ejecuta al cargar, cuando `guardarSesionActiva` y `seleccionarSesionNEM` ya existen.
-
-El bloque de abajo no es contiguo en el archivo. Falta `eliminarLegoCard_` después de `eliminarIDeviceCard_`. Faltan `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_` entre `probarAudioIDevice_` y el cierre. Esas cuatro funciones no se modificaron en este sprint y deben permanecer.
+`pintarTarjetaIDevice_` completa, ya en el fuente. Es el único bloque de esta entrega.
 
 ```javascript
-var seqIDevice_ = 0;
-var idevicesTocados_ = false;
-var MARCA_IDEVICES_INI_ = '--- iDevices de la sesión ---';
-var MARCA_IDEVICES_FIN_ = '--- fin iDevices ---';
-var META_IDEVICE_ = {
-  lectura: {
-    nombre: 'lectura guiada',
-    etiqueta: 'Lectura guiada',
-    variante: 'idevice-lectura',
-    phTitulo: 'Título de la lectura breve...',
-    phCuerpo: 'Escribe el párrafo que los alumnos leerán y escucharán...'
-  },
-  pregunta: {
-    nombre: 'pregunta formativa',
-    etiqueta: 'Pregunta formativa',
-    variante: 'idevice-pregunta',
-    phTitulo: '¿Qué pregunta detonadora plantearás a los estudiantes?',
-    phCuerpo: 'Retroalimentación formativa y criterios esperados de respuesta...'
-  },
-  reto: {
-    nombre: 'desafío práctico',
-    etiqueta: 'Desafío práctico',
-    variante: 'idevice-desafio',
-    phTitulo: 'Nombre del reto o producto esperado de la sesión...',
-    phCuerpo: 'Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad...'
-  }
-};
-
-function nuevoIdIDevice_() {
-  seqIDevice_ += 1;
-  var id = 'idevice_' + Date.now();
-  if (document.getElementById(id)) id += '_' + seqIDevice_;
-  return id;
-}
-
-function marcarIDevicesTocados_() {
-  idevicesTocados_ = true;
-}
-
-function eliminarIDeviceCard_(btn) {
-  if (!btn || !btn.closest) return;
-  const c = btn.closest('.idevice-card');
-  if (!c) return;
-  marcarIDevicesTocados_();
-  c.remove();
-  const barra = document.querySelector('#editorSesionActiva .idevice-bar .idevice-btn');
-  if (barra && barra.focus) barra.focus();
-}
-
 function pintarTarjetaIDevice_(tipo, datos) {
   const tipoNorm = String(tipo || '').toLowerCase();
   const meta = META_IDEVICE_[tipoNorm];
@@ -175,7 +90,7 @@ function pintarTarjetaIDevice_(tipo, datos) {
   titulo.setAttribute('aria-label', 'Título del bloque');
   titulo.placeholder = meta.phTitulo;
   titulo.value = datos.titulo || '';
-  titulo.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;';
+  titulo.className = 'idevice-campo-titulo';
   const cuerpo = document.createElement('textarea');
   cuerpo.setAttribute('data-campo', 'cuerpo');
   cuerpo.id = 'txt_' + idUnico;
@@ -183,7 +98,7 @@ function pintarTarjetaIDevice_(tipo, datos) {
   cuerpo.setAttribute('aria-label', 'Contenido del bloque');
   cuerpo.placeholder = meta.phCuerpo;
   cuerpo.value = datos.cuerpo || '';
-  cuerpo.style.cssText = 'width:100%;box-sizing:border-box;resize:vertical;';
+  cuerpo.className = 'idevice-campo-cuerpo';
   titulo.addEventListener('input', marcarIDevicesTocados_);
   cuerpo.addEventListener('input', marcarIDevicesTocados_);
   body.appendChild(titulo);
@@ -205,256 +120,20 @@ function pintarTarjetaIDevice_(tipo, datos) {
   div.appendChild(body);
   return div;
 }
-
-function insertariDeviceSesion_(tipo) {
-  const contenedor = document.getElementById('contenedorIDevicesDinamicos');
-  if (!contenedor) {
-    toast('No encontré el contenedor de iDevices de la sesión.', 'error');
-    return;
-  }
-
-  const tipoNorm = String(tipo || '').toLowerCase();
-  const meta = META_IDEVICE_[tipoNorm];
-  if (!meta) return;
-
-  const div = pintarTarjetaIDevice_(tipoNorm, null);
-  if (!div) return;
-  contenedor.appendChild(div);
-  marcarIDevicesTocados_();
-  const titulo = div.querySelector('[data-campo="titulo"]');
-  if (titulo) titulo.focus();
-  if (div.scrollIntoView) div.scrollIntoView({ block: 'nearest' });
-  toast('Bloque de ' + meta.nombre + ' insertado en la sesión.', 'info');
-}
-
-function textoCampoIDevice_(card, campo) {
-  const el = card.querySelector('[data-campo="' + campo + '"]');
-  return String((el && el.value) || '').trim();
-}
-
-function serializarIDevicesSesion_() {
-  const contenedor = document.getElementById('contenedorIDevicesDinamicos');
-  if (!contenedor) return '';
-  const bloques = [];
-  contenedor.querySelectorAll('.idevice-card').forEach(function (card) {
-    const tipo = card.getAttribute('data-tipo') || '';
-    const meta = META_IDEVICE_[tipo];
-    if (!meta) return;
-    const titulo = textoCampoIDevice_(card, 'titulo');
-    const cuerpo = textoCampoIDevice_(card, 'cuerpo');
-    if (!titulo && !cuerpo) return;
-    let linea = '#### ' + meta.etiqueta;
-    if (titulo) linea += ': ' + titulo;
-    linea += '\n' + (cuerpo || '(sin texto)');
-    bloques.push(linea);
-  });
-  if (!bloques.length) return '';
-  return '\n\n' + MARCA_IDEVICES_INI_ + '\n' + bloques.join('\n\n') + '\n' + MARCA_IDEVICES_FIN_;
-}
-
-function quitarMarcaIDevices_(texto) {
-  let base = String(texto || '');
-  const ini = base.indexOf(MARCA_IDEVICES_INI_);
-  const fin = base.indexOf(MARCA_IDEVICES_FIN_);
-  if (ini >= 0 && fin > ini) {
-    base = base.slice(0, ini) + base.slice(fin + MARCA_IDEVICES_FIN_.length);
-  }
-  return base.replace(/\n{3,}/g, '\n\n').trim();
-}
-
-function volcarIDevicesEnGuion_() {
-  const campo = document.getElementById('sesGuionEstudiante');
-  const contenedor = document.getElementById('contenedorIDevicesDinamicos');
-  if (!campo) return '';
-  const hayTarjetas = !!(contenedor && contenedor.querySelector('.idevice-card'));
-  if (!hayTarjetas && !idevicesTocados_) return campo.value;
-  const base = quitarMarcaIDevices_(campo.value);
-  const extra = serializarIDevicesSesion_();
-  campo.value = extra ? (base ? base.replace(/\s+$/, '') + extra : extra.trim()) : base;
-  return campo.value;
-}
-
-function leerTipoIDeviceDesdeCabeza_(cabeza) {
-  const texto = String(cabeza || '').replace(/^####\s+/, '').trim();
-  const claves = Object.keys(META_IDEVICE_);
-  for (let i = 0; i < claves.length; i++) {
-    const meta = META_IDEVICE_[claves[i]];
-    const prefs = [meta.etiqueta, meta.nombre];
-    for (let j = 0; j < prefs.length; j++) {
-      const pref = prefs[j];
-      const bajo = texto.toLowerCase();
-      const prefBajo = pref.toLowerCase();
-      if (bajo === prefBajo) return { tipo: claves[i], titulo: '' };
-      if (bajo.indexOf(prefBajo + ':') === 0) {
-        return { tipo: claves[i], titulo: texto.slice(pref.length + 1).trim() };
-      }
-    }
-  }
-  return null;
-}
-
-function parsearBloqueIDevices_(texto) {
-  const base = String(texto || '');
-  const ini = base.indexOf(MARCA_IDEVICES_INI_);
-  const fin = base.indexOf(MARCA_IDEVICES_FIN_);
-  if (ini < 0 || fin <= ini) return [];
-  const cuerpo = base.slice(ini + MARCA_IDEVICES_INI_.length, fin).trim();
-  if (!cuerpo) return [];
-  const out = [];
-  cuerpo.split(/\n(?=#### )/).forEach(function (parte) {
-    const lineas = parte.trim().split('\n');
-    const leido = leerTipoIDeviceDesdeCabeza_(lineas.shift() || '');
-    if (!leido) return;
-    let cuerpoTxt = lineas.join('\n').trim();
-    if (cuerpoTxt === '(sin texto)') cuerpoTxt = '';
-    out.push({ tipo: leido.tipo, titulo: leido.titulo, cuerpo: cuerpoTxt });
-  });
-  return out;
-}
-
-function rehidratarIDevicesDesdeGuion_() {
-  const contenedor = document.getElementById('contenedorIDevicesDinamicos');
-  if (!contenedor) return;
-  contenedor.textContent = '';
-  const campo = document.getElementById('sesGuionEstudiante');
-  parsearBloqueIDevices_(campo ? campo.value : '').forEach(function (bloque) {
-    const card = pintarTarjetaIDevice_(bloque.tipo, bloque);
-    if (card) contenedor.appendChild(card);
-  });
-  idevicesTocados_ = false;
-}
-
-function camposMomentosSesion_() {
-  return [
-    { id: 'sesApertura', alias: 'planApertura', nombre: 'Apertura' },
-    { id: 'sesDesarrollo', alias: 'planDesarrollo', nombre: 'Desarrollo' },
-    { id: 'sesActividad', alias: 'planActividad', nombre: 'Actividad' },
-    { id: 'sesCierre', alias: 'planCierre', nombre: 'Cierre' }
-  ].map(function (def) {
-    return {
-      nombre: def.nombre,
-      el: document.getElementById(def.id) || document.getElementById(def.alias) || document.querySelector('[data-alias="' + def.alias + '"]')
-    };
-  });
-}
-
-function resaltarMomentoFaltante_(el, falta) {
-  if (!el) return;
-  if (falta) {
-    el.style.outline = '2px solid #b45309';
-    el.style.outlineOffset = '2px';
-    el.setAttribute('aria-invalid', 'true');
-  } else {
-    el.style.outline = '';
-    el.style.outlineOffset = '';
-    el.removeAttribute('aria-invalid');
-  }
-}
-
-function vigilarMomentosSesion_() {
-  camposMomentosSesion_().forEach(function (c) {
-    if (!c.el || c.el._st90Mom) return;
-    c.el._st90Mom = true;
-    c.el.addEventListener('input', function () {
-      if (String(c.el.value || '').trim()) resaltarMomentoFaltante_(c.el, false);
-    });
-  });
-}
-
-function validarMomentosSesionAntesDeGuardar_() {
-  vigilarMomentosSesion_();
-  const faltantes = [];
-  let primero = null;
-  camposMomentosSesion_().forEach(function (c) {
-    const vacio = !c.el || !String(c.el.value || '').trim();
-    resaltarMomentoFaltante_(c.el, vacio);
-    if (!vacio) return;
-    faltantes.push(c.nombre);
-    if (!primero && c.el) primero = c.el;
-  });
-  if (!faltantes.length) return true;
-  if (primero) {
-    if (primero.scrollIntoView) primero.scrollIntoView({ block: 'center' });
-    if (primero.focus) primero.focus();
-  }
-  toast('Completa los cuatro momentos antes de guardar: falta ' + faltantes.join(', ') + '.');
-  return false;
-}
-
-function probarAudioIDevice_(origen) {
-  let card = null;
-  if (typeof origen === 'string') card = document.getElementById(origen);
-  else if (origen && origen.closest) card = origen.closest('.idevice-card');
-  const txtEl = card ? card.querySelector('[data-campo="cuerpo"], textarea') : null;
-  let texto = txtEl ? String(txtEl.value || '').trim() : '';
-  if (!texto) texto = 'Por favor escribe un texto en el bloque de lectura para escucharlo.';
-  if (!window.speechSynthesis) {
-    toast('Este navegador no tiene narración de voz.', 'error');
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(texto);
-  u.lang = 'es-MX';
-  u.rate = 1.0;
-  window.speechSynthesis.speak(u);
-}
-
-(function engancharGuardadoSesionIDevice_() {
-  if (typeof guardarSesionActiva === 'function' && !guardarSesionActiva._st90IDev) {
-    const originalGuardar = guardarSesionActiva;
-    function guardarSesionActivaConIDevices() {
-      if (!validarMomentosSesionAntesDeGuardar_()) return;
-      const campo = document.getElementById('sesGuionEstudiante');
-      if (campo && !String(campo.value || '').trim() && typeof generarGuionDesdeMomentos === 'function') {
-        generarGuionDesdeMomentos();
-      }
-      volcarIDevicesEnGuion_();
-      return originalGuardar.apply(this, arguments);
-    }
-    guardarSesionActivaConIDevices._st90IDev = true;
-    guardarSesionActiva = guardarSesionActivaConIDevices;
-  }
-
-  if (typeof generarGuionDesdeMomentos === 'function' && !generarGuionDesdeMomentos._st90IDev) {
-    const originalGuion = generarGuionDesdeMomentos;
-    function generarGuionDesdeMomentosConIDevices() {
-      const r = originalGuion.apply(this, arguments);
-      volcarIDevicesEnGuion_();
-      return r;
-    }
-    generarGuionDesdeMomentosConIDevices._st90IDev = true;
-    generarGuionDesdeMomentos = generarGuionDesdeMomentosConIDevices;
-  }
-
-  if (typeof seleccionarSesionNEM === 'function' && !seleccionarSesionNEM._st90IDev) {
-    const originalSel = seleccionarSesionNEM;
-    function seleccionarSesionNEMConIDevices(idx) {
-      const r = originalSel.apply(this, arguments);
-      rehidratarIDevicesDesdeGuion_();
-      vigilarMomentosSesion_();
-      return r;
-    }
-    seleccionarSesionNEMConIDevices._st90IDev = true;
-    seleccionarSesionNEM = seleccionarSesionNEMConIDevices;
-  }
-})();
 ```
-
-`eliminarLegoCard_` sigue en `AdminPlanJS_06.html` y no forma parte de este sprint.
 
 ---
 
 ## 3. Bloque de cierre
 
 ```markdown
-### 🛠️ 2026-10-29 - Planeación didáctica: iDevices y momentos
-- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): serializa los idevices y bloquea el guardado si falta un momento`
+### 🛠️ 2026-10-29 - Tarjetas iDevice: campos sin estilo en línea
+- **Mensaje de Commit sugerido (Conventional Commits):** `refactor(planeacion): quita el estilo en linea de los campos idevice`
 - **Cambios Realizados:**
-  - Las tarjetas de lectura, pregunta y reto se pintan en `#contenedorIDevicesDinamicos` con id `idevice_` más marca de tiempo y botón Quitar.
-  - El texto de las tarjetas se vuelca en `#sesGuionEstudiante` al guardar o al regenerar el guion, y se vuelve a armar al elegir la sesión.
-  - Guardar la sesión exige los cuatro momentos. El campo vacío se resalta y el aviso usa el toast ST90.
-- **Archivos Afectados:** `AdminPlanJS_06.html`, `AdminPlaneacion.html`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Los id canónicos de los momentos son `sesApertura`, `sesDesarrollo`, `sesActividad` y `sesCierre` porque `AdminPlanJS_05.html` los lee al guardar. El alias del contrato vive en `data-alias` (`planApertura`, `planDesarrollo`, `planActividad`, `planCierre`); no renombrar los id `ses*`. La serialización usa las marcas `--- iDevices de la sesión ---` y `--- fin iDevices ---` dentro de `sesGuionEstudiante`. `seleccionarSesionNEM` rehidrata las tarjetas y `guardarSesionActiva` valida antes de llamar al guardado original. `.idevice-card` y `.idevice-card-audio` son ganchos, sin regla CSS; el aspecto lo dan `.idevice-container` y las variantes de `ComunCSS.html`. La copia de `ENTREGA_CURSOR.md` no es un pegado contiguo: conserva `eliminarLegoCard_`, `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_`. No hay commit ni clasp: lo audita y sube Antigravity.
+  - En `pintarTarjetaIDevice_` el título pasa a la clase `idevice-campo-titulo` y el cuerpo a `idevice-campo-cuerpo`.
+  - Se eliminaron los dos `style.cssText` de esos campos. El resto de la función y las funciones vecinas no se modificaron.
+- **Archivos Afectados:** `AdminPlanJS_06.html`, `ENTREGA_CURSOR.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Fase 6 de `ESTADO_COORDINACION.md`. Cursor solo sustituye las dos asignaciones dentro de `pintarTarjetaIDevice_`. DeepSeek define `.idevice-campo-titulo` y `.idevice-campo-cuerpo` en `ComunCSS.html`. No reabrir el serializado del guion ni la validación de los cuatro momentos. No pegar este buzón sobre el archivo: `eliminarLegoCard_`, `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_` siguen intactas alrededor. No hay commit ni clasp.
 ```
 
-**Brújula:** la entrega de Cursor está en este archivo y el código ya vive en `AdminPlanJS_06.html` y `AdminPlaneacion.html`. El siguiente paso es la auditoría de Antigravity. La fase 5 del contrato (cinta estilo aSc) no forma parte de este sprint.
+**Brújula:** la fase 6 de cliente queda en esas dos clases. DeepSeek cierra el CSS. Antigravity audita y despliega. El sprint anterior de serialización y validación no se reabrió.

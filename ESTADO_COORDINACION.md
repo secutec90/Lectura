@@ -66,30 +66,21 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
   - Estilos Ribbon en `ComunCSS.html` (degradados suaves, divisores verticales `.separador-ribbon`, tarjetas con elevación hover).
   - iDevices dinámicos serializados en `#sesGuionEstudiante` y validación de los 4 momentos antes de guardar en `AdminPlanJS_06.html`.
   - Preservación del 100% de IDs y eventos `onclick`.
+- **Desacoplamiento CSS de Tarjetas iDevice (FASE 6):** ✅ **100% CONCLUIDA.**
+  - DeepSeek incorporó las clases estructurales `.idevice-card*`, `.idevice-campo-titulo` y `.idevice-campo-cuerpo` en `ComunCSS.html`.
+  - Cursor sustituyó los `style.cssText` en línea en `AdminPlanJS_06.html`.
+- **Fix Integral de Guardado y Visibilidad de Planeaciones NEM:** ✅ **100% CONCLUIDO.**
+  - Eliminado el `ReferenceError` de `cargarBancoPlaneaciones_()` en `AdminPlanJS_02.html`.
+  - Añadido `novalidate` al `<form id="formPlanData">` en `AdminPlaneacion.html` para evitar el bloqueo del navegador por campos requeridos en paneles ocultos.
+  - Normalizado el filtrado en `PlaneacionNEM.gs` (tolerancia de grupos `1A` -> `A`, trimestres y visibilidad de proyectos demo).
+  - Apertura automática de `Mi Banco Personal` al conmutar a la pestaña de Planeación.
 
 ---
 
-## 5. Tarea Activa: FASE 6 (Desacoplamiento CSS y Pulido de Tarjetas iDevice)
+## 5. Tarea Activa: FASE 7 (Verificación Funcional en Vivo y Siguientes Mejoras)
 
-### Objetivo y Diagnóstico Cruzado:
-DeepSeek detectó en la auditoría cruzada que `.idevice-card`, `.idevice-card-audio`, `.idevice-card-pregunta` y `.idevice-card-reto` se emplean como selectores de script pero carecen de reglas en `ComunCSS.html` (solo operan con `.idevice-container`). Asimismo, `AdminPlanJS_06.html` inyecta estilos en línea (`style.cssText`) para los inputs de título y cuerpo.
-
-### Contrato Técnico y Partitura por Agente:
-1. **DeepSeek (UI & CSS):**
-   - En `ComunCSS.html` (sección `BLOQUES MODULARES iDEVICES`, líneas ~1208-1270), añadir:
-     - `.idevice-card`: refuerzo estructural, contenedor de bloque.
-     - `.idevice-card-audio`: variante para bloques que incorporan síntesis de voz.
-     - `.idevice-card-pregunta` y `.idevice-card-reto`: variantes temáticas para el visor de clase.
-     - `.idevice-campo-titulo`: clase limpia con `width: 100%; box-sizing: border-box; margin-bottom: 6px; font-weight: 600; padding: 6px 8px; border: 1px solid var(--app-border); border-radius: 4px;`.
-     - `.idevice-campo-cuerpo`: clase limpia con `width: 100%; box-sizing: border-box; resize: vertical; padding: 8px; border: 1px solid var(--app-border); border-radius: 4px;`.
-   - Entregar el bloque exacto en `ENTREGA_DEEPSEEK.md`.
-
-2. **Cursor (Frontend JS):**
-   - En `AdminPlanJS_06.html` (dentro de `pintarTarjetaIDevice_`):
-     - Sustituir `titulo.style.cssText = '...'` por `titulo.className = 'idevice-campo-titulo';`.
-     - Sustituir `cuerpo.style.cssText = '...'` por `cuerpo.className = 'idevice-campo-cuerpo';`.
-   - Entregar el fragmento en `ENTREGA_CURSOR.md` conservando todas las funciones adyacentes (`eliminarLegoCard_`, `conmutarVistaPlaneacion_`, etc.).
-
-3. **Antigravity (Director & Auditor):**
-   - Auditar consistencia, ejecutar `clasp push / deploy` y `git commit / push`.
+### Estado General:
+- Apps Script sincronizado y desplegado en producción en **`@510`** (Clase y Admin) y **`@511`** (Asistencia).
+- Código limpio, auditado con `acorn` (0 errores) y respaldado en GitHub.
+- Los tres agentes operan en armonía bajo el sistema de buzones automáticos.
 

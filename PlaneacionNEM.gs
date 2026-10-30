@@ -365,7 +365,10 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
     } else {
       // Si solicita su Banco Personal:
       if (ses.rol !== "admin") {
-        if (docF && nomDoc && docF !== nomDoc && docF.indexOf(nomDoc) === -1 && nomDoc.indexOf(docF) === -1) {
+        const esDemo = String(f["Id"] || f["id"] || "").indexOf("PLN-DEMO-") === 0;
+        const esGenerico = docF === "administrador" || docF === "docente st90" || docF === "docente" || !docF;
+        const coincideDoc = docF && nomDoc && (docF === nomDoc || docF.indexOf(nomDoc) >= 0 || nomDoc.indexOf(docF) >= 0);
+        if (!coincideDoc && !esDemo && !esGenerico) {
           return false;
         }
       }
@@ -373,11 +376,24 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
 
     if (filtroDocente && docF.indexOf(normalizarNombrePref_(filtroDocente)) === -1) return false;
     if (filtroGrado && String(f["Grado"] || f["grado"] || "").trim() !== String(filtroGrado).trim()) return false;
-    if (filtroGrupo && String(f["Grupo"] || f["grupo"] || "").trim().toUpperCase() !== String(filtroGrupo).trim().toUpperCase()) return false;
-    if (filtroAsignatura && String(f["Asignatura"] || f["asignatura"] || "").trim().toLowerCase() !== filtroAsignatura.toLowerCase()) return false;
+    if (filtroGrupo) {
+      const gpF = String(f["Grupo"] || f["grupo"] || "").trim().toUpperCase().replace(/^\d+/, "");
+      const gpB = String(filtroGrupo || "").trim().toUpperCase().replace(/^\d+/, "");
+      if (gpB && gpF && gpF !== gpB) return false;
+    }
+    if (filtroAsignatura) {
+      const asigF = String(f["Asignatura"] || f["asignatura"] || "").trim().toLowerCase();
+      const asigB = String(filtroAsignatura || "").trim().toLowerCase();
+      if (asigF !== asigB && asigF.indexOf(asigB) === -1 && asigB.indexOf(asigF) === -1) return false;
+    }
     if (filtroTrimestre) {
       const per = String(f["Periodo"] || f["periodo"] || f["Trimestre"] || f["trimestre"] || "").trim();
-      if (per && per.indexOf(filtroTrimestre) === -1) return false;
+      const mF = String(filtroTrimestre).match(/\d+/);
+      const numFiltro = mF ? mF[0] : "";
+      const mPer = per.match(/\d+/);
+      const numPer = mPer ? mPer[0] : "";
+      if (numFiltro && numPer && numFiltro !== numPer) return false;
+      else if (!numFiltro && per.toLowerCase().indexOf(filtroTrimestre.toLowerCase()) === -1) return false;
     }
     return true;
   });

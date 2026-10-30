@@ -2,6 +2,18 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Fix Integral: Guardado y Visibilidad de Planeaciones NEM + Fase 6 iDevices CSS]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): corregir guardado de proyectos, desbloqueo novalidate y filtros de visualizacion`
+- **Cambios Realizados:**
+  - Corregido `sembrarDemoPlaneaciones_` en `AdminPlanJS_02.html` para invocar la función real `cargarListaPlaneacionesNEM(true)` (eliminando el `ReferenceError: cargarBancoPlaneaciones_ is not defined`).
+  - Agregado atributo `novalidate` a `<form id="formPlanData">` en `AdminPlaneacion.html` para evitar que la validación HTML5 interna del navegador aborte el guardado por campos requeridos en paneles del stepper con `display: none`.
+  - Robustecido `guardarPlaneacionForm` en `AdminPlanJS_05.html`: validación asistida de título con navegación a Etapa 1, token de sesión seguro y valores por defecto para grado/grupo/asignatura.
+  - Corregido el filtrado de planeaciones en `PlaneacionNEM.gs`: normalización flexible de grupo (extrae solo letra para evitar descarte por formato `1A`), matching numérico para trimestres y visibilidad de proyectos demo/propios en Banco Personal.
+  - Inicialización directa de `conmutarVistaPlaneacion_('personal')` en `AdminPlanJS_06.html` para que el panel de planeación nunca inicie con pantalla vacía.
+  - Integrada Fase 6: desacoplamiento de estilos inline de tarjetas iDevice en `AdminPlanJS_06.html` e incorporación de clases `.idevice-card*`, `.idevice-campo-titulo` y `.idevice-campo-cuerpo` en `ComunCSS.html`.
+- **Archivos Afectados:** `AdminPlanJS_02.html`, `AdminPlanJS_05.html`, `AdminPlanJS_06.html`, `AdminPlaneacion.html`, `ComunCSS.html`, `PlaneacionNEM.gs`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Resuelve de raíz por qué no se mostraban las planeaciones ni se guardaban en el Banco Personal.
+
 ### 🛠️ [2026-10-29] - [Fase 5: Cinta Ribbon estilo aSc Horarios 2027 e Iconos Ilustrados]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ui): rediseño visual estilo aSc Horarios 2027 con ribbon y 31 iconos ilustrados`
 - **Cambios Realizados:**

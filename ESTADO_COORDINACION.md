@@ -73,14 +73,17 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
   - Eliminado el `ReferenceError` de `cargarBancoPlaneaciones_()` en `AdminPlanJS_02.html`.
   - Añadido `novalidate` al `<form id="formPlanData">` en `AdminPlaneacion.html` para evitar el bloqueo del navegador por campos requeridos en paneles ocultos.
   - Normalizado el filtrado en `PlaneacionNEM.gs` (tolerancia de grupos `1A` -> `A`, trimestres y visibilidad de proyectos demo).
-  - Apertura automática de `Mi Banco Personal` al conmutar a la pestaña de Planeación.
+  - Restaurada la apertura de **Horario Oficial** (calendario de clases aSc) por defecto al pulsar la pestaña de Planeación.
+  - Auto-siembra preventiva en `PlaneacionNEM.gs` para que nunca se muestren 0 planeaciones en el banco.
+  - Despliegues de Google Apps Script (incluyendo Google Sites inicio) sincronizados a la versión `@514` (`v417 · build-510`).
 
 ---
 
-## 5. Tarea Activa: FASE 7 (Verificación Funcional en Vivo y Siguientes Mejoras)
+## 5. Tarea Activa: FASE 7 (Homogeneización de iDevices en Visor de Clase)
 
-### Estado General:
-- Apps Script sincronizado y desplegado en producción en **`@510`** (Clase y Admin) y **`@511`** (Asistencia).
-- Código limpio, auditado con `acorn` (0 errores) y respaldado en GitHub.
-- Los tres agentes operan en armonía bajo el sistema de buzones automáticos.
+*(Ver detalles completos e instrucciones de arranque entre computadoras en [ESTADO_PROXIMA_SESION.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ESTADO_PROXIMA_SESION.md)).*
+
+- **Cursor:** En `ClaseJS_08.html`, actualizar `insertariDeviceSesion_` reemplazando los strings HTML con `style="..."` por nodos estructurados con `.idevice-campo-titulo` e `.idevice-campo-cuerpo`. Entregar en `ENTREGA_CURSOR.md`.
+- **DeepSeek:** Auditar consistencia visual de las tarjetas en `Clase.html` bajo `ComunCSS.html`. Entregar en `ENTREGA_DEEPSEEK.md`.
+- **Antigravity:** Auditar buzones, compilar manifiesto, desplegar a Apps Script y hacer commit/push en Git.
 

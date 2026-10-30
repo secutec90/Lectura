@@ -69,10 +69,27 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ---
 
-## 5. Tarea Activa: FASE 6 (Monitoreo Continuo y Nuevos Requerimientos)
+## 5. Tarea Activa: FASE 6 (Desacoplamiento CSS y Pulido de Tarjetas iDevice)
 
-### Estado General:
-- Todas las entregas en `ENTREGA_DEEPSEEK.md` y `ENTREGA_CURSOR.md` fueron auditadas, integradas y desplegadas exitosamente.
-- El protocolo de chequeo automático queda activado: **Antigravity inspecciona los buzones tras cada avance concluido**.
-- A la espera de las siguientes instrucciones del usuario para definir la nueva partitura de trabajo.
+### Objetivo y Diagnóstico Cruzado:
+DeepSeek detectó en la auditoría cruzada que `.idevice-card`, `.idevice-card-audio`, `.idevice-card-pregunta` y `.idevice-card-reto` se emplean como selectores de script pero carecen de reglas en `ComunCSS.html` (solo operan con `.idevice-container`). Asimismo, `AdminPlanJS_06.html` inyecta estilos en línea (`style.cssText`) para los inputs de título y cuerpo.
+
+### Contrato Técnico y Partitura por Agente:
+1. **DeepSeek (UI & CSS):**
+   - En `ComunCSS.html` (sección `BLOQUES MODULARES iDEVICES`, líneas ~1208-1270), añadir:
+     - `.idevice-card`: refuerzo estructural, contenedor de bloque.
+     - `.idevice-card-audio`: variante para bloques que incorporan síntesis de voz.
+     - `.idevice-card-pregunta` y `.idevice-card-reto`: variantes temáticas para el visor de clase.
+     - `.idevice-campo-titulo`: clase limpia con `width: 100%; box-sizing: border-box; margin-bottom: 6px; font-weight: 600; padding: 6px 8px; border: 1px solid var(--app-border); border-radius: 4px;`.
+     - `.idevice-campo-cuerpo`: clase limpia con `width: 100%; box-sizing: border-box; resize: vertical; padding: 8px; border: 1px solid var(--app-border); border-radius: 4px;`.
+   - Entregar el bloque exacto en `ENTREGA_DEEPSEEK.md`.
+
+2. **Cursor (Frontend JS):**
+   - En `AdminPlanJS_06.html` (dentro de `pintarTarjetaIDevice_`):
+     - Sustituir `titulo.style.cssText = '...'` por `titulo.className = 'idevice-campo-titulo';`.
+     - Sustituir `cuerpo.style.cssText = '...'` por `cuerpo.className = 'idevice-campo-cuerpo';`.
+   - Entregar el fragmento en `ENTREGA_CURSOR.md` conservando todas las funciones adyacentes (`eliminarLegoCard_`, `conmutarVistaPlaneacion_`, etc.).
+
+3. **Antigravity (Director & Auditor):**
+   - Auditar consistencia, ejecutar `clasp push / deploy` y `git commit / push`.
 

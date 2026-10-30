@@ -49,7 +49,7 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ## 4. Estado de Fases y Despliegues Concluidos
 
-- **Última versión desplegada:** `@507` / código `v417`.
+- **Última versión desplegada:** `@512` / código `v417 · build-510` (Sincronizado tanto en el despliegue principal `AKfycbzPQDTj...` como en el embebido de Google Sites `AKfycbz1-xheu...`).
 - **Horario contextual:** 100% saneado, una sola fila, transparente, iconos 18px.
 - **Asistente en los 4 Pasos (FASE 2):** ✅ **100% CONCLUIDA y homogeneizada.** Los 4 pasos usan el sistema de casillas y selección directa sin ensayos largos.
   - *Paso 1 (Metadatos & Ejes):* Radio buttons limpios + botón `✓ Usar este Título` (`#planTitulo`).

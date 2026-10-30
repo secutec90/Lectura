@@ -2,6 +2,16 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Sincronización de Despliegues: Google Sites inicio a build-510]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(deploy): sincronizar despliegue embebido en google sites a version @512 build-510`
+- **Cambios Realizados:**
+  - Identificada la causa por la cual `https://sites.google.com/view/st90/inicio` seguía mostrando `v417 · build-469`: el iframe de Google Sites tenía incrustado el ID de despliegue `AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ` (anclado a la versión histórica `@507`).
+  - Redesplegadas las 4 instancias activas (`AKfycbz1-xheu...`, `AKfycbxDw5...`, `AKfycbzkoA...`, `AKfycbzPQD...`) apuntando a la versión `@512` con `build-510`.
+  - Verificada la entrega HTTP directa de `build-510` en el endpoint embebido de Google Sites.
+  - Actualizados `ENLACES_UI.md` y `ESTADO_COORDINACION.md`.
+- **Archivos Afectados:** `ENLACES_UI.md`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Garantiza que cualquier usuario que ingrese desde el portal de Google Sites o mediante URL directa de Apps Script reciba la misma versión @512 con todas las correcciones de guardado de planeación y diseño Ribbon.
+
 ### 🛠️ [2026-10-29] - [Fix Integral: Guardado y Visibilidad de Planeaciones NEM + Fase 6 iDevices CSS]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): corregir guardado de proyectos, desbloqueo novalidate y filtros de visualizacion`
 - **Cambios Realizados:**

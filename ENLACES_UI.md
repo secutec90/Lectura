@@ -1,8 +1,10 @@
 # Enlaces de Verificación de Interfaz (UI) — Secundaria Técnica 90
 
 **Plataforma:** Suite Escolar ST90 (Comprensión Lectora, Planeación NEM, Asistencia, Aula Hablada y Encuestas)  
-**Versión activa:** `@409`  
-**ID de Despliegue:** `AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ`
+**Versión activa:** `@512` (`v417 · build-510`)  
+**ID de Despliegue Principal:** `AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ`  
+**ID de Despliegue Embebido en Google Sites (https://sites.google.com/view/st90/inicio):** `AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ`  
+
 
 ---
 

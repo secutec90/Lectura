@@ -314,9 +314,12 @@
           '<p class="hint" style="margin:0 0 14px;">' +
             (esGlobal ? 'Los proyectos aparecerán aquí cuando los docentes completen sus sesiones didácticas y las publiquen.' : 'Pulsa el botón "Nueva" para crear tu primer proyecto didáctico o clona uno desde el Repositorio Global.') +
           '</p>' +
+          '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">' +
           (esGlobal 
             ? '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="conmutarBancoPlaneacion_(\'personal\')">← Ir a Mi Banco Personal</button>' 
             : '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="abrirFormNuevaPlaneacion()">+ Nueva Planeación</button>') +
+          '  <button type="button" class="nem-btn-accion" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0;font-weight:600;" onclick="sembrarDemoPlaneaciones_()" title="Generar 3 proyectos de prueba para ver la simulación en pantalla">🌱 Cargar Proyectos Demo</button>' +
+          '</div>' +
         '</div>';
         return;
       }
@@ -408,6 +411,20 @@
     /* ============================================================
        OPERACIONES COLEGIALES: CLONAR, PUBLICAR Y ELIMINAR PLANEACIONES
        ============================================================ */
+    function sembrarDemoPlaneaciones_() {
+      toast('Generando proyectos didácticos de prueba…', 'info');
+      gsRun('sembrarPlaneacionesDemoNEM', tokenClase).then(function (res) {
+        if (res && res.ok) {
+          toast(res.mensaje || 'Proyectos de prueba creados exitosamente.', 'ok');
+          cargarBancoPlaneaciones_();
+        } else {
+          toast((res && res.mensaje) || 'No se pudieron generar los proyectos demo.', 'err');
+        }
+      }).catch(function (err) {
+        toast('Error al sembrar: ' + ((err && err.message) || String(err)), 'err');
+      });
+    }
+
     function copiarProyectoGlobalAMiBanco_(idPlan, titulo) {
       modal({
         titulo: '📥 Copiar al Banco Personal',

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Suite base de verificación y regresión para proyectos nuevos.
  * Se ejecuta localmente con: node .rsc/test_regresion.js

@@ -2,11 +2,21 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Siembra de Planeaciones Demo para Pruebas]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(planeacion): agregar siembra de planeaciones demo y botón interactivo para pruebas de simulación`
+- **Cambios Realizados:**
+  - Se implementó la función backend `sembrarPlaneacionesDemoNEM(token)` en `PlaneacionNEM.gs` para generar 3 proyectos didácticos completos (1 en Repositorio Global en estado PUBLICADA y 2 en Banco Personal en BORRADOR y APROBADO) con sus sesiones didácticas.
+  - Se agregó el botón interactivo `🌱 Cargar Proyectos Demo` en `AdminPlanJS_02.html` dentro del estado vacío del banco para que el docente pueda simular y visualizar tarjetas al instante.
+  - Se actualizó `.claspignore` y se desplegó a Apps Script con `clasp push` con éxito (85 archivos sincronizados).
+- **Archivos Afectados:** `PlaneacionNEM.gs`, `AdminPlanJS_02.html`, `.claspignore`, `_PLANTILLA_PROYECTO_NUEVO/.rsc/test_regresion.js`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Permite verificar de forma inmediata la renderización de tarjetas, la alternancia entre Banco Personal y Repositorio Global, y probar el guardado y clonado colegiado en vivo.
+
 ### 🛠️ [2026-10-29] - [Guía Interactiva HTML de Orquestación]
 - **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear guía interactiva HTML con prompts copiables en _PLANTILLA_PROYECTO_NUEVO`
 - **Cambios Realizados:**
-  - Se creó `_PLANTILLA_PROYECTO_NUEVO/INSTRUCCIONES_ORQUESTACION.html` con diseño web interactivo premium, modo oscuro elegante, tarjetas de roles y botones de un clic para copiar prompts al portapapeles.
-  - Se documentó el ciclo de 4 tiempos y el flujo de portabilidad multi-PC de forma gráfica.
+  - Se creó `_PLANTILLA_PROYECTO_NUEVO/INSTRUCCIONES_ORQUESTACION.html` con maquetación interactiva y botones para copiar los prompts de arranque al portapapeles con un clic.
+  - Se integró la explicación de roles inmutables y el flujo multi-PC en un formato visual navegable.
+  - Se subió el cambio a GitHub en el commit `dfec044`.
 - **Archivos Afectados:** `_PLANTILLA_PROYECTO_NUEVO/INSTRUCCIONES_ORQUESTACION.html`, `CONTROL_CAMBIOS.md`
 - **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Ofrece al usuario una interfaz visual navegable en cualquier explorador para copiar prompts de arranque sin necesidad de editar markdown.
 

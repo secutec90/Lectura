@@ -1525,3 +1525,140 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
   if (!texto) return { ok: false, mensaje: "La IA no devolvió texto. Inténtalo de nuevo." };
   return { ok: true, texto: texto, campos: nombresCampos };
 }
+
+/**
+ * Siembra planeaciones didácticas de demostración para pruebas del sistema.
+ * Genera proyectos en el Banco Personal del usuario activo y en el Repositorio Global (PUBLICADA).
+ */
+function sembrarPlaneacionesDemoNEM(token) {
+  const ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  const libro = _obtenerLibro_();
+  let pPlan = libro.getSheetByName("PlaneacionesNEM");
+  let pSes = libro.getSheetByName("SesionesNEM");
+  if (!pPlan || !pSes) {
+    _verificarYCrearPestanas_();
+    pPlan = libro.getSheetByName("PlaneacionesNEM");
+    pSes = libro.getSheetByName("SesionesNEM");
+  }
+
+  const docenteActivo = ses.rol === "admin" 
+    ? String(ses.nombre || "Administrador").trim()
+    : String(ses.maestroNombre || ses.nombre || "Docente ST90").trim();
+
+  const fechaHoy = new Date();
+
+  // 1. Planeación en Repositorio Global (PUBLICADA de otro docente para probar clonado)
+  const idGlobal = "PLN-DEMO-001";
+  const filaGlobal = [
+    idGlobal,
+    "Indagación STEAM: Energías Limpias y Sustentabilidad Comunitaria",
+    "2",
+    "A",
+    "Ciencias",
+    "Saberes y Pensamiento Científico",
+    "STEAM",
+    "Transformaciones de la energía térmica y eléctrica en la comunidad",
+    "• Comprende las funciones de la energía en los sistemas técnicos y sus impactos ambientales.\n• Diseña y modela un prototipo escolar sustentable.",
+    "Pensamiento Crítico, Vida Saludable",
+    "Diseñar modelos de aprovechamiento solar y eólico para reducir el consumo eléctrico en el plantel.",
+    "Elevado gasto de energía eléctrica en las aulas y falta de cultura de ahorro energético comunitario.",
+    "Prototipo a escala de calentador solar funcional con bitácora de resultados.",
+    3,
+    "Mtra. Rosa Elena (Ciencias)",
+    "PUBLICADA",
+    1,
+    fechaHoy,
+    fechaHoy,
+    "1er Trimestre",
+    fechaHoy,
+    "",
+    "Mtra. Rosa Elena (Ciencias)",
+    ""
+  ];
+
+  // 2. Planeación en Banco Personal (BORRADOR del docente en sesión)
+  const idPersonal1 = "PLN-DEMO-002";
+  const filaPersonal1 = [
+    idPersonal1,
+    "Proyecto Comunitario: El periódico escolar y la diversidad lingüística",
+    "1",
+    "B",
+    "Español",
+    "Lenguajes",
+    "ABPC",
+    "La diversidad étnica, cultural y lingüística de México expresada en la comunicación comunitaria",
+    "• Identifica una situación comunitaria y recopila testimonios orales y escritos.\n• Redacta notas informativas y entrevistas aplicando normas ortográficas.",
+    "Inclusión, Apropiación de las Culturas a través de la Lectura y la Escritura",
+    "Fortalecer la expresión escrita y el diálogo intercultural mediante la creación de un periódico mural.",
+    "Desconexión entre los saberes locales y los contenidos escolares; falta de canales de expresión estudiantil.",
+    "Edición impresa y digital del Periódico Mural 'Voz Técnica 90'.",
+    3,
+    docenteActivo,
+    "BORRADOR",
+    1,
+    fechaHoy,
+    "",
+    "1er Trimestre",
+    fechaHoy,
+    "",
+    docenteActivo,
+    ""
+  ];
+
+  // 3. Planeación en Banco Personal (APROBADO del docente en sesión)
+  const idPersonal2 = "PLN-DEMO-003";
+  const filaPersonal2 = [
+    idPersonal2,
+    "ABP: Resolución pacífica de conflictos y derechos humanos",
+    "3",
+    "A",
+    "Formación Cívica y Ética",
+    "Ética, Naturaleza y Sociedades",
+    "ABP",
+    "El conflicto en la convivencia humana desde la cultura de paz y la mediación escolar",
+    "• Propone distintas formas de resolver conflictos sociales y escolares sin recurrir a la violencia.\n• Aplica protocolos de mediación y diálogo entre pares.",
+    "Inclusión, Pensamiento Crítico",
+    "Construir un comité escolar de mediación y acuerdos de convivencia armónica en el aula.",
+    "Frecuentes desacuerdos y faltas de respeto entre alumnos durante los recesos y cambios de clase.",
+    "Reglamento consensuado de convivencia y dramatización de casos de mediación.",
+    3,
+    docenteActivo,
+    "APROBADO",
+    1,
+    fechaHoy,
+    fechaHoy,
+    "1er Trimestre",
+    fechaHoy,
+    "",
+    docenteActivo,
+    ""
+  ];
+
+  const filasExistentes = _leerFilas_("PlaneacionesNEM");
+  [filaGlobal, filaPersonal1, filaPersonal2].forEach(function(nueva) {
+    const id = nueva[0];
+    const previa = filasExistentes.filter(function(f) { return String(f["Id"] || f["id"] || "").trim() === id; })[0];
+    if (previa) {
+      pPlan.getRange(previa._fila, 1, 1, ENCABEZADOS.PlaneacionesNEM.length).setValues([nueva]);
+    } else {
+      pPlan.appendRow(nueva);
+    }
+  });
+
+  // Asegurar sesiones iniciales para cada una
+  [idGlobal, idPersonal1, idPersonal2].forEach(function(idP) {
+    const sesExistentes = _leerFilas_("SesionesNEM").filter(function(s) {
+      return String(s["IdPlaneacion"] || s["idplaneacion"] || "").trim() === idP;
+    });
+    if (!sesExistentes.length) {
+      desglosarSesionesInicialesNEM_(libro, idP, 3, "Demostración Didáctica");
+    }
+  });
+
+  SpreadsheetApp.flush();
+  return {
+    ok: true,
+    mensaje: "Se generaron 3 proyectos didácticos de prueba (1 en Repositorio Global y 2 en tu Banco Personal)."
+  };
+}
+

@@ -24,10 +24,10 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 ## 2. Prompts de Arranque Rápido para Agentes
 
 ### Para DeepSeek:
-> *"Actúas como Diseñador UI/UX y CSS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual. Tienes estrictamente prohibido cambiar IDs del DOM o crear lógica de backend. Tu tarea asignada es: [copiar tarea de la sección correspondiente]."*
+> *"Actúas como Diseñador UI/UX y CSS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual. Tienes estrictamente prohibido cambiar IDs del DOM o crear lógica de backend. Tu tarea asignada es la de la FASE activa. Escribe y guarda tu entrega completa y código propuesto en el archivo `ENTREGA_DEEPSEEK.md` para que Antigravity la audite."*
 
 ### Para Cursor:
-> *"Actúas como Desarrollador Frontend JS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas fragmentos JS del DOM y llamadas a `google.script.run`. Respeta estrictamente los IDs definidos por Antigravity y las clases visuales de DeepSeek. Tienes prohibido hacer commit/push o alterar el backend. Tu tarea asignada es: [copiar tarea de la sección correspondiente]."*
+> *"Actúas como Desarrollador Frontend JS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas fragmentos JS del DOM y llamadas a `google.script.run`. Respeta estrictamente los IDs definidos por Antigravity y las clases de DeepSeek. Tienes prohibido hacer commit/push o alterar el backend. Escribe y guarda tu entrega completa y controladores en el archivo `ENTREGA_CURSOR.md` para que Antigravity la audite."*
 
 ---
 
@@ -64,5 +64,30 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ---
 
-## 5. Tarea Activa: FASE 5 (Por definir)
-**Director de Orquesta (Antigravity):** Pendiente de definir requerimiento con el usuario para asignar partituras a DeepSeek y Cursor.
+## 5. Tarea Activa: FASE 5 (Rediseño Visual Estilo aSc Horarios — Ribbon & Iconos Ilustrados)
+
+### Problema y Objetivo de Usuario:
+El usuario desea transformar la cinta de herramientas del panel (`#menuTabsPanel` y sub-cintas) para abandonar los iconos SVG monocromáticos y planos, adoptando la **estética clásica y amigable de aSc Horarios 2027**:
+1. **Iconos ilustrados, ricos en color y con identidad propia** para cada función escolar (Libro azul para lecturas/asignaturas, grupo de estudiantes para alumnos, puerta de madera para aulas, birrete para docentes/profesores, calendario/reloj para horario, campana/sirena para alertas).
+2. **Estructura Ribbon Clásica:** Tarjeta vertical con icono generoso arriba (28px–32px) y etiqueta centrada abajo, marco sutil de hover y divisores verticales entre grupos funcionales.
+
+### Contrato Técnico del DOM (Inmutable):
+- **Botones de Nivel 1 (Ribbon Principal):**
+  - `button#btnTabMat` (Usuarios / Alumnos y Docentes)
+  - `button#btnTabAsi` (Asistencia / Prefectura)
+  - `button#btnTabLec` (Comprensión Lectora)
+  - `button#btnTabPlan` (Planeación Didáctica NEM)
+  - `button#btnTabEnc` (Diagnóstico & Encuestas)
+- **Sub-cintas de Nivel 2:**
+  - `#cintaMat`: `#btnSubUsuAlu`, `#btnSubUsuDoc`, `#btnSubUsuPre`, `#btnSubUsuApo`
+  - `#cintaPlan`: botones de planeación didáctica
+  - `#filaHerramientasEnc`: herramientas del censo
+- **Regla estricta:** NO se modifican IDs, clases de control funcional ni eventos `onclick="tab(...)"`. Solo se sustituye el contenido visual interior (iconos) y los estilos CSS.
+
+### Partituras Específicas por Agente:
+| Agente | Archivo Asignado | Tarea Específica |
+| :--- | :--- | :--- |
+| **DeepSeek** *(Harness)* | `ComunCSS.html` / `Admin.html` | Diseñar la apariencia Ribbon estilo aSc Horarios: degradados de fondo suaves, divisores verticales, botones con elevación hover y la selección de iconos ilustrados/coloridos para cada función escolar. Entrega su código en el bloque `INFORME PARA ANTIGRAVITY`. |
+| **Cursor** | `AdminJS_*.html` / DOM | Verificar que ningún evento de conmutación de pestañas ni badge numérico (`#badgeTotalPreguntasCons`, etc.) quede desalineado. |
+| **Antigravity** | Auditoría & Despliegue | Auditar que los IDs y selectores del DOM permanezcan intactos, validar compatibilidad móvil/desktop, ejecutar `git commit/push` y `clasp push` a producción. |
+

@@ -2,14 +2,23 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Automatización de Buzones de Entrega para Agentes]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(orquestacion): automatizar guardado directo en buzones ENTREGA_DEEPSEEK y ENTREGA_CURSOR con reglas obligatorias`
+- **Cambios Realizados:**
+  - Se crearon las reglas automáticas `.cursor/rules/buzon-entrega-cursor.mdc` (con `alwaysApply: true`), `DEEPSEEK.md` y `AGENTS.md`.
+  - Se configuró la directiva imperativa para que Cursor y DeepSeek guarden sus entregas directamente en `ENTREGA_CURSOR.md` y `ENTREGA_DEEPSEEK.md` sin requerir que el usuario copie y pegue código manualmente en el chat.
+  - Se replicaron las reglas en `_PLANTILLA_PROYECTO_NUEVO/` para que los nuevos proyectos hereden la automatización.
+- **Archivos Afectados:** `.cursor/rules/buzon-entrega-cursor.mdc`, `DEEPSEEK.md`, `AGENTS.md`, `ENTREGA_DEEPSEEK.md`, `ENTREGA_CURSOR.md`, `_PLANTILLA_PROYECTO_NUEVO/*`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Elimina el copiado manual entre ventanas. Los agentes vuelcan directamente su trabajo en el disco local y Antigravity los audita con un solo aviso del usuario.
+
 ### 🛠️ [2026-10-29] - [Siembra de Planeaciones Demo para Pruebas]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(planeacion): agregar siembra de planeaciones demo y botón interactivo para pruebas de simulación`
 - **Cambios Realizados:**
-  - Se implementó la función backend `sembrarPlaneacionesDemoNEM(token)` en `PlaneacionNEM.gs` para generar 3 proyectos didácticos completos (1 en Repositorio Global en estado PUBLICADA y 2 en Banco Personal en BORRADOR y APROBADO) con sus sesiones didácticas.
-  - Se agregó el botón interactivo `🌱 Cargar Proyectos Demo` en `AdminPlanJS_02.html` dentro del estado vacío del banco para que el docente pueda simular y visualizar tarjetas al instante.
-  - Se actualizó `.claspignore` y se desplegó a Apps Script con `clasp push` con éxito (85 archivos sincronizados).
+  - Se implementó `sembrarPlaneacionesDemoNEM(token)` en `PlaneacionNEM.gs` para generar 3 proyectos completos (1 Global y 2 Personales) con sesiones didácticas asociadas.
+  - Se agregó el botón `🌱 Cargar Proyectos Demo` en `AdminPlanJS_02.html`.
+  - Se ejecutó `clasp push -f` (85 archivos sincronizados) y `git push origin main` (`3790a1d`).
 - **Archivos Afectados:** `PlaneacionNEM.gs`, `AdminPlanJS_02.html`, `.claspignore`, `_PLANTILLA_PROYECTO_NUEVO/.rsc/test_regresion.js`, `CONTROL_CAMBIOS.md`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Permite verificar de forma inmediata la renderización de tarjetas, la alternancia entre Banco Personal y Repositorio Global, y probar el guardado y clonado colegiado en vivo.
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Permite validar visualmente la cuadrícula de tarjetas, la alternancia entre Banco Personal y Global, y probar el guardado en vivo.
 
 ### 🛠️ [2026-10-29] - [Guía Interactiva HTML de Orquestación]
 - **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear guía interactiva HTML con prompts copiables en _PLANTILLA_PROYECTO_NUEVO`
@@ -19,29 +28,3 @@ Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterre
   - Se subió el cambio a GitHub en el commit `dfec044`.
 - **Archivos Afectados:** `_PLANTILLA_PROYECTO_NUEVO/INSTRUCCIONES_ORQUESTACION.html`, `CONTROL_CAMBIOS.md`
 - **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Ofrece al usuario una interfaz visual navegable en cualquier explorador para copiar prompts de arranque sin necesidad de editar markdown.
-
-### 🛠️ [2026-10-29] - [Kit de Plantilla para Proyectos Nuevos]
-- **Mensaje de Commit sugerido (Conventional Commits):** `feat(orquestacion): crear carpeta _PLANTILLA_PROYECTO_NUEVO con contratos, reglas y suite de pruebas rsc`
-- **Cambios Realizados:**
-  - Se estructuró y empaquetó la carpeta `_PLANTILLA_PROYECTO_NUEVO/` con contratos, reglas y arnés de pruebas.
-  - Se ejecutó y validó la suite `node .rsc/test_regresion.js` en código de salida 0.
-  - Se sincronizó el repositorio en GitHub con el commit `857d3df`.
-- **Archivos Afectados:** `_PLANTILLA_PROYECTO_NUEVO/*`, `CONTROL_CAMBIOS.md`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Garantiza que cualquier nuevo proyecto herede la gobernanza tripartita, el control de cambios y la verificación automatizada en menos de 2 minutos.
-
-### 🛠️ [2026-10-29] - [Plantilla Maestra de Orquestación]
-- **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear plantilla base reutilizable para proyectos nuevos con antigravity, deepseek y cursor`
-- **Cambios Realizados:**
-  - Se creó `PLANTILLA_ORQUESTACION_MULTIAGENTE.md` como estándar y guía completa para iniciar cualquier proyecto nuevo bajo la arquitectura multi-agente.
-  - Incluye: roles inmutables, ciclo de 4 tiempos, portabilidad multi-PC, prompts de arranque listos para copiar/pegar y plantilla en blanco de `ESTADO_COORDINACION.md`.
-- **Archivos Afectados:** `PLANTILLA_ORQUESTACION_MULTIAGENTE.md`, `CONTROL_CAMBIOS.md`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Se deja documentado el estándar corporativo para que cualquier nuevo repositorio pueda replicar este mismo flujo de trabajo sin fricción.
-
-### 🛠️ [2026-10-29] - [Gobernanza y Sincronización Tripartita]
-- **Mensaje de Commit sugerido (Conventional Commits):** `feat(orquestacion): formalizar gobernanza de despliegues y contrato vivo para deepseek y cursor`
-- **Cambios Realizados:**
-  - Se eliminó el archivo huérfano con nombre de URL en la raíz.
-  - Se actualizó `ESTADO_COORDINACION.md` estableciendo el protocolo de orquestación a tres bandas (Antigravity, DeepSeek, Cursor) y reservando en exclusiva para Antigravity los permisos de `git commit/push` y `clasp push/deploy`.
-  - Se integró la regla de Cursor `control-cambios.mdc` y la bitácora técnica `CONTROL_CAMBIOS.md`.
-- **Archivos Afectados:** `.cursor/rules/control-cambios.mdc`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Se centraliza la autoridad de release en Antigravity para evitar errores 403 de GitHub y 401 de Apps Script en entornos en la nube, garantizando que el código pase auditoría de coherencia y selectores antes de llegar a producción.

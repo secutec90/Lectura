@@ -1,5 +1,5 @@
 <script>
-/* AdminPlanJS_06 — conmutarModuloShell, toggleSidebarShell, etapaPlanActual_, irAPasoPlanNEM, CATALOGO_LIBROS_SEP_FASE6_, abrirModalLibrosSEP_, insertarReferenciaLibroSesion_, eliminarIDeviceCard_, eliminarLegoCard_, insertariDeviceSesion_, ... */
+/* AdminPlanJS_06 — conmutarModuloShell, toggleSidebarShell, etapaPlanActual_, irAPasoPlanNEM, CATALOGO_LIBROS_SEP_FASE6_, abrirModalLibrosSEP_, insertarReferenciaLibroSesion_, eliminarIDeviceCard_, eliminarLegoCard_, insertariDeviceSesion_, serializarIDevicesSesion_, validarMomentosSesionAntesDeGuardar_, ... */
 
 
     function conmutarModuloShell(nombreModulo) {
@@ -279,11 +279,57 @@
 
     /* ============================================================
        BLOQUES MODULARES IDEVICES TIPO EXELearning
+       Los cuatro momentos del editor viven en #sesApertura, #sesDesarrollo,
+       #sesActividad y #sesCierre. Si el DOM llegara a exponer los alias
+       #planApertura, #planDesarrollo, #planActividad y #planCierre, se leen igual.
        ============================================================ */
+    var seqIDevice_ = 0;
+    var idevicesTocados_ = false;
+    var MARCA_IDEVICES_INI_ = '--- iDevices de la sesión ---';
+    var MARCA_IDEVICES_FIN_ = '--- fin iDevices ---';
+    var META_IDEVICE_ = {
+      lectura: {
+        nombre: 'lectura guiada',
+        etiqueta: 'Lectura guiada',
+        variante: 'idevice-lectura',
+        phTitulo: 'Título de la lectura breve...',
+        phCuerpo: 'Escribe el párrafo que los alumnos leerán y escucharán...'
+      },
+      pregunta: {
+        nombre: 'pregunta formativa',
+        etiqueta: 'Pregunta formativa',
+        variante: 'idevice-pregunta',
+        phTitulo: '¿Qué pregunta detonadora plantearás a los estudiantes?',
+        phCuerpo: 'Retroalimentación formativa y criterios esperados de respuesta...'
+      },
+      reto: {
+        nombre: 'desafío práctico',
+        etiqueta: 'Desafío práctico',
+        variante: 'idevice-desafio',
+        phTitulo: 'Nombre del reto o producto esperado de la sesión...',
+        phCuerpo: 'Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad...'
+      }
+    };
+
+    function nuevoIdIDevice_() {
+      seqIDevice_ += 1;
+      var id = 'idevice_' + Date.now();
+      if (document.getElementById(id)) id += '_' + seqIDevice_;
+      return id;
+    }
+
+    function marcarIDevicesTocados_() {
+      idevicesTocados_ = true;
+    }
+
     function eliminarIDeviceCard_(btn) {
-      if (!btn) return;
+      if (!btn || !btn.closest) return;
       const c = btn.closest('.idevice-card');
-      if (c) c.remove();
+      if (!c) return;
+      marcarIDevicesTocados_();
+      c.remove();
+      const barra = document.querySelector('#editorSesionActiva .idevice-bar .idevice-btn');
+      if (barra && barra.focus) barra.focus();
     }
 
     function eliminarLegoCard_(btn) {
@@ -292,73 +338,262 @@
       if (c) c.remove();
     }
 
-    function insertariDeviceSesion_(tipo) {
-      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
-      if (!contenedor) return;
+    function pintarTarjetaIDevice_(tipo, datos) {
+      const tipoNorm = String(tipo || '').toLowerCase();
+      const meta = META_IDEVICE_[tipoNorm];
+      if (!meta) return null;
+      datos = datos || {};
 
-      const idUnico = 'idevice_' + Date.now();
+      const idUnico = (datos.id && !document.getElementById(datos.id)) ? datos.id : nuevoIdIDevice_();
       const div = document.createElement('div');
+      div.id = idUnico;
+      div.setAttribute('data-tipo', tipoNorm);
+      div.className = 'idevice-card idevice-container ' + meta.variante + (tipoNorm === 'lectura' ? ' idevice-card-audio' : '');
 
-      if (tipo === 'lectura') {
-        div.className = 'idevice-card idevice-card-audio';
-        div.id = idUnico;
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="tipo-badge" style="background:#0284c7;color:#fff;">iDevice Lectura Guiada (DUA)</span>' +
-            '<strong style="font-size:12px;color:#0369a1;">Texto narrado con audio accesible</strong>' +
-          '</div>' +
-          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
-        '</div>' +
-        '<input type="text" placeholder="Título de la lectura breve..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;">' +
-        '<textarea id="txtLectura_' + idUnico + '" rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Escribe el párrafo que los alumnos leerán y escucharán..."></textarea>' +
-        '<div style="display:flex;gap:6px;margin-top:4px;">' +
-          '<button type="button" class="btn-soft-primary" onclick="probarAudioIDevice_(\'' + idUnico + '\')" style="font-size:11px;padding:3px 8px;">🔊 Escuchar con Web Speech</button>' +
-        '</div>';
-      } else if (tipo === 'pregunta') {
-        div.className = 'idevice-card idevice-card-pregunta';
-        div.id = idUnico;
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="tipo-badge" style="background:#7c3aed;color:#fff;">iDevice Pregunta Formativa</span>' +
-            '<strong style="font-size:12px;color:#6d28d9;">Reactivo detonador de reflexión</strong>' +
-          '</div>' +
-          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
-        '</div>' +
-        '<input type="text" placeholder="¿Qué pregunta detonadora plantearás a los estudiantes?..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;">' +
-        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Retroalimentación formativa y criterios esperados de respuesta..."></textarea>';
-      } else if (tipo === 'reto') {
-        div.className = 'idevice-card idevice-card-reto';
-        div.id = idUnico;
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="tipo-badge" style="background:#16a34a;color:#fff;">iDevice Desafío Práctico</span>' +
-            '<strong style="font-size:12px;color:#15803d;">Actividad comunitaria situada</strong>' +
-          '</div>' +
-          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
-        '</div>' +
-        '<input type="text" placeholder="Nombre del reto o producto esperado de la sesión..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;">' +
-        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad..."></textarea>';
+      const header = document.createElement('div');
+      header.className = 'idevice-header';
+      const tag = document.createElement('span');
+      tag.className = 'idevice-tag';
+      tag.textContent = meta.etiqueta;
+      const btnQuitar = document.createElement('button');
+      btnQuitar.type = 'button';
+      btnQuitar.className = 'idevice-btn';
+      btnQuitar.textContent = 'Quitar';
+      btnQuitar.setAttribute('aria-label', 'Quitar ' + meta.etiqueta);
+      btnQuitar.addEventListener('click', function () { eliminarIDeviceCard_(btnQuitar); });
+      header.appendChild(tag);
+      header.appendChild(btnQuitar);
+
+      const body = document.createElement('div');
+      body.className = 'idevice-body';
+      const titulo = document.createElement('input');
+      titulo.type = 'text';
+      titulo.setAttribute('data-campo', 'titulo');
+      titulo.setAttribute('aria-label', 'Título del bloque');
+      titulo.placeholder = meta.phTitulo;
+      titulo.value = datos.titulo || '';
+      titulo.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;';
+      const cuerpo = document.createElement('textarea');
+      cuerpo.setAttribute('data-campo', 'cuerpo');
+      cuerpo.id = 'txt_' + idUnico;
+      cuerpo.rows = 2;
+      cuerpo.setAttribute('aria-label', 'Contenido del bloque');
+      cuerpo.placeholder = meta.phCuerpo;
+      cuerpo.value = datos.cuerpo || '';
+      cuerpo.style.cssText = 'width:100%;box-sizing:border-box;resize:vertical;';
+      titulo.addEventListener('input', marcarIDevicesTocados_);
+      cuerpo.addEventListener('input', marcarIDevicesTocados_);
+      body.appendChild(titulo);
+      body.appendChild(cuerpo);
+
+      if (tipoNorm === 'lectura') {
+        const bar = document.createElement('div');
+        bar.className = 'idevice-audio-bar';
+        const btnAudio = document.createElement('button');
+        btnAudio.type = 'button';
+        btnAudio.className = 'idevice-btn';
+        btnAudio.textContent = 'Escuchar con Web Speech';
+        btnAudio.addEventListener('click', function () { probarAudioIDevice_(btnAudio); });
+        bar.appendChild(btnAudio);
+        body.appendChild(bar);
       }
 
-      contenedor.appendChild(div);
-      toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
+      div.appendChild(header);
+      div.appendChild(body);
+      return div;
     }
 
-    function probarAudioIDevice_(btn) {
-      let texto = '';
-      if (btn && btn.closest) {
-        const card = btn.closest('.idevice-card');
-        const txtEl = card ? card.querySelector('textarea') : null;
-        texto = txtEl ? txtEl.value.trim() : '';
+    function insertariDeviceSesion_(tipo) {
+      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
+      if (!contenedor) {
+        toast('No encontré el contenedor de iDevices de la sesión.', 'error');
+        return;
       }
+
+      const tipoNorm = String(tipo || '').toLowerCase();
+      const meta = META_IDEVICE_[tipoNorm];
+      if (!meta) return;
+
+      const div = pintarTarjetaIDevice_(tipoNorm, null);
+      if (!div) return;
+      contenedor.appendChild(div);
+      marcarIDevicesTocados_();
+      const titulo = div.querySelector('[data-campo="titulo"]');
+      if (titulo) titulo.focus();
+      if (div.scrollIntoView) div.scrollIntoView({ block: 'nearest' });
+      toast('Bloque de ' + meta.nombre + ' insertado en la sesión.', 'info');
+    }
+
+    function textoCampoIDevice_(card, campo) {
+      const el = card.querySelector('[data-campo="' + campo + '"]');
+      return String((el && el.value) || '').trim();
+    }
+
+    function serializarIDevicesSesion_() {
+      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
+      if (!contenedor) return '';
+      const bloques = [];
+      contenedor.querySelectorAll('.idevice-card').forEach(function (card) {
+        const tipo = card.getAttribute('data-tipo') || '';
+        const meta = META_IDEVICE_[tipo];
+        if (!meta) return;
+        const titulo = textoCampoIDevice_(card, 'titulo');
+        const cuerpo = textoCampoIDevice_(card, 'cuerpo');
+        if (!titulo && !cuerpo) return;
+        let linea = '#### ' + meta.etiqueta;
+        if (titulo) linea += ': ' + titulo;
+        linea += '\n' + (cuerpo || '(sin texto)');
+        bloques.push(linea);
+      });
+      if (!bloques.length) return '';
+      return '\n\n' + MARCA_IDEVICES_INI_ + '\n' + bloques.join('\n\n') + '\n' + MARCA_IDEVICES_FIN_;
+    }
+
+    function quitarMarcaIDevices_(texto) {
+      let base = String(texto || '');
+      const ini = base.indexOf(MARCA_IDEVICES_INI_);
+      const fin = base.indexOf(MARCA_IDEVICES_FIN_);
+      if (ini >= 0 && fin > ini) {
+        base = base.slice(0, ini) + base.slice(fin + MARCA_IDEVICES_FIN_.length);
+      }
+      return base.replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function volcarIDevicesEnGuion_() {
+      const campo = document.getElementById('sesGuionEstudiante');
+      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
+      if (!campo) return '';
+      const hayTarjetas = !!(contenedor && contenedor.querySelector('.idevice-card'));
+      if (!hayTarjetas && !idevicesTocados_) return campo.value;
+      const base = quitarMarcaIDevices_(campo.value);
+      const extra = serializarIDevicesSesion_();
+      campo.value = extra ? (base ? base.replace(/\s+$/, '') + extra : extra.trim()) : base;
+      return campo.value;
+    }
+
+    function leerTipoIDeviceDesdeCabeza_(cabeza) {
+      const texto = String(cabeza || '').replace(/^####\s+/, '').trim();
+      const claves = Object.keys(META_IDEVICE_);
+      for (let i = 0; i < claves.length; i++) {
+        const meta = META_IDEVICE_[claves[i]];
+        const prefs = [meta.etiqueta, meta.nombre];
+        for (let j = 0; j < prefs.length; j++) {
+          const pref = prefs[j];
+          const bajo = texto.toLowerCase();
+          const prefBajo = pref.toLowerCase();
+          if (bajo === prefBajo) return { tipo: claves[i], titulo: '' };
+          if (bajo.indexOf(prefBajo + ':') === 0) {
+            return { tipo: claves[i], titulo: texto.slice(pref.length + 1).trim() };
+          }
+        }
+      }
+      return null;
+    }
+
+    function parsearBloqueIDevices_(texto) {
+      const base = String(texto || '');
+      const ini = base.indexOf(MARCA_IDEVICES_INI_);
+      const fin = base.indexOf(MARCA_IDEVICES_FIN_);
+      if (ini < 0 || fin <= ini) return [];
+      const cuerpo = base.slice(ini + MARCA_IDEVICES_INI_.length, fin).trim();
+      if (!cuerpo) return [];
+      const out = [];
+      cuerpo.split(/\n(?=#### )/).forEach(function (parte) {
+        const lineas = parte.trim().split('\n');
+        const leido = leerTipoIDeviceDesdeCabeza_(lineas.shift() || '');
+        if (!leido) return;
+        let cuerpoTxt = lineas.join('\n').trim();
+        if (cuerpoTxt === '(sin texto)') cuerpoTxt = '';
+        out.push({ tipo: leido.tipo, titulo: leido.titulo, cuerpo: cuerpoTxt });
+      });
+      return out;
+    }
+
+    function rehidratarIDevicesDesdeGuion_() {
+      const contenedor = document.getElementById('contenedorIDevicesDinamicos');
+      if (!contenedor) return;
+      contenedor.textContent = '';
+      const campo = document.getElementById('sesGuionEstudiante');
+      parsearBloqueIDevices_(campo ? campo.value : '').forEach(function (bloque) {
+        const card = pintarTarjetaIDevice_(bloque.tipo, bloque);
+        if (card) contenedor.appendChild(card);
+      });
+      idevicesTocados_ = false;
+    }
+
+    function camposMomentosSesion_() {
+      return [
+        { id: 'sesApertura', alias: 'planApertura', nombre: 'Apertura' },
+        { id: 'sesDesarrollo', alias: 'planDesarrollo', nombre: 'Desarrollo' },
+        { id: 'sesActividad', alias: 'planActividad', nombre: 'Actividad' },
+        { id: 'sesCierre', alias: 'planCierre', nombre: 'Cierre' }
+      ].map(function (def) {
+        return {
+          nombre: def.nombre,
+          el: document.getElementById(def.id) || document.getElementById(def.alias) || document.querySelector('[data-alias="' + def.alias + '"]')
+        };
+      });
+    }
+
+    function resaltarMomentoFaltante_(el, falta) {
+      if (!el) return;
+      if (falta) {
+        el.style.outline = '2px solid #b45309';
+        el.style.outlineOffset = '2px';
+        el.setAttribute('aria-invalid', 'true');
+      } else {
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+        el.removeAttribute('aria-invalid');
+      }
+    }
+
+    function vigilarMomentosSesion_() {
+      camposMomentosSesion_().forEach(function (c) {
+        if (!c.el || c.el._st90Mom) return;
+        c.el._st90Mom = true;
+        c.el.addEventListener('input', function () {
+          if (String(c.el.value || '').trim()) resaltarMomentoFaltante_(c.el, false);
+        });
+      });
+    }
+
+    function validarMomentosSesionAntesDeGuardar_() {
+      vigilarMomentosSesion_();
+      const faltantes = [];
+      let primero = null;
+      camposMomentosSesion_().forEach(function (c) {
+        const vacio = !c.el || !String(c.el.value || '').trim();
+        resaltarMomentoFaltante_(c.el, vacio);
+        if (!vacio) return;
+        faltantes.push(c.nombre);
+        if (!primero && c.el) primero = c.el;
+      });
+      if (!faltantes.length) return true;
+      if (primero) {
+        if (primero.scrollIntoView) primero.scrollIntoView({ block: 'center' });
+        if (primero.focus) primero.focus();
+      }
+      toast('Completa los cuatro momentos antes de guardar: falta ' + faltantes.join(', ') + '.');
+      return false;
+    }
+
+    function probarAudioIDevice_(origen) {
+      let card = null;
+      if (typeof origen === 'string') card = document.getElementById(origen);
+      else if (origen && origen.closest) card = origen.closest('.idevice-card');
+      const txtEl = card ? card.querySelector('[data-campo="cuerpo"], textarea') : null;
+      let texto = txtEl ? String(txtEl.value || '').trim() : '';
       if (!texto) texto = 'Por favor escribe un texto en el bloque de lectura para escucharlo.';
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(texto);
-        u.lang = 'es-MX';
-        u.rate = 1.0;
-        window.speechSynthesis.speak(u);
+      if (!window.speechSynthesis) {
+        toast('Este navegador no tiene narración de voz.', 'error');
+        return;
       }
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(texto);
+      u.lang = 'es-MX';
+      u.rate = 1.0;
+      window.speechSynthesis.speak(u);
     }
 
 
@@ -465,4 +700,44 @@
       cargarListaPlaneacionesNEM();
     }
   }
+
+  (function engancharGuardadoSesionIDevice_() {
+    if (typeof guardarSesionActiva === 'function' && !guardarSesionActiva._st90IDev) {
+      const originalGuardar = guardarSesionActiva;
+      function guardarSesionActivaConIDevices() {
+        if (!validarMomentosSesionAntesDeGuardar_()) return;
+        const campo = document.getElementById('sesGuionEstudiante');
+        if (campo && !String(campo.value || '').trim() && typeof generarGuionDesdeMomentos === 'function') {
+          generarGuionDesdeMomentos();
+        }
+        volcarIDevicesEnGuion_();
+        return originalGuardar.apply(this, arguments);
+      }
+      guardarSesionActivaConIDevices._st90IDev = true;
+      guardarSesionActiva = guardarSesionActivaConIDevices;
+    }
+
+    if (typeof generarGuionDesdeMomentos === 'function' && !generarGuionDesdeMomentos._st90IDev) {
+      const originalGuion = generarGuionDesdeMomentos;
+      function generarGuionDesdeMomentosConIDevices() {
+        const r = originalGuion.apply(this, arguments);
+        volcarIDevicesEnGuion_();
+        return r;
+      }
+      generarGuionDesdeMomentosConIDevices._st90IDev = true;
+      generarGuionDesdeMomentos = generarGuionDesdeMomentosConIDevices;
+    }
+
+    if (typeof seleccionarSesionNEM === 'function' && !seleccionarSesionNEM._st90IDev) {
+      const originalSel = seleccionarSesionNEM;
+      function seleccionarSesionNEMConIDevices(idx) {
+        const r = originalSel.apply(this, arguments);
+        rehidratarIDevicesDesdeGuion_();
+        vigilarMomentosSesion_();
+        return r;
+      }
+      seleccionarSesionNEMConIDevices._st90IDev = true;
+      seleccionarSesionNEM = seleccionarSesionNEMConIDevices;
+    }
+  })();
 </script>

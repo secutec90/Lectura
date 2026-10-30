@@ -647,8 +647,7 @@
                   🏆 Desafío Práctico Situado
                 </button>
               </div>
-              <div id="contenedorIDevicesDinamicos"></div>
-              </div>
+              <div id="contenedorIDevicesDinamicos" aria-live="polite" aria-label="Bloques iDevice de la sesión"></div>
 
               <!-- Título de la sesión -->
               <!-- Título / Tema de la clase -->
@@ -661,7 +660,7 @@
                   <h3>⏱️ 1. Apertura (5 minutos)</h3>
                   <span class="nem-meta-pill">Activación, saberes previos y propósito</span>
                 </div>
-                <textarea id="sesApertura" style="min-height:75px;" placeholder="Pregunta generadora, reto cognitivo o anécdota detonadora que conecte con la experiencia de los alumnos..."></textarea>
+                <textarea id="sesApertura" data-alias="planApertura" aria-required="true" style="min-height:75px;" placeholder="Pregunta generadora, reto cognitivo o anécdota detonadora que conecte con la experiencia de los alumnos..."></textarea>
               </div>
 
               <div class="momento-caja momento-desarrollo">
@@ -669,7 +668,7 @@
                   <h3>📖 2. Desarrollo / Explicación (10 minutos)</h3>
                   <span class="nem-meta-pill">Conceptos centrales y mediación oral clara</span>
                 </div>
-                <textarea id="sesDesarrollo" style="min-height:90px;" placeholder="Explicación directa del docente o contenido clave. Redacta de forma explicativa, fluida y con lenguaje claro..."></textarea>
+                <textarea id="sesDesarrollo" data-alias="planDesarrollo" aria-required="true" style="min-height:90px;" placeholder="Explicación directa del docente o contenido clave. Redacta de forma explicativa, fluida y con lenguaje claro..."></textarea>
               </div>
 
               <div class="momento-caja momento-actividad">
@@ -677,7 +676,7 @@
                   <h3>✍️ 3. Actividad / Producción (20 minutos)</h3>
                   <span class="nem-meta-pill">Trabajo individual, en parejas o colectivo</span>
                 </div>
-                <textarea id="sesActividad" style="min-height:90px;" placeholder="Instrucciones paso a paso de la actividad de aprendizaje que los alumnos realizarán durante la clase..."></textarea>
+                <textarea id="sesActividad" data-alias="planActividad" aria-required="true" style="min-height:90px;" placeholder="Instrucciones paso a paso de la actividad de aprendizaje que los alumnos realizarán durante la clase..."></textarea>
               </div>
 
               <div class="momento-caja momento-cierre">
@@ -685,7 +684,7 @@
                   <h3>🎯 4. Cierre (5 minutos)</h3>
                   <span class="nem-meta-pill">Síntesis formativa y metacognición</span>
                 </div>
-                <textarea id="sesCierre" style="min-height:75px;" placeholder="Preguntas de reflexión metacognitiva: ¿Qué descubrimos hoy? ¿Cómo se aplica a nuestra vida comunitaria?..."></textarea>
+                <textarea id="sesCierre" data-alias="planCierre" aria-required="true" style="min-height:75px;" placeholder="Preguntas de reflexión metacognitiva: ¿Qué descubrimos hoy? ¿Cómo se aplica a nuestra vida comunitaria?..."></textarea>
               </div>
 
               <!-- Sección DUA: Recursos Visuales con Descripción Oral Obligatoria -->
@@ -750,6 +749,7 @@
                 <label for="sesNotasDocente">Notas y Orientaciones para el Docente</label>
                 <textarea id="sesNotasDocente" style="min-height:70px;" placeholder="Materiales requeridos, adecuaciones curriculares individuales, observaciones de evaluación formativa..."></textarea>
               </div>
+            </div>
             </div>
           </div>
         </div>

@@ -1,0 +1,21 @@
+---
+description: Obliga a Cursor a guardar automáticamente sus entregas e informes en ENTREGA_CURSOR.md
+alwaysApply: true
+---
+
+# Directiva Automática de Entrega para Cursor
+
+Al trabajar en cualquier tarea, componente o refactorización dentro de este repositorio:
+
+1. **Destino Automático de Entrega:**
+   - Cada vez que termines de implementar, refactorizar o proponer código, escribe y guarda automáticamente tu informe técnico, tus controladores de JavaScript y tu bloque de Conventional Commits en el archivo:
+     `ENTREGA_CURSOR.md`
+2. **Prohibido solicitar copiado manual:**
+   - NO arrojes bloques largos de código en la ventana de chat pidiendo al usuario que los copie o pegue a mano.
+   - Modifica los archivos asignados y vuelca el resumen y código correspondiente directamente en `ENTREGA_CURSOR.md`.
+3. **Respeto de Contrato:**
+   - Respeta estrictamente los IDs definidos por Antigravity en `ESTADO_COORDINACION.md` y las clases de estilo de DeepSeek.
+   - Tienes restringido ejecutar `git commit`, `git push` o `clasp push`.
+4. **Respuesta en el chat:**
+   - En el chat de Cursor solo entrega un mensaje breve indicando:  
+     *"✅ Entrega completada y guardada automáticamente en `ENTREGA_CURSOR.md` lista para la auditoría de Antigravity."*

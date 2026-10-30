@@ -143,6 +143,7 @@ function rellenarPlantillaAdmin_(t, urlApp, identidad, modoVista, soloAsistencia
   t.urlSitioDocente = urlSitioDocente_();
   t.urlAsistencia = urlAsistenciaPub();
   t.version = VERSION_APP;
+  t.build = typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-510';
   t.escuela = identidad.nombre;
   t.modoVista = modoVista;
   t.soloAsistencia = !!soloAsistencia;

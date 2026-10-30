@@ -177,7 +177,7 @@
           aplicarVistaColsNivelesRes();
           ajustarModoEstrecho();
           const lblVer = document.getElementById('lblVersionPanel');
-          if (lblVer) lblVer.textContent = (res.version || '') + ' · build-469';
+          if (lblVer) lblVer.textContent = (res.version || 'v417') + ' · ' + (res.build || 'build-510');
           const badgeDev = document.getElementById('badgeEntornoDev');
           if (badgeDev && String(res.version || '').indexOf('dev') >= 0) badgeDev.classList.remove('oculto');
 

@@ -10,7 +10,13 @@
 **Sprint:** Planeación didáctica — iDevices dinámicos y validación de los cuatro momentos.
 **Archivos de trabajo:** `AdminPlanJS_06.html`, `AdminPlaneacion.html`.
 
-**Nota para Antigravity:** este código ya está aplicado en esos dos archivos. La copia de abajo es la referencia de auditoría. No vuelvas a pegar el bloque si `insertariDeviceSesion_`, `rehidratarIDevicesDesdeGuion_` y el cierre `engancharGuardadoSesionIDevice_` ya existen. No hubo `git commit`, `git push` ni `clasp push`.
+**Nota para Antigravity:** este código ya está aplicado en esos dos archivos. La copia de abajo es la referencia de auditoría, no un reemplazo para pegar de un tirón. No hubo `git commit`, `git push` ni `clasp push`.
+
+**Revisión del 2026-10-29, 19:48:** el bloque JavaScript del apartado 2 omite dos huecos del fuente. No sustituye a `AdminPlanJS_06.html`.
+
+- Entre `eliminarIDeviceCard_` y `pintarTarjetaIDevice_` sigue `eliminarLegoCard_`.
+- Entre `probarAudioIDevice_` y el cierre `engancharGuardadoSesionIDevice_` siguen `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_`.
+- El marcado del apartado 1 muestra ahora las cuatro áreas de texto completas, con `style` y `placeholder`. La versión anterior las recortaba.
 
 ---
 
@@ -36,7 +42,7 @@ La sintaxis del script quedó revisada con `node --check`. El panel en vivo no s
 | Alta de bloques | `.idevice-btn--lectura`, `.idevice-btn--pregunta`, `.idevice-btn--reto` | `onclick="insertariDeviceSesion_('lectura'|'pregunta'|'reto')"` ya presente en `AdminPlaneacion.html` |
 | Guardar | botón que llama `guardarSesionActiva()` | El cierre envuelve esa función |
 
-Clases usadas, todas ya existentes: `.idevice-card`, `.idevice-card-audio`, `.idevice-btn`, `.idevice-container`, `.idevice-header`, `.idevice-tag`, `.idevice-body`, `.idevice-audio-bar`, `.idevice-lectura`, `.idevice-pregunta`, `.idevice-desafio`. No se inventaron clases nuevas ni se tocaron archivos `.gs`.
+Clases de estilo que ya tienen regla en `ComunCSS.html` o `AdminPlaneacionCSS.html`: `.idevice-btn`, `.idevice-container`, `.idevice-header`, `.idevice-tag`, `.idevice-body`, `.idevice-audio-bar`, `.idevice-lectura`, `.idevice-pregunta`, `.idevice-desafio`. `.idevice-card` y `.idevice-card-audio` no tienen regla CSS: sirven de gancho para `querySelector` y para el contrato del sprint. La tarjeta se ve por `.idevice-container` y la variante de color. No se inventaron clases nuevas ni se tocaron archivos `.gs`.
 
 ### Formato serializado
 
@@ -63,26 +69,27 @@ Una tarjeta sin título y sin cuerpo no entra al guion. El lector acepta la etiq
 - `serializarIDevicesSesion_()` y `volcarIDevicesEnGuion_()` escriben o reemplazan el bloque marcado dentro de `#sesGuionEstudiante`.
 - `rehidratarIDevicesDesdeGuion_()` reconstruye las tarjetas al elegir sesión y deja la bandera de cambios en falso.
 - `validarMomentosSesionAntesDeGuardar_()` exige los cuatro momentos, marca el vacío y muestra el toast ST90.
-- `engancharGuardadoSesionIDevice_()` envuelve `guardarSesionActiva`, `generarGuionDesdeMomentos` y `seleccionarSesionNEM` sin reescribir `AdminPlanJS_05.html`.
+- El cierre inmediato `engancharGuardadoSesionIDevice_` envuelve `guardarSesionActiva`, `generarGuionDesdeMomentos` y `seleccionarSesionNEM` sin reescribir `AdminPlanJS_05.html`. No es una función para llamar después: corre una sola vez al cargar el script.
 
 ### Ajustes de marcado en `AdminPlaneacion.html`
 
 ```html
 <div id="contenedorIDevicesDinamicos" aria-live="polite" aria-label="Bloques iDevice de la sesión"></div>
-
-<textarea id="sesApertura" data-alias="planApertura" aria-required="true"></textarea>
-<textarea id="sesDesarrollo" data-alias="planDesarrollo" aria-required="true"></textarea>
-<textarea id="sesActividad" data-alias="planActividad" aria-required="true"></textarea>
-<textarea id="sesCierre" data-alias="planCierre" aria-required="true"></textarea>
+<textarea id="sesApertura" data-alias="planApertura" aria-required="true" style="min-height:75px;" placeholder="Pregunta generadora, reto cognitivo o anécdota detonadora que conecte con la experiencia de los alumnos..."></textarea>
+<textarea id="sesDesarrollo" data-alias="planDesarrollo" aria-required="true" style="min-height:90px;" placeholder="Explicación directa del docente o contenido clave. Redacta de forma explicativa, fluida y con lenguaje claro..."></textarea>
+<textarea id="sesActividad" data-alias="planActividad" aria-required="true" style="min-height:90px;" placeholder="Instrucciones paso a paso de la actividad de aprendizaje que los alumnos realizarán durante la clase..."></textarea>
+<textarea id="sesCierre" data-alias="planCierre" aria-required="true" style="min-height:75px;" placeholder="Preguntas de reflexión metacognitiva: ¿Qué descubrimos hoy? ¿Cómo se aplica a nuestra vida comunitaria?..."></textarea>
 ```
 
-Los `placeholder` y el resto del marcado de cada momento no cambiaron.
+Esas cuatro líneas son las del fuente, en `AdminPlaneacion.html`. Lo añadido fue `data-alias`, `aria-required="true"` y, en el contenedor, `aria-live` y `aria-label`.
 
 ---
 
 ## 2. Controladores JS
 
 Ubicación en el fuente: `AdminPlanJS_06.html`, dentro del `<script>` ya incluido por `Admin.html` después de `AdminPlanJS_05`. El cierre se ejecuta al cargar, cuando `guardarSesionActiva` y `seleccionarSesionNEM` ya existen.
+
+El bloque de abajo no es contiguo en el archivo. Falta `eliminarLegoCard_` después de `eliminarIDeviceCard_`. Faltan `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_` entre `probarAudioIDevice_` y el cierre. Esas cuatro funciones no se modificaron en este sprint y deben permanecer.
 
 ```javascript
 var seqIDevice_ = 0;
@@ -447,7 +454,7 @@ function probarAudioIDevice_(origen) {
   - El texto de las tarjetas se vuelca en `#sesGuionEstudiante` al guardar o al regenerar el guion, y se vuelve a armar al elegir la sesión.
   - Guardar la sesión exige los cuatro momentos. El campo vacío se resalta y el aviso usa el toast ST90.
 - **Archivos Afectados:** `AdminPlanJS_06.html`, `AdminPlaneacion.html`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Los id canónicos de los momentos son `sesApertura`, `sesDesarrollo`, `sesActividad` y `sesCierre` porque `AdminPlanJS_05.html` los lee al guardar. El alias del contrato vive en `data-alias` (`planApertura`, `planDesarrollo`, `planActividad`, `planCierre`); no renombrar los id `ses*`. La serialización usa las marcas `--- iDevices de la sesión ---` y `--- fin iDevices ---` dentro de `sesGuionEstudiante`. `seleccionarSesionNEM` rehidrata las tarjetas y `guardarSesionActiva` valida antes de llamar al guardado original. Clases usadas: las ya existentes (`.idevice-card`, `.idevice-card-audio`, `.idevice-btn` y las de `ComunCSS.html`). No hay commit ni clasp: lo audita y sube Antigravity. La copia de auditoría está en `ENTREGA_CURSOR.md`.
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Los id canónicos de los momentos son `sesApertura`, `sesDesarrollo`, `sesActividad` y `sesCierre` porque `AdminPlanJS_05.html` los lee al guardar. El alias del contrato vive en `data-alias` (`planApertura`, `planDesarrollo`, `planActividad`, `planCierre`); no renombrar los id `ses*`. La serialización usa las marcas `--- iDevices de la sesión ---` y `--- fin iDevices ---` dentro de `sesGuionEstudiante`. `seleccionarSesionNEM` rehidrata las tarjetas y `guardarSesionActiva` valida antes de llamar al guardado original. `.idevice-card` y `.idevice-card-audio` son ganchos, sin regla CSS; el aspecto lo dan `.idevice-container` y las variantes de `ComunCSS.html`. La copia de `ENTREGA_CURSOR.md` no es un pegado contiguo: conserva `eliminarLegoCard_`, `conmutarVistaPlaneacion_`, `abrirFormNuevaPlaneacionNEM` e `inicializarModuloPlaneacion_`. No hay commit ni clasp: lo audita y sube Antigravity.
 ```
 
 **Brújula:** la entrega de Cursor está en este archivo y el código ya vive en `AdminPlanJS_06.html` y `AdminPlaneacion.html`. El siguiente paso es la auditoría de Antigravity. La fase 5 del contrato (cinta estilo aSc) no forma parte de este sprint.

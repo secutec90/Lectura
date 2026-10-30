@@ -24,10 +24,10 @@ Se sustituyeron **31 iconos SVG monocromáticos** por ilustraciones vectoriales 
 
 | Archivo | Naturaleza del cambio | Líneas | Diff |
 | :--- | :--- | :--- | :--- |
-| `ComunCSS.html` | Bloque CSS nuevo **FASE 5**, puramente aditivo | 713–886 | **−0 / +175** |
+| `ComunCSS.html` | Bloque CSS nuevo **FASE 5**, puramente aditivo | 713–886 (174 líneas) | **−0 / +175** |
 | `Admin.html` | SVG interior de 31 botones + 5 divisores + envoltura `.ribbon-icono` | 74–283 | **−137 / +36** (solo compresión de SVG) |
 
-El bloque CSS se insertó **antes** del marcador `DESIGN SYSTEM MODULAR "LEGO"` (línea 888), de modo que sus reglas ganan por orden de aparición sin borrar nada existente.
+El bloque CSS se insertó **antes** del marcador `DESIGN SYSTEM MODULAR "LEGO"` (línea 889), de modo que sus reglas ganan por orden de aparición sin borrar nada existente.
 
 ---
 
@@ -223,55 +223,55 @@ Patrón común de cada botón (**no cambia ningún ID ni `onclick`**):
 </button>
 ```
 
-### 4.1 `#btnTabMat` — Usuarios (dos estudiantes sonrientes, cálido) · Admin.html:75
+### 4.1 `#btnTabMat` — Usuarios (dos estudiantes sonrientes, cálido) · Admin.html:74
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.8" rx="9.8" ry="1.8" fill="#0f172a" opacity=".07"/><path d="M17.3 26.6v-5a5.2 5.2 0 0 1 10.4 0v5z" fill="#fbbf24"/><circle cx="22.5" cy="9.6" r="4" fill="#ffd8b4"/><path d="M18.5 9.4a4 4 0 0 1 8 0c0 .7-.5 1.2-1.2 1.2h-5.6c-.7 0-1.2-.5-1.2-1.2z" fill="#8a5a2b"/><circle cx="21.4" cy="9.9" r=".8" fill="#2b1a10"/><circle cx="23.6" cy="9.9" r=".8" fill="#2b1a10"/><path d="M4.6 27.4v-5a6.4 6.4 0 0 1 12.8 0v5z" fill="#e07a3a"/><path d="M11 22.4l1.6 2 1.6-2" fill="#c2541f"/><circle cx="11" cy="11.5" r="5" fill="#ffd8b4"/><path d="M6 11.2a5 5 0 0 1 10 0c0 .8-.6 1.4-1.4 1.4H7.4c-.8 0-1.4-.6-1.4-1.4z" fill="#3f2a17"/><circle cx="9.4" cy="12" r=".95" fill="#2b1a10"/><circle cx="12.6" cy="12" r=".95" fill="#2b1a10"/><path d="M9.2 14.6c1.1 1.3 2.9 1.3 4 0" stroke="#b45309" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg></span>
 ```
 
-### 4.2 `#btnTabAsi` — Asistencia (calendario con check verde) · Admin.html:79
+### 4.2 `#btnTabAsi` — Asistencia (calendario con check verde) · Admin.html:78
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.8" rx="9" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="4.8" y="6.4" width="22.4" height="21.2" rx="3.4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/><path d="M4.8 9.8a3.4 3.4 0 0 1 3.4-3.4h15.6a3.4 3.4 0 0 1 3.4 3.4v2.2H4.8z" fill="#16a34a"/><rect x="9.6" y="3.6" width="2.8" height="6" rx="1.4" fill="#0f766e"/><rect x="19.6" y="3.6" width="2.8" height="6" rx="1.4" fill="#0f766e"/><rect x="8.4" y="15.4" width="7.4" height="2" rx="1" fill="#cbd5e1"/><rect x="8.4" y="19.8" width="5.4" height="2" rx="1" fill="#e2e8f0"/><circle cx="22.4" cy="21.6" r="6" fill="#22c55e"/><path d="M19.6 21.7l2 2 3.6-4" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
 ```
 
-### 4.3 `#btnTabLec` — Lecturas (libro con lomo dorado y bloque de hojas) · Admin.html:84
+### 4.3 `#btnTabLec` — Lecturas (libro con lomo dorado y bloque de hojas) · Admin.html:83
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.7" rx="9.6" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="4.6" y="5.4" width="18.2" height="21.6" rx="2.4" fill="#2563eb"/><rect x="20.8" y="7.2" width="6" height="18" rx="1.2" fill="#f8fafc"/><path d="M22.6 9.8h3M22.6 13.2h3M22.6 16.6h3M22.6 20h3M22.6 23.4h3" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/><rect x="4.6" y="5.4" width="4.6" height="21.6" rx="2.3" fill="#f59e0b"/><rect x="5.9" y="9.6" width="1.2" height="4.4" rx=".6" fill="#ffffff" opacity=".55"/><rect x="11.4" y="9.4" width="8.4" height="2.6" rx="1.3" fill="#fbbf24"/><rect x="11.4" y="14.4" width="6.4" height="1.8" rx=".9" fill="#bfdbfe"/><rect x="11.4" y="18" width="7.6" height="1.8" rx=".9" fill="#bfdbfe" opacity=".75"/><path d="M17.8 5.4h2.8v7.2l-1.4-1.3-1.4 1.3z" fill="#ef4444"/></svg></span>
 ```
 
-### 4.4 `#btnTabPlan` — Planeación (libreta didáctica con pluma) · Admin.html:89
+### 4.4 `#btnTabPlan` — Planeación (libreta didáctica con pluma) · Admin.html:88
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.6" rx="9.2" ry="1.8" fill="#0f172a" opacity=".07"/><rect x="5.2" y="5.4" width="19.4" height="22" rx="2.6" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.2"/><rect x="5.2" y="5.4" width="4.8" height="22" rx="2.4" fill="#4f46e5"/><rect x="11.6" y="9.2" width="10.2" height="1.9" rx=".95" fill="#c7d2fe"/><rect x="11.6" y="13.2" width="7.8" height="1.9" rx=".95" fill="#dbeafe"/><rect x="11.6" y="17.2" width="9.2" height="1.9" rx=".95" fill="#dbeafe"/><rect x="20.6" y="8.2" width="4" height="13.2" rx="1.2" fill="#f59e0b"/><path d="M20.6 21.4h4l-2 4.4z" fill="#fde68a"/><path d="M21.9 24.3h1.4l-.7 1.6z" fill="#334155"/><rect x="20.6" y="6.4" width="4" height="2.2" rx=".9" fill="#ef4444"/></svg></span>
 ```
 
-### 4.5 `#btnTabEnc` — Encuestas (portapapeles con barras y check) · Admin.html:94
+### 4.5 `#btnTabEnc` — Encuestas (portapapeles con barras y check) · Admin.html:93
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.8" rx="8.8" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="5.6" y="5.2" width="20.8" height="22.4" rx="3.2" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1.2"/><rect x="11.6" y="3" width="8.8" height="4.8" rx="2" fill="#0284c7"/><circle cx="16" cy="5.4" r="1.1" fill="#e0f2fe"/><rect x="9.2" y="13.4" width="3.6" height="9.8" rx="1.1" fill="#38bdf8"/><rect x="14.2" y="10.4" width="3.6" height="12.8" rx="1.1" fill="#0284c7"/><rect x="19.2" y="15.6" width="3.6" height="7.6" rx="1.1" fill="#0ea5e9"/><path d="M18.6 24.6l2.2 2.2 4-4.4" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
 ```
 
-### 4.6 `#btnSubUsuAlu` — Alumnos (estudiante con mochila) · Admin.html:102
+### 4.6 `#btnSubUsuAlu` — Alumnos (estudiante con mochila) · Admin.html:101
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.6" rx="8" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="21" y="17.2" width="5.4" height="8.6" rx="2" fill="#c2410c"/><path d="M8.8 26.8v-5.4a7.2 7.2 0 0 1 14.4 0v5.4z" fill="#f59e0b"/><path d="M15.2 21.6l.8 2 1.6-2" fill="#d97706"/><circle cx="16" cy="11.4" r="5.2" fill="#ffd8b4"/><path d="M10.8 11.1a5.2 5.2 0 0 1 10.4 0c0 .8-.6 1.4-1.4 1.4h-7.6c-.8 0-1.4-.6-1.4-1.4z" fill="#4a2f18"/><circle cx="14.1" cy="11.9" r="1" fill="#2b1a10"/><circle cx="17.9" cy="11.9" r="1" fill="#2b1a10"/><path d="M13.9 14.5c1.2 1.4 3 1.4 4.2 0" stroke="#b45309" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg></span>
 ```
 
-### 4.7 `#btnSubUsuDoc` — Docentes (birrete negro con borla naranja) · Admin.html:106
+### 4.7 `#btnSubUsuDoc` — Docentes (birrete negro con borla naranja) · Admin.html:105
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="25.8" rx="6.6" ry="1.3" fill="#0f172a" opacity=".08"/><path d="M16 4.4l12 5.2-12 5.2L4 9.6z" fill="#1f2937"/><path d="M16 4.4l12 5.2-12 5.2z" fill="#111827"/><path d="M10.4 13.2l5.6 2.4 5.6-2.4v5.2c0 2.2-2.5 4-5.6 4s-5.6-1.8-5.6-4z" fill="#374151"/><path d="M27.6 10.2v6.2" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/><circle cx="27.6" cy="17.4" r="2" fill="#f59e0b"/></svg></span>
 ```
 
-### 4.8 `#btnSubUsuPref` — Prefectas (credencial con escudo) · Admin.html:110
+### 4.8 `#btnSubUsuPref` — Prefectas (credencial con escudo) · Admin.html:109
 
 ```html
 <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.6" rx="7.8" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="6.4" y="5" width="19.2" height="23" rx="3.2" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.2"/><path d="M6.4 8.2a3.2 3.2 0 0 1 3.2-3.2h12.8a3.2 3.2 0 0 1 3.2 3.2v2.2H6.4z" fill="#ca8a04"/><circle cx="12.4" cy="15.4" r="3.1" fill="#fbbf24"/><path d="M8 22.8c0-2.4 2-4.4 4.4-4.4s4.4 2 4.4 4.4z" fill="#f59e0b"/><rect x="18.4" y="13.6" width="5" height="1.7" rx=".85" fill="#a16207"/><rect x="18.4" y="17.4" width="5" height="1.7" rx=".85" fill="#d97706"/><path d="M22.6 19.8l3.6 1.7v3.4c0 2.2-1.6 3.8-3.6 4.4-2-.6-3.6-2.2-3.6-4.4v-3.4z" fill="#16a34a"/><path d="M21 24.6l1.2 1.2 2.2-2.4" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
 ```
 
-### 4.9 `#btnSubUsuAdm` — Apoyo (engranaje de servicio) · Admin.html:114
+### 4.9 `#btnSubUsuAdm` — Apoyo (engranaje de servicio) · Admin.html:113
 
 > **Nota de contrato:** la partitura cita `#btnSubUsuApo`, pero el DOM real tiene `#btnSubUsuAdm` con etiqueta "Apoyo". **No se renombró**: se ilustró el ID existente.
 
@@ -285,15 +285,15 @@ Patrón común de cada botón (**no cambia ningún ID ni `onclick`**):
 
 | Botón | Línea `Admin.html` | Ilustración | Paleta dominante |
 | :--- | ---: | :--- | :--- |
-| `#btnTabMat` | 75 | Dos estudiantes sonrientes | `#e07a3a` · `#fbbf24` |
-| `#btnTabAsi` | 79 | Calendario + check | `#16a34a` · `#22c55e` |
-| `#btnTabLec` | 84 | Libro con lomo dorado | `#2563eb` · `#f59e0b` |
-| `#btnTabPlan` | 89 | Libreta + pluma | `#4f46e5` · `#f59e0b` |
-| `#btnTabEnc` | 94 | Portapapeles + barras + check | `#0284c7` |
-| `#btnSubUsuAlu` | 102 | Estudiante con mochila | `#f59e0b` · `#c2410c` |
-| `#btnSubUsuDoc` | 106 | Birrete + borla | `#1f2937` · `#f59e0b` |
-| `#btnSubUsuPref` | 110 | Credencial + escudo | `#ca8a04` · `#16a34a` |
-| `#btnSubUsuAdm` | 114 | Engranaje | `#14b8a6` |
+| `#btnTabMat` | 74 | Dos estudiantes sonrientes | `#e07a3a` · `#fbbf24` |
+| `#btnTabAsi` | 78 | Calendario + check | `#16a34a` · `#22c55e` |
+| `#btnTabLec` | 83 | Libro con lomo dorado | `#2563eb` · `#f59e0b` |
+| `#btnTabPlan` | 88 | Libreta + pluma | `#4f46e5` · `#f59e0b` |
+| `#btnTabEnc` | 93 | Portapapeles + barras + check | `#0284c7` |
+| `#btnSubUsuAlu` | 101 | Estudiante con mochila | `#f59e0b` · `#c2410c` |
+| `#btnSubUsuDoc` | 105 | Birrete + borla | `#1f2937` · `#f59e0b` |
+| `#btnSubUsuPref` | 109 | Credencial + escudo | `#ca8a04` · `#16a34a` |
+| `#btnSubUsuAdm` | 113 | Engranaje | `#14b8a6` |
 | `#btnAsiAlu` | 154 | Estudiante (reúso) | `#f59e0b` |
 | `#btnAsiMae` | 158 | Birrete (reúso) | `#1f2937` |
 | `#btnAsiRep` | 162 | Barras comparativas | `#f59e0b` `#16a34a` `#0284c7` |
@@ -343,7 +343,7 @@ Patrón común de cada botón (**no cambia ningún ID ni `onclick`**):
 | Atributos `id=` en `Admin.html` | 104 | **104** |
 | Atributos `onclick=` en `Admin.html` | 64 | **64** |
 | Scriptlets `<?!=` / `<?=` | 56 | **56** |
-| SVG `viewBox="0 0 24 24"` en cintas | 32 | **2** (ayudas dentro de modales, fuera de alcance) |
+| SVG `viewBox="0 0 24 24"` en cintas | 33 | **2** (ayudas dentro de modales, fuera de alcance) |
 | SVG `viewBox="0 0 32 32"` nuevos | — | **31** |
 | Divisores `.separador-ribbon` | — | **5** |
 | Reglas CSS eliminadas | — | **0** |
@@ -377,3 +377,17 @@ Ambos PNG están excluidos de `clasp push` por `.claspignore` (`**/*.png`), igua
 ## 10. Propuesta para Fase 6 (no ejecutada)
 
 Llevar el mismo lenguaje ilustrado a las tarjetas de módulo (`.bloque`, `.kpi-card`, `.sep-libro-card`) y a los estados vacíos, para que el ribbon no quede como una isla estética dentro del panel. Requiere partitura de Antigravity con los selectores exactos.
+
+---
+
+## 11. Control de revisión de este documento
+
+Verificación automática contra los archivos reales (2026-10-29, 19:52 America/Mexico_City):
+
+| Comprobación | Resultado |
+| :--- | :--- |
+| Bloque CSS del §3 vs `ComunCSS.html` 713–886 | **idéntico byte a byte** |
+| 9 bloques SVG del §4.1–4.9 vs `Admin.html` | **idénticos** en los 9 |
+| Números de línea del §5 | **corregidos** (estaban +1: apuntaban al `<span>`, no al `<button>`) |
+| Conteo de SVG monocromáticos previos (§7) | **corregido**: 33, no 32 |
+| `id=` / `onclick=` / scriptlets | 104 / 64 / 56 — sin cambio |

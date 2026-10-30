@@ -2,6 +2,15 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Kit de Plantilla para Proyectos Nuevos]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(orquestacion): crear carpeta _PLANTILLA_PROYECTO_NUEVO con contratos, reglas y suite de pruebas rsc`
+- **Cambios Realizados:**
+  - Se creó la carpeta `_PLANTILLA_PROYECTO_NUEVO/` como starter kit autosuficiente para nuevos desarrollos.
+  - Incluye: `README_ARRANQUE.md`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`, `.cursor/rules/control-cambios.mdc`, `.rsc/_cargar_codigo.js`, `.rsc/test_regresion.js`, `.rsc.json` y `.gitignore`.
+  - Se verificó y validó la ejecución de `node .rsc/test_regresion.js` en código 0.
+- **Archivos Afectados:** `_PLANTILLA_PROYECTO_NUEVO/*`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Permite inicializar cualquier nuevo proyecto en menos de 2 minutos copiando la carpeta y asegurando la misma arquitectura multi-agente y arnés de pruebas desde el primer commit.
+
 ### 🛠️ [2026-10-29] - [Plantilla Maestra de Orquestación]
 - **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear plantilla base reutilizable para proyectos nuevos con antigravity, deepseek y cursor`
 - **Cambios Realizados:**

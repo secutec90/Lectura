@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "targets": [
+    "antigravity",
+    "deepseek",
+    "cursor"
+  ],
+  "governance": {
+    "releaseManager": "antigravity",
+    "designLead": "deepseek",
+    "frontendLead": "cursor",
+    "coordinationContract": "ESTADO_COORDINACION.md",
+    "changelog": "CONTROL_CAMBIOS.md"
+  },
+  "testRunner": "node .rsc/test_regresion.js"
+}

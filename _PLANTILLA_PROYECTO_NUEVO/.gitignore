@@ -1,0 +1,22 @@
+# Artefactos del sistema operativo y de sincronización en la nube
+desktop.ini
+Desktop.ini
+.DS_Store
+Thumbs.db
+
+# Archivos de bloqueo de Git y temporales
+*.lock
+*.tmp
+*.tmpdir/
+.rsc/_temp_*
+
+# Dependencias locales y logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Credenciales y variables de entorno
+.env
+.env.local
+.clasprc.json

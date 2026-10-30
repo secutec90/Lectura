@@ -365,7 +365,9 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
     } else {
       // Si solicita su Banco Personal:
       if (ses.rol !== "admin") {
-        if (docF && docF !== nomDoc) return false;
+        if (docF && nomDoc && docF !== nomDoc && docF.indexOf(nomDoc) === -1 && nomDoc.indexOf(docF) === -1) {
+          return false;
+        }
       }
     }
 

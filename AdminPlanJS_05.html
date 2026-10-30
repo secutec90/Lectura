@@ -176,7 +176,8 @@
         if (btn) btn.disabled = false;
         toast((res && res.mensaje) || 'Planeación guardada con éxito.', 'ok');
         cerrarFormPlaneacion();
-        cargarListaPlaneacionesNEM();
+        if (typeof conmutarBancoPlaneacion_ === 'function') conmutarBancoPlaneacion_('personal');
+        else if (typeof cargarListaPlaneacionesNEM === 'function') cargarListaPlaneacionesNEM(true);
         const idTarget = (res && (res.id || res.Id)) || payload.id;
         if (idTarget) {
           abrirGestorSesiones(idTarget);

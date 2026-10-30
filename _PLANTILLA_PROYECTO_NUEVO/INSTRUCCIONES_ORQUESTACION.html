@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protocolo de Orquestación Multi-Agente | Guía Maestra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: rgba(18, 24, 38, 0.85);
+      --bg-card-hover: rgba(26, 34, 53, 0.95);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --color-ag: #6366f1;
+      --color-ag-glow: rgba(99, 102, 241, 0.25);
+      --color-ds: #06b6d4;
+      --color-ds-glow: rgba(6, 182, 212, 0.25);
+      --color-cr: #f59e0b;
+      --color-cr-glow: rgba(245, 158, 11, 0.25);
+      --color-success: #10b981;
+      --color-danger: #ef4444;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      padding: 40px 20px 80px;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.1) 0%, transparent 45%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      margin-bottom: 20px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #4ade80;
+      box-shadow: 0 0 10px #4ade80;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* SECTION TITLES */
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 1rem;
+    }
+
+    /* GRID ROLES */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .role-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .role-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .role-card.ag::before { background: var(--color-ag); box-shadow: 0 0 16px var(--color-ag); }
+    .role-card.ds::before { background: var(--color-ds); box-shadow: 0 0 16px var(--color-ds); }
+    .role-card.cr::before { background: var(--color-cr); box-shadow: 0 0 16px var(--color-cr); }
+
+    .role-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .role-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .role-title h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .role-title p {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-dim);
+    }
+
+    .role-body h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 16px 0 8px;
+      color: var(--text-muted);
+    }
+
+    .role-list {
+      list-style: none;
+      font-size: 0.92rem;
+    }
+
+    .role-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      color: #cbd5e1;
+    }
+
+    .role-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4ade80;
+      font-weight: bold;
+    }
+
+    .role-forbidden {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      font-size: 0.85rem;
+      color: #fca5a5;
+    }
+
+    .role-forbidden strong {
+      color: #ef4444;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* TIMELINE CICLO */
+    .timeline-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 50px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-item::after {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 45px;
+      bottom: -20px;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .step-item:last-child::after {
+      display: none;
+    }
+
+    .step-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.15);
+      border: 2px solid var(--color-ag);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #a5b4fc;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .step-content h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .step-content p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* PROMPTS BOXES */
+    .prompts-section {
+      margin-bottom: 50px;
+    }
+
+    .prompt-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .prompt-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy:hover {
+      background: var(--color-ag);
+      border-color: var(--color-ag);
+    }
+
+    .btn-copy.copied {
+      background: var(--color-success) !important;
+      border-color: var(--color-success) !important;
+    }
+
+    .prompt-code {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    /* MULTI PC */
+    .multipc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 50px;
+    }
+
+    @media (max-width: 768px) {
+      .multipc-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.1rem; }
+    }
+
+    .multipc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .multipc-box h4 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-pill {
+      display: block;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: #38bdf8;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 10px 0;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      padding-top: 30px;
+      border-top: 1px solid var(--border-card);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- HERO HEADER -->
+    <header class="hero">
+      <div class="badge-pill">
+        <span class="badge-dot"></span>
+        Plantilla Oficial de Orquestación Multi-Agente
+      </div>
+      <h1>Antigravity + DeepSeek + Cursor</h1>
+      <p>Guía interactiva y contrato maestro para gobernar proyectos de software colaborativo con múltiples inteligencias artificiales en perfecta sincronía.</p>
+    </header>
+
+    <!-- ROLES INMUTABLES -->
+    <section>
+      <h2 class="section-title"><span>👥</span> 1. Los Tres Roles Inmutables (La Partitura)</h2>
+      <div class="roles-grid">
+        
+        <!-- ANTIGRAVITY -->
+        <div class="role-card ag">
+          <div class="role-header">
+            <div class="role-avatar" style="color: #818cf8;">⚡</div>
+            <div class="role-title">
+              <h3>Antigravity</h3>
+              <p>Director de Orquesta & Release Manager</p>
+            </div>
+          </div>
+          <div class="role-body">
+            <h4>Partitura Exclusiva:</h4>
+            <ul class="role-list">
+              <li><strong>Único autorizado</strong> para <code>git commit/push</code> y despliegues (Clasp, npm, cloud).</li>
+              <li>Diseña la arquitectura y redacta los IDs del DOM en <code>ESTADO_COORDINACION.md</code>.</li>
+              <li>Programa la lógica de backend (APIs, base de datos, concurrencia).</li>
+              <li>Audita el código de DeepSeek y Cursor antes de consolidar.</li>
+              <li>Sella los cierres en <code>CONTROL_CAMBIOS.md</code>.</li>
+            </ul>
+            <div class="role-forbidden">
+              <strong>ESTRICTAMENTE PROHIBIDO:</strong>
+              Aprobar código sin verificar coherencia de IDs o ignorar condiciones de carrera.
+            </div>
+          </div>
+        </div>
+
+        <!-- DEEPSEEK -->
+        <div class="role-card ds">
+          <div class="role-header">
+            <div class="role-avatar" style="color: #22d3ee;">🎨</div>
+            <div class="role-title">
+              <h3>DeepSeek</h3>
+              <p>Diseñador UI/UX & Especialista CSS (Harness)</p>
+            </div>
+          </div>
+          <div class="role-body">
+            <h4>Partitura Exclusiva:</h4>
+            <ul class="role-list">
+              <li>Experiencia de usuario (UX/UI), microinteracciones y accesibilidad DUA.</li>
+              <li>Archivos exclusivos de diseño y CSS (<code>*CSS.html</code>, <code>*.css</code>).</li>
+              <li>Estructura visual, botones planos y tarjetas interactivas.</li>
+              <li>Respeta estrictamente los IDs acordados por Antigravity.</li>
+            </ul>
+            <div class="role-forbidden">
+              <strong>ESTRICTAMENTE PROHIBIDO:</strong>
+              Tocar backend <code>.gs</code>, renombrar IDs del DOM o hacer <code>git push</code>.
+            </div>
+          </div>
+        </div>
+
+        <!-- CURSOR -->
+        <div class="role-card cr">
+          <div class="role-header">
+            <div class="role-avatar" style="color: #fbbf24;">⚡</div>
+            <div class="role-title">
+              <h3>Cursor</h3>
+              <p>Ingeniero Frontend JS & Integrador DOM</p>
+            </div>
+          </div>
+          <div class="role-body">
+            <h4>Partitura Exclusiva:</h4>
+            <ul class="role-list">
+              <li>Lógica del cliente, controladores de eventos (click, submit, change).</li>
+              <li>Manipulación del DOM y conexión con llamadas backend.</li>
+              <li>Fragmentos JS exclusivos (<code>AdminPlanJS_*.html</code>, <code>*.js</code>).</li>
+              <li>Aplica las clases semánticas diseñadas por DeepSeek.</li>
+            </ul>
+            <div class="role-forbidden">
+              <strong>ESTRICTAMENTE PROHIBIDO:</strong>
+              Inventar estilos arbitrarios, tocar bases de datos o hacer commits remotos.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CICLO DE TRABAJO -->
+    <section>
+      <h2 class="section-title"><span>🔄</span> 2. El Ciclo de Entrega en 4 Tiempos</h2>
+      <div class="timeline-container">
+        
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Tiempo 1: Redacción de la Partitura (Antigravity)</h4>
+            <p>El usuario describe en español simple la necesidad. Antigravity define en <code>ESTADO_COORDINACION.md</code> la lista exacta de IDs del DOM (<code>#campoX</code>), clases CSS (<code>.estado-activo</code>) y las funciones de backend a implementar.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Tiempo 2: Ejecución en Paralelo</h4>
+            <p><strong>DeepSeek Harness</strong> trabaja en maquetación y CSS; <strong>Cursor</strong> programa los controladores de eventos en JS; <strong>Antigravity</strong> construye y blinda el backend y base de datos.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Tiempo 3: Auditoría de Ensamble (Antigravity)</h4>
+            <p>Antigravity audita que los selectores de Cursor coincidan con el diseño de DeepSeek, ejecuta la suite de pruebas local <code>node .rsc/test_regresion.js</code> y confirma que no haya variables duplicadas ni fugas.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Tiempo 4: Cierre, Commit y Despliegue (Antigravity)</h4>
+            <p>Antigravity registra el bloque en <code>CONTROL_CAMBIOS.md</code>, marca la fase como concluida en <code>ESTADO_COORDINACION.md</code> y ejecuta de forma exclusiva el <code>git commit</code>, <code>git push</code> y despliegue a producción.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PROMPTS COPIABLES -->
+    <section class="prompts-section">
+      <h2 class="section-title"><span>📋</span> 3. Prompts de Arranque Rápido</h2>
+
+      <!-- PROMPT DEEPSEEK -->
+      <div class="prompt-card">
+        <div class="prompt-header">
+          <div class="prompt-title">
+            <span style="color: var(--color-ds);">●</span> Para DeepSeek (Harness / Web)
+          </div>
+          <button class="btn-copy" onclick="copiarAlPortapapeles('prompt-deepseek', this)">
+            Copiar Prompt
+          </button>
+        </div>
+        <div class="prompt-code" id="prompt-deepseek">Actúas como Diseñador UI/UX y Especialista CSS de este proyecto. Tu partitura oficial está en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual designados. Respeta estrictamente los IDs del DOM acordados; no los cambies. Tienes estrictamente prohibido ejecutar git commit/push o comandos de despliegue. Lee `ESTADO_COORDINACION.md` y confirma tu comprensión de la tarea asignada.</div>
+      </div>
+
+      <!-- PROMPT CURSOR -->
+      <div class="prompt-card">
+        <div class="prompt-header">
+          <div class="prompt-title">
+            <span style="color: var(--color-cr);">●</span> Para Cursor
+          </div>
+          <button class="btn-copy" onclick="copiarAlPortapapeles('prompt-cursor', this)">
+            Copiar Prompt
+          </button>
+        </div>
+        <div class="prompt-code" id="prompt-cursor">Actúas como Desarrollador Frontend JS de este proyecto. Tu partitura oficial está en `ESTADO_COORDINACION.md` y tu regla de registro en `.cursor/rules/control-cambios.mdc`. Solo modificas fragmentos JS del cliente y conexión con backend. Respeta estrictamente los IDs del DOM y las clases visuales acordadas. Tienes prohibido hacer commit/push o alterar la base de datos. Lee `ESTADO_COORDINACION.md` y confirma tu comprensión de la tarea asignada.</div>
+      </div>
+
+      <!-- PROMPT ANTIGRAVITY -->
+      <div class="prompt-card">
+        <div class="prompt-header">
+          <div class="prompt-title">
+            <span style="color: var(--color-ag);">●</span> Para Antigravity (Proyecto Nuevo)
+          </div>
+          <button class="btn-copy" onclick="copiarAlPortapapeles('prompt-antigravity', this)">
+            Copiar Prompt
+          </button>
+        </div>
+        <div class="prompt-code" id="prompt-antigravity">Hola Antigravity, arranquemos este proyecto nuevo utilizando la plantilla de orquestación multi-agente. Quiero construir [describe tu idea aquí]. Define la arquitectura, redacta la FASE 1 en ESTADO_COORDINACION.md y prepárame las partituras para DeepSeek y Cursor.</div>
+      </div>
+
+    </section>
+
+    <!-- TRABAJO MULTI PC -->
+    <section>
+      <h2 class="section-title"><span>💻</span> 4. Flujo de Portabilidad entre Computadoras</h2>
+      <div class="multipc-grid">
+        
+        <div class="multipc-box">
+          <h4>📤 Al terminar en esta PC (PC 1):</h4>
+          <p>Le dices a Antigravity: <em>"Guarda y sube a GitHub para irme a la otra máquina"</em>.</p>
+          <div class="code-pill">git add -A && git commit -m "..." && git push origin main</div>
+          <p style="font-size: 0.88rem; color: var(--text-dim);">Todo tu avance, contratos y bitácoras quedan seguros en GitHub.</p>
+        </div>
+
+        <div class="multipc-box">
+          <h4>📥 Al llegar a la otra PC (PC 2):</h4>
+          <p>Abres la terminal en tu carpeta y descargas los últimos cambios:</p>
+          <div class="code-pill">git pull origin main</div>
+          <p style="font-size: 0.88rem; color: var(--text-dim);">Abres Antigravity o Cursor y dices: <em>"Lee ESTADO_COORDINACION.md y dime dónde nos quedamos"</em>.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      Suite Escolar ST90 &bull; Ecosistema de Orquestación Multi-Agente &bull; 2026
+    </footer>
+
+  </div>
+
+  <script>
+    function copiarAlPortapapeles(idElemento, boton) {
+      const texto = document.getElementById(idElemento).innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        const textoOriginal = boton.innerHTML;
+        boton.innerHTML = '✓ ¡Copiado!';
+        boton.classList.add('copied');
+        setTimeout(() => {
+          boton.innerHTML = textoOriginal;
+          boton.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Error al copiar: ', err);
+      });
+    }
+  </script>
+</body>
+</html>

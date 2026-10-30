@@ -2,14 +2,22 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-29] - [Guía Interactiva HTML de Orquestación]
+- **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear guía interactiva HTML con prompts copiables en _PLANTILLA_PROYECTO_NUEVO`
+- **Cambios Realizados:**
+  - Se creó `_PLANTILLA_PROYECTO_NUEVO/INSTRUCCIONES_ORQUESTACION.html` con diseño web interactivo premium, modo oscuro elegante, tarjetas de roles y botones de un clic para copiar prompts al portapapeles.
+  - Se documentó el ciclo de 4 tiempos y el flujo de portabilidad multi-PC de forma gráfica.
+- **Archivos Afectados:** `_PLANTILLA_PROYECTO_NUEVO/INSTRUCCIONES_ORQUESTACION.html`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Ofrece al usuario una interfaz visual navegable en cualquier explorador para copiar prompts de arranque sin necesidad de editar markdown.
+
 ### 🛠️ [2026-10-29] - [Kit de Plantilla para Proyectos Nuevos]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(orquestacion): crear carpeta _PLANTILLA_PROYECTO_NUEVO con contratos, reglas y suite de pruebas rsc`
 - **Cambios Realizados:**
-  - Se creó la carpeta `_PLANTILLA_PROYECTO_NUEVO/` como starter kit autosuficiente para nuevos desarrollos.
-  - Incluye: `README_ARRANQUE.md`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`, `.cursor/rules/control-cambios.mdc`, `.rsc/_cargar_codigo.js`, `.rsc/test_regresion.js`, `.rsc.json` y `.gitignore`.
-  - Se verificó y validó la ejecución de `node .rsc/test_regresion.js` en código 0.
+  - Se estructuró y empaquetó la carpeta `_PLANTILLA_PROYECTO_NUEVO/` con contratos, reglas y arnés de pruebas.
+  - Se ejecutó y validó la suite `node .rsc/test_regresion.js` en código de salida 0.
+  - Se sincronizó el repositorio en GitHub con el commit `857d3df`.
 - **Archivos Afectados:** `_PLANTILLA_PROYECTO_NUEVO/*`, `CONTROL_CAMBIOS.md`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Permite inicializar cualquier nuevo proyecto en menos de 2 minutos copiando la carpeta y asegurando la misma arquitectura multi-agente y arnés de pruebas desde el primer commit.
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Garantiza que cualquier nuevo proyecto herede la gobernanza tripartita, el control de cambios y la verificación automatizada en menos de 2 minutos.
 
 ### 🛠️ [2026-10-29] - [Plantilla Maestra de Orquestación]
 - **Mensaje de Commit sugerido (Conventional Commits):** `docs(orquestacion): crear plantilla base reutilizable para proyectos nuevos con antigravity, deepseek y cursor`

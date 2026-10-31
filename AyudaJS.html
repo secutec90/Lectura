@@ -502,6 +502,32 @@ function cerrarAyudaPedagogica_() {
   ultimoDisparadorAyuda_ = null;
 }
 
+function calcularTrimestreSEP_Local(fechaStr) {
+  var s = String(fechaStr || '').trim();
+  var mes = 0;
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    mes = parseInt(s.substring(5, 7), 10);
+  } else if (s) {
+    var d = new Date(s.indexOf('T') === -1 ? (s + 'T12:00:00') : s);
+    if (!isNaN(d.getTime())) mes = d.getMonth() + 1;
+  }
+  if (!mes) {
+    var hoy = new Date();
+    mes = hoy.getMonth() + 1;
+  }
+  // Calendario Oficial SEP:
+  // Trimestre 1: Agosto (8) a Noviembre (11)
+  // Trimestre 2: Diciembre (12) a Marzo (3)
+  // Trimestre 3: Abril (4) a Julio (7)
+  if (mes >= 8 && mes <= 11) {
+    return { num: 1, texto: 'Trimestre 1 (Ago - Nov)' };
+  } else if (mes === 12 || (mes >= 1 && mes <= 3)) {
+    return { num: 2, texto: 'Trimestre 2 (Dic - Mar)' };
+  } else {
+    return { num: 3, texto: 'Trimestre 3 (Abr - Jul)' };
+  }
+}
+
 function obtenerMetadatosClaseActiva_() {
   function v(id) {
     var el = nodo_(id);
@@ -514,6 +540,36 @@ function obtenerMetadatosClaseActiva_() {
   var campo = v('planCampoFormativo') || 'Ética, Naturaleza y Sociedades';
   var metodo = v('planMetodologia') || '';
   var titulo = v('planTitulo') || '';
+  var contenido = v('planContenidoSintetico') || v('selContenidoSinteticoNEM');
+  var pda = v('planPDA');
+  var problema = v('planProblema');
+
+  // Detectar fecha desde formulario o banner superior
+  var fecha = v('planFechaInicio');
+  if (!fecha) {
+    var feEl = nodo_('txtEncabezadoFecha');
+    if (feEl && feEl.textContent && /\d{4}-\d{2}-\d{2}/.test(feEl.textContent)) {
+      fecha = feEl.textContent.trim();
+    }
+  }
+
+  // Detectar o calcular Periodo y Trimestre según Calendario SEP
+  var periodo = v('planPeriodo');
+  if (!periodo) {
+    var perEl = nodo_('txtEncabezadoPeriodo');
+    if (perEl && perEl.textContent && /trimestre/i.test(perEl.textContent)) {
+      periodo = perEl.textContent.trim();
+    }
+  }
+
+  var triInfo = calcularTrimestreSEP_Local(fecha);
+  var numTrimestre = triInfo.num;
+  if (!periodo) {
+    periodo = triInfo.texto;
+  } else {
+    var matchTri = periodo.match(/([123])/);
+    if (matchTri) numTrimestre = parseInt(matchTri[1], 10);
+  }
 
   // Si planAsignatura está vacío o no es específico, inspeccionar el banner oficial
   if (!asig || asig.length < 2) {
@@ -547,6 +603,12 @@ function obtenerMetadatosClaseActiva_() {
     campoFormativo: campo,
     metodologia: metodo,
     titulo: titulo,
+    fecha: fecha,
+    periodo: periodo,
+    trimestre: numTrimestre,
+    contenido: contenido,
+    pda: pda,
+    problema: problema,
     paso: pasoPlanVisible_(),
     pasoNombre: CONTEXTO_POR_PASO_[pasoPlanVisible_()] || 'Metadatos y ejes'
   };
@@ -566,17 +628,21 @@ function actualizarSugerenciasSegunMateria_() {
   if (!contSug) return;
 
   var esTec = /tecnolog/i.test(meta.asignatura);
-  var textoIdea = '💡 3 ideas para ' + meta.asignatura + ' ' + meta.grado + '°';
-  var textoEnfoque = esTec ? '🎯 Ajustar a contexto CECSE' : '🎯 Conectar con la comunidad';
-  var textoEjemplo = '✨ Redactar ejemplo viable';
+  var textoIdea = '💡 3 ideas SEP · ' + meta.asignatura + ' ' + meta.grado + '° (T' + meta.trimestre + ')';
+  var textoEnfoque = esTec ? '🎯 Ajustar a contexto CECSE' : '🎯 Conectar con problemática comunitaria';
+  var textoEjemplo = '✨ Redactar ejemplo viable para Trimestre ' + meta.trimestre;
 
   vaciarNodo_(contSug);
-  [textoIdea, textoEnfoque, textoEjemplo].forEach(function (txt) {
+  [
+    { texto: textoIdea, prompt: 'Dame 3 propuestas de proyectos comunitarios para ' + meta.asignatura + ' ' + meta.grado + '° correspondientes al Trimestre ' + meta.trimestre + ', apegadas a los Planes y Programas SEP (Fase 6).' },
+    { texto: textoEnfoque, prompt: esTec ? '¿Cómo organizo las 2h de teoría y 6h de práctica en el CECSE para este proyecto?' : '¿Cómo vinculo este tema de ' + meta.asignatura + ' del Trimestre ' + meta.trimestre + ' con una problemática real de la comunidad escolar?' },
+    { texto: textoEjemplo, prompt: 'Redacta un ejemplo concreto y viable para la sección ' + meta.pasoNombre + ' en ' + meta.asignatura + ' ' + meta.grado + '° (Trimestre ' + meta.trimestre + ').' }
+  ].forEach(function (item) {
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'ia-chip';
-    b.setAttribute('data-sugerencia-ia', txt);
-    b.textContent = txt;
+    b.setAttribute('data-sugerencia-ia', item.prompt);
+    b.textContent = item.texto;
     contSug.appendChild(b);
   });
 }
@@ -584,13 +650,14 @@ function actualizarSugerenciasSegunMateria_() {
 function actualizarContextoAsistenteIA_() {
   var meta = obtenerMetadatosClaseActiva_();
   var pasoTxt = CONTEXTO_POR_PASO_[pasoPlanVisible_()] || 'Metadatos y ejes';
+  var triTxt = 'Trimestre ' + meta.trimestre;
 
   if (/tecnolog/i.test(meta.asignatura)) {
-    contextoSeccionActiva = 'Tecnología ' + meta.grado + '° · ' + pasoTxt;
+    contextoSeccionActiva = 'Tecnología ' + meta.grado + '° · ' + triTxt + ' · ' + pasoTxt;
   } else if (meta.asignatura && meta.asignatura !== 'General') {
-    contextoSeccionActiva = meta.asignatura + ' ' + meta.grado + '° · ' + pasoTxt;
+    contextoSeccionActiva = meta.asignatura + ' ' + meta.grado + '° · ' + triTxt + ' · ' + pasoTxt;
   } else {
-    contextoSeccionActiva = pasoTxt;
+    contextoSeccionActiva = triTxt + ' · ' + pasoTxt;
   }
   pintarChipContexto_();
   actualizarSugerenciasSegunMateria_();
@@ -600,13 +667,14 @@ function sincronizarContextoDesdeFoco_(id) {
   if (!id || !CONTEXTO_POR_CAMPO_[id]) return;
   var meta = obtenerMetadatosClaseActiva_();
   var campoTxt = CONTEXTO_POR_CAMPO_[id];
+  var triTxt = 'Trimestre ' + meta.trimestre;
 
   if (/tecnolog/i.test(meta.asignatura)) {
-    contextoSeccionActiva = 'Tecnología ' + meta.grado + '° · ' + campoTxt;
+    contextoSeccionActiva = 'Tecnología ' + meta.grado + '° · ' + triTxt + ' · ' + campoTxt;
   } else if (meta.asignatura && meta.asignatura !== 'General') {
-    contextoSeccionActiva = meta.asignatura + ' ' + meta.grado + '° · ' + campoTxt;
+    contextoSeccionActiva = meta.asignatura + ' ' + meta.grado + '° · ' + triTxt + ' · ' + campoTxt;
   } else {
-    contextoSeccionActiva = campoTxt;
+    contextoSeccionActiva = triTxt + ' · ' + campoTxt;
   }
   pintarChipContexto_();
   actualizarSugerenciasSegunMateria_();
@@ -666,7 +734,7 @@ function asegurarDrawerAsistente_() {
       '<button type="button" class="ia-drawer-cerrar" id="btnCerrarDrawerIA" data-cerrar-drawer-ia="1" aria-label="Cerrar asistente">×</button>' +
     '</div>' +
     '<div class="ia-cuerpo" id="chatAsistenteCuerpo" aria-live="polite">' +
-      '<div class="ia-vacio">👋 ¡Hola! Soy tu asistente de planeación didáctica NEM.<br>Puedo sugerirte ideas, redactar propósitos o contextualizar tu clase.</div>' +
+      '<div class="ia-vacio">👋 ¡Hola! Soy tu asistente de planeación didáctica NEM.<br>Puedo sugerirte ideas, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
     '</div>' +
     '<div class="ia-sugerencias">' +
       '<button type="button" class="ia-chip" data-sugerencia-ia="💡 Dame 3 ideas para mi grado">💡 Dame 3 ideas para mi grado</button>' +
@@ -714,7 +782,7 @@ function enviarMensajeAsistente_(textoForzado) {
     return;
   }
 
-  // Recopilar metadatos de la clase activa para que la IA responda con su materia real
+  // Recopilar metadatos de la clase activa con trimestre y fecha oficial SEP
   var meta = obtenerMetadatosClaseActiva_();
   var payloadContexto = JSON.stringify({
     asignatura: meta.asignatura,
@@ -723,6 +791,12 @@ function enviarMensajeAsistente_(textoForzado) {
     campoFormativo: meta.campoFormativo,
     metodologia: meta.metodologia,
     tituloProyecto: meta.titulo,
+    fecha: meta.fecha,
+    periodo: meta.periodo,
+    trimestre: meta.trimestre,
+    contenidoSintetico: meta.contenido,
+    pda: meta.pda,
+    problema: meta.problema,
     pasoActual: meta.paso,
     pasoNombre: meta.pasoNombre,
     seccionVisible: contextoSeccionActiva
@@ -734,7 +808,7 @@ function enviarMensajeAsistente_(textoForzado) {
   enviandoAsistente_ = true;
   var btn = nodo_('btnEnviarAsistenteIA');
   if (btn) btn.disabled = true;
-  var espera = pintarBurbuja_('msg-ia', '⏳ Asistente pensando para ' + meta.asignatura + ' ' + meta.grado + '°…');
+  var espera = pintarBurbuja_('msg-ia', '⏳ Asistente analizando planes SEP para ' + meta.asignatura + ' ' + meta.grado + '° (T' + meta.trimestre + ')…');
   gsRun('consultarAsistenteIAPaso', tk, payloadContexto, texto).then(function (r) {
     if (espera && espera.parentNode) espera.parentNode.removeChild(espera);
     if (r && r.ok === false) {
@@ -1619,6 +1693,12 @@ function iniciarLmsSt90_() {
     var id = ev.target && ev.target.id;
     sincronizarContextoDesdeFoco_(id);
     if (id && id.indexOf('plan') === 0 && id !== 'planContenidoSintetico') aplicarAdecuacionCECSE_();
+  });
+  document.addEventListener('change', function (ev) {
+    var id = ev.target && ev.target.id;
+    if (id === 'planFechaInicio' || id === 'planPeriodo' || id === 'planAsignatura' || id === 'planGrado') {
+      actualizarContextoAsistenteIA_();
+    }
   });
   window.abrirAyudaPedagogica = abrirAyudaPedagogica;
   window.abrirAyudaPasoPlan_ = abrirAyudaPasoPlan_;

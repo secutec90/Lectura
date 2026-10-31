@@ -1896,6 +1896,45 @@ function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
   const paso = String(datosCtx.pasoNombre || "Diseño General").trim();
   const escuelaNom = typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90";
 
+  // Determinar Trimestre y Fecha según Calendario Oficial SEP
+  let trimestre = Number(datosCtx.trimestre) || 1;
+  let periodo = String(datosCtx.periodo || "").trim();
+  const fecha = String(datosCtx.fecha || "").trim();
+
+  if (!periodo && fecha) {
+    let mes = 0;
+    if (/^\d{4}-\d{2}-\d{2}/.test(fecha)) {
+      mes = parseInt(fecha.substring(5, 7), 10);
+    } else {
+      const d = new Date(fecha.indexOf('T') === -1 ? (fecha + 'T12:00:00') : fecha);
+      if (!isNaN(d.getTime())) mes = d.getMonth() + 1;
+    }
+    if (mes >= 8 && mes <= 11) {
+      trimestre = 1;
+      periodo = "Trimestre 1 (Ago - Nov)";
+    } else if (mes === 12 || (mes >= 1 && mes <= 3)) {
+      trimestre = 2;
+      periodo = "Trimestre 2 (Dic - Mar)";
+    } else if (mes >= 4 && mes <= 7) {
+      trimestre = 3;
+      periodo = "Trimestre 3 (Abr - Jul)";
+    }
+  } else if (periodo && !datosCtx.trimestre) {
+    const m = periodo.match(/([123])/);
+    if (m) trimestre = parseInt(m[1], 10);
+  }
+  if (!periodo) {
+    periodo = "Trimestre " + trimestre;
+  }
+
+  // Directiva de Planes y Programas SEP por Trimestre (Fase 6 Secundaria):
+  const directivaSEP =
+    "ALINEACIÓN ESTRICTA A PLANES Y PROGRAMAS DE ESTUDIO OFICIALES SEP (FASE 6 SECUNDARIA):\n" +
+    "- Temporalidad en Calendario Escolar: " + periodo + (fecha ? " (Fecha de inicio: " + fecha + ")" : "") + ".\n" +
+    "- REQUISITO CURRICULAR: Todas las propuestas didácticas, proyectos comunitarios, contenidos sintéticos y PDA deben pertenecer RIGUROSAMENTE al programa de estudio oficial de la SEP para el TRIMESTRE " + trimestre + " de " + (asignatura || "la materia") + " en " + grado + "° de secundaria.\n" +
+    "- PROHIBIDO proponer contenidos o PDA correspondientes a otros trimestres o grados escolares distintos a " + grado + "°.\n" +
+    "- Articula la propuesta con problemáticas de la comunidad escolar, los 7 Ejes Articuladores y el enfoque socio-crítico de la Nueva Escuela Mexicana.";
+
   // Directiva disciplinar estricta:
   let directivaDisciplina = "";
   if (/tecnolog/i.test(asignatura)) {
@@ -1910,18 +1949,23 @@ function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
       "- PROHIBIDO sugerir contenidos de Tecnología, procesadores de texto, hojas de cálculo, PowerPoint ni horas de CECSE para esta clase, a menos que el docente lo pida expresamente.";
   }
 
-  const promptSistema = "Eres el Asistente Pedagógico Inteligente de la Suite Escolar ST90 para la " + escuelaNom + " (Fase 6 de la Nueva Escuela Mexicana).\n" +
-    "Tu misión es asesorar y acompañar al docente de secundaria en tiempo real según la clase y paso activo.\n\n" +
+  const promptSistema = "Eres el Asistente Pedagógico Inteligente de la Suite Escolar ST90 para la " + escuelaNom + " (Fase 6 de la Nueva Escuela Mexicana - SEP).\n" +
+    "Tu misión es asesorar y acompañar al docente de secundaria en tiempo real según el trimestre activo del calendario escolar y la clase seleccionada.\n\n" +
     "DATOS DE LA CLASE ACTIVA DEL DOCENTE:\n" +
     "- Asignatura: " + (asignatura || "No especificada") + "\n" +
     "- Grado y Grupo: " + grado + "° \"" + (datosCtx.grupo || "A") + "\"\n" +
+    "- Trimestre y Calendario Escolar: " + periodo + (fecha ? " · Fecha: " + fecha : "") + "\n" +
     (campo ? "- Campo Formativo: " + campo + "\n" : "") +
     (metodologia ? "- Metodología: " + metodologia + "\n" : "") +
+    (datosCtx.contenidoSintetico ? "- Contenido Sintético SEP: " + datosCtx.contenidoSintetico + "\n" : "") +
+    (datosCtx.pda ? "- PDA Seleccionado: " + datosCtx.pda + "\n" : "") +
+    (datosCtx.problema ? "- Problema Comunitario: " + datosCtx.problema + "\n" : "") +
     (datosCtx.tituloProyecto ? "- Título del Proyecto: " + datosCtx.tituloProyecto + "\n" : "") +
     "- Sección o Paso actual: " + paso + "\n\n" +
     "DIRECTIVAS PEDAGÓGICAS Y DISCIPLINARES:\n" +
+    directivaSEP + "\n" +
     directivaDisciplina + "\n" +
-    "- Proporciona sugerencias prácticas, concretas, adaptadas al grado (" + grado + "°) e inclusivas (DUA).\n" +
+    "- Proporciona sugerencias prácticas, concretas, adaptadas al grado (" + grado + "°) y al Trimestre " + trimestre + ", con enfoque DUA e inclusivo.\n" +
     "- Responde de manera cálida, concisa (máximo 120 palabras) y estructurada con viñetas claras.";
 
   try {

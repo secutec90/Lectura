@@ -2,6 +2,21 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Alineación Estricta a Planes y Programas SEP (Fase 6) y Sincronización de Trimestre según Calendario (build-559)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ia): sincronizacion reactiva del trimestre segun fecha del calendario y alineacion estricta a planes SEP Fase 6 en build-559`
+- **Causa Raíz / Requerimiento:** Se requería que el Asistente Pedagógico IA detectara y respetara dinámicamente el trimestre escolar seleccionado por el docente en el calendario escolar (`#planFechaInicio` / `#planPeriodo`) y que todas las propuestas, contenidos, PDA y orientaciones pedagógicas estuvieran rigurosamente ajustadas a los Planes y Programas de Estudio oficiales de la SEP (Fase 6 - Educación Secundaria) para dicho trimestre.
+- **Cambios Realizados:**
+  - **Sincronización Reactiva de Calendario en `AyudaJS.html`:**
+    - Se implementó `calcularTrimestreSEP_Local(fecha)` respetando el calendario oficial de la SEP para secundaria: Trimestre 1 (Ago - Nov), Trimestre 2 (Dic - Mar) y Trimestre 3 (Abr - Jul).
+    - Se agregaron listeners a eventos `change` y `input` en el selector de fecha del calendario (`#planFechaInicio`) y periodo (`#planPeriodo`), actualizando al instante el chip de contexto superior del drawer (`📍 Geografía 1° · Trimestre 1 · Metadatos y ejes`) y los chips de sugerencia rápida (`💡 3 ideas SEP · Geografía 1° (Trimestre 1)`).
+    - Se envía un payload enriquecido a `consultarAsistenteIAPaso` con `trimestre`, `periodo`, `fecha`, `contenidoSintetico`, `pda` y `problema`.
+  - **Alineación Curricular Obligatoria en `PlaneacionNEM.gs` (`consultarAsistenteIAPaso`):**
+    - Se incorporó la `directivaSEP`: exige estricto cumplimiento del programa sintético/analítico oficial de la SEP Fase 6 para la asignatura, grado y trimestre específicos seleccionados en el calendario escolar.
+    - Se prohíbe sugerir PDA o contenidos de otros trimestres o grados distintos al activo.
+    - Se articula la respuesta con los 7 Ejes Articuladores de la NEM y el Diseño Universal para el Aprendizaje (DUA).
+  - **Despliegue a Producción (@559):** Versión `@559` desplegada en los 5 endpoints oficiales de Google Apps Script y validada con diagnóstico en vivo (`ok: true`, `build: "build-559"`, `totalAdmin: 14`).
+- **Archivos Afectados:** `AyudaJS.html`, `PlaneacionNEM.gs`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Contextualización Disciplinar Estricta del Asistente IA por Asignatura (build-558)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(ia): contextualizacion disciplinar estricta por asignatura activa y segregacion de reglas CECSE a Tecnologia en build-558`
 - **Causa Raíz Diagnosticada:** Al pulsar el chip de sugerencia rápida `💡 Dame 3 ideas para mi grado` estando en la clase de Geografía 1°A, el asistente IA respondía con proyectos de ofimática (Word para 1°, Excel para 2°, PowerPoint/IA para 3° y 6h en CECSE). Esto ocurría porque:

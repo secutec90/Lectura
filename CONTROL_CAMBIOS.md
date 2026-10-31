@@ -2,6 +2,18 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Contextualización Disciplinar Estricta del Asistente IA por Asignatura (build-558)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(ia): contextualizacion disciplinar estricta por asignatura activa y segregacion de reglas CECSE a Tecnologia en build-558`
+- **Causa Raíz Diagnosticada:** Al pulsar el chip de sugerencia rápida `💡 Dame 3 ideas para mi grado` estando en la clase de Geografía 1°A, el asistente IA respondía con proyectos de ofimática (Word para 1°, Excel para 2°, PowerPoint/IA para 3° y 6h en CECSE). Esto ocurría porque:
+  1. El cliente `AyudaJS.html` enviaba como contexto únicamente la cadena genérica `"Metadatos y ejes"`, sin transmitir la asignatura (`Geografía`), el grado (`1°`), ni el campo formativo (`Ética, Naturaleza y Sociedades`).
+  2. En el backend `PlaneacionNEM.gs`, la directiva de Tecnología CECSE (Word, Excel, PowerPoint) estaba insertada en el prompt de sistema como una regla global incondicional, provocando que la IA asumiera erróneamente el perfil de Tecnología ante cualquier consulta donde la asignatura no viniera explícita.
+- **Cambios Realizados:**
+  - **Extracción de Metadatos Activos en `AyudaJS.html` (`obtenerMetadatosClaseActiva_`):** Detecta dinámicamente la asignatura, grado, grupo, campo formativo, metodología y título de la clase seleccionada (leyendo `#planAsignatura`, `#txtEncabezadoMateriaGrupo`, `#planGrado` o el banner superior).
+  - **Sincronización del Chip y Sugerencias Contextuales:** El chip superior del drawer ahora muestra `📍 Geografía 1° · Metadatos y ejes`, y el chip interactivo se adapta a `💡 3 ideas para Geografía 1°` (reservando `🎯 Ajustar a contexto CECSE` exclusivamente para cuando la materia es Tecnología).
+  - **Segregación Disciplinar Estricta en `PlaneacionNEM.gs` (`consultarAsistenteIAPaso`):** Si la materia es Tecnología, se aplican las reglas CECSE (Word, Excel, PowerPoint y horas de cómputo); si la materia es cualquier otra (Geografía, Historia, Español, Matemáticas, etc.), se prohíbe explícitamente sugerir Word/Excel/PowerPoint/CECSE y se exige apego 100% al programa de la disciplina de la NEM.
+  - **Despliegue a Producción (@558):** Versión `@558` activa en los 5 despliegues de Google Apps Script y verificada con diagnóstico HTTP 200 en vivo.
+- **Archivos Afectados:** `AyudaJS.html`, `PlaneacionNEM.gs`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Corrección de Apertura e Interacción: Iconos de Ayuda Pedagógica NEM ❓ y Asistente IA 🤖 (build-557)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(ui): correccion de clases visible/abierto en modal ayuda NEM, estructura semantica de drawer asistente IA y enlace de eventos en build-557`
 - **Causa Raíz Diagnosticada:** Los iconos de ayuda `❓` y asistente `🤖` eran visibles en la interfaz pero parecían no funcionar al hacer clic ("si los veo pero no funcionan") debido a 3 causas encadenadas:

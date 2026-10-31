@@ -1855,19 +1855,73 @@ function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
     };
   }
 
-  const seccion = String(contextoSeccion || "Diseño General de Planeación NEM").trim();
   const pregunta = String(preguntaDocente || "").trim();
   if (!pregunta) {
     return { ok: false, error: "La pregunta no puede estar vacía." };
   }
 
+  // Parsear contexto (puede venir como JSON enriquecido o como string plano)
+  let datosCtx = {
+    asignatura: "",
+    grado: "1",
+    grupo: "A",
+    campoFormativo: "",
+    metodologia: "",
+    tituloProyecto: "",
+    pasoNombre: "Metadatos y ejes"
+  };
+
+  const rawCtx = String(contextoSeccion || "").trim();
+  try {
+    if (rawCtx.startsWith("{") && rawCtx.endsWith("}")) {
+      const obj = JSON.parse(rawCtx);
+      datosCtx = Object.assign(datosCtx, obj);
+    } else {
+      datosCtx.pasoNombre = rawCtx || "Planeación NEM";
+      // Intentar extraer asignatura si viene en formato "Geografía 1° · Metadatos"
+      const matchAsig = rawCtx.match(/^([A-Za-zÁÉÍÓÚáéíóúñÑ\s]+)\s+([123])°/);
+      if (matchAsig) {
+        datosCtx.asignatura = matchAsig[1].trim();
+        datosCtx.grado = matchAsig[2].trim();
+      }
+    }
+  } catch (err) {
+    datosCtx.pasoNombre = rawCtx || "Planeación NEM";
+  }
+
+  const asignatura = String(datosCtx.asignatura || "").trim();
+  const grado = String(datosCtx.grado || "1").trim();
+  const campo = String(datosCtx.campoFormativo || "").trim();
+  const metodologia = String(datosCtx.metodologia || "").trim();
+  const paso = String(datosCtx.pasoNombre || "Diseño General").trim();
   const escuelaNom = typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90";
+
+  // Directiva disciplinar estricta:
+  let directivaDisciplina = "";
+  if (/tecnolog/i.test(asignatura)) {
+    directivaDisciplina = "ASIGNATURA: TECNOLOGÍA (" + grado + "° de secundaria). Vinculada al aula de cómputo (CECSE).\n" +
+      "- Distribución horaria: 2 horas de teoría en aula + 6 horas de práctica en el CECSE.\n" +
+      "- Enfoque de software por grado: 1° Word/Ofimática básica, 2° Excel/Análisis de datos, 3° PowerPoint/IA aplicada.";
+  } else {
+    directivaDisciplina = "ASIGNATURA: " + (asignatura ? asignatura.toUpperCase() : "GENERAL DE SECUNDARIA") +
+      " (" + grado + "° de secundaria)" + (campo ? " · Campo Formativo: " + campo : "") +
+      (metodologia ? " · Metodología: " + metodologia : "") + ".\n" +
+      "- TODAS tus sugerencias, ejemplos y proyectos deben pertenecer ESTRICTAMENTE al programa de " + (asignatura || "esta disciplina") + " de la Nueva Escuela Mexicana (Fase 6).\n" +
+      "- PROHIBIDO sugerir contenidos de Tecnología, procesadores de texto, hojas de cálculo, PowerPoint ni horas de CECSE para esta clase, a menos que el docente lo pida expresamente.";
+  }
+
   const promptSistema = "Eres el Asistente Pedagógico Inteligente de la Suite Escolar ST90 para la " + escuelaNom + " (Fase 6 de la Nueva Escuela Mexicana).\n" +
-    "Tu misión es asesorar al docente de secundaria en tiempo real según el paso o campo que está completando.\n" +
-    "Contexto activo en la pantalla del docente: " + seccion + ".\n" +
-    "Reglas pedagógicas clave:\n" +
-    "- Si la asignatura o contexto refiere a Tecnología o CECSE, recuerda la distribución curricular de 2h de Teoría en aula y 6h de Práctica en el aula de cómputo (CECSE), así como el enfoque de grado (1° Word/Ofimática, 2° Excel/Datos, 3° PowerPoint/IA).\n" +
-    "- Proporciona sugerencias prácticas, concretas, inclusivas (DUA) y listas para aplicar.\n" +
+    "Tu misión es asesorar y acompañar al docente de secundaria en tiempo real según la clase y paso activo.\n\n" +
+    "DATOS DE LA CLASE ACTIVA DEL DOCENTE:\n" +
+    "- Asignatura: " + (asignatura || "No especificada") + "\n" +
+    "- Grado y Grupo: " + grado + "° \"" + (datosCtx.grupo || "A") + "\"\n" +
+    (campo ? "- Campo Formativo: " + campo + "\n" : "") +
+    (metodologia ? "- Metodología: " + metodologia + "\n" : "") +
+    (datosCtx.tituloProyecto ? "- Título del Proyecto: " + datosCtx.tituloProyecto + "\n" : "") +
+    "- Sección o Paso actual: " + paso + "\n\n" +
+    "DIRECTIVAS PEDAGÓGICAS Y DISCIPLINARES:\n" +
+    directivaDisciplina + "\n" +
+    "- Proporciona sugerencias prácticas, concretas, adaptadas al grado (" + grado + "°) e inclusivas (DUA).\n" +
     "- Responde de manera cálida, concisa (máximo 120 palabras) y estructurada con viñetas claras.";
 
   try {
@@ -1898,7 +1952,7 @@ function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
     return {
       ok: true,
       respuesta: String(respuesta).trim(),
-      contexto: seccion
+      contexto: paso
     };
   } catch (e) {
     return { ok: false, error: "Excepción al consultar asistente IA: " + e.message };

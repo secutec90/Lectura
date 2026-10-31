@@ -502,26 +502,114 @@ function cerrarAyudaPedagogica_() {
   ultimoDisparadorAyuda_ = null;
 }
 
+function obtenerMetadatosClaseActiva_() {
+  function v(id) {
+    var el = nodo_(id);
+    return el ? String(el.value || '').trim() : '';
+  }
+
+  var asig = v('planAsignatura');
+  var grado = v('planGrado') || '1';
+  var grupo = v('planGrupo') || 'A';
+  var campo = v('planCampoFormativo') || 'Ética, Naturaleza y Sociedades';
+  var metodo = v('planMetodologia') || '';
+  var titulo = v('planTitulo') || '';
+
+  // Si planAsignatura está vacío o no es específico, inspeccionar el banner oficial
+  if (!asig || asig.length < 2) {
+    var enc = nodo_('txtEncabezadoMateriaGrupo') || nodo_('txtClaseSeleccionada');
+    var txtEnc = enc ? enc.textContent.trim() : '';
+    if (txtEnc) {
+      var partes = txtEnc.split(/[-·•]/);
+      if (partes.length > 0 && partes[0].trim()) {
+        asig = partes[0].trim();
+      }
+      var matchG = txtEnc.match(/([123])\s*[°oº]?\s*([A-Fa-f])/);
+      if (matchG) {
+        if (!v('planGrado')) grado = matchG[1];
+        if (!v('planGrupo')) grupo = matchG[2].toUpperCase();
+      }
+    }
+  }
+
+  // Inferir del título si la asignatura aún no está fija
+  if ((!asig || asig.length < 2) && titulo) {
+    var partesTit = titulo.split(/[-·•(]/);
+    if (partesTit.length > 0 && partesTit[0].trim()) {
+      asig = partesTit[0].trim();
+    }
+  }
+
+  return {
+    asignatura: asig || 'General',
+    grado: grado,
+    grupo: grupo,
+    campoFormativo: campo,
+    metodologia: metodo,
+    titulo: titulo,
+    paso: pasoPlanVisible_(),
+    pasoNombre: CONTEXTO_POR_PASO_[pasoPlanVisible_()] || 'Metadatos y ejes'
+  };
+}
+
 function pintarChipContexto_() {
   var chip = nodo_('chipContextoAsistente');
   if (!chip) return;
   chip.textContent = '📍 ' + (contextoSeccionActiva || 'Planeación NEM');
 }
 
+function actualizarSugerenciasSegunMateria_() {
+  var meta = obtenerMetadatosClaseActiva_();
+  var drawer = nodo_('drawerAsistenteIA');
+  if (!drawer) return;
+  var contSug = drawer.querySelector('.ia-sugerencias');
+  if (!contSug) return;
+
+  var esTec = /tecnolog/i.test(meta.asignatura);
+  var textoIdea = '💡 3 ideas para ' + meta.asignatura + ' ' + meta.grado + '°';
+  var textoEnfoque = esTec ? '🎯 Ajustar a contexto CECSE' : '🎯 Conectar con la comunidad';
+  var textoEjemplo = '✨ Redactar ejemplo viable';
+
+  vaciarNodo_(contSug);
+  [textoIdea, textoEnfoque, textoEjemplo].forEach(function (txt) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ia-chip';
+    b.setAttribute('data-sugerencia-ia', txt);
+    b.textContent = txt;
+    contSug.appendChild(b);
+  });
+}
+
 function actualizarContextoAsistenteIA_() {
-  if (esTecnologia_() && pasoPlanVisible_() === 1) contextoSeccionActiva = etiquetaTecnologia_();
-  else contextoSeccionActiva = CONTEXTO_POR_PASO_[pasoPlanVisible_()] || 'Planeación NEM';
+  var meta = obtenerMetadatosClaseActiva_();
+  var pasoTxt = CONTEXTO_POR_PASO_[pasoPlanVisible_()] || 'Metadatos y ejes';
+
+  if (/tecnolog/i.test(meta.asignatura)) {
+    contextoSeccionActiva = 'Tecnología ' + meta.grado + '° · ' + pasoTxt;
+  } else if (meta.asignatura && meta.asignatura !== 'General') {
+    contextoSeccionActiva = meta.asignatura + ' ' + meta.grado + '° · ' + pasoTxt;
+  } else {
+    contextoSeccionActiva = pasoTxt;
+  }
   pintarChipContexto_();
+  actualizarSugerenciasSegunMateria_();
 }
 
 function sincronizarContextoDesdeFoco_(id) {
   if (!id || !CONTEXTO_POR_CAMPO_[id]) return;
-  if ((id === 'planAsignatura' || id === 'planGrado') && esTecnologia_()) {
-    contextoSeccionActiva = etiquetaTecnologia_();
+  var meta = obtenerMetadatosClaseActiva_();
+  var campoTxt = CONTEXTO_POR_CAMPO_[id];
+
+  if (/tecnolog/i.test(meta.asignatura)) {
+    contextoSeccionActiva = 'Tecnología ' + meta.grado + '° · ' + campoTxt;
+  } else if (meta.asignatura && meta.asignatura !== 'General') {
+    contextoSeccionActiva = meta.asignatura + ' ' + meta.grado + '° · ' + campoTxt;
   } else {
-    contextoSeccionActiva = CONTEXTO_POR_CAMPO_[id];
+    contextoSeccionActiva = campoTxt;
   }
   pintarChipContexto_();
+  actualizarSugerenciasSegunMateria_();
 }
 
 function pintarBurbuja_(clase, texto) {
@@ -574,15 +662,15 @@ function asegurarDrawerAsistente_() {
       '<div class="ia-titular">' +
         '<h3 class="ia-drawer-titulo">Asistente NEM · ST90</h3>' +
       '</div>' +
-      '<span class="ia-chip-contexto" id="chipContextoAsistente">📍 Metadatos y ejes</span>' +
+      '<span class="ia-chip-contexto" id="chipContextoAsistente">📍 Planeación NEM</span>' +
       '<button type="button" class="ia-drawer-cerrar" id="btnCerrarDrawerIA" data-cerrar-drawer-ia="1" aria-label="Cerrar asistente">×</button>' +
     '</div>' +
     '<div class="ia-cuerpo" id="chatAsistenteCuerpo" aria-live="polite">' +
-      '<div class="ia-vacio">👋 ¡Hola! Soy tu asistente de planeación didáctica NEM.<br>Puedo sugerirte ideas, redactar propósitos o adaptar tu clase al contexto CECSE.</div>' +
+      '<div class="ia-vacio">👋 ¡Hola! Soy tu asistente de planeación didáctica NEM.<br>Puedo sugerirte ideas, redactar propósitos o contextualizar tu clase.</div>' +
     '</div>' +
     '<div class="ia-sugerencias">' +
       '<button type="button" class="ia-chip" data-sugerencia-ia="💡 Dame 3 ideas para mi grado">💡 Dame 3 ideas para mi grado</button>' +
-      '<button type="button" class="ia-chip" data-sugerencia-ia="🎯 Ajustar a contexto CECSE">🎯 Ajustar a contexto CECSE</button>' +
+      '<button type="button" class="ia-chip" data-sugerencia-ia="🎯 Conectar con la comunidad">🎯 Conectar con la comunidad</button>' +
       '<button type="button" class="ia-chip" data-sugerencia-ia="✨ Redactar ejemplo viable">✨ Redactar ejemplo viable</button>' +
     '</div>' +
     '<div class="ia-composer">' +
@@ -591,6 +679,7 @@ function asegurarDrawerAsistente_() {
     '</div>';
 
   document.body.appendChild(drawer);
+  actualizarSugerenciasSegunMateria_();
   return drawer;
 }
 
@@ -603,7 +692,7 @@ function conmutarDrawerAsistente_(abrir) {
   else ocultarOverlay_('drawerAsistenteIA');
   if (btn) btn.setAttribute('aria-expanded', mostrar ? 'true' : 'false');
   if (mostrar) {
-    pintarChipContexto_();
+    actualizarContextoAsistenteIA_();
     var campo = nodo_('txtMensajeAsistente');
     if (campo && campo.focus) {
       try { campo.focus(); } catch (err) {}
@@ -624,14 +713,29 @@ function enviarMensajeAsistente_(textoForzado) {
     avisar_('google.script.run no está disponible.', 'error');
     return;
   }
+
+  // Recopilar metadatos de la clase activa para que la IA responda con su materia real
+  var meta = obtenerMetadatosClaseActiva_();
+  var payloadContexto = JSON.stringify({
+    asignatura: meta.asignatura,
+    grado: meta.grado,
+    grupo: meta.grupo,
+    campoFormativo: meta.campoFormativo,
+    metodologia: meta.metodologia,
+    tituloProyecto: meta.titulo,
+    pasoActual: meta.paso,
+    pasoNombre: meta.pasoNombre,
+    seccionVisible: contextoSeccionActiva
+  });
+
   asegurarDrawerAsistente_();
   pintarBurbuja_('msg-docente', texto);
   if (campo) campo.value = '';
   enviandoAsistente_ = true;
   var btn = nodo_('btnEnviarAsistenteIA');
   if (btn) btn.disabled = true;
-  var espera = pintarBurbuja_('msg-ia', '⏳ Asistente pensando...');
-  gsRun('consultarAsistenteIAPaso', tk, contextoSeccionActiva, texto).then(function (r) {
+  var espera = pintarBurbuja_('msg-ia', '⏳ Asistente pensando para ' + meta.asignatura + ' ' + meta.grado + '°…');
+  gsRun('consultarAsistenteIAPaso', tk, payloadContexto, texto).then(function (r) {
     if (espera && espera.parentNode) espera.parentNode.removeChild(espera);
     if (r && r.ok === false) {
       pintarBurbuja_('msg-ia', String(r.mensaje || r.error || 'El asistente no pudo responder.'));

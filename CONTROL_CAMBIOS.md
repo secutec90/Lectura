@@ -2,6 +2,21 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Corrección de Apertura e Interacción: Iconos de Ayuda Pedagógica NEM ❓ y Asistente IA 🤖 (build-557)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(ui): correccion de clases visible/abierto en modal ayuda NEM, estructura semantica de drawer asistente IA y enlace de eventos en build-557`
+- **Causa Raíz Diagnosticada:** Los iconos de ayuda `❓` y asistente `🤖` eran visibles en la interfaz pero parecían no funcionar al hacer clic ("si los veo pero no funcionan") debido a 3 causas encadenadas:
+  1. **Discrepancia de Estados CSS (`.visible` / `.abierto` vs `.oculto`):** El CSS de DeepSeek en `AdminPlaneacionCSS.html` y `ComunCSS.html` condiciona la opacidad (`opacity: 1; pointer-events: auto;`) y la visibilidad del drawer (`visibility: visible; transform: none;`) a las clases `.visible` o `.abierto`. Sin embargo, `mostrarOverlay_` en `AyudaJS.html` únicamente removía `.oculto`, dejando el modal en `opacity: 0; pointer-events: none;` y el drawer fuera de pantalla.
+  2. **Estructura Interna Desalineada del DOM:** `asegurarModalAyuda_()` y `asegurarDrawerAsistente_()` creaban contenedores planos sin las clases de diseño (`.ayuda-nem-panel`, `.ayuda-nem-cabecera`, `.ayuda-nem-cuerpo`, `.ayuda-nem-bloque--*`, `.ia-drawer-velo`), impidiendo el renderizado visual adecuado.
+  3. **Ausencia de `AyudaJS.html` y Botones en `Clase.html`:** El script solo estaba incluido en `Admin.html`, y los botones `.btn-ayuda-nem` solo se encontraban en `AdminPlaneacion.html`.
+- **Cambios Realizados:**
+  - **Sincronización de Clases de Overlay en `AyudaJS.html`:** `mostrarOverlay_` y `ocultarOverlay_` ahora añaden y retiran de forma reactiva las clases `.visible` y `.abierto`, además de alternar el velo de fondo `#iaDrawerVelo`.
+  - **Estructura Semántica Completa en `asegurarModalAyuda_()` y `asegurarDrawerAsistente_()`:** Construcción del árbol DOM con las clases exactas diseñadas por DeepSeek: tarjeta cabecera con avatar e insignias, bloques pedagógicos (`#modalAyudaProposito`, `#modalAyudaComoLlenar`, `#modalAyudaEjemplo`), botón `.ayuda-nem-entendido`, chips de sugerencia rápida y compositor de chat con `#txtMensajeAsistente`.
+  - **Mapeo Robusto de Claves de Ayuda (`normalizarClaveAyuda_`):** Soporte bidireccional entre los IDs del DOM (`planTitulo`, `planCampoFormativo`, `planMetodologia`, `planNumSesiones`, `planContenidoSintetico`, `planPDA`, `planProblema`, `planAjustesRazonables`, `planProposito`) y las entradas pedagógicas del `DICCIONARIO_AYUDA_NEM`.
+  - **Conexión de Botones del Stepper:** `abrirAyudaPasoPlan_(paso)` y `abrirAsistentePasoNEM_(paso)` conectadas a la apertura del modal pedagógico y del drawer IA con contexto del paso activo.
+  - **Integración y Paridad en `Clase.html`:** Incluido `<?!= include('AyudaJS') ?>` e integrados los botones `.btn-ayuda-nem` en todos los labels del formulario de planeación del docente.
+  - **Despliegue a Producción (@557):** Desplegado en los 5 endpoints oficiales de Google Apps Script con verificación HTTP 200 en vivo.
+- **Archivos Afectados:** `AyudaJS.html`, `Clase.html`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Backend Suite Escolar ST90: Biblioteca de Recursos, Asistente Contextual IA y Adecuación Tecnología CECSE (build-556)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(backend): modulo BibliotecaRecursos, endpoint de chat IA contextual y directivas curriculares CECSE en build-556`
 - **Causa / Requerimiento:** Expansión del ecosistema "Suite Escolar ST90" a plataforma LMS integral para secundaria, incorporando soporte backend para el Repositorio Colectivo y catálogo SEP Oficial (Fase 6), endpoint de asistencia reactiva con DeepSeek para el drawer flotante, y adecuación curricular estricta de la asignatura de Tecnología vinculada al CECSE.

@@ -49,7 +49,7 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ## 4. Estado de Fases y Despliegues Concluidos
 
-- **Última versión desplegada:** `@556` / código `v417 · build-556` (Integración oficial del Plan de Acreditación y Mejora Continua Suite Escolar ST90: nuevo módulo backend `Biblioteca.gs` y pestaña `BibliotecaRecursos`, catálogo SEP Oficial Fase 6, adecuación curricular para Tecnología CECSE en `PlaneacionNEM.gs`, endpoint reactivo `consultarAsistenteIAPaso`, módulo frontend `AyudaJS.html`, drawer lateral con DeepSeek, modal pedagógico `#modalAyudaNEM`, vista previa simulada del alumno y estilos en `ComunCSS.html` y `AdminPlaneacionCSS.html`). Confirmadas las 14 planeaciones activas y diagnóstico HTTP 200 en vivo en los 5 despliegues de producción.
+- **Última versión desplegada:** `@557` / código `v417 · build-557` (Resolución de apertura e interacción visual de los iconos de ayuda ❓ y asistente IA 🤖: clases `.visible`/`.abierto` en overlays, construcción semántica de `#modalAyudaNEM` y `#drawerAsistenteIA` con estilos DeepSeek, mapeo de claves de formulario y paridad total en `Clase.html`). Confirmadas las 14 planeaciones activas y diagnóstico HTTP 200 en vivo en los 5 despliegues de producción.
 - **Horario contextual:** 100% saneado, una sola fila, transparente, iconos 18px.
 - **Asistente en los 4 Pasos (FASE 2):** ✅ **100% CONCLUIDA y homogeneizada.** Los 4 pasos usan el sistema de casillas y selección directa sin ensayos largos.
   - *Paso 1 (Metadatos & Ejes):* Radio buttons limpios + botón `✓ Usar este Título` (`#planTitulo`).

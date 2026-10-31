@@ -225,14 +225,30 @@ function ocultarOverlay_(id) {
   var el = nodo_(id);
   if (!el) return;
   el.classList.add('oculto');
+  el.classList.remove('visible', 'abierto');
   el.setAttribute('aria-hidden', 'true');
+  if (id === 'drawerAsistenteIA') {
+    var velo = nodo_('iaDrawerVelo');
+    if (velo) {
+      velo.classList.remove('visible', 'abierto');
+      velo.classList.add('oculto');
+    }
+  }
 }
 
 function mostrarOverlay_(id) {
   var el = nodo_(id);
   if (!el) return null;
   el.classList.remove('oculto');
+  el.classList.add('visible', 'abierto');
   el.setAttribute('aria-hidden', 'false');
+  if (id === 'drawerAsistenteIA') {
+    var velo = nodo_('iaDrawerVelo');
+    if (velo) {
+      velo.classList.remove('oculto');
+      velo.classList.add('visible', 'abierto');
+    }
+  }
   return el;
 }
 
@@ -323,28 +339,134 @@ function filasRecursos_(r) {
   return [];
 }
 
+function normalizarClaveAyuda_(raw) {
+  var k = String(raw || '').trim();
+  if (DICCIONARIO_AYUDA_NEM[k]) return k;
+  var alias = {
+    planTitulo: 'titulo',
+    planCampoFormativo: 'campoFormativo',
+    planMetodologia: 'metodologia',
+    planNumSesiones: 'sesiones',
+    planGrado: 'grado',
+    planGrupo: 'grupo',
+    planAsignatura: 'asignatura',
+    planFechaInicio: 'fechaInicio',
+    planPeriodo: 'periodo',
+    planContenidoSintetico: 'contenidoSintetico',
+    selContenidoSinteticoNEM: 'contenidoSintetico',
+    planPDA: 'pda',
+    planProblema: 'problemaComunitario',
+    planAjustesRazonables: 'ajustesRazonables',
+    planProposito: 'proposito',
+    sesApertura: 'apertura',
+    planApertura: 'apertura',
+    sesDesarrollo: 'desarrollo',
+    planDesarrollo: 'desarrollo',
+    sesActividad: 'actividad',
+    planActividad: 'actividad',
+    sesCierre: 'cierre',
+    planCierre: 'cierre'
+  };
+  return alias[k] || k;
+}
+
 function entradaAyuda_(clave) {
-  var k = String(clave || '').trim();
+  var k = normalizarClaveAyuda_(clave);
   if (!k || !DICCIONARIO_AYUDA_NEM[k]) return null;
   return DICCIONARIO_AYUDA_NEM[k];
 }
 
+var AYUDA_POR_PASO_NEM_ = {
+  1: {
+    titulo: 'Paso 1 · Metadatos y Ejes Articuladores',
+    proposito: 'Estructura general del proyecto: asignatura, grado, grupo, temporalidad, campo formativo, metodología sociocrítica y ejes que articulan el aprendizaje.',
+    comoLlenar: 'Selecciona la clase u horario asignado, confirma la metodología orientadora de tu campo formativo y marca los ejes articuladores que guiarán el trabajo.',
+    ejemplo: 'Campo: Ética, Naturaleza y Sociedades · Metodología: ABP · Ejes: Inclusión y Pensamiento Crítico.'
+  },
+  2: {
+    titulo: 'Paso 2 · Contenidos Sintéticos y PDA',
+    proposito: 'Ancla curricular de la Fase 6 (Secundaria). Conecta el proyecto con los saberes y progresiones de aprendizaje oficiales de la SEP.',
+    comoLlenar: 'Selecciona el contenido sintético oficial y marca o adapta las casillas de los PDA correspondientes a tu grado escolar.',
+    ejemplo: 'Compara diversas fuentes y formula explicaciones fundamentadas sobre problemáticas de su localidad.'
+  },
+  3: {
+    titulo: 'Paso 3 · Diagnóstico Comunitario y DUA',
+    proposito: 'Contextualización territorial y diseño universal para garantizar la participación y permanencia de todo el estudiantado (UDEI / BAPyC).',
+    comoLlenar: 'Describe la problemática real observada en la escuela o entorno, y explicita los ajustes razonables en materiales, tiempos y formas de trabajo.',
+    ejemplo: 'Ajustes: Lectura en voz alta, apoyos visuales y tiempo adicional para redacción de evidencias.'
+  },
+  4: {
+    titulo: 'Paso 4 · Propósito Formativo y Producto Central',
+    proposito: 'Horizonte formativo y evidencia integradora tangible que los alumnos producirán y presentarán a la comunidad escolar.',
+    comoLlenar: 'Redacta con claridad qué aprenderán, para qué y cuál será el entregable o artefacto final evaluable.',
+    ejemplo: 'Gaceta informativa y presentación comunitaria de propuestas de mejora ambiental.'
+  }
+};
+
+function abrirAyudaPasoPlan_(paso) {
+  var p = Number(paso) || 1;
+  var d = AYUDA_POR_PASO_NEM_[p];
+  if (d) {
+    abrirAyudaPedagogica(d);
+  } else if (typeof AYUDA_PASOS_PLAN_NEM_ !== 'undefined' && AYUDA_PASOS_PLAN_NEM_[p]) {
+    var antiguo = AYUDA_PASOS_PLAN_NEM_[p];
+    abrirAyudaPedagogica({
+      titulo: antiguo.titulo,
+      proposito: antiguo.html,
+      comoLlenar: '',
+      ejemplo: ''
+    });
+  }
+}
+
+function abrirAsistentePasoNEM_(paso) {
+  var p = Number(paso) || 1;
+  if (esTecnologia_() && p === 1) contextoSeccionActiva = etiquetaTecnologia_();
+  else contextoSeccionActiva = CONTEXTO_POR_PASO_[p] || 'Planeación NEM';
+  pintarChipContexto_();
+  conmutarDrawerAsistente_(true);
+}
+
 function asegurarModalAyuda_() {
-  var modal = crearSiFalta_('modalAyudaNEM', 'div', document.body, true);
+  var modal = nodo_('modalAyudaNEM');
+  if (modal) return modal;
+  modal = document.createElement('div');
+  modal.id = 'modalAyudaNEM';
+  modal.className = 'oculto';
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.setAttribute('aria-labelledby', 'modalAyudaTitulo');
-  crearSiFalta_('modalAyudaTitulo', 'h2', modal, false);
-  crearSiFalta_('modalAyudaProposito', 'div', modal, false);
-  crearSiFalta_('modalAyudaComoLlenar', 'div', modal, false);
-  crearSiFalta_('modalAyudaEjemplo', 'div', modal, false);
-  if (!modal.querySelector('[data-cerrar-ayuda-nem]')) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.setAttribute('data-cerrar-ayuda-nem', '1');
-    btn.textContent = 'Entendido';
-    modal.appendChild(btn);
-  }
+
+  modal.innerHTML = 
+    '<div class="ayuda-nem-panel">' +
+      '<div class="ayuda-nem-cabecera">' +
+        '<div class="ayuda-nem-icono">💡</div>' +
+        '<div class="ayuda-nem-titular">' +
+          '<h2 id="modalAyudaTitulo">Ayuda Pedagógica NEM</h2>' +
+          '<p class="ayuda-nem-ceja">Orientación Curricular Oficial Fase 6 · Secundaria</p>' +
+        '</div>' +
+        '<button type="button" class="ayuda-nem-cerrar" data-cerrar-ayuda-nem="1" aria-label="Cerrar ayuda">×</button>' +
+      '</div>' +
+      '<div class="ayuda-nem-cuerpo">' +
+        '<div class="ayuda-nem-bloque ayuda-nem-bloque--proposito">' +
+          '<div class="ayuda-nem-etiqueta">🎯 Propósito Formativo</div>' +
+          '<p id="modalAyudaProposito"></p>' +
+        '</div>' +
+        '<div class="ayuda-nem-bloque ayuda-nem-bloque--como">' +
+          '<div class="ayuda-nem-etiqueta">📝 Cómo llenarlo en el aula</div>' +
+          '<p id="modalAyudaComoLlenar"></p>' +
+        '</div>' +
+        '<div class="ayuda-nem-bloque ayuda-nem-bloque--ejemplo">' +
+          '<div class="ayuda-nem-etiqueta">✨ Ejemplo viable</div>' +
+          '<p id="modalAyudaEjemplo"></p>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ayuda-nem-pie">' +
+        '<button type="button" class="ayuda-nem-entendido" data-cerrar-ayuda-nem="1">Entendido</button>' +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(modal);
   return modal;
 }
 
@@ -360,7 +482,7 @@ function abrirAyudaPedagogica(titulo, proposito, comoLlenar, ejemplo) {
   var p = nodo_('modalAyudaProposito');
   var c = nodo_('modalAyudaComoLlenar');
   var e = nodo_('modalAyudaEjemplo');
-  if (h) h.textContent = String(titulo || 'Ayuda');
+  if (h) h.textContent = String(titulo || 'Ayuda Pedagógica NEM');
   if (p) p.textContent = String(proposito || '');
   if (c) c.textContent = String(comoLlenar || '');
   if (e) e.textContent = String(ejemplo || '');
@@ -405,6 +527,8 @@ function sincronizarContextoDesdeFoco_(id) {
 function pintarBurbuja_(clase, texto) {
   var caja = nodo_('chatAsistenteCuerpo');
   if (!caja) return null;
+  var vacio = caja.querySelector('.ia-vacio');
+  if (vacio) vacio.remove();
   var p = document.createElement('p');
   p.className = clase;
   p.textContent = texto;
@@ -414,41 +538,67 @@ function pintarBurbuja_(clase, texto) {
 }
 
 function asegurarDrawerAsistente_() {
-  var btn = crearSiFalta_('btnAsistenteFlotanteIA', 'button', document.body, false);
-  btn.type = 'button';
-  btn.setAttribute('aria-controls', 'drawerAsistenteIA');
-  if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', 'Abrir asistente de planeación');
-  if (!btn.textContent) btn.textContent = '🤖';
-  if (!btn.getAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
-
-  var drawer = crearSiFalta_('drawerAsistenteIA', 'aside', document.body, true);
-  drawer.setAttribute('aria-label', 'Asistente de planeación');
-  crearSiFalta_('chipContextoAsistente', 'p', drawer, false);
-  var cuerpo = crearSiFalta_('chatAsistenteCuerpo', 'div', drawer, false);
-  var campo = crearSiFalta_('txtMensajeAsistente', 'textarea', drawer, false);
-  var enviar = crearSiFalta_('btnEnviarAsistenteIA', 'button', drawer, false);
-  cuerpo.setAttribute('aria-live', 'polite');
-  if (!campo.getAttribute('aria-label')) campo.setAttribute('aria-label', 'Mensaje para el asistente');
-  enviar.type = 'button';
-  if (!enviar.textContent) enviar.textContent = 'Enviar';
-  if (!drawer.querySelector('[data-sugerencia-ia]')) {
-    var i;
-    for (i = 0; i < SUGERENCIAS_ASISTENTE_.length; i++) {
-      var s = document.createElement('button');
-      s.type = 'button';
-      s.setAttribute('data-sugerencia-ia', SUGERENCIAS_ASISTENTE_[i]);
-      s.textContent = SUGERENCIAS_ASISTENTE_[i];
-      if (campo.parentNode) campo.parentNode.insertBefore(s, campo);
-      else drawer.appendChild(s);
-    }
+  var velo = nodo_('iaDrawerVelo');
+  if (!velo) {
+    velo = document.createElement('div');
+    velo.id = 'iaDrawerVelo';
+    velo.className = 'ia-drawer-velo oculto';
+    velo.setAttribute('data-cerrar-drawer-ia', '1');
+    document.body.appendChild(velo);
   }
+
+  var btn = nodo_('btnAsistenteFlotanteIA');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'btnAsistenteFlotanteIA';
+    btn.className = 'btn-asistente-flotante';
+    btn.setAttribute('aria-controls', 'drawerAsistenteIA');
+    btn.setAttribute('aria-label', 'Abrir asistente de planeación');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = '🤖';
+    document.body.appendChild(btn);
+  }
+
+  var drawer = nodo_('drawerAsistenteIA');
+  if (drawer) return drawer;
+
+  drawer = document.createElement('aside');
+  drawer.id = 'drawerAsistenteIA';
+  drawer.className = 'oculto';
+  drawer.setAttribute('aria-label', 'Asistente de planeación');
+
+  drawer.innerHTML =
+    '<div class="ia-drawer-cabecera">' +
+      '<div class="ia-avatar">🤖</div>' +
+      '<div class="ia-titular">' +
+        '<h3 class="ia-drawer-titulo">Asistente NEM · ST90</h3>' +
+      '</div>' +
+      '<span class="ia-chip-contexto" id="chipContextoAsistente">📍 Metadatos y ejes</span>' +
+      '<button type="button" class="ia-drawer-cerrar" id="btnCerrarDrawerIA" data-cerrar-drawer-ia="1" aria-label="Cerrar asistente">×</button>' +
+    '</div>' +
+    '<div class="ia-cuerpo" id="chatAsistenteCuerpo" aria-live="polite">' +
+      '<div class="ia-vacio">👋 ¡Hola! Soy tu asistente de planeación didáctica NEM.<br>Puedo sugerirte ideas, redactar propósitos o adaptar tu clase al contexto CECSE.</div>' +
+    '</div>' +
+    '<div class="ia-sugerencias">' +
+      '<button type="button" class="ia-chip" data-sugerencia-ia="💡 Dame 3 ideas para mi grado">💡 Dame 3 ideas para mi grado</button>' +
+      '<button type="button" class="ia-chip" data-sugerencia-ia="🎯 Ajustar a contexto CECSE">🎯 Ajustar a contexto CECSE</button>' +
+      '<button type="button" class="ia-chip" data-sugerencia-ia="✨ Redactar ejemplo viable">✨ Redactar ejemplo viable</button>' +
+    '</div>' +
+    '<div class="ia-composer">' +
+      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu consulta pedagógica..." aria-label="Mensaje para el asistente"></textarea>' +
+      '<button type="button" id="btnEnviarAsistenteIA" class="nem-btn-accion nem-btn-primario">Enviar</button>' +
+    '</div>';
+
+  document.body.appendChild(drawer);
   return drawer;
 }
 
 function conmutarDrawerAsistente_(abrir) {
   var drawer = asegurarDrawerAsistente_();
   var btn = nodo_('btnAsistenteFlotanteIA');
-  var mostrar = (abrir === true) || (abrir !== false && drawer.classList.contains('oculto'));
+  var estaAbierto = drawer.classList.contains('visible') || drawer.classList.contains('abierto');
+  var mostrar = (abrir === true) || (abrir !== false && !estaAbierto);
   if (mostrar) mostrarOverlay_('drawerAsistenteIA');
   else ocultarOverlay_('drawerAsistenteIA');
   if (btn) btn.setAttribute('aria-expanded', mostrar ? 'true' : 'false');
@@ -1257,6 +1407,7 @@ function clicLmsSt90_(e) {
   var ayuda = e.target && e.target.closest ? e.target.closest('.btn-ayuda-nem') : null;
   if (ayuda) {
     e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
     ultimoDisparadorAyuda_ = ayuda;
     var clave = ayuda.getAttribute('data-ayuda-campo');
     var datos = entradaAyuda_(clave);
@@ -1272,12 +1423,17 @@ function clicLmsSt90_(e) {
     cerrarAyudaPedagogica_();
     return;
   }
-  if (e.target && e.target.id === 'btnAsistenteFlotanteIA') {
+  if (e.target && (e.target.id === 'btnAsistenteFlotanteIA' || (e.target.closest && e.target.closest('#btnAsistenteFlotanteIA')))) {
     e.preventDefault();
     conmutarDrawerAsistente_();
     return;
   }
-  if (e.target && e.target.id === 'btnEnviarAsistenteIA') {
+  if (e.target && (e.target.id === 'btnCerrarDrawerIA' || (e.target.closest && e.target.closest('[data-cerrar-drawer-ia]')) || e.target.id === 'iaDrawerVelo')) {
+    e.preventDefault();
+    conmutarDrawerAsistente_(false);
+    return;
+  }
+  if (e.target && (e.target.id === 'btnEnviarAsistenteIA' || (e.target.closest && e.target.closest('#btnEnviarAsistenteIA')))) {
     e.preventDefault();
     enviarMensajeAsistente_();
     return;
@@ -1361,6 +1517,9 @@ function iniciarLmsSt90_() {
     if (id && id.indexOf('plan') === 0 && id !== 'planContenidoSintetico') aplicarAdecuacionCECSE_();
   });
   window.abrirAyudaPedagogica = abrirAyudaPedagogica;
+  window.abrirAyudaPasoPlan_ = abrirAyudaPasoPlan_;
+  window.abrirAsistentePasoNEM_ = abrirAsistentePasoNEM_;
+  window.conmutarDrawerAsistente_ = conmutarDrawerAsistente_;
   window.DICCIONARIO_AYUDA_NEM = DICCIONARIO_AYUDA_NEM;
   window.cargarBibliotecaRecursos_ = cargarBibliotecaRecursos_;
   window.abrirVistaBibliotecaDocente_ = abrirVistaBibliotecaDocente_;

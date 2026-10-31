@@ -2,6 +2,101 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Backend Suite Escolar ST90: Biblioteca de Recursos, Asistente Contextual IA y Adecuación Tecnología CECSE (build-556)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(backend): modulo BibliotecaRecursos, endpoint de chat IA contextual y directivas curriculares CECSE en build-556`
+- **Causa / Requerimiento:** Expansión del ecosistema "Suite Escolar ST90" a plataforma LMS integral para secundaria, incorporando soporte backend para el Repositorio Colectivo y catálogo SEP Oficial (Fase 6), endpoint de asistencia reactiva con DeepSeek para el drawer flotante, y adecuación curricular estricta de la asignatura de Tecnología vinculada al CECSE.
+- **Cambios Realizados:**
+  - **Estructura de Base de Datos en `00_Constantes.gs` y `03_Setup.gs`:** Se añadió `ENCABEZADOS.BibliotecaRecursos` con las columnas `[Id, Titulo, Tipo, Asignatura, Grado, Trimestre, URL_Drive, Autor, Fecha]`, y se integró auto-creación y sincronización de columnas en `_asegurarSetup_()` para la pestaña `BibliotecaRecursos`.
+  - **Módulo `Biblioteca.gs`:** Se implementaron las funciones `catalogoLibrosSEPOficiales_()` (catálogo de libros SEP oficiales Fase 6 para 1°, 2° y 3°), `subirRecursoBiblioteca(token, datos)` (con `LockService` y normalización de metadatos), `listarRecursosBiblioteca(filtros)` (con soporte de búsqueda y filtrado reactivo por asignatura, grado, trimestre y texto) y `eliminarRecursoBiblioteca(token, idRecurso)` con control de acceso por propietario o admin.
+  - **Adecuación Curricular para Tecnología (CECSE) en `PlaneacionNEM.gs`:** En `asistirDisenoProyectoNEM`, se inyectaron directivas obligatorias para la asignatura Tecnología:
+    - 1° Grado: Uso de procesadores de texto (Word) y ofimática básica.
+    - 2° Grado: Hojas de cálculo (Excel) y análisis de datos.
+    - 3° Grado: Presentaciones (PowerPoint) e IA aplicada, exigiendo mención explícita de "PowerPoint", "IA" y el "CECSE".
+    - Carga horaria: 2 horas de Teoría y 6 horas de Práctica en el CECSE (Aula de Cómputo).
+  - **Endpoint de Asistente IA en Tiempo Real (`consultarAsistenteIAPaso`):** En `PlaneacionNEM.gs`, se programó el endpoint que atiende al drawer flotante con contexto dinámico de la pantalla activa del docente y respuesta de DeepSeek en tiempo real.
+  - **Verificación de Sintaxis y Símbolos:** Validación exitosa con `node herramientas/manifiesto.js` (76 documentos evaluados, 0 documentos sin parsear).
+- **Archivos Afectados:** `00_Constantes.gs`, `03_Setup.gs`, `Biblioteca.gs`, `PlaneacionNEM.gs`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas:** Proporciona la infraestructura backend completa y segura para que el frontend de Cursor y los estilos de DeepSeek se conecten sin fricción y con plena compatibilidad de concurrencia.
+
+### 🛠️ [2026-10-30] - [Erradicación de check_sites, Serialización Primitiva de Fechas y Blindaje Cuadrícula (build-555)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(backend): erradicacion de check_sites en Apps Script, saneamiento de fechas Date a primitivos ISO y blindaje de cuadricula en build-555`
+- **Causa Raíz Diagnosticada:** Un script de prueba local (`check_sites.js`) fue inadvertidamente empaquetado y subido a Google Apps Script por `clasp push`, provocando una excepción fatal global `ReferenceError: require is not defined (línea 1, archivo "check_sites")` que tumbaba el 100% de las invocaciones a `google.script.run` y devolvía páginas de error HTML silenciosas al cliente. Además, las celdas de fecha de Google Sheets (`FechaCreacion`, `FechaInicio`) retornaban instancias de `Date` nativas que fallaban al serializarse en el sandbox de iframe de Google Sites.
+- **Cambios Realizados:**
+  - **Erradicación y Blindaje en `.claspignore`:** Se añadieron las reglas `**/*.js` y `*.js` a `.claspignore` para impedir permanentemente que scripts de Node.js o pruebas locales se suban como código servidor de Apps Script. Con `clasp push --force`, el archivo remoto corruptor `check_sites` fue completamente eliminado del runtime de Google Apps Script.
+  - **Saneamiento de Fechas y Serialización Primitiva en `PlaneacionNEM.gs`:** Se implementó `_fmtFechaIsoGas_` para formatear cualquier objeto `Date` a strings ISO/locales limpios antes de responder, y se envolvió la respuesta de `listarPlaneacionesNEM` en `JSON.parse(JSON.stringify(...))` asegurando primitivos 100% serializables sin tipos no clonables.
+  - **Resiliencia de Frontend en `AdminPlanJS_02.html` y `ClaseJS_04.html`:** Tolerancia dual en `gsRun('listarPlaneacionesNEM')` para aceptar respuestas de tipo array u objeto estructurado con `totalEnBase`, y visualización interactiva de errores con botón de reintento en caso de interrupciones de red.
+  - **Despliegue Global Unificado (@555):** Generada la versión oficial `555` (`v417 · build-555`) y desplegada en los 5 endpoints activos:
+    1. Google Sites (`AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ`)
+    2. Web App Direct / Admin (`AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ`)
+    3. Asistencia (`AKfycbwYr2eeYCG7o0fKe1pJr70ljjXsXaA4RUtoM07RdSjtrU0_DTOjOIpG19GIbYtknxWGUg`)
+    4. Réplica 4 (`AKfycbxDw5ITzPHqaX68RdZ8F2Xpywp_dZX8ORz3k00ZVrpmarmDGgCYxgjkRfYrfJKRUDJ1Ug`)
+    5. Réplica 5 (`AKfycbzkoAhW2vraK6fpgKH3AZ6mpMRctfmPHWjF4lMFYE2Ku1aptJTz68Ga2jI3g8ZcPikOHw`)
+  - **Verificación en Vivo:** Comprobado mediante `curl.exe` y diagnóstico `st90diag2026`: retorno HTTP 200 con `{ ok: true, build: "build-555", totalFilas: 14, totalAdmin: 14 }`.
+- **Archivos Afectados:** `.claspignore`, `00_Constantes.gs`, `PlaneacionNEM.gs`, `AdminPlanJS_02.html`, `ClaseJS_04.html`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas:** Resuelve definitivamente el congelamiento y la pantalla vacía de "0 planeaciones" reportada por el usuario, dejando el banco personal y el repositorio global 100% operativos.
+
+### 🛠️ [2026-10-30] - [Paridad Completa de Clase.html: Función Demo, Forzado de Filtros y Blindaje Sheets (build-553)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(clase): paridad de sembrarDemoPlaneaciones en ClaseJS, reseteo forzado de filtros y conexion robusta sheets en build-553`
+- **Cambios Realizados:**
+  - **Inclusión de `sembrarDemoPlaneaciones_()` en `ClaseJS_04.html`:** Se implementó la función completa que faltaba en el visor de clase (`Clase.html`), resolviendo el error silencioso de JavaScript que ocurría al pulsar `🌱 Cargar Proyectos Demo` en la vista incrustada.
+  - **Forzado de Reseteo en `cargarListaPlaneacionesNEM(forzar)`:** Tanto en `ClaseJS_04.html` como en `AdminPlanJS_02.html`, el parámetro `forzar === true` (invocado por el botón `🔄 Ver Todos los Proyectos`) ahora restablece explícitamente en el DOM y en las variables en memoria todos los campos de filtrado (`grado = ''`, `grupo = ''`, `asignatura = ''`, `trimestre = ''`, `docente = ''`), garantizando que se consulten y muestren los 14 proyectos didácticos guardados en Google Sheets.
+  - **Blindaje de Conexión a Google Sheets en `PlaneacionNEM.gs`:** Se añadió validación estricta tras `_obtenerLibro_()`, arrojando una excepción descriptiva si el libro no puede abrirse en lugar de retornar un array vacío silencioso que hacía creer erróneamente al frontend que la base de datos tenía 0 planeaciones.
+  - **Verificación en Vivo Multi-Endpoint:** Confirmadas las 14 planeaciones didácticas guardadas (incluyendo `PLN-2553AC8D-D` "Voces que transforman") mediante curl directo y autenticado en los 5 despliegues de producción (`@553`).
+- **Archivos Afectados:** `00_Constantes.gs`, `PlaneacionNEM.gs`, `ClaseJS_04.html`, `AdminPlanJS_02.html`, `02_Rutas.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Garantiza que tanto en la vista Admin como en la vista Clase Hablada de Google Sites, el usuario pueda ver inmediatamente sus planeaciones guardadas, limpiar cualquier filtro accidental con un clic, y ejecutar la generación de proyectos demo sin fallos.
+
+### 🛠️ [2026-10-30] - [Corrección de Filtros Fantasma y Despliegue de Proyectos en Mi Banco Personal (build-542)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): desvincular filtro docente en banco personal, boton reactivo ver todos y despliegue build-542`
+- **Cambios Realizados:**
+  - **Aislamiento de Filtro Docente:** En `PlaneacionNEM.gs:listarPlaneacionesNEM()`, se condicionó el filtrado por docente estrictamente a `banco === 'global'`. En "Mi Banco Personal" el campo docente autofiltrado o residual del navegador nunca suprime las planeaciones del usuario.
+  - **Normalización de Grupo:** En `PlaneacionNEM.gs`, se corrigió la regex de extracción de grupo a `.replace(/[^A-Z0-9]/g, "").replace(/^\d+/, "")` para evitar discrepancias con valores como "1°A" vs "A".
+  - **Limpieza y Botón Reactivo "Ver Todos":** En `AdminPlanJS_02.html` y `ClaseJS_04.html`, se implementó `limpiarFiltrosPlaneacion_()` y se añadió un botón reactivo primario `[🔄 Ver Todos los Proyectos (X)]` en el estado vacío cuando la base de datos contiene proyectos pero ningún resultado coincide con los selectores activos.
+  - **Transmisión Segura del Cliente:** En `cargarListaPlaneacionesNEM`, se evita enviar `docente` en modo personal (`docente: (bancoPlanActual === 'global') ? doc : ''`).
+  - **Despliegue Global Multi-Endpoint:** Compilado a `v417 · build-542` (versión 542) y desplegado con éxito en los 5 endpoints de producción de Google Apps Script:
+    1. Google Sites (`AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ`)
+    2. Web App Direct / Admin (`AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ`)
+    3. Asistencia (`AKfycbwYr2eeYCG7o0fKe1pJr70ljjXsXaA4RUtoM07RdSjtrU0_DTOjOIpG19GIbYtknxWGUg`)
+    4. Réplica 4 (`AKfycbxDw5ITzPHqaX68RdZ8F2Xpywp_dZX8ORz3k00ZVrpmarmDGgCYxgjkRfYrfJKRUDJ1Ug`)
+    5. Réplica 5 (`AKfycbzkoAhW2vraK6fpgKH3AZ6mpMRctfmPHWjF4lMFYE2Ku1aptJTz68Ga2jI3g8ZcPikOHw`)
+- **Archivos Afectados:** `00_Constantes.gs`, `PlaneacionNEM.gs`, `AdminPlanJS_02.html`, `ClaseJS_04.html`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Resuelve el caso donde un docente o administrador veía "0 planeaciones" en su banco personal debido a que filtros residuales (docente o grado/grupo) filtraban las 14 planeaciones existentes en base de datos.
+
+### 🛠️ [2026-10-30] - [Visualización y Consulta de Proyectos Guardados en Mi Banco Personal (build-539)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): resolucion de gsRun apply context, sincronizacion de encabezados sheets y despliegue build-539`
+- **Cambios Realizados:**
+  - Corregido el despachador `gsRun` en `ComunJS.html`: sustituido `runner[fn].apply(null, args)` por `runner[fn].apply(runner, args)`, resolviendo el fallo silencioso en el dispatcher del cliente de Google Apps Script dentro del iframe.
+  - Añadida sincronización automática de columnas y encabezados en `03_Setup.gs:_asegurarSetup_()` para `PlaneacionesNEM` y `SesionesNEM`, garantizando que columnas nuevas (`DocentePropietario`, `EsCopiaDe`) no queden como celdas sin título que corrompan el mapeo de `_leerFilas_()`.
+  - Verificada la persistencia íntegra en la base de datos de Google Sheets (ID: `1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU`), confirmando 14 planeaciones guardadas activas (incluyendo el proyecto de Español 1°A "Voces que transforman: indagación y acción comunitaria" ID `PLN-2553AC8D-D`).
+  - Limpiada la ruta de diagnóstico temporal en `02_Rutas.gs`.
+  - Compilado y desplegado a producción en los 5 endpoints de Google Apps Script con versión `@539` / `build-539`.
+- **Archivos Afectados:** `00_Constantes.gs`, `02_Rutas.gs`, `03_Setup.gs`, `ComunJS.html`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Permite a los docentes y administradores ver inmediatamente sus proyectos didácticos guardados en la cuadrícula de "Mi Banco Personal" con sus datos completos y acceder a las sesiones didácticas paso a paso.
+
+
+### 🛠️ [2026-10-30] - [Persistencia Robusta de Planeaciones Didácticas NEM y Feedback Reactivo en Siembra Demo]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): resolucion de persistencia en sheets, feedback visual y recuperacion tolerante de sesion`
+- **Cambios Realizados:**
+  - Creada función `_obtenerHojaRobusta_` en `PlaneacionNEM.gs` con normalización flexible de nombres de pestañas (`PlaneacionesNEM`, `SesionesNEM`), eliminando fallas por diferencias sutiles de mayúsculas, espacios o guiones.
+  - Añadido chequeo dinámico y expansión preventiva de filas (`maxRows`) en `PlaneacionNEM.gs` (`desglosarSesionesInicialesNEM_` y `sembrarPlaneacionesDemoNEM`) antes de operaciones `.setValues()`, evitando excepciones de límites de rango en Google Sheets.
+  - Implementado fallback tolerante de autenticación en `ClaseLogica.gs:exigirClaseRol_`: si la bandera `clase_` caduca o se desincroniza en `CacheService`, valida automáticamente contra la sesión unificada activa (`sesion_`), garantizando que un administrador o docente autenticado nunca sea bloqueado falsamente.
+  - Reubicado el toast flotante de notificación `#st90-toast` en `ComunCSS.html` al extremo superior derecho (`top: 18px; right: 20px; z-index: 999999`) con soporte para variantes semánticas `.ok`, `.exito`, `.err`, `.error` e `.info`, asegurando visibilidad total e inmediata cuando la Suite Escolar está incrustada dentro de Google Sites (evitando que el toast se pierda 2000px abajo fuera de la pantalla visible).
+  - Dotado de retroalimentación inmediata el botón `🌱 Cargar Proyectos Demo` en `AdminPlanJS_02.html`: el botón se deshabilita con texto `⏳ Sembrando proyectos demo…` y la cuadrícula muestra una tarjeta verde animada durante el proceso de guardado en Sheets. En caso de error, se despliega un diálogo modal reactivo y una tarjeta con botón de reintento.
+  - Reforzado el flujo de guardado en `AdminPlanJS_05.html:guardarPlaneacionForm`: cambio a estado de carga en el botón, validación con feedback modal y cierre reactivo hacia el gestor de sesiones.
+  - Verificada la integridad del árbol de scripts con `node herramientas/manifiesto.js` (0 errores en 75 documentos evaluados).
+  - Código desplegado a Google Apps Script con versión `@529` / build `v417 · build-526` en el endpoint de Google Sites y réplicas.
+- **Archivos Afectados:** `00_Constantes.gs`, `PlaneacionNEM.gs`, `ClaseLogica.gs`, `ComunCSS.html`, `AdminPlanJS_02.html`, `AdminPlanJS_05.html`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Corrige el problema de "no carga nada" al pulsar el botón de proyectos demo y asegura que el guardado de planeaciones persista de forma segura en Google Sheets, con retroalimentación visual inmediata dentro del iframe de Google Sites.
+
+### 🛠️ [2026-10-30] - [Fase 7: Paridad Visual de Tarjetas iDevice en Visor de Clase (Clase.html)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ui): paridad visual de tarjetas idevice en visor de clase y normalizacion st90`
+- **Cambios Realizados:**
+  - Auditada la entrega de DeepSeek en `ENTREGA_DEEPSEEK.md` (§19).
+  - Incorporadas en `ComunCSS.html` las reglas de paridad para `.idevice-card:not(.idevice-container)`: cabeceras con franja tintada sangrada por variante (`#f0f7ff`, `#ecfdf5`, `#fffbeb`), normalización de `.tipo-badge` a paleta ST90 accesible, refuerzo métrico de campos de entrada (13px, padding uniforme, anillo de foco azul) y botón Quitar estilizado con hover.
+  - Verificada la integridad del árbol de scripts con `node herramientas/manifiesto.js` (0 documentos sin parsear en 75 documentos evaluados).
+  - Ejecutado `clasp push` y desplegado en los 5 IDs de producción en Google Apps Script (@515-@519).
+- **Archivos Afectados:** `ComunCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`, `ESTADO_PROXIMA_SESION.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Asegura paridad visual exacta entre las tarjetas iDevice en el panel Docente/Admin y en el visor del aula (`Clase.html`), sin afectar las clases nativas y quedando preparado para cuando la lógica de `ClaseJS_08.html` sea migrada por Cursor.
+
 ### 🛠️ [2026-10-29] - [Planeación Didáctica: Horario Oficial por Defecto y Auto-Siembra de Proyectos Demo]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): restaurar vista inicial de horario oficial y auto-sembrar proyectos demo en banco personal`
 - **Cambios Realizados:**

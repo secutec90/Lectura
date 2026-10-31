@@ -146,8 +146,49 @@ function exigirLecturaPlaneacion_(ses, filaPlan) {
   return exigirPropietarioPlaneacion_(ses, filaPlan);
 }
 
+/**
+ * Obtiene una pestaña del libro con tolerancia a mayúsculas, espacios y caracteres especiales.
+ * Si no existe, intenta insertarla con sus encabezados de 00_Constantes.gs.
+ */
+function _obtenerHojaRobusta_(libro, nombre) {
+  if (!libro) return null;
+  let p = libro.getSheetByName(nombre);
+  if (p) return p;
+  const sheets = libro.getSheets();
+  const nomNorm = String(nombre || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s_-]+/g, "");
+  for (let s = 0; s < sheets.length; s++) {
+    const shName = sheets[s].getName().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s_-]+/g, "");
+    if (shName === nomNorm || 
+        (nomNorm === "planeacionesnem" && (shName === "planeaciones" || shName === "planeacion" || shName === "planeacionnem")) ||
+        (nomNorm === "sesionesnem" && (shName === "sesiones" || shName === "sesion" || shName === "sesionnem"))) {
+      return sheets[s];
+    }
+  }
+  try {
+    p = libro.insertSheet(nombre);
+    if (typeof ENCABEZADOS !== 'undefined' && ENCABEZADOS[nombre]) {
+      p.appendRow(ENCABEZADOS[nombre]);
+      p.getRange(1, 1, 1, ENCABEZADOS[nombre].length).setFontWeight("bold");
+    }
+    return p;
+  } catch (eIns) {
+    return libro.getSheetByName(nombre) || null;
+  }
+}
+
 function crearOActualizarPlaneacionNEM(token, datos) {
-  const ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  let ses = null;
+  try {
+    ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  } catch (eRol) {
+    const sVal = (typeof obtenerSesionValida_ === 'function') ? obtenerSesionValida_(token) : null;
+    if (sVal && (sVal.rol === "admin" || sVal.rol === "maestro" || sVal.rol === "docente")) {
+      ses = sVal;
+      if (ses.rol === "docente") ses.rol = "maestro";
+    } else {
+      throw eRol;
+    }
+  }
   if (!datos || typeof datos !== "object") throw new Error("Datos de planeación no proporcionados.");
 
   const titulo = String(datos.titulo || "").trim();
@@ -180,22 +221,28 @@ function crearOActualizarPlaneacionNEM(token, datos) {
   const idHorario = String(datos.idHorario || "").trim();
 
   const lock = LockService.getScriptLock();
+  let locked = false;
   try {
-    lock.waitLock(15000);
+    locked = lock.tryLock(10000);
   } catch (eLock) {
-    throw new Error("El servidor de planeaciones está ocupado. Intenta de nuevo.");
+    locked = false;
   }
-  let locked = true;
 
   try {
     const libro = _obtenerLibro_();
     if (!libro) {
       throw new Error("No se pudo conectar a la base de datos de Google Sheets (ID: 1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU). " + (typeof ultimoErrorAperturaLibro !== 'undefined' ? ultimoErrorAperturaLibro : ''));
     }
-    let pPlan = libro.getSheetByName("PlaneacionesNEM");
+    let pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
     if (!pPlan) {
-      _verificarYCrearPestanas_();
-      pPlan = libro.getSheetByName("PlaneacionesNEM");
+      throw new Error("No se pudo inicializar la pestaña PlaneacionesNEM en Google Sheets.");
+    }
+    if (pPlan.getLastRow() === 0) {
+      pPlan.appendRow(ENCABEZADOS.PlaneacionesNEM);
+      pPlan.getRange(1, 1, 1, ENCABEZADOS.PlaneacionesNEM.length).setFontWeight("bold");
+    }
+    if (pPlan.getMaxColumns() < ENCABEZADOS.PlaneacionesNEM.length) {
+      pPlan.insertColumnsAfter(pPlan.getMaxColumns(), ENCABEZADOS.PlaneacionesNEM.length - pPlan.getMaxColumns());
     }
 
     const filasPlan = _leerFilas_("PlaneacionesNEM");
@@ -264,8 +311,10 @@ function crearOActualizarPlaneacionNEM(token, datos) {
     }
 
     SpreadsheetApp.flush();
-    lock.releaseLock();
-    locked = false;
+    if (locked) {
+      try { lock.releaseLock(); } catch (eR) {}
+      locked = false;
+    }
 
     return {
       ok: true,
@@ -275,7 +324,9 @@ function crearOActualizarPlaneacionNEM(token, datos) {
       mensaje: previa ? "Planeación didáctica actualizada exitosamente." : "Proyecto didáctico inicializado con " + numSesiones + " sesiones de 40 min."
     };
   } finally {
-    if (locked) lock.releaseLock();
+    if (locked) {
+      try { lock.releaseLock(); } catch (eR) {}
+    }
   }
 }
 
@@ -284,8 +335,16 @@ function crearOActualizarPlaneacionNEM(token, datos) {
  */
 function desglosarSesionesInicialesNEM_(libro, idPlaneacion, numSesiones, tituloProyecto) {
   if (!libro) return;
-  const pSes = libro.getSheetByName("SesionesNEM");
+  const pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
   if (!pSes) return;
+
+  if (pSes.getLastRow() === 0) {
+    pSes.appendRow(ENCABEZADOS.SesionesNEM);
+    pSes.getRange(1, 1, 1, ENCABEZADOS.SesionesNEM.length).setFontWeight("bold");
+  }
+  if (pSes.getMaxColumns() < ENCABEZADOS.SesionesNEM.length) {
+    pSes.insertColumnsAfter(pSes.getMaxColumns(), ENCABEZADOS.SesionesNEM.length - pSes.getMaxColumns());
+  }
 
   const n = Math.max(1, Math.min(20, Math.floor(Number(numSesiones) || 3)));
   const filasNuevas = [];
@@ -320,7 +379,11 @@ function desglosarSesionesInicialesNEM_(libro, idPlaneacion, numSesiones, titulo
   }
 
   if (filasNuevas.length > 0) {
-    pSes.getRange(pSes.getLastRow() + 1, 1, filasNuevas.length, ENCABEZADOS.SesionesNEM.length).setValues(filasNuevas);
+    const startRow = pSes.getLastRow() + 1;
+    if (pSes.getMaxRows() < startRow + filasNuevas.length - 1) {
+      pSes.insertRowsAfter(pSes.getMaxRows(), (startRow + filasNuevas.length - 1) - pSes.getMaxRows() + 10);
+    }
+    pSes.getRange(startRow, 1, filasNuevas.length, ENCABEZADOS.SesionesNEM.length).setValues(filasNuevas);
     SpreadsheetApp.flush();
   }
 }
@@ -330,7 +393,18 @@ function desglosarSesionesInicialesNEM_(libro, idPlaneacion, numSesiones, titulo
  * Soporta banco personal y banco global (repositorio colegiado).
  */
 function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
-  const ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  let ses = null;
+  try {
+    ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  } catch (eRol) {
+    const sVal = (typeof obtenerSesionValida_ === 'function') ? obtenerSesionValida_(token) : null;
+    if (sVal && (sVal.rol === "admin" || sVal.rol === "maestro" || sVal.rol === "docente")) {
+      ses = sVal;
+      if (ses.rol === "docente") ses.rol = "maestro";
+    } else {
+      throw eRol;
+    }
+  }
   let opts = {};
   if (filtroGrado && typeof filtroGrado === "object") {
     opts = filtroGrado;
@@ -346,9 +420,11 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
   const filtroDocente = String(opts.docente || "").trim();
 
   const libro = _obtenerLibro_();
-  if (libro && !libro.getSheetByName("PlaneacionesNEM")) {
-    _verificarYCrearPestanas_();
+  if (!libro) {
+    throw new Error("No se pudo conectar a la base de datos de Google Sheets (ID: 1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU). " + (typeof ultimoErrorAperturaLibro !== 'undefined' ? ultimoErrorAperturaLibro : ''));
   }
+  const pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
+  const pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
   let filas = _leerFilas_("PlaneacionesNEM");
   if (!filas || filas.length === 0) {
     try {
@@ -361,6 +437,8 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
   const nomDoc = normalizarNombrePref_(ses.maestroNombre || ses.nombre || "");
 
   const filtradas = filas.filter(function (f) {
+    const id = String(f["Id"] || f["id"] || f["ID"] || "").trim();
+    if (!id) return false;
     const estadoPlan = String(f["Estado"] || f["estado"] || "BORRADOR").toUpperCase();
     const docF = normalizarNombrePref_(f["DocentePropietario"] || f["Docente"] || f["docente"] || "");
 
@@ -374,7 +452,7 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
       // Si solicita su Banco Personal:
       if (ses.rol !== "admin") {
         const esDemo = String(f["Id"] || f["id"] || "").indexOf("PLN-DEMO-") === 0;
-        const esGenerico = docF === "administrador" || docF === "docente st90" || docF === "docente" || !docF;
+        const esGenerico = docF === "administrador" || docF === "docente st90" || docF === "docente" || !docF || docF.indexOf("admin") >= 0;
         const coincideDoc = docF && nomDoc && (docF === nomDoc || docF.indexOf(nomDoc) >= 0 || nomDoc.indexOf(docF) >= 0);
         if (!coincideDoc && !esDemo && !esGenerico) {
           return false;
@@ -382,16 +460,16 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
       }
     }
 
-    if (filtroDocente && docF.indexOf(normalizarNombrePref_(filtroDocente)) === -1) return false;
+    if (banco === "global" && filtroDocente && docF.indexOf(normalizarNombrePref_(filtroDocente)) === -1) return false;
     if (filtroGrado && String(f["Grado"] || f["grado"] || "").trim() !== String(filtroGrado).trim()) return false;
     if (filtroGrupo) {
-      const gpF = String(f["Grupo"] || f["grupo"] || "").trim().toUpperCase().replace(/^\d+/, "");
-      const gpB = String(filtroGrupo || "").trim().toUpperCase().replace(/^\d+/, "");
+      const gpF = String(f["Grupo"] || f["grupo"] || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/^\d+/, "");
+      const gpB = String(filtroGrupo || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/^\d+/, "");
       if (gpB && gpF && gpF !== gpB) return false;
     }
     if (filtroAsignatura) {
-      const asigF = String(f["Asignatura"] || f["asignatura"] || "").trim().toLowerCase();
-      const asigB = String(filtroAsignatura || "").trim().toLowerCase();
+      const asigF = normalizarNombrePref_(f["Asignatura"] || f["asignatura"] || "");
+      const asigB = normalizarNombrePref_(filtroAsignatura);
       if (asigF !== asigB && asigF.indexOf(asigB) === -1 && asigB.indexOf(asigF) === -1) return false;
     }
     if (filtroTrimestre) {
@@ -435,12 +513,23 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
     const completadas = sesiones.filter(function (s) {
       return String(s["GuionEstudianteAccesible"] || s["guionestudianteaccesible"] || "").trim().length > 0;
     }).length;
-    const fc = p["FechaCreacion"] || p["fechacreacion"] || "";
-    const fa = p["FechaAprobacion"] || p["fechaaprobacion"] || "";
-    const per = p["Periodo"] || p["periodo"] || "";
-    const fi = p["FechaInicio"] || p["fechainicio"] || "";
-    const idH = p["IdHorario"] || p["idhorario"] || "";
-    const esCopia = p["EsCopiaDe"] || p["escopiade"] || "";
+    function _fmtFechaIsoGas_(v) {
+      if (!v) return "";
+      if (v instanceof Date) {
+        try {
+          return Utilities.formatDate(v, "America/Mexico_City", "yyyy-MM-dd HH:mm:ss");
+        } catch (eFmt) {
+          return v.toISOString ? v.toISOString() : String(v);
+        }
+      }
+      return String(v);
+    }
+    const fc = _fmtFechaIsoGas_(p["FechaCreacion"] || p["fechacreacion"]);
+    const fa = _fmtFechaIsoGas_(p["FechaAprobacion"] || p["fechaaprobacion"]);
+    const per = String(p["Periodo"] || p["periodo"] || "");
+    const fi = _fmtFechaIsoGas_(p["FechaInicio"] || p["fechainicio"]);
+    const idH = String(p["IdHorario"] || p["idhorario"] || "");
+    const esCopia = String(p["EsCopiaDe"] || p["escopiade"] || "");
 
     const docNorm = normalizarNombrePref_(docProp || doc);
     const esMio = (ses.rol === "admin") || (docNorm === nomDoc);
@@ -499,11 +588,12 @@ function listarPlaneacionesNEM(token, filtroGrado, filtroGrupo, opciones) {
     return new Date(b.fechaCreacion || 0) - new Date(a.fechaCreacion || 0);
   });
 
-  return {
+  return JSON.parse(JSON.stringify({
     ok: true,
     total: out.length,
+    totalEnBase: filas.length,
     planeaciones: out
-  };
+  }));
 }
 
 /**
@@ -516,12 +606,27 @@ function clonarPlaneacionAGlobal(token, idPlaneacionOriginal) {
   if (!idOriginal) throw new Error("ID de planeación a clonar no especificado.");
 
   const libro = _obtenerLibro_();
-  let pPlan = libro.getSheetByName("PlaneacionesNEM");
-  let pSes = libro.getSheetByName("SesionesNEM");
+  if (!libro) {
+    throw new Error("No se pudo conectar a la base de datos de Google Sheets. " + (typeof ultimoErrorAperturaLibro !== 'undefined' ? ultimoErrorAperturaLibro : ''));
+  }
+  let pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
+  let pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
   if (!pPlan || !pSes) {
-    _verificarYCrearPestanas_();
-    pPlan = libro.getSheetByName("PlaneacionesNEM");
-    pSes = libro.getSheetByName("SesionesNEM");
+    throw new Error("No se pudieron inicializar las pestañas PlaneacionesNEM y SesionesNEM.");
+  }
+  if (pPlan.getLastRow() === 0) {
+    pPlan.appendRow(ENCABEZADOS.PlaneacionesNEM);
+    pPlan.getRange(1, 1, 1, ENCABEZADOS.PlaneacionesNEM.length).setFontWeight("bold");
+  }
+  if (pPlan.getMaxColumns() < ENCABEZADOS.PlaneacionesNEM.length) {
+    pPlan.insertColumnsAfter(pPlan.getMaxColumns(), ENCABEZADOS.PlaneacionesNEM.length - pPlan.getMaxColumns());
+  }
+  if (pSes.getLastRow() === 0) {
+    pSes.appendRow(ENCABEZADOS.SesionesNEM);
+    pSes.getRange(1, 1, 1, ENCABEZADOS.SesionesNEM.length).setFontWeight("bold");
+  }
+  if (pSes.getMaxColumns() < ENCABEZADOS.SesionesNEM.length) {
+    pSes.insertColumnsAfter(pSes.getMaxColumns(), ENCABEZADOS.SesionesNEM.length - pSes.getMaxColumns());
   }
 
   const filasPlan = _leerFilas_("PlaneacionesNEM");
@@ -622,7 +727,7 @@ function publicarPlaneacionEnRepositorio(token, idPlaneacion) {
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
   const libro = _obtenerLibro_();
-  const pPlan = libro.getSheetByName("PlaneacionesNEM");
+  const pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
   const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan;
@@ -680,8 +785,11 @@ function eliminarPlaneacionNEM(token, idPlaneacion) {
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
   const libro = _obtenerLibro_();
-  const pPlan = libro.getSheetByName("PlaneacionesNEM");
-  const pSes = libro.getSheetByName("SesionesNEM");
+  if (!libro) {
+    throw new Error("No se pudo conectar a la base de datos de Google Sheets (ID: 1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU). " + (typeof ultimoErrorAperturaLibro !== 'undefined' ? ultimoErrorAperturaLibro : ''));
+  }
+  const pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
+  const pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
 
   const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) {
@@ -726,9 +834,7 @@ function obtenerPlaneacionCompletaNEM(token, idPlaneacion) {
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
   const libro = _obtenerLibro_();
-  if (libro && !libro.getSheetByName("PlaneacionesNEM")) {
-    _verificarYCrearPestanas_();
-  }
+  _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
 
   const pFila = _leerFilas_("PlaneacionesNEM").filter(function (f) {
     return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan;
@@ -909,7 +1015,7 @@ function guardarSesionNEM(token, payloadSesion) {
   if (!idSes || !idPlan) throw new Error("ID de sesión e ID de planeación son obligatorios.");
 
   const libro = _obtenerLibro_();
-  const pSes = libro.getSheetByName("SesionesNEM");
+  const pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
   if (!pSes) throw new Error("La hoja SesionesNEM no existe.");
 
   const filas = _leerFilas_("SesionesNEM");
@@ -1002,7 +1108,7 @@ function aprobarPlaneacionNEM(token, idPlaneacion) {
   if (!idPlan) throw new Error("ID de planeación no especificado.");
 
   const libro = _obtenerLibro_();
-  const pPlan = libro.getSheetByName("PlaneacionesNEM");
+  const pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
   const filasPlan = _leerFilas_("PlaneacionesNEM");
   const previa = filasPlan.filter(function (f) { return String(f["Id"] || f["id"] || f["ID"] || "").trim() === idPlan; })[0];
   if (!previa) throw new Error("Planeación no encontrada.");
@@ -1043,7 +1149,7 @@ function calendarizarSesionNEM(token, idSesion, idHorario, fecha) {
   if (!fe) throw new Error("Fecha escolar no especificada.");
 
   const libro = _obtenerLibro_();
-  const pSes = libro.getSheetByName("SesionesNEM");
+  const pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
   const filasSes = _leerFilas_("SesionesNEM");
   const sesion = filasSes.filter(function (s) { return String(s["Id"] || s["id"] || s["ID"] || "").trim() === idSes; })[0];
   if (!sesion) throw new Error("Sesión no encontrada.");
@@ -1139,6 +1245,22 @@ function asistirDisenoProyectoNEM(token, peticion) {
     "- Metodología base: " + metodologia + "\n" +
     "- Contenido Curricular Oficial: " + contenido + "\n" +
     "- PDA Oficial(es): " + pdas;
+
+  // Adecuación curricular obligatoria para Tecnología (CECSE - Aula de Cómputo)
+  if (asignatura.toLowerCase().indexOf("tecnolog") !== -1) {
+    let enfoqueGrado = "";
+    if (grado === "1") {
+      enfoqueGrado = "1er Grado: Enfocar el proyecto al uso de procesadores de texto (Word) y ofimática básica.";
+    } else if (grado === "2") {
+      enfoqueGrado = "2do Grado: Enfocar el proyecto al uso de hojas de cálculo (Excel) y análisis de datos.";
+    } else {
+      enfoqueGrado = "3er Grado: Enfocar el proyecto a presentaciones digitales (PowerPoint) e introducción práctica a herramientas de Inteligencia Artificial (IA). En el producto final y justificación DEBES mencionar explícitamente 'PowerPoint', 'IA' y el 'CECSE'.";
+    }
+    instruccion += "\n\nDIRECTIVA PEDAGÓGICA Y CURRICULAR OBLIGATORIA PARA TECNOLOGÍA (CECSE - AULA DE CÓMPUTO):\n" +
+      "- Esta asignatura se imparte con una distribución horaria estricta de 2 horas de Teoría en aula y 6 horas de Práctica en el CECSE (Aula de Cómputo).\n" +
+      "- Enfoque formativo por grado:\n  " + enfoqueGrado + "\n" +
+      "- El problema comunitario, el propósito formativo y el producto final deben reflejar la aplicación práctica y situada en el CECSE.";
+  }
 
   try {
     const r = UrlFetchApp.fetch(URL_BASE_DEEPSEEK, {
@@ -1557,14 +1679,41 @@ function asistirPasoPlaneacionNEM(token, paso, datos) {
  * Genera proyectos en el Banco Personal del usuario activo y en el Repositorio Global (PUBLICADA).
  */
 function sembrarPlaneacionesDemoNEM(token) {
-  const ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  let ses = null;
+  try {
+    ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  } catch (eRol) {
+    const sVal = (typeof obtenerSesionValida_ === 'function') ? obtenerSesionValida_(token) : null;
+    if (sVal && (sVal.rol === "admin" || sVal.rol === "maestro" || sVal.rol === "docente")) {
+      ses = sVal;
+      if (ses.rol === "docente") ses.rol = "maestro";
+    } else {
+      throw eRol;
+    }
+  }
+
   const libro = _obtenerLibro_();
-  let pPlan = libro.getSheetByName("PlaneacionesNEM");
-  let pSes = libro.getSheetByName("SesionesNEM");
+  if (!libro) {
+    throw new Error("No se pudo conectar a la base de datos de Google Sheets. " + (typeof ultimoErrorAperturaLibro !== 'undefined' ? ultimoErrorAperturaLibro : ''));
+  }
+  const pPlan = _obtenerHojaRobusta_(libro, "PlaneacionesNEM");
+  const pSes = _obtenerHojaRobusta_(libro, "SesionesNEM");
   if (!pPlan || !pSes) {
-    _verificarYCrearPestanas_();
-    pPlan = libro.getSheetByName("PlaneacionesNEM");
-    pSes = libro.getSheetByName("SesionesNEM");
+    throw new Error("No se pudieron inicializar las pestañas PlaneacionesNEM y SesionesNEM.");
+  }
+  if (pPlan.getLastRow() === 0) {
+    pPlan.appendRow(ENCABEZADOS.PlaneacionesNEM);
+    pPlan.getRange(1, 1, 1, ENCABEZADOS.PlaneacionesNEM.length).setFontWeight("bold");
+  }
+  if (pPlan.getMaxColumns() < ENCABEZADOS.PlaneacionesNEM.length) {
+    pPlan.insertColumnsAfter(pPlan.getMaxColumns(), ENCABEZADOS.PlaneacionesNEM.length - pPlan.getMaxColumns());
+  }
+  if (pSes.getLastRow() === 0) {
+    pSes.appendRow(ENCABEZADOS.SesionesNEM);
+    pSes.getRange(1, 1, 1, ENCABEZADOS.SesionesNEM.length).setFontWeight("bold");
+  }
+  if (pSes.getMaxColumns() < ENCABEZADOS.SesionesNEM.length) {
+    pSes.insertColumnsAfter(pSes.getMaxColumns(), ENCABEZADOS.SesionesNEM.length - pSes.getMaxColumns());
   }
 
   const docenteActivo = ses.rol === "admin" 
@@ -1665,6 +1814,9 @@ function sembrarPlaneacionesDemoNEM(token) {
     const id = nueva[0];
     const previa = filasExistentes.filter(function(f) { return String(f["Id"] || f["id"] || "").trim() === id; })[0];
     if (previa) {
+      if (pPlan.getMaxRows() < previa._fila) {
+        pPlan.insertRowsAfter(pPlan.getMaxRows(), previa._fila - pPlan.getMaxRows() + 5);
+      }
       pPlan.getRange(previa._fila, 1, 1, ENCABEZADOS.PlaneacionesNEM.length).setValues([nueva]);
     } else {
       pPlan.appendRow(nueva);
@@ -1687,4 +1839,70 @@ function sembrarPlaneacionesDemoNEM(token) {
     mensaje: "Se generaron 3 proyectos didácticos de prueba (1 en Repositorio Global y 2 en tu Banco Personal)."
   };
 }
+
+/**
+ * Consulta interactiva con el Asistente IA (DeepSeek) desde el Drawer flotante en tiempo real.
+ * Asesora al docente según la sección activa del formulario y reglas pedagógicas NEM / CECSE.
+ */
+function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
+  const ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  const clave = typeof obtenerClaveDeepSeek_ === "function" ? obtenerClaveDeepSeek_() : "";
+  if (!clave) {
+    return {
+      ok: false,
+      sinClave: true,
+      error: "No hay clave de DeepSeek configurada en el sistema. Solicita al administrador registrarla en Configuración."
+    };
+  }
+
+  const seccion = String(contextoSeccion || "Diseño General de Planeación NEM").trim();
+  const pregunta = String(preguntaDocente || "").trim();
+  if (!pregunta) {
+    return { ok: false, error: "La pregunta no puede estar vacía." };
+  }
+
+  const escuelaNom = typeof NOMBRE_ESCUELA !== "undefined" ? NOMBRE_ESCUELA : "Secundaria Técnica 90";
+  const promptSistema = "Eres el Asistente Pedagógico Inteligente de la Suite Escolar ST90 para la " + escuelaNom + " (Fase 6 de la Nueva Escuela Mexicana).\n" +
+    "Tu misión es asesorar al docente de secundaria en tiempo real según el paso o campo que está completando.\n" +
+    "Contexto activo en la pantalla del docente: " + seccion + ".\n" +
+    "Reglas pedagógicas clave:\n" +
+    "- Si la asignatura o contexto refiere a Tecnología o CECSE, recuerda la distribución curricular de 2h de Teoría en aula y 6h de Práctica en el aula de cómputo (CECSE), así como el enfoque de grado (1° Word/Ofimática, 2° Excel/Datos, 3° PowerPoint/IA).\n" +
+    "- Proporciona sugerencias prácticas, concretas, inclusivas (DUA) y listas para aplicar.\n" +
+    "- Responde de manera cálida, concisa (máximo 120 palabras) y estructurada con viñetas claras.";
+
+  try {
+    const r = UrlFetchApp.fetch(URL_BASE_DEEPSEEK, {
+      method: "post",
+      contentType: "application/json",
+      headers: { Authorization: "Bearer " + clave },
+      payload: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: promptSistema },
+          { role: "user", content: pregunta }
+        ],
+        temperature: 0.4,
+        max_tokens: 350
+      }),
+      muteHttpExceptions: true
+    });
+
+    const code = r.getResponseCode();
+    if (code !== 200) {
+      const errTxt = r.getContentText();
+      return { ok: false, error: "Error de la API de DeepSeek (" + code + "): " + errTxt.slice(0, 150) };
+    }
+
+    const json = JSON.parse(r.getContentText());
+    const respuesta = json.choices && json.choices[0] && json.choices[0].message ? json.choices[0].message.content : "";
+    return {
+      ok: true,
+      respuesta: String(respuesta).trim(),
+      contexto: seccion
+    };
+  } catch (e) {
+    return { ok: false, error: "Excepción al consultar asistente IA: " + e.message };
+  }
+}
+
 

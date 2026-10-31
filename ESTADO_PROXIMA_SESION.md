@@ -1,8 +1,7 @@
 # 📌 ESTADO DE RELEVO Y CONTINUACIÓN DE SESIÓN — ST90
-**Fecha de corte:** 2026-10-29 (Noche)  
-**Próxima sesión:** 2026-10-30 (Mañana en otra PC)  
-**Versión activa en producción:** `@514` (`v417 · build-510`)  
-**Rama Git:** `main` (100% sincronizada con `origin/main`)
+**Fecha de corte:** 2026-10-30 (Tarde)  
+**Versión activa en producción:** `@555` (`v417 · build-555`)  
+**Rama Git:** `main`
 
 ---
 
@@ -11,58 +10,55 @@
 > **DIRECTIVA OBLIGATORIA:**  
 > No le pidas al usuario que repita contexto ni que copie/pegue código manualmente en el chat.  
 > Lee este documento, `ESTADO_COORDINACION.md` y los buzones `ENTREGA_CURSOR.md` y `ENTREGA_DEEPSEEK.md`.  
-> Continúa directamente en el punto exacto de la **Fase 7**.
+> Continúa directamente en el punto exacto de la **Fase 7 y Módulo de Descarga/PDF Oficial**.
 
 ---
 
 ## 1. Dónde nos quedamos (Estado del Sistema)
 
-1. **Horario Oficial y Planeación Didáctica NEM:**
-   - Al pulsar la pestaña **Planeación**, se abre por defecto el **Horario Oficial** (calendario semanal de clases aSc con sus bloques y asignaturas clicables).
-   - En la cinta Ribbon se puede conmutar a **Mi Banco Personal** o **Repositorio Global**.
-   - Se implementó auto-siembra preventiva en `PlaneacionNEM.gs`: si la hoja `PlaneacionesNEM` está vacía, genera automáticamente los 3 proyectos didácticos demo (`PLN-DEMO-001`, `002` y `003`), por lo que el banco nunca se muestra en 0.
-   - Se resolvió el bloqueo de guardado del formulario (`novalidate` en `<form id="formPlanData">` y validación asistida de título con navegación al Paso 1).
-2. **Cinta Ribbon e Iconografía (Fase 5):**
-   - 31 iconos vectoriales coloridos ilustrados integrados en `#menuTabsPanel` y subcintas de Nivel 2.
-   - 100% de IDs y eventos `onclick` verificados e intactos.
-3. **Tarjetas iDevice en Panel Docente/Admin (Fase 6):**
-   - Clases `.idevice-card*`, `.idevice-campo-titulo` y `.idevice-campo-cuerpo` desacopladas en `ComunCSS.html`.
-   - `AdminPlanJS_06.html` (`pintarTarjetaIDevice_`) libre de `style.cssText` en línea.
-4. **Despliegues Google Apps Script:**
-   - Todos los IDs de despliegue están sincronizados a la versión **`@514`**:
-     - Despliegue incrustado en Google Sites (`https://sites.google.com/view/st90/inicio`): `AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ` @514.
-     - Despliegue Principal Web App: `AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ` @514.
-     - Despliegue Asistencia: `AKfycbwYr2eeYCG7o0fKe1pJr70ljjXsXaA4RUtoM07RdSjtrU0_DTOjOIpG19GIbYtknxWGUg` @514.
+1. **Persistencia y Visibilidad de Planeaciones NEM (100% Operativa):**
+   - La base de datos de Google Sheets (`1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU`) contiene **14 de 14 planeaciones didácticas** activas e intactas.
+   - El usuario confirmó visualmente en pantalla la carga exitosa de las 14 planeaciones (tanto borradores personales como proyectos colegiados).
+   - Se erradicó el error global crítico provocado por un script local (`check_sites`) subido a Google Apps Script que tumbaba las ejecuciones de `google.script.run` con `ReferenceError: require is not defined`.
+   - Se blindó `.claspignore` con `**/*.js` y `*.js`, y se normalizaron todas las fechas `Date` a strings ISO serializables en `PlaneacionNEM.gs`.
+2. **Despliegues Google Apps Script (Sincronizados en `@555`):**
+   - Google Sites (`https://sites.google.com/view/st90/inicio`): `AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ` @555.
+   - Acceso Directo Web App / Admin: `AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ` @555.
+   - Despliegue Asistencia: `AKfycbwYr2eeYCG7o0fKe1pJr70ljjXsXaA4RUtoM07RdSjtrU0_DTOjOIpG19GIbYtknxWGUg` @555.
+   - Réplicas secundarias: @555.
+3. **Cinta Ribbon e Iconografía (Fase 5 y 6 Concluidas):**
+   - Menú contextual Ribbon estilo aSc Horarios 2027 e iDevices desacoplados en CSS.
 
 ---
 
-## 2. Tarea Inmediata para Mañana: FASE 7
+## 2. Plan Activo: Expansión LMS Secundaria "Suite Escolar ST90"
 
-DeepSeek y Cursor identificaron el siguiente pendiente para completar el ciclo de los iDevices:
-El visor de clase (`ClaseJS_08.html`) aún construye los iDevices con `innerHTML` lleno de `style="..."` en línea y etiquetas legacy (`.tipo-badge`, etc.), en lugar de usar los nodos estructurados y clases desacopladas que ya funcionan en Admin (`.idevice-header`, `.idevice-body`, `.idevice-campo-titulo`, `.idevice-campo-cuerpo`).
+El ecosistema evoluciona incorporando 4 grandes dimensiones pedagógicas y funcionales:
+
+1. **UI/UX Pedagógica (Iconos ❓ y Asistente 🤖):**
+   - Iconos de ayuda en el 80%+ de campos con fundamento NEM, modo de llenado y ejemplos situados.
+   - Botón flotante y drawer de chat con DeepSeek sensible a la sección activa en tiempo real.
+2. **Biblioteca de Recursos y Libros SEP:**
+   - Hoja `BibliotecaRecursos` en Sheets para compartir materiales clasificados por Asignatura, Grado y Trimestre.
+   - Visor de Libros de Texto SEP Fase 6.
+3. **Adecuación Curricular para Tecnología (CECSE):**
+   - Motor de IA configurado para 1° (Word), 2° (Excel), 3° (PowerPoint + IA) y carga horaria: 2h Teoría / 6h Práctica en Aula de Cómputo.
+4. **Constructor de Clases y Facilitadores:**
+   - Modal de vista previa simulada del alumno y soporte para bloque de incrustación HTML/Iframe (Genially, H5P, Canva).
 
 ### 🎯 Partitura de Asignación por Agente:
 
-| Agente | Responsabilidad en Fase 7 | Archivo de Entrega / Trabajo |
+| Agente | Responsabilidad Inmediata | Buzón / Archivo |
 | :--- | :--- | :--- |
-| **Cursor** *(Lógica Frontend)* | Reemplazar en `ClaseJS_08.html` la función `insertariDeviceSesion_` para que instancie nodos DOM con las clases de la Fase 6 (`.idevice-campo-titulo`, `.idevice-campo-cuerpo`, `.idevice-header`, `.idevice-btn`), manteniendo idénticos los eventos de audio Web Speech y eliminación. Escribir su informe directamente en el buzón. | Archivo: `ClaseJS_08.html`<br>Buzón: `ENTREGA_CURSOR.md` |
-| **DeepSeek** *(Diseño UI/UX)* | Auditar que las tarjetas iDevice en el visor `Clase.html` se rendericen limpias, con tipografía uniforme y alineadas al sistema de diseño sin requerir `AdminPlaneacionCSS`. Escribir su propuesta o confirmación directamente en el buzón. | Archivo: `ComunCSS.html`<br>Buzón: `ENTREGA_DEEPSEEK.md` |
-| **Antigravity** *(Orquestación)* | 1. Leer los buzones `ENTREGA_CURSOR.md` y `ENTREGA_DEEPSEEK.md`.<br>2. Auditar coherencia de selectores y verificar con `node herramientas/manifiesto.js`.<br>3. Ejecutar `clasp push`, crear versión `@515` y desplegar a los IDs correspondientes.<br>4. Registrar en `CONTROL_CAMBIOS.md` y hacer `git commit / push`. | Archivos: `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md` |
+| **Cursor** *(Lógica Frontend)* | Programar `AyudaJS.html`, función global `abrirAyuda(...)`, catálogo `DICCIONARIO_AYUDA_NEM`, controlador del drawer de chat IA con contexto activo, eventos de biblioteca y `abrirVistaPreviaAlumno_()`. | `ENTREGA_CURSOR.md`<br>`AyudaJS.html`<br>`AdminPlanJS_*.html` |
+| **DeepSeek** *(Diseño UI/UX)* | Diseñar estilos CSS para `.btn-ayuda-nem`, `#modalAyudaNEM`, `#btnAsistenteFlotanteIA`, `#drawerAsistenteIA`, `#vistaBibliotecaDocente`, `#modalPreviewAlumno` y `.bloque-iframe-container`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
+| **Antigravity** *(Backend & Gobernanza)* | Crear hoja `BibliotecaRecursos` en `03_Setup.gs`, endpoints `subirRecursoBiblioteca` / `listarRecursosBiblioteca`, inyección curricular de Tecnología CECSE en prompts de `PlaneacionNEM.gs` (`asistirDisenoProyectoNEM`), endpoint de chat IA contextual, auditoría y despliegue a `@556`. | `03_Setup.gs`<br>`PlaneacionNEM.gs`<br>`09_IA.gs`<br>`CONTROL_CAMBIOS.md` |
 
 ---
 
-## 3. Checklist de Arranque en la Otra PC
+## 3. Checklist de Ejecución y Próximo Cierre (@556)
 
-1. **Sincronizar código:**
-   ```bash
-   git pull origin main
-   ```
-2. **Validar estado local:**
-   ```bash
-   node herramientas/manifiesto.js
-   ```
-   *(Debe reportar 0 documentos sin parsear).*
-3. **Para iniciar el trabajo:**
-   - El usuario solo debe decir:
-     > *"Continuamos con la Fase 7 según ESTADO_PROXIMA_SESION.md"*.
-   - Los modelos Cursor y DeepSeek deben volcar sus entregas automáticamente en `ENTREGA_CURSOR.md` y `ENTREGA_DEEPSEEK.md`.
+1. **DeepSeek** elabora su propuesta visual y CSS en [ENTREGA_DEEPSEEK.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_DEEPSEEK.md).
+2. **Cursor** elabora la lógica de interacción y controladores en [ENTREGA_CURSOR.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_CURSOR.md).
+3. **Antigravity** programa el backend (`03_Setup.gs`, `PlaneacionNEM.gs`, `09_IA.gs`), audita buzones, compila el manifiesto (`node herramientas/manifiesto.js`) y ejecuta el despliegue oficial.
+

@@ -167,14 +167,27 @@
     });
   }
 
-  /* Envuelve google.script.run con manejo uniforme */
+  /* Envuelve google.script.run con manejo uniforme y enlace seguro al runner */
   function gsRun(fn) {
     const args = Array.prototype.slice.call(arguments, 1);
     return new Promise(function (resolve, reject) {
-      google.script.run
-        .withSuccessHandler(resolve)
-        .withFailureHandler(function (err) { reject(err); })
-        [fn].apply(null, args);
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+        reject(new Error('google.script.run no está disponible.'));
+        return;
+      }
+      var runner = google.script.run
+        .withSuccessHandler(function (res) { resolve(res); })
+        .withFailureHandler(function (err) { reject(err); });
+
+      if (typeof runner[fn] !== 'function') {
+        reject(new Error('Función no encontrada en el servidor: ' + fn));
+        return;
+      }
+      try {
+        runner[fn].apply(runner, args);
+      } catch (errSync) {
+        reject(errSync);
+      }
     });
   }
 

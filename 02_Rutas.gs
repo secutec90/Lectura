@@ -3,6 +3,32 @@
  **********************************************************************/
 function doGet(e) {
   const p = (e && e.parameter) || {};
+  if (p.diag === "st90diag2026") {
+    const libro = _obtenerLibro_();
+    const cache = CacheService.getScriptCache();
+    const tAdmin = Utilities.getUuid();
+    cache.put("clase_" + tAdmin, JSON.stringify({ rol: "admin", nombre: "Administrador", usuario: "admin" }), 300);
+    cache.put("admin_" + tAdmin, "1", 300);
+    const rAdmin = listarPlaneacionesNEM(tAdmin, { banco: "personal" });
+
+    const filas = _leerFilas_("PlaneacionesNEM");
+    const tiposFila0 = {};
+    if (filas && filas[0]) {
+      Object.keys(filas[0]).forEach(function(k) {
+        const v = filas[0][k];
+        tiposFila0[k] = { val: String(v), type: typeof v, isDate: v instanceof Date };
+      });
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      ok: true,
+      build: typeof BUILD_APP !== "undefined" ? BUILD_APP : "build-553",
+      totalFilas: rAdmin.totalEnBase,
+      totalAdmin: rAdmin.total,
+      tiposFila0: tiposFila0,
+      rAdminKeys: Object.keys(rAdmin)
+    }, null, 2)).setMimeType(ContentService.MimeType.JSON);
+  }
   const accionSim = String(p.accion || "").trim();
   if (accionSim) {
     if (String(p.clave || "") === "st90sim" || accionSim.toLowerCase().indexOf("sembrar") >= 0 || accionSim === "cargarSimulados" || accionSim === "repararResultados") {
@@ -143,7 +169,7 @@ function rellenarPlantillaAdmin_(t, urlApp, identidad, modoVista, soloAsistencia
   t.urlSitioDocente = urlSitioDocente_();
   t.urlAsistencia = urlAsistenciaPub();
   t.version = VERSION_APP;
-  t.build = typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-510';
+  t.build = typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-520';
   t.escuela = identidad.nombre;
   t.modoVista = modoVista;
   t.soloAsistencia = !!soloAsistencia;

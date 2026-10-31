@@ -808,14 +808,16 @@ function _leerFilas_(nombre) {
   let p = libro.getSheetByName(nombre);
   if (!p) {
     const sheets = libro.getSheets();
-    const nomNorm = String(nombre || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const nomNorm = String(nombre || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s_-]+/g, "");
     for (let s = 0; s < sheets.length; s++) {
-      const shName = sheets[s].getName().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const shName = sheets[s].getName().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s_-]+/g, "");
       if (shName === nomNorm ||
           (nomNorm === "horarios" && (shName === "horario" || shName === "horarios")) ||
           (nomNorm === "horario" && (shName === "horario" || shName === "horarios")) ||
           (nomNorm === "grupos" && (shName === "grupo" || shName === "grupos")) ||
-          (nomNorm === "alumnos" && (shName === "alumno" || shName === "alumnos"))) {
+          (nomNorm === "alumnos" && (shName === "alumno" || shName === "alumnos")) ||
+          (nomNorm === "planeacionesnem" && (shName === "planeacionesnem" || shName === "planeaciones" || shName === "planeacion" || shName === "planeacionnem")) ||
+          (nomNorm === "sesionesnem" && (shName === "sesionesnem" || shName === "sesiones" || shName === "sesion" || shName === "sesionnem"))) {
         p = sheets[s];
         break;
       }
@@ -828,12 +830,16 @@ function _leerFilas_(nombre) {
   const out = [];
   for (let i = 1; i < valores.length; i++) {
     const fila = {};
+    let tieneDato = false;
     enc.forEach(function (h, c) {
       const col = String(h || "").trim();
-      fila[col] = valores[i][c];
-      const kSimple = col.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      if (typeof fila[kSimple] === "undefined") fila[kSimple] = valores[i][c];
+      const val = valores[i][c];
+      fila[col] = val;
+      if (val !== "" && val !== null && typeof val !== "undefined") tieneDato = true;
+      const kSimple = col.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s_-]+/g, "");
+      if (typeof fila[kSimple] === "undefined") fila[kSimple] = val;
     });
+    if (!tieneDato) continue;
     fila._fila = i + 1;
     out.push(fila);
   }

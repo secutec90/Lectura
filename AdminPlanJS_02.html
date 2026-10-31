@@ -216,12 +216,14 @@
     
 
   function cargarContextoPlaneacionNEM() {
-      gsRun('contextoInicialPlaneacionNEM', tokenClase).then(function (r) {
+      const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
+      gsRun('contextoInicialPlaneacionNEM', tk).then(function (r) {
         ctxPlanNEM = r || {};
         poblarFiltrosPlan_();
         cargarListaPlaneacionesNEM();
       }).catch(function (e) {
-        toast((e && e.message) || String(e), 'error');
+        console.warn('Fallo al obtener contexto de planeación:', e);
+        cargarListaPlaneacionesNEM();
       });
     }
 
@@ -239,11 +241,39 @@
     function alCambiarFiltroPlan() {
       const g = (document.getElementById('selPlanGrado') || {}).value || '';
       const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
+      const asig = (document.getElementById('selPlanAsignatura') || {}).value || '';
+      const trim = (document.getElementById('selPlanTrimestre') || {}).value || '';
       const lblG = document.getElementById('lblPlanGrado');
       const lblGrp = document.getElementById('lblPlanGrupo');
+      const lblAsig = document.getElementById('lblPlanAsignatura');
+      const lblTrim = document.getElementById('lblPlanTrimestre');
       if (lblG) lblG.textContent = g ? (g + '°') : 'Grado';
       if (lblGrp) lblGrp.textContent = grp ? grp : 'Grupo';
+      if (lblAsig) lblAsig.textContent = asig ? asig : 'Asignatura';
+      if (lblTrim) lblTrim.textContent = trim ? trim : 'Trimestre';
       cargarListaPlaneacionesNEM();
+    }
+
+    function limpiarFiltrosPlaneacion_() {
+      const elG = document.getElementById('selPlanGrado');
+      const elGrp = document.getElementById('selPlanGrupo');
+      const elAsig = document.getElementById('selPlanAsignatura');
+      const elTrim = document.getElementById('selPlanTrimestre');
+      const elDoc = document.getElementById('inpPlanDocente');
+      if (elG) elG.value = '';
+      if (elGrp) elGrp.value = '';
+      if (elAsig) elAsig.value = '';
+      if (elTrim) elTrim.value = '';
+      if (elDoc) elDoc.value = '';
+      const lblG = document.getElementById('lblPlanGrado');
+      const lblGrp = document.getElementById('lblPlanGrupo');
+      const lblAsig = document.getElementById('lblPlanAsignatura');
+      const lblTrim = document.getElementById('lblPlanTrimestre');
+      if (lblG) lblG.textContent = 'Grado';
+      if (lblGrp) lblGrp.textContent = 'Grupo';
+      if (lblAsig) lblAsig.textContent = 'Asignatura';
+      if (lblTrim) lblTrim.textContent = 'Trimestre';
+      cargarListaPlaneacionesNEM(true);
     }
 
     let bancoPlanActual = 'personal';
@@ -273,11 +303,33 @@
     }
 
     function cargarListaPlaneacionesNEM(forzar) {
-      const g = (document.getElementById('selPlanGrado') || {}).value || '';
-      const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
-      const asig = (document.getElementById('selPlanAsignatura') || {}).value || '';
-      const trim = (document.getElementById('selPlanTrimestre') || {}).value || '';
-      const doc = (document.getElementById('inpPlanDocente') || {}).value || '';
+      if (forzar) {
+        const elG = document.getElementById('selPlanGrado');
+        const elGrp = document.getElementById('selPlanGrupo');
+        const elAsig = document.getElementById('selPlanAsignatura');
+        const elTrim = document.getElementById('selPlanTrimestre');
+        const elDoc = document.getElementById('inpPlanDocente');
+        if (elG) elG.value = '';
+        if (elGrp) elGrp.value = '';
+        if (elAsig) elAsig.value = '';
+        if (elTrim) elTrim.value = '';
+        if (elDoc) elDoc.value = '';
+        const lblG = document.getElementById('lblPlanGrado');
+        const lblGrp = document.getElementById('lblPlanGrupo');
+        const lblAsig = document.getElementById('lblPlanAsignatura');
+        const lblTrim = document.getElementById('lblPlanTrimestre');
+        if (lblG) lblG.textContent = 'Grado';
+        if (lblGrp) lblGrp.textContent = 'Grupo';
+        if (lblAsig) lblAsig.textContent = 'Asignatura';
+        if (lblTrim) lblTrim.textContent = 'Trimestre';
+      }
+
+      const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
+      const g = forzar ? '' : ((document.getElementById('selPlanGrado') || {}).value || '');
+      const grp = forzar ? '' : ((document.getElementById('selPlanGrupo') || {}).value || '');
+      const asig = forzar ? '' : ((document.getElementById('selPlanAsignatura') || {}).value || '');
+      const trim = forzar ? '' : ((document.getElementById('selPlanTrimestre') || {}).value || '');
+      const doc = forzar ? '' : ((document.getElementById('inpPlanDocente') || {}).value || '');
 
       const grid = document.getElementById('gridPlaneaciones');
       if (grid) grid.innerHTML = '<p class="hint" style="text-align:center;">Cargando planeaciones didácticas…</p>';
@@ -288,36 +340,62 @@
         grupo: grp,
         asignatura: asig,
         trimestre: trim,
-        docente: doc
+        docente: (bancoPlanActual === 'global') ? doc : ''
       };
 
-      gsRun('listarPlaneacionesNEM', tokenClase, opciones).then(function (res) {
-        listaPlanNEM = (res && res.planeaciones) || [];
-        pintarGridPlaneaciones(listaPlanNEM);
+      gsRun('listarPlaneacionesNEM', tk, opciones).then(function (res) {
+        listaPlanNEM = Array.isArray(res) ? res : ((res && res.planeaciones) || []);
+        pintarGridPlaneaciones(listaPlanNEM, res);
       }).catch(function (e) {
-        if (grid) grid.innerHTML = '<p class="hint" style="color:var(--st90-rojo);text-align:center;">' + escaparHtml((e && e.message) || String(e)) + '</p>';
+        if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;">' +
+          '<p style="color:var(--st90-rojo);font-weight:700;margin:0 0 8px;">Error al consultar planeaciones:</p>' +
+          '<p class="hint" style="color:#991b1b;margin:0 0 12px;">' + escaparHtml((e && e.message) || String(e)) + '</p>' +
+          '<button type="button" class="nem-btn-accion" onclick="cargarListaPlaneacionesNEM(true)">🔄 Reintentar conexión</button>' +
+        '</div>';
       });
     }
 
-    function pintarGridPlaneaciones(lista) {
+    function pintarGridPlaneaciones(lista, resServidor) {
       const grid = document.getElementById('gridPlaneaciones');
       const txtConteo = document.getElementById('txtPlanConteo');
       if (!grid) return;
-      if (txtConteo) txtConteo.textContent = lista.length + (lista.length === 1 ? ' planeación' : ' planeaciones');
+      const totalBase = (resServidor && typeof resServidor.totalEnBase === 'number')
+        ? resServidor.totalEnBase
+        : (Array.isArray(resServidor) ? resServidor.length : (lista.length || 0));
+      if (txtConteo) {
+        txtConteo.textContent = (totalBase ? (lista.length + ' de ' + totalBase) : lista.length) + (lista.length === 1 ? ' planeación' : ' planeaciones');
+      }
 
       if (!lista || !lista.length) {
         const esGlobal = (bancoPlanActual === 'global');
+        const g = (document.getElementById('selPlanGrado') || {}).value || '';
+        const grp = (document.getElementById('selPlanGrupo') || {}).value || '';
+        const asig = (document.getElementById('selPlanAsignatura') || {}).value || '';
+        const trim = (document.getElementById('selPlanTrimestre') || {}).value || '';
+        const tieneFiltros = !!(g || grp || asig || trim);
+
+        let mensajePrincipal = esGlobal
+          ? 'No hay proyectos publicados en el Repositorio Global con estos filtros'
+          : 'No hay planeaciones registradas en tu Banco Personal con estos filtros';
+        let mensajeSecundario = esGlobal
+          ? 'Los proyectos aparecerán aquí cuando los docentes completen sus sesiones didácticas y las publiquen.'
+          : 'Pulsa el botón "Nueva" para crear tu primer proyecto didáctico o clona uno desde el Repositorio Global.';
+
+        if (totalBase > 0) {
+          mensajePrincipal = 'Hay ' + totalBase + ' proyectos guardados en la base de datos' + (tieneFiltros ? ', pero ninguno coincide con los filtros seleccionados.' : '.');
+          mensajeSecundario = tieneFiltros
+            ? 'Pulsa «Ver Todos los Proyectos» para limpiar los filtros y ver las ' + totalBase + ' planeaciones.'
+            : 'Pulsa «Ver Todos los Proyectos» para refrescar la vista.';
+        }
+
         grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px 16px;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">' +
-          '<p style="font-size:16px;font-weight:700;color:#334155;margin:0 0 6px;">' +
-            (esGlobal ? 'No hay proyectos publicados en el Repositorio Global con estos filtros' : 'No hay planeaciones registradas en tu Banco Personal con estos filtros') +
-          '</p>' +
-          '<p class="hint" style="margin:0 0 14px;">' +
-            (esGlobal ? 'Los proyectos aparecerán aquí cuando los docentes completen sus sesiones didácticas y las publiquen.' : 'Pulsa el botón "Nueva" para crear tu primer proyecto didáctico o clona uno desde el Repositorio Global.') +
-          '</p>' +
+          '<p style="font-size:16px;font-weight:700;color:#334155;margin:0 0 6px;">' + mensajePrincipal + '</p>' +
+          '<p class="hint" style="margin:0 0 14px;">' + mensajeSecundario + '</p>' +
           '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">' +
+          '  <button type="button" class="nem-btn-accion nem-btn-primario" onclick="limpiarFiltrosPlaneacion_()">🔄 Ver Todos los Proyectos' + (totalBase > 0 ? ' (' + totalBase + ')' : '') + '</button>' +
           (esGlobal 
-            ? '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="conmutarBancoPlaneacion_(\'personal\')">← Ir a Mi Banco Personal</button>' 
-            : '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="abrirFormNuevaPlaneacion()">+ Nueva Planeación</button>') +
+            ? '<button type="button" class="nem-btn-accion" onclick="conmutarBancoPlaneacion_(\'personal\')">← Ir a Mi Banco Personal</button>' 
+            : '<button type="button" class="nem-btn-accion" onclick="abrirFormNuevaPlaneacion()">+ Nueva Planeación</button>') +
           '  <button type="button" class="nem-btn-accion" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0;font-weight:600;" onclick="sembrarDemoPlaneaciones_()" title="Generar 3 proyectos de prueba para ver la simulación en pantalla">🌱 Cargar Proyectos Demo</button>' +
           '</div>' +
         '</div>';
@@ -416,16 +494,40 @@
     }
 
     function sembrarDemoPlaneaciones_() {
+      const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
+      const grid = document.getElementById('gridPlaneaciones');
+      if (grid) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:36px 16px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;">' +
+          '<p style="font-size:16px;font-weight:700;color:#166534;margin:0 0 6px;">🌱 Generando proyectos didácticos de prueba...</p>' +
+          '<p class="hint" style="color:#15803d;margin:0;">Guardando proyectos en Google Sheets y creando sesiones de 40 min. Por favor espera un momento…</p>' +
+          '</div>';
+      }
       toast('Generando proyectos didácticos de prueba…', 'info');
-      gsRun('sembrarPlaneacionesDemoNEM', tokenClase).then(function (res) {
+      gsRun('sembrarPlaneacionesDemoNEM', tk).then(function (res) {
         if (res && res.ok) {
           toast(res.mensaje || 'Proyectos de prueba creados exitosamente.', 'ok');
           cargarListaPlaneacionesNEM(true);
         } else {
-          toast((res && res.mensaje) || 'No se pudieron generar los proyectos demo.', 'err');
+          const msg = (res && res.mensaje) || 'No se pudieron generar los proyectos demo.';
+          toast(msg, 'err');
+          if (typeof modal === 'function') {
+            modal({ titulo: '⚠️ Aviso al generar proyectos demo', html: '<p style="color:#b91c1c;font-size:13px;line-height:1.5;">' + escaparHtml(msg) + '</p>' });
+          }
+          cargarListaPlaneacionesNEM(true);
         }
       }).catch(function (err) {
-        toast('Error al sembrar: ' + ((err && err.message) || String(err)), 'err');
+        const msg = (err && err.message) || String(err);
+        toast('Error al sembrar: ' + msg, 'err');
+        if (typeof modal === 'function') {
+          modal({ titulo: '❌ Error al generar proyectos demo', html: '<p style="color:#b91c1c;font-size:13px;line-height:1.5;">' + escaparHtml(msg) + '</p>' });
+        }
+        if (grid) {
+          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;">' +
+            '<p style="color:#b91c1c;font-weight:700;margin:0 0 8px;">Error al conectar con Google Sheets:</p>' +
+            '<p style="color:#7f1d1d;font-size:12.5px;margin:0 0 14px;">' + escaparHtml(msg) + '</p>' +
+            '<button type="button" class="nem-btn-accion" onclick="sembrarDemoPlaneaciones_()">Reintentar siembra</button>' +
+            '</div>';
+        }
       });
     }
 
@@ -444,8 +546,9 @@
         ]
       }).then(function (conf) {
         if (!conf) return;
+        const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
         toast('Clonando proyecto didáctico...', 'info');
-        gsRun('clonarPlaneacionAGlobal', tokenClase, idPlan).then(function (res) {
+        gsRun('clonarPlaneacionAGlobal', tk, idPlan).then(function (res) {
           toast(res.mensaje || 'Planeación clonada con éxito.', 'ok');
           conmutarBancoPlaneacion_('personal');
         }).catch(function (err) {
@@ -472,8 +575,9 @@
         ]
       }).then(function (conf) {
         if (!conf) return;
+        const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
         toast('Verificando sesiones y publicando...', 'info');
-        gsRun('publicarPlaneacionEnRepositorio', tokenClase, idPlan).then(function (res) {
+        gsRun('publicarPlaneacionEnRepositorio', tk, idPlan).then(function (res) {
           toast(res.mensaje || '¡Proyecto publicado exitosamente en el Repositorio Global!', 'ok');
           cargarListaPlaneacionesNEM();
         }).catch(function (err) {
@@ -496,8 +600,9 @@
         ]
       }).then(function (conf) {
         if (!conf) return;
+        const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
         toast('Eliminando planeación...', 'info');
-        gsRun('eliminarPlaneacionNEM', tokenClase, idPlan).then(function (res) {
+        gsRun('eliminarPlaneacionNEM', tk, idPlan).then(function (res) {
           toast(res.mensaje || 'Planeación eliminada.', 'ok');
           cargarListaPlaneacionesNEM();
         }).catch(function (err) {

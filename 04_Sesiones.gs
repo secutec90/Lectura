@@ -113,7 +113,7 @@ function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
       urlHoja: URL_HOJA_DEFAULT,
       requiereCambioClave: claveEsDefault(),
       version: VERSION_APP,
-      build: typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-510'
+      build: typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-520'
     };
   }
 
@@ -154,7 +154,7 @@ function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
         urlAsistencia: urlAsistenciaPub(),
         urlHoja: URL_HOJA_DEFAULT,
         version: VERSION_APP,
-        build: typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-510'
+        build: typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-520'
       };
     }
   } catch (ePref) {
@@ -188,7 +188,7 @@ function iniciarSesionUnificada(usuario, clave, vistaSolicitada) {
         urlAsistencia: urlAsistenciaPub(),
         urlHoja: URL_HOJA_DEFAULT,
         version: VERSION_APP,
-        build: typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-510'
+        build: typeof BUILD_APP !== 'undefined' ? BUILD_APP : 'build-520'
       };
     }
   } catch (eMae) {

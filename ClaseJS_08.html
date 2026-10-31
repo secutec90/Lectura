@@ -229,50 +229,78 @@
       const contenedor = document.getElementById('contenedorIDevicesDinamicos');
       if (!contenedor) return;
 
+      const catalogo = {
+        lectura: {
+          variante: 'idevice-card-audio',
+          etiqueta: 'iDevice Lectura Guiada (DUA)',
+          phTitulo: 'Título de la lectura breve...',
+          phCuerpo: 'Escribe el párrafo que los alumnos leerán y escucharán...'
+        },
+        pregunta: {
+          variante: 'idevice-card-pregunta',
+          etiqueta: 'iDevice Pregunta Formativa',
+          phTitulo: '¿Qué pregunta detonadora plantearás a los estudiantes?...',
+          phCuerpo: 'Retroalimentación formativa y criterios esperados de respuesta...'
+        },
+        reto: {
+          variante: 'idevice-card-reto',
+          etiqueta: 'iDevice Desafío Práctico',
+          phTitulo: 'Nombre del reto o producto esperado de la sesión...',
+          phCuerpo: 'Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad...'
+        }
+      };
+      const meta = catalogo[tipo];
+      if (!meta) return;
+
       const idUnico = 'idevice_' + Date.now();
       const div = document.createElement('div');
+      div.id = idUnico;
+      div.className = 'idevice-card ' + meta.variante;
+
+      const header = document.createElement('div');
+      header.className = 'idevice-header';
+      const tag = document.createElement('span');
+      tag.className = 'idevice-tag';
+      tag.textContent = meta.etiqueta;
+      const btnQuitar = document.createElement('button');
+      btnQuitar.type = 'button';
+      btnQuitar.className = 'idevice-btn';
+      btnQuitar.textContent = '🗑️ Quitar';
+      btnQuitar.setAttribute('aria-label', 'Quitar ' + meta.etiqueta);
+      btnQuitar.addEventListener('click', function () { eliminarIDeviceCard_(btnQuitar); });
+      header.appendChild(tag);
+      header.appendChild(btnQuitar);
+
+      const body = document.createElement('div');
+      body.className = 'idevice-body';
+      const titulo = document.createElement('input');
+      titulo.type = 'text';
+      titulo.className = 'idevice-campo-titulo';
+      titulo.placeholder = meta.phTitulo;
+      titulo.setAttribute('aria-label', 'Título del bloque');
+      const cuerpo = document.createElement('textarea');
+      cuerpo.className = 'idevice-campo-cuerpo';
+      cuerpo.rows = 2;
+      cuerpo.placeholder = meta.phCuerpo;
+      cuerpo.setAttribute('aria-label', 'Contenido del bloque');
+      if (tipo === 'lectura') cuerpo.id = 'txtLectura_' + idUnico;
+      body.appendChild(titulo);
+      body.appendChild(cuerpo);
 
       if (tipo === 'lectura') {
-        div.className = 'idevice-card idevice-card-audio';
-        div.id = idUnico;
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="tipo-badge" style="background:#0284c7;color:#fff;">iDevice Lectura Guiada (DUA)</span>' +
-            '<strong style="font-size:12px;color:#0369a1;">Texto narrado con audio accesible</strong>' +
-          '</div>' +
-          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
-        '</div>' +
-        '<input type="text" placeholder="Título de la lectura breve..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;">' +
-        '<textarea id="txtLectura_' + idUnico + '" rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bae6fd;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Escribe el párrafo que los alumnos leerán y escucharán..."></textarea>' +
-        '<div style="display:flex;gap:6px;margin-top:4px;">' +
-          '<button type="button" class="btn-soft-primary" onclick="probarAudioIDevice_(\'' + idUnico + '\')" style="font-size:11px;padding:3px 8px;">🔊 Escuchar con Web Speech</button>' +
-        '</div>';
-      } else if (tipo === 'pregunta') {
-        div.className = 'idevice-card idevice-card-pregunta';
-        div.id = idUnico;
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="tipo-badge" style="background:#7c3aed;color:#fff;">iDevice Pregunta Formativa</span>' +
-            '<strong style="font-size:12px;color:#6d28d9;">Reactivo detonador de reflexión</strong>' +
-          '</div>' +
-          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
-        '</div>' +
-        '<input type="text" placeholder="¿Qué pregunta detonadora plantearás a los estudiantes?..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;">' +
-        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #ddd6fe;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Retroalimentación formativa y criterios esperados de respuesta..."></textarea>';
-      } else if (tipo === 'reto') {
-        div.className = 'idevice-card idevice-card-reto';
-        div.id = idUnico;
-        div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="tipo-badge" style="background:#16a34a;color:#fff;">iDevice Desafío Práctico</span>' +
-            '<strong style="font-size:12px;color:#15803d;">Actividad comunitaria situada</strong>' +
-          '</div>' +
-          '<button type="button" onclick="eliminarIDeviceCard_(this)" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:12px;font-weight:700;">🗑️ Quitar</button>' +
-        '</div>' +
-        '<input type="text" placeholder="Nombre del reto o producto esperado de la sesión..." style="width:100%;font-size:12px;font-weight:700;margin-bottom:6px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;">' +
-        '<textarea rows="2" style="width:100%;font-size:11.5px;padding:4px 6px;border:1px solid #bbf7d0;border-radius:4px;box-sizing:border-box;resize:vertical;" placeholder="Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad..."></textarea>';
+        const bar = document.createElement('div');
+        bar.className = 'idevice-audio-bar';
+        const btnAudio = document.createElement('button');
+        btnAudio.type = 'button';
+        btnAudio.className = 'idevice-btn';
+        btnAudio.textContent = '🔊 Escuchar con Web Speech';
+        btnAudio.addEventListener('click', function () { probarAudioIDevice_(btnAudio); });
+        bar.appendChild(btnAudio);
+        body.appendChild(bar);
       }
 
+      div.appendChild(header);
+      div.appendChild(body);
       contenedor.appendChild(div);
       toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
     }

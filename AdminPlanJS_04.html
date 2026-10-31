@@ -309,7 +309,8 @@
       pda: pda
     };
 
-    gsRun('asistirDisenoProyectoNEM', tokenClase, payload).then(function (res) {
+    const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
+    gsRun('asistirDisenoProyectoNEM', tk, payload).then(function (res) {
       if (btn) { btn.disabled = false; btn.textContent = txtOriginal; }
       if (!res || !res.ok) {
         toast((res && res.error) || 'No se pudo obtener sugerencia de IA.', 'error');
@@ -408,7 +409,8 @@
       pda: planActualNEM.pda || ''
     };
 
-    gsRun('asistirDesgloseSesionesNEM', tokenClase, payload).then(function (res) {
+    const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
+    gsRun('asistirDesgloseSesionesNEM', tk, payload).then(function (res) {
       if (btn) { btn.disabled = false; btn.textContent = txtOriginal; }
       if (!res || !res.ok) {
         toast((res && res.error) || 'No se pudo generar el desglose con IA.', 'error');

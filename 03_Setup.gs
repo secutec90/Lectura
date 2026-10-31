@@ -20,6 +20,39 @@ function _asegurarSetup_() {
     return { ok: false, faltantes: faltantes };
   }
 
+  try {
+    const pPlan = libro.getSheetByName("PlaneacionesNEM");
+    if (pPlan && pPlan.getLastRow() >= 1) {
+      const maxCols = pPlan.getMaxColumns();
+      if (maxCols < ENCABEZADOS.PlaneacionesNEM.length) {
+        pPlan.insertColumnsAfter(maxCols, ENCABEZADOS.PlaneacionesNEM.length - maxCols);
+      }
+      pPlan.getRange(1, 1, 1, ENCABEZADOS.PlaneacionesNEM.length).setValues([ENCABEZADOS.PlaneacionesNEM]).setFontWeight("bold");
+    }
+    const pSes = libro.getSheetByName("SesionesNEM");
+    if (pSes && pSes.getLastRow() >= 1) {
+      const maxCols = pSes.getMaxColumns();
+      if (maxCols < ENCABEZADOS.SesionesNEM.length) {
+        pSes.insertColumnsAfter(maxCols, ENCABEZADOS.SesionesNEM.length - maxCols);
+      }
+      pSes.getRange(1, 1, 1, ENCABEZADOS.SesionesNEM.length).setValues([ENCABEZADOS.SesionesNEM]).setFontWeight("bold");
+    }
+    let pBib = libro.getSheetByName("BibliotecaRecursos");
+    if (!pBib) {
+      pBib = libro.insertSheet("BibliotecaRecursos");
+      pBib.appendRow(ENCABEZADOS.BibliotecaRecursos);
+      pBib.getRange(1, 1, 1, ENCABEZADOS.BibliotecaRecursos.length).setFontWeight("bold");
+    } else if (pBib.getLastRow() >= 1) {
+      const maxCols = pBib.getMaxColumns();
+      if (maxCols < ENCABEZADOS.BibliotecaRecursos.length) {
+        pBib.insertColumnsAfter(maxCols, ENCABEZADOS.BibliotecaRecursos.length - maxCols);
+      }
+      pBib.getRange(1, 1, 1, ENCABEZADOS.BibliotecaRecursos.length).setValues([ENCABEZADOS.BibliotecaRecursos]).setFontWeight("bold");
+    }
+  } catch (eEnc) {
+    Logger.log("Aviso al sincronizar encabezados BibliotecaRecursos/PlaneacionesNEM: " + eEnc);
+  }
+
   cache.put("setup_ok", "1", 21600);
   return { ok: true };
 }

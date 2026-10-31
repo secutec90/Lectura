@@ -90,15 +90,15 @@
   /* Toast (esquina inferior derecha para no tapar nunca el menú superior) */
   #st90-toast {
     position: fixed;
-    bottom: 20px; right: 20px;
+    top: 18px; right: 20px;
     left: auto; top: auto;
-    transform: translateY(80px);
+    transform: translateY(-80px);
     background: var(--st90-azul);
     color: #fff;
     padding: 10px 18px;
     border-radius: 8px;
     box-shadow: 0 4px 14px rgba(15,23,42,0.22);
-    z-index: 9999;
+    z-index: 999999;
     font-weight: 600;
     font-size: 13px;
     opacity: 0;
@@ -156,8 +156,8 @@
     50% { transform: translateX(85%); width: 48%; }
     100% { transform: translateX(260%); width: 32%; }
   }
-  #st90-toast.error { background: var(--st90-rojo); }
-  #st90-toast.exito { background: var(--st90-verde); }
+  #st90-toast.error, #st90-toast.err { background: var(--st90-rojo); }
+  #st90-toast.exito, #st90-toast.ok { background: var(--st90-verde); }
   #st90-toast.info { background: #0284c7; }
 
   /* Modal */
@@ -1917,5 +1917,402 @@
     cursor: pointer;
   }
   .st90-modal .acciones .ia-btn-primario:hover { background: #155e75; }
+  /* ============================================================
+     FASE 7 · MÓDULO 1 — AYUDA CONTEXTUAL (❓) Y ASISTENTE IA (🤖)
+     DeepSeek · Proposal CSS contra la partitura de ENTREGA_DEEPSEEK.md.
+     Selectores del contrato: .btn-ayuda-nem, #btnAsistenteFlotanteIA,
+     #drawerAsistenteIA, #chatAsistenteCuerpo, #chipContextoAsistente,
+     .msg-docente, .msg-ia.
+     ============================================================ */
+
+  /* --- 1.1 · Botón de ayuda en campos (22 px, neutro institucional) --- */
+  .btn-ayuda-nem {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    padding: 0;
+    margin: 0 0 0 6px;
+    border: 1px solid #dbe3ec;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #64748b;
+    font: 800 12px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 1;
+    transition: color .15s ease, background .15s ease, border-color .15s ease,
+                transform .12s ease, box-shadow .15s ease;
+  }
+  .btn-ayuda-nem:hover {
+    color: #2563eb;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    transform: translateY(-1px);
+  }
+  .btn-ayuda-nem:focus-visible {
+    color: #2563eb;
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+  }
+  .btn-ayuda-nem[aria-expanded="true"] {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+  /* Insignia opcional de pendientes */
+  .btn-ayuda-nem[data-badge]::after {
+    content: attr(data-badge);
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  /* Tooltip ligero (no nativo, para que se vea igual en todos los navegadores) */
+  .btn-ayuda-nem[data-tip]::before {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 50%;
+    z-index: 30;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-50%) translateY(3px);
+    pointer-events: none;
+    transition: opacity .14s ease, transform .14s ease;
+  }
+  .btn-ayuda-nem[data-tip]:hover::before,
+  .btn-ayuda-nem[data-tip]:focus-visible::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  /* DUA: el botón se enciende cuando su campo tiene el foco */
+  input:focus + .btn-ayuda-nem,
+  textarea:focus + .btn-ayuda-nem,
+  select:focus + .btn-ayuda-nem {
+    color: #2563eb;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  }
+
+  /* --- 1.2 · Toast por encima del botón flotante --- */
+  #st90-toast { bottom: 92px; }
+
+  /* --- 1.3 · Botón flotante del Asistente IA (52 px, halo respiratorio) --- */
+  #btnAsistenteFlotanteIA {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 99990;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(140deg, #2563eb 0%, #4f46e5 62%, #7c3aed 100%);
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.38), 0 2px 6px rgba(15, 23, 42, 0.2);
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+  #btnAsistenteFlotanteIA svg,
+  #btnAsistenteFlotanteIA img {
+    width: 26px;
+    height: 26px;
+    display: block;
+    pointer-events: none;
+  }
+  #btnAsistenteFlotanteIA::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+    animation: iaHaloRespiratorio 2.8s cubic-bezier(.4, 0, .2, 1) infinite;
+    pointer-events: none;
+  }
+  @keyframes iaHaloRespiratorio {
+    0%   { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45); }
+    70%  { box-shadow: 0 0 0 16px rgba(37, 99, 235, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+  }
+  #btnAsistenteFlotanteIA:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45), 0 3px 8px rgba(15, 23, 42, 0.22);
+  }
+  #btnAsistenteFlotanteIA:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 3px;
+  }
+  #btnAsistenteFlotanteIA[aria-expanded="true"] {
+    background: linear-gradient(140deg, #1e40af 0%, #4338ca 62%, #6d28d9 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #btnAsistenteFlotanteIA::after { animation: none; opacity: 0; }
+    #btnAsistenteFlotanteIA { transition: none; }
+  }
+
+  /* --- 1.4 · Drawer lateral (380 px) --- */
+  .ia-drawer-velo {
+    position: fixed;
+    inset: 0;
+    z-index: 99991;
+    background: rgba(15, 23, 42, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .ia-drawer-velo.visible { opacity: 1; pointer-events: auto; }
+
+  #drawerAsistenteIA {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99992;
+    width: 380px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-left: 1px solid var(--app-border);
+    box-shadow: -18px 0 48px rgba(15, 23, 42, 0.18);
+    transform: translateX(102%);
+    visibility: hidden;
+    transition: transform .22s cubic-bezier(.4, 0, .2, 1);
+  }
+  #drawerAsistenteIA.abierto,
+  #drawerAsistenteIA.visible {
+    transform: none;
+    visibility: visible;
+  }
+
+  .ia-drawer-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 55%, #0ea5e9 100%);
+    color: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ia-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .ia-drawer-titulo {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  #chipContextoAsistente {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 178px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #chipContextoAsistente:empty { display: none; }
+  .ia-drawer-cerrar {
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .ia-drawer-cerrar:hover { background: rgba(255, 255, 255, 0.26); }
+  .ia-drawer-cerrar:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+  #chatAsistenteCuerpo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 14px 8px;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+  }
+  .msg-ia,
+  .msg-docente {
+    max-width: 88%;
+    padding: 9px 12px;
+    border-radius: 14px;
+    font-size: 12.8px;
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .msg-ia {
+    align-self: flex-start;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-bottom-left-radius: 4px;
+    color: #1e293b;
+  }
+  .msg-docente {
+    align-self: flex-end;
+    background: #2563eb;
+    border: 1px solid #1d4ed8;
+    border-bottom-right-radius: 4px;
+    color: #ffffff;
+  }
+  .msg-hora {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    opacity: .65;
+  }
+  .ia-vacio {
+    margin: auto;
+    padding: 20px 10px;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #64748b;
+  }
+
+  /* Chips de sugerencias rápidas */
+  .ia-sugerencias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 14px 10px;
+    background: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ia-chip {
+    padding: 5px 10px;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .14s ease, border-color .14s ease, transform .12s ease;
+  }
+  .ia-chip:hover { background: #dbeafe; border-color: #93c5fd; transform: translateY(-1px); }
+  .ia-chip:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+  .ia-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px 14px 12px;
+    border-top: 1px solid var(--app-border);
+    background: #ffffff;
+    flex: 0 0 auto;
+  }
+  #txtMensajeAsistente {
+    flex: 1 1 auto;
+    min-height: 42px;
+    max-height: 128px;
+    resize: none;
+    padding: 10px 12px;
+    border: 1px solid var(--app-border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12.8px;
+    line-height: 1.45;
+    color: var(--app-text);
+    background: #ffffff;
+  }
+  #txtMensajeAsistente:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  #btnEnviarAsistenteIA {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .15s ease, transform .12s ease;
+  }
+  #btnEnviarAsistenteIA:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+  #btnEnviarAsistenteIA:disabled { background: #94a3b8; cursor: not-allowed; }
+  #btnEnviarAsistenteIA:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+  @media (max-width: 520px) {
+    #drawerAsistenteIA { width: 100%; border-left: 0; }
+    #btnAsistenteFlotanteIA { right: 16px; bottom: 16px; width: 50px; height: 50px; }
+    #chipContextoAsistente { max-width: 120px; }
+  }
+
+  @media print {
+    #btnAsistenteFlotanteIA,
+    #drawerAsistenteIA,
+    .ia-drawer-velo,
+    .btn-ayuda-nem { display: none !important; }
+  }
 </style>
 

@@ -49,7 +49,7 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ## 4. Estado de Fases y Despliegues Concluidos
 
-- **Última versión desplegada:** `@514` / código `v417 · build-510` (Horario oficial por defecto en Planeación y auto-siembra demo en Google Sheets).
+- **Última versión desplegada:** `@555` / código `v417 · build-555` (Erradicación completa de archivo corruptor `check_sites` en Apps Script mediante actualización estricta de `.claspignore`, saneamiento de fechas `Date` a strings ISO serializables en `PlaneacionNEM.gs`, resiliencia de cuadrícula en `AdminPlanJS_02.html` y `ClaseJS_04.html`, y verificación en vivo de las 14 planeaciones existentes en base de datos para todos los despliegues de producción).
 - **Horario contextual:** 100% saneado, una sola fila, transparente, iconos 18px.
 - **Asistente en los 4 Pasos (FASE 2):** ✅ **100% CONCLUIDA y homogeneizada.** Los 4 pasos usan el sistema de casillas y selección directa sin ensayos largos.
   - *Paso 1 (Metadatos & Ejes):* Radio buttons limpios + botón `✓ Usar este Título` (`#planTitulo`).
@@ -79,11 +79,35 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ---
 
-## 5. Tarea Activa: FASE 7 (Homogeneización de iDevices en Visor de Clase)
+## 5. Tarea Activa: PLAN DE ACREDITACIÓN Y MEJORA CONTINUA — SUITE ESCOLAR ST90 (LMS NEM)
 
-*(Ver detalles completos e instrucciones de arranque entre computadoras en [ESTADO_PROXIMA_SESION.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ESTADO_PROXIMA_SESION.md)).*
+El proyecto evoluciona hacia una plataforma LMS integral para secundaria ("Suite Escolar ST90").
+Los 3 agentes operan con partituras claras depositadas en sus buzones respectivos:
 
-- **Cursor:** En `ClaseJS_08.html`, actualizar `insertariDeviceSesion_` reemplazando los strings HTML con `style="..."` por nodos estructurados con `.idevice-campo-titulo` e `.idevice-campo-cuerpo`. Entregar en `ENTREGA_CURSOR.md`.
-- **DeepSeek:** Auditar consistencia visual de las tarjetas en `Clase.html` bajo `ComunCSS.html`. Entregar en `ENTREGA_DEEPSEEK.md`.
-- **Antigravity:** Auditar buzones, compilar manifiesto, desplegar a Apps Script y hacer commit/push en Git.
+### Partitura y Contrato Técnico Inmutable:
+- **Campos e IDs de UI Pedagógica (Iconos ❓ y Asistente 🤖):**
+  - Botón de ayuda en inputs: `.btn-ayuda-nem[data-ayuda-campo="..."]` (presente en al menos 80% de inputs).
+  - Modal pedagógico: `#modalAyudaNEM` (`#modalAyudaTitulo`, `#modalAyudaProposito`, `#modalAyudaComoLlenar`, `#modalAyudaEjemplo`).
+  - Botón flotante Asistente IA: `#btnAsistenteFlotanteIA`
+  - Drawer lateral del Asistente IA: `#drawerAsistenteIA` (`#chipContextoAsistente`, `#chatAsistenteCuerpo`, `#txtMensajeAsistente`, `#btnEnviarAsistenteIA`).
+- **Biblioteca de Recursos:**
+  - Hoja Google Sheets: `BibliotecaRecursos` (`[Id, Titulo, Tipo, Asignatura, Grado, Trimestre, URL_Drive, Autor, Fecha]`).
+  - Contenedor vista: `#vistaBibliotecaDocente`
+  - Filtros y buscador: `#buscarRecursoBiblioteca`, `#filtroAsignaturaRecurso`, `#filtroGradoRecurso`, `#filtroTrimestreRecurso`.
+  - Grid de libros SEP oficiales: `#gridLibrosOficialesSEP`
+  - Modal de subida: `#modalSubirRecurso` (`#formSubirRecursoBiblioteca`).
+- **Adecuación Tecnología CECSE:**
+  - Insignia y distribución: `#badgeCECSE` (2h Teoría / 6h Práctica CECSE).
+  - Reglas curriculares por grado: 1° Word/Ofimática, 2° Excel/Hojas de cálculo, 3° PowerPoint/IA aplicada.
+- **Constructor de Clases:**
+  - Botón y modal de simulación de alumno: `#btnPreviewAlumno`, `#modalPreviewAlumno`.
+  - Bloque incrustado: `.bloque-iframe-container` para contenido educativo externo (Genially, H5P, Canva).
+
+### Asignaciones por Agente:
+| Agente | Responsabilidad Inmediata | Buzón / Archivo |
+| :--- | :--- | :--- |
+| **DeepSeek** *(Diseño UI/UX)* | Diseñar estilos CSS para `.btn-ayuda-nem`, `#modalAyudaNEM`, `#btnAsistenteFlotanteIA`, `#drawerAsistenteIA`, `#vistaBibliotecaDocente`, `#modalPreviewAlumno` y `.bloque-iframe-container`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
+| **Cursor** *(Lógica Frontend)* | Programar `AyudaJS.html`, función global `abrirAyuda(...)`, catálogo `DICCIONARIO_AYUDA_NEM`, controlador del drawer de chat IA con contexto activo, eventos de biblioteca y `abrirVistaPreviaAlumno_()`. | `ENTREGA_CURSOR.md`<br>`AyudaJS.html`<br>`AdminPlanJS_*.html` |
+| **Antigravity** *(Backend & Gobernanza)* | Crear hoja `BibliotecaRecursos` en `03_Setup.gs`, endpoints `subirRecursoBiblioteca` / `listarRecursosBiblioteca`, inyección curricular de Tecnología CECSE en prompts de `PlaneacionNEM.gs` (`asistirDisenoProyectoNEM`), endpoint de chat IA contextual, auditoría y despliegue a `@556`. | `03_Setup.gs`<br>`PlaneacionNEM.gs`<br>`09_IA.gs`<br>`CONTROL_CAMBIOS.md` |
+
 

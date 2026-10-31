@@ -116,6 +116,8 @@
           }
 
           token = res.token || '';
+          tokenClase = token;
+          if (typeof window !== 'undefined') { window.token = token; window.tokenClase = token; }
           sesionRol = res.rol || 'admin';
           sesionPrefectoId = res.prefectoId || '';
           sesionNombre = res.nombre || '';
@@ -177,7 +179,7 @@
           aplicarVistaColsNivelesRes();
           ajustarModoEstrecho();
           const lblVer = document.getElementById('lblVersionPanel');
-          if (lblVer) lblVer.textContent = (res.version || 'v417') + ' · ' + (res.build || 'build-510');
+          if (lblVer) lblVer.textContent = (res.version || 'v417') + ' · ' + (res.build || 'build-520');
           const badgeDev = document.getElementById('badgeEntornoDev');
           if (badgeDev && String(res.version || '').indexOf('dev') >= 0) badgeDev.classList.remove('oculto');
 

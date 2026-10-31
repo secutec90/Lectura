@@ -69,7 +69,20 @@ function sesionClase_(token) {
 }
 
 function exigirClaseRol_(token, roles) {
-  const s = sesionClase_(token);
+  let s = null;
+  try {
+    s = sesionClase_(token);
+  } catch (eClase) {
+    // Fallback de tolerancia para sesiones unificadas activas en cache
+    const sSes = obtenerSesionValida_(token);
+    if (sSes && (sSes.rol === "admin" || sSes.rol === "docente" || sSes.rol === "maestro")) {
+      s = sSes;
+      if (s.rol === "docente") s.rol = "maestro";
+      if (!s.maestroNombre && s.nombre) s.maestroNombre = s.nombre;
+    } else {
+      throw eClase;
+    }
+  }
   const ok = (roles || []).indexOf(s.rol) >= 0;
   if (!ok) throw new Error("No tienes permiso para esa acción.");
   return s;

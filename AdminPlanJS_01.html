@@ -17,9 +17,19 @@
   var fechaClaseEtiquetaManual = false;
 
   function getTokenPlan_() {
-    if (typeof token !== 'undefined' && token) return token;
-    if (typeof tokenClase !== 'undefined' && tokenClase) return tokenClase;
-    return '';
+    var tk = '';
+    if (typeof token !== 'undefined' && token) tk = token;
+    else if (typeof tokenClase !== 'undefined' && tokenClase) tk = tokenClase;
+    else if (typeof window !== 'undefined' && window.token) tk = window.token;
+    else if (typeof window !== 'undefined' && window.tokenClase) tk = window.tokenClase;
+    if (tk) {
+      tokenClase = tk;
+      if (typeof window !== 'undefined') {
+        window.token = tk;
+        window.tokenClase = tk;
+      }
+    }
+    return tk;
   }
 
   function fechaLocalDesde_(d) {

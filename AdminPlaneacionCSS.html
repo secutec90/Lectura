@@ -1059,4 +1059,806 @@
     background: #eff6ff !important;
     border-color: #2563eb !important;
   }
+
+  /* ============================================================
+     FASE 7 · MÓDULOS 2, 3 y 4 — BIBLIOTECA, CECSE, PREVIEW, IFRAME,
+     LÍNEA DEL TIEMPO Y MODAL DE AYUDA PEDAGÓGICA
+     DeepSeek · Selectores del contrato: #modalAyudaNEM,
+     #vistaBibliotecaDocente, #buscarRecursoBiblioteca,
+     #gridLibrosOficialesSEP, .card-recurso, .badge-cecse,
+     #modalPreviewAlumno, .bloque-iframe-container, #timelineProyectoNEM.
+     ============================================================ */
+
+  /* ---------- 1 · Modal pedagógico NEM ---------- */
+  #modalAyudaNEM {
+    position: fixed;
+    inset: 0;
+    z-index: 99980;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .16s ease;
+  }
+  #modalAyudaNEM.visible,
+  #modalAyudaNEM.abierto { opacity: 1; pointer-events: auto; }
+
+  #modalAyudaNEM .ayuda-nem-panel {
+    width: min(660px, 96vw);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+    transform: translateY(10px) scale(.99);
+    transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+  }
+  #modalAyudaNEM.visible .ayuda-nem-panel,
+  #modalAyudaNEM.abierto .ayuda-nem-panel { transform: none; }
+
+  .ayuda-nem-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 18px;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 58%, #0ea5e9 100%);
+    color: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ayuda-nem-icono {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    font-size: 20px;
+    line-height: 1;
+  }
+  #modalAyudaTitulo {
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: 800;
+    line-height: 1.3;
+    color: #ffffff;
+  }
+  .ayuda-nem-ceja {
+    margin: 2px 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.84);
+  }
+  .ayuda-nem-cerrar {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .ayuda-nem-cerrar:hover { background: rgba(255, 255, 255, 0.26); }
+  .ayuda-nem-cerrar:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+  .ayuda-nem-cuerpo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 18px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ayuda-nem-etiqueta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 7px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #475569;
+  }
+
+  /* Bloque 1 · fondo azul muy suave */
+  .ayuda-nem-bloque--proposito {
+    padding: 12px 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+  }
+  /* Bloque 2 · instrucciones */
+  .ayuda-nem-bloque--como { padding: 0 2px; }
+  /* Bloque 3 · ejemplo contextual en cursiva destacada */
+  .ayuda-nem-bloque--ejemplo {
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  }
+
+  #modalAyudaProposito,
+  #modalAyudaComoLlenar {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #334155;
+  }
+  #modalAyudaComoLlenar ol,
+  #modalAyudaComoLlenar ul { margin: 6px 0 0; padding-left: 20px; }
+  #modalAyudaComoLlenar li { margin: 0 0 5px; }
+  #modalAyudaEjemplo {
+    margin: 0;
+    font-family: Georgia, 'Palatino Linotype', serif;
+    font-size: 13.5px;
+    font-style: italic;
+    line-height: 1.6;
+    color: #0f172a;
+  }
+
+  .ayuda-nem-pie {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 18px 15px;
+    border-top: 1px solid var(--app-border);
+    background: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ayuda-nem-entendido {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .ayuda-nem-entendido:hover { background: #1d4ed8; }
+  .ayuda-nem-entendido:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+  /* ---------- 2 · Biblioteca de recursos ---------- */
+  #vistaBibliotecaDocente { display: block; }
+
+  .biblio-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+  }
+  .biblio-buscador {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 170px;
+  }
+  .biblio-buscador .biblio-lupa {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    line-height: 1;
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  #buscarRecursoBiblioteca {
+    width: 100%;
+    height: 38px;
+    padding: 0 14px 0 34px;
+    border: 1px solid var(--app-border);
+    border-radius: 999px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12.8px;
+    color: var(--app-text);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  #buscarRecursoBiblioteca:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .biblio-filtro,
+  #filtroAsignaturaRecurso,
+  #filtroGradoRecurso,
+  #filtroTrimestreRecurso {
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--app-border);
+    border-radius: 999px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .biblio-filtro:hover,
+  #filtroAsignaturaRecurso:hover,
+  #filtroGradoRecurso:hover,
+  #filtroTrimestreRecurso:hover { border-color: #93c5fd; background: #f8fbff; }
+  .biblio-filtro:focus,
+  #filtroAsignaturaRecurso:focus,
+  #filtroGradoRecurso:focus,
+  #filtroTrimestreRecurso:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .biblio-subir {
+    height: 38px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: #2563eb;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+    transition: background .15s ease, transform .12s ease, box-shadow .15s ease;
+  }
+  .biblio-subir:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.34);
+  }
+  .biblio-subir:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+  /* Libros SEP oficiales */
+  #gridLibrosOficialesSEP {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin: 0 0 18px;
+  }
+  #gridLibrosOficialesSEP .libro-sep {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    text-align: center;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  #gridLibrosOficialesSEP .libro-sep:hover {
+    transform: translateY(-2px);
+    border-color: #bfdbfe;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  }
+  #gridLibrosOficialesSEP .libro-sep img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e2e8f0;
+  }
+  #gridLibrosOficialesSEP .libro-sep__grado {
+    align-self: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  #gridLibrosOficialesSEP .libro-sep__btn {
+    padding: 6px 8px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: #f8fbff;
+    color: #1d4ed8;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #gridLibrosOficialesSEP .libro-sep__btn:hover { background: #eff6ff; border-color: #93c5fd; }
+
+  /* Repositorio colectivo */
+  .biblio-grid,
+  .repositorio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+    gap: 14px;
+  }
+  .card-recurso {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .card-recurso:hover {
+    transform: translateY(-2px);
+    border-color: #bfdbfe;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
+  }
+  .card-recurso__tipo {
+    align-self: flex-start;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .03em;
+  }
+  .card-recurso__tipo--pdf { background: #fee2e2; color: #b91c1c; }
+  .card-recurso__tipo--presentacion { background: #ffedd5; color: #c2410c; }
+  .card-recurso__tipo--enlace { background: #dbeafe; color: #1d4ed8; }
+  .card-recurso__tipo--video { background: #ede9fe; color: #6d28d9; }
+  .card-recurso__titulo {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0f172a;
+  }
+  .card-recurso__meta {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #64748b;
+  }
+  .card-recurso__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  .biblio-vacio {
+    grid-column: 1 / -1;
+    padding: 36px 20px;
+    text-align: center;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #f8fafc;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #64748b;
+  }
+
+  /* ---------- 3 · Tecnología CECSE ---------- */
+  .badge-cecse {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border: 1px solid #bae6fd;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .panel-cecse {
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-left: 4px solid #0284c7;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    margin: 0 0 14px;
+  }
+  .cecse-horas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0 14px;
+  }
+  .cecse-horas__item {
+    flex: 1 1 150px;
+    padding: 10px 12px;
+    border: 1px solid #e0f2fe;
+    border-radius: 10px;
+    background: #f0f9ff;
+  }
+  .cecse-horas__n {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #0284c7;
+  }
+  .cecse-horas__l {
+    display: block;
+    margin-top: 2px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #0369a1;
+  }
+  .cecse-software-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .cecse-software {
+    padding: 12px;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: #ffffff;
+  }
+  .cecse-software__grado {
+    display: block;
+    margin: 0 0 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  .cecse-software__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .cecse-software__badge--excel { background: #ecfdf5; border-color: #a7f3d0; color: #047857; }
+  .cecse-software__badge--powerpoint { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+
+  /* ---------- 4 · Vista previa del alumno ---------- */
+  #modalPreviewAlumno {
+    position: fixed;
+    inset: 0;
+    z-index: 99980;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.6);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .16s ease;
+  }
+  #modalPreviewAlumno.visible,
+  #modalPreviewAlumno.abierto { opacity: 1; pointer-events: auto; }
+
+  #modalPreviewAlumno .preview-panel {
+    width: min(940px, 96vw);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 26px 64px rgba(15, 23, 42, 0.34);
+    transform: translateY(10px) scale(.99);
+    transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+  }
+  #modalPreviewAlumno.visible .preview-panel,
+  #modalPreviewAlumno.abierto .preview-panel { transform: none; }
+
+  .preview-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    flex: 0 0 auto;
+  }
+  .preview-cabecera h3 {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .preview-cerrar {
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .preview-cerrar:hover { background: rgba(255, 255, 255, 0.24); }
+  .preview-cerrar:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+  .preview-marco {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 16px;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .preview-barra {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #eef2f7;
+    border-bottom: 1px solid #dbe3ec;
+    flex: 0 0 auto;
+  }
+  .preview-punto {
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
+    border-radius: 50%;
+    background: #f87171;
+  }
+  .preview-punto:nth-child(2) { background: #fbbf24; }
+  .preview-punto:nth-child(3) { background: #34d399; }
+  .preview-url {
+    flex: 1 1 auto;
+    height: 24px;
+    margin-left: 8px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #dbe3ec;
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 11px;
+    color: #64748b;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .preview-lienzo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 22px;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--app-text);
+  }
+  .preview-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 16px 16px;
+    flex: 0 0 auto;
+  }
+
+  /* ---------- 5 · Iframe embebido con carga y fallback ---------- */
+  .bloque-iframe-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 12px 0;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #0f172a;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  }
+  .bloque-iframe-container > iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .iframe-cargando {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #0f172a;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    transition: opacity .25s ease;
+  }
+  .bloque-iframe-container.cargado .iframe-cargando { opacity: 0; pointer-events: none; }
+  .iframe-spinner {
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba(255, 255, 255, 0.18);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: iframeSpin .9s linear infinite;
+  }
+  @keyframes iframeSpin { to { transform: rotate(360deg); } }
+  .iframe-fallback {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    display: none;
+    padding: 10px 14px;
+    background: rgba(220, 38, 38, 0.92);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .bloque-iframe-container.error .iframe-fallback { display: block; }
+  .bloque-iframe-container.error .iframe-cargando { opacity: 0; pointer-events: none; }
+  .bloque-iframe-container .iframe-abrir {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.74);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity .15s ease, background .15s ease;
+  }
+  .bloque-iframe-container:hover .iframe-abrir,
+  .bloque-iframe-container:focus-within .iframe-abrir { opacity: 1; }
+  .bloque-iframe-container .iframe-abrir:hover { background: rgba(37, 99, 235, 0.92); }
+  .bloque-iframe-container .iframe-abrir:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+    opacity: 1;
+  }
+  @supports not (aspect-ratio: 1 / 1) {
+    .bloque-iframe-container { height: 0; padding-top: 56.25%; }
+  }
+
+  /* ---------- 6 · Línea del tiempo del proyecto NEM ---------- */
+  #timelineProyectoNEM {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+    overflow-x: auto;
+    padding: 8px 2px 16px;
+    margin: 0 0 8px;
+  }
+  .timeline-paso {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 118px;
+    padding: 0 4px;
+    text-align: center;
+  }
+  .timeline-paso::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: calc(-50% + 16px);
+    right: calc(50% + 16px);
+    height: 2px;
+    background: #e2e8f0;
+  }
+  .timeline-paso:first-child::before { display: none; }
+  .timeline-paso__punto {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .timeline-paso__titulo {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #64748b;
+  }
+  .timeline-paso__sub {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+
+  /* Estado: completado */
+  .timeline-paso.completado .timeline-paso__punto {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #15803d;
+  }
+  .timeline-paso.completado .timeline-paso__titulo { color: #15803d; }
+  .timeline-paso.completado::before { background: #86efac; }
+
+  /* Estado: activo (pulso) */
+  .timeline-paso.activo .timeline-paso__punto {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    animation: timelinePulso 2.2s ease-in-out infinite;
+  }
+  .timeline-paso.activo .timeline-paso__titulo { color: #1d4ed8; font-weight: 800; }
+  @keyframes timelinePulso {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45); }
+    50%      { box-shadow: 0 0 0 7px rgba(37, 99, 235, 0); }
+  }
+
+  /* Estado: pendiente */
+  .timeline-paso.pendiente .timeline-paso__punto {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+  }
+  .timeline-paso.pendiente .timeline-paso__titulo { color: #94a3b8; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-paso.activo .timeline-paso__punto { animation: none; }
+    .iframe-spinner { animation: none; }
+  }
+
+  @media (max-width: 640px) {
+    .bloque-iframe-container { aspect-ratio: 4 / 3; border-radius: 10px; }
+    .biblio-grid,
+    .repositorio-grid { grid-template-columns: 1fr; }
+    .preview-marco { margin: 10px; }
+    .preview-lienzo { padding: 14px; }
+    #timelineProyectoNEM .timeline-paso { min-width: 104px; }
+  }
 </style>

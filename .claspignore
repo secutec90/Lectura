@@ -4,6 +4,9 @@
 **/*.PNG
 **/*.xml
 **/*.gsheet
+**/*.js
+*.js
+debug_plan.json
 .rsc/**
 .antigravity/**
 .claude/**
@@ -12,9 +15,6 @@
 _acl-recovery/**
 Documentacion_NEM_AulaHablada.html
 ENLACES_UI.html
-_borrar_versiones.js
-_probar_api.js
-_recup_*.js
 _partir_admin.py
 
 constructor/**
@@ -25,3 +25,4 @@ scratch/**
 herramientas/**
 PROPUESTA_ESTILO_RIBBON.html
 _PLANTILLA_PROYECTO_NUEVO/**
+evidencia_fase7/**

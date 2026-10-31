@@ -2,8 +2,8 @@
 
 **Plataforma:** Sistema Integral de Comprensión Lectora, Planeación Didáctica NEM y Aula Hablada  
 **Fecha de corte:** Octubre 2026  
-**Última versión desplegada:** `@417`  
-**URL de producción activa:** [https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=docente](https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=docente)
+**Última versión desplegada:** `@555`  
+**URL de producción activa:** [https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin](https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin)
 
 ---
 
@@ -14,6 +14,17 @@ En las iteraciones recientes del proyecto, la plataforma evolucionó de un siste
 ---
 
 ## Hitos y Desarrollos Recientes
+
+### 27. Erradicación de Fallo Global en Apps Script y Despliegue Robusto de Planeaciones NEM (@555)
+- **Diagnóstico y Eliminación de Causa Raíz (`check_sites`):**
+  - Se identificó y resolvió el error fatal `ReferenceError: require is not defined (línea 1, archivo "check_sites")` generado por la subida involuntaria de un script local de Node a Google Apps Script que bloqueaba el 100% de las invocaciones a `google.script.run`.
+  - Se blindó `.claspignore` con `**/*.js` y `*.js`, y se depuró el proyecto remoto con `clasp push --force`.
+- **Saneamiento Primitivo de Fechas en `PlaneacionNEM.gs`:**
+  - Conversión estricta de objetos `Date` de Google Sheets a cadenas ISO/locales mediante `_fmtFechaIsoGas_` y envoltura con `JSON.parse(JSON.stringify(...))`, evitando excepciones de serialización entre iframes en Google Sites.
+- **Cuadrícula Resiliente y Confirmación de 14 Planeaciones:**
+  - `AdminPlanJS_02.html` y `ClaseJS_04.html` ahora toleran respuestas tipo array u objeto estructurado con `totalEnBase`.
+  - Verificado en producción con el usuario: visualización exitosa de las **14 de 14 planeaciones** guardadas en "Mi Banco Personal" y "Repositorio Global".
+- **Despliegue Multi-Endpoint (@555):** Sincronizados los 5 despliegues de Apps Script (`AKfycbz1-xheu...`, `AKfycbzPQ...`, `AKfycbwYr...`, etc.) en versión oficial `@555`.
 
 ### 26. Organización del Constructor en 3 Pestañas Horizontales Integradas en una Sola Fila Superior (@416–@417)
 - **Integración en la Barra Contextual Superior (`#barraFormulario` dentro de `#filaHerramientasEnc` en `AdminEncuestas.html`):**

@@ -281,7 +281,7 @@
                 <span class="ribbon-label" id="lblPlanTrimestre">Trimestre</span>
               </div>
               <div id="wrapPlanFiltroDocente" class="oculto" style="display:inline-flex;align-items:center;">
-                <input type="text" id="inpPlanDocente" placeholder="Buscar por docente..." oninput="alCambiarFiltroPlan()" style="font-size:12px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;min-width:160px;background:#fff;" title="Filtrar por autor docente en el repositorio global">
+                <input type="text" id="inpPlanDocente" name="filtroDocentePlan_noop" autocomplete="off" placeholder="Buscar por docente..." oninput="alCambiarFiltroPlan()" style="font-size:12px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;min-width:160px;background:#fff;" title="Filtrar por autor docente en el repositorio global">
               </div>
               <button type="button" class="ribbon-btn ribbon-ico-azul" onclick="cargarListaPlaneacionesNEM(true)" aria-label="Actualizar">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
@@ -376,11 +376,11 @@
                 <!-- FILA 1 (IMAGEN 1): TÍTULO, CAMPO FORMATIVO, METODOLOGÍA Y SESIONES EN UNA SOLA FILA -->
               <div class="nem-fila-una">
                 <div class="nem-campo-inline">
-                  <label for="planTitulo">Título del Proyecto o Planeación *</label>
+                  <label for="planTitulo">Título del Proyecto * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planTitulo" title="Ayuda pedagógica NEM" aria-label="Ayuda para Título del Proyecto">❓</button></label>
                   <input type="text" id="planTitulo" required placeholder="Ej. Voces y Raíces de Nuestra Tierra: Narrativas comunitarias">
                 </div>
                 <div class="nem-campo-inline">
-                  <label for="planCampoFormativo">Campo Formativo (NEM) *</label>
+                  <label for="planCampoFormativo">Campo Formativo * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planCampoFormativo" title="Ayuda pedagógica NEM" aria-label="Ayuda para Campo Formativo">❓</button></label>
                   <select id="planCampoFormativo" required>
                     <option value="Lenguajes">Lenguajes</option>
                     <option value="Saberes y Pensamiento Científico">Saberes y Pensamiento Científico</option>
@@ -389,7 +389,7 @@
                   </select>
                 </div>
                 <div class="nem-campo-inline">
-                  <label for="planMetodologia">Metodología Sociocrítica *</label>
+                  <label for="planMetodologia">Metodología * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planMetodologia" title="Ayuda pedagógica NEM" aria-label="Ayuda para Metodología">❓</button></label>
                   <select id="planMetodologia" required>
                     <option value="Aprendizaje basado en proyectos comunitarios">Proyectos Comunitarios (Lenguajes)</option>
                     <option value="Aprendizaje basado en indagación (STEAM)">Indagación / STEAM (Saberes)</option>
@@ -398,7 +398,7 @@
                   </select>
                 </div>
                 <div class="nem-campo-inline">
-                  <label for="planNumSesiones">Sesiones (40m) *</label>
+                  <label for="planNumSesiones">Sesiones (40m) * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planNumSesiones" title="Ayuda pedagógica NEM" aria-label="Ayuda para Sesiones">❓</button></label>
                   <input type="number" id="planNumSesiones" min="1" max="25" value="3" required style="text-align:center;font-weight:700;">
                 </div>
               </div>
@@ -442,6 +442,7 @@
                   <div>
                     <label for="selContenidoSinteticoNEM" style="font-size:11.5px;font-weight:700;color:#166534;margin:0 0 4px;display:flex;align-items:center;height:24px;">
                       1. Elegir Contenido Central del Programa Sintético SEP:
+                      <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planContenidoSintetico" title="Ayuda pedagógica NEM" aria-label="Ayuda para Contenido Curricular">❓</button>
                     </label>
                     <select id="selContenidoSinteticoNEM" class="nem-select-sintetico" onchange="alSeleccionarContenidoSinteticoNEM()">
                       <option value="">-- Elige un contenido curricular oficial --</option>
@@ -454,8 +455,9 @@
                   <!-- Columna Derecha: PDA Oficiales, Buscador y Checklist -->
                   <div>
                     <div style="display:flex;align-items:center;gap:6px;margin:0 0 4px;height:24px;flex-wrap:nowrap;">
-                      <label style="font-size:11.5px;font-weight:700;color:#166534;margin:0;">
+                      <label style="font-size:11.5px;font-weight:700;color:#166534;margin:0;display:flex;align-items:center;">
                         2. PDA de este grado:
+                        <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planPDA" title="Ayuda pedagógica NEM" aria-label="Ayuda para PDA">❓</button>
                       </label>
                       <button type="button" id="btnBuscarPDA" title="Buscar PDA" onclick="alternarBuscadorPDA_()" style="border:0;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;height:22px;">🔍</button>
                       <button type="button" id="btnArticulacionPDA" title="Ver progresión en otros grados" onclick="alternarArticulacionOtrosGrados_()" style="border:0;background:none;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;height:22px;">👁️</button>
@@ -533,7 +535,10 @@
                   <!-- COLUMNA 2: Problema de la Comunidad (Textarea) -->
                   <div class="nem-campo-inline">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;flex-wrap:wrap;gap:4px;">
-                      <label for="planProblema" style="margin:0;font-size:11.5px;font-weight:700;color:var(--st90-azul);">Problema de la Comunidad (Situación-Problema) *</label>
+                      <label for="planProblema" style="margin:0;font-size:11.5px;font-weight:700;color:var(--st90-azul);display:flex;align-items:center;">
+                        Problema de la Comunidad (Situación-Problema) *
+                        <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planProblema" title="Ayuda pedagógica NEM" aria-label="Ayuda para Problema de la Comunidad">❓</button>
+                      </label>
                     </div>
                     <textarea id="planProblema" rows="3" style="min-height:75px;resize:vertical !important;overflow-y:auto !important;" required placeholder="¿Qué reto de la escuela o comunidad detona este proyecto? (Selecciona a la izquierda del catálogo CTE, importa de encuestas o redacta libremente)"></textarea>
                   </div>
@@ -552,8 +557,9 @@
                     </div>
                   </div>
                   <div>
-                    <label for="planAjustesRazonables" style="font-size:11px;font-weight:700;color:#78350f;margin-bottom:3px;display:block;">
+                    <label for="planAjustesRazonables" style="font-size:11px;font-weight:700;color:#78350f;margin-bottom:3px;display:flex;align-items:center;">
                       Ajustes Razonables Curriculares y Metodológicos (DUA) *
+                      <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planAjustesRazonables" title="Ayuda pedagógica NEM" aria-label="Ayuda para Ajustes Razonables DUA">❓</button>
                     </label>
                     <textarea id="planAjustesRazonables" rows="2" style="width:100%;min-height:55px;border:1px solid #fcd34d;border-radius:6px;padding:6px;font-size:11.5px;background:#ffffff;box-sizing:border-box;resize:vertical !important;overflow-y:auto !important;" placeholder="Describe las adecuaciones de acceso, apoyos visuales/auditivos, tiempos flexibles o macrotipos..."></textarea>
                   </div>
@@ -582,7 +588,10 @@
                 </div>
 
                 <div class="nem-campo-inline" style="margin-bottom:14px;">
-                  <label for="planProposito" style="margin-bottom:4px;font-size:12px;font-weight:700;color:var(--st90-azul);">Propósito Formativo del Proyecto y Producto Central Tangible *</label>
+                  <label for="planProposito" style="margin-bottom:4px;font-size:12px;font-weight:700;color:var(--st90-azul);display:flex;align-items:center;">
+                    Propósito Formativo del Proyecto y Producto Central Tangible *
+                    <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planProposito" title="Ayuda pedagógica NEM" aria-label="Ayuda para Propósito y Producto">❓</button>
+                  </label>
                   <textarea id="planProposito" rows="4" style="min-height:90px;width:100%;resize:vertical !important;overflow-y:auto !important;" placeholder="Define qué aprenderán los estudiantes, para qué lo aprenderán y cuál será el producto integrador o evidencia central de aprendizaje..."></textarea>
                 </div>
 
@@ -592,7 +601,7 @@
                   </button>
                   <div style="display:flex;gap:10px;">
                     <button type="button" class="nem-btn-accion" onclick="cerrarFormPlaneacion()">Cancelar</button>
-                    <button type="submit" class="nem-btn-accion nem-btn-primario" id="btnGuardarPlan">💾 Guardar Planeación</button>
+                    <button type="submit" class="nem-btn-accion nem-btn-primario" id="btnGuardarPlan" onclick="guardarPlaneacionForm(event)">💾 Guardar Planeación</button>
                   </div>
                 </div>
               </div>

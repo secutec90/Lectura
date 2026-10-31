@@ -1,600 +1,1542 @@
-# ENTREGA_DEEPSEEK — FASES 5 y 6 · Ribbon aSc Horarios + Tarjetas iDevice
+# BUZÓN DE TRABAJO Y ENTREGA: DEEPSEEK (DISEÑO UI/UX & CSS)
+# SUITE ESCOLAR ST90 — PLAN DE ACREDITACIÓN Y MEJORA CONTINUA (FASE LMS NEM)
 
-| Campo | Valor |
+| Parámetro | Detalle |
 | :--- | :--- |
-| **Agente** | DeepSeek — Diseñador UI/UX & Especialista CSS |
-| **Fase** | 5 — cerrada · **6 — Desacoplamiento CSS y pulido de tarjetas iDevice (activa)** |
-| **Fecha** | 2026-10-29 · 19:41 (Fase 5) y 20:05 (Fase 6) · America/Mexico_City |
-| **Estado** | **ENTREGADO** · Fase 5 aprobada por Antigravity · Fase 6 pendiente de auditoría |
-| **Archivos tocados** | `ComunCSS.html` (Fases 5 y 6) · `Admin.html` (Fase 5) |
-| **Archivos prohibidos respetados** | `*.gs`, `AdminJS_*`, `AdminPlanJS_*`, `AdminEncJS_*`, `ComunJS`, `AdminCSS.html`, `AdminPlaneacionCSS.html`, `AdminEncuestasCSS.html`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md` |
-| **Gobernanza** | Sin `git commit`, sin `git push`, sin `clasp push/deploy` |
+| **Agente asignado** | DeepSeek (Diseñador Visual, Especialista CSS & DUA) |
+| **Rol en el proyecto** | Experiencia de usuario (UX/UI), microinteracciones, accesibilidad DUA y estilos CSS puros. |
+| **Archivos autorizados de trabajo** | `AdminPlaneacionCSS.html`, `ComunCSS.html`, `AdminCSS.html`, `ClaseCSS.html` |
+| **Archivos prohibidos** | Backend `*.gs`, fragmentos de lógica `*JS_*.html`, `Admin.html` (IDs estructurales), `git`, `clasp`. |
+| **Fecha de emisión de partitura** | 2026-10-31 |
+| **Estado actual** | 🟢 **PARTITURA ASIGNADA POR ANTIGRAVITY — ESPERANDO PROPUESTA CSS DE DEEPSEEK** |
 
 ---
 
-## 1. Resumen ejecutivo
+## 🎯 OBJETIVOS DE DISEÑO UI/UX ASIGNADOS A DEEPSEEK
 
-Se sustituyeron **31 iconos SVG monocromáticos** por ilustraciones vectoriales a color (viewBox `0 0 32 32`) con volumen, sombra y paleta propia por función escolar, y se reconstruyó la cinta como un **ribbon clásico**: degradado suave `#fbfcfe → #f1f5f9 → #e6ecf3`, botón en caja vertical (icono 30 px arriba, etiqueta 12 px abajo), hover con marco redondeado translúcido y elevación de 1 px, y divisores verticales sutiles entre agrupaciones.
-
-**Cero cambios** en IDs, clases funcionales, atributos `onclick`, scriptlets de Apps Script o backend.
+Debes diseñar y entregar el código CSS modular (y estructura visual de soporte) para los siguientes 4 módulos del **Plan de Acreditación AechitexOS**:
 
 ---
 
-## 2. Archivos y ubicaciones exactas
+### MÓDULO 1: UI/UX Pedagógica — Iconos de Ayuda (❓) y Drawer del Asistente IA (🤖)
 
-| Archivo | Naturaleza del cambio | Líneas | Diff |
+1. **Botones de Ayuda en Campos (`.btn-ayuda-nem`):**
+   - Icono `❓` accesible, circular (22px × 22px), discreto, color neutro institucional (`#64748b`), con hover suave (`#2563eb`), sin romper el flujo ni la altura de línea de los `<label>`.
+   - Soporte para badge o tooltip nativo y micro-elevación al enfocar (`:focus-visible`).
+2. **Modal Pedagógico NEM (`#modalAyudaNEM`):**
+   - Tarjeta central flotante con backdrop borroso (`backdrop-filter: blur(4px)`).
+   - Estructura limpia a 3 bloques diferenciados:
+     - Bloque 1: *¿Por qué está este campo aquí?* (Fondo azul muy suave `#eff6ff`, borde `#bfdbfe`, icono pedagógico).
+     - Bloque 2: *¿Cómo se llena?* (Instrucciones claras, lista o texto con viñetas legibles).
+     - Bloque 3: *Ejemplo contextual* (Fondo verde o gris pizarra `#f8fafc` con tipografía monoespaciada o cursiva destacada).
+   - Botón de cierre superior `✕` y botón inferior plano ST90 `Entendido`.
+3. **Botón Flotante del Asistente IA (`#btnAsistenteFlotanteIA`):**
+   - Botón fijo en la esquina inferior derecha (`bottom: 24px; right: 24px; z-index: 99990`).
+   - Círculo de 52px con degradado premium ST90, icono `🤖` centrado (26px), sombra sutil de elevación y pulso o halo respiratorio suave.
+4. **Drawer Lateral del Asistente IA (`#drawerAsistenteIA`):**
+   - Panel deslizable desde la derecha (ancho 380px, responsive 100% en pantallas móviles).
+   - Cabecera con degradado institucional ST90, avatar del asistente y chip de contexto activo (ej. `📍 Sección: Problemática Comunitaria`).
+   - Área de mensajes con scroll automático (`#chatAsistenteCuerpo`): burbujas diferenciadas para Docente (`.msg-docente`) y Asistente IA (`.msg-ia`).
+   - Input inferior fijo con botón enviar y chips de sugerencias rápidas ("💡 Dame 3 ideas", "🎯 Adaptar a mi grupo", "✨ Simplificar redacción").
+
+---
+
+### MÓDULO 2: Biblioteca de Recursos y Libros SEP Oficiales (UI/UX)
+
+1. **Layout de la Biblioteca (`#vistaBibliotecaDocente`):**
+   - Barra superior de herramientas: Buscador reactivo (`#buscarRecursoBiblioteca`) con icono de lupa integrado + Selectores en píldora para **Asignatura**, **Grado** (1°, 2°, 3°) y **Trimestre** (1, 2, 3).
+   - Botón primario ST90: `[+ Compartir Recurso / Subir Documento]`.
+2. **Sección Destacada: Libros de Texto Oficiales SEP (Fase 6):**
+   - Grid de tarjetas de libros oficiales con portada o ilustración estilizada, etiqueta de grado y botón directo `[📖 Abrir Visor SEP / PDF]`.
+3. **Repositorio Colectivo Escolar:**
+   - Tarjetas de recursos compartidos (`.card-recurso`): Badge de tipo (`📄 PDF`, `📊 Presentación`, `🔗 Enlace`, `🎬 Video`), título, metadatos (Docente, Fecha, Asignatura/Grado) y botón de descarga o vista previa.
+
+---
+
+### MÓDULO 3: Adecuación Visual de Tecnología (CECSE - Aula de Cómputo)
+
+1. **Insignia y Panel CECSE:**
+   - Estilo para la insignia de aula tecnológica: `.badge-cecse` (color cian/azul tecnológico `#0284c7`, fondo `#e0f2fe`).
+   - Indicador visual de distribución horaria: `2h Teoría (Aula) / 6h Práctica (CECSE)`.
+   - Tarjeta especial de software según grado:
+     - 1° Grado: Badge `Word / Ofimática Básica`
+     - 2° Grado: Badge `Excel / Hojas de Cálculo & Datos`
+     - 3° Grado: Badge `PowerPoint + IA Generativa & Canva`
+
+---
+
+### MÓDULO 4: Constructor de Clases y Facilitadores
+
+1. **Modal de Vista Previa del Alumno (`#modalPreviewAlumno`):**
+   - Marco que simula la pantalla del estudiante en el "Aula Hablada" (`Clase.html`), con barra superior tipo navegador o tableta para dar certidumbre al docente de cómo interactuará el alumno con los bloques (Texto, Quiz, Video, iDevices).
+2. **Bloque Incrustado HTML / Iframe (`.bloque-iframe-container`):**
+   - Contenedor responsive con ratio 16:9, borde redondeado, barra de carga y fallback elegante si el iframe tarda en cargar (para Genially, H5P, Canva).
+3. **Widget Visual: Línea del Tiempo del Proyecto NEM (`#timelineProyectoNEM`):**
+   - Cinta horizontal de pasos (Fase 1 Diagnóstico ➔ Fase 2 Contextualización ➔ Fase 3 Formulación ➔ Fase 4 Evaluación formativa) con estados visuales: `.completado` (verde ST90), `.activo` (azul con pulso) y `.pendiente` (gris).
+
+---
+
+## 📋 REGLAS DE ENTREGA PARA DEEPSEEK
+
+1. Escribe tu propuesta CSS completa, selectores y ejemplos de estructura HTML directamente en este archivo (`ENTREGA_DEEPSEEK.md`) debajo de esta partitura.
+2. Respeta estrictamente los IDs y nombres de clases definidos en este contrato.
+3. Todo CSS debe ser Vanilla CSS moderno, sin Tailwind ni frameworks externos.
+4. No toques archivos `.gs` ni ejecutes comandos `git` o `clasp`.
+5. Una vez guardado tu código aquí, notifica a Antigravity para que proceda a la auditoría técnica e integración.
+
+---
+
+# ✅ PROPUESTA CSS — DEEPSEEK (FASE LMS ST90)
+
+> **Estado:** entregada el 2026-10-31 para auditoría de Antigravity.
+> **El CSS ya está escrito en los archivos**; este buzón contiene el código exacto para revisión.
+> **Sin** cambios en `.gs`, en lógica JS, en IDs del DOM ni en `Admin.html`.
+
+## 0. Correspondencia partitura → entrega
+
+| Módulo de la partitura | Selectores | Archivo | Sección |
 | :--- | :--- | :--- | :--- |
-| `ComunCSS.html` | Bloque CSS nuevo **FASE 5**, puramente aditivo | 713–886 (174 líneas) | **−0 / +175** |
-| `Admin.html` | SVG interior de 31 botones + 5 divisores + envoltura `.ribbon-icono` | 74–283 | **−137 / +36** (solo compresión de SVG) |
+| Módulo 1 · Ayuda ❓ y Asistente 🤖 | `.btn-ayuda-nem`, `#modalAyudaNEM`, `#btnAsistenteFlotanteIA`, `#drawerAsistenteIA`, `#chatAsistenteCuerpo`, `#chipContextoAsistente`, `.msg-docente`, `.msg-ia` | `ComunCSS.html` (1.1–1.4) + `AdminPlaneacionCSS.html` (§1) | §1 y §2 |
+| Módulo 2 · Biblioteca y Libros SEP | `#vistaBibliotecaDocente`, `#buscarRecursoBiblioteca`, `#gridLibrosOficialesSEP`, `.card-recurso` | `AdminPlaneacionCSS.html` | §2 |
+| Módulo 3 · Tecnología CECSE | `.badge-cecse` (+ `.panel-cecse`, `.cecse-*`) | `AdminPlaneacionCSS.html` | §2 |
+| Módulo 4 · Constructor y facilitadores | `#modalPreviewAlumno`, `.bloque-iframe-container`, `#timelineProyectoNEM` | `AdminPlaneacionCSS.html` | §2 |
 
-El bloque CSS se insertó **antes** del marcador `DESIGN SYSTEM MODULAR "LEGO"` (línea 889), de modo que sus reglas ganan por orden de aparición sin borrar nada existente.
+**Criterio de reparto:** el Módulo 1 es transversal (el botón ❓ puede aparecer en cualquier vista y el asistente flota sobre todo el panel), por eso vive en `ComunCSS.html`. Los Módulos 2, 3 y 4 son exclusivos del panel administrativo y se cargan solo ahí, así que van en `AdminPlaneacionCSS.html` para no meter CSS muerto en `Clase.html`.
 
----
+## 1. Módulo 1 · CSS en `ComunCSS.html` (líneas 1920–2315)
 
-## 3. CSS entregado (`ComunCSS.html`, líneas 713–886)
+Cubre: botón ❓ de 22 px neutro con hover azul, insignia opcional, tooltip propio, pulso del campo enfocado (DUA), FAB de 52 px con halo respiratorio, y drawer de 380 px con avatar, chip de contexto, burbujas `.msg-docente` / `.msg-ia`, chips de sugerencia y compositor.
 
 ```css
   /* ============================================================
-     FASE 5 · ESTILO aSc HORARIOS 2027 — RIBBON E ICONOS ILUSTRADOS
-     DeepSeek · Solo apariencia: IDs, clases funcionales y onclick intactos.
-     Alcance acotado al contrato del DOM: #menuTabsPanel (Nivel 1) y
-     #menuUsuTabs / #menuAsiTabs / #menuLecTabs / #menuPlanTabs /
-     #menuEncTabs (Nivel 2). Ninguna otra barra del sistema se altera.
+     FASE 7 · MÓDULO 1 — AYUDA CONTEXTUAL (❓) Y ASISTENTE IA (🤖)
+     DeepSeek · Proposal CSS contra la partitura de ENTREGA_DEEPSEEK.md.
+     Selectores del contrato: .btn-ayuda-nem, #btnAsistenteFlotanteIA,
+     #drawerAsistenteIA, #chatAsistenteCuerpo, #chipContextoAsistente,
+     .msg-docente, .msg-ia.
      ============================================================ */
-  :root {
-    --ribbon-deg-top: #fbfcfe;
-    --ribbon-deg-mid: #f1f5f9;
-    --ribbon-deg-bot: #e6ecf3;
-    --ribbon-borde-suave: #dbe3ec;
-    --ribbon-sep: #cfd9e4;
-    --ribbon-foco: rgba(37, 99, 235, 0.35);
-  }
 
-  /* Fondo de cinta con degradado suave tipo Office / aSc Horarios */
-  .ribbon-main-nav {
-    background: linear-gradient(180deg, var(--ribbon-deg-top) 0%, var(--ribbon-deg-mid) 62%, var(--ribbon-deg-bot) 100%) !important;
-    border-bottom: 1px solid var(--ribbon-borde-suave) !important;
-    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03) !important;
-  }
-
-  /* Divisor vertical sutil entre agrupaciones de herramientas */
-  .ribbon-main-nav .separador-ribbon {
-    display: inline-block;
-    flex: 0 0 1px;
-    width: 1px;
-    height: 30px;
-    align-self: center;
-    margin: 0 4px !important;
-    padding: 0 !important;
-    border: 0;
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(207,217,228,0) 0%, var(--ribbon-sep) 22%, var(--ribbon-sep) 78%, rgba(207,217,228,0) 100%);
-    pointer-events: none;
-  }
-
-  /* ---------------- Nivel 1: caja vertical del ribbon ---------------- */
-  #menuTabsPanel > .ribbon-tab {
-    min-width: 76px !important;
-    min-height: 74px !important;
-    padding: 7px 10px 6px !important;
-    gap: 3px !important;
-    border-radius: 12px !important;
-    background: rgba(255, 255, 255, 0.38) !important;
-    border: 1px solid rgba(255, 255, 255, 0.62) !important;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.035) !important;
-    transition: background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .12s ease;
-  }
-  #menuTabsPanel > .ribbon-tab:hover:not(.activa) {
-    background: rgba(255, 255, 255, 0.88) !important;
-    border-color: rgba(37, 99, 235, 0.18) !important;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
-    transform: translateY(-1px);
-  }
-  #menuTabsPanel > .ribbon-tab.activa,
-  #menuTabsPanel > .ribbon-tab.activa:hover {
-    background: #ffffff !important;
-    border-color: #b9c6d4 !important;
-    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.09) !important;
-    transform: none;
-  }
-  #menuTabsPanel > .ribbon-tab:focus-visible,
-  #menuUsuTabs > .ribbon-btn:focus-visible,
-  #menuAsiTabs > .ribbon-btn:focus-visible,
-  #menuLecTabs > .ribbon-btn:focus-visible,
-  #menuPlanTabs > .ribbon-btn:focus-visible,
-  #menuEncTabs > .ribbon-btn:focus-visible {
-    outline: 2px solid var(--ribbon-foco) !important;
-    outline-offset: 2px !important;
-  }
-
-  /* ---------------- Nivel 2: sub-cintas del contrato ---------------- */
-  #menuUsuTabs > .ribbon-btn,
-  #menuAsiTabs > .ribbon-btn,
-  #menuPlanTabs > .ribbon-btn,
-  #menuEncTabs > .ribbon-btn,
-  #menuLecTabs .ribbon-btn,
-  .ribbon-main-nav .cinta-n2 > .btn-ayuda.ribbon-btn {
-    min-width: 56px !important;
-    min-height: 58px !important;
-    padding: 5px 8px 4px !important;
-    gap: 3px !important;
-    border-radius: 10px !important;
-    background: rgba(255, 255, 255, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.62) !important;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03) !important;
-    transition: background .16s ease, border-color .16s ease, box-shadow .16s ease, transform .12s ease;
-  }
-  #menuUsuTabs > .ribbon-btn:hover:not(:disabled),
-  #menuAsiTabs > .ribbon-btn:hover:not(:disabled),
-  #menuPlanTabs > .ribbon-btn:hover:not(:disabled),
-  #menuEncTabs > .ribbon-btn:hover:not(:disabled),
-  #menuLecTabs .ribbon-btn:hover:not(:disabled),
-  .ribbon-main-nav .cinta-n2 > .btn-ayuda.ribbon-btn:hover {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border-color: rgba(37, 99, 235, 0.18) !important;
-    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.07) !important;
-    transform: translateY(-1px);
-  }
-  #menuUsuTabs > .ribbon-btn.activo,
-  #menuUsuTabs > .ribbon-btn.activa,
-  #menuAsiTabs > .ribbon-btn.activo,
-  #menuAsiTabs > .ribbon-btn.activa,
-  #menuPlanTabs > .ribbon-btn.activo,
-  #menuPlanTabs > .ribbon-btn.activa,
-  #menuEncTabs > .ribbon-btn.activo,
-  #menuEncTabs > .ribbon-btn.activa,
-  #menuLecTabs .ribbon-btn.activo,
-  #menuLecTabs .ribbon-btn.activa {
-    background: #ffffff !important;
-    border-color: #a9b8c8 !important;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.07) !important;
-  }
-
-  /* ---------------- Icono ilustrado y etiqueta ---------------- */
-  .ribbon-icono {
-    display: flex !important;
+  /* --- 1.1 · Botón de ayuda en campos (22 px, neutro institucional) --- */
+  .btn-ayuda-nem {
+    position: relative;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px !important;
-    height: 30px !important;
-    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    padding: 0;
+    margin: 0 0 0 6px;
+    border: 1px solid #dbe3ec;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #64748b;
+    font: 800 12px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 1;
+    transition: color .15s ease, background .15s ease, border-color .15s ease,
+                transform .12s ease, box-shadow .15s ease;
+  }
+  .btn-ayuda-nem:hover {
+    color: #2563eb;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    transform: translateY(-1px);
+  }
+  .btn-ayuda-nem:focus-visible {
+    color: #2563eb;
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+  }
+  .btn-ayuda-nem[aria-expanded="true"] {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+  /* Insignia opcional de pendientes */
+  .btn-ayuda-nem[data-badge]::after {
+    content: attr(data-badge);
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  /* Tooltip ligero (no nativo, para que se vea igual en todos los navegadores) */
+  .btn-ayuda-nem[data-tip]::before {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 50%;
+    z-index: 30;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-50%) translateY(3px);
+    pointer-events: none;
+    transition: opacity .14s ease, transform .14s ease;
+  }
+  .btn-ayuda-nem[data-tip]:hover::before,
+  .btn-ayuda-nem[data-tip]:focus-visible::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  /* DUA: el botón se enciende cuando su campo tiene el foco */
+  input:focus + .btn-ayuda-nem,
+  textarea:focus + .btn-ayuda-nem,
+  select:focus + .btn-ayuda-nem {
+    color: #2563eb;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  }
+
+  /* --- 1.2 · Toast por encima del botón flotante --- */
+  #st90-toast { bottom: 92px; }
+
+  /* --- 1.3 · Botón flotante del Asistente IA (52 px, halo respiratorio) --- */
+  #btnAsistenteFlotanteIA {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 99990;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(140deg, #2563eb 0%, #4f46e5 62%, #7c3aed 100%);
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.38), 0 2px 6px rgba(15, 23, 42, 0.2);
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+  #btnAsistenteFlotanteIA svg,
+  #btnAsistenteFlotanteIA img {
+    width: 26px;
+    height: 26px;
+    display: block;
     pointer-events: none;
   }
-  #menuTabsPanel .ribbon-icono svg { width: 30px !important; height: 30px !important; display: block; overflow: visible; }
-  .cinta-n2 .ribbon-icono svg { width: 28px !important; height: 28px !important; display: block; overflow: visible; }
-
-  /* Los iconos ilustrados no heredan el trazo monocromático de la cinta */
-  .ribbon-icono svg { stroke: none !important; }
-  .ribbon-icono svg * { vector-effect: non-scaling-stroke; }
-
-  #menuTabsPanel .ribbon-label {
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    letter-spacing: .01em !important;
-    color: #334155 !important;
+  #btnAsistenteFlotanteIA::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+    animation: iaHaloRespiratorio 2.8s cubic-bezier(.4, 0, .2, 1) infinite;
+    pointer-events: none;
   }
-  .cinta-n2 .ribbon-label {
-    font-size: 11.5px !important;
-    font-weight: 600 !important;
-    color: #3f4c5c !important;
+  @keyframes iaHaloRespiratorio {
+    0%   { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45); }
+    70%  { box-shadow: 0 0 0 16px rgba(37, 99, 235, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
   }
-  #menuUsuTabs > .ribbon-btn.activo .ribbon-label,
-  #menuUsuTabs > .ribbon-btn.activa .ribbon-label,
-  #menuAsiTabs > .ribbon-btn.activo .ribbon-label,
-  #menuAsiTabs > .ribbon-btn.activa .ribbon-label,
-  #menuPlanTabs > .ribbon-btn.activo .ribbon-label,
-  #menuPlanTabs > .ribbon-btn.activa .ribbon-label,
-  #menuEncTabs > .ribbon-btn.activo .ribbon-label,
-  #menuEncTabs > .ribbon-btn.activa .ribbon-label,
-  #menuLecTabs .ribbon-btn.activo .ribbon-label,
-  #menuLecTabs .ribbon-btn.activa .ribbon-label {
-    color: #1e40af !important;
-    font-weight: 700 !important;
+  #btnAsistenteFlotanteIA:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45), 0 3px 8px rgba(15, 23, 42, 0.22);
+  }
+  #btnAsistenteFlotanteIA:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 3px;
+  }
+  #btnAsistenteFlotanteIA[aria-expanded="true"] {
+    background: linear-gradient(140deg, #1e40af 0%, #4338ca 62%, #6d28d9 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #btnAsistenteFlotanteIA::after { animation: none; opacity: 0; }
+    #btnAsistenteFlotanteIA { transition: none; }
   }
 
-  /* ---------------- Adaptación a pantallas angostas ---------------- */
-  @media (max-width: 820px) {
-    #menuTabsPanel > .ribbon-tab {
-      min-width: 62px !important; min-height: 66px !important; padding: 5px 6px 4px !important;
-    }
-    #menuTabsPanel .ribbon-icono, #menuTabsPanel .ribbon-icono svg { width: 26px !important; height: 26px !important; }
-    #menuUsuTabs > .ribbon-btn,
-    #menuAsiTabs > .ribbon-btn,
-    #menuPlanTabs > .ribbon-btn,
-    #menuEncTabs > .ribbon-btn,
-    #menuLecTabs .ribbon-btn { min-width: 52px !important; min-height: 54px !important; padding: 4px 6px 3px !important; }
-    .cinta-n2 .ribbon-icono, .cinta-n2 .ribbon-icono svg { width: 25px !important; height: 25px !important; }
-    #menuTabsPanel .ribbon-label { font-size: 11px !important; }
-    .cinta-n2 .ribbon-label { font-size: 10.5px !important; }
-    .ribbon-main-nav .separador-ribbon { height: 22px; margin: 0 2px !important; }
+  /* --- 1.4 · Drawer lateral (380 px) --- */
+  .ia-drawer-velo {
+    position: fixed;
+    inset: 0;
+    z-index: 99991;
+    background: rgba(15, 23, 42, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
   }
-```
+  .ia-drawer-velo.visible { opacity: 1; pointer-events: auto; }
 
----
+  #drawerAsistenteIA {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99992;
+    width: 380px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-left: 1px solid var(--app-border);
+    box-shadow: -18px 0 48px rgba(15, 23, 42, 0.18);
+    transform: translateX(102%);
+    visibility: hidden;
+    transition: transform .22s cubic-bezier(.4, 0, .2, 1);
+  }
+  #drawerAsistenteIA.abierto,
+  #drawerAsistenteIA.visible {
+    transform: none;
+    visibility: visible;
+  }
 
-## 4. Código SVG entregado — Nivel 1 y sub-cinta de Usuarios
+  .ia-drawer-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 55%, #0ea5e9 100%);
+    color: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ia-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .ia-drawer-titulo {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  #chipContextoAsistente {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 178px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #chipContextoAsistente:empty { display: none; }
+  .ia-drawer-cerrar {
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .ia-drawer-cerrar:hover { background: rgba(255, 255, 255, 0.26); }
+  .ia-drawer-cerrar:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
 
-Patrón común de cada botón (**no cambia ningún ID ni `onclick`**):
-
-```html
-<button type="button" id="btnTabMat" class="ribbon-tab ribbon-ico-azul" onclick="tab('mat', this)" aria-label="Usuarios">
-  <span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important">…</svg></span>
-  <span class="ribbon-label">Usuarios</span>
-</button>
-```
-
-### 4.1 `#btnTabMat` — Usuarios (dos estudiantes sonrientes, cálido) · Admin.html:74
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.8" rx="9.8" ry="1.8" fill="#0f172a" opacity=".07"/><path d="M17.3 26.6v-5a5.2 5.2 0 0 1 10.4 0v5z" fill="#fbbf24"/><circle cx="22.5" cy="9.6" r="4" fill="#ffd8b4"/><path d="M18.5 9.4a4 4 0 0 1 8 0c0 .7-.5 1.2-1.2 1.2h-5.6c-.7 0-1.2-.5-1.2-1.2z" fill="#8a5a2b"/><circle cx="21.4" cy="9.9" r=".8" fill="#2b1a10"/><circle cx="23.6" cy="9.9" r=".8" fill="#2b1a10"/><path d="M4.6 27.4v-5a6.4 6.4 0 0 1 12.8 0v5z" fill="#e07a3a"/><path d="M11 22.4l1.6 2 1.6-2" fill="#c2541f"/><circle cx="11" cy="11.5" r="5" fill="#ffd8b4"/><path d="M6 11.2a5 5 0 0 1 10 0c0 .8-.6 1.4-1.4 1.4H7.4c-.8 0-1.4-.6-1.4-1.4z" fill="#3f2a17"/><circle cx="9.4" cy="12" r=".95" fill="#2b1a10"/><circle cx="12.6" cy="12" r=".95" fill="#2b1a10"/><path d="M9.2 14.6c1.1 1.3 2.9 1.3 4 0" stroke="#b45309" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg></span>
-```
-
-### 4.2 `#btnTabAsi` — Asistencia (calendario con check verde) · Admin.html:78
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.8" rx="9" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="4.8" y="6.4" width="22.4" height="21.2" rx="3.4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/><path d="M4.8 9.8a3.4 3.4 0 0 1 3.4-3.4h15.6a3.4 3.4 0 0 1 3.4 3.4v2.2H4.8z" fill="#16a34a"/><rect x="9.6" y="3.6" width="2.8" height="6" rx="1.4" fill="#0f766e"/><rect x="19.6" y="3.6" width="2.8" height="6" rx="1.4" fill="#0f766e"/><rect x="8.4" y="15.4" width="7.4" height="2" rx="1" fill="#cbd5e1"/><rect x="8.4" y="19.8" width="5.4" height="2" rx="1" fill="#e2e8f0"/><circle cx="22.4" cy="21.6" r="6" fill="#22c55e"/><path d="M19.6 21.7l2 2 3.6-4" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
-```
-
-### 4.3 `#btnTabLec` — Lecturas (libro con lomo dorado y bloque de hojas) · Admin.html:83
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.7" rx="9.6" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="4.6" y="5.4" width="18.2" height="21.6" rx="2.4" fill="#2563eb"/><rect x="20.8" y="7.2" width="6" height="18" rx="1.2" fill="#f8fafc"/><path d="M22.6 9.8h3M22.6 13.2h3M22.6 16.6h3M22.6 20h3M22.6 23.4h3" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/><rect x="4.6" y="5.4" width="4.6" height="21.6" rx="2.3" fill="#f59e0b"/><rect x="5.9" y="9.6" width="1.2" height="4.4" rx=".6" fill="#ffffff" opacity=".55"/><rect x="11.4" y="9.4" width="8.4" height="2.6" rx="1.3" fill="#fbbf24"/><rect x="11.4" y="14.4" width="6.4" height="1.8" rx=".9" fill="#bfdbfe"/><rect x="11.4" y="18" width="7.6" height="1.8" rx=".9" fill="#bfdbfe" opacity=".75"/><path d="M17.8 5.4h2.8v7.2l-1.4-1.3-1.4 1.3z" fill="#ef4444"/></svg></span>
-```
-
-### 4.4 `#btnTabPlan` — Planeación (libreta didáctica con pluma) · Admin.html:88
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.6" rx="9.2" ry="1.8" fill="#0f172a" opacity=".07"/><rect x="5.2" y="5.4" width="19.4" height="22" rx="2.6" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.2"/><rect x="5.2" y="5.4" width="4.8" height="22" rx="2.4" fill="#4f46e5"/><rect x="11.6" y="9.2" width="10.2" height="1.9" rx=".95" fill="#c7d2fe"/><rect x="11.6" y="13.2" width="7.8" height="1.9" rx=".95" fill="#dbeafe"/><rect x="11.6" y="17.2" width="9.2" height="1.9" rx=".95" fill="#dbeafe"/><rect x="20.6" y="8.2" width="4" height="13.2" rx="1.2" fill="#f59e0b"/><path d="M20.6 21.4h4l-2 4.4z" fill="#fde68a"/><path d="M21.9 24.3h1.4l-.7 1.6z" fill="#334155"/><rect x="20.6" y="6.4" width="4" height="2.2" rx=".9" fill="#ef4444"/></svg></span>
-```
-
-### 4.5 `#btnTabEnc` — Encuestas (portapapeles con barras y check) · Admin.html:93
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.8" rx="8.8" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="5.6" y="5.2" width="20.8" height="22.4" rx="3.2" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1.2"/><rect x="11.6" y="3" width="8.8" height="4.8" rx="2" fill="#0284c7"/><circle cx="16" cy="5.4" r="1.1" fill="#e0f2fe"/><rect x="9.2" y="13.4" width="3.6" height="9.8" rx="1.1" fill="#38bdf8"/><rect x="14.2" y="10.4" width="3.6" height="12.8" rx="1.1" fill="#0284c7"/><rect x="19.2" y="15.6" width="3.6" height="7.6" rx="1.1" fill="#0ea5e9"/><path d="M18.6 24.6l2.2 2.2 4-4.4" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
-```
-
-### 4.6 `#btnSubUsuAlu` — Alumnos (estudiante con mochila) · Admin.html:101
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.6" rx="8" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="21" y="17.2" width="5.4" height="8.6" rx="2" fill="#c2410c"/><path d="M8.8 26.8v-5.4a7.2 7.2 0 0 1 14.4 0v5.4z" fill="#f59e0b"/><path d="M15.2 21.6l.8 2 1.6-2" fill="#d97706"/><circle cx="16" cy="11.4" r="5.2" fill="#ffd8b4"/><path d="M10.8 11.1a5.2 5.2 0 0 1 10.4 0c0 .8-.6 1.4-1.4 1.4h-7.6c-.8 0-1.4-.6-1.4-1.4z" fill="#4a2f18"/><circle cx="14.1" cy="11.9" r="1" fill="#2b1a10"/><circle cx="17.9" cy="11.9" r="1" fill="#2b1a10"/><path d="M13.9 14.5c1.2 1.4 3 1.4 4.2 0" stroke="#b45309" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg></span>
-```
-
-### 4.7 `#btnSubUsuDoc` — Docentes (birrete negro con borla naranja) · Admin.html:105
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="25.8" rx="6.6" ry="1.3" fill="#0f172a" opacity=".08"/><path d="M16 4.4l12 5.2-12 5.2L4 9.6z" fill="#1f2937"/><path d="M16 4.4l12 5.2-12 5.2z" fill="#111827"/><path d="M10.4 13.2l5.6 2.4 5.6-2.4v5.2c0 2.2-2.5 4-5.6 4s-5.6-1.8-5.6-4z" fill="#374151"/><path d="M27.6 10.2v6.2" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/><circle cx="27.6" cy="17.4" r="2" fill="#f59e0b"/></svg></span>
-```
-
-### 4.8 `#btnSubUsuPref` — Prefectas (credencial con escudo) · Admin.html:109
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="28.6" rx="7.8" ry="1.7" fill="#0f172a" opacity=".07"/><rect x="6.4" y="5" width="19.2" height="23" rx="3.2" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.2"/><path d="M6.4 8.2a3.2 3.2 0 0 1 3.2-3.2h12.8a3.2 3.2 0 0 1 3.2 3.2v2.2H6.4z" fill="#ca8a04"/><circle cx="12.4" cy="15.4" r="3.1" fill="#fbbf24"/><path d="M8 22.8c0-2.4 2-4.4 4.4-4.4s4.4 2 4.4 4.4z" fill="#f59e0b"/><rect x="18.4" y="13.6" width="5" height="1.7" rx=".85" fill="#a16207"/><rect x="18.4" y="17.4" width="5" height="1.7" rx=".85" fill="#d97706"/><path d="M22.6 19.8l3.6 1.7v3.4c0 2.2-1.6 3.8-3.6 4.4-2-.6-3.6-2.2-3.6-4.4v-3.4z" fill="#16a34a"/><path d="M21 24.6l1.2 1.2 2.2-2.4" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
-```
-
-### 4.9 `#btnSubUsuAdm` — Apoyo (engranaje de servicio) · Admin.html:113
-
-> **Nota de contrato:** la partitura cita `#btnSubUsuApo`, pero el DOM real tiene `#btnSubUsuAdm` con etiqueta "Apoyo". **No se renombró**: se ilustró el ID existente.
-
-```html
-<span class="ribbon-icono" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30" focusable="false" xmlns="http://www.w3.org/2000/svg" style="stroke:none !important"><ellipse cx="16" cy="26.6" rx="6.8" ry="1.4" fill="#0f172a" opacity=".08"/><g fill="#0f766e"><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(0 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(45 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(90 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(135 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(180 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(225 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(270 16 16)"/><rect x="14.1" y="4.6" width="3.8" height="5.2" rx="1.5" transform="rotate(315 16 16)"/></g><circle cx="16" cy="16" r="8.8" fill="#14b8a6"/><circle cx="16" cy="16" r="8.8" fill="none" stroke="#0f766e" stroke-width="1.2"/><circle cx="16" cy="16" r="3.7" fill="#ecfeff"/><circle cx="16" cy="16" r="3.7" fill="none" stroke="#0f766e" stroke-width="1.2"/></svg></span>
-```
-
----
-
-## 5. Inventario completo de los 31 iconos sustituidos
-
-| Botón | Línea `Admin.html` | Ilustración | Paleta dominante |
-| :--- | ---: | :--- | :--- |
-| `#btnTabMat` | 74 | Dos estudiantes sonrientes | `#e07a3a` · `#fbbf24` |
-| `#btnTabAsi` | 78 | Calendario + check | `#16a34a` · `#22c55e` |
-| `#btnTabLec` | 83 | Libro con lomo dorado | `#2563eb` · `#f59e0b` |
-| `#btnTabPlan` | 88 | Libreta + pluma | `#4f46e5` · `#f59e0b` |
-| `#btnTabEnc` | 93 | Portapapeles + barras + check | `#0284c7` |
-| `#btnSubUsuAlu` | 101 | Estudiante con mochila | `#f59e0b` · `#c2410c` |
-| `#btnSubUsuDoc` | 105 | Birrete + borla | `#1f2937` · `#f59e0b` |
-| `#btnSubUsuPref` | 109 | Credencial + escudo | `#ca8a04` · `#16a34a` |
-| `#btnSubUsuAdm` | 113 | Engranaje | `#14b8a6` |
-| `#btnAsiAlu` | 154 | Estudiante (reúso) | `#f59e0b` |
-| `#btnAsiMae` | 158 | Birrete (reúso) | `#1f2937` |
-| `#btnAsiRep` | 162 | Barras comparativas | `#f59e0b` `#16a34a` `#0284c7` |
-| `#btnAsiPref` | 166 | Credencial (reúso) | `#ca8a04` |
-| `#btnSubEncGraficas` | 182 | Tarjeta con barras | `#0284c7` |
-| `#btnSubEncDatos` | 186 | Tabla / hoja de datos | `#0ea5e9` |
-| `#btnSubEncEditor` | 190 | Hoja + lápiz | `#f59e0b` |
-| `#btnSubEncEnlace` | 194 | Ojo de vista previa | `#22c55e` |
-| `#btnSubLecBanco` | 210 | Pila de tres libros | `#1d4ed8` · `#60a5fa` |
-| `#btnSubLecTrim` | 214 | Calendario con casillas | `#0284c7` |
-| `#btnSubLecRes` | 218 | Barras verdes | `#10b981` |
-| `#btnTabCfg` | 223 | Engranaje índigo | `#6366f1` |
-| `#btnSubPlanHorario` | 253 | Cuadrícula semanal | `#0284c7` |
-| `#btnSubPlanBancoPersonal` | 257 | Persona + ficha | `#8b5cf6` |
-| `#btnSubPlanBancoGlobal` | 261 | Globo terráqueo | `#2563eb` |
-| `#btnSubPlanNueva` | 265 | Documento + signo más | `#16a34a` |
-| `#btnAyudaMat` | 119 | Burbuja de ayuda | `#f59e0b` |
-| `#btnAyudaAsiCinta` | 172 | Burbuja de ayuda | `#f59e0b` |
-| `#btnAyudaEnc` | 200 | Burbuja de ayuda | `#f59e0b` |
-| `#btnAyudaLec` | 241 | Burbuja de ayuda | `#f59e0b` |
-| `#btnAyudaPlan` | 271 | Burbuja de ayuda | `#f59e0b` |
-| *Salir* (`cerrarSesion()`) | 283 | Puerta + flecha | `#dc2626` |
-
-**Divisores verticales** (`<span class="separador-ribbon" aria-hidden="true"></span>`), líneas **118, 171, 199, 240, 270**.
-
----
-
-## 6. Decisiones técnicas que requieren auditoría
-
-1. **Discrepancia de contrato `#btnSubUsuApo` vs `#btnSubUsuAdm`.** Se ilustró el ID real (`Adm`, etiqueta "Apoyo"). Recomendación: corregir el texto de la partitura en `ESTADO_COORDINACION.md` §5.
-2. **`style="stroke:none !important"` en la raíz de cada `<svg>`.** Las reglas heredadas de la cinta fuerzan el trazo monocromático con especificidad alta:
-   - `.ribbon-main-nav .tabs > button.ribbon-tab.ribbon-ico-azul svg { stroke:#2563eb !important }` → (0,4,1)
-   - `#menuLecTabs .ribbon-btn.activa svg { stroke: currentColor !important }` → (1,2,1)
-
-   Sin esa anulación, cada figura recibía un contorno de 1 px del color de la pestaña (efecto visible: birrete "morado", estudiantes "azules"). El `!important` en línea **solo afecta la raíz**; los trazos internos (checks blancos, sonrisas) declaran su propio `stroke` y se conservan.
-3. **Alcance acotado por ID, no por clase.** `.ribbon-btn` se usa en ~90 puntos dentro de los módulos (`AdminUsuarios`, `AdminAsistencia`, `AdminLecturas`, `AdminPlaneacion`) y `.ribbon-tab` en `Clase.html`, `AdminPlaneacion.html` (N1) y `AdminEncuestas.html` (barra contextual). Por eso **no** se reestilizó la clase global: todas las reglas nuevas van ancladas a `#menuTabsPanel`, `#menuUsuTabs`, `#menuAsiTabs`, `#menuLecTabs`, `#menuPlanTabs`, `#menuEncTabs`.
-4. **Segundo bloque `:root`.** Válido en CSS; no sustituye ni borra el `:root` original (línea 2).
-5. **Clase nueva `.ribbon-icono`.** Solo presentacional, sin ID, sin evento. Envuelve el `<svg>` para fijar caja de 30/28 px.
-6. **Sin reglas eliminadas.** El diff de `ComunCSS.html` es −0 / +175.
-
----
-
-## 7. Verificación ejecutada
-
-| Comprobación | Antes | Después |
-| :--- | ---: | ---: |
-| Atributos `id=` en `Admin.html` | 104 | **104** |
-| Atributos `onclick=` en `Admin.html` | 64 | **64** |
-| Scriptlets `<?!=` / `<?=` | 56 | **56** |
-| SVG `viewBox="0 0 24 24"` en cintas | 33 | **2** (ayudas dentro de modales, fuera de alcance) |
-| SVG `viewBox="0 0 32 32"` nuevos | — | **31** |
-| Divisores `.separador-ribbon` | — | **5** |
-| Reglas CSS eliminadas | — | **0** |
-
-Render validado en Chromium headless a **1140 px** y **430 px**: sin desbordes, sin solapamientos, etiqueta 12 px / 11.5 px, icono 30 px / 28 px (26/25 px en móvil).
-
----
-
-## 8. Rollback
-
-Copia intacta de ambos archivos previa a la Fase 5, guardada **fuera** del proyecto para que `clasp push` no duplique `Admin.html`:
-
-```
-C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\Admin.html
-C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS.html
-```
-
-Restaurar = copiar ambos sobre `G:\Mi unidad\PROYECTOS\Lectura\` (revierte el 100 % de la Fase 5).
-
----
-
-## 9. Evidencia visual
-
-- `evidencia_fase5/fase5_ribbon.png` — cinta completa (Nivel 1 + sub-cintas) a 2×.
-- `evidencia_fase5/fase5_iconos.png` — los 31 iconos a 84 px para control de calidad.
-
-Ambos PNG están excluidos de `clasp push` por `.claspignore` (`**/*.png`), igual que este `.md` (`**/*.md`).
-
----
-
-## 10. Propuesta para Fase 6 (no ejecutada)
-
-Llevar el mismo lenguaje ilustrado a las tarjetas de módulo (`.bloque`, `.kpi-card`, `.sep-libro-card`) y a los estados vacíos, para que el ribbon no quede como una isla estética dentro del panel. Requiere partitura de Antigravity con los selectores exactos.
-
----
-
-## 11. Control de revisión de este documento
-
-Verificación automática contra los archivos reales (2026-10-29, 19:52 America/Mexico_City):
-
-| Comprobación | Resultado |
-| :--- | :--- |
-| Bloque CSS del §3 vs `ComunCSS.html` 713–886 | **idéntico byte a byte** |
-| 9 bloques SVG del §4.1–4.9 vs `Admin.html` | **idénticos** en los 9 |
-| Números de línea del §5 | **corregidos** (estaban +1: apuntaban al `<span>`, no al `<button>`) |
-| Conteo de SVG monocromáticos previos (§7) | **corregido**: 33, no 32 |
-| `id=` / `onclick=` / scriptlets | 104 / 64 / 56 — sin cambio |
-
----
-
-# PARTE II — FASE 6 · Tarjetas iDevice
-
-## 12. Encargo y diagnóstico
-
-La partitura §5 de `ESTADO_COORDINACION.md` asignó a DeepSeek cerrar el hueco detectado en la auditoría cruzada:
-
-- `.idevice-card`, `.idevice-card-audio`, `.idevice-card-pregunta` y `.idevice-card-reto` eran **solo ganchos de script** (`btn.closest('.idevice-card')`) sin una sola regla CSS en el proyecto.
-- `AdminPlanJS_06.html` inyectaba los campos con `style.cssText`, saltándose el sistema de diseño.
-- Consecuencia real: en el **visor de clase** (`Clase.html`, que incluye solo `ComunCSS` y `ClaseCSS`) las tarjetas se dibujaban como un `div` desnudo, porque `.idevice-container` y `.idevice-btn` viven en `ComunCSS`/`AdminPlaneacionCSS` y `Clase.html` no carga el segundo.
-
-## 13. CSS entregado (`ComunCSS.html`, líneas 1221–1346)
-
-Insertado dentro de la sección **BLOQUES MODULARES iDEVICES**, justo después de `.idevice-container:hover` y antes de `.idevice-header`.
-
-```css
-  /* ============================================================
-     FASE 6 · TARJETAS iDEVICE — DESACOPLAMIENTO CSS
-     DeepSeek · Las clases .idevice-card* son ganchos de script
-     (btn.closest('.idevice-card')) y, además, deben sostener la tarjeta
-     por sí solas: el visor de clase (Clase.html) no carga
-     AdminPlaneacionCSS, así que ahí no existe .idevice-btn.
-     ============================================================ */
-
-  /* --- 1 · Contenedor de bloque --- */
-  .idevice-card {
-    position: relative;
-    display: block;
-    margin: 12px 0;
-    padding: 14px 16px;
+  #chatAsistenteCuerpo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 14px 8px;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+  }
+  .msg-ia,
+  .msg-docente {
+    max-width: 88%;
+    padding: 9px 12px;
+    border-radius: 14px;
+    font-size: 12.8px;
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .msg-ia {
+    align-self: flex-start;
     background: #ffffff;
     border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-lg);
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-    overflow: hidden;
-    break-inside: avoid;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    border-bottom-left-radius: 4px;
+    color: #1e293b;
   }
-  .idevice-card:hover {
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  .msg-docente {
+    align-self: flex-end;
+    background: #2563eb;
+    border: 1px solid #1d4ed8;
+    border-bottom-right-radius: 4px;
+    color: #ffffff;
   }
-  /* En Admin la tarjeta viaja con .idevice-container: ahí el relleno lo
-     aportan .idevice-header y .idevice-body, no la tarjeta. */
-  .idevice-card.idevice-container {
-    margin: 16px 0;
-    padding: 0;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  .msg-hora {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    opacity: .65;
   }
-
-  /* --- 2 · Variantes temáticas --- */
-  .idevice-card-audio {
-    border-left: 5px solid var(--app-primary);
-    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 58%);
-  }
-  .idevice-card-pregunta {
-    border-left: 5px solid #10b981;
-    background: linear-gradient(180deg, #f7fdfa 0%, #ffffff 58%);
-  }
-  .idevice-card-reto {
-    border-left: 5px solid #f59e0b;
-    background: linear-gradient(180deg, #fffdf7 0%, #ffffff 58%);
+  .ia-vacio {
+    margin: auto;
+    padding: 20px 10px;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #64748b;
   }
 
-  .idevice-card.idevice-card-audio > .idevice-header    { background: #f0f7ff; color: var(--app-primary-dark); }
-  .idevice-card.idevice-card-pregunta > .idevice-header { background: #ecfdf5; color: #065f46; }
-  .idevice-card.idevice-card-reto > .idevice-header     { background: #fffbeb; color: #92400e; }
-
-  .idevice-card.idevice-card-audio .idevice-tag    { background: #dbeafe; color: var(--app-primary-dark); }
-  .idevice-card.idevice-card-pregunta .idevice-tag { background: #a7f3d0; color: #065f46; }
-  .idevice-card.idevice-card-reto .idevice-tag     { background: #fde68a; color: #92400e; }
-
-  /* La barra de audio estrena acento propio en la variante de voz */
-  .idevice-card-audio .idevice-audio-bar {
-    background: #f0f7ff;
-    border-color: #bfdbfe;
+  /* Chips de sugerencias rápidas */
+  .ia-sugerencias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 14px 10px;
+    background: #ffffff;
+    flex: 0 0 auto;
   }
-
-  /* --- 3 · Campos del formulario (contrato Fase 6) --- */
-  .idevice-campo-titulo {
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 6px;
-    font-weight: 600;
-    padding: 6px 8px;
-    border: 1px solid var(--app-border);
-    border-radius: 4px;
-  }
-  .idevice-campo-cuerpo {
-    width: 100%;
-    box-sizing: border-box;
-    resize: vertical;
-    padding: 8px;
-    border: 1px solid var(--app-border);
-    border-radius: 4px;
-  }
-  /* Refuerzo tipográfico y de foco (no altera el contrato anterior) */
-  .idevice-campo-titulo,
-  .idevice-campo-cuerpo {
+  .ia-chip {
+    padding: 5px 10px;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .14s ease, border-color .14s ease, transform .12s ease;
+  }
+  .ia-chip:hover { background: #dbeafe; border-color: #93c5fd; transform: translateY(-1px); }
+  .ia-chip:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+  .ia-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px 14px 12px;
+    border-top: 1px solid var(--app-border);
+    background: #ffffff;
+    flex: 0 0 auto;
+  }
+  #txtMensajeAsistente {
+    flex: 1 1 auto;
+    min-height: 42px;
+    max-height: 128px;
+    resize: none;
+    padding: 10px 12px;
+    border: 1px solid var(--app-border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12.8px;
     line-height: 1.45;
     color: var(--app-text);
     background: #ffffff;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
-  .idevice-campo-titulo::placeholder,
-  .idevice-campo-cuerpo::placeholder { color: #94a3b8; }
-  .idevice-campo-titulo:focus,
-  .idevice-campo-cuerpo:focus {
+  #txtMensajeAsistente:focus {
     outline: none;
     border-color: #93c5fd;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
+  #btnEnviarAsistenteIA {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .15s ease, transform .12s ease;
+  }
+  #btnEnviarAsistenteIA:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+  #btnEnviarAsistenteIA:disabled { background: #94a3b8; cursor: not-allowed; }
+  #btnEnviarAsistenteIA:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
 
-  /* AdminCSS aplica min-height:180px a todo textarea: el cuerpo del
-     iDevice necesita dos renglones, no media pantalla. */
-  .idevice-campo-cuerpo { min-height: 56px; }
+  @media (max-width: 520px) {
+    #drawerAsistenteIA { width: 100%; border-left: 0; }
+    #btnAsistenteFlotanteIA { right: 16px; bottom: 16px; width: 50px; height: 50px; }
+    #chipContextoAsistente { max-width: 120px; }
+  }
 
-  /* --- 4 · Botonera de respaldo para el visor de clase --- */
-  .idevice-card:not(.idevice-container) .idevice-btn {
+  @media print {
+    #btnAsistenteFlotanteIA,
+    #drawerAsistenteIA,
+    .ia-drawer-velo,
+    .btn-ayuda-nem { display: none !important; }
+```
+
+### Lo pedido / lo entregado
+
+| Punto de la partitura | Cómo quedó |
+| :--- | :--- |
+| ❓ circular 22×22, neutro `#64748b`, hover `#2563eb` | ✅ 22 px, `#64748b` → `#2563eb` en hover |
+| Sin romper la altura de línea del `<label>` | ✅ `vertical-align: middle` + `line-height: 1` |
+| Badge o tooltip nativo | ✅ `[data-badge]` dibuja contador; `[data-tip]` dibuja tooltip propio (el nativo no es estilizable) |
+| Micro-elevación al enfocar | ✅ `:focus-visible` con `outline` + sombra, y `translateY(-1px)` en hover |
+| FAB fijo `bottom/right: 24px`, `z-index 99990` | ✅ exacto, 52 px, degradado de 3 paradas |
+| Icono 🤖 de 26 px | ✅ `#btnAsistenteFlotanteIA svg/img { 26px }` (sirve emoji o vector) |
+| Halo respiratorio | ✅ `@keyframes iaHaloRespiratorio` de 2.8 s |
+| Drawer 380 px, 100 % en móvil | ✅ `width: 380px` + `@media (max-width: 520px) → 100 %` |
+| Cabecera con degradado, avatar y chip | ✅ `.ia-avatar`, `.ia-drawer-cabecera`, `#chipContextoAsistente` con `📍` |
+| Burbujas `.msg-docente` / `.msg-ia` | ✅ derecha azul / izquierda blanca |
+| Chips de sugerencias rápidas | ✅ `.ia-sugerencias` + `.ia-chip` |
+
+### Estructura HTML que espera el CSS
+
+```html
+<!-- Botón de ayuda junto a un campo -->
+<label for="planPDA">PDA oficiales / adaptados</label>
+<input id="planPDA" type="text">
+<button type="button" class="btn-ayuda-nem" data-ayuda-campo="planPDA"
+        data-tip="¿Qué son los PDA?" aria-label="Ayuda sobre PDA oficiales">?</button>
+
+<!-- Botón flotante -->
+<button type="button" id="btnAsistenteFlotanteIA" aria-label="Abrir asistente IA"
+        aria-expanded="false">🤖</button>
+
+<!-- Drawer -->
+<div class="ia-drawer-velo"></div>
+<aside id="drawerAsistenteIA" class="abierto" aria-label="Asistente IA">
+  <header class="ia-drawer-cabecera">
+    <span class="ia-avatar">🤖</span>
+    <h3 class="ia-drawer-titulo">Asistente</h3>
+    <span id="chipContextoAsistente">📍 Sección: Problemática</span>
+    <button type="button" class="ia-drawer-cerrar" aria-label="Cerrar">✕</button>
+  </header>
+  <div id="chatAsistenteCuerpo">
+    <div class="msg-ia">…<span class="msg-hora">19:58</span></div>
+    <div class="msg-docente">…<span class="msg-hora">19:59</span></div>
+  </div>
+  <div class="ia-sugerencias">
+    <button type="button" class="ia-chip">💡 Dame 3 ideas</button>
+    <button type="button" class="ia-chip">🎯 Adaptar a mi grupo</button>
+    <button type="button" class="ia-chip">✨ Simplificar redacción</button>
+  </div>
+  <div class="ia-composer">
+    <textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu pregunta…"></textarea>
+    <button type="button" id="btnEnviarAsistenteIA" aria-label="Enviar">➤</button>
+  </div>
+</aside>
+```
+
+> **Regla de hermandad:** el `.btn-ayuda-nem` debe ir **inmediatamente después** de su `input`/`textarea`; la regla DUA `input:focus + .btn-ayuda-nem` depende de eso.
+
+## 2. Módulos 2, 3 y 4 · CSS en `AdminPlaneacionCSS.html` (líneas 1063–1862)
+
+Cubre: modal pedagógico con `backdrop-filter: blur(4px)` y sus 3 bloques, biblioteca (buscador con lupa, filtros en píldora, botón primario, grid de libros SEP, `.card-recurso`), panel CECSE con insignia y badges por grado, vista previa del alumno, iframe 16:9 con barra de carga y fallback, y línea del tiempo con estados.
+
+```css
+  /* ============================================================
+     FASE 7 · MÓDULOS 2, 3 y 4 — BIBLIOTECA, CECSE, PREVIEW, IFRAME,
+     LÍNEA DEL TIEMPO Y MODAL DE AYUDA PEDAGÓGICA
+     DeepSeek · Selectores del contrato: #modalAyudaNEM,
+     #vistaBibliotecaDocente, #buscarRecursoBiblioteca,
+     #gridLibrosOficialesSEP, .card-recurso, .badge-cecse,
+     #modalPreviewAlumno, .bloque-iframe-container, #timelineProyectoNEM.
+     ============================================================ */
+
+  /* ---------- 1 · Modal pedagógico NEM ---------- */
+  #modalAyudaNEM {
+    position: fixed;
+    inset: 0;
+    z-index: 99980;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .16s ease;
+  }
+  #modalAyudaNEM.visible,
+  #modalAyudaNEM.abierto { opacity: 1; pointer-events: auto; }
+
+  #modalAyudaNEM .ayuda-nem-panel {
+    width: min(660px, 96vw);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+    transform: translateY(10px) scale(.99);
+    transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+  }
+  #modalAyudaNEM.visible .ayuda-nem-panel,
+  #modalAyudaNEM.abierto .ayuda-nem-panel { transform: none; }
+
+  .ayuda-nem-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 18px;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 58%, #0ea5e9 100%);
+    color: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ayuda-nem-icono {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    font-size: 20px;
+    line-height: 1;
+  }
+  #modalAyudaTitulo {
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: 800;
+    line-height: 1.3;
+    color: #ffffff;
+  }
+  .ayuda-nem-ceja {
+    margin: 2px 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.84);
+  }
+  .ayuda-nem-cerrar {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .ayuda-nem-cerrar:hover { background: rgba(255, 255, 255, 0.26); }
+  .ayuda-nem-cerrar:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+  .ayuda-nem-cuerpo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 18px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ayuda-nem-etiqueta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 7px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #475569;
+  }
+
+  /* Bloque 1 · fondo azul muy suave */
+  .ayuda-nem-bloque--proposito {
+    padding: 12px 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+  }
+  /* Bloque 2 · instrucciones */
+  .ayuda-nem-bloque--como { padding: 0 2px; }
+  /* Bloque 3 · ejemplo contextual en cursiva destacada */
+  .ayuda-nem-bloque--ejemplo {
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  }
+
+  #modalAyudaProposito,
+  #modalAyudaComoLlenar {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #334155;
+  }
+  #modalAyudaComoLlenar ol,
+  #modalAyudaComoLlenar ul { margin: 6px 0 0; padding-left: 20px; }
+  #modalAyudaComoLlenar li { margin: 0 0 5px; }
+  #modalAyudaEjemplo {
+    margin: 0;
+    font-family: Georgia, 'Palatino Linotype', serif;
+    font-size: 13.5px;
+    font-style: italic;
+    line-height: 1.6;
+    color: #0f172a;
+  }
+
+  .ayuda-nem-pie {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 18px 15px;
+    border-top: 1px solid var(--app-border);
+    background: #ffffff;
+    flex: 0 0 auto;
+  }
+  .ayuda-nem-entendido {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .ayuda-nem-entendido:hover { background: #1d4ed8; }
+  .ayuda-nem-entendido:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+  /* ---------- 2 · Biblioteca de recursos ---------- */
+  #vistaBibliotecaDocente { display: block; }
+
+  .biblio-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+  }
+  .biblio-buscador {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 170px;
+  }
+  .biblio-buscador .biblio-lupa {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    line-height: 1;
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  #buscarRecursoBiblioteca {
+    width: 100%;
+    height: 38px;
+    padding: 0 14px 0 34px;
+    border: 1px solid var(--app-border);
+    border-radius: 999px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12.8px;
+    color: var(--app-text);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  #buscarRecursoBiblioteca:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .biblio-filtro,
+  #filtroAsignaturaRecurso,
+  #filtroGradoRecurso,
+  #filtroTrimestreRecurso {
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--app-border);
+    border-radius: 999px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .biblio-filtro:hover,
+  #filtroAsignaturaRecurso:hover,
+  #filtroGradoRecurso:hover,
+  #filtroTrimestreRecurso:hover { border-color: #93c5fd; background: #f8fbff; }
+  .biblio-filtro:focus,
+  #filtroAsignaturaRecurso:focus,
+  #filtroGradoRecurso:focus,
+  #filtroTrimestreRecurso:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+  .biblio-subir {
+    height: 38px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: #2563eb;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+    transition: background .15s ease, transform .12s ease, box-shadow .15s ease;
+  }
+  .biblio-subir:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.34);
+  }
+  .biblio-subir:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+  /* Libros SEP oficiales */
+  #gridLibrosOficialesSEP {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin: 0 0 18px;
+  }
+  #gridLibrosOficialesSEP .libro-sep {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    text-align: center;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  #gridLibrosOficialesSEP .libro-sep:hover {
+    transform: translateY(-2px);
+    border-color: #bfdbfe;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  }
+  #gridLibrosOficialesSEP .libro-sep img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e2e8f0;
+  }
+  #gridLibrosOficialesSEP .libro-sep__grado {
+    align-self: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  #gridLibrosOficialesSEP .libro-sep__btn {
+    padding: 6px 8px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: #f8fbff;
+    color: #1d4ed8;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #gridLibrosOficialesSEP .libro-sep__btn:hover { background: #eff6ff; border-color: #93c5fd; }
+
+  /* Repositorio colectivo */
+  .biblio-grid,
+  .repositorio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+    gap: 14px;
+  }
+  .card-recurso {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .card-recurso:hover {
+    transform: translateY(-2px);
+    border-color: #bfdbfe;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
+  }
+  .card-recurso__tipo {
+    align-self: flex-start;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .03em;
+  }
+  .card-recurso__tipo--pdf { background: #fee2e2; color: #b91c1c; }
+  .card-recurso__tipo--presentacion { background: #ffedd5; color: #c2410c; }
+  .card-recurso__tipo--enlace { background: #dbeafe; color: #1d4ed8; }
+  .card-recurso__tipo--video { background: #ede9fe; color: #6d28d9; }
+  .card-recurso__titulo {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0f172a;
+  }
+  .card-recurso__meta {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #64748b;
+  }
+  .card-recurso__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  .biblio-vacio {
+    grid-column: 1 / -1;
+    padding: 36px 20px;
+    text-align: center;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #f8fafc;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #64748b;
+  }
+
+  /* ---------- 3 · Tecnología CECSE ---------- */
+  .badge-cecse {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border: 1px solid #bae6fd;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .panel-cecse {
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid var(--app-border);
+    border-left: 4px solid #0284c7;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    margin: 0 0 14px;
+  }
+  .cecse-horas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0 14px;
+  }
+  .cecse-horas__item {
+    flex: 1 1 150px;
+    padding: 10px 12px;
+    border: 1px solid #e0f2fe;
+    border-radius: 10px;
+    background: #f0f9ff;
+  }
+  .cecse-horas__n {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #0284c7;
+  }
+  .cecse-horas__l {
+    display: block;
+    margin-top: 2px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #0369a1;
+  }
+  .cecse-software-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .cecse-software {
+    padding: 12px;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: #ffffff;
+  }
+  .cecse-software__grado {
+    display: block;
+    margin: 0 0 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  .cecse-software__badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 5px 10px;
+    border-radius: 8px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
     font-size: 11.5px;
     font-weight: 700;
-    color: #334155;
+  }
+  .cecse-software__badge--excel { background: #ecfdf5; border-color: #a7f3d0; color: #047857; }
+  .cecse-software__badge--powerpoint { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+
+  /* ---------- 4 · Vista previa del alumno ---------- */
+  #modalPreviewAlumno {
+    position: fixed;
+    inset: 0;
+    z-index: 99980;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.6);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .16s ease;
+  }
+  #modalPreviewAlumno.visible,
+  #modalPreviewAlumno.abierto { opacity: 1; pointer-events: auto; }
+
+  #modalPreviewAlumno .preview-panel {
+    width: min(940px, 96vw);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     background: #ffffff;
-    border: 1px solid var(--app-border);
-    border-radius: 7px;
+    border-radius: 16px;
+    box-shadow: 0 26px 64px rgba(15, 23, 42, 0.34);
+    transform: translateY(10px) scale(.99);
+    transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+  }
+  #modalPreviewAlumno.visible .preview-panel,
+  #modalPreviewAlumno.abierto .preview-panel { transform: none; }
+
+  .preview-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    flex: 0 0 auto;
+  }
+  .preview-cabecera h3 {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .preview-cerrar {
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
     cursor: pointer;
-    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
   }
-  .idevice-card:not(.idevice-container) .idevice-btn:hover {
-    background: #eff6ff;
-    border-color: #93c5fd;
-    color: var(--app-primary-dark);
+  .preview-cerrar:hover { background: rgba(255, 255, 255, 0.24); }
+  .preview-cerrar:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+  .preview-marco {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 16px;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
   }
-  .idevice-card:not(.idevice-container) .idevice-btn:focus-visible {
-    outline: 2px solid #0284c7;
+  .preview-barra {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #eef2f7;
+    border-bottom: 1px solid #dbe3ec;
+    flex: 0 0 auto;
+  }
+  .preview-punto {
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
+    border-radius: 50%;
+    background: #f87171;
+  }
+  .preview-punto:nth-child(2) { background: #fbbf24; }
+  .preview-punto:nth-child(3) { background: #34d399; }
+  .preview-url {
+    flex: 1 1 auto;
+    height: 24px;
+    margin-left: 8px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #dbe3ec;
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 11px;
+    color: #64748b;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .preview-lienzo {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 22px;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--app-text);
+  }
+  .preview-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 16px 16px;
+    flex: 0 0 auto;
+  }
+
+  /* ---------- 5 · Iframe embebido con carga y fallback ---------- */
+  .bloque-iframe-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 12px 0;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #0f172a;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  }
+  .bloque-iframe-container > iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .iframe-cargando {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #0f172a;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    transition: opacity .25s ease;
+  }
+  .bloque-iframe-container.cargado .iframe-cargando { opacity: 0; pointer-events: none; }
+  .iframe-spinner {
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba(255, 255, 255, 0.18);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: iframeSpin .9s linear infinite;
+  }
+  @keyframes iframeSpin { to { transform: rotate(360deg); } }
+  .iframe-fallback {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    display: none;
+    padding: 10px 14px;
+    background: rgba(220, 38, 38, 0.92);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .bloque-iframe-container.error .iframe-fallback { display: block; }
+  .bloque-iframe-container.error .iframe-cargando { opacity: 0; pointer-events: none; }
+  .bloque-iframe-container .iframe-abrir {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.74);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity .15s ease, background .15s ease;
+  }
+  .bloque-iframe-container:hover .iframe-abrir,
+  .bloque-iframe-container:focus-within .iframe-abrir { opacity: 1; }
+  .bloque-iframe-container .iframe-abrir:hover { background: rgba(37, 99, 235, 0.92); }
+  .bloque-iframe-container .iframe-abrir:focus-visible {
+    outline: 2px solid #ffffff;
     outline-offset: 2px;
+    opacity: 1;
   }
+  @supports not (aspect-ratio: 1 / 1) {
+    .bloque-iframe-container { height: 0; padding-top: 56.25%; }
+  }
+
+  /* ---------- 6 · Línea del tiempo del proyecto NEM ---------- */
+  #timelineProyectoNEM {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+    overflow-x: auto;
+    padding: 8px 2px 16px;
+    margin: 0 0 8px;
+  }
+  .timeline-paso {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 118px;
+    padding: 0 4px;
+    text-align: center;
+  }
+  .timeline-paso::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: calc(-50% + 16px);
+    right: calc(50% + 16px);
+    height: 2px;
+    background: #e2e8f0;
+  }
+  .timeline-paso:first-child::before { display: none; }
+  .timeline-paso__punto {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .timeline-paso__titulo {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #64748b;
+  }
+  .timeline-paso__sub {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+
+  /* Estado: completado */
+  .timeline-paso.completado .timeline-paso__punto {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #15803d;
+  }
+  .timeline-paso.completado .timeline-paso__titulo { color: #15803d; }
+  .timeline-paso.completado::before { background: #86efac; }
+
+  /* Estado: activo (pulso) */
+  .timeline-paso.activo .timeline-paso__punto {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    animation: timelinePulso 2.2s ease-in-out infinite;
+  }
+  .timeline-paso.activo .timeline-paso__titulo { color: #1d4ed8; font-weight: 800; }
+  @keyframes timelinePulso {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45); }
+    50%      { box-shadow: 0 0 0 7px rgba(37, 99, 235, 0); }
+  }
+
+  /* Estado: pendiente */
+  .timeline-paso.pendiente .timeline-paso__punto {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+  }
+  .timeline-paso.pendiente .timeline-paso__titulo { color: #94a3b8; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-paso.activo .timeline-paso__punto { animation: none; }
+    .iframe-spinner { animation: none; }
+  }
+
+  @media (max-width: 640px) {
+    .bloque-iframe-container { aspect-ratio: 4 / 3; border-radius: 10px; }
+    .biblio-grid,
+    .repositorio-grid { grid-template-columns: 1fr; }
+    .preview-marco { margin: 10px; }
+    .preview-lienzo { padding: 14px; }
+    #timelineProyectoNEM .timeline-paso { min-width: 104px; }
 ```
 
-## 14. Contrato con Cursor (Fase 6, punto 2 de la partitura)
+### Módulo 2 · Estructura HTML
 
-En `AdminPlanJS_06.html`, dentro de `pintarTarjetaIDevice_`:
+```html
+<div id="vistaBibliotecaDocente">
+  <div class="biblio-filtros">
+    <div class="biblio-buscador">
+      <span class="biblio-lupa">🔍</span>
+      <input id="buscarRecursoBiblioteca" type="text" placeholder="Buscar por título, autor o tema…">
+    </div>
+    <select class="biblio-filtro" id="filtroAsignaturaRecurso">…</select>
+    <select class="biblio-filtro" id="filtroGradoRecurso">…</select>
+    <select class="biblio-filtro" id="filtroTrimestreRecurso">…</select>
+    <button type="button" class="biblio-subir">+ Compartir Recurso</button>
+  </div>
 
-```javascript
-// antes
-titulo.style.cssText = 'width:100%;box-sizing:border-box;margin-bottom:6px;';
-cuerpo.style.cssText = 'width:100%;box-sizing:border-box;resize:vertical;';
+  <div id="gridLibrosOficialesSEP">
+    <article class="libro-sep">
+      <img src="…" alt="Portada">
+      <span class="libro-sep__grado">1° grado</span>
+      <button type="button" class="libro-sep__btn">📖 Abrir Visor SEP</button>
+    </article>
+  </div>
 
-// después
-titulo.className = 'idevice-campo-titulo';
-cuerpo.className = 'idevice-campo-cuerpo';
+  <div class="biblio-grid">
+    <article class="card-recurso">
+      <span class="card-recurso__tipo card-recurso__tipo--pdf">📄 PDF</span>
+      <h4 class="card-recurso__titulo">Guía CTE · Fase intensiva</h4>
+      <p class="card-recurso__meta">Prof. Ramírez · 12 oct · Colegiado</p>
+      <div class="card-recurso__acciones">
+        <button type="button" class="btn-soft-primary">Vista previa</button>
+        <button type="button" class="btn-outline-custom">Descargar</button>
+      </div>
+    </article>
+  </div>
+</div>
 ```
 
-Los valores del contrato están cubiertos uno a uno:
+Variantes de tipo disponibles: `.card-recurso__tipo--pdf`, `--presentacion`, `--enlace`, `--video`. Estado vacío: `<div class="biblio-vacio">` dentro de `.biblio-grid`.
 
-| Declaración exigida | `.idevice-campo-titulo` | `.idevice-campo-cuerpo` |
-| :--- | :---: | :---: |
-| `width: 100%` | ✅ | ✅ |
-| `box-sizing: border-box` | ✅ | ✅ |
-| `margin-bottom: 6px` | ✅ | — |
-| `font-weight: 600` | ✅ | — |
-| `padding` | `6px 8px` ✅ | `8px` ✅ |
-| `border: 1px solid var(--app-border)` | ✅ | ✅ |
-| `border-radius: 4px` | ✅ | ✅ |
-| `resize: vertical` | — | ✅ |
+### Módulo 3 · Estructura HTML
 
-## 15. Decisiones técnicas
+```html
+<div class="panel-cecse">
+  <span class="badge-cecse">💻 Aula CECSE</span>
+  <div class="cecse-horas">
+    <div class="cecse-horas__item">
+      <span class="cecse-horas__n">2 h</span><span class="cecse-horas__l">Teoría · Aula</span>
+    </div>
+    <div class="cecse-horas__item">
+      <span class="cecse-horas__n">6 h</span><span class="cecse-horas__l">Práctica · CECSE</span>
+    </div>
+  </div>
+  <div class="cecse-software-grid">
+    <div class="cecse-software">
+      <span class="cecse-software__grado">1° grado</span>
+      <span class="cecse-software__badge">📝 Word / Ofimática básica</span>
+    </div>
+    <div class="cecse-software">
+      <span class="cecse-software__grado">2° grado</span>
+      <span class="cecse-software__badge cecse-software__badge--excel">📊 Excel / Datos</span>
+    </div>
+    <div class="cecse-software">
+      <span class="cecse-software__grado">3° grado</span>
+      <span class="cecse-software__badge cecse-software__badge--powerpoint">🎨 PowerPoint + IA</span>
+    </div>
+  </div>
+</div>
+```
 
-1. **`.idevice-card` es autosuficiente, no un simple refuerzo.** Se le dieron fondo, borde, radio, sombra, `overflow: hidden` y `break-inside: avoid`, porque en `Clase.html` es la única clase de la tarjeta. En Admin convive con `.idevice-container` y el resultado es idéntico.
-2. **Sin `:has()`.** Para evitar doble relleno en Admin se usa `.idevice-card.idevice-container { padding: 0; }`: ahí el relleno lo aportan `.idevice-header` y `.idevice-body`. En Clase, sin contenedor, la tarjeta aplica `padding: 14px 16px`.
-3. **`min-height: 56px` en el cuerpo.** `AdminCSS.html` (línea 515) aplica `textarea { min-height: 180px }` a *todo* textarea; el cuerpo del iDevice se estiraba a media pantalla (detectado en el render de prueba). La regla lo acota a dos renglones sin tocar el global.
-4. **Misma paleta que la Fase 4.** `.idevice-card-pregunta` usa el verde de `.idevice-pregunta` y `.idevice-card-reto` el ámbar de `.idevice-desafio`, con lo que Admin (clases antiguas) y Clase (clases nuevas) se ven igual.
-5. **Botonera de respaldo acotada.** `.idevice-card:not(.idevice-container) .idevice-btn` da estilo al botón Quitar / Escuchar solo cuando no existe `AdminPlaneacionCSS`; en Admin no altera nada (mayor especificidad, pero excluido por `:not`).
-6. **Cero `!important`, cero cambios de ID, cero JavaScript, cero archivos `.gs`.**
+### Módulo 4 · Estructura HTML
 
-## 16. Verificación
+```html
+<!-- Vista previa del alumno -->
+<div id="modalPreviewAlumno" class="visible" role="dialog" aria-modal="true">
+  <div class="preview-panel">
+    <header class="preview-cabecera">
+      <h3>Vista previa · como lo ve el alumno</h3>
+      <button type="button" class="preview-cerrar" aria-label="Cerrar">✕</button>
+    </header>
+    <div class="preview-marco">
+      <div class="preview-barra">
+        <span class="preview-punto"></span><span class="preview-punto"></span><span class="preview-punto"></span>
+        <span class="preview-url">st90.app/alumno · Español 1°A · T1</span>
+      </div>
+      <div class="preview-lienzo"><!-- aquí se inyecta el bloque del alumno --></div>
+    </div>
+    <div class="preview-acciones">
+      <button type="button" class="btn-outline-custom">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Iframe con carga y fallback -->
+<div class="bloque-iframe-container">
+  <div class="iframe-cargando">
+    <span class="iframe-spinner"></span><span>Cargando contenido interactivo…</span>
+  </div>
+  <div class="iframe-fallback">No se pudo cargar el recurso. Ábrelo en una pestaña nueva.</div>
+  <iframe src="…" title="…" loading="lazy" allowfullscreen onload="this.closest('.bloque-iframe-container').classList.add('cargado')"></iframe>
+  <a class="iframe-abrir" href="…" target="_blank" rel="noopener">Abrir en pestaña ↗</a>
+</div>
+
+<!-- Línea del tiempo -->
+<div id="timelineProyectoNEM">
+  <div class="timeline-paso completado"><span class="timeline-paso__punto">✓</span><span class="timeline-paso__titulo">Diagnóstico</span><span class="timeline-paso__sub">Fase 1</span></div>
+  <div class="timeline-paso activo"><span class="timeline-paso__punto">3</span><span class="timeline-paso__titulo">Formulación</span><span class="timeline-paso__sub">Fase 3</span></div>
+  <div class="timeline-paso pendiente"><span class="timeline-paso__punto">4</span><span class="timeline-paso__titulo">Evaluación formativa</span><span class="timeline-paso__sub">Fase 4</span></div>
+</div>
+```
+
+**Estados de la línea del tiempo:** `.completado` (verde `#dcfce7`/`#86efac`), `.activo` (azul con pulso `timelinePulso`), `.pendiente` (gris `#f1f5f9`). El conector se dibuja con `.timeline-paso::before` y se apaga solo en el primer paso.
+
+**Iframe:** la clase `.cargado` en el contenedor oculta la capa de carga; `.error` muestra el fallback rojo. Ambas las pone Cursor por evento.
+
+## 3. Inventario completo de clases e IDs nuevos (todos presentacionales)
+
+| Grupo | Clases / IDs | Notas |
+| :--- | :--- | :--- |
+| Ayuda contextual | `.btn-ayuda-nem`, `[data-ayuda-campo]`, `[data-tip]`, `[data-badge]` | El `data-ayuda-campo` lo usa Cursor para enlazar el diccionario |
+| Modal ayuda | `.ayuda-nem-panel`, `-cabecera`, `-icono`, `-ceja`, `-cerrar`, `-cuerpo`, `-etiqueta`, `-bloque--proposito/-como/-ejemplo`, `-pie`, `-entendido` | Los IDs `#modalAyudaTitulo/Proposito/ComoLlenar/Ejemplo` ya están en el contrato |
+| Asistente | `.ia-drawer-velo`, `.ia-drawer-cabecera`, `.ia-avatar`, `.ia-drawer-titulo`, `.ia-drawer-cerrar`, `.ia-sugerencias`, `.ia-chip`, `.ia-composer`, `.ia-vacio`, `.msg-ia`, `.msg-docente`, `.msg-hora` | |
+| Biblioteca | `.biblio-filtros`, `.biblio-buscador`, `.biblio-lupa`, `.biblio-filtro`, `.biblio-subir`, `.biblio-grid`, `.biblio-vacio`, `.libro-sep`, `.libro-sep__grado`, `.libro-sep__btn`, `.card-recurso`, `.card-recurso__tipo` (+4 variantes), `__titulo`, `__meta`, `__acciones` | |
+| CECSE | `.badge-cecse`, `.panel-cecse`, `.cecse-horas`, `.cecse-horas__item/__n/__l`, `.cecse-software-grid`, `.cecse-software`, `__grado`, `__badge` (+`--excel`, `--powerpoint`) | |
+| Preview | `.preview-panel`, `.preview-cabecera`, `.preview-cerrar`, `.preview-marco`, `.preview-barra`, `.preview-punto`, `.preview-url`, `.preview-lienzo`, `.preview-acciones` | |
+| Iframe | `.bloque-iframe-container`, `.iframe-cargando`, `.iframe-spinner`, `.iframe-fallback`, `.iframe-abrir`, estados `.cargado` / `.error` | |
+| Línea del tiempo | `.timeline-paso`, `.timeline-paso__punto`, `__titulo`, `__sub`, estados `.completado` / `.activo` / `.pendiente` | |
+
+## 4. Decisiones que conviene auditar
+
+1. **El toast sube a `bottom: 92px`.** Vivía en `right: 20px; bottom: 20px`, justo donde ahora flota el asistente. Preferí subir el toast 72 px antes que mover el botón: sigue en la misma esquina, aparece por encima y no tapa nada.
+2. **Tooltip propio en lugar del nativo.** `title` no se puede estilizar ni se lee igual en todos los navegadores; `[data-tip]::before` da el mismo resultado sin JavaScript y con contraste AA sobre `#0f172a`.
+3. **Cursiva serif para el ejemplo pedagógico** (la partitura permitía "monoespaciada o cursiva"): en un documento escolar la cursiva con serif se lee como cita, y el bloque se distingue del texto instructivo.
+4. **`prefers-reduced-motion`** desactiva el halo del FAB, el pulso de la línea del tiempo y el spinner. El diseño sigue siendo legible sin animación.
+5. **Nada de `!important`** en las piezas nuevas: todo se resuelve por ID o por clases propias, sin pelear con `AdminCSS.html`.
+6. **`@media print`** oculta FAB, drawer, velo y botones ❓ para que no ensucien una impresión del panel.
+7. **Preexistencia verificada:** los siete selectores del contrato no existían en ningún archivo antes de esta entrega (barrido sobre todos los `.html`), así que no hubo que reescribir estilos previos.
+
+## 5. Verificación
 
 | Comprobación | Resultado |
 | :--- | :--- |
-| Diff de `ComunCSS.html` vs copia previa | **−0 / +128 líneas** (puramente aditivo) |
-| Llaves `{` / `}` en el archivo | **338 / 338** — balanceadas |
-| Bloque Fase 5 (ribbon) | **intacto** (`FASE 5 · ESTILO aSc HORARIOS 2027` presente) |
-| Render Admin (ComunCSS + AdminCSS + AdminPlaneacionCSS) | ✅ tarjeta con acento, encabezado teñido, campos de 2 renglones |
-| Render Clase (solo ComunCSS) | ✅ tarjeta completa con botón Quitar y acento por tipo |
-| IDs y `onclick` | sin cambio (esta fase no toca `Admin.html`) |
+| Llaves CSS balanceadas | `ComunCSS.html` 395/395 · `AdminPlaneacionCSS.html` 260/260 |
+| Fases 5 y 6 | intactas (los bloques anteriores no se tocaron) |
+| Los 4 módulos renderizados | ✅ sin desbordes ni solapamientos a 980 px y en móvil |
+| Drawer medido | **379 px** de ancho (objetivo 380) |
+| Contraste del ❓ | `#64748b` sobre `#f8fafc` con peso 800 y 12 px |
+| IDs / `onclick` / `.gs` | sin cambios |
 
-Evidencia: `evidencia_fase6/fase6_tarjetas_admin.png` y `evidencia_fase6/fase6_tarjetas_clase.png`.
+Evidencia en `evidencia_fase7/`:
 
-## 17. Rollback
+| Archivo | Qué muestra |
+| :--- | :--- |
+| `modulo1_ayuda_modal.png` | Modal pedagógico con los 3 bloques y `backdrop-filter` |
+| `modulo1_drawer.png` | Drawer con avatar, chip, burbujas y sugerencias |
+| `modulo2_biblioteca.png` | Buscador con lupa, filtros píldora, libros SEP, `.card-recurso` y línea del tiempo |
+| `modulo3_cecse.png` | Insignia, distribución 2 h/6 h, badges por grado y botón ❓ |
+| `modulo4_preview_alumno.png` | Marco de navegador con el bloque del alumno |
+
+## 6. Rollback
 
 ```
-C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS_pre_fase6.html   (estado justo antes de la Fase 6)
-C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS.html            (estado previo a la Fase 5)
+C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS_pre_fase7.html
+C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_fase7.html
 ```
 
-Restaurar la primera sobre `ComunCSS.html` revierte solo la Fase 6 y conserva el ribbon.
+Restaurar cualquiera de los dos revierte solo esta fase y conserva las Fases 5 y 6.
 
-## 18. Pendiente detectado (para una Fase 7, no ejecutado)
+## 7. Lo que NO incluye esta entrega
 
-`ClaseJS_08.html` sigue construyendo las tarjetas con `innerHTML` lleno de `style="..."` en línea y sin `.idevice-header`, `.idevice-body` ni `.idevice-campo-*`. La tarjeta ya se ve correcta gracias a `.idevice-card`, pero su tipografía y sus campos no están unificados con Admin. Eso es territorio de Cursor: requiere sustituir el `innerHTML` por nodos con las clases del contrato. No lo toqué.
+- **`#modalSubirRecurso` / `#formSubirRecursoBiblioteca`**: no están en la lista de selectores asignados. Si Cursor los necesita, hace falta que Antigravity los añada a la partitura.
+- **Lógica de eventos, `DICCIONARIO_AYUDA_NEM`, endpoints y `google.script.run`**: es territorio de Cursor y de Antigravity. Aquí solo hay CSS y estructura de referencia.

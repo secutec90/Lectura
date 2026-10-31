@@ -2016,6 +2016,134 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
   }
 
+  /* --- 1.1b · Asistente de Voz en Campos NEM (accesible DUA) --- */
+  .btn-voz-nem {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    padding: 0;
+    margin: 0 0 0 4px;
+    border: 1px solid #dbe3ec;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #475569;
+    font: 700 11px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 1;
+    transition: all .15s ease;
+  }
+  .btn-voz-nem:hover {
+    color: #059669;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    transform: translateY(-1px);
+  }
+  .btn-voz-nem.reproduciendo {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #059669;
+    animation: pulsoVozNem 1.2s infinite;
+  }
+  @keyframes pulsoVozNem {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+    70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+
+  /* Botón de narración dentro del modal de ayuda pedagógica */
+  .btn-voz-modal-nem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid #10b981;
+    border-radius: 8px;
+    background: #ecfdf5;
+    color: #065f46;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .btn-voz-modal-nem:hover {
+    background: #d1fae5;
+    transform: translateY(-1px);
+  }
+  .btn-voz-modal-nem.reproduciendo {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #059669;
+    animation: pulsoVozNem 1.2s infinite;
+  }
+
+  /* Botón de dictado por voz (Micrófono) en el Asistente IA */
+  .btn-microfono-ia {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+    border: 1px solid var(--app-border);
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .btn-microfono-ia:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+  }
+  .btn-microfono-ia.escuchando {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #dc2626;
+    animation: pulsoMicNem 1s infinite;
+  }
+  @keyframes pulsoMicNem {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
+
+  /* Botón de voz en cada burbuja de respuesta del Asistente IA */
+  .btn-voz-ia-msg {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .14s ease;
+  }
+  .btn-voz-ia-msg:hover {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+  }
+  .btn-voz-ia-msg.reproduciendo {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #059669;
+    animation: pulsoVozNem 1.2s infinite;
+  }
+
   /* --- 1.2 · Toast por encima del botón flotante --- */
   #st90-toast { bottom: 92px; }
 

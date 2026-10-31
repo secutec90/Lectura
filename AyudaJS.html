@@ -427,6 +427,193 @@ function abrirAsistentePasoNEM_(paso) {
   conmutarDrawerAsistente_(true);
 }
 
+/* ============================================================
+   ASISTENTE DE VOZ NEM · Síntesis TTS y Dictado STT (DUA)
+   ============================================================ */
+var btnReproduciendoActivo_ = null;
+var reconocimientoVoz_ = null;
+var escuchandoVoz_ = false;
+
+function detenerVozNEM_() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+  }
+  if (btnReproduciendoActivo_) {
+    restaurarBtnVoz_(btnReproduciendoActivo_);
+    btnReproduciendoActivo_ = null;
+  }
+}
+
+function marcarBtnVozReproduciendo_(btn) {
+  if (!btn) return;
+  btn.classList.add('reproduciendo');
+  btn._textoOriginal = btn._textoOriginal || btn.textContent || '🔊';
+  if (btn.classList.contains('btn-voz-modal-nem')) {
+    btn.textContent = '⏹️ Detener lectura';
+  } else if (btn.classList.contains('btn-voz-ia-msg')) {
+    btn.textContent = '⏹️ Detener';
+  } else {
+    btn.textContent = '⏹️';
+  }
+}
+
+function restaurarBtnVoz_(btn) {
+  if (!btn) return;
+  btn.classList.remove('reproduciendo');
+  if (btn._textoOriginal) {
+    btn.textContent = btn._textoOriginal;
+  } else if (btn.classList.contains('btn-voz-modal-nem')) {
+    btn.textContent = '🔊 Escuchar orientación';
+  } else if (btn.classList.contains('btn-voz-ia-msg')) {
+    btn.textContent = '🔊 Escuchar';
+  } else {
+    btn.textContent = '🔊';
+  }
+}
+
+function narrarTextoNEM_(texto, btnIndicador, alTerminar) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    avisar_('Tu navegador no soporta síntesis de voz.', 'info');
+    return;
+  }
+  var yaEstabaReproduciendoEste = (btnReproduciendoActivo_ && btnReproduciendoActivo_ === btnIndicador);
+  detenerVozNEM_();
+  if (yaEstabaReproduciendoEste) return;
+
+  var textoLimpio = String(texto || '')
+    .replace(/[*#_`~>•]/g, ' ')
+    .replace(/https?:\/\/\S+/g, 'enlace')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!textoLimpio) return;
+
+  var utter = new SpeechSynthesisUtterance(textoLimpio);
+  utter.lang = 'es-MX';
+  utter.rate = 1.0;
+  utter.pitch = 1.0;
+
+  var voces = window.speechSynthesis.getVoices() || [];
+  var vozEs = null;
+  for (var i = 0; i < voces.length; i++) {
+    var lang = (voces[i].lang || '').toLowerCase();
+    if (lang === 'es-mx' || lang === 'es_mx') { vozEs = voces[i]; break; }
+    if (!vozEs && lang.indexOf('es') === 0) vozEs = voces[i];
+  }
+  if (vozEs) utter.voice = vozEs;
+
+  if (btnIndicador) {
+    marcarBtnVozReproduciendo_(btnIndicador);
+    btnReproduciendoActivo_ = btnIndicador;
+  }
+
+  utter.onend = function () {
+    if (btnIndicador) restaurarBtnVoz_(btnIndicador);
+    if (btnReproduciendoActivo_ === btnIndicador) btnReproduciendoActivo_ = null;
+    if (typeof alTerminar === 'function') alTerminar();
+  };
+  utter.onerror = function () {
+    if (btnIndicador) restaurarBtnVoz_(btnIndicador);
+    if (btnReproduciendoActivo_ === btnIndicador) btnReproduciendoActivo_ = null;
+  };
+
+  window.speechSynthesis.speak(utter);
+}
+
+function conmutarDictadoPorVozIA_() {
+  var SpeechRec = (typeof window !== 'undefined') ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
+  if (!SpeechRec) {
+    avisar_('El dictado por voz requiere Google Chrome, Edge o un navegador compatible con Web Speech API.', 'info');
+    return;
+  }
+  var btn = nodo_('btnMicrofonoIA');
+  var campo = nodo_('txtMensajeAsistente');
+  if (!campo) return;
+
+  if (escuchandoVoz_ && reconocimientoVoz_) {
+    try { reconocimientoVoz_.stop(); } catch (e) {}
+    escuchandoVoz_ = false;
+    if (btn) {
+      btn.classList.remove('escuchando');
+      btn.textContent = '🎙️';
+      btn.title = 'Dictar por voz';
+    }
+    return;
+  }
+
+  try {
+    reconocimientoVoz_ = new SpeechRec();
+    reconocimientoVoz_.lang = 'es-MX';
+    reconocimientoVoz_.continuous = false;
+    reconocimientoVoz_.interimResults = true;
+
+    reconocimientoVoz_.onstart = function () {
+      escuchandoVoz_ = true;
+      if (btn) {
+        btn.classList.add('escuchando');
+        btn.textContent = '🔴';
+        btn.title = 'Escuchando... haz clic para detener';
+      }
+    };
+
+    reconocimientoVoz_.onresult = function (ev) {
+      var transcript = '';
+      for (var i = ev.resultIndex; i < ev.results.length; ++i) {
+        transcript += ev.results[i][0].transcript;
+      }
+      campo.value = transcript;
+    };
+
+    reconocimientoVoz_.onerror = function () {
+      escuchandoVoz_ = false;
+      if (btn) {
+        btn.classList.remove('escuchando');
+        btn.textContent = '🎙️';
+        btn.title = 'Dictar por voz';
+      }
+    };
+
+    reconocimientoVoz_.onend = function () {
+      escuchandoVoz_ = false;
+      if (btn) {
+        btn.classList.remove('escuchando');
+        btn.textContent = '🎙️';
+        btn.title = 'Dictar por voz';
+      }
+      if (campo && campo.value.trim()) {
+        campo.focus();
+      }
+    };
+
+    reconocimientoVoz_.start();
+  } catch (err) {
+    escuchandoVoz_ = false;
+    if (btn) {
+      btn.classList.remove('escuchando');
+      btn.textContent = '🎙️';
+    }
+    avisar_('No se pudo activar el micrófono: ' + err.message, 'error');
+  }
+}
+
+function asegurarBotonesVozCampos_() {
+  var botones = document.querySelectorAll('.btn-ayuda-nem');
+  for (var i = 0; i < botones.length; i++) {
+    var btn = botones[i];
+    var siguiente = btn.nextElementSibling;
+    if (siguiente && siguiente.classList.contains('btn-voz-nem')) continue;
+    var clave = btn.getAttribute('data-ayuda-campo') || '';
+    var btnVoz = document.createElement('button');
+    btnVoz.type = 'button';
+    btnVoz.className = 'btn-voz-nem';
+    btnVoz.setAttribute('data-voz-campo', clave);
+    btnVoz.setAttribute('title', 'Escuchar orientación pedagógica');
+    btnVoz.setAttribute('aria-label', 'Escuchar orientación pedagógica');
+    btnVoz.textContent = '🔊';
+    btn.parentNode.insertBefore(btnVoz, btn.nextSibling);
+  }
+}
+
 function asegurarModalAyuda_() {
   var modal = nodo_('modalAyudaNEM');
   if (modal) return modal;
@@ -462,6 +649,7 @@ function asegurarModalAyuda_() {
         '</div>' +
       '</div>' +
       '<div class="ayuda-nem-pie">' +
+        '<button type="button" class="btn-voz-modal-nem" id="btnNarrarModalAyuda" aria-label="Escuchar explicación en voz alta">🔊 Escuchar orientación</button>' +
         '<button type="button" class="ayuda-nem-entendido" data-cerrar-ayuda-nem="1">Entendido</button>' +
       '</div>' +
     '</div>';
@@ -495,6 +683,7 @@ function abrirAyudaPedagogica(titulo, proposito, comoLlenar, ejemplo) {
 }
 
 function cerrarAyudaPedagogica_() {
+  detenerVozNEM_();
   ocultarOverlay_('modalAyudaNEM');
   if (ultimoDisparadorAyuda_ && ultimoDisparadorAyuda_.focus) {
     try { ultimoDisparadorAyuda_.focus(); } catch (err) {}
@@ -680,7 +869,7 @@ function sincronizarContextoDesdeFoco_(id) {
   actualizarSugerenciasSegunMateria_();
 }
 
-function pintarBurbuja_(clase, texto) {
+function pintarBurbuja_(clase, texto, omitirVoz) {
   var caja = nodo_('chatAsistenteCuerpo');
   if (!caja) return null;
   var vacio = caja.querySelector('.ia-vacio');
@@ -688,6 +877,21 @@ function pintarBurbuja_(clase, texto) {
   var p = document.createElement('p');
   p.className = clase;
   p.textContent = texto;
+
+  // En mensajes de IA completados, anexar botón de narración
+  if (clase === 'msg-ia' && !omitirVoz && texto && texto.indexOf('⏳') === -1) {
+    var contAccion = document.createElement('div');
+    contAccion.style.marginTop = '6px';
+    var btnVoz = document.createElement('button');
+    btnVoz.type = 'button';
+    btnVoz.className = 'btn-voz-ia-msg';
+    btnVoz.setAttribute('aria-label', 'Escuchar respuesta');
+    btnVoz.setAttribute('title', 'Escuchar respuesta en voz alta');
+    btnVoz.textContent = '🔊 Escuchar';
+    contAccion.appendChild(btnVoz);
+    p.appendChild(contAccion);
+  }
+
   caja.appendChild(p);
   caja.scrollTop = caja.scrollHeight;
   return p;
@@ -743,7 +947,8 @@ function asegurarDrawerAsistente_() {
     '</div>' +
     '<div class="ia-composer">' +
       '<textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu consulta pedagógica..." aria-label="Mensaje para el asistente"></textarea>' +
-      '<button type="button" id="btnEnviarAsistenteIA" class="nem-btn-accion nem-btn-primario">Enviar</button>' +
+      '<button type="button" id="btnMicrofonoIA" class="btn-microfono-ia" title="Dictar por voz" aria-label="Dictar consulta por voz">🎙️</button>' +
+      '<button type="button" id="btnEnviarAsistenteIA" class="nem-btn-accion nem-btn-primario" title="Enviar consulta">Enviar</button>' +
     '</div>';
 
   document.body.appendChild(drawer);
@@ -756,8 +961,12 @@ function conmutarDrawerAsistente_(abrir) {
   var btn = nodo_('btnAsistenteFlotanteIA');
   var estaAbierto = drawer.classList.contains('visible') || drawer.classList.contains('abierto');
   var mostrar = (abrir === true) || (abrir !== false && !estaAbierto);
-  if (mostrar) mostrarOverlay_('drawerAsistenteIA');
-  else ocultarOverlay_('drawerAsistenteIA');
+  if (mostrar) {
+    mostrarOverlay_('drawerAsistenteIA');
+  } else {
+    detenerVozNEM_();
+    ocultarOverlay_('drawerAsistenteIA');
+  }
   if (btn) btn.setAttribute('aria-expanded', mostrar ? 'true' : 'false');
   if (mostrar) {
     actualizarContextoAsistenteIA_();
@@ -1513,6 +1722,7 @@ function engancharPasoPlanNEM_() {
     try {
       actualizarContextoAsistenteIA_();
       aplicarAdecuacionCECSE_();
+      asegurarBotonesVozCampos_();
     } catch (e) {}
     return r;
   }
@@ -1582,6 +1792,62 @@ function engancharFiltrosBiblioteca_() {
 }
 
 function clicLmsSt90_(e) {
+  // 1. Clic en botón de voz individual de campo (🔊)
+  var vozCampo = e.target && e.target.closest ? e.target.closest('.btn-voz-nem') : null;
+  if (vozCampo) {
+    e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
+    var claveVoz = vozCampo.getAttribute('data-voz-campo');
+    var datosVoz = entradaAyuda_(claveVoz);
+    if (!datosVoz) {
+      avisar_('No hay orientación grabada para este campo.', 'info');
+      return;
+    }
+    var textoNarrar = 'Orientación para ' + (datosVoz.titulo || 'este campo') + '. ' +
+      'Propósito formativo: ' + (datosVoz.proposito || '') + '. ' +
+      'Cómo llenarlo en el aula: ' + (datosVoz.comoLlenar || '') + '. ' +
+      (datosVoz.ejemplo ? ('Ejemplo viable: ' + datosVoz.ejemplo) : '');
+    narrarTextoNEM_(textoNarrar, vozCampo);
+    return;
+  }
+
+  // 2. Clic en botón de narración dentro del modal de ayuda pedagógica
+  var btnNarrarModal = e.target && e.target.closest ? e.target.closest('#btnNarrarModalAyuda') : null;
+  if (btnNarrarModal) {
+    e.preventDefault();
+    var titM = (nodo_('modalAyudaTitulo') || {}).textContent || '';
+    var proM = (nodo_('modalAyudaProposito') || {}).textContent || '';
+    var comM = (nodo_('modalAyudaComoLlenar') || {}).textContent || '';
+    var ejeM = (nodo_('modalAyudaEjemplo') || {}).textContent || '';
+    var guionModal = 'Ayuda pedagógica NEM: ' + titM + '. ' +
+      (proM ? ('Propósito formativo: ' + proM + '. ') : '') +
+      (comM ? ('Cómo llenarlo: ' + comM + '. ') : '') +
+      (ejeM ? ('Ejemplo viable: ' + ejeM) : '');
+    narrarTextoNEM_(guionModal, btnNarrarModal);
+    return;
+  }
+
+  // 3. Clic en botón de narrar burbuja de respuesta del Asistente IA
+  var btnVozIa = e.target && e.target.closest ? e.target.closest('.btn-voz-ia-msg') : null;
+  if (btnVozIa) {
+    e.preventDefault();
+    var contBurbuja = btnVozIa.closest('.msg-ia');
+    if (contBurbuja) {
+      var clon = contBurbuja.cloneNode(true);
+      var btnInside = clon.querySelector('.btn-voz-ia-msg');
+      if (btnInside && btnInside.parentNode) btnInside.parentNode.removeChild(btnInside);
+      narrarTextoNEM_(clon.textContent, btnVozIa);
+    }
+    return;
+  }
+
+  // 4. Clic en botón de micrófono (dictado por voz en el asistente IA)
+  if (e.target && (e.target.id === 'btnMicrofonoIA' || (e.target.closest && e.target.closest('#btnMicrofonoIA')))) {
+    e.preventDefault();
+    conmutarDictadoPorVozIA_();
+    return;
+  }
+
   var ayuda = e.target && e.target.closest ? e.target.closest('.btn-ayuda-nem') : null;
   if (ayuda) {
     e.preventDefault();
@@ -1646,6 +1912,7 @@ function clicLmsSt90_(e) {
 
 function teclaLmsSt90_(ev) {
   if (ev.key !== 'Escape') return;
+  detenerVozNEM_();
   var ayuda = nodo_('modalAyudaNEM');
   if (ayuda && !ayuda.classList.contains('oculto')) {
     cerrarAyudaPedagogica_();
@@ -1674,6 +1941,7 @@ function iniciarLmsSt90_() {
   asegurarModalSubir_();
   asegurarPreviewAlumno_();
   asegurarBadgeCecse_();
+  asegurarBotonesVozCampos_();
   ocultarOverlay_('modalAyudaNEM');
   ocultarOverlay_('drawerAsistenteIA');
   ocultarOverlay_('vistaBibliotecaDocente');
@@ -1712,6 +1980,10 @@ function iniciarLmsSt90_() {
   window.abrirVistaPreviaAlumno_ = abrirVistaPreviaAlumno_;
   window.insertarBloqueIframe_ = insertarBloqueIframe_;
   window.actualizarContextoAsistenteIA_ = actualizarContextoAsistenteIA_;
+  window.detenerVozNEM_ = detenerVozNEM_;
+  window.narrarTextoNEM_ = narrarTextoNEM_;
+  window.conmutarDictadoPorVozIA_ = conmutarDictadoPorVozIA_;
+  window.asegurarBotonesVozCampos_ = asegurarBotonesVozCampos_;
 }
 
 if (document.readyState === 'loading') {

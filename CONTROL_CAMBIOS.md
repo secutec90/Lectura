@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Asistente de Voz DUA: Narración en Iconos de Ayuda y Respuestas IA, y Dictado por Voz (build-561)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(voz): asistente de voz accesible DUA con narracion en iconos de ayuda, lectura de respuestas IA y dictado por voz en build-561`
+- **Causa Raíz / Requerimiento:** El usuario solicitó la integración del asistente de voz tanto en la Asistencia de IA como en cada icono de ayuda pedagógica para apoyar la accesibilidad y el Diseño Universal para el Aprendizaje (DUA), permitiendo escuchar orientaciones sin necesidad de lectura visual y dictar consultas con micrófono.
+- **Cambios Realizados:**
+  - **Asistente de Voz en Iconos de Ayuda (`.btn-voz-nem`):**
+    - Se creó la función `asegurarBotonesVozCampos_()` que inyecta automáticamente un botón de voz `🔊` accesible al lado de cada botón de ayuda `❓` en todos los formularios de planeación.
+    - Al hacer clic en `🔊`, sintetiza en voz alta (Web Speech API `es-MX`) la orientación curricular del campo: título, propósito formativo, cómo llenarlo en el aula y ejemplo viable.
+    - El botón muestra un pulso animado visual (`.reproduciendo`) y conmuta a `⏹️` para permitir pausar o detener la narración en cualquier instante.
+  - **Narración en el Modal de Ayuda Pedagógica (`#modalAyudaNEM`):**
+    - Se integró el botón `#btnNarrarModalAyuda` (*🔊 Escuchar orientación*) en el pie del modal, permitiendo reproducir o pausar la lectura completa de la ayuda abierta.
+    - Se detiene automáticamente cualquier voz en reproducción al cerrar el modal o pulsar la tecla Escape.
+  - **Asistente de Voz en el Drawer de IA (`#drawerAsistenteIA`):**
+    - **Lectura de Respuestas IA:** En cada burbuja de respuesta del asistente (`.msg-ia`), se anexó el botón `🔊 Escuchar` (`.btn-voz-ia-msg`) para narrar la respuesta didáctica de la IA de forma clara.
+    - **Dictado por Voz con Micrófono (`#btnMicrofonoIA`):** En el compositor del chat se integró el botón `🎙️` con reconocimiento de voz en tiempo real (`webkitSpeechRecognition`), permitiendo a los docentes dictar sus consultas pedagógicas directamente al campo de texto.
+  - **Estilos Visuales en `ComunCSS.html`:** Estilos para `.btn-voz-nem`, `.btn-voz-modal-nem`, `.btn-microfono-ia` (con pulso rojo mientras escucha) y `.btn-voz-ia-msg`.
+  - **Despliegue a Producción (@561):** Versión `@561` desplegada en los 5 endpoints oficiales de Google Apps Script y validada con diagnóstico en vivo (`build: "build-561"`, `totalAdmin: 14`).
+- **Archivos Afectados:** `ComunCSS.html`, `AyudaJS.html`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Autonomía Profesional Docente: Desbloqueo de Metodología y Campo Formativo en Planeación NEM (build-560)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): desbloqueo de selectores de metodologia sociocritica y campo formativo respetando autonomia docente NEM en build-560`
 - **Causa Raíz Diagnosticada:** Al seleccionar una clase o asignatura en el formulario de planeación (ej. *Geografía* o *Español*), la función `actualizarCatalogoPDAParaClase_` en `AdminPlanJS_04.html` y `ClaseJS_05.html` ejecutaba `selMet.disabled = true;` y `selCampo.disabled = true;`. Esto bloqueaba físicamente el `<select id="planMetodologia">`, mostrándolo atenuado/grisáceo y privando al docente de hacer clic para elegir otra opción. Dicha restricción contradecía el principio de **Autonomía Profesional del Magisterio** de la SEP (Fase 6), el cual establece que las 4 metodologías sociocríticas (*Proyectos Comunitarios*, *STEAM*, *ABP*, *Aprendizaje Servicio*) son sugerencias de referencia, pero el docente tiene plena libertad de elegir la metodología que mejor se adapte al problema comunitario o propósito del proyecto.

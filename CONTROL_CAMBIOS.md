@@ -2,6 +2,15 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Autonomía Profesional Docente: Desbloqueo de Metodología y Campo Formativo en Planeación NEM (build-560)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(planeacion): desbloqueo de selectores de metodologia sociocritica y campo formativo respetando autonomia docente NEM en build-560`
+- **Causa Raíz Diagnosticada:** Al seleccionar una clase o asignatura en el formulario de planeación (ej. *Geografía* o *Español*), la función `actualizarCatalogoPDAParaClase_` en `AdminPlanJS_04.html` y `ClaseJS_05.html` ejecutaba `selMet.disabled = true;` y `selCampo.disabled = true;`. Esto bloqueaba físicamente el `<select id="planMetodologia">`, mostrándolo atenuado/grisáceo y privando al docente de hacer clic para elegir otra opción. Dicha restricción contradecía el principio de **Autonomía Profesional del Magisterio** de la SEP (Fase 6), el cual establece que las 4 metodologías sociocríticas (*Proyectos Comunitarios*, *STEAM*, *ABP*, *Aprendizaje Servicio*) son sugerencias de referencia, pero el docente tiene plena libertad de elegir la metodología que mejor se adapte al problema comunitario o propósito del proyecto.
+- **Cambios Realizados:**
+  - **Eliminación del Bloqueo Forzado:** En `AdminPlanJS_04.html` y `ClaseJS_05.html`, se reemplazó el bloqueo por una autoselección recomendada abierta (`selMet.disabled = false;`, `selCampo.disabled = false;`).
+  - **Flexibilidad Curricular:** El sistema selecciona automáticamente la metodología sugerida oficial por disciplina al elegir la clase, pero permite al docente cambiarla libremente a cualquiera de las 4 opciones de la NEM según su criterio pedagógico.
+  - **Despliegue a Producción (@560):** Versión `@560` desplegada en los 5 endpoints oficiales de Google Apps Script y validada con diagnóstico HTTP 200 en vivo (`ok: true`, `build: "build-560"`, `totalAdmin: 14`).
+- **Archivos Afectados:** `AdminPlanJS_04.html`, `ClaseJS_05.html`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Alineación Estricta a Planes y Programas SEP (Fase 6) y Sincronización de Trimestre según Calendario (build-559)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ia): sincronizacion reactiva del trimestre segun fecha del calendario y alineacion estricta a planes SEP Fase 6 en build-559`
 - **Causa Raíz / Requerimiento:** Se requería que el Asistente Pedagógico IA detectara y respetara dinámicamente el trimestre escolar seleccionado por el docente en el calendario escolar (`#planFechaInicio` / `#planPeriodo`) y que todas las propuestas, contenidos, PDA y orientaciones pedagógicas estuvieran rigurosamente ajustadas a los Planes y Programas de Estudio oficiales de la SEP (Fase 6 - Educación Secundaria) para dicho trimestre.

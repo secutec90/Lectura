@@ -34,17 +34,17 @@
 
     matrizCurricularActivaNEM_ = encontrada;
 
-    // EFECTO CASCADA NEM: Autoselección y Bloqueo de Campo Formativo y Metodología
+    // AUTONOMÍA DOCENTE NEM: Autoselección inicial recomendada sin bloqueo forzado
     const selCampo = document.getElementById('planCampoFormativo');
     if (selCampo) {
       selCampo.value = encontrada.campo;
-      selCampo.disabled = true;
+      selCampo.disabled = false;
     }
 
     const selMet = document.getElementById('planMetodologia');
     if (selMet) {
       selMet.value = encontrada.metodologia;
-      selMet.disabled = true;
+      selMet.disabled = false;
     }
 
     // Actualización de la etiqueta visual del catálogo oficial

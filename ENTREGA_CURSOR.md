@@ -1535,10 +1535,28 @@ if (document.readyState === 'loading') {
 
 ---
 
-### 🛠️ [2026-10-31] - [Controladores LMS AechitexOS en el buzón de Cursor]
-- **Mensaje de Commit sugerido (Conventional Commits):** `feat(planeacion): controladores js del lms aechitexos en el buzon de cursor`
-- **Cambios Realizados:**
-  - Propuesta de `AyudaJS.html` con ayuda pedagógica, drawer del asistente, biblioteca, adecuación CECSE, vista previa del alumno e iframe https. Quedó en el buzón. El runtime, el backend y los IDs existentes no se tocaron.
-- **Archivos Afectados:** `ENTREGA_CURSOR.md`
-- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** `abrirAyuda(clave)` de `ComunJS.html` se conserva. La ayuda de campos es `abrirAyudaPedagogica`. Antigravity integra el `<script>` como `AyudaJS.html` después de `AdminPlanJS_Arranque`, publica `window.CATALOGO_LIBROS_SEP_FASE6_` y no reabre el polimorfismo de `abrirAyuda`. Los overlays usan `.oculto`.
+---
+
+### 🚀 [PROGRAMACIÓN PARA MAÑANA] - ETAPA 2: CONTENIDOS SINTÉTICOS & PDA (NEM FASE 6)
+**Fecha asignada:** Sesión de Mañana  
+**Agente:** Cursor (Frontend JS & Manipulación del DOM)  
+**Archivos autorizados:** `AdminPlanJS_03.html`, `ClaseJS_05.html`, `AyudaJS.html`  
+**Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
+
+#### Objetivos Específicos para Cursor:
+1. **Sincronización Reactiva de Contenidos Sintéticos por Asignatura y Grado:**
+   - Al cambiar `#planAsignatura` o `#planGrado` en Etapa 1, poblar reactivamente la lista o catálogo de Contenidos Sintéticos de la Fase 6 en `#planContenidoSintetico`.
+   - Permitir búsqueda rápida / autocompletado en el catálogo sin bloquear la edición libre del docente.
+2. **Filtrado y Selección Múltiple de PDA por Trimestre:**
+   - Detectar el trimestre activo de la clase (T1, T2, T3) según el calendario.
+   - Renderizar los Procesos de Desarrollo de Aprendizaje (PDA) correspondientes con casillas interactivas `.ia-pda-checkbox`.
+   - Al marcar/desmarcar un PDA, actualizar el `textarea#planPDA` con formato de viñetas claras (`• PDA 1... \n• PDA 2...`) y actualizar el contador numérico `#badgeContadorPDA` en tiempo real.
+3. **Integración con Asesora Pedagógica IA para PDA con DUA:**
+   - Conectar el botón `✨ Sugerir con IA` de la Etapa 2 para solicitar a la Asesora:
+     `"Sugiere 2 PDA adaptados con enfoque DUA para el contenido sintético seleccionado en [Asignatura] [Grado]° (Trimestre [T])."`
+   - Habilitar chips de 1 clic `[➕ Insertar este PDA]` dentro de la burbuja de respuesta para anexarlo inmediatamente al `textarea#planPDA`.
+4. **Contrato de Inmutabilidad:**
+   - No alterar los IDs inmutables: `planContenidoSintetico`, `planPDA`, `tabPasoPlan2`, `etapaPlanNEM_2`.
+   - Toda llamada a backend se realiza exclusivamente mediante `gsRun` con manejo de errores y feedback visual.
+
 

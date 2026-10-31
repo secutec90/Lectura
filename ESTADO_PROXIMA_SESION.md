@@ -1,64 +1,70 @@
-# 📌 ESTADO DE RELEVO Y CONTINUACIÓN DE SESIÓN — ST90
+# 📌 ESTADO DE RELEVO Y CONTINUACIÓN DE SESIÓN — SUITE ESCOLAR ST90
 **Fecha de corte:** 2026-10-31  
-**Versión activa en producción:** `@556` (`v417 · build-556`)  
-**Rama Git:** `main`
+**Versión activa en producción:** `@562` (`v417 · build-562`)  
+**Rama Git:** `main` (Sincronizada con GitHub)  
+**Base de datos:** Google Sheets ID `1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU` (14/14 planeaciones íntegras)
 
 ---
 
-## 🧭 Para cualquier Agente (Antigravity, Cursor, DeepSeek) al abrir en la otra PC
+## 🧭 Directiva para los 3 Agentes (Antigravity, Cursor, DeepSeek) al Iniciar Mañana
 
-> **DIRECTIVA OBLIGATORIA:**  
+> **DIRECTIVA OBLIGATORIA (CERO PREGUNTAS REDUNDANTES AL USUARIO):**  
 > No le pidas al usuario que repita contexto ni que copie/pegue código manualmente en el chat.  
-> Lee este documento, `ESTADO_COORDINACION.md` y los buzones `ENTREGA_CURSOR.md` y `ENTREGA_DEEPSEEK.md`.  
-> Continúa directamente en el punto exacto de la **Fase 7 y Módulo de Descarga/PDF Oficial**.
+> Lee este documento, `ESTADO_COORDINACION.md` y tus buzones `ENTREGA_CURSOR.md` o `ENTREGA_DEEPSEEK.md`.  
+> Continúa directamente en el punto exacto de la **Etapa 2: Contenidos Sintéticos & PDA (NEM Fase 6)**.
 
 ---
 
-## 1. Dónde nos quedamos (Estado del Sistema)
+## 1. Dónde nos quedamos (Hitos Concluidos en `@562`)
 
-1. **Persistencia y Visibilidad de Planeaciones NEM (100% Operativa):**
-   - La base de datos de Google Sheets (`1ZxCuV_6O3JcX9E-7y165Q6ofAZRERk9-xj5rYeUhaYU`) contiene **14 de 14 planeaciones didácticas** activas e intactas.
-   - El usuario confirmó visualmente en pantalla la carga exitosa de las 14 planeaciones (tanto borradores personales como proyectos colegiados).
-   - Se erradicó el error global crítico provocado por un script local (`check_sites`) subido a Google Apps Script que tumbaba las ejecuciones de `google.script.run` con `ReferenceError: require is not defined`.
-   - Se blindó `.claspignore` con `**/*.js` y `*.js`, y se normalizaron todas las fechas `Date` a strings ISO serializables en `PlaneacionNEM.gs`.
-2. **Despliegues Google Apps Script (Sincronizados en `@555`):**
-   - Google Sites (`https://sites.google.com/view/st90/inicio`): `AKfycbz1-xheu_68hU7LpM0_3sUSfqwsb1Hw775eWuHgwmPTJWtvGY7cCh0AR4zcq2Lg32DIBQ` @555.
-   - Acceso Directo Web App / Admin: `AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ` @555.
-   - Despliegue Asistencia: `AKfycbwYr2eeYCG7o0fKe1pJr70ljjXsXaA4RUtoM07RdSjtrU0_DTOjOIpG19GIbYtknxWGUg` @555.
-   - Réplicas secundarias: @555.
-3. **Cinta Ribbon e Iconografía (Fase 5 y 6 Concluidas):**
-   - Menú contextual Ribbon estilo aSc Horarios 2027 e iDevices desacoplados en CSS.
+1. **Clarificación Normativa de la Fila 1 (Etapa 1 - NEM Fase 6):**
+   - **Campo Formativo:** Normativo obligatorio por disciplina (Tecnología pertenece por ley a *De lo Humano y lo Comunitario*; Geografía a *Ética, Naturaleza y Sociedades*).
+   - **Metodología Sociocrítica:** Autonomía docente abierta (ABP, STEAM, Aprendizaje Servicio, Proyectos Comunitarios). Desbloqueada sin restricciones en `AdminPlanJS_04.html` y `ClaseJS_05.html`.
+   - **Sesiones (40 min):** Flexible (3 a 25 sesiones). En Tecnología ST90 se organiza con la estructura CECSE (2h aula teoría + 6h cómputo).
+   - **Título del Proyecto:** Personalizable y convocante, superando las etiquetas técnicas provisionales.
+2. **Avatar Ilustrado de la Asesora Pedagógica NEM:**
+   - Se reemplazó el robot genérico (`🤖`) por una ilustración 3D cálida, profesional y moderna de una mentora secundaria mexicana.
+   - Optimizado en miniatura 128x128px y embebido en base64 (`AVATAR_ASESOR_NEM_B64_` en `AyudaJS.html`).
+   - Aplicado al botón flotante (`#btnAsistenteFlotanteIA`), a la cabecera del drawer lateral (`.ia-avatar`) y a las cabeceras de sección con `✨`.
+3. **Sugerencia e Inserción de Título con 1 Clic:**
+   - Botón `#btnSugerirTituloIA` (`✨ Sugerir con IA`) en el campo `#planTitulo`.
+   - Generación de 3 títulos contextualizados según Asignatura, Grado y Trimestre calendario oficial.
+   - Chips interactivos en la burbuja de la IA `[➕ Usar este título]` conectados a `aplicarTituloAlPlan(nuevoTitulo)` con animación visual de resalte.
+4. **Asistente de Voz DUA con Web Speech API:**
+   - Narración oral `🔊` en cada icono `❓` (`.btn-voz-nem`) y en el modal de ayuda pedagógica.
+   - Lectura de respuestas didácticas de la IA (`🔊 Escuchar`) y dictado de consultas por voz con micrófono `🎙️`.
+5. **Producción Operativa:**
+   - Desplegado a los 5 endpoints oficiales en Google Apps Script (`@562`), verificado con `curl.exe` (HTTP 200).
+   - Las 14 planeaciones didácticas en Google Sheets se mantienen íntegras y verificadas.
 
 ---
 
-## 2. Plan Activo: Expansión LMS Secundaria "Suite Escolar ST90"
+## 2. Partitura y Tareas Programadas para Mañana: ETAPA 2 (CONTENIDOS SINTÉTICOS Y PDA)
 
-El ecosistema evoluciona incorporando 4 grandes dimensiones pedagógicas y funcionales:
+La orquesta se concentra en la experiencia pedagógica de la **Etapa 2 (Contenidos & PDA)** y su articulación comunitaria:
 
-1. **UI/UX Pedagógica (Iconos ❓ y Asistente 🤖):**
-   - Iconos de ayuda en el 80%+ de campos con fundamento NEM, modo de llenado y ejemplos situados.
-   - Botón flotante y drawer de chat con DeepSeek sensible a la sección activa en tiempo real.
-2. **Biblioteca de Recursos y Libros SEP:**
-   - Hoja `BibliotecaRecursos` en Sheets para compartir materiales clasificados por Asignatura, Grado y Trimestre.
-   - Visor de Libros de Texto SEP Fase 6.
-3. **Adecuación Curricular para Tecnología (CECSE):**
-   - Motor de IA configurado para 1° (Word), 2° (Excel), 3° (PowerPoint + IA) y carga horaria: 2h Teoría / 6h Práctica en Aula de Cómputo.
-4. **Constructor de Clases y Facilitadores:**
-   - Modal de vista previa simulada del alumno y soporte para bloque de incrustación HTML/Iframe (Genially, H5P, Canva).
+### Contrato Técnico Inmutable de Selectores (Etapa 2):
+- Pestaña de Etapa 2: `button#tabPasoPlan2`
+- Contenedor de Etapa 2: `div#etapaPlanNEM_2`
+- Contenido Sintético Oficial: `textarea#planContenidoSintetico`
+- Procesos de Desarrollo de Aprendizaje: `textarea#planPDA`
+- Contador reactivo de PDA: `#badgeContadorPDA`
+- Selector de Trimestre curricular: `#selTrimestrePDA` (T1, T2, T3)
 
-### 🎯 Partitura de Asignación por Agente:
+---
 
-| Agente | Responsabilidad Inmediata | Buzón / Archivo |
+### 🎯 Tareas Asignadas por Agente para la Sesión de Mañana:
+
+| Agente | Responsabilidad Inmediata | Archivo / Buzón |
 | :--- | :--- | :--- |
-| **Cursor** *(Lógica Frontend)* | Programar `AyudaJS.html`, función global `abrirAyuda(...)`, catálogo `DICCIONARIO_AYUDA_NEM`, controlador del drawer de chat IA con contexto activo, eventos de biblioteca y `abrirVistaPreviaAlumno_()`. | `ENTREGA_CURSOR.md`<br>`AyudaJS.html`<br>`AdminPlanJS_*.html` |
-| **DeepSeek** *(Diseño UI/UX)* | Diseñar estilos CSS para `.btn-ayuda-nem`, `#modalAyudaNEM`, `#btnAsistenteFlotanteIA`, `#drawerAsistenteIA`, `#vistaBibliotecaDocente`, `#modalPreviewAlumno` y `.bloque-iframe-container`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
-| **Antigravity** *(Backend & Gobernanza)* | Crear hoja `BibliotecaRecursos` en `03_Setup.gs`, endpoints `subirRecursoBiblioteca` / `listarRecursosBiblioteca`, inyección curricular de Tecnología CECSE en prompts de `PlaneacionNEM.gs` (`asistirDisenoProyectoNEM`), endpoint de chat IA contextual, auditoría y despliegue a `@556`. | `03_Setup.gs`<br>`PlaneacionNEM.gs`<br>`09_IA.gs`<br>`CONTROL_CAMBIOS.md` |
+| **Cursor** *(Lógica Frontend DOM)* | 1. **Sincronización Reactiva:** Poblar reactivamente el catálogo de Contenidos Sintéticos oficiales de la SEP según Asignatura y Grado de Etapa 1.<br>2. **Filtrado de PDA por Trimestre:** Mostrar los PDA correspondientes al trimestre activo con casillas interactivas `.ia-pda-checkbox`.<br>3. **Selección Dinámica:** Al marcar/desmarcar casillas, anexar viñetas a `#planPDA` y actualizar el contador `#badgeContadorPDA`.<br>4. **Asistente IA para PDA:** Conectar `✨ Sugerir con IA` para redactar PDA adaptados a barreras DUA e insertarlos con 1 clic. | [ENTREGA_CURSOR.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_CURSOR.md)<br>[AdminPlanJS_03.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/AdminPlanJS_03.html)<br>[ClaseJS_05.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ClaseJS_05.html) |
+| **DeepSeek** *(Diseño UI/UX)* | 1. **Grid de Contenidos Sintéticos:** Maquetar tarjetas interactivas `.card-contenido-nem` con elevación y estado `.seleccionado`.<br>2. **Paleta Oficial de Campos:** Badges diferenciados por Campo Formativo (Lenguajes: Azul `#1e40af`, Saberes: Violeta `#6d28d9`, Ética: Ámbar `#c2410c`, De lo Humano: Verde `#047857`).<br>3. **Lista de PDA:** Diseño ergonómico de filas con checkboxes estilizados y micro-animación en `#badgeContadorPDA`. | [ENTREGA_DEEPSEEK.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_DEEPSEEK.md)<br>[AdminPlaneacionCSS.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/AdminPlaneacionCSS.html)<br>[ComunCSS.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ComunCSS.html) |
+| **Antigravity** *(Backend & QA)* | 1. **Matriz Curricular Fase 6:** Asegurar en `PlaneacionNEM.gs` los catálogos curriculares oficiales de Contenidos y PDA de la SEP.<br>2. **Persistencia Backend:** Endpoint para guardar la matriz de PDA seleccionados en Google Sheets sin romper compatibilidad.<br>3. **Auditoría & Despliegue:** Validar que Cursor y DeepSeek respeten los contratos inmutables, compilar `build-563`, crear versión `@563` en clasp y hacer push a GitHub. | [PlaneacionNEM.gs](file:///g:/Mi%20unidad/PROYECTOS/Lectura/PlaneacionNEM.gs)<br>[CONTROL_CAMBIOS.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/CONTROL_CAMBIOS.md)<br>[avances.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/avances.md) |
 
 ---
 
-## 3. Checklist de Ejecución y Próximo Cierre (@556)
+## 3. Checklist de Arranque Mañana
 
-1. **DeepSeek** elabora su propuesta visual y CSS en [ENTREGA_DEEPSEEK.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_DEEPSEEK.md).
-2. **Cursor** elabora la lógica de interacción y controladores en [ENTREGA_CURSOR.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_CURSOR.md).
-3. **Antigravity** programa el backend (`03_Setup.gs`, `PlaneacionNEM.gs`, `09_IA.gs`), audita buzones, compila el manifiesto (`node herramientas/manifiesto.js`) y ejecuta el despliegue oficial.
-
+1. **Cursor** abre [ENTREGA_CURSOR.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_CURSOR.md) y ejecuta la lógica de selección de Contenidos y PDA.
+2. **DeepSeek** abre [ENTREGA_DEEPSEEK.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ENTREGA_DEEPSEEK.md) y aplica los estilos visuales para las tarjetas y badges de campo.
+3. **Antigravity** audita la integración, valida con `node herramientas/manifiesto.js`, ejecuta `clasp push / deploy` a `@563` y sella la bitácora.

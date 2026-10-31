@@ -1536,7 +1536,28 @@ C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_fase7.h
 
 Restaurar cualquiera de los dos revierte solo esta fase y conserva las Fases 5 y 6.
 
-## 7. Lo que NO incluye esta entrega
+---
 
-- **`#modalSubirRecurso` / `#formSubirRecursoBiblioteca`**: no están en la lista de selectores asignados. Si Cursor los necesita, hace falta que Antigravity los añada a la partitura.
-- **Lógica de eventos, `DICCIONARIO_AYUDA_NEM`, endpoints y `google.script.run`**: es territorio de Cursor y de Antigravity. Aquí solo hay CSS y estructura de referencia.
+## 8. 🚀 [PROGRAMACIÓN PARA MAÑANA] - ETAPA 2: DISEÑO UI/UX DE CONTENIDOS SINTÉTICOS Y PDA
+**Fecha asignada:** Sesión de Mañana  
+**Agente:** DeepSeek (Diseñador Visual & CSS)  
+**Archivos autorizados:** `AdminPlaneacionCSS.html`, `ComunCSS.html`  
+**Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
+
+### Objetivos Específicos para DeepSeek:
+1. **Grid y Tarjetas de Contenidos Sintéticos (`.grid-contenidos-nem`, `.card-contenido-nem`):**
+   - Diseñar un catálogo en acordeón o tarjetas seleccionables con elevación sutil (`box-shadow: 0 2px 8px rgba(0,0,0,0.06)`), borde redondeado de 10px y transición suave al hover.
+   - Estado activo/seleccionado (`.card-contenido-nem.seleccionado`) con borde primario de 2px y fondo ligeramente tintado.
+2. **Paleta Cromática Oficial por Campo Formativo (NEM Fase 6):**
+   - **Lenguajes:** Badges y acentos en Azul Zafiro (`#1e40af`, fondo `#eff6ff`, borde `#bfdbfe`).
+   - **Saberes y Pensamiento Científico:** Badges en Violeta Curricular (`#6d28d9`, fondo `#f5f3ff`, borde `#ddd6fe`).
+   - **Ética, Naturaleza y Sociedades:** Badges en Ámbar Tierra (`#c2410c`, fondo `#fff7ed`, borde `#fed7aa`).
+   - **De lo Humano y lo Comunitario:** Badges en Verde Esmeralda (`#047857`, fondo `#ecfdf5`, borde `#a7f3d0`).
+3. **Casillas de Selección y Lista de PDA (`.lista-pda-container`, `.pda-item-check`):**
+   - Diseño limpio de filas de PDA con checkbox personalizado, tipografía legible (13.5px, interlineado 1.45) y contraste WCAG AAA.
+   - Micro-animación de pulso para el contador de PDA seleccionados (`#badgeContadorPDA`).
+4. **Reglas de Gobernanza:**
+   - Cero uso de `!important`.
+   - No renombrar ni eliminar ningún ID del DOM.
+   - Todo el CSS debe quedar encapsulado en `AdminPlaneacionCSS.html` o `ComunCSS.html`.
+

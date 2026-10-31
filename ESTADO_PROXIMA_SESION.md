@@ -1,6 +1,6 @@
 # 📌 ESTADO DE RELEVO Y CONTINUACIÓN DE SESIÓN — ST90
-**Fecha de corte:** 2026-10-30 (Tarde)  
-**Versión activa en producción:** `@555` (`v417 · build-555`)  
+**Fecha de corte:** 2026-10-31  
+**Versión activa en producción:** `@556` (`v417 · build-556`)  
 **Rama Git:** `main`
 
 ---

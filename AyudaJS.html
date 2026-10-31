@@ -14,6 +14,8 @@ var PORTAL_LIBROS_SEP_ = 'https://libros.conaliteg.gob.mx/';
 var MARCA_IFRAME_PREFIJO_ = '#### Contenido externo: ';
 var MARCA_IDEVICES_INI_AYUDA_ = '--- iDevices de la sesión ---';
 var MARCA_IDEVICES_FIN_AYUDA_ = '--- fin iDevices ---';
+var AVATAR_ASESOR_NEM_B64_ = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCACAAIADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDSZjnHHQdh6Um8+35Ckbr+A/lSV6pwDtx9B+Qo3n0H5Cm0UAO3n0H5CjefQfkKbWnbaHdzSbZVMP7rzRuUszLkDgD3I64xScktwSb2M7efb8hRvPoPyFa66NHJpC3UTyNMy5AypG7zNhXb1wOu7pRqNhYQajb/AGWeJ7YyiKVRLu2kMAST6Ec+3I7UvaK9iuRmRvPt+Qo3H2/IV0aW+kXV5cLBFG/lxtgIGVWPmALtBcEkLnJBx3xVV9HjOniYQ3EcjQNOHHMed5Cx9M7iMd85PSl7RByMxt59vyFG8+35Cr9xot5BPDbqnnTyoXMcQJKYOCD9O/aqEkbwyNHKjI6nDKwwQapST2Jaa3DcfQfkKN59B+QptFMB24+g/IUqMd69OvoKZSp99frQAN1/AfypKVuv4D+VJQAVLb20l07JEMlVLkd9o64Hcgc4HpUthaC7u4kkLR25kVJJccJnpz0BPTmt5bm7022t7O0triC4nkZobWTbI8cikDdyOVYE9uq5BxUSlbRFRjfVkccNhp8Nw/nxNaTjy4p8sWJAyc4UHawPIXocAnmpbDTb5rSJIVWztlZ2FxdgM0ocAHEfPBABxzzzmr1np0Vg4muSl1f5J3EZigyc4Ren49PSrbM7OHkLMW5ye9c7l2JnVUdEVBounb99y91eyZOS7+WnPXCr0rL1LxF4Q0KUwXENh569YUjaaQfUZOPxrnviT4tm0a0XTbCUx3Uy5klU8op4AHoT6+leYadHqF2hi0mxa7vGOWkIyqD1JPGTUSk0ryZpRpzq/wDAPb9L8S+FNeuFtYbC3WdvupLbGIt9DnGfatd9E0wuGhW6spVOVaGUkKfXDf418/3PhvxtawSX0+nyIIvmMkDLuUeuFOfyruPAniue2lsrG9vWure74R3k37G7YJ7eoqI1Ob4JXLq0KlPX8zvptKv4bZ4ix1SzMRjYRsUnVdwbvnIyOnPFU7f7LOisiW4kkSRSruWuFmJIjRQx6AbR0xjOcV0yg5XYGDjuDVa9sINQkWZm+z38ZDR3SDnI6bx3+vWrjV6MwjVT3OIurFrRVYz28yFihaF9wDDqp/zg1Wrpdj/abq0vLMR3iwsWW3RR5kY52xDHViSS3JwMAVg3KweZutTIYSoJD8lG7qT0OPWuuMr7lSVtiClT76/WkpU++v1qyQbr+A/lSopdwq4yemTSN1/AfyoC7mCjHPqcCplonYEm9EX7a8t4bUW17avMscxmQK+3LYAKsMHI4Hv19a6TTbH+y7cySqBqFwMyED/UoeQg9D6/lWJ4bs1uNRe7nXdDaKJSDyGfOEH58/hXXaekN5JcfaNzSqQx+bGQe/51zybtr8xXk0l1ZVGNuMHdnr7VNNdPLGqyMAkY6+3qa1UhiiRoFAEbAhifQ+przb4h315p/gy4ez5cSCKRxyAvPPvnA/OoWpDpNNK+55P451b+2PENxLFkxtKQnHJA4H6Cux8B3dnpFpDYXFvcpczvl5PLBTcegyCcD615toEE154ljE8jMVBL8+x/wr0ZPD2mWFvJc2lxcGaRFjBYFVU92JPc/XrXDjJxl7jPoMDRlFc8TvtR8S2Wlulo9rdzTSLuHkxjAHTlmIArxrxLGmleLBPZq0FtcMLlUYAeW/RxxwOeeOOa9Bv/AA7puoHyZ7i4CJKkqSI5lJG0ZRjzkdeD61yPj3QEttOhu7YyrDbNIRvbO0cbVwe2WIA9AK5sLOMJJo6cTSnKLVj2rSb8X2l2l9Gf9dErH645/XNQanr9lpEqJe+cnmDKMIiVb1APr7Vw3wc1C6u9IvYZw3kwuu1eyseoH164ruNa0Sx1+0+z3wkDxNuR1faycdfSu6tWp0bSnt5HzdPDSqVHCPQkP2PxLpyi2mH2iI5t5Dw0bf3WHUA1z+o6vcT6dFYTBkmVz9oXaFGVJCgKOBjPJA5OPStDw34etdHg3xNLPJufFxK3zYJ+7xxim+K7MCa31REB84+XMOg8wDg/iP5VvQqqavHXsE1KDdPqjnHjaNtrjDYzj0pE++v1pXGH7c88Nn9aRPvr9a7INuKb3E01owbr+A/lTScAn0qwOv0eL7P4egP8V1K0zf7o+Vf5E1czc20++FlSQptJYZ4PNKIvL07T0X+C0j4+oyf51R1C9WxtTK3JJ2r7muSU1FObJ5JTqqEN9i632i8KxzzyTgnhMBQT+Fc7401Cz0rwveRXUKus8bQiIjgk/T0OPxrSsb3ckaStumYkhkBKn0wazvGegv4h8NXFpAga8T95b5P8Y7fiM/jiop1Y1Y80SqtGdGry1TwFLi4065hvkGJIMM4z94ZHB9yK9H0+6ttbs4JbF3mQjbLBkEsPxBwR6V5ZfQ3FtusZUeGaFyJYJRtYH3FdD4QsryOJ2t3eORpMhl+grkxcE483Y9zAVGp8i2Z640EUOmk3JmtLKJdxEhSPcccEkKMAfrXl2u+IE8RX5ihBOnxSRpFIzEDI3ZYjpglhyewHrXZa3o91c+EdQfULuSdxbsQGOFXHPSvIgl5p0nlqrMknyEhchh9PWscFTUr1Oxtj6rVqa2ep738NL62Gg/2Uqqt1buzS7erEnOT7/wBBXVTRXEt9tKj7McFmz19vWuK+Fnhy+0jSp77U7doLi5IEMcg+dIhzyO2T29q9EwrSKqMcHHLcc13ThGatJXPnHVlTquVNixhSyrwigY4HAqHUbb7XouoQD5isfmof9pOf5Zq3Pb+U0YDZ3dT71YtkUyLFj5XBU/iMULR3REE1PU8u3ZA9AOOKE++v1poG0bfTinJ99frXomgN1/AfyprcqR7U5uv4D+VJQB2k8xezsMfcezib6/Lj+lZmqwS3+mtDGN0isHAz97Hb61Z09vtXhyzcfft2e2b8DuX9DVmNNo4/E1zSgpQcWRzyp1VOO61Oe0kedJEUnOyAYktmG1g+epri/G3iq+n124061vJYbSHEbJG23c3ckjmuv1Fkv/EYh0+GU3dqwjunTjIKhgMd+vX8K8v8c2kmmeJtQDsrOzpIdpzt3YO0+9cWDi6NWVPdHtYtxxFKFe1n2/r+tTHaAfaWzGSW6P1z9a73wnDNp9qLx7YTWk7HYdwUB16jceM4xwcZ7VheHrnQ4VuBq8LTTM4eIbGb5McjggcH19a9K8PxWniTwpqemaXtsoZJVTLJ95sZ+7k4BxzXRiYe0puPmZUavs5prsZniG4utR0G+trWIrCImkkYMrfIBk5xkKOnU5PpXn5UHy18ssSBz2Fem3ukz+HvhxrMU8iK93tPkKMeVlgvB75rgbq5hmgtYEtUiljXbJKp5lOScn0wMD8KywVN06enU1r1PaVrPpfUu6T4iv8ARLqER3UrW4YGSFmypXPoele228kARJw28MoZMeh6V84ed5l3MuemBXtPga+F74Wt3kbL25MLD6dP0xXZWSauePVjb3jqMtI5kfv0FWbRh9pjLHgHdn6DNUkkZ3KsPy7Ul7cfY9Iv7k8MkBVT6s3yj+dc1ruxnT1kjzwHcN3945py++v1r0DUG6/gP5UlK3X8B/KkoA2/DNyBdzac5AW8UGMntKv3fzGR+Vbg44xgiuKEbtGZIztMRB3KeVPY12NpfJq9ibwALcR/LdxgdG/vgf3W/nWDa5nb+mTUjdXXQ8O8dXU0PxA1BreeSIgoD5blSflHpXNahJi2fJPJBOevWtjxvN5vjzUXGcebjr6cf0rM+xyand21jF965lSEe25gM/rRy2uzsVRumoiW9yvlLIfvRnn6d/8+1esfDO81OzgvTZaTcahDOyYMRVUVgDwXYgA4YdMmvFWSS0uJrd87onaM/gcV7Z8C9S3aXqdgW5jZJlH5qf5LUVG7ClPljddDe1oX+vWo03Vb7SNNgMqlkjke5myp4DEbQOa5/xn4MtfDPhyK+t7qa4k88RyF0VVwynBAAyOQO561qT6FqH9qarBEgW3a5eWEljwGIYnABOMk+nStnxco1HwBqMO9XmhtxIQpBwyYbt7A0oq3wmTnK6be58+W9yG1CQA9WH8q9T+Gd8ReXmnk/61RKn1HB/Q1wXiLw+dEtPDd7EhDX1mTMQM/vAc5/75YflV/wxqyadr1jOXeMK4Vy64BU8Hn8a2XvJoJpSjoe8A4G1T9TWJ4qu/LgttLU/MT9om9uyL/M/lWvPdwadZveTjdCh2ogPMz9lH9T6VxMz3F1JLfXJDyTOS7HuT6ew6VjCyd3/AEzGnG2rIaVPvr9aSlT76/WusoG6/gP5UlK3X8B/KkoGKDjPXkY4OKu6eL+B5tVssBbVf3rOPkcHA2Ed8+n41RrR07Vns8RzIJ7UAkQsoIznd36ZIGTycDiokuqQoxXNc4fxx4Um1i7n8R6BC0ykb7ywXmaA92Ufxp7jkdxR8PfC122pQ69qMLW9paZkhWUbWkbH3sHoo657mvTZ9OS91C2W0kK6i48430TFE9yMcbOQoxg5GCOaqXl/dXmlS2+s2c6C4i2/b7RAHAbOCyn5Tn8DiskzSabjyo8D1kpca3eTx42SSs4x7mvQfhcg0SYaiGu5jdxMjQLanaOQQd4JBHy+3Ws27+Gd7JIzaLqunaipPEby/ZpvxSTj8jW14Q0HxXombe80C/QLlVZE3qQeQcqSDXNi5zULw3O/CU6U58tTVWO7mtpJ3kaedjGxLIrK0pXOeACdv6VxeqeLrm2s57PT7MJaz7ojNckMzAfKQEAAXg9DnrW1dyeJIzstvD+qTyHoFgKj8WbA/WsrV9G1rXbCzg1ZdK0H7KFDNJciaWTg5OyPJz7fXmscNiK8tJrQ1r4bC03eL/E4a4vd4ja4uZJvKQRp5jk7FAwAPQVt6L4Wk1SOLU9XMljo5PyMBia6/wBmIHt6seB710Oi+F9G08tNYWUmr3MQ3NeaiAkEXusWcfTeT9K6uOxuoQ+s3EkGpXKRpcJ5km5TEeuF4KkfTHXuK9FzdrbHnvlv7pn6ob27WC7uY/Jt1QC3t1yRDGfuk+7YPJ5OPSs4sWABycE9/wCladxqsipJbW0zS25ZmikmXMkYf7yg/oT9cYzWXVRjpqc8opyuFKn31+tJSp99frWgwbr+A/lSU9kYkfKeg7e1N2N/dP5UAJRS7G/un8qNjf3T+VAEkFzNbNmKRlBZWZQeG2sGGfxGa0otZZpp5ZXljlu7hDcSRHG2EfwL/noBWTsb+6fyo2N/dP5VLimNNo6A2Wl3jlZ10/EZlkUW0m1PKC/JvbsdxHvjOaYvhoGe9W2knjEP7uNUc8yhNzLnjKjpkDkkVhbG/un8qcDMGRg0m5DuQ5OVPqPQ1PI+jHzLsaGm6XFqNqsk7X8zPcrbgRvuCBhncQc5A59KsJpunW9n5hghkijiLvcrNhmmVv8AV7c9DjHToc5rIVp0RkR5VV/vKrEBvr60zyznOw5+lHI77hzI3ZNYigvJbiK6lukmDKIfL8oQpnKYOOGU+gPGeax7i5e42qQFiQsY4wSQmeSATz155NRbG/un8qNjf3T+VUoJCcmxKKXY390/lRsb+6fyqiRKVPvr9aNjf3T+VORG3r8p6+lAH//Z';
+
 
 var ENFOQUE_CECSE_ = {
   '1': '1°: Procesadores de texto (Word) y ofimática básica.',
@@ -869,6 +871,53 @@ function sincronizarContextoDesdeFoco_(id) {
   actualizarSugerenciasSegunMateria_();
 }
 
+function escaparHtmlTexto_(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function extraerSugerenciasTitulos_(txt) {
+  if (!txt || typeof txt !== 'string') return [];
+  var resultados = [];
+  var vistos = {};
+  var reComillas = /["«“]([^"»”\n]{8,90})["»”]/g;
+  var m;
+  while ((m = reComillas.exec(txt)) !== null) {
+    var cand = String(m[1] || '').trim();
+    if (cand.length >= 8 && !vistos[cand.toLowerCase()] && !/^(error|undefined|null|http|class|id|trimestre|sesiones|tecnologia)$/i.test(cand)) {
+      vistos[cand.toLowerCase()] = true;
+      resultados.push(cand);
+    }
+  }
+  return resultados.slice(0, 4);
+}
+
+function aplicarTituloAlPlan(nuevoTitulo) {
+  var inp = nodo_('planTitulo');
+  if (!inp) {
+    avisar_('No se encontró el campo Título del Proyecto.', 'error');
+    return;
+  }
+  var tLimpio = String(nuevoTitulo || '')
+    .replace(/^[\d+.\-•*"\s]+/, '')
+    .replace(/["\s]+$/, '')
+    .trim();
+  if (!tLimpio) return;
+  inp.value = tLimpio;
+  inp.dispatchEvent(new Event('input', { bubbles: true }));
+  inp.dispatchEvent(new Event('change', { bubbles: true }));
+  inp.classList.add('titulo-destacado-anim');
+  setTimeout(function () {
+    inp.classList.remove('titulo-destacado-anim');
+  }, 2200);
+  actualizarContextoAsistenteIA_();
+  avisar_('✨ Título aplicado: "' + tLimpio + '"', 'exito');
+}
+window.aplicarTituloAlPlan = aplicarTituloAlPlan;
+
 function pintarBurbuja_(clase, texto, omitirVoz) {
   var caja = nodo_('chatAsistenteCuerpo');
   if (!caja) return null;
@@ -878,18 +927,53 @@ function pintarBurbuja_(clase, texto, omitirVoz) {
   p.className = clase;
   p.textContent = texto;
 
-  // En mensajes de IA completados, anexar botón de narración
-  if (clase === 'msg-ia' && !omitirVoz && texto && texto.indexOf('⏳') === -1) {
+  // En mensajes de IA completados, anexar botón de narración y botones para aplicar títulos sugeridos
+  if (clase === 'msg-ia' && texto && texto.indexOf('⏳') === -1) {
     var contAccion = document.createElement('div');
     contAccion.style.marginTop = '6px';
-    var btnVoz = document.createElement('button');
-    btnVoz.type = 'button';
-    btnVoz.className = 'btn-voz-ia-msg';
-    btnVoz.setAttribute('aria-label', 'Escuchar respuesta');
-    btnVoz.setAttribute('title', 'Escuchar respuesta en voz alta');
-    btnVoz.textContent = '🔊 Escuchar';
-    contAccion.appendChild(btnVoz);
+    contAccion.style.display = 'flex';
+    contAccion.style.flexWrap = 'wrap';
+    contAccion.style.gap = '6px';
+
+    if (!omitirVoz) {
+      var btnVoz = document.createElement('button');
+      btnVoz.type = 'button';
+      btnVoz.className = 'btn-voz-ia-msg';
+      btnVoz.setAttribute('aria-label', 'Escuchar respuesta');
+      btnVoz.setAttribute('title', 'Escuchar respuesta en voz alta');
+      btnVoz.textContent = '🔊 Escuchar';
+      contAccion.appendChild(btnVoz);
+    }
     p.appendChild(contAccion);
+
+    // Detección automática de títulos sugeridos para inserción con 1 clic
+    var titulos = extraerSugerenciasTitulos_(texto);
+    if (titulos.length > 0) {
+      var contTitulos = document.createElement('div');
+      contTitulos.className = 'ia-bloque-titulos-sugeridos';
+      contTitulos.style.marginTop = '8px';
+      contTitulos.style.display = 'flex';
+      contTitulos.style.flexDirection = 'column';
+      contTitulos.style.gap = '6px';
+
+      var etiTit = document.createElement('div');
+      etiTit.style.fontSize = '11px';
+      etiTit.style.fontWeight = 'bold';
+      etiTit.style.color = 'var(--nem-color-primario, #1e3a8a)';
+      etiTit.textContent = '✨ Clic para aplicar al Título del Proyecto:';
+      contTitulos.appendChild(etiTit);
+
+      titulos.forEach(function (tit) {
+        var bTit = document.createElement('button');
+        bTit.type = 'button';
+        bTit.className = 'btn-aplicar-titulo-ia';
+        bTit.setAttribute('data-aplicar-titulo', tit);
+        bTit.setAttribute('title', 'Insertar este título en el formulario');
+        bTit.innerHTML = '➕ <strong>' + escaparHtmlTexto_(tit) + '</strong>';
+        contTitulos.appendChild(bTit);
+      });
+      p.appendChild(contTitulos);
+    }
   }
 
   caja.appendChild(p);
@@ -914,10 +998,12 @@ function asegurarDrawerAsistente_() {
     btn.id = 'btnAsistenteFlotanteIA';
     btn.className = 'btn-asistente-flotante';
     btn.setAttribute('aria-controls', 'drawerAsistenteIA');
-    btn.setAttribute('aria-label', 'Abrir asistente de planeación');
+    btn.setAttribute('aria-label', 'Abrir asesora pedagógica de planeación');
     btn.setAttribute('aria-expanded', 'false');
-    btn.textContent = '🤖';
+    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Asesora Pedagógica" />';
     document.body.appendChild(btn);
+  } else if (!btn.querySelector('img')) {
+    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Asesora Pedagógica" />';
   }
 
   var drawer = nodo_('drawerAsistenteIA');
@@ -926,19 +1012,19 @@ function asegurarDrawerAsistente_() {
   drawer = document.createElement('aside');
   drawer.id = 'drawerAsistenteIA';
   drawer.className = 'oculto';
-  drawer.setAttribute('aria-label', 'Asistente de planeación');
+  drawer.setAttribute('aria-label', 'Asesora de planeación pedagógica NEM');
 
   drawer.innerHTML =
     '<div class="ia-drawer-cabecera">' +
-      '<div class="ia-avatar">🤖</div>' +
+      '<div class="ia-avatar"><img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-avatar-img" alt="Asesora Pedagógica ST90" /></div>' +
       '<div class="ia-titular">' +
-        '<h3 class="ia-drawer-titulo">Asistente NEM · ST90</h3>' +
+        '<h3 class="ia-drawer-titulo">Asesora NEM · ST90</h3>' +
       '</div>' +
       '<span class="ia-chip-contexto" id="chipContextoAsistente">📍 Planeación NEM</span>' +
       '<button type="button" class="ia-drawer-cerrar" id="btnCerrarDrawerIA" data-cerrar-drawer-ia="1" aria-label="Cerrar asistente">×</button>' +
     '</div>' +
     '<div class="ia-cuerpo" id="chatAsistenteCuerpo" aria-live="polite">' +
-      '<div class="ia-vacio">👋 ¡Hola! Soy tu asistente de planeación didáctica NEM.<br>Puedo sugerirte ideas, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
+      '<div class="ia-vacio">👋 ¡Hola! Soy tu asesora pedagógica de planeación didáctica NEM.<br>Puedo sugerirte títulos contextualizados, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
     '</div>' +
     '<div class="ia-sugerencias">' +
       '<button type="button" class="ia-chip" data-sugerencia-ia="💡 Dame 3 ideas para mi grado">💡 Dame 3 ideas para mi grado</button>' +
@@ -946,7 +1032,7 @@ function asegurarDrawerAsistente_() {
       '<button type="button" class="ia-chip" data-sugerencia-ia="✨ Redactar ejemplo viable">✨ Redactar ejemplo viable</button>' +
     '</div>' +
     '<div class="ia-composer">' +
-      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu consulta pedagógica..." aria-label="Mensaje para el asistente"></textarea>' +
+      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu consulta pedagógica..." aria-label="Mensaje para la asesora pedagógica"></textarea>' +
       '<button type="button" id="btnMicrofonoIA" class="btn-microfono-ia" title="Dictar por voz" aria-label="Dictar consulta por voz">🎙️</button>' +
       '<button type="button" id="btnEnviarAsistenteIA" class="nem-btn-accion nem-btn-primario" title="Enviar consulta">Enviar</button>' +
     '</div>';
@@ -1848,6 +1934,28 @@ function clicLmsSt90_(e) {
     return;
   }
 
+  // 5. Clic en chip interactivo para aplicar título sugerido por la IA
+  var btnAplicarTit = e.target && e.target.closest ? e.target.closest('[data-aplicar-titulo]') : null;
+  if (btnAplicarTit) {
+    e.preventDefault();
+    var tVal = btnAplicarTit.getAttribute('data-aplicar-titulo');
+    aplicarTituloAlPlan(tVal);
+    return;
+  }
+
+  // 6. Clic en botón "✨ Sugerir con IA" en la cabecera del campo Título
+  var btnSugTit = e.target && e.target.closest ? e.target.closest('#btnSugerirTituloIA, [data-accion="sugerir-titulo-ia"], .btn-ia-sugerir-titulo') : null;
+  if (btnSugTit) {
+    e.preventDefault();
+    conmutarDrawerAsistente_(true);
+    var metaTit = obtenerMetadatosClaseActiva_();
+    var prmTit = 'Sugiere 3 títulos atractivos, motivadores y con enfoque pedagógico NEM para un proyecto de ' +
+      metaTit.asignatura + ' ' + metaTit.grado + '° (Trimestre ' + metaTit.trimestre + '). ' +
+      'Por favor escribe cada propuesta entre comillas "..." con mayúsculas iniciales para poder aplicarla directamente al formulario.';
+    enviarMensajeAsistente_(prmTit);
+    return;
+  }
+
   var ayuda = e.target && e.target.closest ? e.target.closest('.btn-ayuda-nem') : null;
   if (ayuda) {
     e.preventDefault();
@@ -1984,6 +2092,8 @@ function iniciarLmsSt90_() {
   window.narrarTextoNEM_ = narrarTextoNEM_;
   window.conmutarDictadoPorVozIA_ = conmutarDictadoPorVozIA_;
   window.asegurarBotonesVozCampos_ = asegurarBotonesVozCampos_;
+  window.aplicarTituloAlPlan = aplicarTituloAlPlan;
+  window.AVATAR_ASESOR_NEM_B64_ = AVATAR_ASESOR_NEM_B64_;
 }
 
 if (document.readyState === 'loading') {

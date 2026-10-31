@@ -2,7 +2,7 @@
 
 **Plataforma:** Sistema Integral de Comprensión Lectora, Planeación Didáctica NEM y Aula Hablada  
 **Fecha de corte:** Octubre 2026  
-**Última versión desplegada:** `@555`  
+**Última versión desplegada:** `@562`  
 **URL de producción activa:** [https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin](https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin)
 
 ---
@@ -14,6 +14,19 @@ En las iteraciones recientes del proyecto, la plataforma evolucionó de un siste
 ---
 
 ## Hitos y Desarrollos Recientes
+
+### 29. Asesora Pedagógica Ilustrada, Inserción de Títulos IA y Clarificación Curricular NEM (@562)
+- **Clarificación de Estructura Obligatoria vs. Autonomía Docente:**
+  - Se formalizó la distinción normativa del Plan de Estudios 2022 de la SEP: el *Campo Formativo* es una adscripción obligatoria por disciplina; la *Metodología*, el *Número de Sesiones* y el *Título del Proyecto* gozan de plena autonomía profesional del magisterio.
+- **Sustitución del Robot por Avatar Ilustrado de la Asesora Pedagógica:**
+  - Se sustituyó el emoji `🤖` por una ilustración 3D profesional y cálida de una mentora pedagógica de secundaria técnica mexicana, optimizada en 128x128px y embebida como Data URI base64 (`AVATAR_ASESOR_NEM_B64_`), con presencia en el botón flotante, cabecera del drawer y etapas.
+- **Sugerencia e Inserción Reactiva de Título con 1 Clic:**
+  - Se implementó el botón `#btnSugerirTituloIA` (`✨ Sugerir con IA`) y la función `aplicarTituloAlPlan(nuevoTitulo)` vinculada a chips interactivos `[➕ Usar este título]` dentro del flujo del asistente pedagógico.
+- **Despliegue Multi-Endpoint (@562):** Sincronizados los 5 despliegues de Google Apps Script con código HTTP 200 verificado en vivo y 14/14 planeaciones íntegras en base de datos.
+
+### 28. Asistente de Voz Accesible DUA y Desbloqueo de Autonomía Curricular (@560–@561)
+- Integración de síntesis de voz Web Speech API `es-MX` en todos los iconos `❓` (mediante `.btn-voz-nem` `🔊`), lectura de respuestas de la IA y dictado por voz con micrófono `🎙️`.
+- Desbloqueo de los selectores de Metodología y Campo Formativo en `AdminPlanJS_04.html` y `ClaseJS_05.html`.
 
 ### 27. Erradicación de Fallo Global en Apps Script y Despliegue Robusto de Planeaciones NEM (@555)
 - **Diagnóstico y Eliminación de Causa Raíz (`check_sites`):**

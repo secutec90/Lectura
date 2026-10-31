@@ -2169,12 +2169,21 @@
     box-shadow: 0 10px 24px rgba(37, 99, 235, 0.38), 0 2px 6px rgba(15, 23, 42, 0.2);
     transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
   }
-  #btnAsistenteFlotanteIA svg,
-  #btnAsistenteFlotanteIA img {
+  #btnAsistenteFlotanteIA svg {
     width: 26px;
     height: 26px;
     display: block;
     pointer-events: none;
+  }
+  #btnAsistenteFlotanteIA img,
+  .ia-btn-avatar-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
   #btnAsistenteFlotanteIA::after {
     content: '';
@@ -2251,17 +2260,81 @@
     flex: 0 0 auto;
   }
   .ia-avatar {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.36);
-    font-size: 16px;
-    line-height: 1;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+    padding: 0;
+  }
+  .ia-avatar img,
+  .ia-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 999px;
+  }
+
+  /* Botón interactivo para sugerir título con IA */
+  .btn-ia-sugerir-titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    padding: 2px 9px;
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: all .15s ease;
+  }
+  .btn-ia-sugerir-titulo:hover {
+    background: #e0e7ff;
+    border-color: #818cf8;
+    color: #312e81;
+    transform: translateY(-1px);
+  }
+
+  /* Chip en la respuesta de la IA para aplicar el título con 1 clic */
+  .btn-aplicar-titulo-ia {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 4px 4px 2px 0;
+    padding: 3px 8px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .14s ease;
+  }
+  .btn-aplicar-titulo-ia:hover {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #1d4ed8;
+    transform: translateY(-1px);
+  }
+
+  /* Animación de pulso visual cuando la IA inserta un título */
+  .titulo-destacado-anim {
+    animation: pulsoTituloDestacado 1.8s ease;
+  }
+  @keyframes pulsoTituloDestacado {
+    0% { background-color: #dbeafe; border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3); }
+    100% { background-color: #ffffff; border-color: var(--app-border, #cbd5e1); box-shadow: none; }
   }
   .ia-drawer-titulo {
     margin: 0;

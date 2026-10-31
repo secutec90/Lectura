@@ -2,6 +2,29 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Asesora Pedagógica Ilustrada, Inserción Reactiva de Título con IA y Clarificación Normativa NEM (build-562)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ux): avatar ilustrado de asesora pedagogica, sugerir e insertar titulo con 1 clic y alineacion normativa NEM Fase 6 en build-562`
+- **Causa Raíz / Requerimiento:**
+  1. El docente requería comprender qué campos de la Fila 1 (Etapa 1: *Título del Proyecto*, *Campo Formativo*, *Metodología*, *Sesiones*) son obligatorios e inmutables por la estructura curricular de la Nueva Escuela Mexicana (NEM) y cuáles pertenecen a la autonomía profesional docente.
+  2. Sustituir el avatar genérico del robot (`🤖`) por una imagen cálida, profesional y empática de una Asesora Pedagógica de secundaria técnica.
+  3. Integrar un botón `✨ Sugerir con IA` y la capacidad de insertar títulos sugeridos directamente al formulario con un solo clic.
+- **Cambios Realizados:**
+  - **Clarificación Pedagógica y Normativa NEM (Fase 6):**
+    - *Campo Formativo:* Obligatorio por asignación curricular oficial de la SEP según la disciplina (ej. Tecnología pertenece obligatoriamente a *De lo Humano y lo Comunitario*; Geografía a *Ética, Naturaleza y Sociedades*).
+    - *Metodología:* Flexible / Autonomía docente. Aunque la SEP sugiere una de referencia por campo (Aprendizaje Servicio para De lo Humano, STEAM para Saberes, ABP para Ética, Proyectos Comunitarios para Lenguajes), el docente puede cambiarla libremente para abordar su proyecto.
+    - *Sesiones (40 min):* Flexible (3 a 25 sesiones). En Tecnología ST90 se organiza con la estructura CECSE (2h teoría / 6h cómputo).
+    - *Título del Proyecto:* Debe cambiarse obligatoriamente para reflejar el problema comunitario, el producto y la identidad del proyecto grupal, superando las etiquetas técnicas provisionales.
+  - **Avatar Ilustrado de la Asesora Pedagógica:**
+    - Se generó y optimizó la imagen de la Asesora Pedagógica en miniatura de 128x128 píxeles en formato base64 embebido (`AVATAR_ASESOR_NEM_B64_` en `AyudaJS.html`).
+    - Se reemplazó el emoji de robot `🤖` en el botón flotante (`#btnAsistenteFlotanteIA`), en la cabecera del drawer lateral (`.ia-avatar`), y se sustituyeron los iconos de etapas por el distintivo de asesoría `✨`.
+  - **Sugerencia e Inserción de Título con 1 Clic:**
+    - Se integró el botón `#btnSugerirTituloIA` (`✨ Sugerir con IA`) en el encabezado del campo `#planTitulo` en `AdminPlaneacion.html` y `Clase.html`.
+    - Al pulsar el botón, la Asesora IA genera 3 propuestas de títulos contextualizados, atractivos y motivadores entre comillas `"..."`.
+    - La función `pintarBurbuja_` analiza las respuestas de IA y crea automáticamente botones chip interactivos `[➕ Usar este título]`.
+    - La función `aplicarTituloAlPlan(nuevoTitulo)` inyecta el título elegido al `<input id="planTitulo">`, dispara los eventos de actualización y añade una micro-animación visual destacada.
+  - **Despliegue a Producción (@562):** Versión `@562` desplegada en los 5 endpoints oficiales de Google Apps Script y validada con diagnóstico HTTP 200 en vivo (`build: "build-562"`, `totalAdmin: 14`).
+- **Archivos Afectados:** `AyudaJS.html`, `AdminPlaneacion.html`, `Clase.html`, `ComunCSS.html`, `00_Constantes.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Asistente de Voz DUA: Narración en Iconos de Ayuda y Respuestas IA, y Dictado por Voz (build-561)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(voz): asistente de voz accesible DUA con narracion en iconos de ayuda, lectura de respuestas IA y dictado por voz en build-561`
 - **Causa Raíz / Requerimiento:** El usuario solicitó la integración del asistente de voz tanto en la Asistencia de IA como en cada icono de ayuda pedagógica para apoyar la accesibilidad y el Diseño Universal para el Aprendizaje (DUA), permitiendo escuchar orientaciones sin necesidad de lectura visual y dictar consultas con micrófono.

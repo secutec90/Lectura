@@ -49,65 +49,30 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ## 4. Estado de Fases y Despliegues Concluidos
 
-- **Última versión desplegada:** `@558` / código `v417 · build-558` (Contextualización disciplinar estricta del Asistente IA: segregación de directivas CECSE exclusivamente a Tecnología y detección automática de asignatura, grado y campo activo en `AyudaJS.html` y `PlaneacionNEM.gs` para Geografía, Español, etc.). Confirmadas las 14 planeaciones activas y diagnóstico HTTP 200 en vivo en los 5 despliegues de producción.
+- **Última versión desplegada:** `@562` / código `v417 · build-562` (Asesora Pedagógica NEM ilustrada en reemplazo del robot `🤖`, Asistente de Voz DUA con Web Speech API `🔊`/`🎙️`, botón interactivo `✨ Sugerir con IA` y chips `[➕ Usar este título]` con inserción reactiva en 1 clic en `#planTitulo`). Integridad confirmada de las 14 planeaciones en Google Sheets y HTTP 200 verificado en vivo en los 5 despliegues de producción.
+- **Fila 1 (Etapa 1 - NEM Fase 6):** Desbloqueada la autonomía docente en Metodología y Campo Formativo. Reglas normativas SEP documentadas.
 - **Horario contextual:** 100% saneado, una sola fila, transparente, iconos 18px.
 - **Asistente en los 4 Pasos (FASE 2):** ✅ **100% CONCLUIDA y homogeneizada.** Los 4 pasos usan el sistema de casillas y selección directa sin ensayos largos.
-  - *Paso 1 (Metadatos & Ejes):* Radio buttons limpios + botón `✓ Usar este Título` (`#planTitulo`).
-  - *Paso 2 (Contenidos & PDA):* Casillas `.ia-check` + botón `✓ Insertar seleccionados en PDA` (`#planPDA`).
-  - *Paso 3 (Diagnóstico CTE & DUA):* Dos bloques independientes `.ia-bloque` con casilla (`#planProblema` y `#planAjustesRazonables`).
-  - *Paso 4 (Propósito & Producto):* Dos bloques independientes `.ia-bloque--proposito` y `.ia-bloque--producto` + botón `✓ Insertar en Propósito y Producto` (`#planProposito`).
 - **Formulario Esbozo NEM (FASE 3):** ✅ **100% CONCLUIDA.** Catálogo a 2 columnas con scroll delimitado (220px), módulo de inclusión DUA/UDEI con insignias en vista Admin y botones inferiores planos ST90.
 - **Editor de Sesiones Didácticas e iDevices (FASE 4):** ✅ **100% CONCLUIDA.**
-  - `AdminPlaneacionCSS.html`: reglas `.nem-sesiones-tabs`, `.nem-tab-sesion` (.activa, .aprobada, .borrador), `.idevice-bar`, `.idevice-btn` (.idevice-btn--lectura, .idevice-btn--pregunta, .idevice-btn--reto) y `.nem-btn-accion--azul`.
-  - `AdminPlaneacion.html`: limpiados tooltips redundantes `title`, botón `#btnCalSesion` migrado a `.nem-btn-accion--azul` (sin estilos en línea), clases semánticas aplicadas a `.idevice-btn`.
-  - `AdminPlanJS_05.html` y `ClaseJS_07.html`: función `pintarTabsSesiones()` inyecta clases semánticas `.aprobada` y `.borrador`.
-- **Cinta Ribbon estilo aSc Horarios 2027 e Iconos Ilustrados (FASE 5):** ✅ **100% CONCLUIDA.**
-  - 31 iconos SVG monocromáticos sustituidos por ilustraciones detalladas estilo aSc Horarios 2027 en `#menuTabsPanel` y sub-cintas.
-  - Estilos Ribbon en `ComunCSS.html` (degradados suaves, divisores verticales `.separador-ribbon`, tarjetas con elevación hover).
-  - iDevices dinámicos serializados en `#sesGuionEstudiante` y validación de los 4 momentos antes de guardar en `AdminPlanJS_06.html`.
-  - Preservación del 100% de IDs y eventos `onclick`.
-- **Desacoplamiento CSS de Tarjetas iDevice (FASE 6):** ✅ **100% CONCLUIDA.**
-  - DeepSeek incorporó las clases estructurales `.idevice-card*`, `.idevice-campo-titulo` y `.idevice-campo-cuerpo` en `ComunCSS.html`.
-  - Cursor sustituyó los `style.cssText` en línea en `AdminPlanJS_06.html`.
-- **Fix Integral de Guardado y Visibilidad de Planeaciones NEM:** ✅ **100% CONCLUIDO.**
-  - Eliminado el `ReferenceError` de `cargarBancoPlaneaciones_()` en `AdminPlanJS_02.html`.
-  - Añadido `novalidate` al `<form id="formPlanData">` en `AdminPlaneacion.html` para evitar el bloqueo del navegador por campos requeridos en paneles ocultos.
-  - Normalizado el filtrado en `PlaneacionNEM.gs` (tolerancia de grupos `1A` -> `A`, trimestres y visibilidad de proyectos demo).
-  - Restaurada la apertura de **Horario Oficial** (calendario de clases aSc) por defecto al pulsar la pestaña de Planeación.
-  - Auto-siembra preventiva en `PlaneacionNEM.gs` para que nunca se muestren 0 planeaciones en el banco.
-  - Despliegues de Google Apps Script (incluyendo Google Sites inicio) sincronizados a la versión `@514` (`v417 · build-510`).
 
 ---
 
-## 5. Tarea Activa: PLAN DE ACREDITACIÓN Y MEJORA CONTINUA — SUITE ESCOLAR ST90 (LMS NEM)
+## 5. Tarea Activa para la Siguiente Sesión: ETAPA 2 (CONTENIDOS SINTÉTICOS Y PDA) + PROBLEMÁTICA COMUNITARIA
 
-El proyecto evoluciona hacia una plataforma LMS integral para secundaria ("Suite Escolar ST90").
-Los 3 agentes operan con partituras claras depositadas en sus buzones respectivos:
+La orquesta se concentra en la experiencia pedagógica de la **Etapa 2 (Contenidos & PDA)** y su articulación comunitaria:
 
 ### Partitura y Contrato Técnico Inmutable:
-- **Campos e IDs de UI Pedagógica (Iconos ❓ y Asistente 🤖):**
-  - Botón de ayuda en inputs: `.btn-ayuda-nem[data-ayuda-campo="..."]` (presente en al menos 80% de inputs).
-  - Modal pedagógico: `#modalAyudaNEM` (`#modalAyudaTitulo`, `#modalAyudaProposito`, `#modalAyudaComoLlenar`, `#modalAyudaEjemplo`).
-  - Botón flotante Asistente IA: `#btnAsistenteFlotanteIA`
-  - Drawer lateral del Asistente IA: `#drawerAsistenteIA` (`#chipContextoAsistente`, `#chatAsistenteCuerpo`, `#txtMensajeAsistente`, `#btnEnviarAsistenteIA`).
-- **Biblioteca de Recursos:**
-  - Hoja Google Sheets: `BibliotecaRecursos` (`[Id, Titulo, Tipo, Asignatura, Grado, Trimestre, URL_Drive, Autor, Fecha]`).
-  - Contenedor vista: `#vistaBibliotecaDocente`
-  - Filtros y buscador: `#buscarRecursoBiblioteca`, `#filtroAsignaturaRecurso`, `#filtroGradoRecurso`, `#filtroTrimestreRecurso`.
-  - Grid de libros SEP oficiales: `#gridLibrosOficialesSEP`
-  - Modal de subida: `#modalSubirRecurso` (`#formSubirRecursoBiblioteca`).
-- **Adecuación Tecnología CECSE:**
-  - Insignia y distribución: `#badgeCECSE` (2h Teoría / 6h Práctica CECSE).
-  - Reglas curriculares por grado: 1° Word/Ofimática, 2° Excel/Hojas de cálculo, 3° PowerPoint/IA aplicada.
-- **Constructor de Clases:**
-  - Botón y modal de simulación de alumno: `#btnPreviewAlumno`, `#modalPreviewAlumno`.
-  - Bloque incrustado: `.bloque-iframe-container` para contenido educativo externo (Genially, H5P, Canva).
-
-### Asignaciones por Agente:
-| Agente | Responsabilidad Inmediata | Buzón / Archivo |
-| :--- | :--- | :--- |
-| **DeepSeek** *(Diseño UI/UX)* | Diseñar estilos CSS para `.btn-ayuda-nem`, `#modalAyudaNEM`, `#btnAsistenteFlotanteIA`, `#drawerAsistenteIA`, `#vistaBibliotecaDocente`, `#modalPreviewAlumno` y `.bloque-iframe-container`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
-| **Cursor** *(Lógica Frontend)* | Programar `AyudaJS.html`, función global `abrirAyuda(...)`, catálogo `DICCIONARIO_AYUDA_NEM`, controlador del drawer de chat IA con contexto activo, eventos de biblioteca y `abrirVistaPreviaAlumno_()`. | `ENTREGA_CURSOR.md`<br>`AyudaJS.html`<br>`AdminPlanJS_*.html` |
-| **Antigravity** *(Backend & Gobernanza)* | Crear hoja `BibliotecaRecursos` en `03_Setup.gs`, endpoints `subirRecursoBiblioteca` / `listarRecursosBiblioteca`, inyección curricular de Tecnología CECSE en prompts de `PlaneacionNEM.gs` (`asistirDisenoProyectoNEM`), endpoint de chat IA contextual, auditoría y despliegue a `@556`. | `03_Setup.gs`<br>`PlaneacionNEM.gs`<br>`09_IA.gs`<br>`CONTROL_CAMBIOS.md` |
+- **Campos del formulario (Etapa 2):**
+  - Contenido Sintético: `textarea#planContenidoSintetico`
+  - Procesos de Desarrollo de Aprendizaje: `textarea#planPDA`
+  - Insignia de conteo: `#badgeContadorPDA`
+  - Selector de Trimestre curricular: `#selTrimestrePDA` (T1, T2, T3)
+- **Asignaciones para la siguiente sesión (Mañana):**
+  | Agente | Responsabilidad Inmediata | Buzón / Archivo |
+  | :--- | :--- | :--- |
+  | **DeepSeek** *(Diseño UI/UX)* | Maquetar el catálogo interactivo de Contenidos Sintéticos en acordeón/tarjetas, tags de colores por Campo Formativo (Lenguajes: Azul, Saberes: Morado, Ética: Naranja, De lo Humano: Verde) y microinteracciones de selección de PDA. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
+  | **Cursor** *(Lógica Frontend DOM)* | Programar la sincronización reactiva de Contenidos Sintéticos y PDA según la Asignatura y Grado de Etapa 1, filtrado por trimestre (T1/T2/T3), checkboxes interactivos para anexar PDA a `#planPDA` con 1 clic, y conexión del botón "✨ Sugerir con IA" para PDA DUA. | `ENTREGA_CURSOR.md`<br>`AdminPlanJS_03.html`<br>`AyudaJS.html` |
+  | **Antigravity** *(Backend, QA & Despliegue)* | Asegurar los catálogos curriculares oficiales SEP Fase 6 en `PlaneacionNEM.gs`, endpoint de guardado integral de PDA seleccionados en Google Sheets, auditoría multiagente, compilación a `build-563` y despliegue a producción. | `PlaneacionNEM.gs`<br>`CONTROL_CAMBIOS.md`<br>`avances.md` |
 
 

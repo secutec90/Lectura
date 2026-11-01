@@ -690,4 +690,698 @@
         }
       ]
     }
-  ];</script>
+  ];
+
+  /* Etapa 2: contenidos sintéticos, PDA por trimestre, autoguardado y avance del stepper. */
+  var LLAVE_BORRADOR_PLAN_NEM_ = 'st90_borrador_plan_nem';
+  var contenidoFiltroPda_ = '';
+  var _pdasDisponiblesNEM_prev_ = null;
+  var timerBorradorPlanNEM_ = null;
+  var timerCatalogoEtapa2_ = null;
+  var CAMPOS_BORRADOR_PLAN_NEM_ = [
+    'planTitulo', 'planNumSesiones', 'planCampoFormativo', 'planMetodologia',
+    'planAsignatura', 'planGrado', 'planGrupo', 'planFechaInicio', 'planPeriodo',
+    'planIdHorario', 'planContenidoSintetico', 'planPDA', 'selContenidoSinteticoNEM',
+    'planProblema', 'planAjustesRazonables', 'selProblemaEscolar', 'planProposito'
+  ];
+
+  function matrizActivaEtapa2_() {
+    try {
+      if (typeof matrizCurricularActivaNEM_ !== 'undefined' && matrizCurricularActivaNEM_) return matrizCurricularActivaNEM_;
+    } catch (e) {}
+    return null;
+  }
+
+  function trimestreCalculadoPlan_() {
+    var fecha = (document.getElementById('planFechaInicio') || {}).value || '';
+    if (typeof calcularTrimestreSEP_Local === 'function') {
+      var info = calcularTrimestreSEP_Local(fecha);
+      if (info && info.num) return info.num;
+    }
+    if (typeof determinarTrimestreSEP === 'function') {
+      var coincidencia = String(determinarTrimestreSEP(fecha) || '').match(/(\d)/);
+      if (coincidencia) return parseInt(coincidencia[1], 10);
+    }
+    return 1;
+  }
+
+  function trimestreActivoPlan_() {
+    var sel = document.getElementById('selTrimestrePDA');
+    if (sel && sel.value) return String(sel.value);
+    return String(trimestreCalculadoPlan_());
+  }
+
+  function trimestreDeContenido_(idx, total, explicito) {
+    var n = parseInt(explicito, 10);
+    if (n === 1 || n === 2 || n === 3) return n;
+    var corte = Math.ceil((total || 1) / 3);
+    if (idx < corte) return 1;
+    if (idx < corte * 2) return 2;
+    return 3;
+  }
+
+  function mapaTrimestreContenidos_() {
+    var mapa = {};
+    var matriz = matrizActivaEtapa2_();
+    if (!matriz || !Array.isArray(matriz.contenidos)) return mapa;
+    var total = matriz.contenidos.length;
+    matriz.contenidos.forEach(function (c, idx) {
+      if (!c || !c.contenido) return;
+      mapa[c.contenido] = trimestreDeContenido_(idx, total, c.trimestre);
+    });
+    return mapa;
+  }
+
+  function sufijoCampoNEM_(campo) {
+    var n = String(campo || '').toLowerCase();
+    if (n.indexOf('lenguaje') >= 0) return 'lenguajes';
+    if (n.indexOf('saber') >= 0 || n.indexOf('cient') >= 0) return 'cientifico';
+    if (n.indexOf('etic') >= 0 || n.indexOf('natur') >= 0 || n.indexOf('socied') >= 0) return 'etica';
+    return 'comunitario';
+  }
+
+  function vaciarNodoEtapa2_(nodo) {
+    if (!nodo) return;
+    while (nodo.firstChild) nodo.removeChild(nodo.firstChild);
+  }
+
+  function engancharUnaVez_(el, tipo, fn) {
+    if (!el) return;
+    var marca = '_st90Etapa2_' + tipo;
+    if (el[marca]) return;
+    el[marca] = true;
+    el.addEventListener(tipo, fn);
+  }
+
+  function asegurarSelectorTrimestre_() {
+    var existente = document.getElementById('selTrimestrePDA');
+    if (existente) return existente;
+    var host = document.querySelector('.nem-catalogo-header') || document.getElementById('etapaPlanNEM_2');
+    if (!host) return null;
+    var etiqueta = document.createElement('label');
+    etiqueta.className = 'nem-trimestre-pda';
+    etiqueta.style.display = 'inline-flex';
+    etiqueta.style.alignItems = 'center';
+    etiqueta.style.gap = '6px';
+    etiqueta.appendChild(document.createTextNode('Trimestre'));
+    var sel = document.createElement('select');
+    sel.id = 'selTrimestrePDA';
+    sel.setAttribute('aria-label', 'Trimestre de los PDA');
+    ['1', '2', '3'].forEach(function (n) {
+      var op = document.createElement('option');
+      op.value = n;
+      op.textContent = 'T' + n;
+      sel.appendChild(op);
+    });
+    sel.value = String(trimestreCalculadoPlan_());
+    etiqueta.appendChild(sel);
+    host.appendChild(etiqueta);
+    return sel;
+  }
+
+  function asegurarBuscadorContenidos_() {
+    var sel = document.getElementById('selContenidoSinteticoNEM');
+    if (!sel || !sel.parentNode) return null;
+    var bus = document.getElementById('buscarContenidoSinteticoNEM');
+    if (!bus) {
+      bus = document.createElement('input');
+      bus.type = 'search';
+      bus.id = 'buscarContenidoSinteticoNEM';
+      bus.className = 'nem-input-filter';
+      bus.placeholder = 'Buscar contenido sintético…';
+      bus.setAttribute('aria-label', 'Buscar contenido sintético');
+      bus.style.marginTop = '8px';
+      sel.parentNode.insertBefore(bus, sel.nextSibling);
+    }
+    var grid = document.getElementById('gridContenidosNEM');
+    if (!grid) {
+      grid = document.createElement('div');
+      grid.id = 'gridContenidosNEM';
+      grid.className = 'grid-contenidos-nem';
+      bus.parentNode.insertBefore(grid, bus.nextSibling);
+    }
+    return grid;
+  }
+
+  function asegurarBadgeContadorPda_() {
+    var badge = document.getElementById('badgeContadorPDA');
+    if (badge) return badge;
+    badge = document.createElement('span');
+    badge.id = 'badgeContadorPDA';
+    badge.className = 'nem-badge-count';
+    badge.setAttribute('aria-live', 'polite');
+    badge.textContent = '0';
+    var ancla = document.getElementById('badgeConteoPDAs');
+    if (ancla && ancla.parentNode) ancla.parentNode.insertBefore(badge, ancla);
+    return badge;
+  }
+
+  function asegurarBotonSugerirPda_() {
+    if (document.getElementById('btnSugerirPdaIA')) return;
+    var etiqueta = document.querySelector('label[for="planPDA"]');
+    if (!etiqueta) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'btnSugerirPdaIA';
+    btn.className = 'btn-ia-sugerir-titulo';
+    btn.textContent = '✨ Sugerir con IA';
+    btn.title = 'Sugerir PDA adaptados con enfoque DUA';
+    btn.setAttribute('aria-label', 'Sugerir PDA con IA');
+    etiqueta.appendChild(btn);
+  }
+
+  function asegurarDatalistContenidos_(items) {
+    var area = document.getElementById('planContenidoSintetico');
+    if (!area) return;
+    var lista = document.getElementById('listaContenidosSinteticosNEM');
+    if (!lista) {
+      lista = document.createElement('datalist');
+      lista.id = 'listaContenidosSinteticosNEM';
+      if (area.parentNode) area.parentNode.appendChild(lista);
+      area.setAttribute('list', lista.id);
+    }
+    vaciarNodoEtapa2_(lista);
+    (items || []).forEach(function (c) {
+      var op = document.createElement('option');
+      op.value = c.contenido;
+      lista.appendChild(op);
+    });
+  }
+
+  function contenidosConTrimestre_() {
+    var matriz = matrizActivaEtapa2_();
+    if (!matriz || !Array.isArray(matriz.contenidos)) return [];
+    var total = matriz.contenidos.length;
+    return matriz.contenidos.map(function (c, idx) {
+      return {
+        contenido: c.contenido,
+        trimestre: trimestreDeContenido_(idx, total, c.trimestre),
+        campo: matriz.campo || ''
+      };
+    }).filter(function (c) { return !!c.contenido; });
+  }
+
+  function pintarGridContenidosEtapa2_() {
+    var grid = asegurarBuscadorContenidos_();
+    if (!grid) return;
+    var bus = document.getElementById('buscarContenidoSinteticoNEM');
+    var q = String((bus && bus.value) || '').toLowerCase().trim();
+    var tri = trimestreActivoPlan_();
+    var items = contenidosConTrimestre_().filter(function (c) {
+      if (q) return c.contenido.toLowerCase().indexOf(q) >= 0;
+      return String(c.trimestre) === String(tri);
+    });
+    var elegido = (document.getElementById('selContenidoSinteticoNEM') || {}).value || contenidoFiltroPda_ || (document.getElementById('planContenidoSintetico') || {}).value || '';
+    vaciarNodoEtapa2_(grid);
+    if (!items.length) {
+      var vacio = document.createElement('p');
+      vacio.className = 'hint';
+      vacio.textContent = q
+        ? 'Ningún contenido coincide con la búsqueda. Puedes redactarlo libremente en el recuadro de abajo.'
+        : 'No hay contenidos de este trimestre en la disciplina. Prueba otro trimestre o escribe el contenido a mano.';
+      grid.appendChild(vacio);
+      return;
+    }
+    items.forEach(function (c) {
+      var sufijo = sufijoCampoNEM_(c.campo);
+      var tarjeta = document.createElement('button');
+      tarjeta.type = 'button';
+      tarjeta.className = 'card-contenido-nem card-contenido-nem--' + sufijo;
+      if (c.contenido === elegido) tarjeta.classList.add('seleccionado');
+      tarjeta.setAttribute('data-contenido-nem', c.contenido);
+      var insignia = document.createElement('span');
+      insignia.className = 'badge-campo badge-campo--' + sufijo;
+      insignia.textContent = c.campo || 'Fase 6';
+      var titulo = document.createElement('p');
+      titulo.className = 'card-contenido-nem__titulo';
+      titulo.textContent = c.contenido;
+      var meta = document.createElement('span');
+      meta.className = 'card-contenido-nem__meta';
+      meta.textContent = 'T' + c.trimestre;
+      tarjeta.appendChild(insignia);
+      tarjeta.appendChild(titulo);
+      tarjeta.appendChild(meta);
+      tarjeta.addEventListener('click', function () {
+        elegirContenidoSinteticoEtapa2_(c.contenido);
+      });
+      grid.appendChild(tarjeta);
+    });
+  }
+
+  function elegirContenidoSinteticoEtapa2_(texto) {
+    var sel = document.getElementById('selContenidoSinteticoNEM');
+    contenidoFiltroPda_ = texto || '';
+    if (sel) {
+      var encontrado = false;
+      var i;
+      for (i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === texto) { encontrado = true; break; }
+      }
+      if (encontrado) sel.value = texto;
+    }
+    if (typeof alSeleccionarContenidoSinteticoNEM === 'function') alSeleccionarContenidoSinteticoNEM();
+    else {
+      var area = document.getElementById('planContenidoSintetico');
+      if (area && texto) area.value = texto;
+      if (typeof poblarSelectorPDASegunContenido_ === 'function') poblarSelectorPDASegunContenido_(texto);
+    }
+    pintarGridContenidosEtapa2_();
+    programarAutoguardadoPlanNEM_();
+  }
+
+  function actualizarBadgesPda_(n) {
+    var badge = document.getElementById('badgeConteoPDAs');
+    if (badge) badge.textContent = n + ' seleccionado' + (n === 1 ? '' : 's');
+    var contador = asegurarBadgeContadorPda_();
+    if (contador) contador.textContent = String(n);
+  }
+
+  function escribirPdaEtapa2_() {
+    var inp = document.getElementById('planPDA');
+    if (!inp || window._st90EscribiendoPda) return;
+    window._st90EscribiendoPda = true;
+    var oficiales = {};
+    var todas = _pdasDisponiblesNEM_prev_ ? _pdasDisponiblesNEM_prev_() : [];
+    todas.forEach(function (x) { if (x && x.texto) oficiales[x.texto] = true; });
+    var elegidos = (window.pdasSeleccionadosNEM_ || []).filter(function (t) { return !!oficiales[t]; });
+    var vistos = {};
+    var custom = [];
+    String(inp.value || '').split('\n').forEach(function (linea) {
+      var limpio = String(linea).replace(/^[\s•\-\*\u2022]+/, '').replace(/^\[[^\]]*\]\s*/, '').trim();
+      if (!limpio || oficiales[limpio] || vistos[limpio]) return;
+      vistos[limpio] = true;
+      custom.push('• ' + limpio);
+    });
+    elegidos.forEach(function (t) { vistos[t] = true; });
+    inp.value = elegidos.map(function (t) { return '• ' + t; }).concat(custom).join('\n');
+    window.pdasSeleccionadosNEM_ = elegidos.slice();
+    window._st90EscribiendoPda = false;
+    actualizarBadgesPda_(elegidos.length);
+  }
+
+  function alCambiarCasillaPdaEtapa2_(texto, marcado) {
+    if (!Array.isArray(window.pdasSeleccionadosNEM_)) window.pdasSeleccionadosNEM_ = [];
+    var i = window.pdasSeleccionadosNEM_.indexOf(texto);
+    if (marcado && i < 0) window.pdasSeleccionadosNEM_.push(texto);
+    if (!marcado && i >= 0) window.pdasSeleccionadosNEM_.splice(i, 1);
+    escribirPdaEtapa2_();
+    programarAutoguardadoPlanNEM_();
+    evaluarProgresoStepperPlan_();
+  }
+
+  function instalarPintorPdaEtapa2_() {
+    if (typeof _pdasDisponiblesNEM_ === 'function' && !_pdasDisponiblesNEM_prev_) {
+      _pdasDisponiblesNEM_prev_ = _pdasDisponiblesNEM_;
+    }
+    window._leerSeleccionPDANEM_ = function () {
+      var inp = document.getElementById('planPDA');
+      var txt = (inp && inp.value) || '';
+      if (!String(txt).trim()) return [];
+      return String(txt).split('\n').map(function (linea) {
+        return String(linea).replace(/^[\s•\-\*\u2022]+/, '').replace(/^\[[^\]]*\]\s*/, '').replace(/^\d+[.)]\s*/, '').trim();
+      }).filter(Boolean);
+    };
+    window._pdasDisponiblesNEM_ = function () {
+      var todas = _pdasDisponiblesNEM_prev_ ? _pdasDisponiblesNEM_prev_() : [];
+      var mapa = mapaTrimestreContenidos_();
+      var tri = trimestreActivoPlan_();
+      return todas.filter(function (x) {
+        if (!x || !x.texto) return false;
+        if (contenidoFiltroPda_) return x.contenido === contenidoFiltroPda_;
+        var t = mapa[x.contenido];
+        if (!t) return true;
+        return String(t) === String(tri);
+      });
+    };
+    window._escribirPlanPDA_ = escribirPdaEtapa2_;
+    window._pintarSelectorPDANEM_ = function (filtro, omitirEscritura) {
+      var cont = document.getElementById('listaPDAsCheckboxNEM');
+      if (!cont) return;
+      asegurarBadgeContadorPda_();
+      var q = String(filtro || '').toLowerCase().trim();
+      var disp = (typeof _pdasDisponiblesNEM_ === 'function' ? _pdasDisponiblesNEM_() : []).filter(function (x) {
+        return !q || x.texto.toLowerCase().indexOf(q) >= 0 || String(x.contenido || '').toLowerCase().indexOf(q) >= 0;
+      });
+      vaciarNodoEtapa2_(cont);
+      if (!disp.length) {
+        var vacio = document.createElement('span');
+        vacio.style.fontSize = '12px';
+        vacio.style.color = '#64748b';
+        vacio.textContent = 'No hay PDA de este trimestre para el grado. Cambia el trimestre o elige otro contenido.';
+        cont.appendChild(vacio);
+      } else {
+        disp.forEach(function (x) {
+          var fila = document.createElement('label');
+          fila.className = 'pda-item';
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'ia-pda-checkbox';
+          cb.value = x.texto;
+          cb.checked = (window.pdasSeleccionadosNEM_ || []).indexOf(x.texto) >= 0;
+          cb.addEventListener('change', function () {
+            alCambiarCasillaPdaEtapa2_(x.texto, cb.checked);
+          });
+          var span = document.createElement('span');
+          span.className = 'pda-item__texto';
+          span.textContent = x.texto;
+          fila.appendChild(cb);
+          fila.appendChild(span);
+          cont.appendChild(fila);
+        });
+      }
+      if (!omitirEscritura) escribirPdaEtapa2_();
+      else actualizarBadgesPda_((window.pdasSeleccionadosNEM_ || []).length);
+    };
+  }
+
+  function alCambiarTrimestrePda_() {
+    var mapa = mapaTrimestreContenidos_();
+    if (contenidoFiltroPda_ && String(mapa[contenidoFiltroPda_]) !== trimestreActivoPlan_()) {
+      contenidoFiltroPda_ = '';
+    }
+    pintarGridContenidosEtapa2_();
+    if (typeof _pintarSelectorPDANEM_ === 'function') {
+      _pintarSelectorPDANEM_((document.getElementById('buscarPDANEM') || {}).value || '');
+    }
+    programarAutoguardadoPlanNEM_();
+  }
+
+  function programarCatalogoEtapa2_() {
+    clearTimeout(timerCatalogoEtapa2_);
+    timerCatalogoEtapa2_ = setTimeout(function () {
+      if (typeof actualizarCatalogoPDAParaClase_ === 'function') {
+        actualizarCatalogoPDAParaClase_(
+          (document.getElementById('planAsignatura') || {}).value,
+          (document.getElementById('planGrado') || {}).value || '1'
+        );
+      }
+    }, 180);
+  }
+
+  function leerBorradorPlanNEM_() {
+    try {
+      var raw = localStorage.getItem(LLAVE_BORRADOR_PLAN_NEM_);
+      if (!raw) return null;
+      var datos = JSON.parse(raw);
+      if (!datos || typeof datos !== 'object' || !datos.campos) return null;
+      return datos;
+    } catch (e) { return null; }
+  }
+
+  function guardarBorradorPlanNEM_() {
+    if (window._st90RestaurandoBorrador) return;
+    if (!document.getElementById('planTitulo') && !document.getElementById('planPDA')) return;
+    var datos = { ts: Date.now(), campos: {}, ejes: [] };
+    CAMPOS_BORRADOR_PLAN_NEM_.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) datos.campos[id] = el.value;
+    });
+    document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
+      if (cb.checked) datos.ejes.push(cb.value);
+    });
+    try { localStorage.setItem(LLAVE_BORRADOR_PLAN_NEM_, JSON.stringify(datos)); } catch (e) {}
+  }
+
+  function programarAutoguardadoPlanNEM_() {
+    clearTimeout(timerBorradorPlanNEM_);
+    timerBorradorPlanNEM_ = setTimeout(guardarBorradorPlanNEM_, 400);
+  }
+
+  function limpiarBorradorPlanNEM_() {
+    try { localStorage.removeItem(LLAVE_BORRADOR_PLAN_NEM_); } catch (e) {}
+  }
+
+  function formularioPlanSinCaptura_() {
+    var id = (document.getElementById('planId') || {}).value || '';
+    if (String(id).trim()) return false;
+    var vacios = ['planContenidoSintetico', 'planPDA', 'planProblema', 'planProposito'];
+    var i;
+    for (i = 0; i < vacios.length; i++) {
+      var el = document.getElementById(vacios[i]);
+      if (el && String(el.value || '').trim()) return false;
+    }
+    return true;
+  }
+
+  function restaurarBorradorPlanNEM_(datos) {
+    if (!datos || !datos.campos) return;
+    window._st90RestaurandoBorrador = true;
+    Object.keys(datos.campos).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el || datos.campos[id] == null || datos.campos[id] === '') return;
+      el.value = datos.campos[id];
+    });
+    if (Array.isArray(datos.ejes)) {
+      document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
+        cb.checked = datos.ejes.indexOf(cb.value) >= 0;
+      });
+    }
+    window._st90RestaurandoBorrador = false;
+    var querido = datos.campos.selContenidoSinteticoNEM || datos.campos.planContenidoSintetico || '';
+    var sel = document.getElementById('selContenidoSinteticoNEM');
+    if (sel && querido) {
+      var i;
+      for (i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === querido) {
+          sel.value = querido;
+          contenidoFiltroPda_ = querido;
+          break;
+        }
+      }
+    }
+    if (typeof poblarSelectorPDASegunContenido_ === 'function') {
+      poblarSelectorPDASegunContenido_(contenidoFiltroPda_ || querido);
+    }
+    pintarGridContenidosEtapa2_();
+  }
+
+  function etapaCompletaPlan_(n) {
+    function lleno(id) {
+      var el = document.getElementById(id);
+      return !!(el && String(el.value || '').trim());
+    }
+    if (n === 1) return lleno('planTitulo') && lleno('planNumSesiones') && lleno('planCampoFormativo') && lleno('planMetodologia');
+    if (n === 2) return lleno('planContenidoSintetico') && lleno('planPDA');
+    if (n === 3) {
+      var ok = lleno('planProblema');
+      var sec = document.getElementById('secInclusionBAPyC');
+      if (sec && !sec.classList.contains('oculto')) ok = ok && lleno('planAjustesRazonables');
+      return ok;
+    }
+    if (n === 4) return lleno('planProposito');
+    return false;
+  }
+
+  function evaluarProgresoStepperPlan_() {
+    var listos = 0;
+    var i;
+    for (i = 1; i <= 4; i++) {
+      var tab = document.getElementById('tabPasoPlan' + i);
+      var completo = etapaCompletaPlan_(i);
+      if (tab) tab.classList.toggle('completado', completo);
+      if (completo) listos++;
+    }
+    var pct = listos * 25;
+    var header = document.querySelector('.nem-stepper-header');
+    if (header) header.setAttribute('data-progreso', String(pct));
+    var avance = document.getElementById('avancePlanNEM');
+    if (!avance && header) {
+      avance = document.createElement('span');
+      avance.id = 'avancePlanNEM';
+      avance.className = 'nem-stepper-avance';
+      avance.setAttribute('aria-live', 'polite');
+      header.appendChild(avance);
+    }
+    if (avance) avance.textContent = pct + '%';
+  }
+
+  function campoObligatorioVacio_(id) {
+    if (id === 'planAjustesRazonables') {
+      var sec = document.getElementById('secInclusionBAPyC');
+      if (!sec || sec.classList.contains('oculto')) return false;
+    }
+    var el = document.getElementById(id);
+    if (!el) return false;
+    var obligatorios = {
+      planTitulo: 1, planNumSesiones: 1, planCampoFormativo: 1, planMetodologia: 1,
+      planContenidoSintetico: 1, planPDA: 1, planProblema: 1, planAjustesRazonables: 1, planProposito: 1
+    };
+    if (!obligatorios[id]) return false;
+    return !String(el.value || '').trim();
+  }
+
+  function asegurarControlesEtapa2_() {
+    asegurarSelectorTrimestre_();
+    asegurarBuscadorContenidos_();
+    asegurarBadgeContadorPda_();
+    asegurarBotonSugerirPda_();
+    var items = contenidosConTrimestre_();
+    asegurarDatalistContenidos_(items);
+  }
+
+  function iniciarSincronizacionEtapa2NEM_() {
+    if (window._st90Etapa2Lista) return;
+    if (!document.getElementById('etapaPlanNEM_2') && !document.getElementById('planPDA')) return;
+    window._st90Etapa2Lista = true;
+
+    var estabaVacio = formularioPlanSinCaptura_();
+    var borrador = leerBorradorPlanNEM_();
+
+    instalarPintorPdaEtapa2_();
+
+    if (typeof actualizarCatalogoPDAParaClase_ === 'function' && !actualizarCatalogoPDAParaClase_._st90Etapa2) {
+      var origCat = actualizarCatalogoPDAParaClase_;
+      function catalogoConGrid(asig, grado) {
+        contenidoFiltroPda_ = '';
+        var r = origCat.apply(this, arguments);
+        try {
+          var selCat = document.getElementById('selContenidoSinteticoNEM');
+          if (selCat && selCat.value) contenidoFiltroPda_ = selCat.value;
+          asegurarControlesEtapa2_();
+          pintarGridContenidosEtapa2_();
+          if (typeof _pintarSelectorPDANEM_ === 'function') {
+            _pintarSelectorPDANEM_((document.getElementById('buscarPDANEM') || {}).value || '');
+          }
+        } catch (e) {}
+        return r;
+      }
+      catalogoConGrid._st90Etapa2 = true;
+      window.actualizarCatalogoPDAParaClase_ = catalogoConGrid;
+    }
+
+    if (typeof alSeleccionarContenidoSinteticoNEM === 'function' && !alSeleccionarContenidoSinteticoNEM._st90Etapa2) {
+      var origCont = alSeleccionarContenidoSinteticoNEM;
+      function elegirContenido(ev) {
+        var sel = document.getElementById('selContenidoSinteticoNEM');
+        if (sel && sel.value) contenidoFiltroPda_ = sel.value;
+        var r = origCont.apply(this, arguments);
+        try { pintarGridContenidosEtapa2_(); } catch (e) {}
+        return r;
+      }
+      elegirContenido._st90Etapa2 = true;
+      window.alSeleccionarContenidoSinteticoNEM = elegirContenido;
+    }
+
+    if (typeof irAPasoPlanNEM === 'function' && !irAPasoPlanNEM._st90Borrador) {
+      var origIr = irAPasoPlanNEM;
+      function irConBorrador(paso) {
+        var r = origIr.apply(this, arguments);
+        try {
+          guardarBorradorPlanNEM_();
+          evaluarProgresoStepperPlan_();
+        } catch (e) {}
+        return r;
+      }
+      irConBorrador._st90Borrador = true;
+      window.irAPasoPlanNEM = irConBorrador;
+    }
+
+    if (typeof gsRun === 'function' && !gsRun._st90Borrador) {
+      var origGs = gsRun;
+      function gsRunConBorrador(fn) {
+        var promesa = origGs.apply(this, arguments);
+        if (fn === 'crearOActualizarPlaneacionNEM' && promesa && promesa.then) {
+          promesa.then(function (res) {
+            if (res && res.ok) limpiarBorradorPlanNEM_();
+          }, function () {});
+        }
+        return promesa;
+      }
+      gsRunConBorrador._st90Borrador = true;
+      window.gsRun = gsRunConBorrador;
+    }
+
+    asegurarControlesEtapa2_();
+
+    var asig = document.getElementById('planAsignatura');
+    var grado = document.getElementById('planGrado');
+    engancharUnaVez_(asig, 'input', programarCatalogoEtapa2_);
+    engancharUnaVez_(asig, 'change', programarCatalogoEtapa2_);
+    engancharUnaVez_(grado, 'change', programarCatalogoEtapa2_);
+
+    var buscador = document.getElementById('buscarContenidoSinteticoNEM');
+    engancharUnaVez_(buscador, 'input', pintarGridContenidosEtapa2_);
+
+    var trimestre = document.getElementById('selTrimestrePDA');
+    engancharUnaVez_(trimestre, 'change', function () {
+      trimestre._st90Tocado = true;
+      alCambiarTrimestrePda_();
+    });
+
+    var fecha = document.getElementById('planFechaInicio');
+    engancharUnaVez_(fecha, 'change', function () {
+      var selTri = document.getElementById('selTrimestrePDA');
+      if (selTri && !selTri._st90Tocado) {
+        selTri.value = String(trimestreCalculadoPlan_());
+        alCambiarTrimestrePda_();
+      }
+    });
+
+    CAMPOS_BORRADOR_PLAN_NEM_.forEach(function (id) {
+      var el = document.getElementById(id);
+      engancharUnaVez_(el, 'input', function () {
+        programarAutoguardadoPlanNEM_();
+        if (id === 'planContenidoSintetico') {
+          var texto = String(el.value || '').trim();
+          var coincide = contenidosConTrimestre_().some(function (c) { return c.contenido === texto; });
+          if (coincide && contenidoFiltroPda_ !== texto) {
+            contenidoFiltroPda_ = texto;
+            var selC = document.getElementById('selContenidoSinteticoNEM');
+            if (selC) selC.value = texto;
+            if (typeof poblarSelectorPDASegunContenido_ === 'function') poblarSelectorPDASegunContenido_(texto);
+          }
+          pintarGridContenidosEtapa2_();
+        }
+        if (id === 'planPDA' && !window._st90EscribiendoPda) {
+          var leidos = window._leerSeleccionPDANEM_ ? window._leerSeleccionPDANEM_() : [];
+          var oficiales = {};
+          var todas = _pdasDisponiblesNEM_prev_ ? _pdasDisponiblesNEM_prev_() : [];
+          todas.forEach(function (x) { if (x && x.texto) oficiales[x.texto] = true; });
+          window.pdasSeleccionadosNEM_ = leidos.filter(function (t) { return !!oficiales[t]; });
+          if (typeof _pintarSelectorPDANEM_ === 'function') {
+            _pintarSelectorPDANEM_((document.getElementById('buscarPDANEM') || {}).value || '', true);
+          }
+        }
+      });
+      engancharUnaVez_(el, 'change', programarAutoguardadoPlanNEM_);
+      engancharUnaVez_(el, 'blur', function () {
+        if (el && el.setAttribute) el.setAttribute('aria-invalid', campoObligatorioVacio_(id) ? 'true' : 'false');
+        evaluarProgresoStepperPlan_();
+        guardarBorradorPlanNEM_();
+      });
+    });
+
+    document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
+      engancharUnaVez_(cb, 'change', function () {
+        programarAutoguardadoPlanNEM_();
+        evaluarProgresoStepperPlan_();
+      });
+    });
+
+    if (typeof actualizarCatalogoPDAParaClase_ === 'function') {
+      actualizarCatalogoPDAParaClase_(
+        (asig && asig.value) || '',
+        (grado && grado.value) || '1'
+      );
+    } else {
+      pintarGridContenidosEtapa2_();
+    }
+
+    if (estabaVacio && borrador) restaurarBorradorPlanNEM_(borrador);
+    evaluarProgresoStepperPlan_();
+
+    window.guardarBorradorPlanNEM_ = guardarBorradorPlanNEM_;
+    window.evaluarProgresoStepperPlan_ = evaluarProgresoStepperPlan_;
+    window.iniciarSincronizacionEtapa2NEM_ = iniciarSincronizacionEtapa2NEM_;
+  }
+
+  window.iniciarSincronizacionEtapa2NEM_ = iniciarSincronizacionEtapa2NEM_;
+  window.guardarBorradorPlanNEM_ = guardarBorradorPlanNEM_;
+  window.evaluarProgresoStepperPlan_ = evaluarProgresoStepperPlan_;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciarSincronizacionEtapa2NEM_);
+  } else {
+    iniciarSincronizacionEtapa2NEM_();
+  }
+</script>

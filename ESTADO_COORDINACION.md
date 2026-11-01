@@ -13,12 +13,6 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 | **Diseñador Visual & DUA** | **DeepSeek** | • Experiencia de usuario (UX/UI), microinteracciones y accesibilidad DUA.<br>• Archivos CSS exclusivos (`AdminPlaneacionCSS.html`, `ComunCSS.html`, `AdminCSS.html`, etc.).<br>• Tarjetas, estados visuales (`.activa`, `.aprobada`) y botones planos ST90. | Modificar funciones backend `.gs`, ejecutar comandos git/clasp o alterar IDs del DOM sin aprobación previa. |
 | **Ingeniero Frontend** | **Cursor** | • Interacción del cliente, eventos click/change y manipulación del DOM.<br>• Fragmentos JS (`AdminPlanJS_*.html`, `AdminEncJS_*.html`, `AdminJS_*.html`, etc.).<br>• Conexión con `google.script.run` respetando estrictamente los IDs del contrato. | Inventar nuevas clases CSS arbitrarias, modificar archivos `.gs` de backend o ejecutar push a GitHub/Apps Script. |
 
-### Ciclo de Entrega en 4 Tiempos:
-1. **Partitura (Antigravity):** Define la fase activa en este documento con los selectores exactos del DOM y asignaciones.
-2. **Ejecución en Paralelo:** DeepSeek trabaja en CSS/UI; Cursor en interacción DOM/JS; Antigravity en backend `.gs`.
-3. **Auditoría de Ensamble (Antigravity):** Verifica coherencia de selectores, concurrencia, sintaxis y ausencia de colisiones.
-4. **Cierre Oficial (Antigravity):** Si pasa la auditoría, Antigravity consolida el código, ejecuta el commit/push a GitHub, despliega con Clasp si corresponde, y sella el bloque en `CONTROL_CAMBIOS.md`.
-
 ---
 
 ## 2. Prompts de Arranque Rápido para Agentes
@@ -33,51 +27,27 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 
 ## 3. Contrato Técnico entre Agentes (IDs y Selectores del DOM)
 
-Para que DeepSeek y Cursor diseñen e interactúen con certeza:
-- **Campos del formulario que reciben los datos (Esbozo NEM):**
-  - Paso 1: `input#planTitulo` (Título)
-  - Paso 2: `textarea#planPDA` (PDA oficiales/adaptados) y `textarea#planContenidoSintetico` (Contenido)
-  - Paso 3: `textarea#planProblema` (Problema comunitario) y `textarea#planAjustesRazonables` (Ajustes DUA)
-  - Paso 4: `textarea#planProposito` (Propósito y producto)
-- **Contenedor del modal de IA donde se inyecta la vista:** `#iaPasoBox`
-- **Archivos asignados:**
-  - **DeepSeek:** Estilos del modal y tarjetas en `ComunCSS.html` o `AdminPlaneacionCSS.html`.
-  - **Cursor:** Renderizado interactivo y controladores en `AdminPlanJS_*.html` o `ComunJS.html`.
-  - **Antigravity:** Prompts y endpoints backend en `PlaneacionNEM.gs` y `09_IA.gs`.
+- **Campos del formulario que reciben los datos (Wizard NEM de 4 Etapas):**
+  - **Etapa 1 (`#etapaPlanNEM_1`):** `input#planTitulo`, `select#planCampoFormativo` (bloqueado `🔒` por norma SEP según asignatura), `select#planMetodologia`, `input#planNumSesiones` (organizados en una sola fila `.nem-fila-una`).
+  - **Etapa 2 (`#etapaPlanNEM_2`):** `select#selContenidoSinteticoNEM`, `select#selPDANEM`, `textarea#planContenidoSintetico`, `textarea#planPDA`, `#badgeConteoPDAs`.
+  - **Etapa 3 (`#etapaPlanNEM_3`):** `select#selProblemaEscolar`, `textarea#planProblema`, `#secInclusionBAPyC`, `textarea#planAjustesRazonables`, modal `📊 Directorio de encuestas` (`#dirSelect`, `#dirDetalle`).
+  - **Etapa 4 (`#etapaPlanNEM_4`):** `textarea#planProposito`, `#btnSugerirProyectoIA`, `#cajaRubricaCotejoNEM` (Lista de Cotejo / Rúbrica editable) y vista previa PDF Oficial NL (`#modalVistaPreviaPDFOficialNL`).
 
 ---
 
 ## 4. Estado de Fases y Despliegues Concluidos
 
-- **Última versión desplegada:** `@562` / código `v417 · build-562` (Asesora Pedagógica NEM ilustrada en reemplazo del robot `🤖`, Asistente de Voz DUA con Web Speech API `🔊`/`🎙️`, botón interactivo `✨ Sugerir con IA` y chips `[➕ Usar este título]` con inserción reactiva en 1 clic en `#planTitulo`). Integridad confirmada de las 14 planeaciones en Google Sheets y HTTP 200 verificado en vivo en los 5 despliegues de producción.
-- **Fila 1 (Etapa 1 - NEM Fase 6):** Desbloqueada la autonomía docente en Metodología y Campo Formativo. Reglas normativas SEP documentadas.
-- **Horario contextual:** 100% saneado, una sola fila, transparente, iconos 18px.
-- **Asistente en los 4 Pasos (FASE 2):** ✅ **100% CONCLUIDA y homogeneizada.** Los 4 pasos usan el sistema de casillas y selección directa sin ensayos largos.
-- **Formulario Esbozo NEM (FASE 3):** ✅ **100% CONCLUIDA.** Catálogo a 2 columnas con scroll delimitado (220px), módulo de inclusión DUA/UDEI con insignias en vista Admin y botones inferiores planos ST90.
-- **Editor de Sesiones Didácticas e iDevices (FASE 4):** ✅ **100% CONCLUIDA.**
+- **Última versión desplegada:** `@567` / código `v418 · build-567` (sincronizada en los 5 endpoints de Google Apps Script y rama `main` de GitHub, commit `20e7e03`).
+- **Etapa 1 y Etapa 2 (Desaturación UI/UX + Regla Normativa SEP + Lucy Asesora con Voz Femenina):** ✅ **100% CONCLUIDA.**
+- **Directorio de Encuestas Institucional + Tooltip Único DUA/UDEI/BAPyC + Serialización de Sesiones:** ✅ **100% CONCLUIDA.**
+- **Formato PDF Oficial de Nuevo León (`PLANO DIDÁCTICO`):** ✅ **100% OPERATIVO** desde las tarjetas del Banco de Planeaciones, desde el Paso 4 y desde el editor de Sesiones.
 
 ---
 
-## 5. Tarea Activa: DESATURACIÓN VISUAL UI/UX (ETAPA 1 & 2) + CORRECCIÓN DE AVATAR + CONTENIDOS & PDA
+## 5. Tarea Programada para Mañana: ETAPAS 3 Y 4 — AJUSTES DUA CON 1 CLIC, LISTA DE COTEJO EDITABLE E INTEGRACIÓN AL PDF OFICIAL NL (`build-568`)
 
-### Diagnóstico de Saturación Visual y Correcciones Inmediatas:
-1. **Avatar truncado en mitad inferior (`AVATAR_ASESOR_NEM_B64_`):** La cadena base64 JPEG sufrió corrupción de bytes en su mitad inferior. **Antigravity** regenerará e inyectará vía buffer binario directo un avatar PNG/JPEG 100% íntegro con encuadre centrado superior (`object-fit: cover; object-position: center 20%`).
-2. **Eliminación de contaminación de micro-iconos (`❓`, `🔊`, `✨` repetidos):**
-   - **Quitar los iconos `❓` y `✨` de adentro de las 4 pestañas del Stepper** (`#tabPasoPlan1..4`), dejando solo el número y título del paso (más el check `✓` cuando esté completo).
-   - **Quitar los botones sueltos de bocina `🔊` (`.btn-voz-nem`) de todas las etiquetas `<label>`** del formulario. La lectura en voz alta `🔊` se mantiene únicamente **adentro** del modal `#modalAyudaNEM` y en las respuestas del drawer de la Asesora IA.
-   - Reemplazar el signo de interrogación rojo estridente `❓` por un icono `(?)` monocromático sutil (`#94a3b8`, hover `#2563eb`) y reubicar `✨ Sugerir con IA` como acción limpia alineada a la derecha del label o integrada en el input.
-3. **Simplificación del Banner `#bannerClaseNEM` (Cero "cajitas" saturadas):**
-   - Quitar las 5 píldoras blancas con borde alrededor de la fecha, hora, trimestre y docente; mostrarlas como metadatos en texto limpio separado por puntos (`•`).
-4. **Reorganización Respirable de la Etapa 1 (`#etapaPlanNEM_1`):**
-   - En lugar de apretar 4 campos en una sola fila (que rompe el label de `Sesiones (40m)` en dos líneas), distribuir en una **rejilla limpia de 2 filas**:
-     - **Fila A:** `Título del Proyecto` (75% ancho) + `Sesiones (40m)` (25% ancho).
-     - **Fila B:** `Campo Formativo` (50% ancho) + `Metodología` (50% ancho).
-
-### Partitura y Reparto de Tareas por Agente:
 | Agente | Responsabilidad Inmediata | Buzón / Archivo |
 | :--- | :--- | :--- |
-| **DeepSeek** *(Diseño UI/UX & Desaturación CSS)* | 1. **Desaturar `#bannerClaseNEM`:** Eliminar bordes/fondos de caja en cada metadato; dejar una barra limpia y plana.<br>2. **Rejilla Respirable en `.nem-fila-una`:** Pasar de 4 columnas apretadas a layout 2×2 (`3fr 1fr` arriba para Título y Sesiones; `1fr 1fr` abajo para Campo y Metodología).<br>3. **Limpieza de `.btn-ayuda-nem` y Stepper:** Icono `(?)` neutro sin color rojo estridente, ocultar `.btn-voz-nem` fuera del modal, y estilizar el Stepper `#tabPasoPlan1..4` limpio con estado `.completado` (`✓`) y barra de progreso.<br>4. **Tarjetas de Etapa 2:** Grid `.card-contenido-nem` y badges por Campo Formativo.<br>5. Al finalizar, ejecutar `node herramientas/centinela_buzon.js deepseek`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
-| **Cursor** *(Lógica Frontend DOM)* | 1. **Dejar de inyectar `🔊` (`.btn-voz-nem`) en los `<label>` del formulario:** Modificar `AyudaJS.html` para que el botón de voz solo se renderice dentro de `#modalAyudaNEM` y en las burbujas del drawer `#drawerAsistenteIA`, nunca al lado de cada `<label>`.<br>2. **Limpiar pestañas del Stepper:** Asegurar que `#tabPasoPlan1..4` no tengan iconos `❓ ✨` incrustados y muestren solo número, nombre de etapa y check `✓` al completarse.<br>3. **Etapa 2 (Contenidos & PDA) + Autoguardado `localStorage`:** Sincronización de Contenidos Sintéticos SEP, filtrado de PDA por trimestre, contador `#badgeContadorPDA` y respaldo automático en `localStorage`.<br>4. Al finalizar, ejecutar `node herramientas/centinela_buzon.js cursor`. | `ENTREGA_CURSOR.md`<br>`AyudaJS.html`<br>`AdminPlanJS_03.html` |
-| **Antigravity** *(Backend, Avatar & QA)* | 1. **Reparar `AVATAR_ASESOR_NEM_B64_`:** Generar e inyectar imagen base64 100% íntegra (sin corrupción en la mitad inferior) en `AyudaJS.html`.<br>2. **Limpiar HTML base en `AdminPlaneacion.html`:** Retirar los `<span>` de `❓` y `✨` incrustados dentro de `#tabPasoPlan1..4`.<br>3. **Catálogo SEP Fase 6 & Despliegue:** Asegurar endpoints en `PlaneacionNEM.gs`, auditar entregas de DeepSeek y Cursor, y desplegar `build-563`. | `AyudaJS.html`<br>`AdminPlaneacion.html`<br>`PlaneacionNEM.gs` |
-
-
+| **Cursor** *(Lógica Frontend DOM)* | 1. **Chips Rápidos de Ajustes Razonables DUA en Etapa 3 (`#secInclusionBAPyC`):** Botones de 1 clic (`+ Macrotipo / Alto Contraste`, `+ Audio y Lectura Guiada`, `+ Tiempos Flexibles y Pausas Activas`, `+ Trabajo en Parejas Tutoras`) que agregan viñetas a `#planAjustesRazonables`.<br>2. **Lista de Cotejo Editable en Etapa 4 (`#cajaRubricaCotejoNEM`):** Tabla interactiva de 3 a 5 criterios de evaluación formativa con botón `+ Agregar criterio`, botón `✨ Sugerir criterios desde PDA` y eliminación por fila (`×`), conectada en vivo con `_generarHtmlDocumentoPlanoDidacticoNL_()` para el PDF Oficial de Nuevo León.<br>3. Al finalizar, ejecutar `node herramientas/centinela_buzon.js cursor`. | `ENTREGA_CURSOR.md`<br>`AdminPlanJS_04.html`<br>`AyudaJS.html` |
+| **DeepSeek** *(Diseño UI/UX & CSS)* | 1. **Estilos para `#cajaRubricaCotejoNEM` y `.nem-tabla-cotejo-edit`:** Diseño limpio y compacto para la tabla editable de criterios de evaluación en Etapa 4 y los chips de ajustes DUA (`.nem-chip-dua-rapido`) en Etapa 3.<br>2. **Estilos de Hoja Carta en `#modalVistaPreviaPDFOficialNL`:** Sombra editorial en vista previa y reglas `@media print` para impresión multipágina impecable.<br>3. Al finalizar, ejecutar `node herramientas/centinela_buzon.js deepseek`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
+| **Antigravity** *(Backend, PDF & QA)* | 1. **Persistencia y Fechas Reales de Sesiones en PDF:** Vincular las fechas reales del horario docente al cronograma del Plano Didáctico PDF y persistir criterios personalizados en `PlaneacionNEM.gs`.<br>2. **Auditoría & Despliegue:** Integrar entregas de Cursor y DeepSeek, validar con `node herramientas/manifiesto.js` y desplegar `build-568` (`@568`). | `PlaneacionNEM.gs`<br>`AyudaJS.html`<br>`CONTROL_CAMBIOS.md` |

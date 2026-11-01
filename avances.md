@@ -412,5 +412,23 @@ En las iteraciones recientes del proyecto, la plataforma evolucionó de un siste
   * **Integración Completa del Set de Herramientas:** Quedaron alineados armónicamente en una sola fila flotante los 3 subtabs a la izquierda, los filtros de dimensión en el centro, y los 5 botones de acción a la derecha (Enlace Alumnos, CSV, PDF, Mantenimiento, Ayuda).
 - **Despliegue:** Versión `@407` en `AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ`.
 
+### Despliegue v418 · build-563 a build-567 (Desaturación UI/UX, Asesora "Lucy" con Voz Femenina, Bloqueo Normativo de Campo Formativo, Directorio de Encuestas, Tooltip Único y Plano Didáctico PDF Oficial de Nuevo León)
+- **Hitos Cerrados en la Sesión:**
+  1. **Reparación Íntegra del Avatar y Identidad de "Lucy" (`AyudaJS.html`, `PlaneacionNEM.gs`):** Se regeneró por buffer binario el retrato 3D de la asesora pedagógica (`AVATAR_ASESOR_NEM_B64_`, `6,864` caracteres base64 íntegros), se bautizó oficialmente como **Lucy · Asesora Pedagógica NEM**, y se programó el selector ponderado de voz femenina en español (`elegirVozFemeninaEspanol_`) en Web Speech API.
+  2. **Desaturación Visual y Alineación Geométrica de Etapa 1 y Etapa 2 (`AdminPlaneacion.html`, `Clase.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+     - Eliminados los iconos `❓ ✨` incrustados en `#tabPasoPlan1..4` y las bocinas duplicadas en los `<label>`.
+     - Organizados en una sola fila horizontal (`.nem-fila-una`) los 4 campos de la Etapa 1 (`Título del Proyecto *`, `Campo Formativo * 🔒`, `Metodología *`, `Sesiones (40m) *`).
+     - Bloqueado por norma SEP Fase 6 el selector `#planCampoFormativo` (`disabled = true` con candado `🔒`) para seleccionarse automáticamente según cada asignatura de secundaria.
+     - Alineadas a idéntica altura (`38px`) y formato las dos listas desplegables de la Etapa 2 (`#selContenidoSinteticoNEM` y `#selPDANEM`), eliminando el contenedor extra en `#listaPDAsCheckboxNEM`.
+     - Barra de progreso en el Stepper (`25% · 50% · 75% · 100%`) y autoguardado de borrador en `localStorage` (`st90_borrador_plan_nem`).
+  3. **Directorio de Encuestas Completo y Tooltip Único en Siglas DUA / UDEI / BAPyC (`15_DirectorioEncuentas.gs`, `AdminPlanJS_02.html`):**
+     - Incorporado `_catalogoEncuestasBaseST90_()` con encuestas diagnósticas y resúmenes IA listos para todas las asignaturas (`Tecnología 1° T1`, `Español`, `Matemáticas`, `Ciencias`, `Geografía`, `Historia`, `FCyE`), preselección automática en `#dirSelect` y vista inmediata del resumen con botón `📋 Insertar en la planeación`.
+     - Eliminado el atributo nativo `title` en los elementos que usan `data-tip` (`UDEI`, `Inclusión (DUA):`, `?`, `BAPyC`), dejando un único tooltip flotante limpio.
+  4. **Fix de Serialización en `obtenerPlaneacionCompletaNEM` y Formato PDF Oficial de Nuevo León (`PlaneacionNEM.gs`, `AyudaJS.html`, `AdminPlanJS_05.html`, `ClaseJS_07.html`):**
+     - Corregido el fallo `"No se encontró la planeación"` causado por objetos `Date` crudos en `obtenerPlaneacionCompletaNEM` mediante conversión ISO, `JSON.parse(JSON.stringify(...))` y respaldo en memoria desde `listaPlanNEM`.
+     - Implementado el **Plano Didáctico en Formato PDF Oficial de Nuevo León** (`abrirVistaPreviaPDFPlaneacionNEM` e `imprimirDescargarPDFPlaneacionNEM_`) con los 2 escudos oficiales (`NL Educación` y `Gobierno del Nuevo Nuevo León`), tabla de datos generales, cronograma de sesiones de 40 min (4 momentos DUA), lista de cotejo formativa y bloque de firmas (`Docente Titular` y `Visto Bueno Dirección / Subdirección`).
+- **Despliegue:** Versión `@567` (`v418 · build-567`) activa en los 5 endpoints oficiales de Google Apps Script y sincronizada en GitHub (`main`).
+
+
 
 

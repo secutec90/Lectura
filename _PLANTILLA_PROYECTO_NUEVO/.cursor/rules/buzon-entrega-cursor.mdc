@@ -19,3 +19,5 @@ Al trabajar en cualquier tarea, componente o refactorización dentro de este rep
 4. **Respuesta en el chat:**
    - En el chat de Cursor solo entrega un mensaje breve indicando:  
      *"✅ Entrega completada y guardada automáticamente en `ENTREGA_CURSOR.md` lista para la auditoría de Antigravity."*
+5. **Re-lectura Automática del Buzón cada 60 segundos (Modo Centinela):**
+   - Inmediatamente después de guardar tu entrega en `ENTREGA_CURSOR.md`, ejecuta en terminal el comando `node .rsc/centinela_buzon.js cursor` para revisar el buzón cada minuto. En cuanto detecte que Antigravity cargó una nueva tarea (`🟢`), vuelve a leer `ENTREGA_CURSOR.md` y `ESTADO_COORDINACION.md` y ejecútala automáticamente sin esperar intervención del usuario.

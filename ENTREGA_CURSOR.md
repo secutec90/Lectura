@@ -1555,8 +1555,12 @@ if (document.readyState === 'loading') {
    - Conectar el botón `✨ Sugerir con IA` de la Etapa 2 para solicitar a la Asesora:
      `"Sugiere 2 PDA adaptados con enfoque DUA para el contenido sintético seleccionado en [Asignatura] [Grado]° (Trimestre [T])."`
    - Habilitar chips de 1 clic `[➕ Insertar este PDA]` dentro de la burbuja de respuesta para anexarlo inmediatamente al `textarea#planPDA`.
-4. **Contrato de Inmutabilidad:**
+4. **Autoguardado de Emergencia en `localStorage` y Progreso del Stepper (4 Etapas):**
+   - Sin eliminar ningún módulo existente de `AdminPlaneacion.html`, respaldar automáticamente en `localStorage` (`st90_borrador_plan_nem`) los campos de las 4 etapas cada vez que el docente cambie de paso (`irAPasoPlanNEM`) o edite un campo, permitiendo restaurar el borrador si recarga la página antes de guardar en Google Sheets.
+   - Validar en tiempo real (`onBlur`) los campos obligatorios de cada etapa y marcar la pestaña correspondiente (`#tabPasoPlan1..4`) con la clase `.completado` (`✓`) y actualizar el porcentaje de avance (`25% · 50% · 75% · 100%`).
+5. **Contrato de Inmutabilidad y Modo Centinela (Polling cada 60s):**
    - No alterar los IDs inmutables: `planContenidoSintetico`, `planPDA`, `tabPasoPlan2`, `etapaPlanNEM_2`.
    - Toda llamada a backend se realiza exclusivamente mediante `gsRun` con manejo de errores y feedback visual.
+   - **Al terminar tu entrega y guardarla en `ENTREGA_CURSOR.md`, ejecuta inmediatamente `node herramientas/centinela_buzon.js cursor` para revisar el buzón cada 60 segundos en espera de la siguiente tarea.**
 
 

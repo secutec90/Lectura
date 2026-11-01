@@ -24,10 +24,10 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 ## 2. Prompts de Arranque Rápido para Agentes
 
 ### Para DeepSeek:
-> *"Actúas como Diseñador UI/UX y CSS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual. Tienes estrictamente prohibido cambiar IDs del DOM o crear lógica de backend. Tu tarea asignada es la de la FASE activa. Escribe y guarda tu entrega completa y código propuesto en el archivo `ENTREGA_DEEPSEEK.md` para que Antigravity la audite."*
+> *"Actúas como Diseñador UI/UX y CSS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual. Tienes estrictamente prohibido cambiar IDs del DOM o crear lógica de backend. Tu tarea asignada es la de la FASE activa. Escribe y guarda tu entrega completa y código propuesto en el archivo `ENTREGA_DEEPSEEK.md` para que Antigravity la audite, e inmediatamente después ejecuta `node herramientas/centinela_buzon.js deepseek` para revisar cada 60 segundos si Antigravity cargó una nueva tarea."*
 
 ### Para Cursor:
-> *"Actúas como Desarrollador Frontend JS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas fragmentos JS del DOM y llamadas a `google.script.run`. Respeta estrictamente los IDs definidos por Antigravity y las clases de DeepSeek. Tienes prohibido hacer commit/push o alterar el backend. Escribe y guarda tu entrega completa y controladores en el archivo `ENTREGA_CURSOR.md` para que Antigravity la audite."*
+> *"Actúas como Desarrollador Frontend JS del proyecto Suite Escolar ST90. Tu partitura está definida en `ESTADO_COORDINACION.md`. Solo tocas fragmentos JS del DOM y llamadas a `google.script.run`. Respeta estrictamente los IDs definidos por Antigravity y las clases de DeepSeek. Tienes prohibido hacer commit/push o alterar el backend. Escribe y guarda tu entrega completa y controladores en el archivo `ENTREGA_CURSOR.md` para que Antigravity la audite, e inmediatamente después ejecuta `node herramientas/centinela_buzon.js cursor` para revisar cada 60 segundos si Antigravity cargó una nueva tarea."*
 
 ---
 
@@ -71,8 +71,8 @@ La orquesta se concentra en la experiencia pedagógica de la **Etapa 2 (Contenid
 - **Asignaciones para la siguiente sesión (Mañana):**
   | Agente | Responsabilidad Inmediata | Buzón / Archivo |
   | :--- | :--- | :--- |
-  | **DeepSeek** *(Diseño UI/UX)* | Maquetar el catálogo interactivo de Contenidos Sintéticos en acordeón/tarjetas, tags de colores por Campo Formativo (Lenguajes: Azul, Saberes: Morado, Ética: Naranja, De lo Humano: Verde) y microinteracciones de selección de PDA. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
-  | **Cursor** *(Lógica Frontend DOM)* | Programar la sincronización reactiva de Contenidos Sintéticos y PDA según la Asignatura y Grado de Etapa 1, filtrado por trimestre (T1/T2/T3), checkboxes interactivos para anexar PDA a `#planPDA` con 1 clic, y conexión del botón "✨ Sugerir con IA" para PDA DUA. | `ENTREGA_CURSOR.md`<br>`AdminPlanJS_03.html`<br>`AyudaJS.html` |
+  | **DeepSeek** *(Diseño UI/UX)* | Maquetar el catálogo interactivo de Contenidos Sintéticos en acordeón/tarjetas, tags de colores por Campo Formativo (Lenguajes: Azul, Saberes: Morado, Ética: Naranja, De lo Humano: Verde), microinteracciones de selección de PDA, y barra de progreso visual (`25% · 50% · 75% · 100%`) con estado `.completado` (`✓`) en el Stepper de 4 etapas (`#tabPasoPlan1..4`). Al finalizar, activar `node herramientas/centinela_buzon.js deepseek`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
+  | **Cursor** *(Lógica Frontend DOM)* | Programar la sincronización reactiva de Contenidos Sintéticos y PDA según la Asignatura y Grado de Etapa 1, filtrado por trimestre (T1/T2/T3), checkboxes interactivos para anexar PDA a `#planPDA` con 1 clic, conexión del botón "✨ Sugerir con IA" para PDA DUA, y **autoguardado de emergencia en `localStorage`** al cambiar entre etapas del Stepper junto con validación en tiempo real (`onBlur`) y marca de paso completado (`✓`). Al finalizar, activar `node herramientas/centinela_buzon.js cursor`. | `ENTREGA_CURSOR.md`<br>`AdminPlanJS_03.html`<br>`AyudaJS.html` |
   | **Antigravity** *(Backend, QA & Despliegue)* | Asegurar los catálogos curriculares oficiales SEP Fase 6 en `PlaneacionNEM.gs`, endpoint de guardado integral de PDA seleccionados en Google Sheets, auditoría multiagente, compilación a `build-563` y despliegue a producción. | `PlaneacionNEM.gs`<br>`CONTROL_CAMBIOS.md`<br>`avances.md` |
 
 

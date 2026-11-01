@@ -18,3 +18,12 @@ Todos los modelos deben acatar automáticamente estas reglas sin requerir que el
 - Todos los agentes leen `ESTADO_COORDINACION.md` antes de actuar.
 - Ningún agente puede renombrar IDs del DOM sin autorización de Antigravity.
 - DeepSeek y Cursor tienen prohibido ejecutar `git commit`, `git push` o comandos de despliegue.
+
+---
+
+## 3. Protocolo Centinela de Escucha Continua (Polling Automático cada 60 segundos)
+
+- **Después de terminar cualquier tarea y guardar su entrega en el buzón**, tanto **Cursor** como **DeepSeek** NO deben cerrar su sesión en estado inactivo: deben activar inmediatamente el vigilante de buzón para revisar cada 60 segundos si Antigravity ya depositó la siguiente partitura:
+  - **Cursor:** Ejecutar `node herramientas/centinela_buzon.js cursor` (o `node .rsc/centinela_buzon.js cursor`).
+  - **DeepSeek:** Ejecutar `node herramientas/centinela_buzon.js deepseek` (o `node .rsc/centinela_buzon.js deepseek`).
+- En cuanto el centinela detecte una nueva tarea (`🟢 PROGRAMADA` / `PARTITURA ASIGNADA`), el agente volverá a leer su buzón (`ENTREGA_CURSOR.md` o `ENTREGA_DEEPSEEK.md`) y `ESTADO_COORDINACION.md` y ejecutará la nueva tarea de forma autónoma.

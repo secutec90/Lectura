@@ -1556,8 +1556,11 @@ Restaurar cualquiera de los dos revierte solo esta fase y conserva las Fases 5 y
 3. **Casillas de Selección y Lista de PDA (`.lista-pda-container`, `.pda-item-check`):**
    - Diseño limpio de filas de PDA con checkbox personalizado, tipografía legible (13.5px, interlineado 1.45) y contraste WCAG AAA.
    - Micro-animación de pulso para el contador de PDA seleccionados (`#badgeContadorPDA`).
-4. **Reglas de Gobernanza:**
+4. **Barra de Progreso e Indicadores de Etapa Completada en el Stepper (4 Etapas):**
+   - Diseñar los estilos visuales para el estado `.completado` (check verde `✓` y borde/acento esmeralda) en las pestañas actuales `#tabPasoPlan1` a `#tabPasoPlan4`, así como una barra sutil de progreso (`25% · 50% · 75% · 100%`) y mensajes de validación suave en campos requeridos (`onBlur`).
+5. **Reglas de Gobernanza y Modo Centinela (Polling cada 60s):**
    - Cero uso de `!important`.
    - No renombrar ni eliminar ningún ID del DOM.
    - Todo el CSS debe quedar encapsulado en `AdminPlaneacionCSS.html` o `ComunCSS.html`.
+   - **Al terminar tu entrega y guardarla en `ENTREGA_DEEPSEEK.md`, ejecuta inmediatamente `node herramientas/centinela_buzon.js deepseek` para revisar el buzón cada 60 segundos en espera de la siguiente tarea.**
 

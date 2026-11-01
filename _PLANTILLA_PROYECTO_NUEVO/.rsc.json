@@ -10,7 +10,13 @@
     "designLead": "deepseek",
     "frontendLead": "cursor",
     "coordinationContract": "ESTADO_COORDINACION.md",
-    "changelog": "CONTROL_CAMBIOS.md"
+    "changelog": "CONTROL_CAMBIOS.md",
+    "mailboxSentinel": {
+      "enabled": true,
+      "pollIntervalSeconds": 60,
+      "cursorCommand": "node .rsc/centinela_buzon.js cursor",
+      "deepseekCommand": "node .rsc/centinela_buzon.js deepseek"
+    }
   },
   "testRunner": "node .rsc/test_regresion.js"
 }

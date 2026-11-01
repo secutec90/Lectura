@@ -781,33 +781,50 @@
      FASE 3 — Catálogo SEP a dos columnas
      ============================================================ */
   .nem-catalogo-dos-col {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
     align-items: start;
   }
 
   .nem-catalogo-dos-col > div > label,
   .nem-catalogo-dos-col > div > .nem-catalogo-col-titulo {
-    display: block;
-    min-height: 18px;
-    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    height: 24px;
+    min-height: 24px;
+    margin: 0 0 4px;
   }
 
-  /* Lista de PDA: recupera caja y scroll (el contenedor perdió la clase nem-lista-pda-scroll) */
+  /* Contenedor del selector de PDA: sin borde ni relleno extra para igualar ambas listas */
   #listaPDAsCheckboxNEM {
-    max-height: 220px;
-    overflow-y: auto;
-    border: 1px solid #bbf7d0;
-    border-radius: 8px;
-    padding: 8px;
-    background: #ffffff;
+    max-height: none;
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
     box-sizing: border-box;
+    margin: 0;
   }
 
-  /* Buscador y selector del catálogo con la misma altura */
+  /* Buscador y selectores del catálogo con el mismo formato e idéntica altura */
   #buscarPDANEM,
-  .nem-select-sintetico {
-    min-height: 36px;
+  .nem-select-sintetico,
+  #listaPDAsCheckboxNEM .nem-select-sintetico {
+    width: 100%;
+    height: 38px;
+    min-height: 38px;
+    border: 1.5px solid #86efac;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    background: #ffffff;
+    color: #14532d;
     box-sizing: border-box;
+    font-family: inherit;
+    margin: 0;
   }
 
   /* ============================================================
@@ -1941,22 +1958,25 @@
   /* ---------- 2 · Etapa 1: rejilla respirable 2×2 ---------- */
   .nem-fila-una {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px 16px;
+    grid-template-columns: minmax(220px, 2.2fr) minmax(160px, 1.35fr) minmax(160px, 1.35fr) 128px;
+    gap: 12px;
     align-items: end;
     margin-bottom: 20px;
   }
-  .nem-fila-una > .nem-campo-titulo { grid-column: span 3; }
-  .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; min-width: 130px; }
-  .nem-fila-una > .nem-campo-formativo { grid-column: span 2; }
-  .nem-fila-una > .nem-campo-metodologia { grid-column: span 2; }
+  .nem-fila-una > .nem-campo-titulo,
+  .nem-fila-una > .nem-campo-formativo,
+  .nem-fila-una > .nem-campo-metodologia,
+  .nem-fila-una > .nem-campo-sesiones {
+    grid-column: span 1;
+    min-width: 0;
+  }
 
   @media (max-width: 980px) {
     .nem-fila-una { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .nem-fila-una > .nem-campo-titulo { grid-column: span 2; }
-    .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; }
+    .nem-fila-una > .nem-campo-titulo,
     .nem-fila-una > .nem-campo-formativo,
-    .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
+    .nem-fila-una > .nem-campo-metodologia,
+    .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; }
   }
   @media (max-width: 620px) {
     .nem-fila-una { grid-template-columns: 1fr; }
@@ -2115,16 +2135,7 @@
   .card-contenido-nem--comunitario { border-left: 4px solid #047857; }
 
   /* ---------- 7 · Filas de PDA legibles (contraste AAA) ---------- */
-  #listaPDAsCheckboxNEM {
-    font-size: 13.5px;
-    line-height: 1.45;
-    color: #1e293b;
-  }
-  #listaPDAsCheckboxNEM .nem-select-sintetico {
-    font-size: 13.5px;
-    line-height: 1.45;
-    color: #1e293b;
-  }
+
   .pda-item {
     display: flex;
     align-items: flex-start;

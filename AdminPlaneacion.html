@@ -373,15 +373,11 @@
 
               <!-- ETAPA 1: METADATOS Y EJES ARTICULADORES -->
               <div id="etapaPlanNEM_1" class="nem-step-pane">
-                <!-- FILA 1: TÍTULO, CAMPO FORMATIVO, METODOLOGÍA Y SESIONES -->
+                <!-- FILA 1: TÍTULO, CAMPO FORMATIVO, METODOLOGÍA Y SESIONES EN UNA SOLA FILA -->
               <div class="nem-fila-una">
                 <div class="nem-campo-inline nem-campo-titulo">
                   <label for="planTitulo">Título del Proyecto * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planTitulo" title="Ayuda pedagógica NEM" aria-label="Ayuda para Título del Proyecto">?</button><button type="button" class="btn-ia-sugerir-titulo" id="btnSugerirTituloIA" title="Sugerir títulos motivadores con IA" aria-label="Sugerir título con IA">✨ Sugerir con IA</button></label>
                   <input type="text" id="planTitulo" required placeholder="Ej. Voces y Raíces de Nuestra Tierra: Narrativas comunitarias">
-                </div>
-                <div class="nem-campo-inline nem-campo-sesiones">
-                  <label for="planNumSesiones">Sesiones (40m) * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planNumSesiones" title="Ayuda pedagógica NEM" aria-label="Ayuda para Sesiones">?</button></label>
-                  <input type="number" id="planNumSesiones" min="1" max="25" value="3" required style="text-align:center;font-weight:700;">
                 </div>
                 <div class="nem-campo-inline nem-campo-formativo">
                   <label for="planCampoFormativo">Campo Formativo * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planCampoFormativo" title="Ayuda pedagógica NEM" aria-label="Ayuda para Campo Formativo">?</button></label>
@@ -400,6 +396,10 @@
                     <option value="Aprendizaje Basado en Problemas (ABP)">ABP (Ética, Nat. y Soc.)</option>
                     <option value="Aprendizaje Servicio (AS)">Aprendizaje Servicio / AS (De lo Humano)</option>
                   </select>
+                </div>
+                <div class="nem-campo-inline nem-campo-sesiones">
+                  <label for="planNumSesiones">Sesiones (40m) * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planNumSesiones" title="Ayuda pedagógica NEM" aria-label="Ayuda para Sesiones">?</button></label>
+                  <input type="number" id="planNumSesiones" min="1" max="25" value="3" required style="text-align:center;font-weight:700;">
                 </div>
               </div>
 
@@ -455,7 +455,7 @@
                   <!-- Columna Derecha: PDA Oficiales, Buscador y Checklist -->
                   <div>
                     <div style="display:flex;align-items:center;gap:6px;margin:0 0 4px;height:24px;flex-wrap:nowrap;">
-                      <label style="font-size:11.5px;font-weight:700;color:#166534;margin:0;display:flex;align-items:center;">
+                      <label style="font-size:11.5px;font-weight:700;color:#166534;margin:0;display:flex;align-items:center;" title="PDA: Procesos de Desarrollo de Aprendizaje (progresiones curriculares por grado escolar)">
                         2. PDA de este grado:
                         <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planPDA" title="Ayuda pedagógica NEM" aria-label="Ayuda para PDA">?</button>
                       </label>
@@ -472,7 +472,9 @@
 
                     <!-- Contenedor interactivo del selector de PDA -->
                     <div id="listaPDAsCheckboxNEM">
-                      <span style="font-size:11px;color:#64748b;">Selecciona un contenido a la izquierda para ver sus PDA oficiales.</span>
+                      <select id="selPDANEM" class="nem-select-sintetico" onchange="elegirPDANEM_(this)">
+                        <option value="">Selecciona un PDA para agregarlo…</option>
+                      </select>
                     </div>
 
                     <!-- Articulación con otros grados (se abre con el icono del ojo) -->
@@ -548,11 +550,11 @@
                 <div id="secInclusionBAPyC" class="nem-inclusion-box oculto">
                   <div class="nem-inclusion-header-single">
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1 1 auto;min-width:0;">
-                      <span class="nem-badge-udei">UDEI</span>
-                      <strong style="color:#92400e;font-size:11.5px;white-space:nowrap;">Inclusión (DUA):</strong><span class="nem-ayuda-paso" title="¿Qué significan UDEI, DUA y BAPyC?" onclick="abrirAyudaInclusion_()" style="margin-left:4px;font-size:12px;cursor:pointer;">?</span>
+                      <span class="nem-badge-udei" title="UDEI: Unidad de Educación Especial y Educación Inclusiva (equipo interdisciplinario de apoyo a la inclusión escolar)" data-tip="UDEI: Unidad de Educación Especial y Educación Inclusiva" style="cursor:help;">UDEI</span>
+                      <strong class="nem-dua-label" title="DUA: Diseño Universal para el Aprendizaje (múltiples formas de motivación, representación, acción y expresión para todo el alumnado)" data-tip="DUA: Diseño Universal para el Aprendizaje (múltiples formas de representación, acción y motivación)" style="color:#92400e;font-size:11.5px;white-space:nowrap;cursor:help;text-decoration:underline dotted #d97706;">Inclusión (DUA):</strong><span class="nem-ayuda-paso" title="Haz clic para abrir el glosario pedagógico completo de UDEI, DUA y BAPyC" data-tip="Haz clic para ver qué significan UDEI, DUA y BAPyC" onclick="abrirAyudaInclusion_()" style="margin-left:4px;font-size:12px;cursor:pointer;">?</span>
                       <div id="wrapChipsBAPyCGrupo" style="display:inline-flex;gap:4px;flex-wrap:wrap;align-items:center;"></div>
                     </div>
-                    <div id="badgeAlertaBAPyC" class="nem-badge-bapyc-alert" style="white-space:nowrap;flex:0 0 auto;">
+                    <div id="badgeAlertaBAPyC" class="nem-badge-bapyc-alert" title="BAPyC: Barreras para el Aprendizaje, la Participación y la Convivencia detectadas en el diagnóstico de este grupo. Requiere registrar Ajustes Razonables DUA." data-tip="BAPyC: Barreras para el Aprendizaje, la Participación y la Convivencia detectadas en este grupo" style="white-space:nowrap;flex:0 0 auto;cursor:help;">
                       ⚠️ BAPyC detectadas en grupo
                     </div>
                   </div>

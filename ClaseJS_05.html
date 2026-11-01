@@ -16,7 +16,7 @@
     if (tieneBAPyC) {
       sec.classList.remove('oculto');
       if (wrapChips) {
-        wrapChips.innerHTML = '<div class="nem-chip-bapyc"><span>BAPyC</span> Grupo con barreras para el aprendizaje, la participación y la convivencia</div>';
+        wrapChips.innerHTML = '<div class="nem-chip-bapyc" title="BAPyC: Barreras para el Aprendizaje, la Participación y la Convivencia (obstáculos del entorno escolar, didáctico o actitudinal que se atienden con ajustes razonables)" data-tip="BAPyC: Barreras para el Aprendizaje, la Participación y la Convivencia" style="cursor:help;"><span title="BAPyC: Barreras para el Aprendizaje, la Participación y la Convivencia">BAPyC</span> Grupo con barreras para el aprendizaje, la participación y la convivencia</div>';
       }
       if (inpAjustes && (!inpAjustes.value || !inpAjustes.value.trim())) {
         inpAjustes.value = '• Este grupo tiene alumnado que enfrenta barreras para el aprendizaje, la participación y la convivencia (BAPyC). Consulta el expediente de inclusión del grupo y describe aquí los ajustes razonables de acceso, formato y evaluación.';
@@ -749,27 +749,7 @@
   }
 
   function asegurarBuscadorContenidos_() {
-    var sel = document.getElementById('selContenidoSinteticoNEM');
-    if (!sel || !sel.parentNode) return null;
-    var bus = document.getElementById('buscarContenidoSinteticoNEM');
-    if (!bus) {
-      bus = document.createElement('input');
-      bus.type = 'search';
-      bus.id = 'buscarContenidoSinteticoNEM';
-      bus.className = 'nem-input-filter';
-      bus.placeholder = 'Buscar contenido sintético…';
-      bus.setAttribute('aria-label', 'Buscar contenido sintético');
-      bus.style.marginTop = '8px';
-      sel.parentNode.insertBefore(bus, sel.nextSibling);
-    }
-    var grid = document.getElementById('gridContenidosNEM');
-    if (!grid) {
-      grid = document.createElement('div');
-      grid.id = 'gridContenidosNEM';
-      grid.className = 'grid-contenidos-nem';
-      bus.parentNode.insertBefore(grid, bus.nextSibling);
-    }
-    return grid;
+    return document.getElementById('gridContenidosNEM') || null;
   }
 
   function asegurarBadgeContadorPda_() {
@@ -942,65 +922,6 @@
     if (typeof _pdasDisponiblesNEM_ === 'function' && !_pdasDisponiblesNEM_prev_) {
       _pdasDisponiblesNEM_prev_ = _pdasDisponiblesNEM_;
     }
-    window._leerSeleccionPDANEM_ = function () {
-      var inp = document.getElementById('planPDA');
-      var txt = (inp && inp.value) || '';
-      if (!String(txt).trim()) return [];
-      return String(txt).split('\n').map(function (linea) {
-        return String(linea).replace(/^[\s•\-\*\u2022]+/, '').replace(/^\[[^\]]*\]\s*/, '').replace(/^\d+[.)]\s*/, '').trim();
-      }).filter(Boolean);
-    };
-    window._pdasDisponiblesNEM_ = function () {
-      var todas = _pdasDisponiblesNEM_prev_ ? _pdasDisponiblesNEM_prev_() : [];
-      var mapa = mapaTrimestreContenidos_();
-      var tri = trimestreActivoPlan_();
-      return todas.filter(function (x) {
-        if (!x || !x.texto) return false;
-        if (contenidoFiltroPda_) return x.contenido === contenidoFiltroPda_;
-        var t = mapa[x.contenido];
-        if (!t) return true;
-        return String(t) === String(tri);
-      });
-    };
-    window._escribirPlanPDA_ = escribirPdaEtapa2_;
-    window._pintarSelectorPDANEM_ = function (filtro, omitirEscritura) {
-      var cont = document.getElementById('listaPDAsCheckboxNEM');
-      if (!cont) return;
-      asegurarBadgeContadorPda_();
-      var q = String(filtro || '').toLowerCase().trim();
-      var disp = (typeof _pdasDisponiblesNEM_ === 'function' ? _pdasDisponiblesNEM_() : []).filter(function (x) {
-        return !q || x.texto.toLowerCase().indexOf(q) >= 0 || String(x.contenido || '').toLowerCase().indexOf(q) >= 0;
-      });
-      vaciarNodoEtapa2_(cont);
-      if (!disp.length) {
-        var vacio = document.createElement('span');
-        vacio.style.fontSize = '12px';
-        vacio.style.color = '#64748b';
-        vacio.textContent = 'No hay PDA de este trimestre para el grado. Cambia el trimestre o elige otro contenido.';
-        cont.appendChild(vacio);
-      } else {
-        disp.forEach(function (x) {
-          var fila = document.createElement('label');
-          fila.className = 'pda-item';
-          var cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.className = 'ia-pda-checkbox';
-          cb.value = x.texto;
-          cb.checked = (window.pdasSeleccionadosNEM_ || []).indexOf(x.texto) >= 0;
-          cb.addEventListener('change', function () {
-            alCambiarCasillaPdaEtapa2_(x.texto, cb.checked);
-          });
-          var span = document.createElement('span');
-          span.className = 'pda-item__texto';
-          span.textContent = x.texto;
-          fila.appendChild(cb);
-          fila.appendChild(span);
-          cont.appendChild(fila);
-        });
-      }
-      if (!omitirEscritura) escribirPdaEtapa2_();
-      else actualizarBadgesPda_((window.pdasSeleccionadosNEM_ || []).length);
-    };
   }
 
   function alCambiarTrimestrePda_() {

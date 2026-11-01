@@ -2,6 +2,18 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Fila 1 en Una Sola Línea, Alineación de Listas Desplegables en Etapa 2 y Tooltips en Siglas UDEI / DUA / BAPyC (build-565)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `style(nem): fila 1 en una sola linea, listas desplegables Etapa 2 alineadas e identicas y tooltips en siglas UDEI/DUA/BAPyC en build-565`
+- **Causa Raíz / Requerimiento:**
+  1. En Etapa 1 (`.nem-fila-una`), el docente solicitó organizar los 4 campos (`Título del Proyecto *`, `Campo Formativo *`, `Metodología *`, `Sesiones (40m) *`) en una sola fila horizontal.
+  2. En Etapa 2 (`.nem-catalogo-dos-col`), la lista desplegable derecha (`#selPDANEM` dentro de `#listaPDAsCheckboxNEM`) parecía estar encerrada dentro de un contenedor adicional con borde y padding (`#listaPDAsCheckboxNEM`), quedando desalineada respecto a `#selContenidoSinteticoNEM` de la izquierda.
+  3. Añadir tooltips explicativos con el significado de cada sigla en la sección de inclusión (`UDEI`, `Inclusión (DUA):`, `?`, `BAPyC Grupo con barreras para el aprendizaje, la participación y la convivencia`, y `⚠️ BAPyC detectadas en grupo`).
+- **Cambios Realizados:**
+  - **Etapa 1 en una sola fila (`.nem-fila-una`):** Reordenados los 4 campos y configurado `grid-template-columns: minmax(220px, 2.2fr) minmax(160px, 1.35fr) minmax(160px, 1.35fr) 128px` con `grid-column: span 1` en `AdminPlaneacion.html`, `Clase.html`, `AdminPlaneacionCSS.html` y `ClaseCSS.html`.
+  - **Listas desplegables alineadas e idénticas en Etapa 2 (`#selContenidoSinteticoNEM` y `#selPDANEM`):** Se eliminó el borde, fondo y relleno contenedor de `#listaPDAsCheckboxNEM` (`border: none; padding: 0; background: transparent;`) y se unificaron alturas (`38px`), bordes (`1.5px solid #86efac`), tipografía (`13px`, `#14532d`) y encabezados (`height: 24px; margin: 0 0 4px;`).
+  - **Tooltips en siglas de inclusión (`#secInclusionBAPyC`):** Se agregaron atributos `title` y tooltips flotantes `data-tip` en `.nem-badge-udei` (*UDEI: Unidad de Educación Especial y Educación Inclusiva*), `.nem-dua-label` (*DUA: Diseño Universal para el Aprendizaje*), `.nem-ayuda-paso` (*? Glosario de UDEI, DUA y BAPyC*), `.nem-chip-bapyc` (*BAPyC: Barreras para el Aprendizaje, la Participación y la Convivencia*) y `#badgeAlertaBAPyC` (*⚠️ BAPyC detectadas en grupo*).
+- **Archivos Afectados:** `AdminPlaneacion.html`, `Clase.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `ComunCSS.html`, `AdminPlanJS_03.html`, `AdminPlanJS_04.html`, `ClaseJS_05.html`, `ClaseJS_06.html`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Desaturación Visual UI/UX de Planeación, Reparación Íntegra de Avatar y Etapa 2 con Autoguardado (build-563)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ui): desaturacion visual de Etapa 1 y 2, reparacion integra de avatar base64 y autoguardado localStorage en build-563`
 - **Causa Raíz / Requerimiento:**

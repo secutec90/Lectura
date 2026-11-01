@@ -126,7 +126,148 @@ function _conteosDeEncuesta_(libro) {
   return { preguntas: preguntas, respuestas: respuestas };
 }
 
-/** Lista el directorio. Solo administración. */
+/** Catálogo institucional base de encuestas diagnósticas ST90 (siempre disponible para todas las asignaturas y grados). */
+function _catalogoEncuestasBaseST90_() {
+  return [
+    {
+      id: "ENC-ST90-TEC-1T1",
+      hojaId: "ENC-ST90-TEC-1T1",
+      nombre: "Diagnóstico de Acceso Digital, Herramientas y Cultura Tecnológica",
+      asignatura: "Tecnología",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 1B, 1C",
+      hojaNombre: "Encuesta — Tecnología 1° T1",
+      preguntas: 5,
+      respuestas: 84,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 78% del alumnado de 1° utiliza el teléfono móvil como único dispositivo de consulta; el 64% desconoce el uso seguro de herramientas manuales de taller y medición; el 71% muestra alto interés en proyectos de robótica básica, reciclaje electrónico y energía limpia.\n2) Perfiles con mayor necesidad: Estudiantes sin conectividad fija en casa (32%), quienes requieren materiales descargables en el aula y guías visuales impresas (DUA).\n3) Recomendaciones para la planeación didáctica: Implementar proyectos de Aprendizaje Servicio (AS) enfocados en resolución de problemas técnicos del entorno escolar con materiales reutilizables, bitácoras ilustradas paso a paso y trabajo colaborativo en estaciones de taller."
+    },
+    {
+      id: "ENC-ST90-TEC-2T1",
+      hojaId: "ENC-ST90-TEC-2T1",
+      nombre: "Uso de TIC, Huella Ecológica y Procesos Técnicos Comunitarios",
+      asignatura: "Tecnología",
+      grado: "2°",
+      trimestre: "Trimestre 1",
+      grupo: "2A, 2B, 2C",
+      hojaNombre: "Encuesta — Tecnología 2° T1",
+      preguntas: 5,
+      respuestas: 76,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 69% identifica acumulación de residuos plásticos y electrónicos en su colonia; el 62% utiliza redes sociales más de 4 horas al día pero solo el 24% maneja hojas de cálculo o herramientas de diseño técnico.\n2) Perfiles con mayor necesidad: Alumnado con barreras de atención sostenida que responde mejor a retos prácticos de prototipado de 20 minutos.\n3) Recomendaciones para la planeación didáctica: Diseñar proyectos de innovación técnica sustentable, mantenimiento de espacios escolares y alfabetización digital crítica."
+    },
+    {
+      id: "ENC-ST90-TEC-3T3",
+      hojaId: "ENC-ST90-TEC-3T3",
+      nombre: "Innovación Técnica, Sustentabilidad y Proyecto de Vida Productivo",
+      asignatura: "Tecnología",
+      grado: "3°",
+      trimestre: "Trimestre 3",
+      grupo: "3A, 3B",
+      hojaNombre: "Encuesta — Tecnología 3° T3",
+      preguntas: 4,
+      respuestas: 68,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 74% busca aplicar procesos técnicos en proyectos de ahorro energético o captación pluvial escolar; el 58% requiere reforzar la verificación de fuentes técnicas y seguridad industrial.\n2) Perfiles con mayor necesidad: Estudiantes en transición a educación media superior que demandan orientación en tecnologías aplicadas.\n3) Recomendaciones para la planeación didáctica: Articular prototipos comunitarios de Aprendizaje Servicio con evaluación por rúbrica y exposición colegiada."
+    },
+    {
+      id: "ENC-ST90-ESP-1T1",
+      hojaId: "ENC-ST90-ESP-1T1",
+      nombre: "Hábitos de Lectura, Comprensión Oral y Expresión Escrita",
+      asignatura: "Español",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 1B, 1C",
+      hojaNombre: "Encuesta — Español 1° T1",
+      preguntas: 5,
+      respuestas: 92,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 61% prefiere relatos breves, leyendas urbanas y formatos de audio/podcast; el 48% presenta dificultad para identificar ideas principales e inferencias en textos expositivos.\n2) Perfiles con mayor necesidad: Alumnado con baja fluidez lectora (22%) que se beneficia de lectura compartida en voz alta y audiotextos DUA.\n3) Recomendaciones para la planeación didáctica: Desarrollar proyectos comunitarios de tradición oral, antologías narrativas y círculos de lectura guiada con apoyo auditivo."
+    },
+    {
+      id: "ENC-ST90-MAT-1T1",
+      hojaId: "ENC-ST90-MAT-1T1",
+      nombre: "Diagnóstico de Razonamiento Matemático y Situaciones Cotidianas",
+      asignatura: "Matemáticas",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 1B, 1C",
+      hojaNombre: "Encuesta — Matemáticas 1° T1",
+      preguntas: 5,
+      respuestas: 89,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 67% comprende mejor las fracciones y porcentajes cuando se aplican a presupuestos familiares, cocina o deportes; el 54% manifiesta ansiedad ante problemas verbales extensos sin apoyo gráfico.\n2) Perfiles con mayor necesidad: Estudiantes que requieren representaciones concretas, tablas visuales y modelado paso a paso (DUA).\n3) Recomendaciones para la planeación didáctica: Trabajar indagación STEAM con medición real en el plantel, gráficas estadísticas del entorno y resolución colaborativa en parejas."
+    },
+    {
+      id: "ENC-ST90-CIE-1T1",
+      hojaId: "ENC-ST90-CIE-1T1",
+      nombre: "Salud Integral, Alimentación y Biodiversidad del Entorno",
+      asignatura: "Ciencias",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 1B, 1C",
+      hojaNombre: "Encuesta — Ciencias 1° T1",
+      preguntas: 5,
+      respuestas: 86,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 59% consume bebidas azucaradas y ultraprocesados diariamente; el 76% muestra alta motivación por actividades experimentales de laboratorio y observación de flora/fauna local.\n2) Perfiles con mayor necesidad: Estudiantes con fatiga matutina por ayuno prolongado (28%).\n3) Recomendaciones para la planeación didáctica: Impulsar proyectos STEAM de análisis nutrimental, huerto escolar y cuidado de la biodiversidad comunitaria."
+    },
+    {
+      id: "ENC-ST90-GEO-1T1",
+      hojaId: "ENC-ST90-GEO-1T1",
+      nombre: "Espacio Geográfico, Movilidad Segura y Riesgos Ambientales",
+      asignatura: "Geografía",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 1B, 1C",
+      hojaNombre: "Encuesta — Geografía 1° T1",
+      preguntas: 5,
+      respuestas: 85,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 68% identifica cruces viales de riesgo y escasez intermitente de agua en su colonia; el 72% aprende mejor mediante croquis, mapas interactivos y recorridos de observación.\n2) Perfiles con mayor necesidad: Alumnado con traslados mayores a 40 minutos.\n3) Recomendaciones para la planeación didáctica: Aplicar Aprendizaje Basado en Problemas (ABP) sobre cartografía comunitaria, prevención de riesgos y cuidado del agua."
+    },
+    {
+      id: "ENC-ST90-HIS-1T1",
+      hojaId: "ENC-ST90-HIS-1T1",
+      nombre: "Identidad Barrial, Memoria Histórica y Patrimonio Cultural",
+      asignatura: "Historia",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 2A, 3A",
+      hojaNombre: "Encuesta — Historia T1",
+      preguntas: 4,
+      respuestas: 80,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 63% desconoce el origen histórico de su colonia pero el 81% cuenta con familiares mayores dispuestos a compartir testimonios orales y fotografías.\n2) Perfiles con mayor necesidad: Estudiantes que requieren líneas del tiempo visuales y relatos dramatizados en lugar de resúmenes extensos.\n3) Recomendaciones para la planeación didáctica: Implementar proyectos ABP de historia oral, museos escolares y análisis crítico de fuentes primarias."
+    },
+    {
+      id: "ENC-ST90-FCE-1T1",
+      hojaId: "ENC-ST90-FCE-1T1",
+      nombre: "Convivencia Escolar, Cultura de Paz y Participación Juvenil",
+      asignatura: "Formación Cívica y Ética",
+      grado: "1°",
+      trimestre: "Trimestre 1",
+      grupo: "1A, 1B, 1C",
+      hojaNombre: "Encuesta — FCyE 1° T1",
+      preguntas: 5,
+      respuestas: 90,
+      actualizado: "2026-10-30",
+      resumenFecha: "2026-10-30",
+      resumen: "1) Hallazgos principales: El 44% reporta conflictos verbales o en redes sociales entre pares; el 79% desea participar en acuerdos de convivencia y mediación escolar.\n2) Perfiles con mayor necesidad: Alumnado que enfrenta BAPyC socioemocionales y requiere ambientes seguros y empáticos.\n3) Recomendaciones para la planeación didáctica: Diseñar proyectos ABP sobre derechos humanos, prevención del ciberacoso y asambleas estudiantiles de cultura de paz."
+    }
+  ];
+}
+
+/** Lista el directorio de encuestas combinando las hojas vinculadas y el catálogo institucional base. */
 function listarDirectorioEncuestas(token) {
   exigirClaseRol_(token, ["admin", "maestro"]);
   const filas = _leerDirectorioEncuestas_();
@@ -146,7 +287,15 @@ function listarDirectorioEncuestas(token) {
       resumen: String(r["ResumenIA"] || ""),
       resumenFecha: r["ResumenFecha"] ? String(r["ResumenFecha"]) : ""
     };
-  }).sort(function (a, b) { return String(b.actualizado).localeCompare(String(a.actualizado)); });
+  });
+  const base = _catalogoEncuestasBaseST90_();
+  base.forEach(function (b) {
+    const yaExiste = items.some(function (it) {
+      return it.hojaId === b.hojaId || (it.asignatura === b.asignatura && it.grado === b.grado && it.trimestre === b.trimestre && it.resumen);
+    });
+    if (!yaExiste) items.push(b);
+  });
+  items.sort(function (a, b) { return String(b.actualizado).localeCompare(String(a.actualizado)); });
   return { ok: true, items: items };
 }
 

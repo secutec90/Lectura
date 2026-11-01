@@ -421,7 +421,7 @@
         html += '<div class="nem-card" style="display:flex;flex-direction:column;justify-content:space-between;">';
         html += '<div>';
         html += '  <div class="nem-card-header">';
-        html += '    <h3 class="nem-card-title">' + escaparHtml(pTitulo) + '</h3>';
+        html += '    <h3 class="nem-card-title" style="cursor:pointer;" onclick="abrirVistaPreviaPDFPlaneacionNEM(\'' + escaparHtml(jsSafe_(pId)) + '\')" title="Haz clic para abrir el Plano Didáctico en formato PDF oficial">' + escaparHtml(pTitulo) + '</h3>';
         html += '    <span class="badge-nem ' + claseBadge + '">' + escaparHtml(est) + '</span>';
         html += '  </div>';
 
@@ -457,15 +457,19 @@
         html += '<div class="nem-card-footer" style="display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0;">';
         
         if (bancoPlanActual === 'global') {
-          // Acciones en Banco Global: Copiar a mi Banco y Ver Sesiones
+          // Acciones en Banco Global: Copiar a mi Banco, PDF Oficial y Ver Sesiones
           html += '  <button type="button" class="nem-btn-accion nem-btn-primario" style="width:100%;text-align:center;background:#059669;border-color:#059669;" onclick="copiarProyectoGlobalAMiBanco_(\'' + escaparHtml(jsSafe_(pId)) + '\', \'' + escaparHtml(jsSafe_(pTitulo)) + '\')">📥 Copiar a mi Banco Personal</button>';
-          html += '  <button type="button" class="nem-btn-accion" style="width:100%;text-align:center;" onclick="abrirGestorSesiones(\'' + escaparHtml(jsSafe_(pId)) + '\')">👁️ Explorar Sesiones (' + escaparHtml(numSes) + ')</button>';
+          html += '  <div style="display:flex;gap:6px;width:100%;">';
+          html += '    <button type="button" class="nem-btn-accion" style="flex:1;text-align:center;background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;font-weight:700;" onclick="abrirVistaPreviaPDFPlaneacionNEM(\'' + escaparHtml(jsSafe_(pId)) + '\')">📄 PDF Oficial</button>';
+          html += '    <button type="button" class="nem-btn-accion" style="flex:1;text-align:center;" onclick="abrirGestorSesiones(\'' + escaparHtml(jsSafe_(pId)) + '\')">👁️ Sesiones (' + escaparHtml(numSes) + ')</button>';
+          html += '  </div>';
         } else {
           // Acciones en Banco Personal del docente creador
           html += '  <div style="display:flex;gap:6px;width:100%;">';
           html += '    <button type="button" class="nem-btn-accion nem-btn-primario" style="flex:1;" onclick="abrirGestorSesiones(\'' + escaparHtml(jsSafe_(pId)) + '\')">Sesiones (' + escaparHtml(numSes) + ')</button>';
+          html += '    <button type="button" class="nem-btn-accion" style="flex:1;background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;font-weight:700;" onclick="abrirVistaPreviaPDFPlaneacionNEM(\'' + escaparHtml(jsSafe_(pId)) + '\')" title="Ver y descargar Plano Didáctico Oficial en PDF">📄 PDF Oficial</button>';
           if (puedeEditar) {
-            html += '    <button type="button" class="nem-btn-accion" style="flex:1;" onclick="editarPlaneacionGeneral(\'' + escaparHtml(jsSafe_(pId)) + '\')">Editar</button>';
+            html += '    <button type="button" class="nem-btn-accion" style="flex:0.8;" onclick="editarPlaneacionGeneral(\'' + escaparHtml(jsSafe_(pId)) + '\')">Editar</button>';
           }
           html += '  </div>';
 
@@ -727,6 +731,11 @@
         if (selDir) selDir.addEventListener('change', function () {
           if (this.value) seleccionarDirEnc_(this.value);
         });
+        var asigActual = String((document.getElementById('planAsignatura') || {}).value || '').trim();
+        var elFAsig = document.getElementById('dirFAsig');
+        if (elFAsig && asigActual && asigs.indexOf(asigActual) >= 0) {
+          elFAsig.value = asigActual;
+        }
         pintarListaDirEnc_();
       }).catch(function (e) {
         toast('Error al leer el directorio: ' + ((e && e.message) || e), 'err');
@@ -746,17 +755,31 @@
         if (ft && it.trimestre !== ft) return false;
         return true;
       });
+      var avisoFiltroFlexible = '';
+      if (!filtrados.length && items.length) {
+        filtrados = items.filter(function (it) {
+          return !fa || it.asignatura === fa;
+        });
+        if (!filtrados.length) filtrados = items.slice();
+        avisoFiltroFlexible = 'Mostrando encuestas disponibles en el banco escolar (sin coincidencia exacta para ' + [fa, fg, ft].filter(Boolean).join(' · ') + '):';
+      }
       if (!filtrados.length) {
-        sel.innerHTML = '<option value="">' + (items.length ? 'Ninguna encuesta coincide con el filtro' : 'Todavía no hay encuestas registradas') + '</option>';
+        sel.innerHTML = '<option value="" selected>Todavía no hay encuestas registradas</option>';
+        sel.selectedIndex = 0;
         var det0 = document.getElementById('dirDetalle');
-        if (det0) det0.innerHTML = items.length ? '' : '<p style="font-size:12px;color:#64748b;margin:6px 0 0;">Vincula la hoja de una encuesta desde Administración → Encuestas, o crea las de prueba con el botón de arriba.</p>';
+        if (det0) det0.innerHTML = '<p style="font-size:12px;color:#64748b;margin:6px 0 0;">Vincula la hoja de una encuesta desde Administración → Encuestas, o crea las de prueba con el botón de arriba.</p>';
         return;
       }
-      sel.innerHTML = '<option value="">Selecciona una encuesta…</option>' + filtrados.map(function (it) {
+      sel.innerHTML = filtrados.map(function (it, idx) {
         var meta = [it.asignatura, it.grado, it.trimestre, it.grupo].filter(Boolean).join(' · ') || 'Sin clasificar';
         var etiqueta = it.nombre + '  —  ' + meta + '  (' + it.respuestas + ' respuestas' + (it.resumen ? ', con resumen' : '') + ')';
-        return '<option value="' + escaparHtml(it.hojaId) + '">' + escaparHtml(etiqueta) + '</option>';
+        return '<option value="' + escaparHtml(it.hojaId) + '"' + (idx === 0 ? ' selected' : '') + '>' + escaparHtml(etiqueta) + '</option>';
       }).join('');
+      sel.selectedIndex = 0;
+      window.__avisoFiltroDirEnc = avisoFiltroFlexible;
+      if (filtrados[0] && filtrados[0].hojaId) {
+        seleccionarDirEnc_(filtrados[0].hojaId);
+      }
     }
 
     function sembrarDemoDirEnc_() {
@@ -783,10 +806,14 @@
       window.__dirSel = it;
       var det = document.getElementById('dirDetalle');
       if (!det) return;
+      var avisoHtml = window.__avisoFiltroDirEnc
+        ? '<div style="font-size:11.5px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:6px 10px;margin-bottom:8px;">ℹ️ ' + escaparHtml(window.__avisoFiltroDirEnc) + '</div>'
+        : '';
       var resumenHtml = it.resumen
         ? '<div style="white-space:pre-line;font-size:12.5px;color:#334155;background:#f1f5f9;border-radius:8px;padding:10px;max-height:190px;overflow:auto;">' + escaparHtml(it.resumen) + '</div>'
         : '<p style="font-size:12px;color:#64748b;margin:0;">Esta encuesta todavía no tiene resumen de IA.</p>';
       det.innerHTML =
+        avisoHtml +
         '<div style="border-top:1px solid #e2e8f0;padding-top:10px;">' +
           '<strong style="font-size:13px;color:var(--st90-azul);">' + escaparHtml(it.nombre) + '</strong>' +
           '<div style="font-size:11.5px;color:#64748b;margin:2px 0 8px;">' +
@@ -801,7 +828,7 @@
           '</div>' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">' +
             '<button type="button" class="btn-outline-custom" style="font-size:11px;padding:4px 9px;" onclick="generarResumenDirEnc_(\'' + escaparHtml(it.hojaId) + '\')">🤖 Generar resumen con IA</button>' +
-            '<button type="button" class="btn-outline-custom" style="font-size:11px;padding:4px 9px;" onclick="insertarResumenDirEnc_()">📋 Insertar en la planeación</button>' +
+            '<button type="button" class="nem-btn-accion nem-btn-primario" style="font-size:11.5px;padding:5px 12px;" onclick="insertarResumenDirEnc_()">📋 Insertar en la planeación</button>' +
           '</div>' +
         '</div>';
     }

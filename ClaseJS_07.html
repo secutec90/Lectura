@@ -127,10 +127,32 @@
         toast('No se especificó un ID de planeación válido.', 'error');
         return;
       }
-      gsRun('obtenerPlaneacionCompletaNEM', tokenClase, idPlan).then(function (res) {
-        if (!res || !res.planeacion) throw new Error('No se encontró la planeación.');
-        planActualNEM = res.planeacion;
-        sesionesActualesNEM = res.sesiones || [];
+      const planEnMemoria = (listaPlanNEM || []).find(function (item) {
+        return String(item.Id || item.id || '').trim() === idPlan;
+      });
+      function pintarVistaSes_(pObj, sArr) {
+        planActualNEM = pObj;
+        const nDef = Math.max(1, Math.min(20, Number(pObj.NumSesiones || pObj.numSesiones || 3)));
+        if (Array.isArray(sArr) && sArr.length) {
+          sesionesActualesNEM = sArr;
+        } else {
+          sesionesActualesNEM = [];
+          for (let i = 1; i <= nDef; i++) {
+            sesionesActualesNEM.push({
+              Id: 'SES-LOCAL-' + i,
+              id: 'SES-LOCAL-' + i,
+              IdPlaneacion: idPlan,
+              NumeroSesion: i,
+              Titulo: 'Sesión ' + i + ': ' + (pObj.Titulo || pObj.titulo || 'Proyecto Didáctico'),
+              DuracionMin: 40,
+              AperturaTexto: '',
+              DesarrolloTexto: '',
+              ActividadTexto: '',
+              CierreTexto: '',
+              Estado: 'BORRADOR'
+            });
+          }
+        }
         sesionActivaIdx = 0;
 
         document.getElementById('cajaListaPlanNEM').classList.add('oculto');
@@ -162,8 +184,17 @@
 
         pintarTabsSesiones();
         seleccionarSesionNEM(0);
+      }
+      gsRun('obtenerPlaneacionCompletaNEM', tokenClase, idPlan).then(function (res) {
+        const pObj = (res && res.planeacion) || planEnMemoria;
+        if (!pObj) throw new Error('No se encontró la planeación.');
+        pintarVistaSes_(pObj, (res && res.sesiones) || []);
       }).catch(function (e) {
-        toast((e && e.message) || String(e), 'error');
+        if (planEnMemoria) {
+          pintarVistaSes_(planEnMemoria, []);
+        } else {
+          toast((e && e.message) || String(e), 'error');
+        }
       });
     }
 

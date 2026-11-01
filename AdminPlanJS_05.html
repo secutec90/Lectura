@@ -237,54 +237,103 @@
       });
     }
 
+    function _construirSesionesFallbackNEM_(planObj) {
+      const n = Math.max(1, Math.min(20, Number((planObj && (planObj.NumSesiones || planObj.numSesiones)) || 3)));
+      const idP = String((planObj && (planObj.Id || planObj.id)) || '');
+      const titP = String((planObj && (planObj.Titulo || planObj.titulo)) || 'Proyecto Didáctico');
+      const arr = [];
+      for (let i = 1; i <= n; i++) {
+        arr.push({
+          id: 'SES-LOCAL-' + i,
+          Id: 'SES-LOCAL-' + i,
+          idPlaneacion: idP,
+          IdPlaneacion: idP,
+          numeroSesion: i,
+          NumeroSesion: i,
+          titulo: 'Sesión ' + i + ': ' + titP,
+          Titulo: 'Sesión ' + i + ': ' + titP,
+          duracionMin: 40,
+          DuracionMin: 40,
+          aperturaTexto: '',
+          AperturaTexto: '',
+          aperturaMin: 5,
+          desarrolloTexto: '',
+          DesarrolloTexto: '',
+          desarrolloMin: 10,
+          actividadTexto: '',
+          ActividadTexto: '',
+          actividadMin: 20,
+          cierreTexto: '',
+          CierreTexto: '',
+          cierreMin: 5,
+          Estado: 'BORRADOR'
+        });
+      }
+      return arr;
+    }
+
+    function _renderizarVistaSesionesNEM_(planObj, listaSesiones) {
+      planActualNEM = planObj;
+      sesionesActualesNEM = (Array.isArray(listaSesiones) && listaSesiones.length)
+        ? listaSesiones
+        : _construirSesionesFallbackNEM_(planObj);
+      sesionActivaIdx = 0;
+
+      const tabClases = document.getElementById('tabClases');
+      const tabPlaneacion = document.getElementById('tabPlaneacion');
+      if (tabClases) tabClases.classList.add('oculto');
+      if (tabPlaneacion) tabPlaneacion.classList.remove('oculto');
+      document.getElementById('cajaListaPlanNEM').classList.add('oculto');
+      document.getElementById('cajaFormPlanNEM').classList.add('oculto');
+      document.getElementById('cajaSesionesPlanNEM').classList.remove('oculto');
+
+      const tit = document.getElementById('titPlanSesiones');
+      const badge = document.getElementById('badgeEstadoPlan');
+      const meta = document.getElementById('subMetaPlanSesiones');
+      const btnAp = document.getElementById('btnAprobarPlan');
+
+      const titPlan = planActualNEM.Titulo || planActualNEM.titulo || 'Sesiones Didácticas';
+      if (tit) tit.textContent = titPlan;
+      const est = String(planActualNEM.Estado || planActualNEM.estado || 'BORRADOR').toUpperCase();
+      if (badge) {
+        badge.textContent = est;
+        badge.className = 'badge-nem ' + (est === 'APROBADO' ? 'badge-aprobado' : (est === 'PROGRAMADO' ? 'badge-programado' : 'badge-borrador'));
+      }
+      if (meta) {
+        const asig = planActualNEM.Asignatura || planActualNEM.asignatura || '';
+        const gr = planActualNEM.Grado || planActualNEM.grado || '';
+        const gp = planActualNEM.Grupo || planActualNEM.grupo || '';
+        const cmp = planActualNEM.CampoFormativo || planActualNEM.campoFormativo || '';
+        meta.textContent = asig + ' · ' + gr + '°' + gp + ' · Campo: ' + cmp + ' · ' + (sesionesActualesNEM.length) + ' sesiones de 40 min';
+      }
+      if (btnAp) {
+        btnAp.style.display = (est === 'APROBADO' || est === 'PROGRAMADO') ? 'none' : 'inline-block';
+      }
+
+      pintarTabsSesiones();
+      seleccionarSesionNEM(0);
+    }
+
     function abrirGestorSesiones(idPlaneacion) {
       const idPlan = String(idPlaneacion || '').trim();
       if (!idPlan) {
         toast('No se especificó un ID de planeación válido.', 'error');
         return;
       }
+      const planEnMemoria = (listaPlanNEM || []).find(function (item) {
+        return String(item.Id || item.id || '').trim() === idPlan;
+      });
       const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (tokenClase || (typeof token !== 'undefined' ? token : ''));
-        gsRun('obtenerPlaneacionCompletaNEM', tk, idPlan).then(function (res) {
-        if (!res || !res.planeacion) throw new Error('No se encontró la planeación.');
-        planActualNEM = res.planeacion;
-        sesionesActualesNEM = res.sesiones || [];
-        sesionActivaIdx = 0;
-
-        const tabClases = document.getElementById('tabClases');
-        const tabPlaneacion = document.getElementById('tabPlaneacion');
-        if (tabClases) tabClases.classList.add('oculto');
-        if (tabPlaneacion) tabPlaneacion.classList.remove('oculto');
-        document.getElementById('cajaListaPlanNEM').classList.add('oculto');
-        document.getElementById('cajaFormPlanNEM').classList.add('oculto');
-        document.getElementById('cajaSesionesPlanNEM').classList.remove('oculto');
-
-        const tit = document.getElementById('titPlanSesiones');
-        const badge = document.getElementById('badgeEstadoPlan');
-        const meta = document.getElementById('subMetaPlanSesiones');
-        const btnAp = document.getElementById('btnAprobarPlan');
-
-        const titPlan = planActualNEM.Titulo || planActualNEM.titulo || 'Sesiones Didácticas';
-        if (tit) tit.textContent = titPlan;
-        const est = String(planActualNEM.Estado || planActualNEM.estado || 'BORRADOR').toUpperCase();
-        if (badge) {
-          badge.textContent = est;
-          badge.className = 'badge-nem ' + (est === 'APROBADO' ? 'badge-aprobado' : (est === 'PROGRAMADO' ? 'badge-programado' : 'badge-borrador'));
-        }
-        if (meta) {
-          const asig = planActualNEM.Asignatura || planActualNEM.asignatura || '';
-          const gr = planActualNEM.Grado || planActualNEM.grado || '';
-          const gp = planActualNEM.Grupo || planActualNEM.grupo || '';
-          const cmp = planActualNEM.CampoFormativo || planActualNEM.campoFormativo || '';
-          meta.textContent = asig + ' · ' + gr + '°' + gp + ' · Campo: ' + cmp + ' · ' + (sesionesActualesNEM.length) + ' sesiones de 40 min';
-        }
-        if (btnAp) {
-          btnAp.style.display = (est === 'APROBADO' || est === 'PROGRAMADO') ? 'none' : 'inline-block';
-        }
-
-        pintarTabsSesiones();
-        seleccionarSesionNEM(0);
+      gsRun('obtenerPlaneacionCompletaNEM', tk, idPlan).then(function (res) {
+        const pObj = (res && res.planeacion) || planEnMemoria;
+        if (!pObj) throw new Error('No se encontró la planeación.');
+        _renderizarVistaSesionesNEM_(pObj, (res && res.sesiones) || []);
       }).catch(function (e) {
-        toast((e && e.message) || String(e), 'error');
+        if (planEnMemoria) {
+          _renderizarVistaSesionesNEM_(planEnMemoria, []);
+        } else {
+          toast((e && e.message) || String(e), 'error');
+        }
       });
     }
 

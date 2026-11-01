@@ -2,6 +2,20 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Directorio de Encuestas Completo, Eliminación de Doble Tooltip, Corrección de Serialización de Planeaciones y Formato PDF Oficial Nuevo León (build-567)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(nem): directorio de encuestas institucional, tooltip unico en siglas DUA/UDEI/BAPyC, fix serializacion Date en obtenerPlaneacionCompletaNEM y Plano Didactico PDF Oficial Nuevo Leon en build-567`
+- **Causa Raíz / Requerimiento:**
+  1. En `📊 Directorio de encuestas`, al filtrar por combinaciones como `Tecnología · 1° · Trimestre 1`, el selector `#dirSelect` quedaba en blanco sin mostrar encuestas ni resumen diagnóstico.
+  2. Al pasar el cursor sobre las siglas de inclusión (`UDEI`, `Inclusión (DUA):`, `?`, `BAPyC`), aparecían dos tooltips simultáneamente (el flotante CSS `data-tip` arriba y el nativo `title` del navegador abajo).
+  3. Al pulsar `Sesiones (3)` en una planeación, aparecía el error `"No se encontró la planeación"` porque `obtenerPlaneacionCompletaNEM` en `PlaneacionNEM.gs` devolvía objetos `Date` crudos de Google Sheets (`FechaCreacion`, `FechaInicio`), lo que en `google.script.run` serializa toda la respuesta como `null`.
+  4. El usuario solicitó visualizar y descargar la planeación en formato PDF con el diseño oficial de Nuevo León (`PLANO DIDÁCTICO — Subsecretaría de Educación Básica · Dirección de Educación Secundaria · Coordinación Académica · Escuela Secundaria Técnica No. 90`).
+- **Cambios Realizados:**
+  - **Catálogo Institucional y Selección Reactiva en `📊 Directorio de encuestas` (`15_DirectorioEncuentas.gs` y `AdminPlanJS_02.html`):** Se incorporó `_catalogoEncuestasBaseST90_()` con encuestas diagnósticas y resúmenes IA listos para todas las asignaturas (`Tecnología 1° T1`, `Español`, `Matemáticas`, `Ciencias`, `Geografía`, `Historia`, `FCyE`), preselección automática de la primera encuesta en `#dirSelect` (`selectedIndex = 0`) y despliegue inmediato de su resumen y botón `📋 Insertar en la planeación`.
+  - **Tooltip Único en Siglas de Inclusión (`AdminPlaneacion.html`, `Clase.html`, `AdminPlanJS_03.html`, `ClaseJS_05.html`, `AyudaJS.html`):** Se retiró el atributo nativo `title` de los elementos que usan `data-tip` (conservando `aria-label` para accesibilidad), eliminando por completo el segundo tooltip nativo del navegador.
+  - **Corrección de `obtenerPlaneacionCompletaNEM` y Respaldo en Memoria (`PlaneacionNEM.gs`, `AdminPlanJS_05.html`, `ClaseJS_07.html`):** Se convirtieron todos los campos `Date` a cadena ISO y se envolvió el retorno en `JSON.parse(JSON.stringify(...))` en `PlaneacionNEM.gs`, además de añadir auto-generación de sesiones y respaldo automático desde `listaPlanNEM` en el cliente.
+  - **Vista Previa y Descarga en PDF — Formato Oficial Nuevo León (`AyudaJS.html`, `AdminPlanJS_02.html`, `ClaseJS_04.html`, `AdminPlaneacion.html`, `Clase.html`):** Se implementó `abrirVistaPreviaPDFPlaneacionNEM()` e `imprimirDescargarPDFPlaneacionNEM_()` con los escudos oficiales de `NL Educación` y `Gobierno del Nuevo Nuevo León`, tabla institucional de datos generales, cronograma de sesiones (4 momentos DUA de 40 min), lista de cotejo formativa y bloque de firmas (`Docente Titular` y `Visto Bueno Dirección / Subdirección`).
+- **Archivos Afectados:** `15_DirectorioEncuentas.gs`, `PlaneacionNEM.gs`, `AyudaJS.html`, `AdminPlanJS_02.html`, `AdminPlanJS_03.html`, `AdminPlanJS_05.html`, `ClaseJS_04.html`, `ClaseJS_05.html`, `ClaseJS_07.html`, `AdminPlaneacion.html`, `Clase.html`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Bloqueo Normativo de Campo Formativo por Asignatura, Asesora Pedagógica "Lucy" y Voz Femenina en Asistente de Voz (build-566)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(nem): bloqueo normativo de Campo Formativo por asignatura, asesora pedagogica Lucy y seleccion de voz femenina en build-566`
 - **Causa Raíz / Requerimiento:**

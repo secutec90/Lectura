@@ -111,3 +111,4 @@ const timer = setInterval(() => {
     process.exit(0);
   }
 }, intervaloSeg * 1000);
+

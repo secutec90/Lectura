@@ -8,7 +8,7 @@
 | **Archivos autorizados de trabajo** | `AdminPlanJS_*.html`, `ClaseJS_*.html`, `AdminJS_*.html`, `AyudaJS.html`, `ComunJS.html` |
 | **Archivos prohibidos** | Backend `*.gs`, archivos CSS exclusivos de DeepSeek, `git`, `clasp`. |
 | **Fecha de emisión de partitura** | 2026-10-31 |
-| **Estado actual** | 🟡 **PROPUESTA JS ENTREGADA (2026-10-31) — PENDIENTE DE AUDITORÍA DE ANTIGRAVITY** |
+| **Estado actual** | ✅ **ETAPA 2 ENTREGADA (2026-10-31) — PENDIENTE DE AUDITORÍA DE ANTIGRAVITY** |
 
 ---
 
@@ -1541,7 +1541,7 @@ if (document.readyState === 'loading') {
 **Fecha asignada:** Sesión Activa  
 **Agente:** Cursor (Frontend JS & Manipulación del DOM)  
 **Archivos autorizados:** `AyudaJS.html`, `AdminPlanJS_03.html`, `ClaseJS_05.html`  
-**Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
+**Estado:** ✅ **EJECUTADA (2026-10-31)**
 
 #### Objetivos Específicos para Cursor:
 1. **Desaturación Inmediata de Iconos en el Formulario (`AyudaJS.html`):**
@@ -1565,5 +1565,43 @@ if (document.readyState === 'loading') {
    - No alterar los IDs inmutables: `planContenidoSintetico`, `planPDA`, `tabPasoPlan2`, `etapaPlanNEM_2`.
    - Toda llamada a backend se realiza exclusivamente mediante `gsRun` con manejo de errores y feedback visual.
    - **Al terminar tu entrega y guardarla en `ENTREGA_CURSOR.md`, ejecuta inmediatamente `node herramientas/centinela_buzon.js cursor` para revisar el buzón cada 60 segundos en espera de la siguiente tarea.**
+
+---
+
+## Entrega 2026-10-31 — Desaturación de voz + Etapa 2 (Contenidos & PDA)
+
+**Estado:** lista para auditoría de Antigravity. Sin `git commit`, sin `clasp push`.
+
+### Qué quedó implementado
+
+1. **`AyudaJS.html` — bocinas fuera de las etiquetas.** `asegurarBotonesVozCampos_()` ya no inserta `.btn-voz-nem`. `retirarBotonesVozDeEtiquetas_()` quita esas bocinas de los `<label>` y las deja solo dentro de `#modalAyudaNEM` y `#drawerAsistenteIA`. `normalizarMarcasAyudaNEM_()` deja el carácter `?` en `.btn-ayuda-nem`. `limpiarIconosStepperPlan_()` retira `❓` y `✨` de `#tabPasoPlan1..4`.
+2. **Chips de PDA.** `extraerSugerenciasPDA_()` e `insertarPdaAlPlan()` pintan `[➕ Insertar este PDA]` en la burbuja de la asesora y lo anexan a `#planPDA`. `#btnSugerirPdaIA` abre el drawer con la consigna de 2 PDA adaptados con enfoque DUA, asignatura, grado y trimestre.
+3. **`AdminPlanJS_03.html` y `ClaseJS_05.html` — `iniciarSincronizacionEtapa2NEM_()`.** Se activa en `DOMContentLoaded` y otra vez desde `iniciarLmsSt90_()` (la segunda llamada no repite enganches). Envuelve el catálogo ya definido en `AdminPlanJS_04.html` / `ClaseJS_06.html`, sin renombrar `planContenidoSintetico`, `planPDA`, `tabPasoPlan2` ni `etapaPlanNEM_2`.
+
+### Contrato de la Etapa 2
+
+| Pieza | Comportamiento |
+| :--- | :--- |
+| `#planAsignatura` / `#planGrado` | Vuelven a poblar el catálogo Fase 6 y la rejilla `#gridContenidosNEM` (`.card-contenido-nem`). |
+| `#buscarContenidoSinteticoNEM` + `datalist#listaContenidosSinteticosNEM` | Filtran y autocompletan. `#planContenidoSintetico` sigue siendo editable. |
+| `#selTrimestrePDA` | T1, T2 o T3. Si el docente no lo toca, sale del calendario SEP (`planFechaInicio`). Los contenidos sin trimestre propio se reparten en tercios. |
+| `.ia-pda-checkbox` en `#listaPDAsCheckboxNEM` | Al marcar, `#planPDA` queda en viñetas `• …` y `#badgeContadorPDA` muestra el número. El texto libre que no está en el catálogo se conserva. |
+| `localStorage` `st90_borrador_plan_nem` | Se guarda al editar (400 ms) y al llamar `irAPasoPlanNEM`. Se restaura si `#planId` está vacío y las etapas 2 a 4 no traen captura. Se borra cuando `gsRun('crearOActualizarPlaneacionNEM')` responde `ok`. |
+| `#tabPasoPlan1..4.completado` | En `blur`, si los obligatorios de la etapa tienen texto. `#avancePlanNEM` muestra `0%`, `25%`, `50%`, `75%` o `100%`. El check `✓` lo pinta el CSS de `.completado`. |
+
+### Verificación
+
+Sintaxis de `AyudaJS.html`, `AdminPlanJS_03.html` y `ClaseJS_05.html` revisada con `vm.Script`. No hay servidor local de la planeación: la interfaz vive en Apps Script y esta entrega no despliega.
+
+### Control de cambios
+
+### 🛠️ [2026-10-31] - Planeación NEM Etapa 2
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(planeacion): sincroniza contenidos y pda de etapa 2 con autoguardado`
+- **Cambios Realizados:**
+ - Se retiró la inyección de `.btn-voz-nem` en las etiquetas del formulario y se normalizó la ayuda a `?`.
+ - Se sincronizó el catálogo de contenidos y los PDA por trimestre, con casillas, contador y sugerencia DUA de un clic.
+ - Se respalda el borrador en `st90_borrador_plan_nem` y las pestañas del stepper reciben `.completado` según los campos obligatorios.
+- **Archivos Afectados:** `AyudaJS.html`, `AdminPlanJS_03.html`, `ClaseJS_05.html`, `ENTREGA_CURSOR.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** La bocina solo vive en el modal de ayuda y en las burbujas del drawer. La Etapa 2 no reescribe el catálogo de `AdminPlanJS_04.html` ni `ClaseJS_06.html`: los envuelve al arrancar, cuando esas funciones ya existen. El trimestre sin dato oficial se reparte en tercios del arreglo de contenidos. El autoguardado no pisa una planeación con `#planId`. No reabrir la inyección de `🔊` en los `<label>`.
 
 

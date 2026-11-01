@@ -1861,4 +1861,313 @@
     .preview-lienzo { padding: 14px; }
     #timelineProyectoNEM .timeline-paso { min-width: 104px; }
   }
+  /* ============================================================
+     DESATURACIÓN VISUAL UI/UX — ETAPA 1 & 2  (DeepSeek)
+     Banner editorial sin cajitas · rejilla 2×2 · micro-iconos limpios ·
+     Stepper con check y barra de progreso · tarjetas de contenidos.
+     Reglas: sin declaraciones forzadas, sin cambios de ID, solo presentación.
+     ============================================================ */
+
+  /* ---------- 1 · Banner de clase: cinta editorial plana ---------- */
+  .nem-banner {
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 10px;
+    box-shadow: none;
+    padding: 10px 16px;
+  }
+  .nem-banner .nem-banner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: #0e7490;
+  }
+  .nem-banner .nem-banner-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    flex: 0 0 auto;
+  }
+  .nem-banner .nem-banner-title {
+    color: #0f172a;
+    font-size: 17px;
+    letter-spacing: -.01em;
+  }
+  .nem-banner .nem-banner-meta {
+    gap: 0;
+    justify-content: flex-start;
+    overflow: visible;
+  }
+  .nem-banner .nem-banner-meta span {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #475569;
+  }
+  .nem-banner .nem-banner-meta span + span::before {
+    content: '•';
+    margin: 0 10px;
+    color: #cbd5e1;
+    font-weight: 700;
+  }
+  .nem-banner .nem-banner-meta strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .nem-banner .nem-banner-btn {
+    border-width: 1px;
+    box-shadow: none;
+    background: transparent;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .nem-banner .nem-banner-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+  }
+
+  /* ---------- 2 · Etapa 1: rejilla respirable 2×2 ---------- */
+  .nem-fila-una {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: end;
+    margin-bottom: 20px;
+  }
+  .nem-fila-una > .nem-campo-titulo { grid-column: span 3; }
+  .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; min-width: 130px; }
+  .nem-fila-una > .nem-campo-formativo { grid-column: span 2; }
+  .nem-fila-una > .nem-campo-metodologia { grid-column: span 2; }
+
+  @media (max-width: 980px) {
+    .nem-fila-una { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .nem-fila-una > .nem-campo-titulo { grid-column: span 2; }
+    .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; }
+    .nem-fila-una > .nem-campo-formativo,
+    .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
+  }
+  @media (max-width: 620px) {
+    .nem-fila-una { grid-template-columns: 1fr; }
+    .nem-fila-una > .nem-campo-titulo,
+    .nem-fila-una > .nem-campo-sesiones,
+    .nem-fila-una > .nem-campo-formativo,
+    .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
+  }
+
+  /* La acción de IA se alinea a la derecha del label, sin empujar el campo */
+  .nem-campo-inline > label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .nem-campo-inline > label .btn-ia-sugerir-titulo { margin-left: auto; }
+
+  /* ---------- 3 · Micro-iconos: fuera el ruido ---------- */
+  /* La bocina solo vive dentro del modal de ayuda y del drawer */
+  label .btn-voz-nem { display: none; }
+  #modalAyudaNEM .btn-voz-nem,
+  #drawerAsistenteIA .btn-voz-nem { display: inline-flex; }
+
+  /* Nada de ❓ ni ✨ dentro de las pestañas del Stepper */
+  .nem-step-tab .nem-ayuda-paso { display: none; }
+
+  /* ---------- 4 · Stepper: check y barra de progreso ---------- */
+  .nem-stepper-header {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 9px;
+  }
+  .nem-stepper-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 25%;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(90deg, #2563eb 0%, #10b981 100%);
+    transition: width .35s ease;
+  }
+  .nem-stepper-header:has(#tabPasoPlan2.activo)::after { width: 50%; }
+  .nem-stepper-header:has(#tabPasoPlan3.activo)::after { width: 75%; }
+  .nem-stepper-header:has(#tabPasoPlan4.activo)::after { width: 100%; }
+
+  .nem-step-tab {
+    border: 1px solid transparent;
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .nem-step-tab.completado .step-num {
+    background: #10b981;
+    color: #ffffff;
+    font-size: 0;
+  }
+  .nem-step-tab.completado .step-num::after {
+    content: '✓';
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .nem-step-tab.completado {
+    box-shadow: inset 0 -2px 0 #10b981;
+  }
+  .nem-step-tab.completado .step-txt { color: #047857; }
+
+  /* ---------- 5 · Etapa 2: rejilla y tarjetas de contenidos ---------- */
+  .grid-contenidos-nem {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+    gap: 12px;
+    margin: 10px 0 16px;
+  }
+  .card-contenido-nem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .card-contenido-nem:hover {
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+  }
+  .card-contenido-nem.seleccionado {
+    padding: 13px;
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.16);
+  }
+  .card-contenido-nem__titulo {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0f172a;
+  }
+  .card-contenido-nem__texto {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #475569;
+  }
+  .card-contenido-nem__meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  /* ---------- 6 · Paleta oficial por Campo Formativo ---------- */
+  .badge-campo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    align-self: flex-start;
+    padding: 2px 9px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+  .badge-campo--lenguajes {
+    color: #1e40af;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .badge-campo--cientifico {
+    color: #6d28d9;
+    background: #f5f3ff;
+    border-color: #ddd6fe;
+  }
+  .badge-campo--etica {
+    color: #c2410c;
+    background: #fff7ed;
+    border-color: #fed7aa;
+  }
+  .badge-campo--comunitario {
+    color: #047857;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+  }
+
+  /* Acento de la tarjeta según el campo */
+  .card-contenido-nem--lenguajes { border-left: 4px solid #1e40af; }
+  .card-contenido-nem--cientifico { border-left: 4px solid #6d28d9; }
+  .card-contenido-nem--etica { border-left: 4px solid #c2410c; }
+  .card-contenido-nem--comunitario { border-left: 4px solid #047857; }
+
+  /* ---------- 7 · Filas de PDA legibles (contraste AAA) ---------- */
+  #listaPDAsCheckboxNEM {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  #listaPDAsCheckboxNEM .nem-select-sintetico {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  .pda-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0 0 6px;
+    padding: 8px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .pda-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+  .pda-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin: 2px 0 0;
+    accent-color: #2563eb;
+    cursor: pointer;
+  }
+  .pda-item__texto {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  .pda-item:has(input:checked) {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .pda-item:has(input:checked) .pda-item__texto {
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nem-step-tab,
+    .card-contenido-nem,
+    .pda-item,
+    .nem-stepper-header::after { transition: none; }
+    .card-contenido-nem:hover { transform: none; }
+  }
 </style>

@@ -599,20 +599,47 @@ function conmutarDictadoPorVozIA_() {
 }
 
 function asegurarBotonesVozCampos_() {
-  var botones = document.querySelectorAll('.btn-ayuda-nem');
-  for (var i = 0; i < botones.length; i++) {
-    var btn = botones[i];
-    var siguiente = btn.nextElementSibling;
-    if (siguiente && siguiente.classList.contains('btn-voz-nem')) continue;
-    var clave = btn.getAttribute('data-ayuda-campo') || '';
-    var btnVoz = document.createElement('button');
-    btnVoz.type = 'button';
-    btnVoz.className = 'btn-voz-nem';
-    btnVoz.setAttribute('data-voz-campo', clave);
-    btnVoz.setAttribute('title', 'Escuchar orientación pedagógica');
-    btnVoz.setAttribute('aria-label', 'Escuchar orientación pedagógica');
-    btnVoz.textContent = '🔊';
-    btn.parentNode.insertBefore(btnVoz, btn.nextSibling);
+  retirarBotonesVozDeEtiquetas_();
+  normalizarMarcasAyudaNEM_();
+  limpiarIconosStepperPlan_();
+}
+
+function retirarBotonesVozDeEtiquetas_() {
+  var nodos = document.querySelectorAll('.btn-voz-nem');
+  var i;
+  for (i = 0; i < nodos.length; i++) {
+    var btn = nodos[i];
+    if (btn.closest && (btn.closest('#modalAyudaNEM') || btn.closest('#drawerAsistenteIA'))) continue;
+    if (btn.parentNode) btn.parentNode.removeChild(btn);
+  }
+}
+
+function normalizarMarcasAyudaNEM_() {
+  var ayudas = document.querySelectorAll('.btn-ayuda-nem');
+  var i;
+  for (i = 0; i < ayudas.length; i++) {
+    var marca = String(ayudas[i].textContent || '').replace(/\s/g, '');
+    if (!marca || marca === '❓' || marca === '?' || marca === '(?)' || marca.indexOf('❓') >= 0) {
+      ayudas[i].textContent = '?';
+    }
+  }
+}
+
+function limpiarIconosStepperPlan_() {
+  var i;
+  for (i = 1; i <= 4; i++) {
+    var tab = nodo_('tabPasoPlan' + i);
+    if (!tab) continue;
+    var basura = tab.querySelectorAll('.nem-ayuda-paso, .btn-ayuda-nem, .btn-voz-nem');
+    var k;
+    for (k = 0; k < basura.length; k++) {
+      if (basura[k].parentNode) basura[k].parentNode.removeChild(basura[k]);
+    }
+    var spans = tab.querySelectorAll('.step-num, .step-txt');
+    var s;
+    for (s = 0; s < spans.length; s++) {
+      spans[s].textContent = String(spans[s].textContent || '').replace(/[❓✨🔊]/g, '').replace(/\s+/g, ' ').trim();
+    }
   }
 }
 
@@ -918,6 +945,67 @@ function aplicarTituloAlPlan(nuevoTitulo) {
 }
 window.aplicarTituloAlPlan = aplicarTituloAlPlan;
 
+function extraerSugerenciasPDA_(txt) {
+  if (!txt || typeof txt !== 'string') return [];
+  var resultados = [];
+  var vistos = {};
+  function sumar(cand) {
+    var limpio = String(cand || '').replace(/\s+/g, ' ').replace(/^["«“]|["»”]$/g, '').trim();
+    if (limpio.length < 12 || limpio.length > 320) return;
+    var clave = limpio.toLowerCase();
+    if (vistos[clave]) return;
+    vistos[clave] = true;
+    resultados.push(limpio);
+  }
+  var rePda = /(?:^|\n)\s*PDA\s*:\s*(.{12,320})/gi;
+  var m;
+  while ((m = rePda.exec(txt)) !== null) sumar(m[1]);
+  if (!resultados.length) {
+    String(txt).split('\n').forEach(function (linea) {
+      var l = String(linea || '').replace(/^[\s•\-\*\d.)]+/, '').trim();
+      if (/aprendizaje|compren|analiza|reconoce|elabora|identifica|propone|aplica|usa /i.test(l)) sumar(l);
+    });
+  }
+  return resultados.slice(0, 4);
+}
+
+function insertarPdaAlPlan(texto) {
+  var inp = nodo_('planPDA');
+  if (!inp) {
+    avisar_('No se encontró el campo de PDA.', 'error');
+    return;
+  }
+  var limpio = String(texto || '').replace(/^[\s•\-\*]+/, '').trim();
+  if (!limpio) return;
+  var lineas = String(inp.value || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+  var ya = lineas.some(function (l) { return l.indexOf(limpio) >= 0; });
+  if (!ya) lineas.push('• ' + limpio);
+  inp.value = lineas.join('\n');
+  if (Array.isArray(window.pdasSeleccionadosNEM_) && window.pdasSeleccionadosNEM_.indexOf(limpio) < 0) {
+    window.pdasSeleccionadosNEM_.push(limpio);
+  }
+  if (typeof window._pintarSelectorPDANEM_ === 'function') {
+    try { window._pintarSelectorPDANEM_((nodo_('buscarPDANEM') || {}).value || ''); } catch (e) {}
+  }
+  inp.dispatchEvent(new Event('input', { bubbles: true }));
+  inp.dispatchEvent(new Event('change', { bubbles: true }));
+  if (typeof window.evaluarProgresoStepperPlan_ === 'function') window.evaluarProgresoStepperPlan_();
+  if (typeof window.guardarBorradorPlanNEM_ === 'function') window.guardarBorradorPlanNEM_();
+  avisar_('PDA insertado en la etapa 2.', 'ok');
+}
+window.insertarPdaAlPlan = insertarPdaAlPlan;
+
+function solicitarPdaAdaptadoIA_() {
+  if (typeof conmutarDrawerAsistente_ === 'function') conmutarDrawerAsistente_(true);
+  var meta = obtenerMetadatosClaseActiva_();
+  var cont = (nodo_('planContenidoSintetico') || {}).value || 'el contenido sintético seleccionado';
+  var prm = 'Sugiere 2 PDA adaptados con enfoque DUA para el contenido sintético seleccionado en ' +
+    (meta.asignatura || 'la asignatura') + ' ' + (meta.grado || '') + '° (Trimestre ' + (meta.trimestre || '') + '). ' +
+    'Contenido: ' + cont + '. ' +
+    'Escribe cada PDA en su propia línea comenzando con PDA: para poder insertarlo en el formulario.';
+  enviarMensajeAsistente_(prm);
+}
+
 function pintarBurbuja_(clase, texto, omitirVoz) {
   var caja = nodo_('chatAsistenteCuerpo');
   if (!caja) return null;
@@ -973,6 +1061,35 @@ function pintarBurbuja_(clase, texto, omitirVoz) {
         contTitulos.appendChild(bTit);
       });
       p.appendChild(contTitulos);
+    }
+
+    var pdasSug = extraerSugerenciasPDA_(texto);
+    if (pdasSug.length > 0) {
+      var contPda = document.createElement('div');
+      contPda.className = 'ia-bloque-pdas-sugeridos';
+      contPda.style.marginTop = '8px';
+      contPda.style.display = 'flex';
+      contPda.style.flexDirection = 'column';
+      contPda.style.gap = '6px';
+      var etiPda = document.createElement('div');
+      etiPda.style.fontSize = '11px';
+      etiPda.style.fontWeight = 'bold';
+      etiPda.style.color = 'var(--nem-color-primario, #1e3a8a)';
+      etiPda.textContent = 'Clic para insertar en Procesos de Desarrollo de Aprendizaje:';
+      contPda.appendChild(etiPda);
+      pdasSug.forEach(function (pda) {
+        var bPda = document.createElement('button');
+        bPda.type = 'button';
+        bPda.className = 'btn-insertar-pda-ia';
+        bPda.setAttribute('data-insertar-pda', pda);
+        bPda.setAttribute('title', 'Insertar este PDA en la etapa 2');
+        bPda.textContent = '➕ Insertar este PDA';
+        var fuerte = document.createElement('strong');
+        fuerte.textContent = ' ' + pda;
+        bPda.appendChild(fuerte);
+        contPda.appendChild(bPda);
+      });
+      p.appendChild(contPda);
     }
   }
 
@@ -1943,6 +2060,20 @@ function clicLmsSt90_(e) {
     return;
   }
 
+  var btnInsertarPda = e.target && e.target.closest ? e.target.closest('[data-insertar-pda]') : null;
+  if (btnInsertarPda) {
+    e.preventDefault();
+    insertarPdaAlPlan(btnInsertarPda.getAttribute('data-insertar-pda'));
+    return;
+  }
+
+  var btnSugPda = e.target && e.target.closest ? e.target.closest('#btnSugerirPdaIA') : null;
+  if (btnSugPda) {
+    e.preventDefault();
+    solicitarPdaAdaptadoIA_();
+    return;
+  }
+
   // 6. Clic en botón "✨ Sugerir con IA" en la cabecera del campo Título
   var btnSugTit = e.target && e.target.closest ? e.target.closest('#btnSugerirTituloIA, [data-accion="sugerir-titulo-ia"], .btn-ia-sugerir-titulo') : null;
   if (btnSugTit) {
@@ -2093,7 +2224,11 @@ function iniciarLmsSt90_() {
   window.conmutarDictadoPorVozIA_ = conmutarDictadoPorVozIA_;
   window.asegurarBotonesVozCampos_ = asegurarBotonesVozCampos_;
   window.aplicarTituloAlPlan = aplicarTituloAlPlan;
+  window.insertarPdaAlPlan = insertarPdaAlPlan;
   window.AVATAR_ASESOR_NEM_B64_ = AVATAR_ASESOR_NEM_B64_;
+  if (typeof window.iniciarSincronizacionEtapa2NEM_ === 'function') {
+    window.iniciarSincronizacionEtapa2NEM_();
+  }
 }
 
 if (document.readyState === 'loading') {

@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Desaturación Visual UI/UX de Planeación, Reparación Íntegra de Avatar y Etapa 2 con Autoguardado (build-563)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ui): desaturacion visual de Etapa 1 y 2, reparacion integra de avatar base64 y autoguardado localStorage en build-563`
+- **Causa Raíz / Requerimiento:**
+  1. El avatar de la Asesora Pedagógica (`AVATAR_ASESOR_NEM_B64_`) presentaba corrupción de bytes en su mitad inferior (longitud base64 no múltiplo de 4), mostrando un recuadro negro/gris debajo de los ojos.
+  2. La interfaz de Planeación NEM (Etapa 1) tenía saturación visual: 8 micro-iconos (`❓ ✨`) incrustados dentro de las pestañas del Stepper, doble botón (`❓` rojo + `🔊` bocina) en cada `<label>` que rompía la etiqueta de *Sesiones (40m)* en dos renglones, banner superior lleno de cajas con borde y 4 campos apretados en una sola fila.
+  3. Aún no se había ejecutado `clasp push / deploy` a Google Apps Script para reflejar los cambios en el navegador en vivo.
+- **Cambios Realizados:**
+  - **Reparación Íntegra del Avatar (`AyudaJS.html`):** Se generó un retrato circular 3D completo de la Asesora Pedagógica NEM y se codificó directamente por buffer binario (`6,864` caracteres base64, múltiplo exacto de 4, marcador JPEG EOI `FFD9` verificado), eliminando cualquier recorte o corrupción.
+  - **Desaturación Visual en `AdminPlaneacion.html`, `Clase.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html` y `ComunCSS.html`:**
+    - Se retiraron los 8 iconos `❓ ✨` del interior de las pestañas `#tabPasoPlan1..4`.
+    - Se desactivó la inyección de botones `🔊` (`.btn-voz-nem`) en los `<label>` del formulario (manteniendo la lectura por voz dentro de `#modalAyudaNEM` y en `#drawerAsistenteIA`).
+    - Se sustituyó el emoji rojo `❓` por un botón circular discreto `?` de 18px en gris neutro (`#64748b`).
+    - Se rediseñó `.nem-fila-una` en una rejilla respirable de 2 filas: Fila 1 con *Título del Proyecto* (`3fr`) + *Sesiones (40m)* (`1fr`), y Fila 2 con *Campo Formativo* (`2fr`) + *Metodología* (`2fr`).
+    - Se aplanó `#bannerClaseNEM` eliminando los bordes de caja en cada metadato para dejar una cinta editorial limpia con separadores `•`.
+  - **Etapa 2 (Contenidos & PDA), Barra de Progreso y Autoguardado `localStorage`:**
+    - Tarjetas interactivas `.card-contenido-nem` con badges semánticos por Campo Formativo, barra de progreso en el Stepper (`25% · 50% · 75% · 100%`) con estado `.completado` (`✓`), y respaldo automático en `localStorage` (`st90_borrador_plan_nem`).
+- **Archivos Afectados:** `AyudaJS.html`, `AdminPlaneacion.html`, `Clase.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `ComunCSS.html`, `00_Constantes.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Asesora Pedagógica Ilustrada, Inserción Reactiva de Título con IA y Clarificación Normativa NEM (build-562)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ux): avatar ilustrado de asesora pedagogica, sugerir e insertar titulo con 1 clic y alineacion normativa NEM Fase 6 en build-562`
 - **Causa Raíz / Requerimiento:**

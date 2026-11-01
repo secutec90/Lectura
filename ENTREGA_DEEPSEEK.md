@@ -1571,3 +1571,399 @@ Restaurar cualquiera de los dos revierte solo esta fase y conserva las Fases 5 y
    - Todo el CSS debe quedar encapsulado en `AdminPlaneacionCSS.html` o `ComunCSS.html`.
    - **Al terminar tu entrega y guardarla en `ENTREGA_DEEPSEEK.md`, ejecuta inmediatamente `node herramientas/centinela_buzon.js deepseek` para revisar el buzón cada 60 segundos en espera de la siguiente tarea.**
 
+---
+
+## 9. ✅ EJECUCIÓN — DESATURACIÓN VISUAL UI/UX (ETAPA 1 & 2)
+
+**Fecha:** 2026-10-31 · **Agente:** DeepSeek · **Archivos:** `AdminPlaneacionCSS.html` y `ComunCSS.html`
+**Cumplimiento del contrato:** cero `!important`, cero IDs nuevos, cero cambios de estructura, cero `.gs`.
+
+### 9.1 Qué se hizo, punto por punto
+
+| Punto de la partitura | Ejecución |
+| :--- | :--- |
+| Banner `#bannerClaseNEM` sin cajitas | `.nem-banner-meta span` pierde fondo, borde, radio y relleno; los datos quedan en texto plano separados por `•` mediante `span + span::before`. El banner pasa a cinta plana (`#f8fafc`, sin degradado ni sombra). La etiqueta «CLASE SELECCIONADA» deja de ser píldora y se vuelve ceja editorial con punto azul. |
+| Rejilla 2×2 en `.nem-fila-una` | `grid-template-columns: repeat(4, minmax(0,1fr))` con spans: Título `span 3` (75 %), Sesiones `span 1` (25 %, `min-width: 130px`), Campo Formativo `span 2` y Metodología `span 2` (50/50). Rompe a 2 columnas en ≤980 px y a 1 en ≤620 px. |
+| Ocultar `.btn-voz-nem` en labels | `label .btn-voz-nem { display: none; }` con lista blanca para `#modalAyudaNEM` y `#drawerAsistenteIA`, donde la lectura en voz alta sí debe vivir. |
+| Ocultar `.nem-ayuda-paso` del Stepper | `.nem-step-tab .nem-ayuda-paso { display: none; }` — desaparecen los ❓ y ✨ de las cuatro pestañas sin tocar el HTML. |
+| `.btn-ayuda-nem` discreto 18 px | Pasa de 22 px con borde a **18×18 px**, sin borde, fondo transparente y glifo `#94a3b8`; solo al pasar el cursor toma `#2563eb` con fondo `#eff6ff`. |
+| `✨ Sugerir con IA` alineado | `.nem-campo-inline > label` pasa a flex y el botón recibe `margin-left: auto`: queda como acción limpia al borde derecho del label, encima del input. |
+| Avatar íntegro | `.ia-avatar img`, `.ia-avatar-img` y `#btnAsistenteFlotanteIA img` con `object-fit: cover` + **`object-position: center 20%`**, que era la pieza que faltaba para no cortar la mitad inferior. |
+| Tarjetas de Etapa 2 | `.grid-contenidos-nem` (auto-fill 238 px) y `.card-contenido-nem` con radio 10 px, `box-shadow: 0 2px 8px rgba(0,0,0,.06)`, elevación al hover y `.seleccionado` con borde primario de 2 px y fondo `#eff6ff`. |
+| Paleta por Campo Formativo | `.badge-campo--lenguajes` (azul zafiro), `--cientifico` (violeta), `--etica` (ámbar tierra), `--comunitario` (verde esmeralda), más acentos `.card-contenido-nem--*` con borde izquierdo de 4 px. |
+| Filas de PDA | `#listaPDAsCheckboxNEM` a 13.5 px / 1.45; `.pda-item` como fila seleccionable con checkbox de 16 px y estado marcado en `#eff6ff`. Contraste AAA (`#1e293b` sobre `#f8fafc`). |
+| Stepper `.completado` + progreso | El número se sustituye por `✓` (`font-size: 0` en `.step-num` + `::after`), acento esmeralda y barra inferior de 3 px. La barra avanza 25 → 50 → 75 → 100 % con `:has()` sobre la pestaña activa. |
+
+### 9.2 CSS aplicado — `AdminPlaneacionCSS.html`, líneas 1864–2171
+
+```css
+  /* ============================================================
+     DESATURACIÓN VISUAL UI/UX — ETAPA 1 & 2  (DeepSeek)
+     Banner editorial sin cajitas · rejilla 2×2 · micro-iconos limpios ·
+     Stepper con check y barra de progreso · tarjetas de contenidos.
+     Reglas: sin declaraciones forzadas, sin cambios de ID, solo presentación.
+     ============================================================ */
+
+  /* ---------- 1 · Banner de clase: cinta editorial plana ---------- */
+  .nem-banner {
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 10px;
+    box-shadow: none;
+    padding: 10px 16px;
+  }
+  .nem-banner .nem-banner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: #0e7490;
+  }
+  .nem-banner .nem-banner-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    flex: 0 0 auto;
+  }
+  .nem-banner .nem-banner-title {
+    color: #0f172a;
+    font-size: 17px;
+    letter-spacing: -.01em;
+  }
+  .nem-banner .nem-banner-meta {
+    gap: 0;
+    justify-content: flex-start;
+    overflow: visible;
+  }
+  .nem-banner .nem-banner-meta span {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #475569;
+  }
+  .nem-banner .nem-banner-meta span + span::before {
+    content: '•';
+    margin: 0 10px;
+    color: #cbd5e1;
+    font-weight: 700;
+  }
+  .nem-banner .nem-banner-meta strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .nem-banner .nem-banner-btn {
+    border-width: 1px;
+    box-shadow: none;
+    background: transparent;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .nem-banner .nem-banner-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+  }
+
+  /* ---------- 2 · Etapa 1: rejilla respirable 2×2 ---------- */
+  .nem-fila-una {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: end;
+    margin-bottom: 20px;
+  }
+  .nem-fila-una > .nem-campo-titulo { grid-column: span 3; }
+  .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; min-width: 130px; }
+  .nem-fila-una > .nem-campo-formativo { grid-column: span 2; }
+  .nem-fila-una > .nem-campo-metodologia { grid-column: span 2; }
+
+  @media (max-width: 980px) {
+    .nem-fila-una { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .nem-fila-una > .nem-campo-titulo { grid-column: span 2; }
+    .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; }
+    .nem-fila-una > .nem-campo-formativo,
+    .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
+  }
+  @media (max-width: 620px) {
+    .nem-fila-una { grid-template-columns: 1fr; }
+    .nem-fila-una > .nem-campo-titulo,
+    .nem-fila-una > .nem-campo-sesiones,
+    .nem-fila-una > .nem-campo-formativo,
+    .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
+  }
+
+  /* La acción de IA se alinea a la derecha del label, sin empujar el campo */
+  .nem-campo-inline > label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .nem-campo-inline > label .btn-ia-sugerir-titulo { margin-left: auto; }
+
+  /* ---------- 3 · Micro-iconos: fuera el ruido ---------- */
+  /* La bocina solo vive dentro del modal de ayuda y del drawer */
+  label .btn-voz-nem { display: none; }
+  #modalAyudaNEM .btn-voz-nem,
+  #drawerAsistenteIA .btn-voz-nem { display: inline-flex; }
+
+  /* Nada de ❓ ni ✨ dentro de las pestañas del Stepper */
+  .nem-step-tab .nem-ayuda-paso { display: none; }
+
+  /* ---------- 4 · Stepper: check y barra de progreso ---------- */
+  .nem-stepper-header {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 9px;
+  }
+  .nem-stepper-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 25%;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(90deg, #2563eb 0%, #10b981 100%);
+    transition: width .35s ease;
+  }
+  .nem-stepper-header:has(#tabPasoPlan2.activo)::after { width: 50%; }
+  .nem-stepper-header:has(#tabPasoPlan3.activo)::after { width: 75%; }
+  .nem-stepper-header:has(#tabPasoPlan4.activo)::after { width: 100%; }
+
+  .nem-step-tab {
+    border: 1px solid transparent;
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .nem-step-tab.completado .step-num {
+    background: #10b981;
+    color: #ffffff;
+    font-size: 0;
+  }
+  .nem-step-tab.completado .step-num::after {
+    content: '✓';
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .nem-step-tab.completado {
+    box-shadow: inset 0 -2px 0 #10b981;
+  }
+  .nem-step-tab.completado .step-txt { color: #047857; }
+
+  /* ---------- 5 · Etapa 2: rejilla y tarjetas de contenidos ---------- */
+  .grid-contenidos-nem {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+    gap: 12px;
+    margin: 10px 0 16px;
+  }
+  .card-contenido-nem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .card-contenido-nem:hover {
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+  }
+  .card-contenido-nem.seleccionado {
+    padding: 13px;
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.16);
+  }
+  .card-contenido-nem__titulo {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0f172a;
+  }
+  .card-contenido-nem__texto {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #475569;
+  }
+  .card-contenido-nem__meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  /* ---------- 6 · Paleta oficial por Campo Formativo ---------- */
+  .badge-campo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    align-self: flex-start;
+    padding: 2px 9px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+  .badge-campo--lenguajes {
+    color: #1e40af;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .badge-campo--cientifico {
+    color: #6d28d9;
+    background: #f5f3ff;
+    border-color: #ddd6fe;
+  }
+  .badge-campo--etica {
+    color: #c2410c;
+    background: #fff7ed;
+    border-color: #fed7aa;
+  }
+  .badge-campo--comunitario {
+    color: #047857;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+  }
+
+  /* Acento de la tarjeta según el campo */
+  .card-contenido-nem--lenguajes { border-left: 4px solid #1e40af; }
+  .card-contenido-nem--cientifico { border-left: 4px solid #6d28d9; }
+  .card-contenido-nem--etica { border-left: 4px solid #c2410c; }
+  .card-contenido-nem--comunitario { border-left: 4px solid #047857; }
+
+  /* ---------- 7 · Filas de PDA legibles (contraste AAA) ---------- */
+  #listaPDAsCheckboxNEM {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  #listaPDAsCheckboxNEM .nem-select-sintetico {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  .pda-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0 0 6px;
+    padding: 8px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .pda-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+  .pda-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin: 2px 0 0;
+    accent-color: #2563eb;
+    cursor: pointer;
+  }
+  .pda-item__texto {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+  .pda-item:has(input:checked) {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .pda-item:has(input:checked) .pda-item__texto {
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nem-step-tab,
+    .card-contenido-nem,
+    .pda-item,
+    .nem-stepper-header::after { transition: none; }
+    .card-contenido-nem:hover { transform: none; }
+```
+
+### 9.3 Ajustes en `ComunCSS.html`
+
+```css
+  .btn-ayuda-nem {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin: 0 0 0 5px;
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    font: 700 12px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .btn-ayuda-nem:hover {
+    color: #2563eb;
+    background: #eff6ff;
+  }
+
+  .ia-avatar img,
+  .ia-avatar-img,
+  #btnAsistenteFlotanteAI img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    display: block;
+    border-radius: 999px;
+  }
+```
+
+### 9.4 Decisiones que conviene auditar
+
+1. **`:has()` para la barra de progreso.** Es la única forma de mover la barra sin añadir DOM ni JS. Si el navegador no lo soporta, la barra se queda en 25 %, que es el estado inicial real del formulario: degrada sin mentir.
+2. **El banner no pierde los emojis** (📅 ⏰ 🗓️ 👨‍🏫) porque son nodos de texto dentro del HTML; los dejé atenuados por tamaño y color. Si Antigravity los retira del marcado, la cinta queda aún más limpia sin tocar el CSS.
+3. **La barra de progreso vive en `.nem-stepper-header::after`**, no en un elemento nuevo: cero cambios de estructura y cero riesgo para el JS del Stepper.
+4. **`.nem-campo-inline > label` pasa a flex.** Es el único cambio con efecto estructural indirecto; lo hice para alinear `✨ Sugerir con IA` a la derecha. Todos los labels de la rejilla son de una línea, así que no introduce saltos.
+
+### 9.5 Verificación
+
+| Comprobación | Resultado |
+| :--- | :--- |
+| Llaves CSS balanceadas | `AdminPlaneacionCSS.html` 323/323 · `ComunCSS.html` 425/425 |
+| Uso de `!important` en el bloque nuevo | **0** |
+| Render del panel (1180 px) | banner plano, rejilla 2×2, Stepper con ✓ y barra al 50 %, tarjetas y PDA correctos |
+| «Sesiones (40m)» | ya no se parte en dos renglones |
+| IDs / estructura / `.gs` | sin cambios |
+
+Evidencia en `evidencia_etapa12/`: `etapa1_banner_stepper.png` y `etapa1_2_panel.png`.
+
+### 9.6 Lo que queda del lado de Cursor y Antigravity
+
+- **Cursor:** dejar de inyectar `.btn-voz-nem` junto a cada `.btn-ayuda-nem` en `AyudaJS.html` (hoy el CSS los oculta, pero el nodo sigue en el DOM); y renderizar las filas de PDA con `.pda-item` + `input[type=checkbox]` para que tomen el estilo nuevo.
+- **Antigravity:** retirar del HTML los `<span class="nem-ayuda-paso">` de las cuatro pestañas (el CSS ya los oculta) y reponer el avatar base64 íntegro; el encuadre `center 20%` ya está listo para recibirlo.
+
+### 9.7 Rollback
+
+```
+C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_etapa12.html
+C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\ComunCSS_pre_etapa12.html
+```

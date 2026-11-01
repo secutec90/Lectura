@@ -594,42 +594,61 @@
       background: rgba(255, 255, 255, 0.28);
     }
 
-    /* FILA 1 (IMAGEN 1): Título, Campo, Metodología y Sesiones en UNA SOLA FILA (ALINEACIÓN PERFECTA) */
+    /* FILA 1: Rejilla respirable 2x2 (Título + Sesiones arriba; Campo + Metodología abajo) */
     .nem-fila-una {
       display: grid;
-      grid-template-columns: minmax(220px, 2.5fr) minmax(170px, 1.4fr) minmax(190px, 1.6fr) 95px;
-      gap: 12px;
-      align-items: start;
-      margin-bottom: 10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px 16px;
+      align-items: end;
+      margin-bottom: 18px;
     }
-    @media (max-width: 990px) {
+    .nem-fila-una > .nem-campo-titulo { grid-column: span 3; }
+    .nem-fila-una > .nem-campo-sesiones { grid-column: span 1; min-width: 130px; }
+    .nem-fila-una > .nem-campo-formativo { grid-column: span 2; }
+    .nem-fila-una > .nem-campo-metodologia { grid-column: span 2; }
+    @media (max-width: 980px) {
       .nem-fila-una {
         grid-template-columns: 1fr 1fr;
       }
+      .nem-fila-una > .nem-campo-titulo { grid-column: span 2; }
+      .nem-fila-una > .nem-campo-sesiones,
+      .nem-fila-una > .nem-campo-formativo,
+      .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
     }
-    @media (max-width: 600px) {
+    @media (max-width: 620px) {
       .nem-fila-una {
         grid-template-columns: 1fr;
       }
+      .nem-fila-una > .nem-campo-titulo,
+      .nem-fila-una > .nem-campo-sesiones,
+      .nem-fila-una > .nem-campo-formativo,
+      .nem-fila-una > .nem-campo-metodologia { grid-column: span 1; }
     }
 
     .nem-campo-inline {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       min-width: 0;
     }
     .nem-campo-inline label {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: #1e293b;
       margin: 0;
-      height: 16px;
-      line-height: 16px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
+      min-height: 22px;
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .nem-campo-inline > label .btn-ia-sugerir-titulo {
+      margin-left: auto;
+    }
+    label .btn-voz-nem,
+    .nem-step-tab .nem-ayuda-paso {
+      display: none;
     }
     .nem-campo-inline input,
     .nem-campo-inline select {

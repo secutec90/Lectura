@@ -1538,26 +1538,33 @@ Restaurar cualquiera de los dos revierte solo esta fase y conserva las Fases 5 y
 
 ---
 
-## 8. 🚀 [PROGRAMACIÓN PARA MAÑANA] - ETAPA 2: DISEÑO UI/UX DE CONTENIDOS SINTÉTICOS Y PDA
-**Fecha asignada:** Sesión de Mañana  
+## 8. 🚀 [PROGRAMACIÓN ACTIVA] - DESATURACIÓN VISUAL UI/UX (ETAPA 1 & 2) + DISEÑO DE CONTENIDOS Y PDA
+**Fecha asignada:** Sesión Activa  
 **Agente:** DeepSeek (Diseñador Visual & CSS)  
 **Archivos autorizados:** `AdminPlaneacionCSS.html`, `ComunCSS.html`  
 **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
 
 ### Objetivos Específicos para DeepSeek:
-1. **Grid y Tarjetas de Contenidos Sintéticos (`.grid-contenidos-nem`, `.card-contenido-nem`):**
+1. **Desaturación Visual de la Cabecera y Etapa 1 (`AdminPlaneacionCSS.html` y `ComunCSS.html`):**
+   - **Banner `#bannerClaseNEM`:** Quitar el aspecto de "cajitas con borde" en cada dato (Fecha, Hora, Trimestre, Docente). Dejar una cinta editorial limpia en una sola línea con separadores sutiles y texto plano respirable.
+   - **Layout de `.nem-fila-una` (Etapa 1):** Actualmente tiene 4 columnas en una sola fila y rompe la etiqueta de `Sesiones (40m)` en dos renglones. Cambiar `.nem-fila-una` a un **Grid de 2 filas limpias**:
+     - Fila 1: `Título del Proyecto` (75% / `3fr`) y `Sesiones (40m)` (25% / `1fr`, `min-width: 130px`).
+     - Fila 2: `Campo Formativo` (`1fr`) y `Metodología` (`1fr`).
+   - **Limpieza de micro-iconos (`.btn-ayuda-nem`, `.btn-voz-nem`, `.nem-ayuda-paso`):**
+     - Ocultar por CSS cualquier `.btn-voz-nem` que esté dentro de un `<label>` del formulario (`label .btn-voz-nem { display: none; }`) y ocultar `.nem-ayuda-paso` dentro de `.nem-step-tab` para eliminar los 8 iconos de las pestañas del Stepper.
+     - Hacer que `.btn-ayuda-nem` sea un círculo discreto de `18px × 18px` en gris suave (`#94a3b8`), sin bordes pesados ni emojis rojos, que solo cobra acento azul al pasar el cursor (`:hover`).
+   - **Avatar completo (`.ia-avatar img`, `#btnAsistenteFlotanteIA img`):** Asegurar `width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; display: block;` sin recortes ni desbordes.
+2. **Grid y Tarjetas de Contenidos Sintéticos (`.grid-contenidos-nem`, `.card-contenido-nem`):**
    - Diseñar un catálogo en acordeón o tarjetas seleccionables con elevación sutil (`box-shadow: 0 2px 8px rgba(0,0,0,0.06)`), borde redondeado de 10px y transición suave al hover.
    - Estado activo/seleccionado (`.card-contenido-nem.seleccionado`) con borde primario de 2px y fondo ligeramente tintado.
-2. **Paleta Cromática Oficial por Campo Formativo (NEM Fase 6):**
+3. **Paleta Cromática Oficial por Campo Formativo (NEM Fase 6):**
    - **Lenguajes:** Badges y acentos en Azul Zafiro (`#1e40af`, fondo `#eff6ff`, borde `#bfdbfe`).
    - **Saberes y Pensamiento Científico:** Badges en Violeta Curricular (`#6d28d9`, fondo `#f5f3ff`, borde `#ddd6fe`).
    - **Ética, Naturaleza y Sociedades:** Badges en Ámbar Tierra (`#c2410c`, fondo `#fff7ed`, borde `#fed7aa`).
    - **De lo Humano y lo Comunitario:** Badges en Verde Esmeralda (`#047857`, fondo `#ecfdf5`, borde `#a7f3d0`).
-3. **Casillas de Selección y Lista de PDA (`.lista-pda-container`, `.pda-item-check`):**
+4. **Casillas de Selección, Lista de PDA y Barra de Progreso del Stepper:**
    - Diseño limpio de filas de PDA con checkbox personalizado, tipografía legible (13.5px, interlineado 1.45) y contraste WCAG AAA.
-   - Micro-animación de pulso para el contador de PDA seleccionados (`#badgeContadorPDA`).
-4. **Barra de Progreso e Indicadores de Etapa Completada en el Stepper (4 Etapas):**
-   - Diseñar los estilos visuales para el estado `.completado` (check verde `✓` y borde/acento esmeralda) en las pestañas actuales `#tabPasoPlan1` a `#tabPasoPlan4`, así como una barra sutil de progreso (`25% · 50% · 75% · 100%`) y mensajes de validación suave en campos requeridos (`onBlur`).
+   - Estilos visuales para el estado `.completado` (check verde `✓` y borde/acento esmeralda) en las pestañas `#tabPasoPlan1` a `#tabPasoPlan4`, así como una barra sutil de progreso (`25% · 50% · 75% · 100%`).
 5. **Reglas de Gobernanza y Modo Centinela (Polling cada 60s):**
    - Cero uso de `!important`.
    - No renombrar ni eliminar ningún ID del DOM.

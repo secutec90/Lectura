@@ -58,21 +58,26 @@ Para que DeepSeek y Cursor diseñen e interactúen con certeza:
 
 ---
 
-## 5. Tarea Activa para la Siguiente Sesión: ETAPA 2 (CONTENIDOS SINTÉTICOS Y PDA) + PROBLEMÁTICA COMUNITARIA
+## 5. Tarea Activa: DESATURACIÓN VISUAL UI/UX (ETAPA 1 & 2) + CORRECCIÓN DE AVATAR + CONTENIDOS & PDA
 
-La orquesta se concentra en la experiencia pedagógica de la **Etapa 2 (Contenidos & PDA)** y su articulación comunitaria:
+### Diagnóstico de Saturación Visual y Correcciones Inmediatas:
+1. **Avatar truncado en mitad inferior (`AVATAR_ASESOR_NEM_B64_`):** La cadena base64 JPEG sufrió corrupción de bytes en su mitad inferior. **Antigravity** regenerará e inyectará vía buffer binario directo un avatar PNG/JPEG 100% íntegro con encuadre centrado superior (`object-fit: cover; object-position: center 20%`).
+2. **Eliminación de contaminación de micro-iconos (`❓`, `🔊`, `✨` repetidos):**
+   - **Quitar los iconos `❓` y `✨` de adentro de las 4 pestañas del Stepper** (`#tabPasoPlan1..4`), dejando solo el número y título del paso (más el check `✓` cuando esté completo).
+   - **Quitar los botones sueltos de bocina `🔊` (`.btn-voz-nem`) de todas las etiquetas `<label>`** del formulario. La lectura en voz alta `🔊` se mantiene únicamente **adentro** del modal `#modalAyudaNEM` y en las respuestas del drawer de la Asesora IA.
+   - Reemplazar el signo de interrogación rojo estridente `❓` por un icono `(?)` monocromático sutil (`#94a3b8`, hover `#2563eb`) y reubicar `✨ Sugerir con IA` como acción limpia alineada a la derecha del label o integrada en el input.
+3. **Simplificación del Banner `#bannerClaseNEM` (Cero "cajitas" saturadas):**
+   - Quitar las 5 píldoras blancas con borde alrededor de la fecha, hora, trimestre y docente; mostrarlas como metadatos en texto limpio separado por puntos (`•`).
+4. **Reorganización Respirable de la Etapa 1 (`#etapaPlanNEM_1`):**
+   - En lugar de apretar 4 campos en una sola fila (que rompe el label de `Sesiones (40m)` en dos líneas), distribuir en una **rejilla limpia de 2 filas**:
+     - **Fila A:** `Título del Proyecto` (75% ancho) + `Sesiones (40m)` (25% ancho).
+     - **Fila B:** `Campo Formativo` (50% ancho) + `Metodología` (50% ancho).
 
-### Partitura y Contrato Técnico Inmutable:
-- **Campos del formulario (Etapa 2):**
-  - Contenido Sintético: `textarea#planContenidoSintetico`
-  - Procesos de Desarrollo de Aprendizaje: `textarea#planPDA`
-  - Insignia de conteo: `#badgeContadorPDA`
-  - Selector de Trimestre curricular: `#selTrimestrePDA` (T1, T2, T3)
-- **Asignaciones para la siguiente sesión (Mañana):**
-  | Agente | Responsabilidad Inmediata | Buzón / Archivo |
-  | :--- | :--- | :--- |
-  | **DeepSeek** *(Diseño UI/UX)* | Maquetar el catálogo interactivo de Contenidos Sintéticos en acordeón/tarjetas, tags de colores por Campo Formativo (Lenguajes: Azul, Saberes: Morado, Ética: Naranja, De lo Humano: Verde), microinteracciones de selección de PDA, y barra de progreso visual (`25% · 50% · 75% · 100%`) con estado `.completado` (`✓`) en el Stepper de 4 etapas (`#tabPasoPlan1..4`). Al finalizar, activar `node herramientas/centinela_buzon.js deepseek`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
-  | **Cursor** *(Lógica Frontend DOM)* | Programar la sincronización reactiva de Contenidos Sintéticos y PDA según la Asignatura y Grado de Etapa 1, filtrado por trimestre (T1/T2/T3), checkboxes interactivos para anexar PDA a `#planPDA` con 1 clic, conexión del botón "✨ Sugerir con IA" para PDA DUA, y **autoguardado de emergencia en `localStorage`** al cambiar entre etapas del Stepper junto con validación en tiempo real (`onBlur`) y marca de paso completado (`✓`). Al finalizar, activar `node herramientas/centinela_buzon.js cursor`. | `ENTREGA_CURSOR.md`<br>`AdminPlanJS_03.html`<br>`AyudaJS.html` |
-  | **Antigravity** *(Backend, QA & Despliegue)* | Asegurar los catálogos curriculares oficiales SEP Fase 6 en `PlaneacionNEM.gs`, endpoint de guardado integral de PDA seleccionados en Google Sheets, auditoría multiagente, compilación a `build-563` y despliegue a producción. | `PlaneacionNEM.gs`<br>`CONTROL_CAMBIOS.md`<br>`avances.md` |
+### Partitura y Reparto de Tareas por Agente:
+| Agente | Responsabilidad Inmediata | Buzón / Archivo |
+| :--- | :--- | :--- |
+| **DeepSeek** *(Diseño UI/UX & Desaturación CSS)* | 1. **Desaturar `#bannerClaseNEM`:** Eliminar bordes/fondos de caja en cada metadato; dejar una barra limpia y plana.<br>2. **Rejilla Respirable en `.nem-fila-una`:** Pasar de 4 columnas apretadas a layout 2×2 (`3fr 1fr` arriba para Título y Sesiones; `1fr 1fr` abajo para Campo y Metodología).<br>3. **Limpieza de `.btn-ayuda-nem` y Stepper:** Icono `(?)` neutro sin color rojo estridente, ocultar `.btn-voz-nem` fuera del modal, y estilizar el Stepper `#tabPasoPlan1..4` limpio con estado `.completado` (`✓`) y barra de progreso.<br>4. **Tarjetas de Etapa 2:** Grid `.card-contenido-nem` y badges por Campo Formativo.<br>5. Al finalizar, ejecutar `node herramientas/centinela_buzon.js deepseek`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
+| **Cursor** *(Lógica Frontend DOM)* | 1. **Dejar de inyectar `🔊` (`.btn-voz-nem`) en los `<label>` del formulario:** Modificar `AyudaJS.html` para que el botón de voz solo se renderice dentro de `#modalAyudaNEM` y en las burbujas del drawer `#drawerAsistenteIA`, nunca al lado de cada `<label>`.<br>2. **Limpiar pestañas del Stepper:** Asegurar que `#tabPasoPlan1..4` no tengan iconos `❓ ✨` incrustados y muestren solo número, nombre de etapa y check `✓` al completarse.<br>3. **Etapa 2 (Contenidos & PDA) + Autoguardado `localStorage`:** Sincronización de Contenidos Sintéticos SEP, filtrado de PDA por trimestre, contador `#badgeContadorPDA` y respaldo automático en `localStorage`.<br>4. Al finalizar, ejecutar `node herramientas/centinela_buzon.js cursor`. | `ENTREGA_CURSOR.md`<br>`AyudaJS.html`<br>`AdminPlanJS_03.html` |
+| **Antigravity** *(Backend, Avatar & QA)* | 1. **Reparar `AVATAR_ASESOR_NEM_B64_`:** Generar e inyectar imagen base64 100% íntegra (sin corrupción en la mitad inferior) en `AyudaJS.html`.<br>2. **Limpiar HTML base en `AdminPlaneacion.html`:** Retirar los `<span>` de `❓` y `✨` incrustados dentro de `#tabPasoPlan1..4`.<br>3. **Catálogo SEP Fase 6 & Despliegue:** Asegurar endpoints en `PlaneacionNEM.gs`, auditar entregas de DeepSeek y Cursor, y desplegar `build-563`. | `AyudaJS.html`<br>`AdminPlaneacion.html`<br>`PlaneacionNEM.gs` |
 
 

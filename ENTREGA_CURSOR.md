@@ -1537,28 +1537,31 @@ if (document.readyState === 'loading') {
 
 ---
 
-### 🚀 [PROGRAMACIÓN PARA MAÑANA] - ETAPA 2: CONTENIDOS SINTÉTICOS & PDA (NEM FASE 6)
-**Fecha asignada:** Sesión de Mañana  
+### 🚀 [PROGRAMACIÓN ACTIVA] - DESATURACIÓN DE ICONOS EN DOM + ETAPA 2 (CONTENIDOS & PDA)
+**Fecha asignada:** Sesión Activa  
 **Agente:** Cursor (Frontend JS & Manipulación del DOM)  
-**Archivos autorizados:** `AdminPlanJS_03.html`, `ClaseJS_05.html`, `AyudaJS.html`  
+**Archivos autorizados:** `AyudaJS.html`, `AdminPlanJS_03.html`, `ClaseJS_05.html`  
 **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
 
 #### Objetivos Específicos para Cursor:
-1. **Sincronización Reactiva de Contenidos Sintéticos por Asignatura y Grado:**
+1. **Desaturación Inmediata de Iconos en el Formulario (`AyudaJS.html`):**
+   - **Eliminar la inyección de botones `🔊` (`.btn-voz-nem`) al lado de cada `<label>` o `.btn-ayuda-nem` del formulario.** Están saturando la interfaz y empujando las etiquetas a dos líneas (como en `Sesiones (40m)`). La bocina de lectura en voz alta solo debe existir **adentro** del modal `#modalAyudaNEM` y en las burbujas de respuesta del drawer `#drawerAsistenteIA`.
+   - En los botones `.btn-ayuda-nem`, usar el carácter limpio `?` (texto simple, no el emoji rojo `❓`) para que el estilo monocromático de DeepSeek luzca limpio y discreto.
+2. **Sincronización Reactiva de Contenidos Sintéticos por Asignatura y Grado:**
    - Al cambiar `#planAsignatura` o `#planGrado` en Etapa 1, poblar reactivamente la lista o catálogo de Contenidos Sintéticos de la Fase 6 en `#planContenidoSintetico`.
    - Permitir búsqueda rápida / autocompletado en el catálogo sin bloquear la edición libre del docente.
-2. **Filtrado y Selección Múltiple de PDA por Trimestre:**
+3. **Filtrado y Selección Múltiple de PDA por Trimestre:**
    - Detectar el trimestre activo de la clase (T1, T2, T3) según el calendario.
    - Renderizar los Procesos de Desarrollo de Aprendizaje (PDA) correspondientes con casillas interactivas `.ia-pda-checkbox`.
    - Al marcar/desmarcar un PDA, actualizar el `textarea#planPDA` con formato de viñetas claras (`• PDA 1... \n• PDA 2...`) y actualizar el contador numérico `#badgeContadorPDA` en tiempo real.
-3. **Integración con Asesora Pedagógica IA para PDA con DUA:**
+4. **Integración con Asesora Pedagógica IA para PDA con DUA:**
    - Conectar el botón `✨ Sugerir con IA` de la Etapa 2 para solicitar a la Asesora:
      `"Sugiere 2 PDA adaptados con enfoque DUA para el contenido sintético seleccionado en [Asignatura] [Grado]° (Trimestre [T])."`
    - Habilitar chips de 1 clic `[➕ Insertar este PDA]` dentro de la burbuja de respuesta para anexarlo inmediatamente al `textarea#planPDA`.
-4. **Autoguardado de Emergencia en `localStorage` y Progreso del Stepper (4 Etapas):**
+5. **Autoguardado de Emergencia en `localStorage` y Progreso del Stepper (4 Etapas):**
    - Sin eliminar ningún módulo existente de `AdminPlaneacion.html`, respaldar automáticamente en `localStorage` (`st90_borrador_plan_nem`) los campos de las 4 etapas cada vez que el docente cambie de paso (`irAPasoPlanNEM`) o edite un campo, permitiendo restaurar el borrador si recarga la página antes de guardar en Google Sheets.
    - Validar en tiempo real (`onBlur`) los campos obligatorios de cada etapa y marcar la pestaña correspondiente (`#tabPasoPlan1..4`) con la clase `.completado` (`✓`) y actualizar el porcentaje de avance (`25% · 50% · 75% · 100%`).
-5. **Contrato de Inmutabilidad y Modo Centinela (Polling cada 60s):**
+6. **Contrato de Inmutabilidad y Modo Centinela (Polling cada 60s):**
    - No alterar los IDs inmutables: `planContenidoSintetico`, `planPDA`, `tabPasoPlan2`, `etapaPlanNEM_2`.
    - Toda llamada a backend se realiza exclusivamente mediante `gsRun` con manejo de errores y feedback visual.
    - **Al terminar tu entrega y guardarla en `ENTREGA_CURSOR.md`, ejecuta inmediatamente `node herramientas/centinela_buzon.js cursor` para revisar el buzón cada 60 segundos en espera de la siguiente tarea.**

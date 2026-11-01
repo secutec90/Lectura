@@ -52,7 +52,10 @@
           const inferido = inferirCampoYMetodologia_(item.asignatura);
           const campoSel = document.getElementById('planCampoFormativo');
           const metSel = document.getElementById('planMetodologia');
-          if (campoSel) campoSel.value = inferido.campo;
+          if (campoSel) {
+            campoSel.value = inferido.campo;
+            campoSel.disabled = true;
+          }
           if (metSel) metSel.value = inferido.metodologia;
         }
         if (item.idHorario) {
@@ -1048,10 +1051,17 @@
     if (!datos || !datos.campos) return;
     window._st90RestaurandoBorrador = true;
     Object.keys(datos.campos).forEach(function (id) {
+      if (id === 'planCampoFormativo') return; // El Campo Formativo lo rige siempre la asignatura oficial
       var el = document.getElementById(id);
       if (!el || datos.campos[id] == null || datos.campos[id] === '') return;
       el.value = datos.campos[id];
     });
+    var asigAct = (document.getElementById('planAsignatura') || {}).value || '';
+    var selCampo = document.getElementById('planCampoFormativo');
+    if (selCampo && asigAct && typeof inferirCampoYMetodologia_ === 'function') {
+      selCampo.value = inferirCampoYMetodologia_(asigAct).campo;
+      selCampo.disabled = true;
+    }
     if (Array.isArray(datos.ejes)) {
       document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
         cb.checked = datos.ejes.indexOf(cb.value) >= 0;

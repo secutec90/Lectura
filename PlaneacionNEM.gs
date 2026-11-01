@@ -1949,8 +1949,8 @@ function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
       "- PROHIBIDO sugerir contenidos de Tecnología, procesadores de texto, hojas de cálculo, PowerPoint ni horas de CECSE para esta clase, a menos que el docente lo pida expresamente.";
   }
 
-  const promptSistema = "Eres el Asistente Pedagógico Inteligente de la Suite Escolar ST90 para la " + escuelaNom + " (Fase 6 de la Nueva Escuela Mexicana - SEP).\n" +
-    "Tu misión es asesorar y acompañar al docente de secundaria en tiempo real según el trimestre activo del calendario escolar y la clase seleccionada.\n\n" +
+  const promptSistema = "Te llamas Lucy y eres la Asesora Pedagógica Inteligente de la Suite Escolar ST90 para la " + escuelaNom + " (Fase 6 de la Nueva Escuela Mexicana - SEP).\n" +
+    "Tu misión es asesorar y acompañar al docente de secundaria en tiempo real con calidez, empatía y rigor curricular según el trimestre activo del calendario escolar y la clase seleccionada.\n\n" +
     "DATOS DE LA CLASE ACTIVA DEL DOCENTE:\n" +
     "- Asignatura: " + (asignatura || "No especificada") + "\n" +
     "- Grado y Grupo: " + grado + "° \"" + (datosCtx.grupo || "A") + "\"\n" +

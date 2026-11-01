@@ -2,6 +2,17 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-10-31] - [Bloqueo Normativo de Campo Formativo por Asignatura, Asesora Pedagógica "Lucy" y Voz Femenina en Asistente de Voz (build-566)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(nem): bloqueo normativo de Campo Formativo por asignatura, asesora pedagogica Lucy y seleccion de voz femenina en build-566`
+- **Causa Raíz / Requerimiento:**
+  1. El selector `Campo Formativo *` (`#planCampoFormativo`) permitía edición manual aun cuando cada asignatura de secundaria (Fase 6 SEP) pertenece por norma inmutable a un único Campo Formativo.
+  2. La asesora pedagógica lleva por nombre **Lucy** y su síntesis de voz (Web Speech API) debía seleccionar prioritariamente una voz femenina en español.
+- **Cambios Realizados:**
+  - **Bloqueo Normativo de `#planCampoFormativo`:** Se configuró `disabled = true` con candado visual `🔒` y asignación automática inmutable según la disciplina en `AdminPlaneacion.html`, `Clase.html`, `AdminPlanJS_03.html`, `AdminPlanJS_04.html` y `ClaseJS_05.html`, evitando también que borradores de `localStorage` sobrescriban el campo formativo de otra materia.
+  - **Identidad de la Asesora Pedagógica "Lucy":** Actualizados encabezados, tooltips, saludo inicial y prompt del sistema (`AyudaJS.html` y `PlaneacionNEM.gs`) como **Lucy · Asesora Pedagógica NEM**.
+  - **Voz de Mujer en Web Speech API (`elegirVozFemeninaEspanol_`):** Se implementó un selector ponderado de voces en español (`es-MX` / `es-*`) que prioriza voces femeninas (`Sabina`, `Dalia`, `Paulina`, `Helena`, `Laura`, `Mónica`, `Paloma`, `Elvira`, `Google español`) y descarta voces masculinas (`Raúl`, `Jorge`, `Álvaro`, `Pablo`, `Diego`), con `pitch = 1.08`.
+- **Archivos Afectados:** `AdminPlaneacion.html`, `Clase.html`, `AdminPlanJS_01.html`, `AdminPlanJS_03.html`, `AdminPlanJS_04.html`, `AdminPlanJS_06.html`, `ClaseJS_05.html`, `AyudaJS.html`, `PlaneacionNEM.gs`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-10-31] - [Fila 1 en Una Sola Línea, Alineación de Listas Desplegables en Etapa 2 y Tooltips en Siglas UDEI / DUA / BAPyC (build-565)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `style(nem): fila 1 en una sola linea, listas desplegables Etapa 2 alineadas e identicas y tooltips en siglas UDEI/DUA/BAPyC en build-565`
 - **Causa Raíz / Requerimiento:**

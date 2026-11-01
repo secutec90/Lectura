@@ -107,6 +107,14 @@
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = 'es-MX';
     u.rate = 1.0;
+    u.pitch = 1.08;
+    if (typeof window.elegirVozFemeninaEspanol_ === 'function') {
+      const vFem = window.elegirVozFemeninaEspanol_();
+      if (vFem) {
+        u.voice = vFem;
+        if (vFem.lang) u.lang = vFem.lang;
+      }
+    }
     window.speechSynthesis.speak(u);
   }
 

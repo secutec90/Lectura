@@ -34,13 +34,15 @@
 
     matrizCurricularActivaNEM_ = encontrada;
 
-    // AUTONOMÍA DOCENTE NEM: Autoselección inicial recomendada sin bloqueo forzado
+    // NORMATIVA CURRICULAR SEP FASE 6: El Campo Formativo es obligatorio e inmutable según la asignatura
     const selCampo = document.getElementById('planCampoFormativo');
     if (selCampo) {
       selCampo.value = encontrada.campo;
-      selCampo.disabled = false;
+      selCampo.disabled = true;
+      selCampo.title = 'Asignado automáticamente por norma SEP Fase 6 para ' + encontrada.disciplina + ' (' + encontrada.campo + ')';
     }
 
+    // AUTONOMÍA DOCENTE NEM: La Metodología sugiere la oficial del campo pero permite adaptación docente
     const selMet = document.getElementById('planMetodologia');
     if (selMet) {
       selMet.value = encontrada.metodologia;

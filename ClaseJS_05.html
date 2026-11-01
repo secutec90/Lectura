@@ -600,13 +600,15 @@
 
     matrizCurricularActivaNEM_ = encontrada;
 
-    // AUTONOMÍA DOCENTE NEM: Autoselección inicial recomendada sin bloqueo forzado
+    // NORMATIVA CURRICULAR SEP FASE 6: El Campo Formativo es obligatorio e inmutable según la asignatura
     const selCampo = document.getElementById('planCampoFormativo');
     if (selCampo) {
       selCampo.value = encontrada.campo;
-      selCampo.disabled = false;
+      selCampo.disabled = true;
+      selCampo.title = 'Asignado automáticamente por norma SEP Fase 6 para ' + encontrada.disciplina + ' (' + encontrada.campo + ')';
     }
 
+    // AUTONOMÍA DOCENTE NEM: La Metodología sugiere la oficial del campo pero permite adaptación docente
     const selMet = document.getElementById('planMetodologia');
     if (selMet) {
       selMet.value = encontrada.metodologia;
@@ -997,10 +999,17 @@
     if (!datos || !datos.campos) return;
     window._st90RestaurandoBorrador = true;
     Object.keys(datos.campos).forEach(function (id) {
+      if (id === 'planCampoFormativo') return; // El Campo Formativo lo rige siempre la asignatura oficial
       var el = document.getElementById(id);
       if (!el || datos.campos[id] == null || datos.campos[id] === '') return;
       el.value = datos.campos[id];
     });
+    var asigAct = (document.getElementById('planAsignatura') || {}).value || '';
+    var selCampo = document.getElementById('planCampoFormativo');
+    if (selCampo && asigAct && typeof inferirCampoYMetodologia_ === 'function') {
+      selCampo.value = inferirCampoYMetodologia_(asigAct).campo;
+      selCampo.disabled = true;
+    }
     if (Array.isArray(datos.ejes)) {
       document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
         cb.checked = datos.ejes.indexOf(cb.value) >= 0;

@@ -108,10 +108,10 @@ var DICCIONARIO_AYUDA_NEM = {
     ejemplo: 'Voces y raíces de nuestra tierra: narrativas comunitarias.'
   },
   campoFormativo: {
-    titulo: 'Campo formativo',
-    proposito: 'Sitúa el proyecto en uno de los campos de la Fase 6.',
-    comoLlenar: 'Elige el campo que sostiene la mayor parte de los PDA, aunque el proyecto dialogue con otros.',
-    ejemplo: 'Lenguajes, cuando el producto central es un texto, un podcast o una puesta en escena.'
+    titulo: 'Campo Formativo (Normativo SEP 🔒)',
+    proposito: 'Asigna automáticamente el Campo Formativo oficial de la Fase 6 (Secundaria) al que pertenece normativamente cada asignatura.',
+    comoLlenar: 'Se selecciona y bloquea automáticamente según tu asignatura: Lenguajes (Español, Inglés, Artes), Saberes y Pensamiento Científico (Matemáticas, Biología, Física, Química), Ética, Naturaleza y Sociedades (Geografía, Historia, FCyE) o De lo Humano y lo Comunitario (Tecnología, Educación Física, Tutoría).',
+    ejemplo: 'Matemáticas pertenece obligatoriamente a Saberes y Pensamiento Científico; Geografía a Ética, Naturaleza y Sociedades.'
   },
   sesiones: {
     titulo: 'Número de sesiones',
@@ -473,6 +473,64 @@ function restaurarBtnVoz_(btn) {
   }
 }
 
+function elegirVozFemeninaEspanol_() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
+  var voces = window.speechSynthesis.getVoices() || [];
+  if (!voces.length) return null;
+
+  var mejorVoz = null;
+  var mejorPuntaje = -999;
+
+  for (var i = 0; i < voces.length; i++) {
+    var v = voces[i];
+    var lang = String(v.lang || '').toLowerCase().replace('_', '-');
+    if (lang.indexOf('es') !== 0) continue;
+
+    var nombre = String(v.name || '') + ' ' + String(v.voiceURI || '');
+    var nLow = nombre.toLowerCase();
+    var pts = 0;
+
+    // Prioridad geográfica (México / Latinoamérica / Español general)
+    if (lang === 'es-mx') pts += 40;
+    else if (lang === 'es-us' || lang === 'es-419' || lang === 'es-co' || lang === 'es-ar' || lang === 'es-cl') pts += 28;
+    else if (lang.indexOf('es') === 0) pts += 18;
+
+    // Nombres de voces femeninas en Windows, Edge, Chrome, macOS, iOS y Android (Sabina, Dalia, Paulina, Helena, etc.)
+    if (/\b(sabina|dalia|paulina|helena|laura|monica|mónica|paola|francisca|paloma|elvira|larissa|camila|lupe|penelope|penélope|mia|mía|sofia|sofía|lucia|lucía|jimena|carmen|isabela|marisol|femenin|female|mujer|woman)\b/i.test(nLow)) {
+      pts += 100;
+    }
+    if (/natural|neural|online/i.test(nLow)) {
+      pts += 25;
+    }
+    if (/google\s+espa/i.test(nLow) && !/male|hombre|masculin/i.test(nLow)) {
+      pts += 45;
+    }
+
+    // Penalizar voces masculinas conocidas (Raúl, Jorge, Álvaro, Pablo, Diego, Carlos, etc.)
+    if (/\b(raul|raúl|jorge|alvaro|álvaro|pablo|diego|carlos|miguel|andres|andrés|alonso|enrique|tomas|tomás|juan|male|hombre|masculin)\b/i.test(nLow)) {
+      pts -= 150;
+    }
+
+    if (pts > mejorPuntaje) {
+      mejorPuntaje = pts;
+      mejorVoz = v;
+    }
+  }
+  return mejorVoz;
+}
+window.elegirVozFemeninaEspanol_ = elegirVozFemeninaEspanol_;
+
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  try {
+    window.speechSynthesis.getVoices();
+    if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+      window.speechSynthesis.addEventListener('voiceschanged', function () {
+        try { window.speechSynthesis.getVoices(); } catch (e) {}
+      });
+    }
+  } catch (e) {}
+}
+
 function narrarTextoNEM_(texto, btnIndicador, alTerminar) {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     avisar_('Tu navegador no soporta síntesis de voz.', 'info');
@@ -493,16 +551,13 @@ function narrarTextoNEM_(texto, btnIndicador, alTerminar) {
   var utter = new SpeechSynthesisUtterance(textoLimpio);
   utter.lang = 'es-MX';
   utter.rate = 1.0;
-  utter.pitch = 1.0;
+  utter.pitch = 1.08;
 
-  var voces = window.speechSynthesis.getVoices() || [];
-  var vozEs = null;
-  for (var i = 0; i < voces.length; i++) {
-    var lang = (voces[i].lang || '').toLowerCase();
-    if (lang === 'es-mx' || lang === 'es_mx') { vozEs = voces[i]; break; }
-    if (!vozEs && lang.indexOf('es') === 0) vozEs = voces[i];
+  var vozEs = elegirVozFemeninaEspanol_();
+  if (vozEs) {
+    utter.voice = vozEs;
+    if (vozEs.lang) utter.lang = vozEs.lang;
   }
-  if (vozEs) utter.voice = vozEs;
 
   if (btnIndicador) {
     marcarBtnVozReproduciendo_(btnIndicador);
@@ -1115,12 +1170,14 @@ function asegurarDrawerAsistente_() {
     btn.id = 'btnAsistenteFlotanteIA';
     btn.className = 'btn-asistente-flotante';
     btn.setAttribute('aria-controls', 'drawerAsistenteIA');
-    btn.setAttribute('aria-label', 'Abrir asesora pedagógica de planeación');
+    btn.setAttribute('aria-label', 'Abrir a Lucy, asesora pedagógica de planeación');
+    btn.setAttribute('title', 'Lucy · Asesora Pedagógica NEM');
     btn.setAttribute('aria-expanded', 'false');
-    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Asesora Pedagógica" />';
+    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Lucy · Asesora Pedagógica" />';
     document.body.appendChild(btn);
   } else if (!btn.querySelector('img')) {
-    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Asesora Pedagógica" />';
+    btn.setAttribute('title', 'Lucy · Asesora Pedagógica NEM');
+    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Lucy · Asesora Pedagógica" />';
   }
 
   var drawer = nodo_('drawerAsistenteIA');
@@ -1129,19 +1186,19 @@ function asegurarDrawerAsistente_() {
   drawer = document.createElement('aside');
   drawer.id = 'drawerAsistenteIA';
   drawer.className = 'oculto';
-  drawer.setAttribute('aria-label', 'Asesora de planeación pedagógica NEM');
+  drawer.setAttribute('aria-label', 'Lucy · Asesora de planeación pedagógica NEM');
 
   drawer.innerHTML =
     '<div class="ia-drawer-cabecera">' +
-      '<div class="ia-avatar"><img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-avatar-img" alt="Asesora Pedagógica ST90" /></div>' +
+      '<div class="ia-avatar"><img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-avatar-img" alt="Lucy · Asesora Pedagógica ST90" /></div>' +
       '<div class="ia-titular">' +
-        '<h3 class="ia-drawer-titulo">Asesora NEM · ST90</h3>' +
+        '<h3 class="ia-drawer-titulo">Lucy · Asesora Pedagógica NEM</h3>' +
       '</div>' +
       '<span class="ia-chip-contexto" id="chipContextoAsistente">📍 Planeación NEM</span>' +
       '<button type="button" class="ia-drawer-cerrar" id="btnCerrarDrawerIA" data-cerrar-drawer-ia="1" aria-label="Cerrar asistente">×</button>' +
     '</div>' +
     '<div class="ia-cuerpo" id="chatAsistenteCuerpo" aria-live="polite">' +
-      '<div class="ia-vacio">👋 ¡Hola! Soy tu asesora pedagógica de planeación didáctica NEM.<br>Puedo sugerirte títulos contextualizados, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
+      '<div class="ia-vacio">👋 ¡Hola! Soy <strong>Lucy</strong>, tu asesora pedagógica de planeación didáctica NEM.<br>Puedo sugerirte títulos contextualizados, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
     '</div>' +
     '<div class="ia-sugerencias">' +
       '<button type="button" class="ia-chip" data-sugerencia-ia="💡 Dame 3 ideas para mi grado">💡 Dame 3 ideas para mi grado</button>' +
@@ -1149,7 +1206,7 @@ function asegurarDrawerAsistente_() {
       '<button type="button" class="ia-chip" data-sugerencia-ia="✨ Redactar ejemplo viable">✨ Redactar ejemplo viable</button>' +
     '</div>' +
     '<div class="ia-composer">' +
-      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu consulta pedagógica..." aria-label="Mensaje para la asesora pedagógica"></textarea>' +
+      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Pregúntale a Lucy tu consulta pedagógica..." aria-label="Mensaje para la asesora pedagógica Lucy"></textarea>' +
       '<button type="button" id="btnMicrofonoIA" class="btn-microfono-ia" title="Dictar por voz" aria-label="Dictar consulta por voz">🎙️</button>' +
       '<button type="button" id="btnEnviarAsistenteIA" class="nem-btn-accion nem-btn-primario" title="Enviar consulta">Enviar</button>' +
     '</div>';
@@ -1220,7 +1277,7 @@ function enviarMensajeAsistente_(textoForzado) {
   enviandoAsistente_ = true;
   var btn = nodo_('btnEnviarAsistenteIA');
   if (btn) btn.disabled = true;
-  var espera = pintarBurbuja_('msg-ia', '⏳ Asistente analizando planes SEP para ' + meta.asignatura + ' ' + meta.grado + '° (T' + meta.trimestre + ')…');
+  var espera = pintarBurbuja_('msg-ia', '⏳ Lucy está analizando los planes SEP para ' + meta.asignatura + ' ' + meta.grado + '° (T' + meta.trimestre + ')…');
   gsRun('consultarAsistenteIAPaso', tk, payloadContexto, texto).then(function (r) {
     if (espera && espera.parentNode) espera.parentNode.removeChild(espera);
     if (r && r.ok === false) {

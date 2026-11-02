@@ -71,10 +71,10 @@ function extraerUltimaPartitura(contenido) {
   return contenido.slice(-1500).trim();
 }
 
-const estadoInicialBuzon = leerHashYContenido(rutaBuzon);
-const estadoInicialCoord = leerHashYContenido(rutaCoord);
+let hashBuzonAnterior = leerHashYContenido(rutaBuzon).hash;
+let hashCoordAnterior = leerHashYContenido(rutaCoord).hash;
 
-console.log(`[CENTINELA ${nombreAgente}] Vigilando ${archivoBuzon} y ${archivoCoord} cada ${intervaloSeg}s (máx ${maxCiclos} ciclos)...`);
+console.log(`[CENTINELA ${nombreAgente}] Vigilando ${archivoBuzon} [${hashBuzonAnterior.slice(0, 8)}] y ${archivoCoord} [${hashCoordAnterior.slice(0, 8)}] cada ${intervaloSeg}s (máx ${maxCiclos} ciclos)...`);
 
 let ciclos = 0;
 const timer = setInterval(() => {
@@ -82,26 +82,56 @@ const timer = setInterval(() => {
   const actualBuzon = leerHashYContenido(rutaBuzon);
   const actualCoord = leerHashYContenido(rutaCoord);
 
-  const cambioBuzon = actualBuzon.hash && actualBuzon.hash !== estadoInicialBuzon.hash;
-  const cambioCoord = actualCoord.hash && actualCoord.hash !== estadoInicialCoord.hash;
+  const cambioBuzon = actualBuzon.hash && actualBuzon.hash !== hashBuzonAnterior;
+  const cambioCoord = actualCoord.hash && actualCoord.hash !== hashCoordAnterior;
 
-  if (cambioBuzon || cambioCoord) {
-    const texto = cambioBuzon ? actualBuzon.contenido : actualCoord.contenido;
-    const tieneTareaActiva =
-      texto.includes('🟢') ||
-      texto.includes('PROGRAMADA Y LISTA PARA EJECUCIÓN') ||
-      texto.includes('NUEVA TAREA ASIGNADA') ||
-      texto.includes('PARTITURA ASIGNADA POR ANTIGRAVITY');
+  // CASO 1: Cambio directo en el buzón personal del agente
+  if (cambioBuzon) {
+    const textoBuzon = actualBuzon.contenido;
+    const tieneTareaBuzon =
+      textoBuzon.includes('🟢') ||
+      textoBuzon.includes('PROGRAMADA') ||
+      textoBuzon.includes('NUEVA TAREA ASIGNADA') ||
+      textoBuzon.includes('PARTITURA ASIGNADA');
 
-    if (tieneTareaActiva) {
+    if (tieneTareaBuzon) {
       clearInterval(timer);
       console.log(`\n============================================================`);
-      console.log(`🔔 [CENTINELA ${nombreAgente}] ¡NUEVA TAREA DETECTADA EN EL BUZÓN!`);
+      console.log(`🔔 [CENTINELA ${nombreAgente}] ¡NUEVA PARTITURA DETECTADA EN TU BUZÓN!`);
+      console.log(`📄 Archivo disparador: ${archivoBuzon} (huella: ${actualBuzon.hash.slice(0, 8)})`);
       console.log(`============================================================\n`);
-      console.log(extraerUltimaPartitura(actualBuzon.contenido || actualCoord.contenido));
+      console.log(extraerUltimaPartitura(textoBuzon));
       console.log(`\n============================================================`);
-      console.log(`👉 ACCIÓN REQUERIDA: Lee ${archivoBuzon} y ${archivoCoord}, ejecuta la nueva tarea asignada y guarda tu entrega automáticamente.`);
+      console.log(`👉 ACCIÓN REQUERIDA: Lee ${archivoBuzon}, ejecuta la nueva tarea asignada y guarda tu entrega automáticamente.`);
       process.exit(0);
+    } else {
+      // Hubo cambio pero sin bandera activa, actualizamos huella y seguimos
+      hashBuzonAnterior = actualBuzon.hash;
+      console.log(`[CENTINELA ${nombreAgente}] [Ciclo ${ciclos}] Modificación en ${archivoBuzon} sin tareas activas marcadas. Guardia activa.`);
+    }
+  }
+
+  // CASO 2: Cambio en el archivo global de coordinación (sin cambio en buzón)
+  if (cambioCoord && !cambioBuzon) {
+    const textoCoord = actualCoord.contenido;
+    // Buscamos si la sección de tareas asigna algo explícito para este agente
+    const regexAgente = new RegExp(`\\*\\*${nombreAgente}\\*\\*.*?(🟢\\s*\\*\\*(PROGRAMADA|ACTIVA)|PARTITURA ASIGNADA)`, 'is');
+    const tieneTareaEspecifica = regexAgente.test(textoCoord);
+
+    if (tieneTareaEspecifica) {
+      clearInterval(timer);
+      console.log(`\n============================================================`);
+      console.log(`🔔 [CENTINELA ${nombreAgente}] ¡CONVOCATORIA DETECTADA EN COORDINACIÓN GLOBAL!`);
+      console.log(`📄 Archivo disparador: ${archivoCoord} (huella: ${actualCoord.hash.slice(0, 8)})`);
+      console.log(`============================================================\n`);
+      console.log(extraerUltimaPartitura(textoCoord));
+      console.log(`\n============================================================`);
+      console.log(`👉 ACCIÓN REQUERIDA: Lee ${archivoCoord} y ${archivoBuzon}, ejecuta la partitura asignada.`);
+      process.exit(0);
+    } else {
+      // Cambio en coordinación ajeno a este agente (ej. Antigravity actualizó bitácora o tareas de otro agente)
+      hashCoordAnterior = actualCoord.hash;
+      console.log(`[CENTINELA ${nombreAgente}] [Ciclo ${ciclos}] Actualización en ${archivoCoord} sin nueva partitura para ${nombreAgente}. Huella actualizada [${actualCoord.hash.slice(0, 8)}]. Guardia activa.`);
     }
   }
 

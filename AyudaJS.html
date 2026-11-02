@@ -3390,6 +3390,952 @@ function abrirVistaPreviaPDFPlaneacionNEM(idPlanOModo) {
   }
 }
 
+/* ======================================================================
+   VINCULACIÓN CURRICULAR CON LIBROS DE TEXTO GRATUITOS SEP FASE 6
+   (FILTRADO ESTRICTO POR ASIGNATURA, GRADO Y PROYECTO ACTIVO)
+   ====================================================================== */
+
+var CATALOGO_LIBROS_SEP_POR_ASIGNATURA_FASE6_ = [
+  /* ==================== 1.° GRADO (COLECCIÓN XIMHAI) ==================== */
+  {
+    id: 'SEP-1-MAT-SAB',
+    grado: 1,
+    asignaturas: ['MATEMATICAS', 'MATEMATICA', 'PENSAMIENTO MATEMATICO'],
+    asignaturaEtiqueta: 'Matemáticas 1°',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Saberes y Pensamiento Científico — Matemáticas (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1SAA.htm',
+    paginasRelevantes: 'Págs. 14-48 (Fracciones y decimales en la comunidad), Págs. 112-145 (Proporcionalidad y álgebra), Págs. 198-236 (Geometría y azar)',
+    capitulos: [
+      { tema: 'Conversión de fracciones y decimales, recta numérica y comparación en la comunidad', paginas: 'Págs. 14-48', keywords: ['fraccion', 'decimal', 'racional', 'recta', 'compar', 'medim'] },
+      { tema: 'Operaciones con números enteros, fracciones y decimales (positivos y negativos)', paginas: 'Págs. 49-85', keywords: ['operacion', 'suma', 'resta', 'multiplicacion', 'division', 'negativ', 'entero'] },
+      { tema: 'Proporcionalidad directa, cálculo de porcentajes e introducción al lenguaje algebraico', paginas: 'Págs. 112-145', keywords: ['proporcion', 'porcentaje', 'tanto por ciento', 'algebra', 'expresion'] },
+      { tema: 'Ecuaciones lineales (Ax+B=C) y sucesiones con progresión aritmética', paginas: 'Págs. 146-182', keywords: ['ecuacion', 'lineal', 'sucesion', 'progresion', 'incognita'] },
+      { tema: 'Ángulos, triángulos, perímetro y área de figuras compuestas y círculo', paginas: 'Págs. 198-222', keywords: ['geometria', 'angulo', 'triangulo', 'perimetro', 'area', 'circulo', 'trazo'] },
+      { tema: 'Recolección de datos, tablas de frecuencia, gráficas y medidas de tendencia central', paginas: 'Págs. 223-248', keywords: ['estadistica', 'grafica', 'frecuencia', 'media', 'mediana', 'moda', 'azar', 'probabilidad'] }
+    ],
+    proyectosSugeridos: [
+      'Fracciones y decimales en nuestra comunidad: medimos, comparamos y decidimos',
+      'Presupuesto familiar y porcentajes en el consumo local',
+      'Geometría y medición de espacios escolares'
+    ]
+  },
+  {
+    id: 'SEP-1-MAT-PROY',
+    grado: 1,
+    asignaturas: ['MATEMATICAS', 'MATEMATICA'],
+    asignaturaEtiqueta: 'Matemáticas 1° (Proyectos)',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Nuestro Libro de Proyectos — Indagación STEAM en Matemáticas (Tomo 1 · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1LPA.htm',
+    paginasRelevantes: 'Págs. 92-134 (Proyectos STEAM de medición comunitaria, fracciones, decimales y estadística)',
+    capitulos: [
+      { tema: 'Proyecto STEAM: Medimos, comparamos y decidimos con fracciones y decimales en el entorno', paginas: 'Págs. 92-112', keywords: ['fraccion', 'decimal', 'medim', 'comparam', 'decidim'] },
+      { tema: 'Proyecto STEAM: Estadística, gráficas y proporcionalidad para el bienestar colectivo', paginas: 'Págs. 113-134', keywords: ['estadistica', 'proporcion', 'grafica', 'consumo', 'agua'] }
+    ],
+    proyectosSugeridos: [
+      'Medición y reparto equitativo de recursos comunitarios',
+      'Análisis estadístico de hábitos saludables en 1.er grado'
+    ]
+  },
+  {
+    id: 'SEP-1-BIO-SAB',
+    grado: 1,
+    asignaturas: ['BIOLOGIA', 'CIENCIAS', 'CIENCIAS I'],
+    asignaturaEtiqueta: 'Ciencias I · Biología 1°',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Saberes y Pensamiento Científico — Biología (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1SAA.htm',
+    paginasRelevantes: 'Págs. 50-110 (Célula, sistemas del cuerpo humano y vacunas), Págs. 146-196 (Biodiversidad, ecosistemas y calentamiento global)',
+    capitulos: [
+      { tema: 'La célula como unidad estructural y funcional de los seres vivos y microscopía', paginas: 'Págs. 50-76', keywords: ['celula', 'microscop', 'organelo', 'vida', 'funcion'] },
+      { tema: 'Sistemas nervioso y endocrino, salud sexual, vacunas y prevención de adicciones', paginas: 'Págs. 77-110', keywords: ['sistema', 'nervioso', 'salud', 'vacuna', 'adiccion', 'nutricion', 'cuerpo'] },
+      { tema: 'Biodiversidad local, redes tróficas, ciclos biogeoquímicos y calentamiento global', paginas: 'Págs. 146-196', keywords: ['biodiversidad', 'ecosistema', 'red trofica', 'clima', 'calentamiento', 'especie'] }
+    ],
+    proyectosSugeridos: [
+      'Biodiversidad y herbolaria tradicional en nuestra comunidad',
+      'Prevención de enfermedades metabólicas e infecciosas',
+      'Modelos celulares con materiales reciclados'
+    ]
+  },
+  {
+    id: 'SEP-1-ESP-LEN',
+    grado: 1,
+    asignaturas: ['ESPAÑOL', 'ESPANOL', 'LENGUA MATERNA'],
+    asignaturaEtiqueta: 'Español 1°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Español (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1LEA.htm',
+    paginasRelevantes: 'Págs. 12-68 (Diversidad lingüística, narrativas y memoria colectiva), Págs. 110-165 (Textos informativos y periódico escolar)',
+    capitulos: [
+      { tema: 'La diversidad de lenguas y su uso en la comunicación familiar, escolar y comunitaria', paginas: 'Págs. 12-38', keywords: ['diversidad', 'lengua', 'identidad', 'variante', 'indigena'] },
+      { tema: 'Géneros literarios, narrativas de la comunidad, mitos, leyendas y memoria colectiva', paginas: 'Págs. 39-84', keywords: ['cuento', 'novela', 'narrativa', 'literatura', 'leyenda', 'poesia'] },
+      { tema: 'Textos informativos, investigación documental, divulgación y periódico escolar', paginas: 'Págs. 110-165', keywords: ['informativo', 'noticia', 'periodico', 'investigacion', 'ficha', 'resumen'] }
+    ],
+    proyectosSugeridos: [
+      'Antología de narrativas y memoria oral de la comunidad',
+      'El periódico escolar comunitario y verificación de noticias',
+      'Círculo de lectura dialógica'
+    ]
+  },
+  {
+    id: 'SEP-1-ESP-ML',
+    grado: 1,
+    asignaturas: ['ESPAÑOL', 'ESPANOL', 'LENGUA MATERNA', 'ARTES', 'LECTURA'],
+    asignaturaEtiqueta: 'Español / Artes 1°',
+    campo: 'Lenguajes',
+    titulo: 'Múltiples Lenguajes (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1MLA.htm',
+    paginasRelevantes: 'Págs. 8-158 (Antología de lecturas literarias, visuales, culturales y de divulgación)',
+    capitulos: [
+      { tema: 'Relatos literarios, crónicas visuales y patrimonio cultural de México', paginas: 'Págs. 8-78', keywords: ['lectura', 'comprension', 'relato', 'cultura', 'arte'] },
+      { tema: 'Textos discontinuos, infografías, divulgación y apreciación estética', paginas: 'Págs. 79-158', keywords: ['infografia', 'estetica', 'ensayo', 'divulgacion'] }
+    ],
+    proyectosSugeridos: [
+      'Tertulia literaria con lecturas de Múltiples Lenguajes',
+      'Galería comentada de texto e imagen'
+    ]
+  },
+  {
+    id: 'SEP-1-ING-LEN',
+    grado: 1,
+    asignaturas: ['INGLES', 'LENGUA EXTRANJERA'],
+    asignaturaEtiqueta: 'Inglés 1°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Lengua Extranjera: Inglés (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1LEA.htm',
+    paginasRelevantes: 'Págs. 166-225 (Diversidad lingüística en inglés, biografías, relatos breves y glosarios bilingües)',
+    capitulos: [
+      { tema: 'Personal introductions, community profiles & linguistic diversity in English', paginas: 'Págs. 166-192', keywords: ['profile', 'introduction', 'verb to be', 'community', 'present'] },
+      { tema: 'Short stories, cultural traditions & bilingual glossaries for school life', paginas: 'Págs. 193-225', keywords: ['story', 'glossary', 'bilingual', 'culture', 'reading'] }
+    ],
+    proyectosSugeridos: [
+      'Bilingual Community Poster & Cultural Exchange',
+      'Illustrated Short Story & Glossary in English'
+    ]
+  },
+  {
+    id: 'SEP-1-ART-LEN',
+    grado: 1,
+    asignaturas: ['ARTES'],
+    asignaturaEtiqueta: 'Artes 1°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Artes y Expresión Estética (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1LEA.htm',
+    paginasRelevantes: 'Págs. 226-278 (Manifestaciones artísticas comunitarias, cuerpo, espacio, tiempo y patrimonio)',
+    capitulos: [
+      { tema: 'Identidad, sentido de pertenencia y manifestaciones artísticas de la comunidad', paginas: 'Págs. 226-252', keywords: ['identidad', 'manifestacion', 'visual', 'musica', 'danza', 'teatro'] },
+      { tema: 'Elementos de las artes (forma, color, sonido, movimiento) en soluciones creativas', paginas: 'Págs. 253-278', keywords: ['color', 'sonido', 'cuerpo', 'espacio', 'mural', 'escultura'] }
+    ],
+    proyectosSugeridos: [
+      'Mural o instalación colectiva sobre la identidad del grupo',
+      'Paisaje sonoro y corporal de nuestra escuela'
+    ]
+  },
+  {
+    id: 'SEP-1-GEO-ENS',
+    grado: 1,
+    asignaturas: ['GEOGRAFIA'],
+    asignaturaEtiqueta: 'Geografía 1°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Geografía (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1ETA.htm',
+    paginasRelevantes: 'Págs. 14-88 (Espacio geográfico, cartografía, placas tectónicas, cuencas y clima), Págs. 89-142 (Población, migración, producción y riesgos)',
+    capitulos: [
+      { tema: 'El espacio geográfico como construcción social, categorías de análisis y representaciones cartográficas', paginas: 'Págs. 14-42', keywords: ['espacio geografico', 'mapa', 'cartografia', 'escala', 'coordenada', 'territorio'] },
+      { tema: 'Relieve, placas tectónicas, sismicidad, vulcanismo, aguas continentales/oceánicas y regiones bioclimáticas', paginas: 'Págs. 43-88', keywords: ['placa', 'relieve', 'sismo', 'volcan', 'agua', 'cuenca', 'clima', 'biodiversidad'] },
+      { tema: 'Crecimiento y distribución de la población, migración, desigualdad socioeconómica y prevención de desastres', paginas: 'Págs. 89-142', keywords: ['poblacion', 'migracion', 'riesgo', 'desastre', 'vulnerabilidad', 'sustentable', 'suelo'] }
+    ],
+    proyectosSugeridos: [
+      'Croquis y cartografía participativa del entorno escolar en Nuevo León',
+      'Atlas escolar de prevención de riesgos hidrometeorológicos y cuidado del agua',
+      'Análisis de flujos migratorios y diversidad cultural en la comunidad'
+    ]
+  },
+  {
+    id: 'SEP-1-HIS-ENS',
+    grado: 1,
+    asignaturas: ['HISTORIA', 'HISTORIA I'],
+    asignaturaEtiqueta: 'Historia 1°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Historia (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1ETA.htm',
+    paginasRelevantes: 'Págs. 144-224 (Albores de la humanidad, pueblos antiguos, Mesoamérica, pueblos originarios y afromexicanos)',
+    capitulos: [
+      { tema: 'Los albores de la humanidad, fuentes históricas, Mesoamérica y pueblos antiguos de México', paginas: 'Págs. 144-184', keywords: ['humanidad', 'fuente', 'mesoamerica', 'prehispanico', 'antiguo', 'mito'] },
+      { tema: 'La conformación de las metrópolis, pueblos indígenas y afromexicanos, resistencias y derechos', paginas: 'Págs. 185-224', keywords: ['indigena', 'afromexicano', 'metropoli', 'colonia', 'resistencia', 'discriminacion'] }
+    ],
+    proyectosSugeridos: [
+      'Museo escolar de fuentes históricas y memoria comunitaria',
+      'Herencia cultural de los pueblos originarios de México y el noreste'
+    ]
+  },
+  {
+    id: 'SEP-1-FCE-ENS',
+    grado: 1,
+    asignaturas: ['FORMACION CIVICA Y ETICA', 'FORMACION CIVICA', 'FCYE', 'CIVICA'],
+    asignaturaEtiqueta: 'Formación Cívica y Ética 1°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Formación Cívica y Ética (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1ETA.htm',
+    paginasRelevantes: 'Págs. 226-298 (Identidades juveniles, derechos humanos, cultura de paz, igualdad de género y democracia)',
+    capitulos: [
+      { tema: 'Grupos sociales y culturales en la conformación de las identidades juveniles y derechos humanos', paginas: 'Págs. 226-260', keywords: ['identidad', 'juvenil', 'derecho', 'dignidad', 'libertad', 'igualdad'] },
+      { tema: 'Cultura de paz, resolución no violenta de conflictos, igualdad de género y normas democráticas', paginas: 'Págs. 261-298', keywords: ['paz', 'conflicto', 'violencia', 'genero', 'democracia', 'ley', 'acuerdo'] }
+    ],
+    proyectosSugeridos: [
+      'Acuerdos de convivencia pacífica y mediación escolar',
+      'Campaña por los derechos humanos y la igualdad sustantiva'
+    ]
+  },
+  {
+    id: 'SEP-1-TEC-DHC',
+    grado: 1,
+    asignaturas: ['TECNOLOGIA', 'INFORMATICA', 'OFIMATICA', 'TALLER'],
+    asignaturaEtiqueta: 'Tecnología 1°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Tecnología (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1HUA.htm',
+    paginasRelevantes: 'Págs. 12-88 (Herramientas, máquinas e instrumentos, materiales, energía y comunicación técnica)',
+    capitulos: [
+      { tema: 'Herramientas, máquinas e instrumentos como extensión corporal en la satisfacción de intereses y necesidades', paginas: 'Págs. 12-48', keywords: ['herramienta', 'maquina', 'instrumento', 'tecnica', 'proceso'] },
+      { tema: 'Materiales, usos e implicaciones de la energía y representación gráfica / comunicación técnica', paginas: 'Págs. 49-88', keywords: ['material', 'energia', 'comunicacion tecnica', 'croquis', 'algoritmo', 'computadora'] }
+    ],
+    proyectosSugeridos: [
+      'Soluciones técnicas artesanales y digitales para necesidades del aula',
+      'Uso responsable de materiales y energía en procesos técnicos'
+    ]
+  },
+  {
+    id: 'SEP-1-EDF-DHC',
+    grado: 1,
+    asignaturas: ['EDUCACION FISICA'],
+    asignaturaEtiqueta: 'Educación Física 1°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Educación Física (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1HUA.htm',
+    paginasRelevantes: 'Págs. 90-148 (Capacidades, habilidades y destrezas motrices, juego limpio y estilos de vida activos)',
+    capitulos: [
+      { tema: 'Capacidades, habilidades y destrezas motrices, potencialidades cognitivas y expresivas', paginas: 'Págs. 90-118', keywords: ['motriz', 'capacidad', 'habilidad', 'destreza', 'cuerpo', 'movimiento'] },
+      { tema: 'Estilos de vida activos y saludables, pensamiento lúdico, estratégico y creativo', paginas: 'Págs. 119-148', keywords: ['juego', 'deporte', 'estrategia', 'saludable', 'cooperativo', 'inclusion'] }
+    ],
+    proyectosSugeridos: [
+      'Torneo inclusivo de juegos modificados y cooperativos',
+      'Circuito de activación física y vida saludable escolar'
+    ]
+  },
+  {
+    id: 'SEP-1-TUT-DHC',
+    grado: 1,
+    asignaturas: ['TUTORIA', 'EDUCACION SOCIOEMOCIONAL', 'SOCIOEMOCIONAL'],
+    asignaturaEtiqueta: 'Tutoría y Ed. Socioemocional 1°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Tutoría y Educación Socioemocional (Colección Ximhai · 1.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S1HUA.htm',
+    paginasRelevantes: 'Págs. 150-218 (Autoconocimiento, regulación de emociones, empatía y proyecto de vida)',
+    capitulos: [
+      { tema: 'Formas de ser, pensar, actuar y relacionarse; los sentimientos y su influencia en la toma de decisiones', paginas: 'Págs. 150-184', keywords: ['emocion', 'sentimiento', 'autoconocimiento', 'empatia', 'asertividad'] },
+      { tema: 'Construcción del proyecto de vida, prevención de riesgos y bienestar socioemocional', paginas: 'Págs. 185-218', keywords: ['proyecto de vida', 'meta', 'riesgo', 'convivencia', 'bienestar'] }
+    ],
+    proyectosSugeridos: [
+      'Bitácora de regulación emocional y escucha empática en el aula',
+      'Mi proyecto de vida en primer grado de secundaria'
+    ]
+  },
+
+  /* ==================== 2.° GRADO (COLECCIÓN NANAHUATZIN) ==================== */
+  {
+    id: 'SEP-2-MAT-SAB',
+    grado: 2,
+    asignaturas: ['MATEMATICAS', 'MATEMATICA', 'PENSAMIENTO MATEMATICO'],
+    asignaturaEtiqueta: 'Matemáticas 2°',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Saberes y Pensamiento Científico — Matemáticas (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2SAA.htm',
+    paginasRelevantes: 'Págs. 14-60 (Sucesiones cuadráticas, exponentes y álgebra), Págs. 118-165 (Sistemas de ecuaciones 2x2 y proporcionalidad inversa), Págs. 210-252 (Polígonos y dispersión)',
+    capitulos: [
+      { tema: 'Múltiplos, divisores, criterios de divisibilidad, leyes de los exponentes y notación científica', paginas: 'Págs. 14-38', keywords: ['exponente', 'potencia', 'raiz', 'notacion cientifica', 'divisibilidad', 'multiplo'] },
+      { tema: 'Sucesiones cuadráticas y representación algebraica de áreas y perímetros', paginas: 'Págs. 39-72', keywords: ['sucesion', 'cuadratica', 'algebra', 'expresion', 'area'] },
+      { tema: 'Sistemas de dos ecuaciones lineales con dos incógnitas (2x2) y proporcionalidad inversa', paginas: 'Págs. 118-165', keywords: ['sistema', 'ecuacion', 'incognita', 'inversa', 'funcion', 'grafica'] },
+      { tema: 'Construcción de polígonos regulares, teselados, conversión de unidades y medidas de dispersión', paginas: 'Págs. 210-252', keywords: ['poligono', 'teselado', 'angulo', 'desviacion', 'dispersion', 'probabilidad'] }
+    ],
+    proyectosSugeridos: [
+      'Sistemas de ecuaciones 2x2 aplicados al ahorro de agua y energía',
+      ' Geometría de teselados y polígonos regulares en el arte comunitario',
+      'Análisis de medidas de tendencia central y desviación media'
+    ]
+  },
+  {
+    id: 'SEP-2-MAT-PROY',
+    grado: 2,
+    asignaturas: ['MATEMATICAS', 'MATEMATICA', 'FISICA', 'CIENCIAS'],
+    asignaturaEtiqueta: 'Matemáticas / Física 2° (Proyectos)',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Nuestro Libro de Proyectos — Indagación STEAM en Matemáticas y Física (Tomo 2 · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2LPA.htm',
+    paginasRelevantes: 'Págs. 88-145 (Proyectos STEAM de modelación matemática, fuerzas, movimiento y sustentabilidad)',
+    capitulos: [
+      { tema: 'Proyecto STEAM: Modelación matemática con sistemas de ecuaciones y funciones en la comunidad', paginas: 'Págs. 88-115', keywords: ['ecuacion', 'funcion', 'modelo', 'proporcion'] },
+      { tema: 'Proyecto STEAM: Energía, movimiento y prototipos sustentables para la escuela', paginas: 'Págs. 116-145', keywords: ['energia', 'fuerza', 'movimiento', 'sustentable'] }
+    ],
+    proyectosSugeridos: [
+      'Modelación matemática del consumo hídrico y energético escolar',
+      'Física y matemáticas del movimiento y seguridad vial'
+    ]
+  },
+  {
+    id: 'SEP-2-FIS-SAB',
+    grado: 2,
+    asignaturas: ['FISICA', 'CIENCIAS', 'CIENCIAS II'],
+    asignaturaEtiqueta: 'Ciencias II · Física 2°',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Saberes y Pensamiento Científico — Física (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2SAA.htm',
+    paginasRelevantes: 'Págs. 74-116 (Cinemática, leyes de Newton, presión y fluidos), Págs. 166-208 (Energía térmica, electricidad, magnetismo y universo)',
+    capitulos: [
+      { tema: 'Interacciones en fenómenos relacionados con la fuerza y el movimiento (Leyes de Newton, velocidad y aceleración)', paginas: 'Págs. 74-98', keywords: ['fuerza', 'movimiento', 'newton', 'velocidad', 'aceleracion', 'friccion'] },
+      { tema: 'Principios de Pascal y de Arquímedes, presión hidrostática y estados de agregación de la materia', paginas: 'Págs. 99-116', keywords: ['pascal', 'arquimedes', 'presion', 'fluido', 'materia', 'temperatura'] },
+      { tema: 'Saberes y prácticas para el aprovechamiento de energías, electricidad, magnetismo y composición del Universo', paginas: 'Págs. 166-208', keywords: ['energia', 'electricidad', 'magnetismo', 'solar', 'limpia', 'universo', 'onda'] }
+    ],
+    proyectosSugeridos: [
+      'Prototipo de aprovechamiento de energías limpias y solares en la escuela',
+      'Física de las máquinas hidráulicas (Principio de Pascal)',
+      'Circuitos eléctricos eficientes y prevención de riesgos'
+    ]
+  },
+  {
+    id: 'SEP-2-ESP-LEN',
+    grado: 2,
+    asignaturas: ['ESPAÑOL', 'ESPANOL', 'LENGUA MATERNA'],
+    asignaturaEtiqueta: 'Español 2°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Español (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2LEA.htm',
+    paginasRelevantes: 'Págs. 14-75 (Textos argumentativos, ensayo, variantes del español y crónica), Págs. 118-172 (Poesía y teatro comunitario)',
+    capitulos: [
+      { tema: 'Textos argumentativos, artículos de opinión, ensayo crítico y variantes lingüísticas del español', paginas: 'Págs. 14-75', keywords: ['argumento', 'opinion', 'ensayo', 'variante', 'debate'] },
+      { tema: 'Crónica periodística y literaria, poesía, guion teatral y campañas de comunicación social', paginas: 'Págs. 118-172', keywords: ['cronica', 'poesia', 'teatro', 'campaña', 'biografia'] }
+    ],
+    proyectosSugeridos: [
+      'Revista de crónicas y ensayos sobre nuestra comunidad',
+      'Lectura dramatizada y puesta en escena escolar'
+    ]
+  },
+  {
+    id: 'SEP-2-ING-LEN',
+    grado: 2,
+    asignaturas: ['INGLES', 'LENGUA EXTRANJERA'],
+    asignaturaEtiqueta: 'Inglés 2°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Lengua Extranjera: Inglés (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2LEA.htm',
+    paginasRelevantes: 'Págs. 174-230 (Past experiences, intercultural comparisons, public service announcements & literary texts in English)',
+    capitulos: [
+      { tema: 'Narrating past events, biographies & intercultural comparisons in English', paginas: 'Págs. 174-202', keywords: ['past', 'biography', 'comparison', 'intercultural'] },
+      { tema: 'Public Service Announcements (PSA), dialogues & community problem solving in English', paginas: 'Págs. 203-230', keywords: ['psa', 'campaign', 'dialogue', 'problem'] }
+    ],
+    proyectosSugeridos: [
+      'English Public Service Announcement (PSA) for School Well-being',
+      'Intercultural Magazine & Timeline in English'
+    ]
+  },
+  {
+    id: 'SEP-2-ART-LEN',
+    grado: 2,
+    asignaturas: ['ARTES'],
+    asignaturaEtiqueta: 'Artes 2°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Artes (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2LEA.htm',
+    paginasRelevantes: 'Págs. 232-284 (Diversidad de lenguajes artísticos, memoria colectiva e intervención estética del entorno)',
+    capitulos: [
+      { tema: 'Expresión artística para erradicar la violencia y fortalecer la memoria colectiva', paginas: 'Págs. 232-284', keywords: ['arte', 'mural', 'memoria', 'estetica', 'paz'] }
+    ],
+    proyectosSugeridos: [
+      'Intervención artística por la cultura de paz en la secundaria'
+    ]
+  },
+  {
+    id: 'SEP-2-HIS-ENS',
+    grado: 2,
+    asignaturas: ['HISTORIA', 'HISTORIA II', 'HISTORIA DE MEXICO'],
+    asignaturaEtiqueta: 'Historia 2°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Historia de México (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2ETA.htm',
+    paginasRelevantes: 'Págs. 14-168 (Virreinato, gesta de Independencia, Reforma, Porfiriato y Revolución Mexicana)',
+    capitulos: [
+      { tema: 'La conformación de la Nueva España, sistema de castas, economía virreinal y movimientos de resistencia', paginas: 'Págs. 14-64', keywords: ['virreinato', 'nueva españa', 'colonia', 'conquista'] },
+      { tema: 'Las gestas de resistencia y el movimiento de Independencia, Estado nacional y Leyes de Reforma', paginas: 'Págs. 65-115', keywords: ['independencia', 'reforma', 'juarez', 'soberania', 'republica'] },
+      { tema: 'El Porfiriato, la Revolución Mexicana de 1910, la Constitución de 1917 y el México contemporáneo', paginas: 'Págs. 116-168', keywords: ['porfiriato', 'revolucion', 'constitucion', '1910', '1917'] }
+    ],
+    proyectosSugeridos: [
+      'Gaceta histórica: de la Independencia a la Revolución Mexicana',
+      'Línea del tiempo mural de los derechos sociales en la Constitución de 1917'
+    ]
+  },
+  {
+    id: 'SEP-2-FCE-ENS',
+    grado: 2,
+    asignaturas: ['FORMACION CIVICA Y ETICA', 'FORMACION CIVICA', 'FCYE', 'CIVICA'],
+    asignaturaEtiqueta: 'Formación Cívica y Ética 2°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Formación Cívica y Ética (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2ETA.htm',
+    paginasRelevantes: 'Págs. 170-264 (Derechos humanos, interculturalidad crítica, igualdad de género, Estado de derecho y democracia)',
+    capitulos: [
+      { tema: 'Desigualdades socioeconómicas, interculturalidad, violencia de género y cultura de paz', paginas: 'Págs. 170-218', keywords: ['desigualdad', 'intercultural', 'genero', 'paz', 'derecho'] },
+      { tema: 'Principios y valores de la cultura democrática, división de poderes y participación ciudadana', paginas: 'Págs. 219-264', keywords: ['democracia', 'poderes', 'ley', 'autoridad', 'ciudadania', 'transparencia'] }
+    ],
+    proyectosSugeridos: [
+      'Observatorio estudiantil de convivencia democrática y cultura de paz',
+      'Foro sobre igualdad sustantiva y prevención de violencias'
+    ]
+  },
+  {
+    id: 'SEP-2-TEC-DHC',
+    grado: 2,
+    asignaturas: ['TECNOLOGIA', 'INFORMATICA', 'OFIMATICA', 'TALLER'],
+    asignaturaEtiqueta: 'Tecnología 2°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Tecnología (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2HUA.htm',
+    paginasRelevantes: 'Págs. 14-94 (Sistemas técnicos, procesamiento de datos, hojas de cálculo, energías limpias y pensamiento estratégico)',
+    capitulos: [
+      { tema: 'Factores sociales, culturales y naturales en los procesos técnicos; análisis sistémico de herramientas', paginas: 'Págs. 14-52', keywords: ['sistema tecnico', 'proceso', 'impacto ambiental', 'herramienta'] },
+      { tema: 'Procesamiento de datos, representación técnica, hojas de cálculo e innovación sustentable', paginas: 'Págs. 53-94', keywords: ['datos', 'excel', 'calculo', 'grafica', 'innovacion', 'energia'] }
+    ],
+    proyectosSugeridos: [
+      'Sistematización de datos comunitarios con hojas de cálculo y gráficas',
+      'Mejora sustentable de un proceso técnico escolar'
+    ]
+  },
+  {
+    id: 'SEP-2-EDF-DHC',
+    grado: 2,
+    asignaturas: ['EDUCACION FISICA'],
+    asignaturaEtiqueta: 'Educación Física 2°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Educación Física (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2HUA.htm',
+    paginasRelevantes: 'Págs. 96-152 (Disponibilidad corporal, iniciación deportiva colaborativa y tácticas de juego)',
+    capitulos: [
+      { tema: 'Potencialidades motrices, pensamiento estratégico en deportes alternativos y vida activa', paginas: 'Págs. 96-152', keywords: ['deporte', 'tactica', 'estrategia', 'motriz', 'salud'] }
+    ],
+    proyectosSugeridos: [
+      'Liga cooperativa de deportes alternativos e inclusivos'
+    ]
+  },
+  {
+    id: 'SEP-2-TUT-DHC',
+    grado: 2,
+    asignaturas: ['TUTORIA', 'EDUCACION SOCIOEMOCIONAL', 'SOCIOEMOCIONAL'],
+    asignaturaEtiqueta: 'Tutoría y Ed. Socioemocional 2°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Tutoría y Educación Socioemocional (Colección Nanahuatzin · 2.° Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S2HUA.htm',
+    paginasRelevantes: 'Págs. 154-220 (Identidad colectiva, toma de decisiones autónomas, prevención de riesgos y bienestar)',
+    capitulos: [
+      { tema: 'Autonomía socioemocional, prevención de riesgos en la adolescencia y relaciones asertivas', paginas: 'Págs. 154-220', keywords: ['autonomia', 'emocion', 'decision', 'riesgo', 'empatia'] }
+    ],
+    proyectosSugeridos: [
+      'Red de apoyo socioemocional y prevención de riesgos entre pares'
+    ]
+  },
+
+  /* ==================== 3.° GRADO (COLECCIÓN SK'ASOLIL) ==================== */
+  {
+    id: 'SEP-3-MAT-SAB',
+    grado: 3,
+    asignaturas: ['MATEMATICAS', 'MATEMATICA', 'PENSAMIENTO MATEMATICO'],
+    asignaturaEtiqueta: 'Matemáticas 3°',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Saberes y Pensamiento Científico — Matemáticas (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3SAA.htm',
+    paginasRelevantes: 'Págs. 14-64 (Ecuaciones cuadráticas y funciones), Págs. 128-174 (Teorema de Pitágoras, semejanza y trigonometría), Págs. 216-258 (Sólidos de revolución y probabilidad)',
+    capitulos: [
+      { tema: 'Ecuaciones cuadráticas (factorización y fórmula general), funciones cuadráticas y variación', paginas: 'Págs. 14-64', keywords: ['cuadratica', 'formula general', 'factorizacion', 'funcion', 'parabola', 'algebra'] },
+      { tema: 'Congruencia y semejanza de triángulos, Teorema de Pitágoras y razones trigonométricas (seno, coseno, tangente)', paginas: 'Págs. 128-174', keywords: ['pitagoras', 'trigonometria', 'seno', 'coseno', 'tangente', 'semejanza', 'triangulo'] },
+      { tema: 'Cuerpos geométricos, desarrollos planos, volumen de cilindros, conos y esferas, y probabilidad de eventos', paginas: 'Págs. 216-258', keywords: ['volumen', 'cilindro', 'cono', 'esfera', 'probabilidad', 'evento'] }
+    ],
+    proyectosSugeridos: [
+      'Teorema de Pitágoras y trigonometría para medir alturas y accesibilidad escolar',
+      'Modelación con ecuaciones cuadráticas y volumen de captación pluvial',
+      'Probabilidad de eventos independientes y mutuamente excluyentes'
+    ]
+  },
+  {
+    id: 'SEP-3-MAT-PROY',
+    grado: 3,
+    asignaturas: ['MATEMATICAS', 'MATEMATICA', 'QUIMICA', 'CIENCIAS'],
+    asignaturaEtiqueta: 'Matemáticas / Química 3° (Proyectos)',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Nuestro Libro de Proyectos — Indagación STEAM en Matemáticas y Química (Tomo 3 · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3LPA.htm',
+    paginasRelevantes: 'Págs. 95-152 (Proyectos STEAM de modelación cuadrática, trigonometría, mezclas y sustentabilidad)',
+    capitulos: [
+      { tema: 'Proyecto STEAM: Geometría tridimensional, trigonometría y funciones en obras comunitarias', paginas: 'Págs. 95-122', keywords: ['trigonometria', 'volumen', 'cuadratica', 'pitagoras'] },
+      { tema: 'Proyecto STEAM: Proporciones, concentraciones químicas y cuidado ambiental', paginas: 'Págs. 123-152', keywords: ['quimica', 'concentracion', 'mezcla', 'ambiental'] }
+    ],
+    proyectosSugeridos: [
+      'Diseño geométrico de cisternas o contenedores sustentables (cilindros y conos)',
+      'Estudio estadístico y matemático de contaminantes y consumo en la comunidad'
+    ]
+  },
+  {
+    id: 'SEP-3-QUI-SAB',
+    grado: 3,
+    asignaturas: ['QUIMICA', 'CIENCIAS', 'CIENCIAS III'],
+    asignaturaEtiqueta: 'Ciencias III · Química 3°',
+    campo: 'Saberes y Pensamiento Científico',
+    titulo: 'Saberes y Pensamiento Científico — Química (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3SAA.htm',
+    paginasRelevantes: 'Págs. 66-126 (Propiedades de la materia, mezclas, modelos atómicos y Tabla Periódica), Págs. 176-214 (Enlaces, reacciones químicas, ácidos-bases y redox)',
+    capitulos: [
+      { tema: 'Propiedades extensivas e intensivas de la materia, composición de mezclas y métodos de separación', paginas: 'Págs. 66-92', keywords: ['materia', 'mezcla', 'separacion', 'concentracion', 'propiedad'] },
+      { tema: 'La Tabla Periódica: criterios de clasificación de los elementos químicos, modelos de Bohr y de Lewis', paginas: 'Págs. 93-126', keywords: ['tabla periodica', 'elemento', 'atomo', 'bohr', 'lewis', 'electronegatividad'] },
+      { tema: 'Compuestos iónicos y moleculares, reacciones químicas, ley de conservación de la materia, ácidos-bases y redox', paginas: 'Págs. 176-214', keywords: ['reaccion', 'enlace', 'acido', 'base', 'ph', 'redox', 'oxidacion', 'biomolecula'] }
+    ],
+    proyectosSugeridos: [
+      'Química del agua: métodos de separación de mezclas y medición de pH',
+      'La Tabla Periódica en la salud, la industria y el medio ambiente de Nuevo León',
+      'Reacciones de óxido-reducción y energía química limpia'
+    ]
+  },
+  {
+    id: 'SEP-3-ESP-LEN',
+    grado: 3,
+    asignaturas: ['ESPAÑOL', 'ESPANOL', 'LENGUA MATERNA'],
+    asignaturaEtiqueta: 'Español 3°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Español (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3LEA.htm',
+    paginasRelevantes: 'Págs. 14-82 (Debate crítico, ensayo argumentativo, divulgación científica y análisis de medios), Págs. 124-180 (Creación literaria y dramaturgia)',
+    capitulos: [
+      { tema: 'Textos de divulgación científica, debate plural, ensayo argumentativo y mensajes para erradicar la violencia', paginas: 'Págs. 14-82', keywords: ['debate', 'ensayo', 'divulgacion', 'argumento', 'violencia'] },
+      { tema: 'Creaciones literarias tradicionales y contemporáneas, teatro social y patrimonio lingüístico', paginas: 'Págs. 124-180', keywords: ['literatura', 'teatro', 'poesia', 'narrativa', 'lengua'] }
+    ],
+    proyectosSugeridos: [
+      'Panel de debate y feria de divulgación científica escolar',
+      'Antología de ensayos críticos de 3.er grado'
+    ]
+  },
+  {
+    id: 'SEP-3-ING-LEN',
+    grado: 3,
+    asignaturas: ['INGLES', 'LENGUA EXTRANJERA'],
+    asignaturaEtiqueta: 'Inglés 3°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Lengua Extranjera: Inglés (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3LEA.htm',
+    paginasRelevantes: 'Págs. 182-238 (Debates in English, cultural essays, historical events & artistic expressions)',
+    capitulos: [
+      { tema: 'Arguments, debates, cultural essays & community proposals in English', paginas: 'Págs. 182-238', keywords: ['debate', 'essay', 'culture', 'future', 'proposal'] }
+    ],
+    proyectosSugeridos: [
+      'Youth Debate & Cultural Exhibition in English'
+    ]
+  },
+  {
+    id: 'SEP-3-ART-LEN',
+    grado: 3,
+    asignaturas: ['ARTES'],
+    asignaturaEtiqueta: 'Artes 3°',
+    campo: 'Lenguajes',
+    titulo: 'Lenguajes — Artes (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3LEA.htm',
+    paginasRelevantes: 'Págs. 240-292 (Proyectos artísticos colectivos, arte contemporáneo y transformación comunitaria)',
+    capitulos: [
+      { tema: 'Proyectos artísticos interdisciplinarios y difusión del patrimonio cultural comunitario', paginas: 'Págs. 240-292', keywords: ['arte', 'exposicion', 'colectivo', 'cultura'] }
+    ],
+    proyectosSugeridos: [
+      'Muestra artística de cierre de educación secundaria'
+    ]
+  },
+  {
+    id: 'SEP-3-HIS-ENS',
+    grado: 3,
+    asignaturas: ['HISTORIA', 'HISTORIA III', 'HISTORIA UNIVERSAL'],
+    asignaturaEtiqueta: 'Historia 3°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Historia Universal y Contemporánea (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3ETA.htm',
+    paginasRelevantes: 'Págs. 14-168 (Revoluciones modernas, Imperialismo, Primera y Segunda Guerra Mundial, Guerra Fría y mundo actual)',
+    capitulos: [
+      { tema: 'Las revoluciones modernas (Industrial, Francesa, Independencia de las 13 Colonias) y el imperialismo', paginas: 'Págs. 14-78', keywords: ['revolucion industrial', 'francesa', 'ilustracion', 'imperialismo', 'capitalismo'] },
+      { tema: 'Las tensiones en el siglo XX: Primera y Segunda Guerra Mundial, fascismo, Guerra Fría y movimientos sociales', paginas: 'Págs. 79-168', keywords: ['guerra mundial', 'siglo xx', 'guerra fria', 'onu', 'movimiento social', 'globalizacion'] }
+    ],
+    proyectosSugeridos: [
+      'Coloquio histórico sobre derechos humanos y lecciones del siglo XX',
+      'Documental o pódcast sobre movimientos sociales contemporáneos'
+    ]
+  },
+  {
+    id: 'SEP-3-FCE-ENS',
+    grado: 3,
+    asignaturas: ['FORMACION CIVICA Y ETICA', 'FORMACION CIVICA', 'FCYE', 'CIVICA'],
+    asignaturaEtiqueta: 'Formación Cívica y Ética 3°',
+    campo: 'Ética, Naturaleza y Sociedades',
+    titulo: 'Ética, Naturaleza y Sociedades — Formación Cívica y Ética (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3ETA.htm',
+    paginasRelevantes: 'Págs. 170-268 (Derechos humanos en México y el mundo, mecanismos de participación democrática, ONU y cultura de paz)',
+    capitulos: [
+      { tema: 'Instituciones nacionales e internacionales de defensa de los derechos humanos y cultura de la legalidad', paginas: 'Págs. 170-218', keywords: ['derechos humanos', 'onu', 'cndh', 'justicia', 'legalidad', 'paz'] },
+      { tema: 'Retos de la democracia, participación juvenil, rendición de cuentas y desarrollo sustentable', paginas: 'Págs. 219-268', keywords: ['democracia', 'participacion', 'transparencia', 'sustentable', 'igualdad'] }
+    ],
+    proyectosSugeridos: [
+      'Cabildo juvenil y proyecto de participación ciudadana escolar',
+      'Modelo escolar de mediación y defensa de derechos humanos'
+    ]
+  },
+  {
+    id: 'SEP-3-TEC-DHC',
+    grado: 3,
+    asignaturas: ['TECNOLOGIA', 'INFORMATICA', 'OFIMATICA', 'TALLER'],
+    asignaturaEtiqueta: 'Tecnología 3°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Tecnología e Innovación (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3HUA.htm',
+    paginasRelevantes: 'Págs. 14-96 (Innovación técnica, evaluación de sistemas tecnológicos, energías sustentables y diseño de proyectos)',
+    capitulos: [
+      { tema: 'Innovación técnica, desarrollo sustentable y evaluación de sistemas tecnológicos en la comunidad', paginas: 'Págs. 14-96', keywords: ['innovacion', 'evaluacion', 'sustentable', 'proyecto tecnico', 'automatizacion'] }
+    ],
+    proyectosSugeridos: [
+      'Proyecto de innovación tecnológica sustentable para la comunidad escolar'
+    ]
+  },
+  {
+    id: 'SEP-3-EDF-DHC',
+    grado: 3,
+    asignaturas: ['EDUCACION FISICA'],
+    asignaturaEtiqueta: 'Educación Física 3°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Educación Física (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3HUA.htm',
+    paginasRelevantes: 'Págs. 98-154 (Autonomía motriz, organización de torneos recreativos y proyecto de vida activo)',
+    capitulos: [
+      { tema: 'Diseño y organización de eventos deportivos recreativos e inclusivos en la comunidad escolar', paginas: 'Págs. 98-154', keywords: ['torneo', 'autonomia', 'saludable', 'deporte'] }
+    ],
+    proyectosSugeridos: [
+      'Olimpiada recreativa e inclusiva organizada por 3.er grado'
+    ]
+  },
+  {
+    id: 'SEP-3-TUT-DHC',
+    grado: 3,
+    asignaturas: ['TUTORIA', 'EDUCACION SOCIOEMOCIONAL', 'SOCIOEMOCIONAL'],
+    asignaturaEtiqueta: 'Tutoría y Ed. Socioemocional 3°',
+    campo: 'De lo Humano y lo Comunitario',
+    titulo: 'De lo Humano y lo Comunitario — Tutoría y Educación Socioemocional (Colección Sk\'asolil · 3.er Grado)',
+    editorial: 'SEP / CONALITEG',
+    urlConaliteg: 'https://libros.conaliteg.gob.mx/2023/S3HUA.htm',
+    paginasRelevantes: 'Págs. 156-224 (Proyecto de vida hacia la educación media superior, toma de decisiones y bienestar integral)',
+    capitulos: [
+      { tema: 'Horizonte vocacional, transición a educación media superior y proyecto de vida integral', paginas: 'Págs. 156-224', keywords: ['vocacional', 'preparatoria', 'proyecto de vida', 'decision'] }
+    ],
+    proyectosSugeridos: [
+      'Feria de orientación vocacional y proyecto de vida hacia el bachillerato'
+    ]
+  }
+];
+
+if (typeof window !== 'undefined') {
+  window.CATALOGO_LIBROS_SEP_FASE6_ = CATALOGO_LIBROS_SEP_POR_ASIGNATURA_FASE6_;
+}
+
+function _normAsigLibroSEP_(txt) {
+  return String(txt || '')
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+function obtenerContextoPlanActivoLibrosSEP_() {
+  var cajaSesiones = document.getElementById('cajaSesionesPlanNEM');
+  var enVistaSesiones = !!(cajaSesiones && !cajaSesiones.classList.contains('oculto'));
+  var plan = (typeof planActualNEM !== 'undefined' && planActualNEM) ? planActualNEM : null;
+
+  var asig = '';
+  var gradoRaw = '';
+  var grupo = '';
+  var campo = '';
+  var titulo = '';
+  var pda = '';
+
+  if (enVistaSesiones && plan) {
+    asig = plan.Asignatura || plan.asignatura || '';
+    gradoRaw = plan.Grado || plan.grado || '';
+    grupo = plan.Grupo || plan.grupo || '';
+    campo = plan.CampoFormativo || plan.campoFormativo || '';
+    titulo = plan.Titulo || plan.titulo || '';
+    pda = plan.PDA || plan.pda || plan.ContenidoProgramatico || plan.contenidoProgramatico || '';
+  }
+
+  if (!asig || !gradoRaw) {
+    var subMeta = document.getElementById('subMetaPlanSesiones');
+    if (enVistaSesiones && subMeta && subMeta.textContent) {
+      // Formato: "MATEMATICAS · 1°A · Campo: Saberes y Pensamiento Científico · 3 sesiones de 40 min"
+      var partes = subMeta.textContent.split('·').map(function (s) { return s.trim(); });
+      if (!asig && partes[0]) asig = partes[0];
+      if (!gradoRaw && partes[1]) gradoRaw = partes[1];
+      if (!campo && partes[2] && partes[2].indexOf('Campo:') !== -1) {
+        campo = partes[2].replace(/^Campo:\s*/i, '').trim();
+      }
+    }
+  }
+
+  if (!asig) {
+    asig = (document.getElementById('planAsignatura') && document.getElementById('planAsignatura').value) ||
+           (plan && (plan.Asignatura || plan.asignatura)) || '';
+  }
+  if (!gradoRaw) {
+    gradoRaw = (document.getElementById('planGrado') && document.getElementById('planGrado').value) ||
+               (plan && (plan.Grado || plan.grado)) || '1';
+  }
+  if (!grupo) {
+    grupo = (document.getElementById('planGrupo') && document.getElementById('planGrupo').value) ||
+            (plan && (plan.Grupo || plan.grupo)) || '';
+  }
+  if (!campo) {
+    campo = (document.getElementById('planCampoFormativo') && document.getElementById('planCampoFormativo').value) ||
+            (plan && (plan.CampoFormativo || plan.campoFormativo)) || '';
+  }
+  if (!titulo) {
+    titulo = (document.getElementById('titPlanSesiones') && document.getElementById('titPlanSesiones').textContent) ||
+             (document.getElementById('planTitulo') && document.getElementById('planTitulo').value) || '';
+  }
+
+  var numGrado = parseInt(String(gradoRaw).replace(/[^\d]/g, ''), 10) || 1;
+  if (numGrado < 1 || numGrado > 3) numGrado = 1;
+
+  if (!campo && typeof inferirCampoFormativoPorAsignatura_ === 'function') {
+    var inf = inferirCampoFormativoPorAsignatura_(asig);
+    if (inf && inf.campo) campo = inf.campo;
+  }
+
+  return {
+    asignatura: String(asig || '').trim(),
+    asignaturaNorm: _normAsigLibroSEP_(asig),
+    grado: numGrado,
+    grupo: String(grupo || '').replace(/^[123]°?/i, '').trim(),
+    campo: String(campo || '').trim(),
+    titulo: String(titulo || '').trim(),
+    pda: String(pda || '').trim()
+  };
+}
+
+function filtrarLibrosSEPPorAsignaturaYGrado_(ctx, mostrarTodosGrado) {
+  var c = ctx || obtenerContextoPlanActivoLibrosSEP_();
+  var gradoBuscado = c.grado || 1;
+  var asigNorm = c.asignaturaNorm || '';
+  var campoNorm = _normAsigLibroSEP_(c.campo);
+
+  var delGrado = CATALOGO_LIBROS_SEP_POR_ASIGNATURA_FASE6_.filter(function (lib) {
+    return lib.grado === gradoBuscado;
+  });
+
+  if (mostrarTodosGrado) return delGrado;
+
+  // 1) Coincidencia exacta por asignatura + grado
+  if (asigNorm) {
+    var porAsignatura = delGrado.filter(function (lib) {
+      return (lib.asignaturas || []).some(function (kw) {
+        var kwNorm = _normAsigLibroSEP_(kw);
+        return asigNorm.indexOf(kwNorm) !== -1 || kwNorm.indexOf(asigNorm) !== -1;
+      });
+    });
+    if (porAsignatura.length > 0) return porAsignatura;
+  }
+
+  // 2) Respaldo por Campo Formativo + grado si la asignatura no está especificada
+  if (campoNorm) {
+    var porCampo = delGrado.filter(function (lib) {
+      return _normAsigLibroSEP_(lib.campo) === campoNorm;
+    });
+    if (porCampo.length > 0) return porCampo;
+  }
+
+  return delGrado;
+}
+
+function _indiceCapituloSugeridoParaPlan_(libro, ctx) {
+  if (!libro || !Array.isArray(libro.capitulos) || !libro.capitulos.length) return 0;
+  var textoPlan = _normAsigLibroSEP_((ctx && ctx.titulo ? ctx.titulo : '') + ' ' + (ctx && ctx.pda ? ctx.pda : '')).toLowerCase();
+  if (!textoPlan) return 0;
+  var mejorIdx = 0;
+  var mejorPuntos = 0;
+  libro.capitulos.forEach(function (cap, i) {
+    var pts = 0;
+    (cap.keywords || []).forEach(function (kw) {
+      if (textoPlan.indexOf(_normAsigLibroSEP_(kw).toLowerCase()) !== -1) pts += 2;
+    });
+    if (pts > mejorPuntos) {
+      mejorPuntos = pts;
+      mejorIdx = i;
+    }
+  });
+  return mejorIdx;
+}
+
+function abrirModalLibrosSEP_(mostrarTodosGrado) {
+  var ctx = obtenerContextoPlanActivoLibrosSEP_();
+  var verTodos = !!mostrarTodosGrado;
+  var filtrados = filtrarLibrosSEPPorAsignaturaYGrado_(ctx, verTodos);
+
+  var esc = (typeof escaparHtml === 'function') ? escaparHtml : _escPdf_;
+  var etqAsig = ctx.asignatura || 'Asignatura actual';
+  var etqGradoGrupo = ctx.grado + '°' + (ctx.grupo ? ctx.grupo : '');
+  var etqCampo = ctx.campo || 'SEP Fase 6';
+
+  var bannerHtml =
+    '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">' +
+      '<div>' +
+        '<div style="font-size:11px;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.03em;">🎯 Libros vinculados a la clase que estás planeando</div>' +
+        '<div style="font-size:13px;font-weight:700;color:#0f172a;margin-top:2px;">' +
+          esc(etqAsig) + ' · ' + esc(etqGradoGrupo) + ' <span style="color:#475569;font-weight:600;">(' + esc(etqCampo) + ')</span>' +
+        '</div>' +
+        (ctx.titulo ? '<div style="font-size:11.5px;color:#334155;margin-top:2px;">Proyecto: <strong>' + esc(ctx.titulo) + '</strong></div>' : '') +
+      '</div>' +
+      '<button type="button" onclick="abrirModalLibrosSEP_(' + (verTodos ? 'false' : 'true') + ')" style="background:#ffffff;border:1px solid #93c5fd;color:#1e40af;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">' +
+        (verTodos ? '🎯 Ver sólo libros de ' + esc(etqAsig) + ' (' + ctx.grado + '°)' : '📚 Ver otras asignaturas de ' + ctx.grado + '° grado') +
+      '</button>' +
+    '</div>';
+
+  var itemsHtml = '';
+  filtrados.forEach(function (lib) {
+    var capIdxSug = _indiceCapituloSugeridoParaPlan_(lib, ctx);
+    var selectCapsHtml = '';
+    if (Array.isArray(lib.capitulos) && lib.capitulos.length > 0) {
+      selectCapsHtml = '<div style="margin-top:8px;">' +
+        '<label style="display:block;font-size:11px;font-weight:700;color:#334155;margin-bottom:3px;">Selecciona el bloque o páginas específicas para esta sesión:</label>' +
+        '<select id="selCapLibroSEP_' + esc(lib.id) + '" style="width:100%;padding:6px 8px;font-size:11.5px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;color:#0f172a;">';
+      lib.capitulos.forEach(function (c, cIdx) {
+        var val = c.paginas + ' — ' + c.tema;
+        selectCapsHtml += '<option value="' + esc(val) + '"' + (cIdx === capIdxSug ? ' selected' : '') + '>' +
+          esc(c.paginas + ': ' + c.tema) +
+        '</option>';
+      });
+      selectCapsHtml += '</select></div>';
+    }
+
+    itemsHtml +=
+      '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(15,23,42,0.04);">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">' +
+              '<span style="font-size:10.5px;font-weight:800;color:#ffffff;background:#1d4ed8;padding:2px 8px;border-radius:999px;">' + esc(lib.asignaturaEtiqueta || etqAsig) + '</span>' +
+              '<span style="font-size:10.5px;font-weight:700;color:#1e40af;background:#dbeafe;padding:2px 8px;border-radius:999px;">' + esc(lib.campo) + ' • ' + lib.grado + '.° Grado</span>' +
+              (lib.urlConaliteg ? '<a href="' + esc(lib.urlConaliteg) + '" target="_blank" rel="noopener noreferrer" style="font-size:11px;font-weight:700;color:#0284c7;text-decoration:none;margin-left:auto;">📖 Abrir libro CONALITEG ↗</a>' : '') +
+            '</div>' +
+            '<h4 style="margin:6px 0 3px;font-size:13.5px;color:#0f172a;">' + esc(lib.titulo) + '</h4>' +
+            '<p style="font-size:11.5px;color:#475569;margin:0 0 4px;">Editorial: ' + esc(lib.editorial) + ' | ' + esc(lib.paginasRelevantes) + '</p>' +
+            '<div style="font-size:11px;color:#15803d;font-weight:600;">💡 Proyectos sugeridos: ' + esc((lib.proyectosSugeridos || []).join(' · ')) + '</div>' +
+            selectCapsHtml +
+          '</div>' +
+          '<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">' +
+            '<button type="button" class="btn-soft-primary" onclick="insertarReferenciaLibroSesion_(\'' + esc(lib.id) + '\')" style="font-size:11.5px;font-weight:700;padding:7px 12px;white-space:nowrap;cursor:pointer;">' +
+              '📥 Vincular a sesión' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  var modalHtml =
+    '<div style="max-height:460px;overflow-y:auto;padding-right:4px;">' +
+      bannerHtml +
+      '<div>' + itemsHtml + '</div>' +
+    '</div>';
+
+  if (typeof modal === 'function') {
+    modal({
+      titulo: '📚 Catálogo de Libros de Texto Gratuitos SEP Fase 6 (' + etqAsig + ' · ' + ctx.grado + '°)',
+      html: modalHtml,
+      botones: [{ texto: 'Cerrar', clase: 'btn-secundario', valor: false }]
+    });
+  }
+}
+
+function insertarReferenciaLibroSesion_(idOIndice) {
+  var ctx = obtenerContextoPlanActivoLibrosSEP_();
+  var libro = null;
+
+  if (typeof idOIndice === 'string') {
+    libro = CATALOGO_LIBROS_SEP_POR_ASIGNATURA_FASE6_.find(function (l) {
+      return l.id === idOIndice;
+    });
+  }
+  if (!libro && typeof idOIndice === 'number') {
+    var filtrados = filtrarLibrosSEPPorAsignaturaYGrado_(ctx, false);
+    libro = filtrados[idOIndice];
+  }
+  if (!libro) return;
+
+  var selCap = document.getElementById('selCapLibroSEP_' + libro.id);
+  var detallePaginas = (selCap && selCap.value) ? selCap.value : libro.paginasRelevantes;
+
+  var refTexto = '\n\n📚 [Libro SEP Fase 6 — ' + (libro.asignaturaEtiqueta || (ctx.asignatura + ' ' + libro.grado + '°')) + ']: ' +
+    libro.titulo + ' (' + detallePaginas + ').';
+
+  var sesDesarrollo = document.getElementById('sesDesarrollo');
+  if (sesDesarrollo) {
+    sesDesarrollo.value = (sesDesarrollo.value ? sesDesarrollo.value.trim() : '') + refTexto;
+    try { sesDesarrollo.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+    sesDesarrollo.focus();
+  }
+
+  // Cerrar el modal genérico tras vincular
+  var btnCerrarModal = document.querySelector('#modalOverlay .modal-footer button, .modal-overlay .btn-secundario');
+  if (btnCerrarModal) {
+    try { btnCerrarModal.click(); } catch (e) {}
+  }
+
+  if (typeof toast === 'function') {
+    toast('📚 Vinculado: ' + libro.titulo + ' (' + detallePaginas.split('—')[0].trim() + ')', 'ok');
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.abrirModalLibrosSEP_ = abrirModalLibrosSEP_;
+  window.insertarReferenciaLibroSesion_ = insertarReferenciaLibroSesion_;
+  window.obtenerContextoPlanActivoLibrosSEP_ = obtenerContextoPlanActivoLibrosSEP_;
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', iniciarLmsSt90_);
 } else {

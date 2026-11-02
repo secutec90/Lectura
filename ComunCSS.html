@@ -2924,5 +2924,128 @@
     #barraTemporizadorQuiz[data-estado="critico"] { animation: none; }
     .barra-progreso-nem__fill { transition: none; }
   }
+  /* ============================================================
+     ESTILOS COMPARTIDOS ADMIN & CLASE — RÚBRICA, MEMBRETE E iDEVICE ENCUESTA
+     ============================================================ */
+  #cajaRubricaCotejoNEM {
+    margin: 14px 0 10px;
+    padding: 12px 14px 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  }
+  .nem-rubrica-cab {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 0 10px;
+    margin: 0 0 8px;
+    border-bottom: 1px solid #eef2f7;
+  }
+  .nem-rubrica-titulo {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+  .nem-rubrica-contador {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border: 1px solid #bae6fd;
+    border-radius: 999px;
+    background: #f0f9ff;
+    color: #0369a1;
+    font-size: 10.5px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .nem-rubrica-acciones {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+  .nem-rubrica-btn {
+    padding: 5px 11px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .nem-rubrica-btn:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+  .nem-rubrica-btn--ia { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
+  .nem-rubrica-btn--ia:hover { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+  .nem-tabla-cotejo-edit {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12.5px;
+  }
+  .nem-tabla-cotejo-edit thead th {
+    padding: 6px 8px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #64748b;
+    text-align: left;
+  }
+  .nem-tabla-cotejo-edit thead th.col-indicador,
+  .nem-tabla-cotejo-edit td.col-indicador { width: 76px; text-align: center; }
+  .nem-tabla-cotejo-edit thead th.col-quitar,
+  .nem-tabla-cotejo-edit td.col-quitar { width: 34px; text-align: center; }
+  .nem-tabla-cotejo-edit tbody td {
+    padding: 4px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  .input-criterio-cotejo-nem {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: #1e293b;
+    box-sizing: border-box;
+  }
+  .input-criterio-cotejo-nem:hover { background: #f8fafc; border-color: #e2e8f0; }
+  .input-criterio-cotejo-nem:focus {
+    outline: none;
+    border-color: #0284c7;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
+  }
+  .btn-quitar-criterio-nem {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .btn-quitar-criterio-nem:hover { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+  #modalConfigMembreteST90.visible,
+  #modalConfigMembreteST90.abierto {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
 </style>
 

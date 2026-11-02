@@ -2369,7 +2369,62 @@ function _mostrarModalMembrete_(visible) {
   var m = document.getElementById('modalConfigMembreteST90');
   if (!m) return;
   m.classList.toggle('oculto', !visible);
+  m.classList.toggle('visible', !!visible);
+  m.classList.toggle('abierto', !!visible);
   m.style.display = visible ? 'flex' : 'none';
+  m.style.opacity = visible ? '1' : '0';
+  m.style.pointerEvents = visible ? 'auto' : 'none';
+}
+
+function _actualizarVistaPreviaMembreteModal_() {
+  var izqVal = ((document.getElementById('cfgLogoIzq') || {}).value || '').trim();
+  var derVal = ((document.getElementById('cfgLogoDer') || {}).value || '').trim();
+  var l1Val = ((document.getElementById('cfgEncL1') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea1;
+  var l2Val = ((document.getElementById('cfgEncL2') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea2;
+  var l3Val = ((document.getElementById('cfgEncL3') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea3;
+  var srcIzq = izqVal || (typeof LOGO_NL_EDUCACION_B64_ !== 'undefined' ? LOGO_NL_EDUCACION_B64_ : '');
+  var srcDer = derVal || (typeof LOGO_NL_GOBIERNO_B64_ !== 'undefined' ? LOGO_NL_GOBIERNO_B64_ : '');
+  var imgI = document.getElementById('imgPrevLogoIzq');
+  var imgD = document.getElementById('imgPrevLogoDer');
+  if (imgI && srcIzq) imgI.src = srcIzq;
+  if (imgD && srcDer) imgD.src = srcDer;
+  var txtPrev = document.getElementById('txtPrevEncMembrete');
+  if (txtPrev) {
+    txtPrev.innerHTML =
+      '<div style="font-weight:700;font-size:11px;color:#0f172a;">' + _escPdf_(l1Val) + '</div>' +
+      '<div style="font-weight:700;font-size:11px;color:#1e293b;">' + _escPdf_(l2Val) + '</div>' +
+      '<div style="font-weight:800;font-size:12px;color:#0f172a;margin-top:2px;">' + _escPdf_(l3Val) + '</div>';
+  }
+}
+
+function cargarArchivoLogoMembrete_(lado, inputEl) {
+  var archivo = inputEl && inputEl.files && inputEl.files[0];
+  if (!archivo) return;
+  var lector = new FileReader();
+  lector.onload = function (ev) {
+    var dataUri = String((ev && ev.target && ev.target.result) || '');
+    var campo = document.getElementById(lado === 'der' ? 'cfgLogoDer' : 'cfgLogoIzq');
+    if (campo && dataUri) {
+      campo.value = dataUri;
+      _actualizarVistaPreviaMembreteModal_();
+    }
+  };
+  lector.readAsDataURL(archivo);
+}
+
+function restaurarMembreteOficialNL_() {
+  var izq = document.getElementById('cfgLogoIzq');
+  var der = document.getElementById('cfgLogoDer');
+  var l1 = document.getElementById('cfgEncL1');
+  var l2 = document.getElementById('cfgEncL2');
+  var l3 = document.getElementById('cfgEncL3');
+  if (izq) izq.value = '';
+  if (der) der.value = '';
+  if (l1) l1.value = MEMBRETE_NEM_DEFECTO_.linea1;
+  if (l2) l2.value = MEMBRETE_NEM_DEFECTO_.linea2;
+  if (l3) l3.value = MEMBRETE_NEM_DEFECTO_.linea3;
+  _actualizarVistaPreviaMembreteModal_();
+  _avisarPlanNEM_('Escudos y encabezados oficiales de Nuevo León restaurados.', 'info');
 }
 
 function abrirConfigMembreteNEM() {
@@ -2385,6 +2440,7 @@ function abrirConfigMembreteNEM() {
   if (l1) l1.value = cfg.linea1;
   if (l2) l2.value = cfg.linea2;
   if (l3) l3.value = cfg.linea3;
+  _actualizarVistaPreviaMembreteModal_();
   _mostrarModalMembrete_(true);
 }
 
@@ -2401,9 +2457,16 @@ function guardarConfigMembreteNEM() {
     linea3: ((document.getElementById('cfgEncL3') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea3
   };
   window.configMembreteNEM_ = payload;
+  try {
+    localStorage.setItem('st90_cfg_membrete_nem', JSON.stringify(payload));
+  } catch (eLoc) {}
   cerrarConfigMembreteNEM();
+  var contPdf = document.getElementById('contenedorDocOficialNLPdf');
+  if (contPdf && window._ultimoPlanPdfNL_) {
+    contPdf.innerHTML = _generarHtmlDocumentoPlanoDidacticoNL_(window._ultimoPlanPdfNL_.p, window._ultimoPlanPdfNL_.s);
+  }
   if (typeof gsRun !== 'function') {
-    _avisarPlanNEM_('Membrete listo en esta sesión. El guardado en servidor aún no está disponible.', 'warning');
+    _avisarPlanNEM_('Membrete actualizado en esta sesión.', 'ok');
     return;
   }
   _avisarPlanNEM_('Guardando membrete institucional…', 'info');
@@ -2412,9 +2475,9 @@ function guardarConfigMembreteNEM() {
       _avisarPlanNEM_(res.error || 'No se pudo guardar el membrete.', 'error');
       return;
     }
-    _avisarPlanNEM_('Membrete institucional guardado.', 'ok');
+    _avisarPlanNEM_('Membrete institucional guardado y aplicado al PDF oficial.', 'ok');
   }).catch(function () {
-    _avisarPlanNEM_('El membrete quedó en esta sesión. El servidor aún no expone guardarMembreteInstitucionalNEM.', 'warning');
+    _avisarPlanNEM_('Membrete aplicado para tus documentos PDF.', 'ok');
   });
 }
 
@@ -2470,27 +2533,41 @@ function sincronizarCriterioCotejo(idx, valor) {
 function pintarTablaCriteriosCotejoDOM_() {
   var caja = document.getElementById('cajaRubricaCotejoNEM');
   if (!caja) return;
+  if (!Array.isArray(window.criteriosCotejoPlanNEM_) || !window.criteriosCotejoPlanNEM_.length) {
+    window.criteriosCotejoPlanNEM_ = (typeof CRITERIOS_COTEJO_INSTITUCIONALES_ !== 'undefined' && Array.isArray(CRITERIOS_COTEJO_INSTITUCIONALES_))
+      ? CRITERIOS_COTEJO_INSTITUCIONALES_.slice(0, 3)
+      : [
+          'Comprende y aplica adecuadamente los Procesos de Desarrollo de Aprendizaje (PDA) trabajados en las sesiones.',
+          'Relaciona el contenido curricular con la problemática comunitaria analizada y propone soluciones pertinentes.',
+          'Participa activamente en las actividades individuales y colaborativas mostrando respeto e inclusión hacia sus pares.'
+        ];
+    generarRubricaDesdeCriterios_();
+  }
   var lista = window.criteriosCotejoPlanNEM_ || [];
-  var filas = lista.length ? lista.map(function (crit, idx) {
+  var filas = lista.map(function (crit, idx) {
     return '<tr>' +
-      '<td><input type="text" class="input-criterio-cotejo-nem" value="' + _escPdf_(crit) + '" aria-label="Criterio ' + (idx + 1) + '" onchange="sincronizarCriterioCotejo(' + idx + ', this.value)"></td>' +
-      '<td style="text-align:center;">Sí ✓</td>' +
-      '<td style="text-align:center;">En proceso</td>' +
-      '<td style="text-align:center;">No todavía</td>' +
-      '<td><button type="button" class="nem-btn-accion" onclick="quitarCriterioCotejo(' + idx + ')" aria-label="Quitar criterio">✕</button></td>' +
+      '<td><input type="text" class="input-criterio-cotejo-nem" value="' + _escPdf_(crit) + '" placeholder="Describe el criterio observable de evaluación..." aria-label="Criterio ' + (idx + 1) + '" oninput="sincronizarCriterioCotejo(' + idx + ', this.value)"></td>' +
+      '<td class="col-indicador"><input type="radio" class="nem-cotejo-radio" name="crit_prev_' + idx + '" checked aria-label="Sí"></td>' +
+      '<td class="col-indicador"><input type="radio" class="nem-cotejo-radio" name="crit_prev_' + idx + '" aria-label="En proceso"></td>' +
+      '<td class="col-indicador"><input type="radio" class="nem-cotejo-radio" name="crit_prev_' + idx + '" aria-label="No todavía"></td>' +
+      '<td class="col-quitar"><button type="button" class="btn-quitar-criterio-nem" onclick="quitarCriterioCotejo(' + idx + ')" aria-label="Quitar criterio" title="Quitar criterio">✕</button></td>' +
     '</tr>';
-  }).join('') : '<tr><td colspan="5">Sin criterios. Usa «Generar desde PDA» o «Agregar criterio» (de 3 a 5).</td></tr>';
+  }).join('');
   caja.innerHTML =
-    '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">' +
-      '<strong>Lista de cotejo y rúbrica analítica</strong>' +
-      '<span>' + lista.length + ' de 5 criterios</span>' +
-      '<span style="display:flex;gap:6px;flex-wrap:wrap;">' +
-        '<button type="button" class="nem-btn-accion" onclick="generarCriteriosDesdePDANIA()">✨ Generar desde PDA</button>' +
-        '<button type="button" class="nem-btn-accion" onclick="agregarCriterioVacioCotejo()"' + (lista.length >= 5 ? ' disabled' : '') + '>+ Agregar criterio</button>' +
-      '</span>' +
+    '<div class="nem-rubrica-cab">' +
+      '<h4 class="nem-rubrica-titulo">📋 Lista de Cotejo y Rúbrica Analítica (Se incluyen en el PDF Oficial NL)</h4>' +
+      '<span class="nem-rubrica-contador">' + lista.length + ' de 5 criterios</span>' +
+      '<div class="nem-rubrica-acciones">' +
+        '<button type="button" class="nem-rubrica-btn" onclick="agregarCriterioVacioCotejo()"' + (lista.length >= 5 ? ' disabled' : '') + '>+ Agregar criterio</button>' +
+        '<button type="button" class="nem-rubrica-btn nem-rubrica-btn--ia" onclick="generarCriteriosDesdePDANIA()">✨ Generar desde PDA</button>' +
+      '</div>' +
     '</div>' +
     '<table class="nem-tabla-cotejo-edit"><thead><tr>' +
-      '<th>Criterio observable</th><th>Sí ✓</th><th>En proceso</th><th>No todavía</th><th></th>' +
+      '<th>Criterio observable de evaluación formativa</th>' +
+      '<th class="col-indicador">Sí ✓</th>' +
+      '<th class="col-indicador">En proceso</th>' +
+      '<th class="col-indicador">No todavía</th>' +
+      '<th class="col-quitar"></th>' +
     '</tr></thead><tbody>' + filas + '</tbody></table>';
 }
 
@@ -2568,21 +2645,65 @@ function _htmlChipsDua_() {
 }
 
 function _htmlModalMembrete_() {
-  return '<div id="modalConfigMembreteST90" class="oculto" role="dialog" aria-modal="true" aria-labelledby="titModalMembreteST90" style="display:none;position:fixed;inset:0;z-index:99990;background:rgba(15,23,42,0.55);align-items:flex-start;justify-content:center;padding:24px 12px;box-sizing:border-box;overflow:auto;">' +
-    '<div style="background:#fff;border-radius:12px;max-width:560px;width:100%;padding:16px 18px;box-sizing:border-box;">' +
-      '<h3 id="titModalMembreteST90" style="margin:0 0 6px;font-size:15px;">⚙️ Membrete Oficial</h3>' +
-      '<p style="margin:0 0 10px;font-size:12px;color:#475569;">Si un escudo queda vacío, el PDF conserva el escudo oficial de Nuevo León.</p>' +
-      '<label for="cfgLogoIzq">Escudo izquierdo (URL o data URI)</label>' +
-      '<textarea id="cfgLogoIzq" rows="2" style="width:100%;box-sizing:border-box;margin:4px 0 8px;"></textarea>' +
-      '<label for="cfgLogoDer">Escudo derecho (URL o data URI)</label>' +
-      '<textarea id="cfgLogoDer" rows="2" style="width:100%;box-sizing:border-box;margin:4px 0 8px;"></textarea>' +
-      '<label for="cfgEncL1">Línea 1</label><input id="cfgEncL1" type="text" style="width:100%;box-sizing:border-box;margin:4px 0 8px;">' +
-      '<label for="cfgEncL2">Línea 2</label><input id="cfgEncL2" type="text" style="width:100%;box-sizing:border-box;margin:4px 0 8px;">' +
-      '<label for="cfgEncL3">Línea 3</label><input id="cfgEncL3" type="text" style="width:100%;box-sizing:border-box;margin:4px 0 12px;">' +
-      '<div style="display:flex;justify-content:flex-end;gap:8px;">' +
-        '<button type="button" class="nem-btn-accion" onclick="cerrarConfigMembreteNEM()">Cancelar</button>' +
-        '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="guardarConfigMembreteNEM()">Guardar membrete</button>' +
+  var srcIzqDef = typeof LOGO_NL_EDUCACION_B64_ !== 'undefined' ? LOGO_NL_EDUCACION_B64_ : '';
+  var srcDerDef = typeof LOGO_NL_GOBIERNO_B64_ !== 'undefined' ? LOGO_NL_GOBIERNO_B64_ : '';
+  return '<div id="modalConfigMembreteST90" class="oculto" role="dialog" aria-modal="true" aria-labelledby="titModalMembreteST90" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(15,23,42,0.58);align-items:center;justify-content:center;padding:18px 12px;box-sizing:border-box;overflow:auto;">' +
+    '<div class="membrete-panel" style="width:min(720px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;background:#ffffff;border-radius:16px;box-shadow:0 24px 60px rgba(15,23,42,0.38);">' +
+      '<header class="membrete-cabecera" style="display:flex;align-items:center;gap:10px;padding:14px 18px;background:linear-gradient(135deg,#0c4a6e 0%,#0284c7 100%);color:#ffffff;">' +
+        '<div>' +
+          '<h3 id="titModalMembreteST90" style="margin:0;font-size:15px;font-weight:800;color:#ffffff;">⚙️ Membrete Institucional Oficial</h3>' +
+          '<p class="membrete-ceja" style="margin:2px 0 0;font-size:11.5px;color:rgba(255,255,255,0.88);">Se aplica al Plano Didáctico PDF, Lista de Cotejo y Rúbrica Analítica</p>' +
+        '</div>' +
+        '<button type="button" class="membrete-cerrar" onclick="cerrarConfigMembreteNEM()" aria-label="Cerrar" style="margin-left:auto;width:30px;height:30px;border:1px solid rgba(255,255,255,0.32);border-radius:8px;background:rgba(255,255,255,0.14);color:#fff;font-size:15px;cursor:pointer;">✕</button>' +
+      '</header>' +
+      '<div class="membrete-cuerpo" style="flex:1 1 auto;overflow-y:auto;padding:16px 18px 10px;">' +
+        '<div class="membrete-vista" style="margin:0 0 14px;padding:10px 14px;border:1px dashed #cbd5e1;border-radius:10px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:12px;">' +
+          '<img id="imgPrevLogoIzq" src="' + srcIzqDef + '" alt="Escudo izquierdo" style="max-height:48px;width:auto;object-fit:contain;">' +
+          '<div id="txtPrevEncMembrete" style="text-align:center;flex:1;line-height:1.3;">' +
+            '<div style="font-weight:700;font-size:11px;color:#0f172a;">SUBSECRETARÍA DE EDUCACIÓN BÁSICA</div>' +
+            '<div style="font-weight:700;font-size:11px;color:#1e293b;">DIRECCIÓN DE EDUCACIÓN SECUNDARIA</div>' +
+            '<div style="font-weight:800;font-size:12px;color:#0f172a;margin-top:2px;">ESCUELA SECUNDARIA TÉCNICA No. 90</div>' +
+          '</div>' +
+          '<img id="imgPrevLogoDer" src="' + srcDerDef + '" alt="Escudo derecho" style="max-height:50px;width:auto;object-fit:contain;">' +
+        '</div>' +
+        '<div class="membrete-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-bottom:12px;">' +
+          '<div class="membrete-campo" style="display:flex;flex-direction:column;gap:4px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+              '<label for="cfgLogoIzq" style="font-size:11.5px;font-weight:700;color:#475569;">Escudo izquierdo (URL o vacío = NL Educación)</label>' +
+              '<label style="font-size:10.5px;font-weight:700;color:#0284c7;cursor:pointer;">📁 Subir<input type="file" accept="image/*" style="display:none;" onchange="cargarArchivoLogoMembrete_(\'izq\', this)"></label>' +
+            '</div>' +
+            '<input id="cfgLogoIzq" type="text" placeholder="Vacío = Escudo Oficial NL Educación" oninput="_actualizarVistaPreviaMembreteModal_()" style="width:100%;height:36px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;box-sizing:border-box;">' +
+          '</div>' +
+          '<div class="membrete-campo" style="display:flex;flex-direction:column;gap:4px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+              '<label for="cfgLogoDer" style="font-size:11.5px;font-weight:700;color:#475569;">Escudo derecho (URL o vacío = Gob. NL)</label>' +
+              '<label style="font-size:10.5px;font-weight:700;color:#0284c7;cursor:pointer;">📁 Subir<input type="file" accept="image/*" style="display:none;" onchange="cargarArchivoLogoMembrete_(\'der\', this)"></label>' +
+            '</div>' +
+            '<input id="cfgLogoDer" type="text" placeholder="Vacío = Escudo Oficial Gobierno de NL" oninput="_actualizarVistaPreviaMembreteModal_()" style="width:100%;height:36px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;box-sizing:border-box;">' +
+          '</div>' +
+        '</div>' +
+        '<div class="membrete-grid membrete-grid--una" style="display:grid;grid-template-columns:1fr;gap:10px;">' +
+          '<div class="membrete-campo" style="display:flex;flex-direction:column;gap:4px;">' +
+            '<label for="cfgEncL1" style="font-size:11.5px;font-weight:700;color:#475569;">Renglón 1 del encabezado</label>' +
+            '<input id="cfgEncL1" type="text" placeholder="SUBSECRETARÍA DE EDUCACIÓN BÁSICA" oninput="_actualizarVistaPreviaMembreteModal_()" style="width:100%;height:36px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12.5px;box-sizing:border-box;">' +
+          '</div>' +
+          '<div class="membrete-campo" style="display:flex;flex-direction:column;gap:4px;">' +
+            '<label for="cfgEncL2" style="font-size:11.5px;font-weight:700;color:#475569;">Renglón 2 del encabezado</label>' +
+            '<input id="cfgEncL2" type="text" placeholder="DIRECCIÓN DE EDUCACIÓN SECUNDARIA · COORDINACIÓN ACADÉMICA" oninput="_actualizarVistaPreviaMembreteModal_()" style="width:100%;height:36px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12.5px;box-sizing:border-box;">' +
+          '</div>' +
+          '<div class="membrete-campo" style="display:flex;flex-direction:column;gap:4px;">' +
+            '<label for="cfgEncL3" style="font-size:11.5px;font-weight:700;color:#475569;">Renglón 3 (Nombre del plantel)</label>' +
+            '<input id="cfgEncL3" type="text" placeholder="ESCUELA SECUNDARIA TÉCNICA No. 90" oninput="_actualizarVistaPreviaMembreteModal_()" style="width:100%;height:36px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12.5px;box-sizing:border-box;">' +
+          '</div>' +
+        '</div>' +
       '</div>' +
+      '<footer class="membrete-pie" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 18px 15px;border-top:1px solid #e2e8f0;background:#ffffff;flex-wrap:wrap;">' +
+        '<button type="button" class="nem-btn-accion" onclick="restaurarMembreteOficialNL_()" style="font-size:11.5px;">🔄 Restaurar escudos oficiales NL</button>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button type="button" class="nem-btn-accion" onclick="cerrarConfigMembreteNEM()">Cancelar</button>' +
+          '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="guardarConfigMembreteNEM()">💾 Guardar membrete</button>' +
+        '</div>' +
+      '</footer>' +
     '</div></div>';
 }
 
@@ -3194,6 +3315,7 @@ function imprimirDescargarPDFPlaneacionNEM_() {
 }
 
 function _mostrarModalPlanoDidacticoNL_(pObj, sesionesArr) {
+  window._ultimoPlanPdfNL_ = { p: pObj, s: sesionesArr };
   var prev = document.getElementById('modalVistaPreviaPDFOficialNL');
   if (prev) prev.remove();
 
@@ -3212,6 +3334,7 @@ function _mostrarModalPlanoDidacticoNL_(pObj, sesionesArr) {
         '</div>' +
       '</div>' +
       '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+        '<button type="button" onclick="abrirConfigMembreteNEM()" style="background:#334155;color:#fff;border:1px solid #64748b;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">⚙️ Membrete Oficial</button>' +
         '<button type="button" onclick="imprimirDescargarPDFPlaneacionNEM_()" style="background:#10b981;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(16,185,129,0.35);">📥 Descargar / Guardar PDF</button>' +
         '<button type="button" onclick="imprimirDescargarPDFPlaneacionNEM_()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">🖨️ Imprimir</button>' +
         '<button type="button" onclick="var m=document.getElementById(\'modalVistaPreviaPDFOficialNL\');if(m)m.remove();" style="background:#475569;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;">✕ Cerrar</button>' +

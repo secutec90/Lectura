@@ -3074,5 +3074,97 @@
     box-sizing: border-box !important;
     flex: none !important;
   }
+
+  /* ============================================================
+     CONTENCIÓN ESTRICTA: EDITOR DE SESIÓN NEM Y MOMENTOS (CERO DESBORDES)
+     ============================================================ */
+  #cajaSesionesPlanNEM,
+  #editorSesionActiva,
+  #editorSesionActiva details,
+  .momento-caja,
+  .dua-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Los 4 momentos en Admin y Clase con estilo semántico oficial y sin colapso */
+  .momento-caja {
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 0;
+    border: 1px solid #e2e8f0;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+  .momento-caja-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .momento-caja-header h3 {
+    font-size: 13.5px;
+    font-weight: 800;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .momento-apertura { border-left: 5px solid #0284c7 !important; background: #f0f9ff !important; }
+  .momento-apertura h3 { color: #0369a1 !important; }
+  .momento-desarrollo { border-left: 5px solid #d97706 !important; background: #fffbeb !important; }
+  .momento-desarrollo h3 { color: #b45309 !important; }
+  .momento-actividad { border-left: 5px solid #16a34a !important; background: #f0fdf4 !important; }
+  .momento-actividad h3 { color: #15803d !important; }
+  .momento-cierre { border-left: 5px solid #7c3aed !important; background: #faf5ff !important; }
+  .momento-cierre h3 { color: #6d28d9 !important; }
+
+  /* Cuadrícula responsiva de 4 momentos que nunca se desborda */
+  .grid-momentos-nem {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  @media (max-width: 768px) {
+    .grid-momentos-nem {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Textareas y campos dentro del editor de sesión */
+  #editorSesionActiva textarea,
+  #sesApertura,
+  #sesDesarrollo,
+  #sesActividad,
+  #sesCierre,
+  #sesGuionEstudiante,
+  #sesVisualDesc,
+  #sesNotasDocente {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    resize: vertical !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    overflow-x: hidden !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    padding: 8px 10px !important;
+  }
 </style>
 

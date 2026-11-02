@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-01] - [Entorno de Contenidos eXeLearning: Layout Flex Lateral Derecho, Renombrado a Contenidos, Lápiz en Cada Página y Herramientas Enriquecidas por Formato (build-579)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(exelearning): lienzo al lado derecho del menu, renombrado de iDevices a Contenidos, lapiz de edicion por pagina y herramientas enriquecidas multimedia en build-579`
+- **Causa Raíz / Requerimiento:**
+  1. Los bloques de contenido se publicaban abajo en lugar de aparecer en el espacio derecho enfrente del menú (`.app-workspace` requería `display: flex; flex-direction: row; align-items: stretch;`).
+  2. Renombrar el término técnico `iDevices` por `Contenidos` para claridad de los profesores.
+  3. Cada página del árbol en la lista lateral debía contar con su propio botón de lápiz ✏️ (`renombrarNodoEspecificoSesion_`) para cambiar su nombre directamente.
+  4. Sustituir los dos campos genéricos de texto por herramientas enriquecidas reales según el formato:
+     - Texto DUA: barra de formato (B, I, U, H3, viñetas, citas) y botón de prueba de síntesis de voz DUA.
+     - Video interactivo: selector de origen (YouTube, Google Drive, Archivo Local MP4), preview de video y control de pausa con pregunta de verificación.
+     - Galería / Imagen: selector de imagen (Subir local, Enlace web, Drive), miniatura y campo de descripción oral accesible DUA para invidentes.
+     - Fichero adjunto: selector de documento (PDF, Word) con tarjeta de descarga para el alumno.
+     - Quiz / Preguntas: editor de opciones dinámicas con botón de radio para marcar la respuesta correcta, puntos y retroalimentación explicativa.
+- **Cambios Realizados:**
+  - `AdminPlaneacionCSS.html`: Añadidas las reglas de layout `.app-workspace`, `.canvas-exe`, `.canvas-container`, `.nodo-titulo-wrap`, `.btn-renombrar-nodo`, `.toolbar-enriquecida`, `.tabs-origen-media`, `.caja-preview-media` y `.fila-opcion-quiz`.
+  - `AyudaJS.html`: Renombrado a `Contenidos de Aprendizaje`, integrado el lápiz de edición directa por página en `renderArbolSesion_()`, e implementado `htmlEspecialExe_()` con controles completos de formato, previsualización de video, carga de imagen/documento y gestión de opciones de quiz.
+  - `simulador_exelearning.html`: Actualizado con las mismas capacidades interactivas y abierto en el navegador para validación inmediata del usuario.
+- **Archivos Afectados:** `00_Constantes.gs`, `AdminPlaneacionCSS.html`, `AyudaJS.html`, `simulador_exelearning.html`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-11-01] - [Entorno de Autor eXeLearning 3.0: Árbol de Páginas con Indentación, Catálogo Accordion en 7 Familias, Barra Rápida Flotante e iDevices para Inglés y Ofimática (build-578)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(exelearning): entorno completo de autor eXeLearning 3.0 (arbol de jerarquia, acordeon de 7 familias, barra rapida flotante, componentes curriculares para ingles y tecnologia ofimatica) en build-578`
 - **Causa Raíz / Requerimiento:**

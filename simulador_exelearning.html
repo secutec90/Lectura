@@ -721,7 +721,7 @@
       <div class="box-idevice-menu">
         <div class="idevice-menu-titulo">
           <i class="bi bi-chevron-down" style="color:var(--exe-teal);"></i>
-          <span>iDevices de Aprendizaje</span>
+          <span>Contenidos de Aprendizaje</span>
         </div>
 
         <div class="cat-accordion">
@@ -1231,6 +1231,18 @@
       }
     }
 
+    
+    function renombrarPaginaEspecifica(idx) {
+      const pag = nodos[idx];
+      if (!pag) return;
+      const nuevo = prompt("Introduce el nuevo título para esta página:", pag.titulo);
+      if (nuevo && nuevo.trim()) {
+        pag.titulo = nuevo.trim();
+        seleccionarNodo(idx, document.querySelectorAll('.nodo-item')[idx]);
+        renderNodos();
+      }
+    }
+  
     function renombrarSesion() {
       const nuevo = prompt("Introduce el título del documento o tema de la sesión:", document.getElementById('labelDocTitulo').textContent);
       if (nuevo) {
@@ -1249,8 +1261,11 @@
         }
         div.onclick = () => seleccionarNodo(i, div);
         div.innerHTML = `
-          <span><i class="bi bi-file-earmark-text me-2"></i> ${n.titulo}</span>
-          <span class="nodo-tag">${i === nodoActivoIndex ? 'Activa' : (n.itemsCount + ' iDev')}</span>
+          <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;">
+            <span><i class="bi bi-file-earmark-text me-1"></i> ${n.titulo}</span>
+            <button type="button" class="btn-edit-title" style="padding:1px 4px;font-size:12px;opacity:0.75;" title="Renombrar esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(${i})"><i class="bi bi-pencil"></i></button>
+          </div>
+          <span class="nodo-tag">${i === nodoActivoIndex ? 'Activa' : (n.itemsCount + ' Cont.')}</span>
         `;
         cont.appendChild(div);
       });
@@ -1341,6 +1356,89 @@
         desc = 'Escribe expresiones algebraicas y fórmulas científicas matemáticas.';
       }
 
+      let herramientasHtml = '';
+      if (tipo === 'texto_dua') {
+        herramientasHtml = `
+          <div style="display:flex;gap:4px;background:#f8fafc;padding:6px;border:1px solid #e2e8f0;border-radius:6px 6px 0 0;border-bottom:0;">
+            <button type="button" class="btn-tool-formato" style="padding:2px 8px;font-weight:bold;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">B</button>
+            <button type="button" class="btn-tool-formato" style="padding:2px 8px;font-style:italic;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">I</button>
+            <button type="button" class="btn-tool-formato" style="padding:2px 8px;text-decoration:underline;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">U</button>
+            <button type="button" class="btn-tool-formato" style="padding:2px 8px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">H3</button>
+            <button type="button" class="btn-tool-formato" style="padding:2px 8px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">• Viñeta</button>
+            <button type="button" class="btn-tool-formato" style="padding:2px 8px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">“” Cita</button>
+            <span style="margin-left:auto;font-size:11.5px;color:#0f766e;font-weight:700;display:flex;align-items:center;gap:4px;background:#ccfbf1;padding:2px 8px;border-radius:999px;">
+              <i class="bi bi-volume-up"></i> Síntesis de voz DUA activa
+            </span>
+          </div>
+        `;
+      } else if (tipo === 'video_interactivo') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Origen del Video:</label>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #0284c7;background:#0284c7;color:#fff;font-size:12px;cursor:pointer;">🔴 YouTube</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">☁️ Google Drive</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">📁 Subir Archivo MP4</button>
+          </div>
+          <input type="url" class="campo-input" placeholder="Pega el enlace del video de YouTube o Drive..." value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+          <div style="margin-top:8px;background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:8px;padding:12px;text-align:center;">
+            <i class="bi bi-camera-video me-1 text-primary"></i> Previsualización activa del video
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:10px;">
+            <div><label class="campo-label">Segundo de pausa pedagógica:</label><input type="number" class="campo-input" value="45"></div>
+            <div><label class="campo-label">Pregunta al pausar:</label><input type="text" class="campo-input" value="¿Cómo se calcula el común denominador?"></div>
+          </div>
+        `;
+      } else if (tipo === 'galeria') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Origen de la Imagen:</label>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #0284c7;background:#0284c7;color:#fff;font-size:12px;cursor:pointer;">📁 Subir Imagen</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">🌐 Enlace Web</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">☁️ Google Drive</button>
+          </div>
+          <div style="margin-top:8px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:16px;text-align:center;">
+            <i class="bi bi-image text-muted me-1" style="font-size:24px;"></i>
+            <div style="font-size:12.5px;color:#64748b;margin-top:4px;">Arrastra una imagen o haz clic para subirla (PNG, JPG, SVG)</div>
+          </div>
+          <label class="campo-label" style="margin-top:8px;">Descripción Oral Accesible DUA (Lector de pantalla para invidentes):</label>
+          <textarea class="campo-textarea" rows="2" placeholder="Describe lo que muestra la imagen detalladamente..."></textarea>
+        `;
+      } else if (tipo === 'fichero') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Adjuntar Ficha o Documento:</label>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #0284c7;background:#0284c7;color:#fff;font-size:12px;cursor:pointer;">📁 Subir PDF / DOCX</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">☁️ Enlace Drive / Web</button>
+          </div>
+          <div style="padding:10px 14px;background:#f0fdfa;border:1px solid #ccfbf1;border-radius:6px;display:flex;align-items:center;gap:10px;margin-top:8px;">
+            <i class="bi bi-file-earmark-pdf" style="font-size:22px;color:#0d9488;"></i>
+            <div>
+              <div style="font-weight:700;font-size:13px;color:#0f766e;">Ficha_Trabajo_Fracciones_Sesion3.pdf</div>
+              <div style="font-size:11px;color:#64748b;">PDF de 2 páginas · 245 KB</div>
+            </div>
+          </div>
+        `;
+      } else if (tipo === 'quiz_evaluativo') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Opciones de Respuesta:</label>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="radio" name="sim_quiz_${cid}" checked title="Opción Correcta">
+              <input type="text" class="campo-input" value="A) Una fracción cuyo denominador es 10, 100 o 1000 (Correcta)">
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="radio" name="sim_quiz_${cid}" title="Opción Incorrecta">
+              <input type="text" class="campo-input" value="B) Cualquier número entero">
+            </div>
+          </div>
+          <button type="button" class="btn-modo-conmutador" style="background:#f1f5f9;color:#475569;padding:4px 10px;font-size:12px;margin-top:6px;">+ Añadir otra opción</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+            <div><label class="campo-label">Puntos (Calificación):</label><input type="number" class="campo-input" value="10"></div>
+            <div><label class="campo-label">Retroalimentación explicativa:</label><input type="text" class="campo-input" value="¡Exacto! Ese es el concepto formal según el libro SEP."></div>
+          </div>
+        `;
+      }
+
       card.innerHTML = `
         <div class="idevice-card-header">
           <div class="idevice-card-title">
@@ -1360,8 +1458,7 @@
             <input type="text" class="campo-input" value="${title}">
           </div>
           <div class="campo-grupo">
-            <label class="campo-label">Instrucciones o contenido para el estudiante:</label>
-            <textarea class="campo-textarea">${desc}</textarea>
+            ${herramientasHtml ? herramientasHtml : `<label class="campo-label">Instrucciones o contenido para el estudiante:</label><textarea class="campo-textarea">${desc}</textarea>`}
           </div>
         </div>
       `;

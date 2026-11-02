@@ -52,6 +52,6 @@ Este kit contiene la estructura base para inicializar cualquier proyecto bajo la
 | `INSTRUCCIONES_ORQUESTACION.html` | Guía interactiva navegable con botones de un clic para copiar prompts y ver la metodología. |
 | `.rsc/_cargar_codigo.js` | Cargador local de Node.js para simular el backend y ejecutar pruebas sin desplegar a la nube. |
 | `.rsc/test_regresion.js` | Suite de pruebas automatizadas locales (`node .rsc/test_regresion.js`). |
-| `.rsc/centinela_buzon.js` | Vigilante automático de buzón cada 60s (`node .rsc/centinela_buzon.js cursor|deepseek`) para que los agentes detecten y ejecuten nuevas tareas tras cada entrega sin intervención humana. |
+| `.rsc/centinela_buzon.js` | Vigilante automático de buzón cada 60s (`node .rsc/centinela_buzon.js cursor|deepseek`). Política v2: huella por bloque de partitura, aviso con origen explícito y filtro por agente, para no despertar al agente con ediciones que no son su tarea. |
 | `.rsc.json` | Configuración base del catálogo de arneses y herramientas. |
 | `.gitignore` | Ignora artefactos del sistema operativo (como `desktop.ini`), temporales y bloqueos de sincronización. |

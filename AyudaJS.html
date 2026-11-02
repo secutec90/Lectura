@@ -12,8 +12,8 @@ var ultimoDisparadorAyuda_ = null;
 var lmsSt90Listo_ = false;
 var PORTAL_LIBROS_SEP_ = 'https://libros.conaliteg.gob.mx/';
 var MARCA_IFRAME_PREFIJO_ = '#### Contenido externo: ';
-var MARCA_IDEVICES_INI_AYUDA_ = '--- iDevices de la sesión ---';
-var MARCA_IDEVICES_FIN_AYUDA_ = '--- fin iDevices ---';
+var MARCA_IDEVICES_INI_AYUDA_ = '--- Contenidos de la sesión ---';
+var MARCA_IDEVICES_FIN_AYUDA_ = '--- fin Contenidos ---';
 var AVATAR_ASESOR_NEM_B64_ = 'data:image/jpeg;base64,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';
 
 
@@ -157,7 +157,7 @@ var DICCIONARIO_AYUDA_NEM = {
   },
   desarrollo: {
     titulo: 'Desarrollo de la sesión',
-    proposito: 'Organiza la tarea central, los iDevices y la participación de todo el grupo.',
+    proposito: 'Organiza la tarea central, los Contenidos y la participación de todo el grupo.',
     comoLlenar: 'Describe la actividad, los materiales y cómo se distribuye el tiempo.',
     ejemplo: 'En equipos, leen dos testimonios y arman una viñeta para el periódico mural.'
   },
@@ -2954,8 +2954,8 @@ function asociarEncuestaCreadaAlIDevice_(info) {
 
 function guionDocenteConEncuestas_(notas) {
   var lista = [];
-  if (typeof leerTodosLosiDevicesDeSesion_ === 'function') {
-    lista = leerTodosLosiDevicesDeSesion_().filter(function (d) { return d.tipo === 'encuesta'; });
+  if (typeof leerTodosLosContenidosDeSesion_ === 'function') {
+    lista = leerTodosLosContenidosDeSesion_().filter(function (d) { return d.tipo === 'encuesta'; });
   }
   var exe = (typeof capturarEstadoExe_ === 'function') ? capturarEstadoExe_() : (window._extraExelearning_ || null);
   return JSON.stringify({ notas: notas || '', extra: { idevicesEncuesta: lista, exelearning: exe } });
@@ -3056,7 +3056,7 @@ function serializarEncuestaIDevice_(card) {
   });
 }
 
-function leerTodosLosiDevicesDeSesion_() {
+function leerTodosLosContenidosDeSesion_() {
   var cont = document.getElementById('contenedorIDevicesDinamicos');
   if (!cont) return [];
   var salida = [];
@@ -3174,7 +3174,7 @@ window.conmutarModoEncuestaiDevice_ = conmutarModoEncuestaiDevice_;
 window.cargarCatalogoEnSelectiDevice_ = cargarCatalogoEnSelectiDevice_;
 window.cargarResumenEncuestaiDevice_ = cargarResumenEncuestaiDevice_;
 window.serializarEncuestaIDevice_ = serializarEncuestaIDevice_;
-window.leerTodosLosiDevicesDeSesion_ = leerTodosLosiDevicesDeSesion_;
+window.leerTodosLosContenidosDeSesion_ = leerTodosLosContenidosDeSesion_;
 window.conmutarModoConstructor = conmutarModoConstructor;
 window.recalcularPuntosTotalesQuiz = recalcularPuntosTotalesQuiz;
 window.sincronizarAjustesQuiz_ = sincronizarAjustesQuiz_;
@@ -3182,7 +3182,7 @@ window.barajarFisherYates_ = barajarFisherYates_;
 window.iniciarTemporizadorQuiz_ = iniciarTemporizadorQuiz_;
 /* BUILD-569-571-CURSOR-FIN */
 
-/* BUILD-578-CURSOR-INICIO — árbol de páginas, acordeón e iDevices de inglés y ofimática */
+/* BUILD-578-CURSOR-INICIO — árbol de páginas, acordeón e Contenidos de inglés y ofimática */
 var META_TARJETA_EXE_ = {
   objetivos: { badge: 'badge-info', etiqueta: 'INFORMACIÓN', titulo: 'Objetivos de Aprendizaje', cuerpo: 'Describe lo que lograrán los estudiantes al concluir la sesión.' },
   galeria: { badge: 'badge-info', etiqueta: 'INFORMACIÓN', titulo: 'Galería de Imágenes', cuerpo: 'Describe las imágenes y su texto alternativo.' },
@@ -3282,7 +3282,7 @@ function montarEntornoExeLearning_() {
         '</div>' +
         '<div class="nodos-lista" id="listaNodos"></div>' +
       '</div>' +
-      '<div class="box-idevice-menu"><div class="idevice-menu-titulo"><span>iDevices de Aprendizaje</span></div><div class="cat-accordion">' + htmlCatalogoExe_() + '</div></div>' +
+      '<div class="box-idevice-menu"><div class="idevice-menu-titulo"><span>Contenidos de Aprendizaje</span></div><div class="cat-accordion">' + htmlCatalogoExe_() + '</div></div>' +
     '</aside>' +
     '<main class="canvas-exe"><div class="canvas-container" id="lienzoExeActivo">' +
       '<div class="quick-ribbon" title="Inserción rápida de bloques en la página activa">' +
@@ -3323,7 +3323,7 @@ function renderArbolSesion_() {
     div.style.marginLeft = ((n.nivel || 0) * 16) + 'px';
     div.onclick = function () { seleccionarNodoSesion_(i); };
     var cuenta = contarBloquesPaginaExe_(n.id);
-    div.innerHTML = '<span>' + (n.titulo || ('Página ' + (i + 1))) + '</span><span class="nodo-tag">' + (i === activo ? 'Activa' : (cuenta + ' iDev')) + '</span>';
+    div.innerHTML = '<div class="nodo-titulo-wrap"><span class="nodo-texto">' + (n.titulo || ('Página ' + (i + 1))) + '</span><button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarNodoEspecificoSesion_(' + i + ')">✏️</button></div><span class="nodo-tag">' + (i === activo ? 'Activa' : (cuenta + ' Cont.')) + '</span>';
     cont.appendChild(div);
   });
   var banner = document.getElementById('bannerTituloPagina');
@@ -3427,6 +3427,21 @@ function seleccionarNodoSesion_(idx) {
   aplicarFiltroPaginaExe_();
   actualizarContadorIDevicesExe_();
 }
+
+
+function renombrarNodoEspecificoSesion_(idx) {
+  asegurarPaginasExe_();
+  var pag = window.paginasSesionActiva_[idx];
+  if (!pag || typeof prompt !== 'function') return;
+  var nuevo = prompt('Cambiar nombre de la página ' + (idx + 1) + ':', pag.titulo || '');
+  if (nuevo && String(nuevo).trim()) {
+    pag.titulo = String(nuevo).trim();
+    window._nodoSesionActivo_ = idx;
+    renderArbolSesion_();
+    aplicarFiltroPaginaExe_();
+  }
+}
+window.renombrarNodoEspecificoSesion_ = renombrarNodoEspecificoSesion_;
 
 function renombrarNodoSesion_() {
   asegurarPaginasExe_();
@@ -3581,7 +3596,91 @@ function recalcularHojaExe_(input) {
   });
 }
 
-function htmlEspecialExe_(tipo) {
+function htmlEspecialExe_(tipo, datos) {
+  datos = datos || {};
+  var extra = datos.extra || {};
+  
+  if (tipo === 'texto_dua' || tipo === 'lectura') {
+    return '<div class="toolbar-enriquecida">' +
+      '<button type="button" class="btn-tool-formato" title="Negrita" onclick="formatearTextoExe_(this, \'**\')"><strong>B</strong></button>' +
+      '<button type="button" class="btn-tool-formato" title="Cursiva" onclick="formatearTextoExe_(this, \'*\')"><em>I</em></button>' +
+      '<button type="button" class="btn-tool-formato" title="Subrayado" onclick="formatearTextoExe_(this, \'__\')"><u>U</u></button>' +
+      '<button type="button" class="btn-tool-formato" title="Título" onclick="formatearTextoExe_(this, \'### \')">H3</button>' +
+      '<button type="button" class="btn-tool-formato" title="Viñeta" onclick="formatearTextoExe_(this, \'• \')">• Lista</button>' +
+      '<button type="button" class="btn-tool-formato" title="Cita" onclick="formatearTextoExe_(this, \'> \')">“” Cita</button>' +
+      '<span class="pill-audio-dua" onclick="reproducirAudioDuaCard_(this)">🔊 Síntesis de Voz DUA (Probar)</span>' +
+    '</div>';
+  }
+
+  if (tipo === 'video_interactivo') {
+    return '<label class="campo-label" style="font-weight:700;margin-top:6px;display:block;">Origen del Video:</label>' +
+      '<div class="tabs-origen-media">' +
+        '<button type="button" class="tab-btn-media activo" onclick="conmutarOrigenMedia_(this, \'yt\')">🔴 YouTube</button>' +
+        '<button type="button" class="tab-btn-media" onclick="conmutarOrigenMedia_(this, \'drive\')">☁️ Google Drive</button>' +
+        '<button type="button" class="tab-btn-media" onclick="conmutarOrigenMedia_(this, \'local\')">📁 Archivo Local</button>' +
+      '</div>' +
+      '<div class="panel-origen-yt">' +
+        '<input type="url" class="campo-input inp-video-url" placeholder="Pega el enlace de YouTube (ej. https://youtube.com/watch?v=...)" oninput="actualizarPreviewVideo_(this)">' +
+      '</div>' +
+      '<div class="panel-origen-local" style="display:none;">' +
+        '<input type="file" accept="video/mp4,video/webm" class="campo-input inp-video-file" onchange="cargarVideoLocal_(this)">' +
+      '</div>' +
+      '<div class="caja-preview-media caja-video-prev" style="display:none;"></div>' +
+      '<div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:10px;">' +
+        '<div><label class="campo-label">Pausa en segundo:</label><input type="number" class="campo-input inp-pausa-seg" placeholder="60"></div>' +
+        '<div><label class="campo-label">Pregunta al pausar:</label><input type="text" class="campo-input inp-pausa-preg" placeholder="¿Qué concepto explicó el video?"></div>' +
+      '</div>';
+  }
+
+  if (tipo === 'galeria') {
+    return '<label class="campo-label" style="font-weight:700;margin-top:6px;display:block;">Origen de la Imagen:</label>' +
+      '<div class="tabs-origen-media">' +
+        '<button type="button" class="tab-btn-media activo" onclick="conmutarOrigenMedia_(this, \'local\')">📁 Subir Imagen</button>' +
+        '<button type="button" class="tab-btn-media" onclick="conmutarOrigenMedia_(this, \'url\')">🌐 Enlace Web</button>' +
+        '<button type="button" class="tab-btn-media" onclick="conmutarOrigenMedia_(this, \'drive\')">☁️ Google Drive</button>' +
+      '</div>' +
+      '<div class="panel-origen-local">' +
+        '<input type="file" accept="image/*" class="campo-input inp-img-file" onchange="cargarImagenLocal_(this)">' +
+      '</div>' +
+      '<div class="panel-origen-url" style="display:none;">' +
+        '<input type="url" class="campo-input inp-img-url" placeholder="https://...imagen.png" oninput="actualizarPreviewImg_(this)">' +
+      '</div>' +
+      '<div class="caja-preview-media caja-img-prev" style="display:none;"></div>' +
+      '<label class="campo-label" style="margin-top:8px;display:block;">Descripción Oral Accesible DUA (para invidentes):</label>' +
+      '<textarea class="campo-textarea txt-alt-dua" rows="2" placeholder="Describe la imagen para que el sintetizador de voz se la lea a alumnos con discapacidad visual..."></textarea>';
+  }
+
+  if (tipo === 'fichero') {
+    return '<label class="campo-label" style="font-weight:700;margin-top:6px;display:block;">Adjuntar Documento o Ficha:</label>' +
+      '<div class="tabs-origen-media">' +
+        '<button type="button" class="tab-btn-media activo" onclick="conmutarOrigenMedia_(this, \'local\')">📁 Seleccionar PDF/Ficha</button>' +
+        '<button type="button" class="tab-btn-media" onclick="conmutarOrigenMedia_(this, \'drive\')">☁️ Enlace Drive / Web</button>' +
+      '</div>' +
+      '<div class="panel-origen-local">' +
+        '<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" class="campo-input inp-fichero-file" onchange="cargarFicheroLocal_(this)">' +
+      '</div>' +
+      '<div class="panel-origen-drive" style="display:none;">' +
+        '<input type="url" class="campo-input inp-fichero-url" placeholder="https://drive.google.com/file/d/..."> ' +
+      '</div>' +
+      '<div class="fichero-descarga-card" style="margin-top:8px;padding:8px 12px;background:#f0fdfa;border:1px solid #ccfbf1;border-radius:6px;display:flex;align-items:center;gap:8px;">' +
+        '<span style="font-size:20px;color:#0d9488;">📄</span>' +
+        '<span class="nombre-fichero-label" style="font-weight:600;font-size:12.5px;color:#0f766e;">Ningún archivo seleccionado todavía</span>' +
+      '</div>';
+  }
+
+  if (tipo === 'quiz_evaluativo' || tipo === 'pregunta') {
+    return '<label class="campo-label" style="font-weight:700;margin-top:6px;display:block;">Opciones de Respuesta:</label>' +
+      '<div class="contenedor-opciones-quiz">' +
+        '<div class="fila-opcion-quiz"><input type="radio" name="correcta_' + Date.now() + '" checked title="Marcar como respuesta correcta"><input type="text" class="campo-input inp-opcion-texto" value="Opción A (Correcta)"><button type="button" class="btn-quitar-opcion" onclick="quitarOpcionQuiz_(this)">✕</button></div>' +
+        '<div class="fila-opcion-quiz"><input type="radio" name="correcta_' + Date.now() + '" title="Marcar como respuesta correcta"><input type="text" class="campo-input inp-opcion-texto" value="Opción B"><button type="button" class="btn-quitar-opcion" onclick="quitarOpcionQuiz_(this)">✕</button></div>' +
+      '</div>' +
+      '<button type="button" class="btn-tool-formato" style="margin-top:6px;" onclick="agregarOpcionQuiz_(this)">+ Añadir otra opción</button>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">' +
+        '<div><label class="campo-label">Puntos:</label><input type="number" class="campo-input inp-puntos-quiz" value="10"></div>' +
+        '<div><label class="campo-label">Retroalimentación inmediata:</label><input type="text" class="campo-input inp-retro-quiz" placeholder="Explicación pedagógica"></div>' +
+      '</div>';
+  }
+  
   if (tipo === 'listening') {
     return '<label>URL del audio</label><input type="url" class="campo-input inp-audio-url" placeholder="https://...mp3">' +
       '<label>Transcripción (opcional)</label><textarea class="campo-textarea txt-transcripcion" rows="2"></textarea>' +

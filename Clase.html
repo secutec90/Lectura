@@ -711,27 +711,38 @@
               </div>
             </div>
 
+            <!-- Guía rápida de uso del Gestor de Sesiones -->
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:#14532d;">
+              <div>
+                <strong>💡 ¿Cómo funciona esta vista?</strong>
+                <span><strong>1)</strong> Cada sesión ya incluye una secuencia base (o pulsa <strong>✨ Desglosar con IA</strong> para redactar todas con IA). <strong>2)</strong> Opcionalmente vincula páginas del <strong>📚 Libro SEP</strong> o asigna fecha con <strong>📅 Calendarizar</strong>. <strong>3)</strong> Pulsa <strong>💾 Guardar</strong> o descarga tu <strong>📄 Formato Oficial PDF</strong>.</span>
+              </div>
+            </div>
+
             <!-- Pestañas de Sesiones -->
             <div id="tabsSesionesPlan" class="nem-sesiones-tabs"></div>
 
             <!-- Editor de la Sesión Activa -->
             <div id="editorSesionActiva" class="oculto">
-              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
                 <div>
                   <h3 id="titSesionActiva" style="margin:0;font-size:16px;color:#0f172a;">Sesión 1 (40 min)</h3>
                   <p id="progSesionActiva" style="margin:4px 0 0;font-size:12px;color:#64748b;font-weight:600;"></p>
                 </div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
                   <button type="button" class="nem-btn-accion btn-soft-primary" onclick="abrirModalLibrosSEP_()" id="btnVincularLibroSEP" title="Consultar Libros de Texto Gratuitos SEP Fase 6 y vincular páginas">
                     📚 Vincular Libro SEP Fase 6
                   </button>
                   <button type="button" class="nem-btn-accion" onclick="abrirModalCalendarizarSesion()" id="btnCalSesion" style="border-color:#3b82f6;color:#1d4ed8;">📅 Calendarizar en Horario</button>
+                  <button type="button" class="nem-btn-accion nem-btn-primario" onclick="guardarSesionActiva()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-weight:700;">
+                    💾 Guardar Sesión
+                  </button>
                 </div>
               </div>
 
               <!-- BARRA DE HERRAMIENTAS IDEVICES MODULARES (TIPO EXELOGIC / EXELearning) -->
               <div class="idevice-bar">
-                <span style="font-size:11px;font-weight:800;color:var(--app-muted);text-transform:uppercase;letter-spacing:0.04em;">iDevices Modulares:</span>
+                <span style="font-size:11px;font-weight:800;color:var(--app-muted);text-transform:uppercase;letter-spacing:0.04em;">iDevices Modulares (Opcional):</span>
                 <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('lectura')" title="Insertar bloque de lectura guiada con narración de voz">
                   🎧 Lectura Guiada (Audio DUA)
                 </button>
@@ -744,108 +755,114 @@
                 <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('encuesta')">📊 Encuesta / Diagnóstico</button>
               </div>
               <div id="contenedorIDevicesDinamicos"></div>
-              </div>
 
-              <!-- Título de la sesión -->
               <!-- Título / Tema de la clase -->
-              <label for="sesTitulo" style="font-weight:700;font-size:14px;color:var(--st90-azul);margin-bottom:4px;display:block;">Título / Tema de la clase</label>
-              <input type="text" id="sesTitulo" placeholder="Tema de la clase">
-
-              <!-- Desglose de los 4 momentos NEM (40 min) -->
-              <div class="momento-caja momento-apertura">
-                <div class="momento-caja-header">
-                  <h3>⏱️ 1. Apertura (5 minutos)</h3>
-                  <span class="nem-meta-pill">Activación, saberes previos y propósito</span>
-                </div>
-                <textarea id="sesApertura" style="min-height:75px;" placeholder="Pregunta generadora, reto cognitivo o anécdota detonadora que conecte con la experiencia de los alumnos..."></textarea>
+              <div style="margin:10px 0 12px;">
+                <label for="sesTitulo" style="font-weight:700;font-size:13px;color:var(--st90-azul);margin-bottom:4px;display:block;">Título / Tema de la clase</label>
+                <input type="text" id="sesTitulo" placeholder="Tema de la clase" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;font-weight:600;color:#0f172a;">
               </div>
 
-              <div class="momento-caja momento-desarrollo">
-                <div class="momento-caja-header">
-                  <h3>📖 2. Desarrollo / Explicación (10 minutos)</h3>
-                  <span class="nem-meta-pill">Conceptos centrales y mediación oral clara</span>
-                </div>
-                <textarea id="sesDesarrollo" style="min-height:90px;" placeholder="Explicación directa del docente o contenido clave. Redacta de forma explicativa, fluida y con lenguaje claro..."></textarea>
-              </div>
-
-              <div class="momento-caja momento-actividad">
-                <div class="momento-caja-header">
-                  <h3>✍️ 3. Actividad / Producción (20 minutos)</h3>
-                  <span class="nem-meta-pill">Trabajo individual, en parejas o colectivo</span>
-                </div>
-                <textarea id="sesActividad" style="min-height:90px;" placeholder="Instrucciones paso a paso de la actividad de aprendizaje que los alumnos realizarán durante la clase..."></textarea>
-              </div>
-
-              <div class="momento-caja momento-cierre">
-                <div class="momento-caja-header">
-                  <h3>🎯 4. Cierre (5 minutos)</h3>
-                  <span class="nem-meta-pill">Síntesis formativa y metacognición</span>
-                </div>
-                <textarea id="sesCierre" style="min-height:75px;" placeholder="Preguntas de reflexión metacognitiva: ¿Qué descubrimos hoy? ¿Cómo se aplica a nuestra vida comunitaria?..."></textarea>
-              </div>
-
-              <!-- Sección DUA: Recursos Visuales con Descripción Oral Obligatoria -->
-              <div class="dua-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                  <div style="display:flex;align-items:center;gap:6px;">
-                    <span class="dua-badge-audio">DUA · Accesibilidad Universal</span>
-                    <strong style="font-size:14px;color:#92400e;">Recurso Visual con Descripción Auditiva</strong>
+              <!-- Desglose de los 4 momentos NEM (40 min) en cuadrícula 2x2 -->
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-bottom:14px;">
+                <div class="momento-caja momento-apertura" style="margin-bottom:0;">
+                  <div class="momento-caja-header">
+                    <h3>⏱️ 1. Apertura (5 min)</h3>
+                    <span class="nem-meta-pill">Activación y saberes previos</span>
                   </div>
+                  <textarea id="sesApertura" style="min-height:85px;width:100%;box-sizing:border-box;" placeholder="Pregunta generadora, reto cognitivo o anécdota detonadora..."></textarea>
                 </div>
-                <p class="hint" style="margin:0 0 10px;color:#78350f;">
-                  Para garantizar la inclusión plena según el Diseño Universal para el Aprendizaje, toda imagen o esquema debe contar con una descripción oral rica para que los estudiantes invidentes la escuchen con igual profundidad conceptual.
-                </p>
-                <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;">
-                  <div>
-                    <label for="sesVisualUrl" style="font-size:12px;">URL de imagen (opcional)</label>
-                    <input type="text" id="sesVisualUrl" placeholder="https://... o imagen">
+
+                <div class="momento-caja momento-desarrollo" style="margin-bottom:0;">
+                  <div class="momento-caja-header">
+                    <h3>📖 2. Desarrollo / Explicación (10 min)</h3>
+                    <span class="nem-meta-pill">Conceptos centrales y Libro SEP</span>
                   </div>
-                  <div>
-                    <label for="sesVisualDesc" style="font-size:12px;">Descripción Oral Accesible (Obligatoria si hay recurso visual) *</label>
-                    <textarea id="sesVisualDesc" style="min-height:70px;" placeholder="Describe detalladamente lo que muestra la imagen: colores, elementos, relaciones espaciales y significado..."></textarea>
+                  <textarea id="sesDesarrollo" style="min-height:85px;width:100%;box-sizing:border-box;" placeholder="Explicación directa del docente, contenido clave y páginas vinculadas..."></textarea>
+                </div>
+
+                <div class="momento-caja momento-actividad" style="margin-bottom:0;">
+                  <div class="momento-caja-header">
+                    <h3>✍️ 3. Actividad / Producción (20 min)</h3>
+                    <span class="nem-meta-pill">Trabajo práctico / Producto</span>
                   </div>
+                  <textarea id="sesActividad" style="min-height:85px;width:100%;box-sizing:border-box;" placeholder="Instrucciones paso a paso de la actividad de aprendizaje..."></textarea>
+                </div>
+
+                <div class="momento-caja momento-cierre" style="margin-bottom:0;">
+                  <div class="momento-caja-header">
+                    <h3>🎯 4. Cierre (5 min)</h3>
+                    <span class="nem-meta-pill">Síntesis y metacognición</span>
+                  </div>
+                  <textarea id="sesCierre" style="min-height:85px;width:100%;box-sizing:border-box;" placeholder="Preguntas de reflexión metacognitiva y retroalimentación..."></textarea>
                 </div>
               </div>
 
-              <!-- Guion Estudiante Integrado: Texto que escuchará el alumno -->
-              <div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:14px;margin-bottom:14px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
-                  <div>
-                    <label for="sesGuionEstudiante" style="font-size:15px;font-weight:800;color:var(--st90-azul);margin:0;display:block;">
-                      Texto que escuchará el alumno
-                    </label>
-                    <p class="hint" style="margin:2px 0 0;">Escribe o pega aquí lo que se va a leer en voz alta. El alumno vidente lo lee/ve y el alumno invidente lo escucha con narración de voz fluida.</p>
-                  </div>
-                  <button type="button" class="nem-btn-accion" onclick="generarGuionDesdeMomentos()" style="background:#f0fdf4;border-color:#86efac;color:#15803d;font-weight:700;">
-                    ✨ Generar guion desde los 4 momentos
-                  </button>
-                </div>
-                <textarea id="sesGuionEstudiante" style="min-height:160px;" placeholder="Escribe o pega aquí lo que se va a leer en voz alta."></textarea>
-              </div>
-
-              <!-- Controles de Publicación y Guardado en el Diseño de la Clase -->
+              <!-- Controles Principales de Publicación y Guardado -->
               <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:12px 16px;margin-bottom:14px;">
                 <label style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#0f172a;cursor:pointer;margin:0;">
                   <input type="checkbox" id="chkPubSesionClase" checked style="width:18px;height:18px;accent-color:var(--st90-verde);cursor:pointer;">
-                  <span>Publicar ahora</span>
+                  <span>Publicar ahora para que los alumnos vean la sesión</span>
                 </label>
                 <div style="display:flex;gap:10px;align-items:center;">
                   <button type="button" class="nem-btn-accion" onclick="probarVozGuionSesion()" id="btnEscucharGuionSesion" style="display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;font-weight:700;padding:8px 16px;">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                    <span>Escuchar</span>
+                    <span>Escuchar clase hablada</span>
                   </button>
                   <button type="button" class="nem-btn-accion nem-btn-primario" onclick="guardarSesionActiva()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 22px;font-weight:700;">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                    <span>Guardar</span>
+                    <span>Guardar Sesión</span>
                   </button>
                 </div>
               </div>
 
-              <!-- Notas y Orientaciones Docentes -->
-              <div style="margin-bottom:14px;">
-                <label for="sesNotasDocente">Notas y Orientaciones para el Docente</label>
-                <textarea id="sesNotasDocente" style="min-height:70px;" placeholder="Materiales requeridos, adecuaciones curriculares individuales, observaciones de evaluación formativa..."></textarea>
-              </div>
+              <!-- Opciones adicionales plegables (Audio Estudiante, Imagen DUA y Notas Docentes) -->
+              <details style="background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:10px 14px;margin-bottom:14px;">
+                <summary style="cursor:pointer;font-weight:700;font-size:13px;color:#334155;user-select:none;">
+                  🎧 Opciones de Aula Hablada, Recurso Visual DUA y Notas Docentes (Opcional · se autogenera desde los 4 momentos)
+                </summary>
+                <div style="margin-top:12px;">
+                  <!-- Sección DUA: Recursos Visuales con Descripción Oral Obligatoria -->
+                  <div class="dua-box">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                      <div style="display:flex;align-items:center;gap:6px;">
+                        <span class="dua-badge-audio">DUA · Accesibilidad Universal</span>
+                        <strong style="font-size:14px;color:#92400e;">Recurso Visual con Descripción Auditiva</strong>
+                      </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;">
+                      <div>
+                        <label for="sesVisualUrl" style="font-size:12px;">URL de imagen (opcional)</label>
+                        <input type="text" id="sesVisualUrl" placeholder="https://... o imagen" style="width:100%;box-sizing:border-box;">
+                      </div>
+                      <div>
+                        <label for="sesVisualDesc" style="font-size:12px;">Descripción Oral Accesible (si hay imagen)</label>
+                        <textarea id="sesVisualDesc" style="min-height:60px;width:100%;box-sizing:border-box;" placeholder="Describe lo que muestra la imagen para alumnos con discapacidad visual..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Guion Estudiante Integrado: Texto que escuchará el alumno -->
+                  <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:12px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+                      <div>
+                        <label for="sesGuionEstudiante" style="font-size:14px;font-weight:800;color:var(--st90-azul);margin:0;display:block;">
+                          Texto que escuchará el alumno (Guion de voz)
+                        </label>
+                      </div>
+                      <button type="button" class="nem-btn-accion" onclick="generarGuionDesdeMomentos()" style="background:#f0fdf4;border-color:#86efac;color:#15803d;font-weight:700;">
+                        ✨ Actualizar guion desde los 4 momentos
+                      </button>
+                    </div>
+                    <textarea id="sesGuionEstudiante" style="min-height:110px;width:100%;box-sizing:border-box;" placeholder="Se genera automáticamente a partir de los 4 momentos de la sesión..."></textarea>
+                  </div>
+
+                  <!-- Notas y Orientaciones Docentes -->
+                  <div>
+                    <label for="sesNotasDocente" style="font-size:13px;font-weight:700;">Notas y Orientaciones para el Docente</label>
+                    <textarea id="sesNotasDocente" style="min-height:60px;width:100%;box-sizing:border-box;" placeholder="Materiales requeridos, adecuaciones curriculares individuales, observaciones..."></textarea>
+                  </div>
+                </div>
+              </details>
             </div>
           </div>
         </div>

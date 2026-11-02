@@ -3149,11 +3149,14 @@ function _generarHtmlDocumentoPlanoDidacticoNL_(p, sesiones) {
     var faseIdx = idx === 0 ? 0 : (idx === listaSes.length - 1 ? 2 : 1);
     var faseTxt = fasesNombres[faseIdx];
     var fecSes = s.FechaProgramada || s.fechaProgramada || (idx === 0 && fechaIni ? fechaIni : ('Sesión ' + nSes));
-    var titSes = s.Titulo || s.titulo || ('Sesión ' + nSes);
-    var ap = (s.AperturaTexto || s.aperturaTexto || '').trim() || ('Presentación del propósito de la sesión, activación de saberes previos mediante preguntas detonadoras sobre «' + titulo + '» y encuadre del PDA.');
-    var des = (s.DesarrolloTexto || s.desarrolloTexto || '').trim() || ('Explicación guiada y modelado docente sobre el contenido «' + contenido + '» con apoyos visuales y auditivos DUA.');
-    var act = (s.ActividadTexto || s.actividadTexto || '').trim() || ('Trabajo colaborativo y producción en libreta/portafolio orientado al logro del PDA y avance del producto integrador.');
-    var cie = (s.CierreTexto || s.cierreTexto || '').trim() || ('Puesta en común, reflexión metacognitiva sobre lo aprendido y retroalimentación formativa.');
+    var baseMom = (typeof _generarMomentosBaseParaSesion_ === 'function')
+      ? _generarMomentosBaseParaSesion_(idx)
+      : { titulo: 'Sesión ' + nSes, apertura: '', desarrollo: '', actividad: '', cierre: '' };
+    var titSes = s.Titulo || s.titulo || baseMom.titulo || ('Sesión ' + nSes);
+    var ap = (s.AperturaTexto || s.aperturaTexto || '').trim() || baseMom.apertura || ('Presentación del propósito de la sesión, activación de saberes previos mediante preguntas detonadoras sobre «' + titulo + '» y encuadre del PDA.');
+    var des = (s.DesarrolloTexto || s.desarrolloTexto || '').trim() || baseMom.desarrollo || ('Explicación guiada y modelado docente sobre el contenido «' + contenido + '» con apoyos visuales y auditivos DUA.');
+    var act = (s.ActividadTexto || s.actividadTexto || '').trim() || baseMom.actividad || ('Trabajo colaborativo y producción en libreta/portafolio orientado al logro del PDA y avance del producto integrador.');
+    var cie = (s.CierreTexto || s.cierreTexto || '').trim() || baseMom.cierre || ('Puesta en común, reflexión metacognitiva sobre lo aprendido y retroalimentación formativa.');
     var evalTxt = idx === 0
       ? 'Comprensión del PDA\nParticipación diagnóstica\nRegistro en libreta'
       : (idx === listaSes.length - 1 ? 'Evaluación formativa final\nLista de cotejo\nMetacognición' : 'Avance de evidencia\nTrabajo colaborativo\nRetroalimentación');
@@ -3322,10 +3325,10 @@ function _mostrarModalPlanoDidacticoNL_(pObj, sesionesArr) {
   var docHtml = _generarHtmlDocumentoPlanoDidacticoNL_(pObj, sesionesArr);
   var overlay = document.createElement('div');
   overlay.id = 'modalVistaPreviaPDFOficialNL';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.72);z-index:99995;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px 12px;box-sizing:border-box;overflow-y:auto;';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.75);z-index:99995;display:block;padding:18px 12px 48px;box-sizing:border-box;overflow-y:auto;';
 
   overlay.innerHTML =
-    '<div style="width:100%;max-width:960px;background:#1e293b;color:#fff;border-radius:12px 12px 0 0;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-sizing:border-box;box-shadow:0 8px 25px rgba(0,0,0,0.3);">' +
+    '<div style="width:100%;max-width:860px;margin:0 auto;position:sticky;top:0;z-index:20;background:#1e293b;color:#fff;border-radius:12px 12px 0 0;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-sizing:border-box;box-shadow:0 8px 25px rgba(0,0,0,0.3);">' +
       '<div style="display:flex;align-items:center;gap:10px;">' +
         '<span style="font-size:20px;">📄</span>' +
         '<div>' +
@@ -3340,7 +3343,7 @@ function _mostrarModalPlanoDidacticoNL_(pObj, sesionesArr) {
         '<button type="button" onclick="var m=document.getElementById(\'modalVistaPreviaPDFOficialNL\');if(m)m.remove();" style="background:#475569;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer;">✕ Cerrar</button>' +
       '</div>' +
     '</div>' +
-    '<div id="contenedorDocOficialNLPdf" style="width:100%;max-width:960px;background:#fff;border-radius:0 0 12px 12px;padding:20px;box-sizing:border-box;box-shadow:0 12px 32px rgba(0,0,0,0.35);overflow-x:auto;">' +
+    '<div id="contenedorDocOficialNLPdf" style="display:block;width:100%;max-width:860px;height:auto;margin:0 auto 36px;background:#fff;border-radius:0 0 12px 12px;padding:28px 32px;box-sizing:border-box;box-shadow:0 12px 32px rgba(0,0,0,0.35);overflow:hidden;">' +
       docHtml +
     '</div>';
 
@@ -4329,6 +4332,100 @@ function insertarReferenciaLibroSesion_(idOIndice) {
     toast('📚 Vinculado: ' + libro.titulo + ' (' + detallePaginas.split('—')[0].trim() + ')', 'ok');
   }
 }
+
+function _generarMomentosBaseParaSesion_(idxSesion) {
+  var ctx = obtenerContextoPlanActivoLibrosSEP_();
+  var plan = (typeof planActualNEM !== 'undefined' && planActualNEM) ? planActualNEM : {};
+  var totalSes = (typeof sesionesActualesNEM !== 'undefined' && Array.isArray(sesionesActualesNEM) && sesionesActualesNEM.length)
+    ? sesionesActualesNEM.length : 3;
+  var num = (idxSesion || 0) + 1;
+
+  var tituloProy = ctx.titulo || plan.Titulo || plan.titulo || 'Proyecto de Aula y Comunidad';
+  var contenido = plan.ContenidoProgramatico || plan.contenidoProgramatico || tituloProy;
+  var pda = ctx.pda || plan.PDA || plan.pda || contenido;
+  var producto = plan.ProductoFinal || plan.productoFinal || 'evidencia formativa en libreta y portafolio';
+
+  // Buscar el libro oficial SEP de la asignatura y grado para incluir su referencia sugerida
+  var libros = filtrarLibrosSEPPorAsignaturaYGrado_(ctx, false);
+  var libPrin = libros && libros[0] ? libros[0] : null;
+  var refLibro = '';
+  if (libPrin) {
+    var capIdx = _indiceCapituloSugeridoParaPlan_(libPrin, ctx);
+    var cap = (libPrin.capitulos && libPrin.capitulos[capIdx]) ? libPrin.capitulos[capIdx] : null;
+    refLibro = ' [Libro SEP Fase 6: ' + libPrin.titulo + ' · ' + (cap ? (cap.paginas + ' — ' + cap.tema) : libPrin.paginasRelevantes) + ']';
+  }
+
+  if (num === 1) {
+    return {
+      titulo: 'Sesión 1: Encuadre y saberes previos — ' + tituloProy,
+      apertura: 'Presentación del propósito del proyecto «' + tituloProy + '». Activación de saberes previos mediante lluvia de ideas y preguntas detonadoras sobre cómo se manifiesta este tema en nuestra vida cotidiana y comunidad.',
+      desarrollo: 'Introducción guiada y modelado docente sobre el contenido «' + contenido + '» y el PDA: ' + pda + ', apoyándose en ejemplos visuales y auditivos DUA.' + refLibro,
+      actividad: 'En binas o equipos pequeños, los estudiantes registran en su libreta un diagnóstico inicial de ejemplos reales de su entorno escolar/familiar y resuelven los primeros ejercicios de exploración guiada.',
+      cierre: 'Puesta en común de hallazgos iniciales, aclaración de dudas colectivas y reflexión metacognitiva: ¿Qué sabíamos antes de hoy y qué descubrimos en esta primera sesión?'
+    };
+  } else if (num < totalSes) {
+    return {
+      titulo: 'Sesión ' + num + ': Práctica situada y profundización — ' + tituloProy,
+      apertura: 'Recapitulación breve de la sesión anterior mediante una pregunta rápida de activación y revisión de acuerdos de trabajo colaborativo.',
+      desarrollo: 'Explicación paso a paso de estrategias de resolución y análisis práctico sobre «' + contenido + '», comparando distintos procedimientos con apoyos DUA.' + refLibro,
+      actividad: 'Desarrollo práctico colaborativo: resolución de situaciones contextualizadas de la comunidad y elaboración del borrador o avance de «' + producto + '» con acompañamiento docente.',
+      cierre: 'Coevaluación rápida entre pares sobre el avance logrado, retroalimentación formativa del docente y acuerdos para el cierre del proyecto.'
+    };
+  } else {
+    return {
+      titulo: 'Sesión ' + num + ': Socialización e integración final — ' + tituloProy,
+      apertura: 'Encuadre de los criterios de la Lista de Cotejo y organización del grupo para la presentación o entrega final del proyecto.',
+      desarrollo: 'Síntesis integradora de los conceptos clave del PDA (' + pda + ') y orientaciones para verificar la calidad del producto final.' + refLibro,
+      actividad: 'Conclusión, socialización y entrega de «' + producto + '», verificando su aplicación a la problemática comunitaria analizada.',
+      cierre: 'Evaluación formativa con Lista de Cotejo, autoevaluación y reflexión metacognitiva final: ¿Cómo nos ayudó lo aprendido a tomar mejores decisiones en nuestra comunidad?'
+    };
+  }
+}
+
+(function _envolverSeleccionarSesionConAutollenado_() {
+  var origSel = (typeof window !== 'undefined' && typeof window.seleccionarSesionNEM === 'function')
+    ? window.seleccionarSesionNEM : null;
+  if (!origSel || origSel._envueltaST90) return;
+
+  function nuevaSeleccionarSesionNEM(idx) {
+    origSel(idx);
+    try {
+      var s = (typeof sesionesActualesNEM !== 'undefined' && sesionesActualesNEM) ? sesionesActualesNEM[idx] : null;
+      var elTit = document.getElementById('sesTitulo');
+      var elAp = document.getElementById('sesApertura');
+      var elDes = document.getElementById('sesDesarrollo');
+      var elAct = document.getElementById('sesActividad');
+      var elCie = document.getElementById('sesCierre');
+      if (!elAp || !elDes || !elAct || !elCie) return;
+
+      var vacios = !elAp.value.trim() && !elDes.value.trim() && !elAct.value.trim() && !elCie.value.trim();
+      if (vacios) {
+        var base = _generarMomentosBaseParaSesion_(idx);
+        if (elTit && (!elTit.value.trim() || elTit.value.indexOf('Sesión ') === 0)) {
+          elTit.value = base.titulo;
+          if (s) s.Titulo = base.titulo;
+        }
+        elAp.value = base.apertura;
+        elDes.value = base.desarrollo;
+        elAct.value = base.actividad;
+        elCie.value = base.cierre;
+        if (s) {
+          s.AperturaTexto = base.apertura;
+          s.DesarrolloTexto = base.desarrollo;
+          s.ActividadTexto = base.actividad;
+          s.CierreTexto = base.cierre;
+        }
+        var elGuion = document.getElementById('sesGuionEstudiante');
+        if (elGuion && !elGuion.value.trim() && typeof generarGuionDesdeMomentos === 'function') {
+          generarGuionDesdeMomentos();
+        }
+      }
+    } catch (e) {}
+  }
+  nuevaSeleccionarSesionNEM._envueltaST90 = true;
+  window.seleccionarSesionNEM = nuevaSeleccionarSesionNEM;
+  seleccionarSesionNEM = nuevaSeleccionarSesionNEM;
+})();
 
 if (typeof window !== 'undefined') {
   window.abrirModalLibrosSEP_ = abrirModalLibrosSEP_;

@@ -52,22 +52,23 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 
 ---
 
-## 4. Plan Maestro de Implementación en 4 Olas (`build-568` a `build-571`)
+## 4. Plan Maestro de Implementación en Olas (`build-568` a `build-579`)
 
 | Ola / Build | Alcance Técnico Principal | Estado |
 | :--- | :--- | :--- |
 | **Ola 1 (`build-568`)** | **Etapas 3 y 4 + Membrete Configurable + Lista de Cotejo y Rúbrica Analítica en PDF Oficial NL:**<br>• Chips DUA de 1 clic en Etapa 3.<br>• Editor de Lista de Cotejo (`3–5` criterios) + generador de Rúbrica Analítica (4 niveles SEP) en Etapa 4.<br>• Modal `#modalConfigMembreteST90` (`PropertiesService`) con respaldo en escudos oficiales de Nuevo León.<br>• Fechas reales del horario docente en el PDF Oficial NL. | 🟢 **COMPLETADA** |
 | **Ola 2 (`build-569`)** | **iDevice Encuesta Diagnóstica / Actividad Evaluable en Constructor de Clases:**<br>• Nuevo bloque `encuesta` en `.idevice-bar` (`AdminPlanJS_05.html` / `ClaseJS_07.html`).<br>• Modo A (`datos_previos` con resumen IA) y Modo B (`actividad_activa` vinculada a matrícula en `EntregasActividades`). | 🟢 **COMPLETADA** |
-| **Ola 3 (`build-570`)** | **Constructor Dual Encuestas & Quizzes Integrado al iDevice:**<br>• Conmutador dual y modal de creación directa de encuesta/quiz desde la sesión.<br>• Puntos evaluativos, retroalimentación formativa y vinculación automática a la sesión. | 🟢 **ACTIVA (EN CURSO)** |
-| **Ola 4 (`build-571`)** | **Multimedia, Paginación, Carga a Drive y Temporizador:**<br>• Imágenes/diagramas por reactivo, temporizador en vivo y subida de evidencias. | 🟢 **PROGRAMADA** |
-| **Ola 5 (`build-578`)** | **Entorno Completo eXeLearning 3.0 (Árbol, Catálogo por Categorías, Barra Rápida, Inglés y Ofimática):**<br>• Árbol de páginas con barra teal e indentación.<br>• Catálogo accordion de iDevices (Información, Evaluación, Juegos, Interactivas, Inglés, Ofimática, Ciencias).<br>• Barra flotante superior de iconos multicolores.<br>• Módulos especializados para Lengua Extranjera (Listening, Pronunciación, Flashcards) y Tecnología Ofimática (Simulador de Hojas de Cálculo, Algoritmos). | 🟢 **COMPLETADA** |
+| **Ola 3 (`build-570`)** | **Constructor Dual Encuestas & Quizzes Integrado al iDevice:**<br>• Conmutador dual y modal de creación directa de encuesta/quiz desde la sesión.<br>• Puntos evaluativos, retroalimentación formativa y vinculación automática a la sesión. | 🟢 **COMPLETADA** |
+| **Ola 4 (`build-571`)** | **Multimedia, Paginación, Carga a Drive y Temporizador:**<br>• Imágenes/diagramas por reactivo, temporizador en vivo y subida de evidencias. | 🟢 **COMPLETADA** |
+| **Ola 5 (`build-578` & `build-579`)** | **Entorno Completo eXeLearning 3.0 & Contenidos Especializados:**<br>• Árbol de páginas con barra teal, indentación y lápiz ✏️ de renombrado por nodo.<br>• Catálogo accordion en 7 familias renombrado oficialmente a "Contenidos de Aprendizaje".<br>• Layout frontal derecho en flexbox (`.app-workspace`) publicando contenidos enfrente del menú.<br>• Herramientas reales de autor por formato (Texto DUA con síntesis de voz, Video con 3 orígenes y pausa, Galería/Drive con alt-text DUA, Fichas de descarga, Quiz con opciones dinámicas, Inglés Listening/Pronunciación y Ofimática interactiva). | 🟢 **COMPLETADA** |
+| **Ola 6 (`build-580`)** | **Consolidación, Simulación End-to-End y Verificación en `Clase.html`:**<br>• Prueba de flujo completo alumno: lectura guiada DUA en voz alta, resolución de quiz con retroalimentación inmediata y ejercicios de inglés/ofimática.<br>• Descarga y validación del PDF Oficial del Plano Didáctico NL. | 🟢 **PROGRAMADA (PRÓXIMA SESIÓN)** |
 
 ---
 
-## 5. Reparto de Tareas por Agente (Ejecución Inmediata)
+## 5. Reparto de Tareas por Agente (Próxima Sesión)
 
 | Agente | Partitura Asignada | Buzón / Archivos |
 | :--- | :--- | :--- |
-| **Cursor** *(Frontend & DOM)* | 1. **Ola 5 (`build-578`):** Implementar gestor de páginas (`agregarNodoSesion_`, `eliminarNodoSesion_`, `moverNodoSesion_`, `cambiarNivelNodoSesion_`), acordeón de iDevices (`toggleCatIDevices_`), despachador de inserción y soporte especializado para Inglés (`listening`, `pronunciacion`, `flashcards`) y Tecnología Ofimática (`sim_ofimatica`, `algoritmo`).<br>2. Ejecutar `node herramientas/centinela_buzon.js cursor` al guardar en `ENTREGA_CURSOR.md`. | `ENTREGA_CURSOR.md`<br>`AdminPlanJS_05.html`<br>`ClaseJS_07.html`<br>`AyudaJS.html` |
-| **DeepSeek** *(Diseño UI/UX & CSS)* | 1. **Ola 5 (`build-578`):** Diseñar CSS completo de la barra lateral de árbol (`.box-arbol`, `.arbol-toolbar`, `.nodo-item.seleccionado`), el acordeón colapsable con rotación de chevron (`.cat-accordion`), la barra de acceso rápido flotante (`.quick-ribbon`) y las Lego Cards modulares con badges temáticas de Inglés (`.badge-ingles`) y Tecnología (`.badge-tecnologia`).<br>2. Ejecutar `node herramientas/centinela_buzon.js deepseek` al guardar en `ENTREGA_DEEPSEEK.md`. | `ENTREGA_DEEPSEEK.md`<br>`AdminPlaneacionCSS.html`<br>`ComunCSS.html` |
-| **Antigravity** *(Backend, Integración & Despliegue)* | 1. **Ola 5 (`build-578`):** Auditar entregas de DeepSeek y Cursor, validar coherencia de selectores, asegurar integridad de la serialización en `PlaneacionNEM.gs` sin romper los 4 momentos sintéticos oficiales y realizar despliegue con `git commit / push` y `clasp push`. | `PlaneacionNEM.gs`<br>`CONTROL_CAMBIOS.md` |
+| **Cursor** *(Frontend & DOM)* | 1. **Ola 6 (`build-580`):** Validar la experiencia de resolución del alumno en `ClaseJS_08.html`, asegurando la reproducción de audio DUA y la puntuación del quiz.<br>2. Mantener centinela activo: `node herramientas/centinela_buzon.js cursor`. | `ENTREGA_CURSOR.md`<br>`ClaseJS_08.html`<br>`ClaseJS_07.html` |
+| **DeepSeek** *(Diseño UI/UX & CSS)* | 1. **Ola 6 (`build-580`):** Auditar contraste y comportamiento responsivo móvil/tablet de los nuevos bloques en `ClaseCSS.html`.<br>2. Mantener centinela activo: `node herramientas/centinela_buzon.js deepseek`. | `ENTREGA_DEEPSEEK.md`<br>`ClaseCSS.html` |
+| **Antigravity** *(Backend, Integración & Despliegue)* | 1. **Ola 6 (`build-580`):** Supervisar pruebas end-to-end, auditar persistencia en base de datos de Google Sheets, emitir commits y sincronizar los 5 endpoints de Google Apps Script. | `PlaneacionNEM.gs`<br>`CONTROL_CAMBIOS.md` |

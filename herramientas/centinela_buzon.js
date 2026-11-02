@@ -1,15 +1,29 @@
 #!/usr/bin/env node
 /**
- * CENTINELA DE BUZÓN MULTI-AGENTE (CURSOR & DEEPSEEK)
- * ===================================================
- * Vigila cada 60 segundos el buzón correspondiente (`ENTREGA_CURSOR.md` o
- * `ENTREGA_DEEPSEEK.md`) y `ESTADO_COORDINACION.md` después de que el agente
- * termina una entrega.
+ * CENTINELA DE BUZÓN MULTI-AGENTE (CURSOR & DEEPSEEK) · v2
+ * ========================================================
+ * Vigila el buzón del agente y `ESTADO_COORDINACION.md` cada 60 segundos.
  *
- * En cuanto Antigravity deposita una nueva partitura o actualiza la tarea
- * activa, el centinela despierta al agente devolviendo las instrucciones
- * nuevas por consola (exit code 0) para que continúe automáticamente sin
- * intervención manual del usuario.
+ * Política v2 (2026-11-01):
+ *
+ *  1. HUELLA POR PARTITURA, NO POR ARCHIVO.
+ *     Se firma el bloque de partitura con sus DOS primeras líneas con
+ *     contenido más el número de marcas de estado (🟢). Escribir la entrega
+ *     debajo de la partitura, reformatear la tabla de reparto o añadir
+ *     párrafos al final del bloque ya no despierta al agente.
+ *
+ *  2. TODO AVISO DECLARA EL ORIGEN.
+ *     `ENTREGA_*.md`, `ESTADO_COORDINACION.md` o `AMBOS`, y se imprime el
+ *     bloque del archivo que realmente cambió.
+ *
+ *  3. FILTRO POR AGENTE.
+ *     Si el bloque no menciona al agente vigilado, no lo despierta.
+ *
+ *  4. SILENCIO EXPLÍCITO.
+ *     Un cambio sin partitura nueva se informa una sola vez y el ciclo sigue.
+ *
+ * Contrapartida del contrato: toda partitura nueva debe estrenar título propio
+ * (por ejemplo `## 🎯 PARTITURA ASIGNADA: OLA 6 …`) o añadir una marca 🟢.
  *
  * Uso:
  *   node herramientas/centinela_buzon.js cursor
@@ -25,6 +39,7 @@ const args = process.argv.slice(2);
 const agenteRaw = (args.find(a => !a.startsWith('--')) || 'cursor').toLowerCase().trim();
 const esDeepSeek = agenteRaw.includes('deepseek');
 const nombreAgente = esDeepSeek ? 'DEEPSEEK' : 'CURSOR';
+const patronAgente = esDeepSeek ? /deepseek/i : /cursor/i;
 const archivoBuzon = esDeepSeek ? 'ENTREGA_DEEPSEEK.md' : 'ENTREGA_CURSOR.md';
 const archivoCoord = 'ESTADO_COORDINACION.md';
 
@@ -38,107 +53,128 @@ const raiz = process.cwd();
 const rutaBuzon = path.join(raiz, archivoBuzon);
 const rutaCoord = path.join(raiz, archivoCoord);
 
-function leerHashYContenido(ruta) {
+/* Marcadores que abren una partitura (compatibles con los históricos). */
+const MARCADORES = [
+  '## 🎯 PARTITURA ASIGNADA',
+  '## 🚀 [PROGRAMACIÓN',
+  '🟢 **PARTITURA ASIGNADA',
+  '🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**',
+  '🟢 **NUEVA TAREA ASIGNADA',
+  '## 3. Tarea Activa',
+  '## 5. Tarea Activa',
+  '## 5. Tarea Programada'
+];
+
+function leerArchivo(ruta) {
   try {
-    if (!fs.existsSync(ruta)) return { hash: '', contenido: '', mtime: 0 };
+    if (!fs.existsSync(ruta)) return { hash: '', contenido: '' };
     const contenido = fs.readFileSync(ruta, 'utf8');
-    const stat = fs.statSync(ruta);
-    const hash = crypto.createHash('sha256').update(contenido).digest('hex');
-    return { hash, contenido, mtime: stat.mtimeMs };
+    return { hash: crypto.createHash('sha256').update(contenido).digest('hex'), contenido };
   } catch (e) {
-    return { hash: '', contenido: '', mtime: 0 };
+    return { hash: '', contenido: '' };
   }
 }
 
-function extraerUltimaPartitura(contenido) {
+/* Bloque de partitura: desde el último marcador hasta el siguiente H2. */
+function extraerBloquePartitura(contenido) {
   if (!contenido) return '';
-  const marcadores = [
-    '🚀 [PROGRAMACIÓN',
-    '🟢 **PARTITURA ASIGNADA',
-    '🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**',
-    '🟢 **NUEVA TAREA ASIGNADA',
-    '## 5. Tarea Activa'
-  ];
-  let ultimoIndice = -1;
-  for (const m of marcadores) {
+  let inicio = -1;
+  for (const m of MARCADORES) {
     const idx = contenido.lastIndexOf(m);
-    if (idx > ultimoIndice) ultimoIndice = idx;
+    if (idx > inicio) inicio = idx;
   }
-  if (ultimoIndice >= 0) {
-    const inicioLinea = Math.max(0, contenido.lastIndexOf('\n', ultimoIndice - 10));
-    return contenido.slice(inicioLinea).trim();
-  }
-  return contenido.slice(-1500).trim();
+  if (inicio < 0) return '';
+  const resto = contenido.slice(inicio);
+  const fin = resto.indexOf('\n## ', 4);
+  return (fin >= 0 ? resto.slice(0, fin) : resto).trim();
 }
 
-let hashBuzonAnterior = leerHashYContenido(rutaBuzon).hash;
-let hashCoordAnterior = leerHashYContenido(rutaCoord).hash;
+/* Firma: dos primeras líneas con contenido + número de marcas 🟢. */
+function firma(bloque) {
+  if (!bloque) return '';
+  const lineas = bloque.split('\n')
+    .map(function (l) { return l.replace(/\s+/g, ' ').trim(); })
+    .filter(function (l) { return l.length > 0; });
+  const cabecera = lineas.slice(0, 2).join(' | ');
+  const marcas = (bloque.match(/🟢/g) || []).length;
+  return crypto.createHash('sha256').update(cabecera + '|' + marcas).digest('hex');
+}
 
-console.log(`[CENTINELA ${nombreAgente}] Vigilando ${archivoBuzon} [${hashBuzonAnterior.slice(0, 8)}] y ${archivoCoord} [${hashCoordAnterior.slice(0, 8)}] cada ${intervaloSeg}s (máx ${maxCiclos} ciclos)...`);
+function estado(ruta) {
+  const { hash, contenido } = leerArchivo(ruta);
+  const bloque = extraerBloquePartitura(contenido);
+  return {
+    hashArchivo: hash,
+    bloque,
+    firma: firma(bloque),
+    menciona: bloque ? patronAgente.test(bloque) : false
+  };
+}
 
+let buzonAnterior = estado(rutaBuzon);
+let coordAnterior = estado(rutaCoord);
+
+console.log(`[CENTINELA ${nombreAgente}] Política v2 · huella por partitura`);
+console.log(`[CENTINELA ${nombreAgente}] Vigilando ${archivoBuzon} [${buzonAnterior.hashArchivo.slice(0, 8)}] y ${archivoCoord} [${coordAnterior.hashArchivo.slice(0, 8)}] cada ${intervaloSeg}s (máx ${maxCiclos} ciclos)...`);
+
+const avisados = new Set();
 let ciclos = 0;
+
 const timer = setInterval(() => {
   ciclos++;
-  const actualBuzon = leerHashYContenido(rutaBuzon);
-  const actualCoord = leerHashYContenido(rutaCoord);
+  const buzon = estado(rutaBuzon);
+  const coord = estado(rutaCoord);
 
-  const cambioBuzon = actualBuzon.hash && actualBuzon.hash !== hashBuzonAnterior;
-  const cambioCoord = actualCoord.hash && actualCoord.hash !== hashCoordAnterior;
+  const cambioBuzon = buzon.hashArchivo && buzon.hashArchivo !== buzonAnterior.hashArchivo;
+  const cambioCoord = coord.hashArchivo && coord.hashArchivo !== coordAnterior.hashArchivo;
 
-  // CASO 1: Cambio directo en el buzón personal del agente
-  if (cambioBuzon) {
-    const textoBuzon = actualBuzon.contenido;
-    const tieneTareaBuzon =
-      textoBuzon.includes('🟢') ||
-      textoBuzon.includes('PROGRAMADA') ||
-      textoBuzon.includes('NUEVA TAREA ASIGNADA') ||
-      textoBuzon.includes('PARTITURA ASIGNADA');
+  const tareaBuzon = cambioBuzon && buzon.firma && buzon.firma !== buzonAnterior.firma && buzon.menciona;
+  const tareaCoord = cambioCoord && coord.firma && coord.firma !== coordAnterior.firma && coord.menciona;
 
-    if (tieneTareaBuzon) {
-      clearInterval(timer);
-      console.log(`\n============================================================`);
+  if (tareaBuzon || tareaCoord) {
+    const origen = tareaBuzon && tareaCoord
+      ? 'AMBOS'
+      : (tareaBuzon ? archivoBuzon : archivoCoord);
+    const bloque = tareaBuzon ? buzon.bloque : coord.bloque;
+    const huella = tareaBuzon ? buzon.hashArchivo : coord.hashArchivo;
+
+    clearInterval(timer);
+    console.log('\n============================================================');
+    if (tareaBuzon) {
       console.log(`🔔 [CENTINELA ${nombreAgente}] ¡NUEVA PARTITURA DETECTADA EN TU BUZÓN!`);
-      console.log(`📄 Archivo disparador: ${archivoBuzon} (huella: ${actualBuzon.hash.slice(0, 8)})`);
-      console.log(`============================================================\n`);
-      console.log(extraerUltimaPartitura(textoBuzon));
-      console.log(`\n============================================================`);
-      console.log(`👉 ACCIÓN REQUERIDA: Lee ${archivoBuzon}, ejecuta la nueva tarea asignada y guarda tu entrega automáticamente.`);
-      process.exit(0);
     } else {
-      // Hubo cambio pero sin bandera activa, actualizamos huella y seguimos
-      hashBuzonAnterior = actualBuzon.hash;
-      console.log(`[CENTINELA ${nombreAgente}] [Ciclo ${ciclos}] Modificación en ${archivoBuzon} sin tareas activas marcadas. Guardia activa.`);
-    }
-  }
-
-  // CASO 2: Cambio en el archivo global de coordinación (sin cambio en buzón)
-  if (cambioCoord && !cambioBuzon) {
-    const textoCoord = actualCoord.contenido;
-    // Buscamos si la sección de tareas asigna algo explícito para este agente
-    const regexAgente = new RegExp(`\\*\\*${nombreAgente}\\*\\*.*?(🟢\\s*\\*\\*(PROGRAMADA|ACTIVA)|PARTITURA ASIGNADA)`, 'is');
-    const tieneTareaEspecifica = regexAgente.test(textoCoord);
-
-    if (tieneTareaEspecifica) {
-      clearInterval(timer);
-      console.log(`\n============================================================`);
       console.log(`🔔 [CENTINELA ${nombreAgente}] ¡CONVOCATORIA DETECTADA EN COORDINACIÓN GLOBAL!`);
-      console.log(`📄 Archivo disparador: ${archivoCoord} (huella: ${actualCoord.hash.slice(0, 8)})`);
-      console.log(`============================================================\n`);
-      console.log(extraerUltimaPartitura(textoCoord));
-      console.log(`\n============================================================`);
-      console.log(`👉 ACCIÓN REQUERIDA: Lee ${archivoCoord} y ${archivoBuzon}, ejecuta la partitura asignada.`);
-      process.exit(0);
-    } else {
-      // Cambio en coordinación ajeno a este agente (ej. Antigravity actualizó bitácora o tareas de otro agente)
-      hashCoordAnterior = actualCoord.hash;
-      console.log(`[CENTINELA ${nombreAgente}] [Ciclo ${ciclos}] Actualización en ${archivoCoord} sin nueva partitura para ${nombreAgente}. Huella actualizada [${actualCoord.hash.slice(0, 8)}]. Guardia activa.`);
     }
+    console.log(`📄 Archivo disparador: ${origen} (huella: ${huella.slice(0, 8)})`);
+    console.log('============================================================\n');
+    console.log(bloque);
+    console.log('\n============================================================');
+    console.log(`👉 ACCIÓN REQUERIDA: Lee ${origen} y ${archivoCoord}, ejecuta la partitura asignada y guarda tu entrega en ${archivoBuzon}.`);
+    process.exit(0);
   }
+
+  /* Cambio real de archivo pero sin partitura nueva para este agente. */
+  [['buzon', cambioBuzon, buzon, buzonAnterior], ['coord', cambioCoord, coord, coordAnterior]].forEach(function (par) {
+    const etiqueta = par[0] === 'buzon' ? archivoBuzon : archivoCoord;
+    if (!par[1]) return;
+    const actual = par[2];
+    const previo = par[3];
+    const clave = etiqueta + ':' + actual.hashArchivo;
+    if (avisados.has(clave)) return;
+    avisados.add(clave);
+    const motivo = (actual.firma && actual.firma !== previo.firma)
+      ? 'la partitura no menciona a ' + nombreAgente
+      : 'sin partitura nueva (solo edición de texto)';
+    console.log(`[CENTINELA ${nombreAgente}] [Ciclo ${ciclos}] ${etiqueta} cambió, pero ${motivo}. Guardia activa.`);
+  });
+
+  /* Las huellas se actualizan para no repetir el aviso en cada ciclo. */
+  if (cambioBuzon) buzonAnterior = buzon;
+  if (cambioCoord) coordAnterior = coord;
 
   if (ciclos >= maxCiclos) {
     clearInterval(timer);
-    console.log(`[CENTINELA ${nombreAgente}] Tiempo de espera concluido (${maxCiclos} min) sin nuevas tareas en ${archivoBuzon}.`);
+    console.log(`[CENTINELA ${nombreAgente}] Tiempo de espera concluido (${maxCiclos} min) sin partituras nuevas.`);
     process.exit(0);
   }
 }, intervaloSeg * 1000);
-

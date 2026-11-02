@@ -1,8 +1,8 @@
 # Documento de Avances del Proyecto — Secundaria Técnica 90
 
 **Plataforma:** Sistema Integral de Comprensión Lectora, Planeación Didáctica NEM y Aula Hablada  
-**Fecha de corte:** Octubre 2026  
-**Última versión desplegada:** `@562`  
+**Fecha de corte:** Noviembre 2026  
+**Última versión desplegada:** `@576` (`v420 · build-579`)  
 **URL de producción activa:** [https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin](https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin)
 
 ---
@@ -14,6 +14,27 @@ En las iteraciones recientes del proyecto, la plataforma evolucionó de un siste
 ---
 
 ## Hitos y Desarrollos Recientes
+
+### 30. Entorno de Autor eXeLearning 3.0, Contenidos Curriculares Especializados y Despliegue Multi-Agente (@576 · build-579)
+- **Transformación al Entorno de Autor eXeLearning 3.0:**
+  - Se estructuró el espacio de trabajo en tres pilares: **Árbol de Páginas y Jerarquía** a la izquierda, **Catálogo Accordion de Contenidos** en 7 familias pedagógicas y **Lienzo Central de Trabajo (Canvas)** con barra flotante de acceso rápido.
+  - Corrección de layout con flexbox de fila (`.app-workspace`): la barra lateral y el lienzo conviven de forma horizontal, publicando los contenidos agregados en el espacio frontal derecho enfrente del menú.
+  - Renombrado oficial de la interfaz: el término técnico "iDevices" fue sustituido por **"Contenidos de Aprendizaje"** para un lenguaje natural docente.
+  - Lápiz de edición ✏️ para cada página del árbol (`renombrarNodoEspecificoSesion_`): el docente puede renombrar cualquier página de la sesión directamente con un clic.
+- **Herramientas de Autor Enriquecidas por Formato (Cero campos genéricos):**
+  - **Texto / DUA:** Barra de formato (Negrita, Cursiva, Subrayado, H3, Viñetas, Citas) y pastilla de síntesis de voz DUA para accesibilidad de alumnos invidentes.
+  - **Vídeo Interactivo:** Selector de 3 fuentes (YouTube, Google Drive, Archivo Local MP4) con vista previa embebida y control de pausa pedagógica con pregunta formativa.
+  - **Galería Visual / Imágenes:** Selector de carga local, enlace web o Drive, con previsualización en miniatura y campo de descripción oral accesible (alt-text DUA).
+  - **Fichero Adjunto:** Carga de guías y fichas PDF con tarjeta estilizada de descarga.
+  - **Quiz y Encuestas:** Editor dinámico de preguntas (Opción múltiple, V/F) con botón de radio para marcar la respuesta correcta, puntos y retroalimentación explicativa.
+  - **Inglés:** Módulos de Listening con velocidad variable (0.75x / 1.0x), práctica de pronunciación con Web Speech Recognition y flashcards bilingües.
+  - **Tecnología Ofimática:** Mini hoja de cálculo interactiva editable por celdas con cálculo en tiempo real (`=SUMA`, `=PROMEDIO`), diagramas de flujo por bloques y editor de código/pseudocódigo.
+- **Protocolo Centinela de Orquestación con Huella SHA-256 Independiente:**
+  - El script `herramientas/centinela_buzon.js` fue optimizado para almacenar huellas independientes de los buzones y de `ESTADO_COORDINACION.md`, eliminando falsos positivos y reportando con precisión quirúrgica el archivo disparador.
+- **Persistencia y Despliegue Oficial (@576 · v420):**
+  - Serialización limpia en `extra.exelearning` sin romper los 4 momentos sintéticos oficiales.
+  - AST validado con 0 errores sintácticos mediante `node herramientas/manifiesto.js`.
+  - Sincronización en GitHub (commits `cac83b2`, `c40dd6c`, `d9992f1`) y despliegue a los 5 endpoints activos de Google Apps Script.
 
 ### 29. Asesora Pedagógica Ilustrada, Inserción de Títulos IA y Clarificación Curricular NEM (@562)
 - **Clarificación de Estructura Obligatoria vs. Autonomía Docente:**

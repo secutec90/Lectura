@@ -210,7 +210,7 @@
             </div>
 
             <!-- Controles de la Barra del Constructor (Editor) integrados en la misma fila -->
-            <div id="barraFormulario" class="d-none d-flex flex-wrap align-items-center justify-content-between gap-2 flex-grow-1 px-2">
+            <div id="barraFormulario" class="d-none d-flex flex-nowrap align-items-center justify-content-between gap-2 flex-grow-1 px-2" style="overflow-x:auto;">
               <!-- 3 Pestañas Horizontales del Constructor -->
               <div class="constructor-tabs-nav" id="constructorTabsNav" role="tablist" aria-label="Secciones del Constructor">
                 <button type="button" class="constructor-tab-btn active" id="btnTabConsOrigen" role="tab" aria-selected="true" onclick="cambiarTabConstructorEnc_('origen')">
@@ -231,22 +231,11 @@
                 </button>
               </div>
 
-              <div class="constructor-modo-switch" role="group" aria-label="Modo del constructor">
+              <div class="constructor-modo-switch mb-0" role="group" style="margin:0 !important;flex-shrink:0;" aria-label="Modo del constructor">
                 <button type="button" id="btnModoEncuesta" class="activo" aria-selected="true" onclick="conmutarModoConstructor('encuesta')">📊 Encuesta / Diagnóstico</button>
                 <button type="button" id="btnModoQuiz" aria-selected="false" onclick="conmutarModoConstructor('quiz')">📝 Quiz Evaluativo</button>
               </div>
-              <div id="barraConfigQuizGlobal" class="d-none">
-                <span>Puntos <strong id="lblPuntosTotalesQuiz">0</strong></span>
-                <label><input type="checkbox" id="chkQuizRetroInmediata" checked onchange="recalcularPuntosTotalesQuiz()"> Retroalimentación</label>
-                <label>Intentos
-                  <select id="selQuizIntentos">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                </label>
-                <label>Minutos <input type="number" id="inpTemporizadorQuiz" min="0" max="180" value="0"></label>
-              </div>
+              
               <div class="d-flex align-items-center gap-2">
                 <span id="estado" class="small text-muted"></span>
                 <button class="cons-save-btn" type="button" id="btnGuardar" onclick="guardarTodo()"><i class="bi bi-save"></i> Guardar cambios</button>
@@ -381,6 +370,18 @@
 
           <!-- SUBPESTAÑA 3: EDITOR DE PREGUNTAS (CONSTRUCTOR CON 3 PESTAÑAS HORIZONTALES EN LA BARRA SUPERIOR) -->
           <div class="tab-pane fade" id="paneFormulario">
+            <div id="barraConfigQuizGlobal" class="d-none">
+                <span>Puntos <strong id="lblPuntosTotalesQuiz">0</strong></span>
+                <label><input type="checkbox" id="chkQuizRetroInmediata" checked onchange="recalcularPuntosTotalesQuiz()"> Retroalimentación</label>
+                <label>Intentos
+                  <select id="selQuizIntentos">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </label>
+                <label>Minutos <input type="number" id="inpTemporizadorQuiz" min="0" max="180" value="0"></label>
+              </div>
             <!-- PESTAÑA 1: ORIGEN DE DATOS -->
             <div id="subPaneConsOrigen" class="card p-3 mb-3 shadow-sm">
               <h6 class="fw-bold mb-2"><i class="bi bi-hdd-network text-info me-1"></i> 1. Origen de datos</h6>

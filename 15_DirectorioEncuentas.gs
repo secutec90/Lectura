@@ -473,3 +473,87 @@ function generarResumenEncuestaIA(token, hojaId) {
 
   return { ok: true, resumen: texto, total: agregado.total };
 }
+
+/* ============================================================
+   PUENTE CONSTRUCTOR DE CLASES <-> ENCUESTAS (OLA 2 · build-569)
+   ============================================================ */
+
+/**
+ * Obtiene el catálogo completo de encuestas disponibles (base institucional + hojas vinculadas)
+ * para ser insertadas como iDevice en el Constructor de Sesiones de Clase.
+ */
+function obtenerCatalogoEncuestasParaConstructor(token, filtros) {
+  try {
+    exigirClaseRol_(token, ["admin", "maestro"]);
+  } catch (eRol) {
+    const sVal = (typeof obtenerSesionValida_ === "function") ? obtenerSesionValida_(token) : null;
+    if (!sVal) throw eRol;
+  }
+  const f = filtros || {};
+  const res = listarDirectorioEncuestas(token);
+  let items = (res && res.items) ? res.items : [];
+
+  if (f.asignatura) {
+    const asigBuscada = String(f.asignatura).toLowerCase().trim();
+    items = items.filter(function (it) {
+      const a = String(it.asignatura || "").toLowerCase();
+      return !a || a.indexOf(asigBuscada) !== -1 || asigBuscada.indexOf(a) !== -1;
+    });
+  }
+  if (f.grado) {
+    const gBuscado = String(f.grado).replace(/\D/g, "");
+    if (gBuscado) {
+      items = items.filter(function (it) {
+        const g = String(it.grado || "").replace(/\D/g, "");
+        return !g || g === gBuscado;
+      });
+    }
+  }
+  return { ok: true, encuestas: items };
+}
+
+/**
+ * Registra que un alumno completó una encuesta asignada como actividad de clase
+ * y le acredita su participación en la hoja EntregasActividades.
+ */
+function registrarEntregaEncuestaAlumno(tokenAlumno, payload) {
+  const ses = (typeof obtenerSesionValida_ === "function") ? obtenerSesionValida_(tokenAlumno) : null;
+  if (!ses) throw new Error("Sesión de estudiante inválida o expirada.");
+
+  const p = payload || {};
+  const idEncuesta = String(p.idEncuesta || "").trim();
+  const idSesion = String(p.idSesion || "").trim();
+  const idActividad = String(p.idActividad || ("ENC-ACT-" + idEncuesta)).trim();
+  const ponderacion = Number(p.ponderacion) || 10;
+
+  const libro = _obtenerLibro_();
+  let hojaEnt = _obtenerHojaRobusta_(libro, "EntregasActividades");
+  if (!hojaEnt) {
+    hojaEnt = libro.insertSheet("EntregasActividades");
+    hojaEnt.appendRow(["IdEntrega", "IdActividad", "IdClase", "Matricula", "NombreAlumno", "Grado", "Grupo", "RespuestasJSON", "Calificacion", "Retroalimentacion", "FechaEntrega", "Estado"]);
+  }
+
+  const idEntrega = "ENT-ENC-" + Utilities.getUuid().slice(0, 8).toUpperCase();
+  hojaEnt.appendRow([
+    idEntrega,
+    idActividad,
+    idSesion,
+    String(ses.matricula || ses.usuario || ""),
+    String(ses.nombre || "Estudiante"),
+    String(ses.grado || ""),
+    String(ses.grupo || ""),
+    JSON.stringify({ tipo: "encuesta_completada", idEncuesta: idEncuesta, respuestas: p.respuestas || {} }),
+    ponderacion,
+    "Participación registrada exitosamente en encuesta diagnóstica/formativa de la sesión.",
+    new Date(),
+    "CALIFICADO"
+  ]);
+
+  return {
+    ok: true,
+    idEntrega: idEntrega,
+    calificacion: ponderacion,
+    mensaje: "¡Encuesta enviada y participación registrada en tu historial de clase!"
+  };
+}
+

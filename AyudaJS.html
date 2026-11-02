@@ -2293,6 +2293,9 @@ function iniciarLmsSt90_() {
   if (typeof window.iniciarSincronizacionEtapa2NEM_ === 'function') {
     window.iniciarSincronizacionEtapa2NEM_();
   }
+  if (typeof window.iniciarEtapa3y4CotejoNEM_ === 'function') {
+    window.iniciarEtapa3y4CotejoNEM_();
+  }
 }
 
 /* =========================================================================
@@ -2300,6 +2303,616 @@ function iniciarLmsSt90_() {
    ========================================================================= */
 var LOGO_NL_EDUCACION_B64_ = "data:image/jpeg;base64,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";
 var LOGO_NL_GOBIERNO_B64_ = "data:image/jpeg;base64,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";
+
+/* BUILD-568-CURSOR-INICIO — membrete, chips DUA y lista de cotejo / rúbrica */
+var MEMBRETE_NEM_DEFECTO_ = {
+  logoIzq: '',
+  logoDer: '',
+  linea1: 'SECRETARÍA DE EDUCACIÓN DEL ESTADO DE NUEVO LEÓN',
+  linea2: 'SUBSECRETARÍA DE EDUCACIÓN BÁSICA · DIRECCIÓN DE EDUCACIÓN SECUNDARIA',
+  linea3: 'ESCUELA SECUNDARIA TÉCNICA N° 90 "MIGUEL ÁNGEL GRANADOS CHAPA"'
+};
+var CHIPS_DUA_RAPIDOS_ = [
+  { etq: '+ Macrotipo y Alto Contraste', texto: '• Material visual con macrotipo, alto contraste y apoyos gráficos paso a paso (DUA Representación).' },
+  { etq: '+ Audio DUA y Lectura Guiada', texto: '• Instrucciones breves apoyadas con lectura guiada y audio descriptivo (DUA Representación).' },
+  { etq: '+ Tiempos Flexibles', texto: '• Tiempos flexibles de entrega, pausas activas focalizadas y evaluación diversificada (DUA Acción y Expresión).' },
+  { etq: '+ Parejas Tutoras', texto: '• Trabajo colaborativo en parejas tutoras con monitoreo cercano y refuerzo positivo (DUA Motivación).' }
+];
+
+function _normalizarCfgMembrete_(cfg) {
+  cfg = cfg || {};
+  return {
+    logoIzq: String(cfg.logoIzq || cfg.logoIzquierdo || ''),
+    logoDer: String(cfg.logoDer || cfg.logoDerecho || ''),
+    linea1: String(cfg.linea1 || MEMBRETE_NEM_DEFECTO_.linea1),
+    linea2: String(cfg.linea2 || MEMBRETE_NEM_DEFECTO_.linea2),
+    linea3: String(cfg.linea3 || MEMBRETE_NEM_DEFECTO_.linea3)
+  };
+}
+
+function _cfgMembreteEfectiva_() {
+  var cfg = _normalizarCfgMembrete_(window.configMembreteNEM_ || MEMBRETE_NEM_DEFECTO_);
+  return {
+    logoIzq: cfg.logoIzq || (typeof LOGO_NL_EDUCACION_B64_ !== 'undefined' ? LOGO_NL_EDUCACION_B64_ : ''),
+    logoDer: cfg.logoDer || (typeof LOGO_NL_GOBIERNO_B64_ !== 'undefined' ? LOGO_NL_GOBIERNO_B64_ : ''),
+    linea1: cfg.linea1,
+    linea2: cfg.linea2,
+    linea3: cfg.linea3
+  };
+}
+
+function _tokenPlanNEM_() {
+  if (typeof getTokenPlan_ === 'function') return getTokenPlan_();
+  if (typeof tokenClase !== 'undefined' && tokenClase) return tokenClase;
+  return (window.tokenClase || window.token || '');
+}
+
+function _avisarPlanNEM_(msg, tipo) {
+  if (typeof toast === 'function') toast(msg, tipo || 'info');
+}
+
+function cargarConfigMembreteInicial_() {
+  window.configMembreteNEM_ = _normalizarCfgMembrete_(window.configMembreteNEM_ || MEMBRETE_NEM_DEFECTO_);
+  if (typeof gsRun !== 'function') return;
+  gsRun('obtenerMembreteInstitucionalNEM').then(function (res) {
+    var cfg = (res && (res.config || res.membrete)) || (res && res.linea1 ? res : null);
+    if (cfg) window.configMembreteNEM_ = _normalizarCfgMembrete_(cfg);
+  }).catch(function () {
+    gsRun('obtenerMembreteInstitucionalNEM', _tokenPlanNEM_()).then(function (res2) {
+      var cfg2 = (res2 && (res2.config || res2.membrete)) || null;
+      if (cfg2) window.configMembreteNEM_ = _normalizarCfgMembrete_(cfg2);
+    }).catch(function () {});
+  });
+}
+
+function _mostrarModalMembrete_(visible) {
+  var m = document.getElementById('modalConfigMembreteST90');
+  if (!m) return;
+  m.classList.toggle('oculto', !visible);
+  m.style.display = visible ? 'flex' : 'none';
+}
+
+function abrirConfigMembreteNEM() {
+  asegurarMarcadoresEtapa3y4NEM_();
+  var cfg = _normalizarCfgMembrete_(window.configMembreteNEM_ || MEMBRETE_NEM_DEFECTO_);
+  var izq = document.getElementById('cfgLogoIzq');
+  var der = document.getElementById('cfgLogoDer');
+  var l1 = document.getElementById('cfgEncL1');
+  var l2 = document.getElementById('cfgEncL2');
+  var l3 = document.getElementById('cfgEncL3');
+  if (izq) izq.value = cfg.logoIzq;
+  if (der) der.value = cfg.logoDer;
+  if (l1) l1.value = cfg.linea1;
+  if (l2) l2.value = cfg.linea2;
+  if (l3) l3.value = cfg.linea3;
+  _mostrarModalMembrete_(true);
+}
+
+function cerrarConfigMembreteNEM() {
+  _mostrarModalMembrete_(false);
+}
+
+function guardarConfigMembreteNEM() {
+  var payload = {
+    logoIzq: ((document.getElementById('cfgLogoIzq') || {}).value || '').trim(),
+    logoDer: ((document.getElementById('cfgLogoDer') || {}).value || '').trim(),
+    linea1: ((document.getElementById('cfgEncL1') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea1,
+    linea2: ((document.getElementById('cfgEncL2') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea2,
+    linea3: ((document.getElementById('cfgEncL3') || {}).value || '').trim() || MEMBRETE_NEM_DEFECTO_.linea3
+  };
+  window.configMembreteNEM_ = payload;
+  cerrarConfigMembreteNEM();
+  if (typeof gsRun !== 'function') {
+    _avisarPlanNEM_('Membrete listo en esta sesión. El guardado en servidor aún no está disponible.', 'warning');
+    return;
+  }
+  _avisarPlanNEM_('Guardando membrete institucional…', 'info');
+  gsRun('guardarMembreteInstitucionalNEM', _tokenPlanNEM_(), payload).then(function (res) {
+    if (res && res.ok === false) {
+      _avisarPlanNEM_(res.error || 'No se pudo guardar el membrete.', 'error');
+      return;
+    }
+    _avisarPlanNEM_('Membrete institucional guardado.', 'ok');
+  }).catch(function () {
+    _avisarPlanNEM_('El membrete quedó en esta sesión. El servidor aún no expone guardarMembreteInstitucionalNEM.', 'warning');
+  });
+}
+
+function insertarAjusteDUARapido(textoChip) {
+  var area = document.getElementById('planAjustesRazonables');
+  if (!area) return;
+  var linea = String(textoChip || '').trim();
+  if (!linea) return;
+  var actuales = String(area.value || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+  if (actuales.indexOf(linea) >= 0) {
+    _avisarPlanNEM_('Ese ajuste razonable ya está incluido.', 'warning');
+    return;
+  }
+  var base = String(area.value || '').replace(/\s+$/, '');
+  area.value = base ? (base + '\n' + linea) : linea;
+  area.dispatchEvent(new Event('input', { bubbles: true }));
+  area.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function _persistirCotejoLocal_() {
+  try {
+    localStorage.setItem('st90_criterios_cotejo_nem', JSON.stringify(window.criteriosCotejoPlanNEM_ || []));
+    localStorage.setItem('st90_rubrica_plan_nem', JSON.stringify(window.rubricaPlanNEM_ || []));
+  } catch (e) {}
+}
+
+function _marcarCotejoPersonalizado_() {
+  window.criteriosCotejoPlanNEM_personalizado_ = true;
+}
+
+function generarRubricaDesdeCriterios_() {
+  var lista = window.criteriosCotejoPlanNEM_ || [];
+  window.rubricaPlanNEM_ = lista.map(function (crit) {
+    var c = String(crit || '').replace(/^•\s*/, '').trim();
+    return {
+      criterio: c,
+      sobresaliente: 'Sobresaliente (10): evidencia completa, autónoma y transferible de «' + c + '».',
+      satisfactorio: 'Satisfactorio (8-9): cumple el criterio con apoyos ocasionales.',
+      basico: 'Básico (6-7): cumple de forma parcial y requiere retroalimentación.',
+      requiereApoyo: 'Requiere Apoyo (5): aún no evidencia el criterio; necesita andamiaje DUA.'
+    };
+  });
+  _persistirCotejoLocal_();
+}
+
+function sincronizarCriterioCotejo(idx, valor) {
+  if (!window.criteriosCotejoPlanNEM_ || window.criteriosCotejoPlanNEM_[idx] === undefined) return;
+  window.criteriosCotejoPlanNEM_[idx] = String(valor || '').trim();
+  _marcarCotejoPersonalizado_();
+  generarRubricaDesdeCriterios_();
+}
+
+function pintarTablaCriteriosCotejoDOM_() {
+  var caja = document.getElementById('cajaRubricaCotejoNEM');
+  if (!caja) return;
+  var lista = window.criteriosCotejoPlanNEM_ || [];
+  var filas = lista.length ? lista.map(function (crit, idx) {
+    return '<tr>' +
+      '<td><input type="text" class="input-criterio-cotejo-nem" value="' + _escPdf_(crit) + '" aria-label="Criterio ' + (idx + 1) + '" onchange="sincronizarCriterioCotejo(' + idx + ', this.value)"></td>' +
+      '<td style="text-align:center;">Sí ✓</td>' +
+      '<td style="text-align:center;">En proceso</td>' +
+      '<td style="text-align:center;">No todavía</td>' +
+      '<td><button type="button" class="nem-btn-accion" onclick="quitarCriterioCotejo(' + idx + ')" aria-label="Quitar criterio">✕</button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="5">Sin criterios. Usa «Generar desde PDA» o «Agregar criterio» (de 3 a 5).</td></tr>';
+  caja.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">' +
+      '<strong>Lista de cotejo y rúbrica analítica</strong>' +
+      '<span>' + lista.length + ' de 5 criterios</span>' +
+      '<span style="display:flex;gap:6px;flex-wrap:wrap;">' +
+        '<button type="button" class="nem-btn-accion" onclick="generarCriteriosDesdePDANIA()">✨ Generar desde PDA</button>' +
+        '<button type="button" class="nem-btn-accion" onclick="agregarCriterioVacioCotejo()"' + (lista.length >= 5 ? ' disabled' : '') + '>+ Agregar criterio</button>' +
+      '</span>' +
+    '</div>' +
+    '<table class="nem-tabla-cotejo-edit"><thead><tr>' +
+      '<th>Criterio observable</th><th>Sí ✓</th><th>En proceso</th><th>No todavía</th><th></th>' +
+    '</tr></thead><tbody>' + filas + '</tbody></table>';
+}
+
+function agregarCriterioVacioCotejo() {
+  if (!Array.isArray(window.criteriosCotejoPlanNEM_)) window.criteriosCotejoPlanNEM_ = [];
+  if (window.criteriosCotejoPlanNEM_.length >= 5) {
+    _avisarPlanNEM_('La lista admite como máximo 5 criterios.', 'warning');
+    return;
+  }
+  window.criteriosCotejoPlanNEM_.push('');
+  _marcarCotejoPersonalizado_();
+  generarRubricaDesdeCriterios_();
+  pintarTablaCriteriosCotejoDOM_();
+}
+
+function quitarCriterioCotejo(idx) {
+  var lista = window.criteriosCotejoPlanNEM_ || [];
+  if (lista.length <= 3 && lista.length > 0 && lista.every(function (t) { return String(t || '').trim(); })) {
+    _avisarPlanNEM_('La lista de cotejo conserva entre 3 y 5 criterios.', 'warning');
+    return;
+  }
+  lista.splice(idx, 1);
+  window.criteriosCotejoPlanNEM_ = lista;
+  _marcarCotejoPersonalizado_();
+  generarRubricaDesdeCriterios_();
+  pintarTablaCriteriosCotejoDOM_();
+}
+
+function _lineasFuenteCotejo_(id) {
+  var txt = ((document.getElementById(id) || {}).value || '');
+  return String(txt).split('\n').map(function (l) {
+    return l.replace(/^[•\-\*]\s*/, '').replace(/^\[\d+°?\s*Grado\]\s*/i, '').trim();
+  }).filter(Boolean);
+}
+
+function generarCriteriosDesdePDANIA() {
+  var pdas = _lineasFuenteCotejo_('planPDA');
+  var contenidos = _lineasFuenteCotejo_('planContenidoSintetico');
+  var propositos = _lineasFuenteCotejo_('planProposito');
+  if (!pdas.length && !contenidos.length && !propositos.length) {
+    _avisarPlanNEM_('Escribe el PDA, el contenido o el propósito antes de generar la lista.', 'error');
+    return;
+  }
+  var criterios = [];
+  if (pdas[0]) criterios.push('Identifica y aplica el PDA: ' + pdas[0].slice(0, 140));
+  if (pdas[1]) criterios.push('Desarrolla el proceso: ' + pdas[1].slice(0, 140));
+  if (contenidos[0]) criterios.push('Relaciona el contenido «' + contenidos[0].slice(0, 120) + '» con una situación de su comunidad.');
+  if (propositos[0]) criterios.push('Aporta al producto del proyecto: ' + propositos[0].slice(0, 140));
+  criterios.push('Colabora con respeto e inclusión, usando los ajustes razonables del grupo (DUA).');
+  window.criteriosCotejoPlanNEM_ = criterios.filter(Boolean).slice(0, 5);
+  while (window.criteriosCotejoPlanNEM_.length < 3) {
+    window.criteriosCotejoPlanNEM_.push('Entrega la evidencia de la sesión con orden, reflexión y lenguaje claro.');
+  }
+  _marcarCotejoPersonalizado_();
+  generarRubricaDesdeCriterios_();
+  pintarTablaCriteriosCotejoDOM_();
+  _avisarPlanNEM_('Lista de cotejo y rúbrica analítica listas para el PDF oficial.', 'ok');
+}
+
+function reiniciarCriteriosCotejoNEM_() {
+  window.criteriosCotejoPlanNEM_ = [];
+  window.rubricaPlanNEM_ = [];
+  window.criteriosCotejoPlanNEM_personalizado_ = false;
+  try {
+    localStorage.removeItem('st90_criterios_cotejo_nem');
+    localStorage.removeItem('st90_rubrica_plan_nem');
+  } catch (e) {}
+  pintarTablaCriteriosCotejoDOM_();
+}
+
+function _htmlChipsDua_() {
+  return '<div class="nem-chips-dua-bar">' + CHIPS_DUA_RAPIDOS_.map(function (ch) {
+    return '<button type="button" class="nem-chip-dua-rapido" onclick="insertarAjusteDUARapido(\'' + ch.texto.replace(/'/g, '') + '\')">' + ch.etq + '</button>';
+  }).join('') + '</div>';
+}
+
+function _htmlModalMembrete_() {
+  return '<div id="modalConfigMembreteST90" class="oculto" role="dialog" aria-modal="true" aria-labelledby="titModalMembreteST90" style="display:none;position:fixed;inset:0;z-index:99990;background:rgba(15,23,42,0.55);align-items:flex-start;justify-content:center;padding:24px 12px;box-sizing:border-box;overflow:auto;">' +
+    '<div style="background:#fff;border-radius:12px;max-width:560px;width:100%;padding:16px 18px;box-sizing:border-box;">' +
+      '<h3 id="titModalMembreteST90" style="margin:0 0 6px;font-size:15px;">⚙️ Membrete Oficial</h3>' +
+      '<p style="margin:0 0 10px;font-size:12px;color:#475569;">Si un escudo queda vacío, el PDF conserva el escudo oficial de Nuevo León.</p>' +
+      '<label for="cfgLogoIzq">Escudo izquierdo (URL o data URI)</label>' +
+      '<textarea id="cfgLogoIzq" rows="2" style="width:100%;box-sizing:border-box;margin:4px 0 8px;"></textarea>' +
+      '<label for="cfgLogoDer">Escudo derecho (URL o data URI)</label>' +
+      '<textarea id="cfgLogoDer" rows="2" style="width:100%;box-sizing:border-box;margin:4px 0 8px;"></textarea>' +
+      '<label for="cfgEncL1">Línea 1</label><input id="cfgEncL1" type="text" style="width:100%;box-sizing:border-box;margin:4px 0 8px;">' +
+      '<label for="cfgEncL2">Línea 2</label><input id="cfgEncL2" type="text" style="width:100%;box-sizing:border-box;margin:4px 0 8px;">' +
+      '<label for="cfgEncL3">Línea 3</label><input id="cfgEncL3" type="text" style="width:100%;box-sizing:border-box;margin:4px 0 12px;">' +
+      '<div style="display:flex;justify-content:flex-end;gap:8px;">' +
+        '<button type="button" class="nem-btn-accion" onclick="cerrarConfigMembreteNEM()">Cancelar</button>' +
+        '<button type="button" class="nem-btn-accion nem-btn-primario" onclick="guardarConfigMembreteNEM()">Guardar membrete</button>' +
+      '</div>' +
+    '</div></div>';
+}
+
+function asegurarMarcadoresEtapa3y4NEM_() {
+  var sec = document.getElementById('secInclusionBAPyC');
+  if (sec && !sec.querySelector('.nem-chips-dua-bar')) {
+    var ancla = sec.querySelector('label[for="planAjustesRazonables"]');
+    var barra = document.createElement('div');
+    barra.innerHTML = _htmlChipsDua_();
+    if (ancla && ancla.parentNode) ancla.parentNode.insertBefore(barra.firstChild, ancla);
+    else sec.appendChild(barra.firstChild);
+  }
+  var etapa4 = document.getElementById('etapaPlanNEM_4');
+  if (etapa4 && !document.getElementById('cajaRubricaCotejoNEM')) {
+    var caja = document.createElement('div');
+    caja.id = 'cajaRubricaCotejoNEM';
+    var footer = etapa4.querySelector('.nem-step-nav-footer');
+    if (footer) etapa4.insertBefore(caja, footer);
+    else etapa4.appendChild(caja);
+  }
+  if (!document.getElementById('modalConfigMembreteST90')) {
+    var wrap = document.createElement('div');
+    wrap.innerHTML = _htmlModalMembrete_();
+    document.body.appendChild(wrap.firstChild);
+  }
+  var btnPdf = document.querySelector('#etapaPlanNEM_4 button[onclick*="abrirVistaPreviaPDFPlaneacionNEM"]');
+  if (btnPdf && btnPdf.parentNode && !document.getElementById('btnAbrirConfigMembreteNEM')) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'btnAbrirConfigMembreteNEM';
+    btn.className = 'nem-btn-accion';
+    btn.textContent = '⚙️ Membrete Oficial';
+    btn.onclick = abrirConfigMembreteNEM;
+    btnPdf.parentNode.insertBefore(btn, btnPdf);
+  }
+}
+
+function _restaurarCotejoLocal_() {
+  try {
+    var cr = JSON.parse(localStorage.getItem('st90_criterios_cotejo_nem') || 'null');
+    var rb = JSON.parse(localStorage.getItem('st90_rubrica_plan_nem') || 'null');
+    if (Array.isArray(cr) && cr.length) {
+      window.criteriosCotejoPlanNEM_ = cr.slice(0, 5);
+      window.rubricaPlanNEM_ = Array.isArray(rb) ? rb : [];
+      window.criteriosCotejoPlanNEM_personalizado_ = true;
+      if (!window.rubricaPlanNEM_.length) generarRubricaDesdeCriterios_();
+    }
+  } catch (e) {}
+}
+
+function iniciarEtapa3y4CotejoNEM_() {
+  if (!document.getElementById('etapaPlanNEM_4') && !document.getElementById('secInclusionBAPyC')) return;
+  window.criteriosCotejoPlanNEM_ = window.criteriosCotejoPlanNEM_ || [];
+  window.rubricaPlanNEM_ = window.rubricaPlanNEM_ || [];
+  asegurarMarcadoresEtapa3y4NEM_();
+  _restaurarCotejoLocal_();
+  pintarTablaCriteriosCotejoDOM_();
+  cargarConfigMembreteInicial_();
+}
+
+function _htmlRubricaAnaliticaPdf_() {
+  var rubrica = window.rubricaPlanNEM_;
+  if (!Array.isArray(rubrica) || !rubrica.length) return '';
+  var filas = rubrica.map(function (r) {
+    return '<tr>' +
+      '<td style="border:1px solid #000;padding:4px 6px;font-size:10px;">' + _escPdf_(r.criterio) + '</td>' +
+      '<td style="border:1px solid #000;padding:4px 6px;font-size:10px;">' + _escPdf_(r.sobresaliente) + '</td>' +
+      '<td style="border:1px solid #000;padding:4px 6px;font-size:10px;">' + _escPdf_(r.satisfactorio) + '</td>' +
+      '<td style="border:1px solid #000;padding:4px 6px;font-size:10px;">' + _escPdf_(r.basico) + '</td>' +
+      '<td style="border:1px solid #000;padding:4px 6px;font-size:10px;">' + _escPdf_(r.requiereApoyo) + '</td>' +
+    '</tr>';
+  }).join('');
+  return '<div style="background:#000;color:#fff;font-weight:700;text-align:center;padding:5px 8px;font-size:11.5px;border:1px solid #000;border-bottom:none;">RÚBRICA ANALÍTICA DE EVALUACIÓN POR NIVELES DE DESEMPEÑO</div>' +
+    '<table class="st90-tabla-oficial-nl" style="width:100%;border-collapse:collapse;margin-bottom:26px;font-size:10.5px;">' +
+      '<thead><tr style="background:#e2e8f0;font-weight:700;">' +
+        '<th style="border:1px solid #000;padding:4px 6px;">Criterio</th>' +
+        '<th style="border:1px solid #000;padding:4px 6px;">Sobresaliente (10)</th>' +
+        '<th style="border:1px solid #000;padding:4px 6px;">Satisfactorio (8-9)</th>' +
+        '<th style="border:1px solid #000;padding:4px 6px;">Básico (6-7)</th>' +
+        '<th style="border:1px solid #000;padding:4px 6px;">Requiere Apoyo (5)</th>' +
+      '</tr></thead><tbody>' + filas + '</tbody></table>';
+}
+
+window.insertarAjusteDUARapido = insertarAjusteDUARapido;
+window.abrirConfigMembreteNEM = abrirConfigMembreteNEM;
+window.cerrarConfigMembreteNEM = cerrarConfigMembreteNEM;
+window.guardarConfigMembreteNEM = guardarConfigMembreteNEM;
+window.pintarTablaCriteriosCotejoDOM_ = pintarTablaCriteriosCotejoDOM_;
+window.sincronizarCriterioCotejo = sincronizarCriterioCotejo;
+window.agregarCriterioVacioCotejo = agregarCriterioVacioCotejo;
+window.quitarCriterioCotejo = quitarCriterioCotejo;
+window.generarCriteriosDesdePDANIA = generarCriteriosDesdePDANIA;
+window.generarRubricaDesdeCriterios_ = generarRubricaDesdeCriterios_;
+window.reiniciarCriteriosCotejoNEM_ = reiniciarCriteriosCotejoNEM_;
+window.iniciarEtapa3y4CotejoNEM_ = iniciarEtapa3y4CotejoNEM_;
+/* BUILD-568-CURSOR-FIN */
+
+/* BUILD-569-571-CURSOR-INICIO — iDevice encuesta, quiz y formulario avanzado */
+function _tokenClienteST90_() {
+  if (typeof getTokenPlan_ === 'function') return getTokenPlan_();
+  if (typeof tokenClase !== 'undefined' && tokenClase) return tokenClase;
+  return (window.tokenClase || window.token || '');
+}
+
+function completarIDeviceEncuesta_(card, datos) {
+  if (!card || card.querySelector('.sel-modo-encuesta-idevice')) return;
+  var guardado = {};
+  try {
+    if (datos && datos.cuerpo && String(datos.cuerpo).charAt(0) === '{') guardado = JSON.parse(datos.cuerpo);
+  } catch (e) { guardado = {}; }
+  var cuerpo = card.querySelector('.idevice-campo-cuerpo, textarea[data-campo="cuerpo"]');
+  if (cuerpo) cuerpo.classList.add('oculto');
+  var panel = document.createElement('div');
+  panel.className = 'idevice-encuesta-panel';
+  panel.innerHTML =
+    '<label>Modo</label>' +
+    '<select class="sel-modo-encuesta-idevice" onchange="conmutarModoEncuestaiDevice_(this)">' +
+      '<option value="datos_previos">Datos previos (resumen diagnóstico)</option>' +
+      '<option value="actividad_activa">Actividad evaluable</option>' +
+    '</select>' +
+    '<label>Encuesta del directorio</label>' +
+    '<select class="sel-catalogo-encuesta-id" onchange="cargarResumenEncuestaiDevice_(this)"><option value="">Cargando catálogo…</option></select>' +
+    '<div class="panel-modo-datos">' +
+      '<label>Resumen para la sesión</label>' +
+      '<textarea class="txt-resumen-encuesta" rows="3"></textarea>' +
+      '<label><input type="checkbox" class="chk-incluir-graficas"> Incluir gráficas comparativas</label>' +
+    '</div>' +
+    '<div class="panel-modo-actividad" hidden>' +
+      '<label>Ponderación</label>' +
+      '<input type="number" class="inp-ponderacion-encuesta" min="1" max="10" value="10">' +
+      '<label>Registro</label>' +
+      '<select class="sel-registro-modo"><option value="matricula">Vinculado a matrícula</option><option value="anonimo">Anónimo</option></select>' +
+    '</div>';
+  var body = card.querySelector('.idevice-body') || card;
+  body.appendChild(panel);
+  var modo = card.querySelector('.sel-modo-encuesta-idevice');
+  if (modo && guardado.modo) modo.value = guardado.modo;
+  var resumen = card.querySelector('.txt-resumen-encuesta');
+  if (resumen) resumen.value = guardado.resumen || '';
+  var graf = card.querySelector('.chk-incluir-graficas');
+  if (graf) graf.checked = guardado.incluirGraficas !== false;
+  var pond = card.querySelector('.inp-ponderacion-encuesta');
+  if (pond && guardado.ponderacion) pond.value = guardado.ponderacion;
+  var reg = card.querySelector('.sel-registro-modo');
+  if (reg && guardado.registro) reg.value = guardado.registro;
+  conmutarModoEncuestaiDevice_(modo);
+}
+
+function conmutarModoEncuestaiDevice_(selectEl) {
+  if (!selectEl) return;
+  var card = selectEl.closest('.idevice-bloque') || selectEl.closest('.idevice-card');
+  if (!card) return;
+  var activo = selectEl.value === 'actividad_activa';
+  var datos = card.querySelector('.panel-modo-datos');
+  var act = card.querySelector('.panel-modo-actividad');
+  if (datos) datos.hidden = activo;
+  if (act) act.hidden = !activo;
+}
+
+function cargarCatalogoEnSelectiDevice_(idDomBloque, idPreseleccionado) {
+  var card = document.getElementById(idDomBloque);
+  var sel = card && card.querySelector('.sel-catalogo-encuesta-id');
+  if (!sel || typeof gsRun !== 'function') return;
+  var filtros = {
+    asignatura: ((document.getElementById('planAsignatura') || {}).value || ''),
+    grado: ((document.getElementById('planGrado') || {}).value || '')
+  };
+  gsRun('obtenerCatalogoEncuestasParaConstructor', _tokenClienteST90_(), filtros).then(function (res) {
+    var items = (res && (res.encuestas || res.items)) || [];
+    window._catalogoEncuestasIDevice_ = items;
+    sel.innerHTML = '<option value="">Selecciona una encuesta</option>' + items.map(function (it) {
+      var id = it.id || it.hojaId || '';
+      var etq = (it.nombre || it.titulo || id) + (it.asignatura ? ' · ' + it.asignatura : '') + (it.grado ? ' · ' + it.grado + '°' : '');
+      return '<option value="' + String(id).replace(/"/g, '') + '">' + etq.replace(/</g, '') + '</option>';
+    }).join('');
+    if (idPreseleccionado) sel.value = idPreseleccionado;
+    cargarResumenEncuestaiDevice_(sel);
+  }).catch(function () {
+    sel.innerHTML = '<option value="">No se pudo cargar el catálogo</option>';
+  });
+}
+
+function cargarResumenEncuestaiDevice_(selectEl) {
+  if (!selectEl) return;
+  var card = selectEl.closest('.idevice-bloque') || selectEl.closest('.idevice-card');
+  if (!card) return;
+  var id = selectEl.value;
+  var items = window._catalogoEncuestasIDevice_ || [];
+  var item = null;
+  for (var i = 0; i < items.length; i++) {
+    if (String(items[i].id || items[i].hojaId || '') === String(id)) { item = items[i]; break; }
+  }
+  var resumen = card.querySelector('.txt-resumen-encuesta');
+  if (resumen && item && item.resumen && !resumen.value) resumen.value = item.resumen;
+  var titulo = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+  if (titulo && item && !titulo.value) titulo.value = item.nombre || item.titulo || '';
+}
+
+function serializarEncuestaIDevice_(card) {
+  var modo = (card.querySelector('.sel-modo-encuesta-idevice') || {}).value || 'datos_previos';
+  return JSON.stringify({
+    modo: modo,
+    idEncuesta: (card.querySelector('.sel-catalogo-encuesta-id') || {}).value || '',
+    resumen: (card.querySelector('.txt-resumen-encuesta') || {}).value || '',
+    incluirGraficas: !!((card.querySelector('.chk-incluir-graficas') || {}).checked),
+    ponderacion: Number((card.querySelector('.inp-ponderacion-encuesta') || {}).value || 10),
+    registro: (card.querySelector('.sel-registro-modo') || {}).value || 'matricula'
+  });
+}
+
+function leerTodosLosiDevicesDeSesion_() {
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (!cont) return [];
+  var salida = [];
+  cont.querySelectorAll('.idevice-card, .idevice-bloque').forEach(function (card) {
+    if (salida.indexOf(card) >= 0) return;
+    var tipo = card.getAttribute('data-tipo') || '';
+    var titulo = ((card.querySelector('[data-campo="titulo"], .idevice-campo-titulo') || {}).value || '');
+    if (tipo === 'encuesta') {
+      var datos = {};
+      try { datos = JSON.parse(serializarEncuestaIDevice_(card)); } catch (e) { datos = {}; }
+      datos.tipo = 'encuesta';
+      datos.titulo = titulo;
+      salida.push(datos);
+      return;
+    }
+    salida.push({
+      tipo: tipo,
+      titulo: titulo,
+      cuerpo: ((card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo') || {}).value || '')
+    });
+  });
+  return salida;
+}
+
+function conmutarModoConstructor(modo) {
+  var quiz = modo === 'quiz';
+  var btnE = document.getElementById('btnModoEncuesta');
+  var btnQ = document.getElementById('btnModoQuiz');
+  if (btnE) { btnE.classList.toggle('activo', !quiz); btnE.setAttribute('aria-selected', quiz ? 'false' : 'true'); }
+  if (btnQ) { btnQ.classList.toggle('activo', quiz); btnQ.setAttribute('aria-selected', quiz ? 'true' : 'false'); }
+  var barra = document.getElementById('barraConfigQuizGlobal');
+  if (barra) barra.classList.toggle('d-none', !quiz);
+  document.querySelectorAll('.caja-ajustes-quiz').forEach(function (caja) {
+    caja.classList.toggle('d-none', !quiz);
+  });
+  if (typeof FORM !== 'undefined' && FORM) {
+    FORM.config = FORM.config || {};
+    FORM.config.tipoFormulario = quiz ? 'quiz' : 'encuesta';
+  }
+  if (quiz) recalcularPuntosTotalesQuiz();
+}
+
+function recalcularPuntosTotalesQuiz() {
+  var total = 0;
+  document.querySelectorAll('.quiz-puntos-input').forEach(function (inp) {
+    if (inp.closest('.d-none')) return;
+    total += Number(inp.value) || 0;
+  });
+  var lbl = document.getElementById('lblPuntosTotalesQuiz');
+  if (lbl) lbl.textContent = String(total);
+  if (typeof FORM !== 'undefined' && FORM && FORM.config) FORM.config.puntosTotales = String(total);
+  return total;
+}
+
+function sincronizarAjustesQuiz_(indice, campo, valor) {
+  if (typeof FORM === 'undefined' || !FORM || !FORM.preguntas || !FORM.preguntas[indice]) return;
+  var extra = FORM.preguntas[indice].extra || (FORM.preguntas[indice].extra = {});
+  extra.esQuiz = true;
+  if (campo === 'puntos') extra.puntos = Number(valor) || 0;
+  if (campo === 'respuestaCorrecta') extra.respuestaCorrecta = valor;
+  if (campo === 'retroalimentacion') extra.retroalimentacion = valor;
+  recalcularPuntosTotalesQuiz();
+}
+
+function barajarFisherYates_(lista) {
+  var arr = (lista || []).slice();
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
+}
+
+function iniciarTemporizadorQuiz_(minutos) {
+  var barra = document.getElementById('barraTemporizadorQuiz');
+  var mins = Number(minutos) || 0;
+  if (!barra || mins <= 0) return;
+  var clave = 'st90_quiz_fin_' + ((FORM && FORM.config && FORM.config.titulo) || 'form');
+  var fin = Number(sessionStorage.getItem(clave) || 0);
+  if (!fin || fin < Date.now()) {
+    fin = Date.now() + mins * 60000;
+    sessionStorage.setItem(clave, String(fin));
+  }
+  function pintar() {
+    var resta = Math.max(0, fin - Date.now());
+    var seg = Math.ceil(resta / 1000);
+    var mm = String(Math.floor(seg / 60)).padStart(2, '0');
+    var ss = String(seg % 60).padStart(2, '0');
+    var etiqueta = barra.querySelector('.tiempo-restante');
+    if (etiqueta) etiqueta.textContent = mm + ':' + ss;
+    barra.classList.toggle('alerta', seg <= 120 && seg > 30);
+    barra.classList.toggle('critico', seg <= 30);
+    barra.setAttribute('data-estado', seg <= 30 ? 'critico' : (seg <= 120 ? 'alerta' : 'ok'));
+    if (resta <= 0) {
+      clearInterval(barra._reloj);
+      sessionStorage.removeItem(clave);
+      var form = document.getElementById('formDinamico');
+      if (form && typeof enviar === 'function') enviar({ preventDefault: function () {} });
+    }
+  }
+  pintar();
+  clearInterval(barra._reloj);
+  barra._reloj = setInterval(pintar, 1000);
+}
+
+window.completarIDeviceEncuesta_ = completarIDeviceEncuesta_;
+window.conmutarModoEncuestaiDevice_ = conmutarModoEncuestaiDevice_;
+window.cargarCatalogoEnSelectiDevice_ = cargarCatalogoEnSelectiDevice_;
+window.cargarResumenEncuestaiDevice_ = cargarResumenEncuestaiDevice_;
+window.serializarEncuestaIDevice_ = serializarEncuestaIDevice_;
+window.leerTodosLosiDevicesDeSesion_ = leerTodosLosiDevicesDeSesion_;
+window.conmutarModoConstructor = conmutarModoConstructor;
+window.recalcularPuntosTotalesQuiz = recalcularPuntosTotalesQuiz;
+window.sincronizarAjustesQuiz_ = sincronizarAjustesQuiz_;
+window.barajarFisherYates_ = barajarFisherYates_;
+window.iniciarTemporizadorQuiz_ = iniciarTemporizadorQuiz_;
+/* BUILD-569-571-CURSOR-FIN */
 
 function _escPdf_(s) {
   return String(s == null ? '' : s)
@@ -2335,6 +2948,32 @@ function _leerPlaneacionDesdeFormularioActual_() {
   };
 }
 
+var CRITERIOS_COTEJO_INSTITUCIONALES_ = [
+  'Comprende y aplica adecuadamente los Procesos de Desarrollo de Aprendizaje (PDA) trabajados en las sesiones.',
+  'Relaciona el contenido curricular con la problemática comunitaria analizada y propone soluciones pertinentes.',
+  'Participa activamente en las actividades individuales y colaborativas mostrando respeto e inclusión hacia sus pares.',
+  'Elabora y entrega el producto integrador con estructura coherente, limpieza y sustento reflexivo.',
+  'Realiza el ejercicio de metacognición y autoevaluación reconociendo sus avances y áreas de mejora.'
+];
+
+function criteriosCotejoParaPdf_() {
+  var propios = window.criteriosCotejoPlanNEM_;
+  var editados = !!window.criteriosCotejoPlanNEM_personalizado_;
+  var lista = (editados && Array.isArray(propios) && propios.length)
+    ? propios
+    : CRITERIOS_COTEJO_INSTITUCIONALES_;
+  return lista.map(function (t) { return String(t || '').trim(); }).filter(Boolean).slice(0, 5);
+}
+
+function filasCotejoPdf_() {
+  return criteriosCotejoParaPdf_().map(function (texto, i) {
+    return '<tr><td style="border:1px solid #000;padding:5px 8px;">' + (i + 1) + '. ' + _escPdf_(texto) +
+      '</td><td style="border:1px solid #000;text-align:center;">☐</td>' +
+      '<td style="border:1px solid #000;text-align:center;">☐</td>' +
+      '<td style="border:1px solid #000;text-align:center;">☐</td></tr>';
+  }).join('');
+}
+
 function _generarHtmlDocumentoPlanoDidacticoNL_(p, sesiones) {
   p = p || {};
   var titulo = p.Titulo || p.titulo || 'Proyecto Didáctico Situado';
@@ -2355,6 +2994,13 @@ function _generarHtmlDocumentoPlanoDidacticoNL_(p, sesiones) {
   var proposito = p.Proposito || p.proposito || 'Desarrollo de aprendizajes situados y elaboración de producto integrador.';
   var producto = p.ProductoFinal || p.productoFinal || proposito;
   var ajustes = p.AjustesRazonables || p.ajustesRazonables || '';
+  var cfgMem = (typeof _cfgMembreteEfectiva_ === 'function') ? _cfgMembreteEfectiva_() : {
+    logoIzq: LOGO_NL_EDUCACION_B64_,
+    logoDer: LOGO_NL_GOBIERNO_B64_,
+    linea1: 'SUBSECRETARÍA DE EDUCACIÓN BÁSICA',
+    linea2: 'DIRECCIÓN DE EDUCACIÓN SECUNDARIA',
+    linea3: 'ESCUELA SECUNDARIA TÉCNICA No. 90'
+  };
 
   var listaSes = Array.isArray(sesiones) && sesiones.length ? sesiones.slice() : [];
   if (!listaSes.length) {
@@ -2416,18 +3062,17 @@ function _generarHtmlDocumentoPlanoDidacticoNL_(p, sesiones) {
     '<table style="width:100%;border-collapse:collapse;margin-bottom:10px;border:none;">' +
       '<tr>' +
         '<td style="width:24%;border:none;vertical-align:middle;text-align:left;padding:0;">' +
-          '<img src="' + LOGO_NL_EDUCACION_B64_ + '" alt="Secretaría de Educación de Nuevo León" style="max-height:66px;width:auto;display:block;">' +
+          '<img src="' + _escPdf_(cfgMem.logoIzq) + '" alt="Secretaría de Educación de Nuevo León" style="max-height:66px;width:auto;display:block;">' +
         '</td>' +
         '<td style="width:56%;border:none;vertical-align:middle;text-align:center;padding:0 8px;">' +
-          '<div style="font-size:12px;font-weight:700;letter-spacing:0.2px;line-height:1.25;">SUBSECRETARÍA DE EDUCACIÓN BÁSICA</div>' +
-          '<div style="font-size:11.5px;font-weight:700;line-height:1.25;">DIRECCIÓN DE EDUCACIÓN SECUNDARIA</div>' +
-          '<div style="font-size:11.5px;font-weight:700;line-height:1.25;">COORDINACIÓN ACADÉMICA</div>' +
-          '<div style="font-size:12px;font-weight:800;line-height:1.3;margin-top:2px;">ESCUELA SECUNDARIA TÉCNICA No. 90</div>' +
+          '<div style="font-size:11px;font-weight:700;letter-spacing:0.2px;line-height:1.25;">' + _escPdf_(cfgMem.linea1) + '</div>' +
+          '<div style="font-size:11px;font-weight:700;line-height:1.25;">' + _escPdf_(cfgMem.linea2) + '</div>' +
+          '<div style="font-size:12px;font-weight:800;line-height:1.3;margin-top:2px;">' + _escPdf_(cfgMem.linea3) + '</div>' +
           '<div style="font-size:13px;font-weight:800;margin-top:4px;text-decoration:underline;">PLANO DIDÁCTICO (Planeación didáctica)</div>' +
           '<div style="font-size:11px;font-style:italic;color:#1e293b;">Actividades de aprendizaje diseñadas por el docente</div>' +
         '</td>' +
         '<td style="width:20%;border:none;vertical-align:middle;text-align:right;padding:0;">' +
-          '<img src="' + LOGO_NL_GOBIERNO_B64_ + '" alt="Gobierno del Nuevo Nuevo León" style="max-height:68px;width:auto;display:inline-block;">' +
+          '<img src="' + _escPdf_(cfgMem.logoDer) + '" alt="Gobierno del Nuevo Nuevo León" style="max-height:68px;width:auto;display:inline-block;">' +
         '</td>' +
       '</tr>' +
     '</table>' +
@@ -2497,13 +3142,10 @@ function _generarHtmlDocumentoPlanoDidacticoNL_(p, sesiones) {
         '</tr>' +
       '</thead>' +
       '<tbody>' +
-        '<tr><td style="border:1px solid #000;padding:5px 8px;">1. Comprende y aplica adecuadamente los Procesos de Desarrollo de Aprendizaje (PDA) trabajados en las sesiones.</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td></tr>' +
-        '<tr><td style="border:1px solid #000;padding:5px 8px;">2. Relaciona el contenido curricular con la problemática comunitaria analizada y propone soluciones pertinentes.</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td></tr>' +
-        '<tr><td style="border:1px solid #000;padding:5px 8px;">3. Participa activamente en las actividades individuales y colaborativas mostrando respeto e inclusión hacia sus pares.</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td></tr>' +
-        '<tr><td style="border:1px solid #000;padding:5px 8px;">4. Elabora y entrega el producto integrador con estructura coherente, limpieza y sustento reflexivo.</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td></tr>' +
-        '<tr><td style="border:1px solid #000;padding:5px 8px;">5. Realiza el ejercicio de metacognición y autoevaluación reconociendo sus avances y áreas de mejora.</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td><td style="border:1px solid #000;text-align:center;">☐</td></tr>' +
+        filasCotejoPdf_() +
       '</tbody>' +
     '</table>' +
+    _htmlRubricaAnaliticaPdf_() +
 
     '<!-- FIRMAS INSTITUCIONALES -->' +
     '<table style="width:100%;border-collapse:collapse;margin-top:28px;border:none;font-size:11.5px;">' +

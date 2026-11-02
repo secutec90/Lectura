@@ -309,6 +309,13 @@
         variante: 'idevice-desafio',
         phTitulo: 'Nombre del reto o producto esperado de la sesión...',
         phCuerpo: 'Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad...'
+      },
+      encuesta: {
+        nombre: 'encuesta',
+        etiqueta: 'Encuesta / Diagnóstico',
+        variante: 'idevice-encuesta',
+        phTitulo: 'Título de la encuesta o diagnóstico en esta sesión...',
+        phCuerpo: ''
       }
     };
 
@@ -401,6 +408,10 @@
 
       div.appendChild(header);
       div.appendChild(body);
+      if (tipoNorm === 'encuesta') {
+        div.classList.add('idevice-bloque');
+        if (typeof window.completarIDeviceEncuesta_ === 'function') window.completarIDeviceEncuesta_(div, datos);
+      }
       return div;
     }
 
@@ -418,6 +429,9 @@
       const div = pintarTarjetaIDevice_(tipoNorm, null);
       if (!div) return;
       contenedor.appendChild(div);
+      if (tipoNorm === 'encuesta' && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
+        window.cargarCatalogoEnSelectiDevice_(div.id, '');
+      }
       marcarIDevicesTocados_();
       const titulo = div.querySelector('[data-campo="titulo"]');
       if (titulo) titulo.focus();
@@ -439,8 +453,10 @@
         const meta = META_IDEVICE_[tipo];
         if (!meta) return;
         const titulo = textoCampoIDevice_(card, 'titulo');
-        const cuerpo = textoCampoIDevice_(card, 'cuerpo');
-        if (!titulo && !cuerpo) return;
+        const cuerpo = (tipo === 'encuesta' && typeof window.serializarEncuestaIDevice_ === 'function')
+          ? window.serializarEncuestaIDevice_(card)
+          : textoCampoIDevice_(card, 'cuerpo');
+        if (tipo !== 'encuesta' && !titulo && !cuerpo) return;
         let linea = '#### ' + meta.etiqueta;
         if (titulo) linea += ': ' + titulo;
         linea += '\n' + (cuerpo || '(sin texto)');
@@ -518,6 +534,11 @@
       parsearBloqueIDevices_(campo ? campo.value : '').forEach(function (bloque) {
         const card = pintarTarjetaIDevice_(bloque.tipo, bloque);
         if (card) contenedor.appendChild(card);
+        if (bloque.tipo === 'encuesta' && card && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
+          var prevEnc = {};
+          try { prevEnc = JSON.parse(bloque.cuerpo || '{}'); } catch (eEnc) { prevEnc = {}; }
+          window.cargarCatalogoEnSelectiDevice_(card.id, prevEnc.idEncuesta || '');
+        }
       });
       idevicesTocados_ = false;
     }

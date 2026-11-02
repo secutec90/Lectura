@@ -11,7 +11,7 @@ const HOJA_FORMULARIO = "Formulario";
 const HOJA_CONFIG = "Configuracion";
 const HOJA_RESPUESTAS = "Respuestas";
 const COLUMNAS_FORMULARIO = 11;
-const TIPOS_PREGUNTA = ["texto", "parrafo", "unica", "multiple", "numero", "fecha", "sino", "escala"];
+const TIPOS_PREGUNTA = ["texto", "parrafo", "unica", "multiple", "numero", "fecha", "sino", "escala", "archivo"];
 
 const GRUPOS_POR_TURNO_DEFECTO = {
   Matutino: ["1A", "1B", "1C", "1D", "1E", "2A", "2B", "2C", "2D", "2E", "3A", "3B", "3C", "3D", "3E"],
@@ -29,7 +29,14 @@ const CONFIG_POR_DEFECTO = {
   exitoTexto: "La encuesta de {nombre} quedó registrada.",
   otroBoton: "Registrar otro estudiante",
   gruposPorTurno: JSON.stringify(GRUPOS_POR_TURNO_DEFECTO),
-  categorias: "[]"
+  categorias: "[]",
+  tipoFormulario: "encuesta",
+  puntosTotales: "10",
+  intentosPermitidos: "1",
+  mostrarRetroalimentacion: "SI",
+  temporizadorMinutos: "0",
+  barajarPreguntas: "NO",
+  modoPaginado: "NO"
 };
 
 const OPCIONES_ADMIN = { usuario: "", pass: "" };
@@ -1234,5 +1241,156 @@ function obtenerDelBanco(credenciales, id) {
 }
 
 // --------------------------------------------------------
-// Rutas
+// Rutas y Motor Dual Quiz / Evidencias (OLA 3 y OLA 4 · build-570 / build-571)
 // --------------------------------------------------------
+
+/**
+ * Evalúa automáticamente un formulario configurado como Quiz Evaluativo,
+ * calcula el puntaje obtenido, genera retroalimentación por reactivo
+ * y guarda la respuesta en la hoja Respuestas.
+ */
+function calificarQuizAlumnoST90(datos) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return { exito: false, mensaje: "El sistema está ocupado. Intenta de nuevo." };
+
+  try {
+    const preguntas = leerPreguntas(true);
+    const config = leerConfigEncuestas();
+    const respuestas = (datos && datos.respuestas) || {};
+
+    const problema = validarRespuestas(preguntas, respuestas);
+    if (problema) return { exito: false, mensaje: problema };
+
+    let puntosObtenidos = 0;
+    let puntosMaximos = 0;
+    const desgloseReactivos = [];
+
+    preguntas.forEach(function (p) {
+      if (!condicionVisible(p, respuestas)) return;
+      const ext = p.extra || {};
+      const pts = Number(ext.puntos) || 0;
+      const correcta = ext.respuestaCorrecta;
+      const respAlumno = respuestas[p.id];
+
+      if (!ext.esQuiz || pts <= 0 || correcta == null || String(correcta).trim() === "") {
+        return;
+      }
+
+      puntosMaximos += pts;
+      let esCorrecta = false;
+
+      if (p.tipo === "unica" || p.tipo === "sino" || p.tipo === "escala") {
+        esCorrecta = String(respAlumno || "").trim().toLowerCase() === String(correcta).trim().toLowerCase();
+      } else if (p.tipo === "numero") {
+        esCorrecta = Number(respAlumno) === Number(correcta);
+      } else if (p.tipo === "multiple") {
+        const arrAlumno = (Array.isArray(respAlumno) ? respAlumno : String(respAlumno || "").split(";"))
+          .map(function (s) { return String(s).trim().toLowerCase(); }).filter(Boolean).sort();
+        const arrCorrecta = (Array.isArray(correcta) ? correcta : String(correcta || "").split(";"))
+          .map(function (s) { return String(s).trim().toLowerCase(); }).filter(Boolean).sort();
+        esCorrecta = JSON.stringify(arrAlumno) === JSON.stringify(arrCorrecta);
+      } else if (p.tipo === "texto") {
+        const claves = String(correcta).split("|").map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+        const rLimpia = String(respAlumno || "").trim().toLowerCase();
+        esCorrecta = claves.indexOf(rLimpia) !== -1;
+      }
+
+      const ganados = esCorrecta ? pts : 0;
+      puntosObtenidos += ganados;
+
+      let retroTexto = "";
+      if (ext.retroalimentacion && typeof ext.retroalimentacion === "object") {
+        retroTexto = esCorrecta ? String(ext.retroalimentacion.acierto || "") : String(ext.retroalimentacion.fallo || "");
+      } else {
+        retroTexto = String(ext.retroalimentacion || "");
+      }
+
+      desgloseReactivos.push({
+        idPregunta: p.id,
+        etiqueta: p.etiqueta,
+        respuestaAlumno: valorRespuesta(p, respAlumno),
+        respuestaCorrecta: Array.isArray(correcta) ? correcta.join("; ") : String(correcta),
+        esCorrecta: esCorrecta,
+        puntosGanados: ganados,
+        puntosMaximos: pts,
+        retroalimentacion: retroTexto
+      });
+    });
+
+    const calificacionBase10 = puntosMaximos > 0
+      ? Math.round(((puntosObtenidos / puntosMaximos) * 10) * 10) / 10
+      : 10;
+
+    const hoja = _getHojaRespuestas_();
+    let maximo = 2;
+    preguntas.forEach(function (p) { if (p.columna > maximo) maximo = p.columna; });
+    const fila = new Array(maximo + 2).fill("");
+    fila[0] = new Date();
+    fila[1] = "Quiz (" + calificacionBase10 + "/10)";
+    preguntas.forEach(function (p) {
+      fila[p.columna - 1] = condicionVisible(p, respuestas) ? valorRespuesta(p, respuestas[p.id]) : "";
+    });
+    fila[maximo] = puntosObtenidos + "/" + puntosMaximos;
+    fila[maximo + 1] = calificacionBase10;
+    hoja.appendRow(fila);
+
+    return {
+      exito: true,
+      esQuiz: true,
+      puntosObtenidos: puntosObtenidos,
+      puntosMaximos: puntosMaximos,
+      calificacion: calificacionBase10,
+      mostrarRetroalimentacion: String(config.mostrarRetroalimentacion || "SI") !== "NO",
+      desglose: desgloseReactivos
+    };
+  } catch (error) {
+    console.error("calificarQuizAlumnoST90: " + (error && error.stack ? error.stack : error));
+    return { exito: false, mensaje: "No se pudo evaluar el cuestionario: " + error.message };
+  } finally {
+    if (lock.hasLock()) lock.releaseLock();
+  }
+}
+
+/**
+ * Recibe un archivo en Base64 desde una pregunta tipo "archivo" del Constructor,
+ * lo guarda en la carpeta de evidencias de Google Drive y devuelve el enlace.
+ */
+function subirEvidenciaFormulario(payload) {
+  try {
+    const p = payload || {};
+    const base64Data = String(p.base64 || "").replace(/^data:[^;]+;base64,/, "");
+    if (!base64Data) return { ok: false, mensaje: "No se recibieron datos del archivo." };
+
+    const mimeType = String(p.mimeType || "application/octet-stream");
+    const nombreOriginal = String(p.nombreArchivo || "evidencia_alumno").replace(/[^\w.\-]/g, "_");
+    const matricula = String(p.matricula || "ANON").replace(/[^\w\-]/g, "");
+    const gradoGrupo = String(p.gradoGrupo || "General").replace(/[^\w\-]/g, "_");
+
+    const bytes = Utilities.base64Decode(base64Data);
+    if (bytes.length > 5 * 1024 * 1024) {
+      return { ok: false, mensaje: "El archivo supera el límite permitido de 5 MB." };
+    }
+
+    let carpetaRaiz;
+    const itRaiz = DriveApp.getFoldersByName("ST90_EVIDENCIAS_ENCUESTAS");
+    carpetaRaiz = itRaiz.hasNext() ? itRaiz.next() : DriveApp.createFolder("ST90_EVIDENCIAS_ENCUESTAS");
+
+    let carpetaGrupo;
+    const itGrupo = carpetaRaiz.getFoldersByName(gradoGrupo);
+    carpetaGrupo = itGrupo.hasNext() ? itGrupo.next() : carpetaRaiz.createFolder(gradoGrupo);
+
+    const stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd_HHmmss");
+    const nombreFinal = stamp + "_" + matricula + "_" + nombreOriginal;
+    const blob = Utilities.newBlob(bytes, mimeType, nombreFinal);
+    const archivo = carpetaGrupo.createFile(blob);
+
+    return {
+      ok: true,
+      fileId: archivo.getId(),
+      url: archivo.getUrl(),
+      nombre: nombreFinal
+    };
+  } catch (e) {
+    return { ok: false, mensaje: "Error al subir evidencia a Drive: " + (e && e.message ? e.message : e) };
+  }
+}

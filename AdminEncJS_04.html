@@ -133,6 +133,15 @@
     const info = (RESPUESTAS && RESPUESTAS.hoja) ? RESPUESTAS.hoja : null;
     const elHoja = document.getElementById("hojaActual");
     if (elHoja) elHoja.textContent = info ? (info.nombre + " · " + info.origen) : "sin información";
+    if (typeof conmutarModoConstructor === "function") {
+      conmutarModoConstructor(c.tipoFormulario === "quiz" ? "quiz" : "encuesta");
+    }
+    const retro = document.getElementById("chkQuizRetroInmediata");
+    if (retro) retro.checked = String(c.mostrarRetroalimentacion || "SI") !== "NO";
+    const intentos = document.getElementById("selQuizIntentos");
+    if (intentos && c.intentosPermitidos) intentos.value = String(c.intentosPermitidos);
+    const tempo = document.getElementById("inpTemporizadorQuiz");
+    if (tempo) tempo.value = String(c.temporizadorMinutos || "0");
   }
 
   function leerConfigFormulario() {
@@ -142,6 +151,16 @@
       const el = document.getElementById("cfg_" + k);
       if (el) c[k] = el.value.trim();
     });
+    const btnQuiz = document.getElementById("btnModoQuiz");
+    if (btnQuiz) c.tipoFormulario = btnQuiz.classList.contains("activo") ? "quiz" : "encuesta";
+    const retro = document.getElementById("chkQuizRetroInmediata");
+    if (retro) c.mostrarRetroalimentacion = retro.checked ? "SI" : "NO";
+    const intentos = document.getElementById("selQuizIntentos");
+    if (intentos) c.intentosPermitidos = intentos.value || "1";
+    const tempo = document.getElementById("inpTemporizadorQuiz");
+    if (tempo) c.temporizadorMinutos = String(tempo.value || "0");
+    const lblPts = document.getElementById("lblPuntosTotalesQuiz");
+    if (lblPts) c.puntosTotales = lblPts.textContent || c.puntosTotales || "0";
     return c;
   }
 
@@ -174,7 +193,7 @@
     cont.innerHTML = "";
     (FORM.preguntas || []).forEach((p, i) => {
       const div = document.createElement("div");
-      div.className = "pregunta p-2 d-flex justify-content-between align-items-start gap-2 bg-white";
+      div.className = "pregunta pregunta-card p-2 d-flex justify-content-between align-items-start gap-2 bg-white";
       const info = document.createElement("div");
       info.className = "flex-grow-1";
       info.innerHTML = `
@@ -188,6 +207,15 @@
         ${p.ayuda ? `<div class="text-muted small">${esc(p.ayuda)}</div>` : ''}
         ${p.opciones?.length ? `<div class="text-muted small">${esc(p.opciones.join(" · "))}</div>` : ''}
       `;
+      const extQuiz = p.extra || {};
+      const cajaQuiz = document.createElement("div");
+      const modoQuiz = FORM.config && FORM.config.tipoFormulario === "quiz";
+      cajaQuiz.className = "caja-ajustes-quiz" + (modoQuiz ? "" : " d-none");
+      cajaQuiz.innerHTML =
+        '<label class="campo-quiz">Puntos <input type="number" class="quiz-puntos-input" min="0" max="100" value="' + esc(extQuiz.puntos || 1) + '" oninput="sincronizarAjustesQuiz_(' + i + ', \'puntos\', this.value)"></label>' +
+        '<label class="campo-quiz">Correcta <input type="text" class="quiz-correcta-input" value="' + esc(extQuiz.respuestaCorrecta || '') + '" oninput="sincronizarAjustesQuiz_(' + i + ', \'respuestaCorrecta\', this.value)"></label>' +
+        '<label class="campo-quiz campo-quiz--retro">Retroalimentación <input type="text" class="quiz-retro-input" value="' + esc(typeof extQuiz.retroalimentacion === 'string' ? extQuiz.retroalimentacion : ((extQuiz.retroalimentacion && extQuiz.retroalimentacion.acierto) || '')) + '" oninput="sincronizarAjustesQuiz_(' + i + ', \'retroalimentacion\', this.value)"></label>';
+      info.appendChild(cajaQuiz);
 
       const acciones = document.createElement("div");
       acciones.className = "d-flex gap-1";
@@ -458,12 +486,16 @@
       return;
     }
 
+    const previa = (editando >= 0 && FORM.preguntas[editando] && FORM.preguntas[editando].extra) || {};
     const extra = {
       categoria: document.getElementById("p_categoria").value.trim(),
       escalaMin: Number(document.getElementById("p_escalaMin").value) || 1,
       escalaMax: Number(document.getElementById("p_escalaMax").value) || 5,
       maxLongitud: Number(document.getElementById("p_maxLongitud").value) || ""
     };
+    ["esQuiz", "puntos", "respuestaCorrecta", "retroalimentacion", "media", "archivoConfig", "seccion", "aleatorizarOpciones"].forEach(function (k) {
+      if (previa[k] !== undefined) extra[k] = previa[k];
+    });
 
     if (document.getElementById("p_condActiva").checked) {
       const refId = document.getElementById("p_condPregunta").value;

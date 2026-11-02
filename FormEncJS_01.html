@@ -303,6 +303,17 @@
       .obtenerFormulario();
   }
 
+  function barajarListaST90_(lista) {
+    const arr = (lista || []).slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  }
+
   function renderFormulario() {
     const c = FORM.config || {};
     document.getElementById("introduccion").textContent = c.introduccion || "";
@@ -314,14 +325,127 @@
     const cont = document.getElementById("campos");
     if (!cont) return;
     cont.innerHTML = "";
-    (FORM.preguntas || []).forEach(p => cont.appendChild(crearCampo(p)));
+    let preguntas = (FORM.preguntas || []).slice();
+    if (String(c.barajarPreguntas || "").toUpperCase() === "SI" && !FORM._yaBarajado) {
+      preguntas = barajarListaST90_(preguntas);
+      FORM.preguntas = preguntas;
+      FORM._yaBarajado = true;
+    }
+    const secciones = [];
+    const porSeccion = {};
+    preguntas.forEach(p => {
+      const sec = (p.extra && p.extra.seccion) || "";
+      if (!porSeccion[sec]) { porSeccion[sec] = []; secciones.push(sec); }
+      porSeccion[sec].push(p);
+    });
+    const paginar = secciones.length > 1;
+    if (paginar) {
+      const barra = document.createElement("div");
+      barra.className = "barra-progreso-nem";
+      barra.textContent = "Sección 1 de " + secciones.length;
+      cont.appendChild(barra);
+    }
+    const minutos = Number(c.temporizadorMinutos) || 0;
+    if (minutos > 0 && c.tipoFormulario === "quiz") {
+      const reloj = document.createElement("div");
+      reloj.id = "barraTemporizadorQuiz";
+      reloj.innerHTML = 'Tiempo restante <span class="tiempo-restante">00:00</span>';
+      cont.appendChild(reloj);
+      iniciarRelojQuizST90_(minutos);
+    }
+    preguntas.forEach(p => {
+      const campo = crearCampo(p);
+      const sec = (p.extra && p.extra.seccion) || "";
+      campo.setAttribute("data-seccion", sec);
+      if (paginar && sec !== secciones[0]) campo.classList.add("d-none");
+      cont.appendChild(campo);
+    });
+    if (paginar) {
+      let indice = 0;
+      const nav = document.createElement("div");
+      const btnPrev = document.createElement("button");
+      btnPrev.type = "button";
+      btnPrev.textContent = "Anterior";
+      const btnNext = document.createElement("button");
+      btnNext.type = "button";
+      btnNext.textContent = "Siguiente";
+      function mostrar(i) {
+        indice = i;
+        cont.querySelectorAll("[data-seccion]").forEach(el => {
+          el.classList.toggle("d-none", el.getAttribute("data-seccion") !== secciones[indice]);
+        });
+        const barra = cont.querySelector(".barra-progreso-nem");
+        if (barra) {
+          const pct = Math.round(((indice + 1) / secciones.length) * 100);
+          barra.textContent = "Sección " + (indice + 1) + " de " + secciones.length + " · " + pct + "%";
+        }
+        btnPrev.disabled = indice === 0;
+        btnNext.textContent = indice === secciones.length - 1 ? "Listo" : "Siguiente";
+      }
+      btnPrev.addEventListener("click", () => { if (indice > 0) mostrar(indice - 1); });
+      btnNext.addEventListener("click", () => { if (indice < secciones.length - 1) mostrar(indice + 1); });
+      nav.appendChild(btnPrev);
+      nav.appendChild(btnNext);
+      cont.appendChild(nav);
+      mostrar(0);
+    }
     aplicarDependenciasFormulario();
+  }
+
+  function iniciarRelojQuizST90_(minutos) {
+    const barra = document.getElementById("barraTemporizadorQuiz");
+    if (!barra) return;
+    const clave = "st90_quiz_fin_" + ((FORM.config && FORM.config.titulo) || "form");
+    let fin = Number(sessionStorage.getItem(clave) || 0);
+    if (!fin || fin < Date.now()) {
+      fin = Date.now() + minutos * 60000;
+      sessionStorage.setItem(clave, String(fin));
+    }
+    function pintar() {
+      const resta = Math.max(0, fin - Date.now());
+      const seg = Math.ceil(resta / 1000);
+      const mm = String(Math.floor(seg / 60));
+      const ss = String(seg % 60);
+      const etiqueta = barra.querySelector(".tiempo-restante");
+      if (etiqueta) etiqueta.textContent = (mm.length < 2 ? "0" + mm : mm) + ":" + (ss.length < 2 ? "0" + ss : ss);
+      barra.classList.toggle("alerta", seg <= 120 && seg > 30);
+      barra.classList.toggle("critico", seg <= 30);
+      barra.setAttribute("data-estado", seg <= 30 ? "critico" : (seg <= 120 ? "alerta" : "ok"));
+      if (resta <= 0) {
+        clearInterval(barra._reloj);
+        sessionStorage.removeItem(clave);
+        if (typeof enviar === "function") enviar({ preventDefault: function () {} });
+      }
+    }
+    pintar();
+    clearInterval(barra._reloj);
+    barra._reloj = setInterval(pintar, 1000);
   }
 
   function crearCampo(p) {
     const wrap = document.createElement("div");
     wrap.className = "mb-3";
     wrap.setAttribute("data-id", p.id);
+    const extraMedia = (p.extra && p.extra.media) || null;
+    if (extraMedia && extraMedia.url) {
+      const figura = document.createElement("figure");
+      figura.className = "reactivo-media";
+      const visor = document.createElement(extraMedia.tipo === "video" ? "video" : "img");
+      visor.src = extraMedia.url;
+      if (extraMedia.tipo === "video") visor.controls = true;
+      visor.alt = extraMedia.pie || p.etiqueta || "";
+      figura.appendChild(visor);
+      if (extraMedia.pie) {
+        const pie = document.createElement("figcaption");
+        pie.textContent = extraMedia.pie;
+        figura.appendChild(pie);
+      }
+      figura.addEventListener("click", function (ev) {
+        if (ev.target && ev.target.tagName === "VIDEO") return;
+        figura.classList.toggle("ampliado");
+      });
+      wrap.appendChild(figura);
+    }
     const label = document.createElement("label");
     label.className = "form-label fw-semibold";
     label.setAttribute("for", "campo_" + p.id);
@@ -406,6 +530,41 @@
         div.appendChild(lab);
         control.appendChild(div);
       }
+    } else if (p.tipo === "archivo" || extra.archivoConfig) {
+      control = document.createElement("input");
+      control.type = "hidden";
+      control.id = "campo_" + p.id;
+      const archivo = document.createElement("input");
+      archivo.type = "file";
+      archivo.className = "form-control";
+      const maxMB = Number((extra.archivoConfig && extra.archivoConfig.maxMB) || 5);
+      archivo.addEventListener("change", function () {
+        const file = archivo.files && archivo.files[0];
+        if (!file) return;
+        if (file.size > maxMB * 1024 * 1024) {
+          alert("El archivo supera " + maxMB + " MB.");
+          archivo.value = "";
+          return;
+        }
+        const lector = new FileReader();
+        lector.onload = function () {
+          google.script.run
+            .withSuccessHandler(function (res) {
+              control.value = (res && res.url) || "";
+              if (!res || res.ok === false) alert((res && res.mensaje) || "No se pudo guardar el archivo.");
+            })
+            .withFailureHandler(function (err) { alert(err.message); })
+            .subirEvidenciaFormulario({
+              base64: String(lector.result || ""),
+              mimeType: file.type,
+              nombreArchivo: file.name,
+              matricula: "",
+              gradoGrupo: "General"
+            });
+        };
+        lector.readAsDataURL(file);
+      });
+      wrap.appendChild(archivo);
     } else {
       control = document.createElement("input");
       control.type = p.tipo === "numero" ? "number" : (p.tipo === "fecha" ? "date" : "text");
@@ -414,7 +573,36 @@
       control.placeholder = p.placeholder || "";
       if (extra.maxLongitud) control.maxLength = Number(extra.maxLongitud);
     }
+    if (extra.aleatorizarOpciones && control && control.options && control.options.length > 2) {
+      const claveOpts = "st90_opts_" + p.id;
+      let orden = null;
+      try { orden = JSON.parse(sessionStorage.getItem(claveOpts) || "null"); } catch (e) { orden = null; }
+      const actuales = Array.from(control.options).filter(op => op.value);
+      const textos = orden || barajarListaST90_(actuales.map(op => op.value));
+      if (!orden) sessionStorage.setItem(claveOpts, JSON.stringify(textos));
+      const vacia = control.querySelector("option[value='']");
+      control.innerHTML = "";
+      if (vacia) control.appendChild(vacia);
+      textos.forEach(txt => {
+        const op = document.createElement("option");
+        op.value = txt;
+        op.textContent = txt;
+        control.appendChild(op);
+      });
+    }
     wrap.appendChild(control);
+    if (extra.retroalimentacion && typeof extra.retroalimentacion === "object") {
+      const acierto = document.createElement("div");
+      acierto.className = "retro-acierto";
+      acierto.hidden = true;
+      acierto.textContent = extra.retroalimentacion.acierto || "";
+      const fallo = document.createElement("div");
+      fallo.className = "retro-fallo";
+      fallo.hidden = true;
+      fallo.textContent = extra.retroalimentacion.fallo || "";
+      wrap.appendChild(acierto);
+      wrap.appendChild(fallo);
+    }
     return wrap;
   }
 
@@ -502,10 +690,28 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
 
-    google.script.run
+    const esQuiz = FORM.config && FORM.config.tipoFormulario === "quiz";
+    const llamada = google.script.run
       .withSuccessHandler(res => {
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-send-fill"></i> ' + (FORM.config.boton || "Enviar");
+        if (res && res.desglose) {
+          res.desglose.forEach(function (item) {
+            const wrap = document.querySelector('[data-id="' + item.idPregunta + '"]');
+            if (!wrap) return;
+            const caja = wrap.querySelector(item.esCorrecta ? ".retro-acierto" : ".retro-fallo");
+            if (caja) {
+              if (item.retroalimentacion) caja.textContent = item.retroalimentacion;
+              caja.hidden = !res.mostrarRetroalimentacion;
+            }
+          });
+        }
+        if (res && res.esQuiz && res.exito) {
+          document.getElementById("exitoTexto").textContent = "Calificación: " + res.calificacion + " / 10 (" + res.puntosObtenidos + " de " + res.puntosMaximos + " puntos).";
+          document.getElementById("formDinamico").classList.add("d-none");
+          document.getElementById("panelExito").classList.remove("d-none");
+          return;
+        }
         if (res && res.exito) {
           const pNombre = preguntaCategoria("nombre");
           let nombre = pNombre ? String(respuestas[pNombre.id] || "").trim() : "";
@@ -520,8 +726,9 @@
       .withFailureHandler(err => {
         btn.disabled = false;
         alert("Error de conexión: " + err.message);
-      })
-      .guardarRespuestaFormulario({ respuestas: respuestas });
+      });
+    if (esQuiz) llamada.calificarQuizAlumnoST90({ respuestas: respuestas });
+    else llamada.guardarRespuestaFormulario({ respuestas: respuestas });
   }
 
   function otraRespuesta() {

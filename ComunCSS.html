@@ -2617,5 +2617,312 @@
     .ia-drawer-velo,
     .btn-ayuda-nem { display: none !important; }
   }
+  /* ============================================================
+     OLA 1 · ETAPA 3 — CHIPS RÁPIDOS DE AJUSTES RAZONABLES DUA
+     Contrato: .nem-chips-dua-bar + .nem-chip-dua-rapido
+     ============================================================ */
+  .nem-chips-dua-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 2px;
+  }
+  .nem-chip-dua-rapido {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 11px;
+    border: 1px solid #f59e0b;
+    border-radius: 999px;
+    background: #fffbeb;
+    color: #92400e;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
+                transform 150ms ease, box-shadow 150ms ease;
+  }
+  .nem-chip-dua-rapido:hover {
+    background: #fef3c7;
+    border-color: #d97706;
+    color: #78350f;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(180, 83, 9, 0.16);
+  }
+  .nem-chip-dua-rapido:active {
+    background: #fde68a;
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+  }
+  .nem-chip-dua-rapido:focus-visible {
+    outline: 2px solid #b45309;
+    outline-offset: 2px;
+  }
+
+  /* ============================================================
+     OLA 1 · HOJA CARTA — PLANO DIDÁCTICO OFICIAL NL
+     Vista de papel real en pantalla + impresión multipágina limpia.
+     Los !important vencen los estilos en línea que inyecta AyudaJS.
+     ============================================================ */
+  #modalVistaPreviaPDFOficialNL {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+  #contenedorDocOficialNLPdf {
+    max-width: 816px !important;      /* 8.5 in a 96 dpi */
+    min-height: 1056px;               /* 11 in a 96 dpi */
+    padding: 0.6in 0.55in !important;
+    background: #ffffff !important;
+    border: 1px solid #d7dde5;
+    border-radius: 2px !important;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    overflow: visible !important;
+  }
+  #modalVistaPreviaPDFOficialNL > div:first-child {
+    max-width: 816px !important;
+    border-radius: 10px 10px 0 0 !important;
+  }
+  #contenedorDocOficialNLPdf .st90-doc-oficial-nl {
+    max-width: none !important;
+    padding: 0 !important;
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: #000000;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #contenedorDocOficialNLPdf .st90-tabla-oficial-nl td,
+  #contenedorDocOficialNLPdf .st90-tabla-oficial-nl th {
+    border-color: #1f2937;
+  }
+  #contenedorDocOficialNLPdf .st90-tabla-oficial-nl tr:nth-child(even) td {
+    background: #fbfcfd;
+  }
+
+  /* ---- Impresión: solo la hoja, sin interfaz ---- */
+  @media print {
+    @page { size: letter portrait; margin: 12mm 14mm; }
+
+    html, body {
+      background: #ffffff !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    body > *:not(#modalVistaPreviaPDFOficialNL) { display: none !important; }
+
+    #modalVistaPreviaPDFOficialNL {
+      position: static !important;
+      inset: auto !important;
+      display: block !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      z-index: auto !important;
+    }
+    #modalVistaPreviaPDFOficialNL > div:first-child { display: none !important; }
+
+    #contenedorDocOficialNLPdf {
+      max-width: none !important;
+      width: auto !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: #ffffff !important;
+      overflow: visible !important;
+    }
+    #contenedorDocOficialNLPdf .st90-doc-oficial-nl {
+      padding: 0 !important;
+      max-width: none !important;
+      font-size: 10.5pt;
+      line-height: 1.35;
+    }
+    #contenedorDocOficialNLPdf .st90-doc-oficial-nl img {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Ninguna fila se parte: vale para Lista de Cotejo y Rúbrica Analítica */
+    #contenedorDocOficialNLPdf table { page-break-inside: auto; break-inside: auto; }
+    #contenedorDocOficialNLPdf tr,
+    .nem-tabla-cotejo-edit tr { page-break-inside: avoid; break-inside: avoid; }
+    #contenedorDocOficialNLPdf thead,
+    .nem-tabla-cotejo-edit thead { display: table-header-group; }
+    #contenedorDocOficialNLPdf h1,
+    #contenedorDocOficialNLPdf h2,
+    #contenedorDocOficialNLPdf h3 { page-break-after: avoid; break-after: avoid; }
+
+    /* La rúbrica del formulario también sobrevive si se imprime el panel */
+    #cajaRubricaCotejoNEM {
+      box-shadow: none !important;
+      border: 1px solid #cbd5e1 !important;
+      break-inside: auto;
+    }
+  }
+  /* ============================================================
+     OLA 4 · build-571 — CAPACIDADES TIPO FORMS
+     figure.reactivo-media, .retro-acierto / .retro-fallo,
+     .barra-progreso-nem y #barraTemporizadorQuiz
+     ============================================================ */
+  figure.reactivo-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0;
+    padding: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  figure.reactivo-media img,
+  figure.reactivo-media video {
+    max-width: 100%;
+    max-height: 280px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+    cursor: zoom-in;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  figure.reactivo-media img:hover,
+  figure.reactivo-media img:focus-visible {
+    transform: scale(1.01);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+  }
+  figure.reactivo-media figcaption {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #64748b;
+    text-align: center;
+  }
+  /* Estado ampliado (lo activa el JS al hacer clic) */
+  figure.reactivo-media.ampliado {
+    position: fixed;
+    inset: 0;
+    z-index: 99970;
+    margin: 0;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.86);
+    border: 0;
+    border-radius: 0;
+    cursor: zoom-out;
+  }
+  figure.reactivo-media.ampliado img,
+  figure.reactivo-media.ampliado video {
+    max-height: 92vh;
+    max-width: 94vw;
+    cursor: zoom-out;
+  }
+
+  /* Retroalimentación diferenciada */
+  .retro-acierto,
+  .retro-fallo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .retro-acierto {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #14532d;
+  }
+  .retro-fallo {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #78350f;
+  }
+  .retro-acierto::before { content: '✓'; font-weight: 800; }
+  .retro-fallo::before { content: '!'; font-weight: 800; }
+
+  /* Barra de progreso de secciones paginadas */
+  .barra-progreso-nem {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    margin: 10px 0 14px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .barra-progreso-nem__fill {
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
+    transition: width 300ms ease;
+  }
+  .barra-progreso-nem__texto {
+    display: block;
+    margin-top: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  /* Temporizador pegajoso */
+  #barraTemporizadorQuiz {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #334155;
+    transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
+  }
+  #barraTemporizadorQuiz .tiempo-restante {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+  }
+  /* Quedan 2 minutos o menos */
+  #barraTemporizadorQuiz.alerta,
+  #barraTemporizadorQuiz[data-estado="alerta"] {
+    background: #fffbeb;
+    border-bottom-color: #fcd34d;
+    color: #92400e;
+    animation: temporizadorAlerta 1.6s ease-in-out infinite;
+  }
+  /* Queda menos de un minuto */
+  #barraTemporizadorQuiz.critico,
+  #barraTemporizadorQuiz[data-estado="critico"] {
+    background: #fef2f2;
+    border-bottom-color: #fca5a5;
+    color: #b91c1c;
+    animation: temporizadorCritico 1s ease-in-out infinite;
+  }
+  @keyframes temporizadorAlerta {
+    0%, 100% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.10); }
+    50%      { box-shadow: 0 2px 14px rgba(245, 158, 11, 0.35); }
+  }
+  @keyframes temporizadorCritico {
+    0%, 100% { box-shadow: 0 2px 8px rgba(220, 38, 38, 0.12); }
+    50%      { box-shadow: 0 2px 16px rgba(220, 38, 38, 0.45); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #barraTemporizadorQuiz.alerta,
+    #barraTemporizadorQuiz.critico,
+    #barraTemporizadorQuiz[data-estado="alerta"],
+    #barraTemporizadorQuiz[data-estado="critico"] { animation: none; }
+    .barra-progreso-nem__fill { transition: none; }
+  }
 </style>
 

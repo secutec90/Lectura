@@ -247,6 +247,12 @@
           etiqueta: 'iDevice Desafío Práctico',
           phTitulo: 'Nombre del reto o producto esperado de la sesión...',
           phCuerpo: 'Instrucciones paso a paso del reto y cómo impacta en el aula o la comunidad...'
+        },
+        encuesta: {
+          variante: 'idevice-card-encuesta',
+          etiqueta: 'iDevice Encuesta / Diagnóstico',
+          phTitulo: 'Título de la encuesta o diagnóstico en esta sesión...',
+          phCuerpo: ''
         }
       };
       const meta = catalogo[tipo];
@@ -255,7 +261,8 @@
       const idUnico = 'idevice_' + Date.now();
       const div = document.createElement('div');
       div.id = idUnico;
-      div.className = 'idevice-card ' + meta.variante;
+      div.setAttribute('data-tipo', tipo);
+      div.className = 'idevice-card ' + meta.variante + (tipo === 'encuesta' ? ' idevice-bloque' : '');
 
       const header = document.createElement('div');
       header.className = 'idevice-header';
@@ -301,7 +308,13 @@
 
       div.appendChild(header);
       div.appendChild(body);
+      if (tipo === 'encuesta' && typeof window.completarIDeviceEncuesta_ === 'function') {
+        window.completarIDeviceEncuesta_(div, {});
+      }
       contenedor.appendChild(div);
+      if (tipo === 'encuesta' && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
+        window.cargarCatalogoEnSelectiDevice_(div.id, '');
+      }
       toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
     }
 

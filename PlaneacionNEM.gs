@@ -2058,4 +2058,64 @@ function consultarAsistenteIAPaso(token, contextoSeccion, preguntaDocente) {
   }
 }
 
+/* ============================================================
+   MEMBRETE INSTITUCIONAL CONFIGURABLE (OLA 1 · build-568)
+   ============================================================ */
+
+/**
+ * Obtiene la configuración global del membrete institucional para documentos oficiales.
+ * Si algún campo no está personalizado, el cliente usa los escudos y textos oficiales de Nuevo León.
+ */
+function obtenerMembreteInstitucionalNEM() {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    return {
+      ok: true,
+      membrete: {
+        logoIzq: props.getProperty("ST90_CFG_LOGO_IZQ") || "",
+        logoDer: props.getProperty("ST90_CFG_LOGO_DER") || "",
+        linea1: props.getProperty("ST90_CFG_ENC_L1") || "SECRETARÍA DE EDUCACIÓN DEL ESTADO DE NUEVO LEÓN",
+        linea2: props.getProperty("ST90_CFG_ENC_L2") || "SUBSECRETARÍA DE EDUCACIÓN BÁSICA · DIRECCIÓN DE EDUCACIÓN SECUNDARIA",
+        linea3: props.getProperty("ST90_CFG_ENC_L3") || "ESCUELA SECUNDARIA TÉCNICA N° 90 \"MIGUEL ÁNGEL GRANADOS CHAPA\""
+      }
+    };
+  } catch (e) {
+    return {
+      ok: true,
+      membrete: {
+        logoIzq: "",
+        logoDer: "",
+        linea1: "SECRETARÍA DE EDUCACIÓN DEL ESTADO DE NUEVO LEÓN",
+        linea2: "SUBSECRETARÍA DE EDUCACIÓN BÁSICA · DIRECCIÓN DE EDUCACIÓN SECUNDARIA",
+        linea3: "ESCUELA SECUNDARIA TÉCNICA N° 90 \"MIGUEL ÁNGEL GRANADOS CHAPA\""
+      }
+    };
+  }
+}
+
+/**
+ * Guarda la configuración del membrete institucional (logos y encabezados).
+ */
+function guardarMembreteInstitucionalNEM(token, payload) {
+  try {
+    exigirClaseRol_(token, ["admin", "maestro"]);
+  } catch (eRol) {
+    const sVal = (typeof obtenerSesionValida_ === "function") ? obtenerSesionValida_(token) : null;
+    if (!sVal || (sVal.rol !== "admin" && sVal.rol !== "maestro" && sVal.rol !== "docente")) {
+      throw eRol;
+    }
+  }
+  const p = payload || {};
+  const props = PropertiesService.getScriptProperties();
+  props.setProperties({
+    "ST90_CFG_LOGO_IZQ": String(p.logoIzq || "").trim(),
+    "ST90_CFG_LOGO_DER": String(p.logoDer || "").trim(),
+    "ST90_CFG_ENC_L1": String(p.linea1 || "SECRETARÍA DE EDUCACIÓN DEL ESTADO DE NUEVO LEÓN").trim(),
+    "ST90_CFG_ENC_L2": String(p.linea2 || "SUBSECRETARÍA DE EDUCACIÓN BÁSICA · DIRECCIÓN DE EDUCACIÓN SECUNDARIA").trim(),
+    "ST90_CFG_ENC_L3": String(p.linea3 || "ESCUELA SECUNDARIA TÉCNICA N° 90 \"MIGUEL ÁNGEL GRANADOS CHAPA\"").trim()
+  }, false);
+  return obtenerMembreteInstitucionalNEM();
+}
+
+
 

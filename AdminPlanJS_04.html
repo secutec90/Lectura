@@ -666,6 +666,7 @@
       document.getElementById('planPDA').value = '';
       document.getElementById('planProblema').value = '';
       document.getElementById('planProposito').value = '';
+      if (typeof reiniciarCriteriosCotejoNEM_ === 'function') reiniciarCriteriosCotejoNEM_();
 
       document.querySelectorAll('#wrapEjesPlan input[type="checkbox"]').forEach(function (cb) {
         cb.checked = (cb.value === 'Inclusión' || cb.value === 'Apropiación de las culturas a través de la lectura y la escritura');

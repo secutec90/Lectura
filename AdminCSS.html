@@ -1795,4 +1795,144 @@
     body.es-estrecho .col-grado-2,
     body.es-estrecho .col-grado-3 { border-left: none !important; padding-left: 0 !important; }
     body.es-estrecho .grid-dos-columnas { grid-template-columns: 1fr; }
-  </style>
+    /* ============================================================
+     OLA 3 · build-570 — CONSTRUCTOR DUAL (ENCUESTA vs QUIZ)
+     Contrato: .constructor-modo-switch (#btnModoEncuesta, #btnModoQuiz),
+     #barraConfigQuizGlobal (#lblPuntosTotalesQuiz), .caja-ajustes-quiz
+     ============================================================ */
+  .constructor-modo-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    margin: 0 0 12px;
+  }
+  .constructor-modo-switch button,
+  #btnModoEncuesta,
+  #btnModoQuiz {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    color: #64748b;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+  }
+  .constructor-modo-switch button:hover,
+  #btnModoEncuesta:hover,
+  #btnModoQuiz:hover {
+    color: #334155;
+    background: #e9eef5;
+  }
+  .constructor-modo-switch button.activo,
+  .constructor-modo-switch button[aria-selected="true"],
+  #btnModoEncuesta.activo,
+  #btnModoQuiz.activo {
+    background: #ffffff;
+    color: #1d4ed8;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.10);
+  }
+  #btnModoQuiz.activo {
+    color: #047857;
+  }
+  .constructor-modo-switch button:focus-visible,
+  #btnModoEncuesta:focus-visible,
+  #btnModoQuiz:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  /* Barra de configuración global del quiz */
+  #barraConfigQuizGlobal {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  }
+  #lblPuntosTotalesQuiz {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 4px 12px;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    background: #f0fdf4;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  #lblPuntosTotalesQuiz::before {
+    content: '🏁';
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* Caja de ajustes por reactivo */
+  .caja-ajustes-quiz {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 8px 0 0;
+    padding: 10px 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+  }
+  .caja-ajustes-quiz > label,
+  .caja-ajustes-quiz .campo-quiz {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #15803d;
+  }
+  /* El campo de retroalimentación ocupa el resto de la fila */
+  .caja-ajustes-quiz > label:last-child,
+  .caja-ajustes-quiz .campo-quiz--retro { flex: 1 1 260px; }
+  .quiz-puntos-input,
+  .quiz-correcta-input,
+  .quiz-retro-input {
+    min-height: 32px;
+    padding: 6px 9px;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: #1e293b;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .quiz-puntos-input { width: 78px; text-align: center; font-weight: 700; }
+  .quiz-correcta-input { width: 150px; }
+  .quiz-retro-input { width: 100%; min-width: 0; }
+  .quiz-puntos-input:focus,
+  .quiz-correcta-input:focus,
+  .quiz-retro-input:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+  }
+</style>

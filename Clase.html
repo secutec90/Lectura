@@ -636,6 +636,12 @@
                     </div>
                   </div>
                   <div>
+                    <div class="nem-chips-dua-bar">
+                      <button type="button" class="nem-chip-dua-rapido" onclick="insertarAjusteDUARapido('• Material visual con macrotipo, alto contraste y apoyos gráficos paso a paso (DUA Representación).')">+ Macrotipo y Alto Contraste</button>
+                      <button type="button" class="nem-chip-dua-rapido" onclick="insertarAjusteDUARapido('• Instrucciones breves apoyadas con lectura guiada y audio descriptivo (DUA Representación).')">+ Audio DUA y Lectura Guiada</button>
+                      <button type="button" class="nem-chip-dua-rapido" onclick="insertarAjusteDUARapido('• Tiempos flexibles de entrega, pausas activas focalizadas y evaluación diversificada (DUA Acción y Expresión).')">+ Tiempos Flexibles</button>
+                      <button type="button" class="nem-chip-dua-rapido" onclick="insertarAjusteDUARapido('• Trabajo colaborativo en parejas tutoras con monitoreo cercano y refuerzo positivo (DUA Motivación).')">+ Parejas Tutoras</button>
+                    </div>
                     <label for="planAjustesRazonables" style="font-size:11px;font-weight:700;color:#78350f;margin-bottom:3px;display:block;">
                       Ajustes Razonables Curriculares y Metodológicos (DUA) * <button type="button" class="btn-ayuda-nem" data-ayuda-campo="planAjustesRazonables" title="Ayuda pedagógica NEM" aria-label="Ayuda para Ajustes Razonables DUA">?</button>
                     </label>
@@ -670,11 +676,14 @@
                   <textarea id="planProposito" rows="4" style="min-height:90px;width:100%;resize:vertical !important;overflow-y:auto !important;" placeholder="Define qué aprenderán los estudiantes, para qué lo aprenderán y cuál será el producto integrador o evidencia central de aprendizaje..."></textarea>
                 </div>
 
+                <div id="cajaRubricaCotejoNEM" aria-live="polite"></div>
+
 <div class="nem-step-nav-footer">
                   <button type="button" class="nem-btn-accion" onclick="irAPasoPlanNEM(3)">
                     ← Volver a Diagnóstico CTE
                   </button>
                   <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button type="button" class="nem-btn-accion" id="btnAbrirConfigMembreteNEM" onclick="abrirConfigMembreteNEM()">⚙️ Membrete Oficial</button>
                     <button type="button" class="nem-btn-accion" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;font-weight:700;" onclick="abrirVistaPreviaPDFPlaneacionNEM('formulario')">📄 Vista Previa PDF Oficial</button>
                     <button type="button" class="nem-btn-accion" onclick="cerrarFormPlaneacion()">Cancelar</button>
                     <button type="submit" class="nem-btn-accion nem-btn-primario" id="btnGuardarPlan">💾 Guardar Planeación</button>
@@ -732,6 +741,7 @@
                 <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('reto')" title="Insertar reto situado comunitario o desafío práctico">
                   🏆 Desafío Práctico Situado
                 </button>
+                <button type="button" class="idevice-btn" onclick="insertariDeviceSesion_('encuesta')">📊 Encuesta / Diagnóstico</button>
               </div>
               <div id="contenedorIDevicesDinamicos"></div>
               </div>

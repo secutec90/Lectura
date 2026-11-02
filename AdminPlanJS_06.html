@@ -429,14 +429,14 @@
       const div = pintarTarjetaIDevice_(tipoNorm, null);
       if (!div) return;
       contenedor.appendChild(div);
-      if (tipoNorm === 'encuesta' && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
+      if (tipoNorm === 'encuesta' && !window._st90RestaurandoEnc_ && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
         window.cargarCatalogoEnSelectiDevice_(div.id, '');
       }
       marcarIDevicesTocados_();
       const titulo = div.querySelector('[data-campo="titulo"]');
       if (titulo) titulo.focus();
       if (div.scrollIntoView) div.scrollIntoView({ block: 'nearest' });
-      toast('Bloque de ' + meta.nombre + ' insertado en la sesión.', 'info');
+      if (!window._st90RestaurandoEnc_) toast('Bloque de ' + meta.nombre + ' insertado en la sesión.', 'info');
     }
 
     function textoCampoIDevice_(card, campo) {
@@ -448,20 +448,26 @@
       const contenedor = document.getElementById('contenedorIDevicesDinamicos');
       if (!contenedor) return '';
       const bloques = [];
+      const encuestasExtra = [];
       contenedor.querySelectorAll('.idevice-card').forEach(function (card) {
         const tipo = card.getAttribute('data-tipo') || '';
         const meta = META_IDEVICE_[tipo];
         if (!meta) return;
+        if (tipo === 'encuesta') {
+          if (typeof window.serializarEncuestaIDevice_ === 'function') {
+            try { encuestasExtra.push(JSON.parse(window.serializarEncuestaIDevice_(card))); } catch (eEnc) {}
+          }
+          return;
+        }
         const titulo = textoCampoIDevice_(card, 'titulo');
-        const cuerpo = (tipo === 'encuesta' && typeof window.serializarEncuestaIDevice_ === 'function')
-          ? window.serializarEncuestaIDevice_(card)
-          : textoCampoIDevice_(card, 'cuerpo');
-        if (tipo !== 'encuesta' && !titulo && !cuerpo) return;
+        const cuerpo = textoCampoIDevice_(card, 'cuerpo');
+        if (!titulo && !cuerpo) return;
         let linea = '#### ' + meta.etiqueta;
         if (titulo) linea += ': ' + titulo;
         linea += '\n' + (cuerpo || '(sin texto)');
         bloques.push(linea);
       });
+      window._extraIDevicesEncuesta_ = encuestasExtra;
       if (!bloques.length) return '';
       return '\n\n' + MARCA_IDEVICES_INI_ + '\n' + bloques.join('\n\n') + '\n' + MARCA_IDEVICES_FIN_;
     }
@@ -755,6 +761,10 @@
       function seleccionarSesionNEMConIDevices(idx) {
         const r = originalSel.apply(this, arguments);
         rehidratarIDevicesDesdeGuion_();
+        if (window._encuestasExtraPendientes_ && typeof window.restaurarEncuestasExtraSesion_ === 'function') {
+          window.restaurarEncuestasExtraSesion_(window._encuestasExtraPendientes_);
+          window._encuestasExtraPendientes_ = null;
+        }
         vigilarMomentosSesion_();
         return r;
       }

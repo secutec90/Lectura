@@ -2620,4 +2620,119 @@
     font-size: 10.5px;
     font-weight: 800;
   }
+  /* ============================================================
+     OLA 3 · SECCIÓN eXeLEARNING — CONSTRUCTOR vs SESIÓN
+     Separa visualmente el constructor de bloques del editor de la
+     sesión, y aloja la acción plana «+ Crear nueva Encuesta / Quiz».
+     Contrato: .nem-seccion-exelearning (+ __cab, __titulo, __hint)
+               .nem-btn-crear-encuesta
+     ============================================================ */
+  .nem-seccion-exelearning {
+    margin: 16px 0 18px;
+    padding: 12px 14px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: 3px solid #6366f1;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  }
+  .nem-seccion-exelearning__cab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 0 10px;
+  }
+  .nem-seccion-exelearning__titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #4338ca;
+  }
+  .nem-seccion-exelearning__titulo::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    border-radius: 999px;
+    background: #6366f1;
+  }
+  .nem-seccion-exelearning__hint {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  /* La barra de iDevices deja de parecer una caja suelta dentro de la sección */
+  .nem-seccion-exelearning .idevice-bar {
+    margin: 0 0 10px;
+    background: #ffffff;
+    border-style: solid;
+    border-color: #e2e8f0;
+  }
+  /* Los bloques creados respiran dentro de la sección */
+  .nem-seccion-exelearning #contenedorIDevicesDinamicos > *:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Botón plano ST90 de alta rápida */
+  .nem-btn-crear-encuesta {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #6366f1;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, transform 100ms ease, box-shadow 150ms ease;
+  }
+  .nem-btn-crear-encuesta:hover {
+    background: #4f46e5;
+  }
+  .nem-btn-crear-encuesta:active {
+    background: #4338ca;
+    transform: translateY(1px);
+  }
+  .nem-btn-crear-encuesta:focus-visible {
+    outline: 2px solid #4338ca;
+    outline-offset: 2px;
+  }
+  .nem-btn-crear-encuesta:disabled {
+    background: #c7d2fe;
+    color: #ffffff;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Variante neutra, por si la acción convive con «Guardar Sesión» */
+  .nem-btn-crear-encuesta--neutro {
+    background: #ffffff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+  }
+  .nem-btn-crear-encuesta--neutro:hover {
+    background: #eef2ff;
+    border-color: #a5b4fc;
+  }
+  .nem-btn-crear-encuesta--neutro:active {
+    background: #e0e7ff;
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 620px) {
+    .nem-seccion-exelearning { padding: 10px 10px 12px; }
+    .nem-btn-crear-encuesta { margin-left: 0; width: 100%; justify-content: center; }
+  }
 </style>

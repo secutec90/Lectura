@@ -2825,7 +2825,10 @@ function completarIDeviceEncuesta_(card, datos) {
       '<option value="actividad_activa">Actividad evaluable</option>' +
     '</select>' +
     '<label>Encuesta del directorio</label>' +
-    '<select class="sel-catalogo-encuesta-id" onchange="cargarResumenEncuestaiDevice_(this)"><option value="">Cargando catálogo…</option></select>' +
+    '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+      '<select class="sel-catalogo-encuesta-id" onchange="cargarResumenEncuestaiDevice_(this)"><option value="">Cargando catálogo…</option></select>' +
+      '<button type="button" class="nem-btn-crear-encuesta" onclick="abrirModalCrearEncuestaDesdeSesion_(\'' + String(card.id || '').replace(/'/g, '') + '\')">➕ Crear nueva Encuesta / Quiz</button>' +
+    '</div>' +
     '<div class="panel-modo-datos">' +
       '<label>Resumen para la sesión</label>' +
       '<textarea class="txt-resumen-encuesta" rows="3"></textarea>' +
@@ -2850,6 +2853,144 @@ function completarIDeviceEncuesta_(card, datos) {
   var reg = card.querySelector('.sel-registro-modo');
   if (reg && guardado.registro) reg.value = guardado.registro;
   conmutarModoEncuestaiDevice_(modo);
+}
+
+function abrirModalCrearEncuestaDesdeSesion_(idCard) {
+  window._cardEncuestaOrigen_ = idCard;
+  var modal = document.getElementById('modalConstructorEncuesta');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modalConstructorEncuesta';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'titModalConstructorEncuesta');
+    modal.style.cssText = 'display:none;position:fixed;inset:0;z-index:99996;background:rgba(15,23,42,0.62);align-items:flex-start;justify-content:center;padding:16px 12px;box-sizing:border-box;overflow:auto;';
+    modal.innerHTML =
+      '<div style="background:#fff;border-radius:12px;width:100%;max-width:1080px;padding:12px 14px 16px;box-sizing:border-box;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">' +
+          '<h3 id="titModalConstructorEncuesta" style="margin:0;font-size:16px;">Constructor dual · Encuesta / Quiz</h3>' +
+          '<button type="button" class="nem-btn-accion" onclick="cerrarModalConstructorEncuesta_()">✕ Cerrar</button>' +
+        '</div>' +
+        '<div id="cuerpoModalConstructorEncuesta"></div>' +
+      '</div>';
+    modal.addEventListener('click', function (ev) {
+      if (ev.target === modal) cerrarModalConstructorEncuesta_();
+    });
+    document.body.appendChild(modal);
+  }
+  var cuerpo = document.getElementById('cuerpoModalConstructorEncuesta');
+  var tab = document.getElementById('tab-enc');
+  if (tab && cuerpo && tab.parentNode !== cuerpo) {
+    window._padreTabEnc_ = tab.parentNode;
+    window._siguienteTabEnc_ = tab.nextSibling;
+    cuerpo.appendChild(tab);
+    tab.classList.remove('oculto');
+    tab.classList.remove('d-none');
+    tab.style.display = 'block';
+  }
+  var asig = ((document.getElementById('planAsignatura') || {}).value || '').trim();
+  var grado = ((document.getElementById('planGrado') || {}).value || '').trim();
+  var titulo = document.getElementById('cfg_titulo');
+  if (titulo && !String(titulo.value || '').trim() && (asig || grado)) {
+    titulo.value = 'Encuesta ' + asig + (grado ? ' · ' + grado + '°' : '');
+  }
+  var card = document.getElementById(idCard);
+  var modoActual = card && card.querySelector('.sel-modo-encuesta-idevice');
+  var modo = (modoActual && modoActual.value === 'actividad_activa') ? 'quiz' : 'encuesta';
+  if (typeof conmutarModoConstructor === 'function') conmutarModoConstructor(modo);
+  if (typeof cambiarTabConstructorEnc_ === 'function') cambiarTabConstructorEnc_('cabecera');
+  modal.classList.remove('oculto');
+  modal.style.display = 'flex';
+}
+
+function cerrarModalConstructorEncuesta_() {
+  var tab = document.getElementById('tab-enc');
+  if (tab && window._padreTabEnc_) {
+    if (window._siguienteTabEnc_ && window._siguienteTabEnc_.parentNode === window._padreTabEnc_) {
+      window._padreTabEnc_.insertBefore(tab, window._siguienteTabEnc_);
+    } else {
+      window._padreTabEnc_.appendChild(tab);
+    }
+  }
+  var modal = document.getElementById('modalConstructorEncuesta');
+  if (modal) {
+    modal.classList.add('oculto');
+    modal.style.display = 'none';
+  }
+  window._cardEncuestaOrigen_ = '';
+}
+
+function asociarEncuestaCreadaAlIDevice_(info) {
+  info = info || {};
+  var card = document.getElementById(window._cardEncuestaOrigen_ || '');
+  if (!card) return;
+  var id = String(info.id || info.hojaId || ('ENC-SESION-' + Date.now()));
+  var nombre = String(info.titulo || info.nombre || id);
+  var sel = card.querySelector('.sel-catalogo-encuesta-id');
+  if (sel) {
+    var opt = null;
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === id) { opt = sel.options[i]; break; }
+    }
+    if (!opt) {
+      opt = document.createElement('option');
+      opt.value = id;
+      sel.appendChild(opt);
+    }
+    opt.textContent = nombre;
+    sel.value = id;
+  }
+  var modoSel = card.querySelector('.sel-modo-encuesta-idevice');
+  if (modoSel) {
+    modoSel.value = info.tipoFormulario === 'quiz' ? 'actividad_activa' : 'datos_previos';
+    conmutarModoEncuestaiDevice_(modoSel);
+  }
+  var tituloCampo = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+  if (tituloCampo && !tituloCampo.value) tituloCampo.value = nombre;
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  cerrarModalConstructorEncuesta_();
+  if (typeof toast === 'function') toast('La encuesta quedó vinculada a esta sesión.', 'ok');
+}
+
+function guionDocenteConEncuestas_(notas) {
+  var lista = [];
+  if (typeof leerTodosLosiDevicesDeSesion_ === 'function') {
+    lista = leerTodosLosiDevicesDeSesion_().filter(function (d) { return d.tipo === 'encuesta'; });
+  }
+  return JSON.stringify({ notas: notas || '', extra: { idevicesEncuesta: lista } });
+}
+
+function restaurarEncuestasExtraSesion_(lista) {
+  if (!lista || !lista.length || typeof insertariDeviceSesion_ !== 'function') return;
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (!cont) return;
+  cont.querySelectorAll('.idevice-bloque[data-tipo="encuesta"]').forEach(function (n) { n.remove(); });
+  window._st90RestaurandoEnc_ = true;
+  lista.forEach(function (item) {
+    insertariDeviceSesion_('encuesta');
+    var cards = cont.querySelectorAll('.idevice-bloque[data-tipo="encuesta"]');
+    var card = cards[cards.length - 1];
+    if (!card) return;
+    var titulo = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+    if (titulo) titulo.value = item.titulo || '';
+    var modoSel = card.querySelector('.sel-modo-encuesta-idevice');
+    if (modoSel && item.modo) {
+      modoSel.value = item.modo;
+      conmutarModoEncuestaiDevice_(modoSel);
+    }
+    var resumen = card.querySelector('.txt-resumen-encuesta');
+    if (resumen) resumen.value = item.resumen || '';
+    var graf = card.querySelector('.chk-incluir-graficas');
+    if (graf) graf.checked = item.incluirGraficas !== false;
+    var pond = card.querySelector('.inp-ponderacion-encuesta');
+    if (pond && item.ponderacion) pond.value = item.ponderacion;
+    var reg = card.querySelector('.sel-registro-modo');
+    if (reg && item.registro) reg.value = item.registro;
+    if (typeof cargarCatalogoEnSelectiDevice_ === 'function') {
+      cargarCatalogoEnSelectiDevice_(card.id, item.idEncuesta || '');
+    }
+  });
+  window._st90RestaurandoEnc_ = false;
 }
 
 function conmutarModoEncuestaiDevice_(selectEl) {
@@ -3022,6 +3163,11 @@ function iniciarTemporizadorQuiz_(minutos) {
   barra._reloj = setInterval(pintar, 1000);
 }
 
+window.abrirModalCrearEncuestaDesdeSesion_ = abrirModalCrearEncuestaDesdeSesion_;
+window.cerrarModalConstructorEncuesta_ = cerrarModalConstructorEncuesta_;
+window.asociarEncuestaCreadaAlIDevice_ = asociarEncuestaCreadaAlIDevice_;
+window.guionDocenteConEncuestas_ = guionDocenteConEncuestas_;
+window.restaurarEncuestasExtraSesion_ = restaurarEncuestasExtraSesion_;
 window.completarIDeviceEncuesta_ = completarIDeviceEncuesta_;
 window.conmutarModoEncuestaiDevice_ = conmutarModoEncuestaiDevice_;
 window.cargarCatalogoEnSelectiDevice_ = cargarCatalogoEnSelectiDevice_;

@@ -312,10 +312,10 @@
         window.completarIDeviceEncuesta_(div, {});
       }
       contenedor.appendChild(div);
-      if (tipo === 'encuesta' && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
+      if (tipo === 'encuesta' && !window._st90RestaurandoEnc_ && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
         window.cargarCatalogoEnSelectiDevice_(div.id, '');
       }
-      toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
+      if (!window._st90RestaurandoEnc_) toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
     }
 
     function probarAudioIDevice_(btn) {

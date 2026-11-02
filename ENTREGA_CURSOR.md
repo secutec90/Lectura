@@ -168,3 +168,85 @@ Antigravity: el JavaScript de cliente ya está en los archivos. Auditar. No volv
 - Pregunta `archivo`: `FileReader` + `subirEvidenciaFormulario`.
 - Secciones por `extra.seccion` con `.barra-progreso-nem`.
 - `#barraTemporizadorQuiz` en `sessionStorage` (alerta a los 2 minutos, crítico a los 30 segundos) y barajado Fisher-Yates si `barajarPreguntas` o `aleatorizarOpciones` están activos.
+
+---
+
+### ✅ OLA 3 (`build-576`) — BOTÓN CREAR ENCUESTA / QUIZ DESDE EL IDEVICE (2026-11-01)
+
+Antigravity: aplicado en fuente. No volver a pegar.
+
+- En el iDevice `encuesta`, junto a `.sel-catalogo-encuesta-id`, quedó el botón `➕ Crear nueva Encuesta / Quiz`. Llama a `abrirModalCrearEncuestaDesdeSesion_(card.id)`.
+- El modal `#modalConstructorEncuesta` toma el constructor dual (`#tab-enc`) sin salir de la sesión, precarga asignatura y grado, y abre en encuesta o quiz según el modo del iDevice (`conmutarModoConstructor`).
+- Al guardar, `asociarEncuestaCreadaAlIDevice_` selecciona el ID nuevo en el catálogo del bloque y deja el modo diagnóstico o evaluativo.
+- La encuesta o el quiz se guarda en `guionDocenteJSON.extra.idevicesEncuesta`. El guion de voz del estudiante no recibe ese JSON.
+- Título de la zona: `🧩 Constructor de Clase Interactiva (eXeLearning)` en `AdminPlaneacion.html` y `Clase.html`.
+- Funciones en `AyudaJS.html`: `abrirModalCrearEncuestaDesdeSesion_`, `cerrarModalConstructorEncuesta_`, `asociarEncuestaCreadaAlIDevice_`, `guionDocenteConEncuestas_`, `restaurarEncuestasExtraSesion_`.
+
+---
+
+### ✅ OLA 3 (`build-576`) — CÓDIGO DE ENTREGA (botón + constructor dual)
+
+Estado: aplicado en `AyudaJS.html`, `AdminPlaneacion.html`, `Clase.html`, `AdminPlanJS_06.html` y `AdminEncJS_04.html`. Antigravity: auditar este bloque; no volver a pegarlo si el botón `.nem-btn-crear-encuesta` ya está junto a `.sel-catalogo-encuesta-id`.
+
+El botón dentro del iDevice:
+
+```html
+<button type="button" class="nem-btn-crear-encuesta" onclick="abrirModalCrearEncuestaDesdeSesion_(idDeLaTarjeta)">➕ Crear nueva Encuesta / Quiz</button>
+```
+
+La zona de autor usa `.nem-seccion-exelearning`, `.nem-seccion-exelearning__cab`, `.nem-seccion-exelearning__titulo` y `.nem-seccion-exelearning__hint`, con el título `🧩 Constructor de Clase Interactiva (eXeLearning)`.
+
+`abrirModalCrearEncuestaDesdeSesion_(idCard)` abre `#modalConstructorEncuesta`, mueve `#tab-enc` dentro del modal, precarga `#cfg_titulo` con asignatura y grado, y llama `conmutarModoConstructor('quiz')` si el iDevice está en `actividad_activa`, o `'encuesta'` si está en `datos_previos`.
+
+Al éxito de `guardarTodo()`, `asociarEncuestaCreadaAlIDevice_` agrega el ID al `.sel-catalogo-encuesta-id` y fija el modo. `serializarIDevicesSesion_()` no escribe la encuesta en el guion de voz: la deja en `window._extraIDevicesEncuesta_` y `guionDocenteConEncuestas_()` la persiste en `guionDocenteJSON.extra.idevicesEncuesta`.
+
+```js
+function abrirModalCrearEncuestaDesdeSesion_(idCard) {
+  window._cardEncuestaOrigen_ = idCard;
+  var modal = document.getElementById('modalConstructorEncuesta');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modalConstructorEncuesta';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    document.body.appendChild(modal);
+  }
+  var cuerpo = document.getElementById('cuerpoModalConstructorEncuesta');
+  var tab = document.getElementById('tab-enc');
+  if (tab && cuerpo && tab.parentNode !== cuerpo) cuerpo.appendChild(tab);
+  var asig = ((document.getElementById('planAsignatura') || {}).value || '').trim();
+  var grado = ((document.getElementById('planGrado') || {}).value || '').trim();
+  var titulo = document.getElementById('cfg_titulo');
+  if (titulo && !String(titulo.value || '').trim() && (asig || grado)) {
+    titulo.value = 'Encuesta ' + asig + (grado ? ' · ' + grado + '°' : '');
+  }
+  var card = document.getElementById(idCard);
+  var modoActual = card && card.querySelector('.sel-modo-encuesta-idevice');
+  var modo = (modoActual && modoActual.value === 'actividad_activa') ? 'quiz' : 'encuesta';
+  if (typeof conmutarModoConstructor === 'function') conmutarModoConstructor(modo);
+  modal.style.display = 'flex';
+}
+
+function asociarEncuestaCreadaAlIDevice_(info) {
+  info = info || {};
+  var card = document.getElementById(window._cardEncuestaOrigen_ || '');
+  if (!card) return;
+  var id = String(info.id || info.hojaId || ('ENC-SESION-' + Date.now()));
+  var sel = card.querySelector('.sel-catalogo-encuesta-id');
+  if (sel) {
+    var opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = String(info.titulo || info.nombre || id);
+    sel.appendChild(opt);
+    sel.value = id;
+  }
+  var modoSel = card.querySelector('.sel-modo-encuesta-idevice');
+  if (modoSel) {
+    modoSel.value = info.tipoFormulario === 'quiz' ? 'actividad_activa' : 'datos_previos';
+    conmutarModoEncuestaiDevice_(modoSel);
+  }
+  cerrarModalConstructorEncuesta_();
+}
+```
+
+El código completo de esas funciones, con el modal, la restauración y el cierre, está en `AyudaJS.html` entre `abrirModalCrearEncuestaDesdeSesion_` y `restaurarEncuestasExtraSesion_`.

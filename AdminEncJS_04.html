@@ -578,6 +578,13 @@
           pintarPreguntas();
           estado.textContent = "Guardado a las " + new Date().toLocaleTimeString();
           if (RESPUESTAS) cargarRespuestas();
+          if (window._cardEncuestaOrigen_ && typeof asociarEncuestaCreadaAlIDevice_ === 'function') {
+            asociarEncuestaCreadaAlIDevice_({
+              id: (config && config.idDirectorio) || ('ENC-SESION-' + Date.now()),
+              titulo: (config && config.titulo) || 'Encuesta de la sesión',
+              tipoFormulario: (config && config.tipoFormulario) || 'encuesta'
+            });
+          }
         } else {
           estado.textContent = "";
           alert("Error: " + ((res && res.mensaje) || "No se pudo guardar."));

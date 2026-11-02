@@ -258,6 +258,11 @@
         if (s.GuionDocenteJSON) gDoc = JSON.parse(s.GuionDocenteJSON);
       } catch (e) {}
       document.getElementById('sesNotasDocente').value = gDoc.notas || '';
+      window._encuestasExtraPendientes_ = (gDoc.extra && gDoc.extra.idevicesEncuesta) || [];
+      if (window._encuestasExtraPendientes_.length && typeof window.restaurarEncuestasExtraSesion_ === 'function') {
+        window.restaurarEncuestasExtraSesion_(window._encuestasExtraPendientes_);
+        window._encuestasExtraPendientes_ = null;
+      }
     }
 
     function generarGuionDesdeMomentos() {
@@ -339,7 +344,9 @@
         actividadMin: 20,
         cierreTexto: (document.getElementById('sesCierre') || {}).value || '',
         cierreMin: 5,
-        guionDocenteJSON: JSON.stringify({ notas: (document.getElementById('sesNotasDocente') || {}).value || '' }),
+        guionDocenteJSON: (typeof guionDocenteConEncuestas_ === 'function')
+          ? guionDocenteConEncuestas_((document.getElementById('sesNotasDocente') || {}).value || '')
+          : JSON.stringify({ notas: (document.getElementById('sesNotasDocente') || {}).value || '' }),
         guionEstudianteAccesible: guion
       };
 

@@ -1216,3 +1216,185 @@ ComunCSS.html            → borrar líneas 2766–2926
 ```
 
 Los dos primeros archivos conservan respaldo previo de la OLA 1 en `C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\`; `AdminCSS.html` no tenía respaldo previo porque esta es su primera intervención, por eso el rollback se define por rango de líneas.
+
+---
+
+## ✍️ ENTREGA DEEPSEEK — OLA 3 · Sección eXeLearning y alta de Encuesta / Quiz
+
+**Fecha:** 2026-11-01 · **Archivo:** `AdminPlaneacionCSS.html`, líneas 2622–2737
+
+> **Nota de trazabilidad.** Al abrir el buzón, esta partitura **no estaba escrita**: `ENTREGA_DEEPSEEK.md` seguía en 1218 líneas (última escritura 18:36) y `ESTADO_COORDINACION.md`, aunque se tocó a las 20:56, no menciona `.nem-seccion-exelearning` ni el botón de alta. Ejecuté la instrucción directa y dejo aquí el contrato que propongo, para que Antigravity lo confirme o lo corrija antes de integrar.
+
+### 1. Qué resuelve
+
+El editor de la sesión mezclaba tres cosas en el mismo plano visual: los datos de la clase, la barra de iDevices y los bloques ya creados. La sección `.nem-seccion-exelearning` los agrupa y los separa con una franja índigo superior, de modo que el docente distingue de un vistazo **qué es constructor** y **qué es la sesión**.
+
+### 2. CSS entregado
+
+```css
+  /* ============================================================
+     OLA 3 · SECCIÓN eXeLEARNING — CONSTRUCTOR vs SESIÓN
+     Separa visualmente el constructor de bloques del editor de la
+     sesión, y aloja la acción plana «+ Crear nueva Encuesta / Quiz».
+     Contrato: .nem-seccion-exelearning (+ __cab, __titulo, __hint)
+               .nem-btn-crear-encuesta
+     ============================================================ */
+  .nem-seccion-exelearning {
+    margin: 16px 0 18px;
+    padding: 12px 14px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: 3px solid #6366f1;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  }
+  .nem-seccion-exelearning__cab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 0 10px;
+  }
+  .nem-seccion-exelearning__titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #4338ca;
+  }
+  .nem-seccion-exelearning__titulo::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    border-radius: 999px;
+    background: #6366f1;
+  }
+  .nem-seccion-exelearning__hint {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  /* La barra de iDevices deja de parecer una caja suelta dentro de la sección */
+  .nem-seccion-exelearning .idevice-bar {
+    margin: 0 0 10px;
+    background: #ffffff;
+    border-style: solid;
+    border-color: #e2e8f0;
+  }
+  /* Los bloques creados respiran dentro de la sección */
+  .nem-seccion-exelearning #contenedorIDevicesDinamicos > *:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Botón plano ST90 de alta rápida */
+  .nem-btn-crear-encuesta {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #6366f1;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, transform 100ms ease, box-shadow 150ms ease;
+  }
+  .nem-btn-crear-encuesta:hover {
+    background: #4f46e5;
+  }
+  .nem-btn-crear-encuesta:active {
+    background: #4338ca;
+    transform: translateY(1px);
+  }
+  .nem-btn-crear-encuesta:focus-visible {
+    outline: 2px solid #4338ca;
+    outline-offset: 2px;
+  }
+  .nem-btn-crear-encuesta:disabled {
+    background: #c7d2fe;
+    color: #ffffff;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Variante neutra, por si la acción convive con «Guardar Sesión» */
+  .nem-btn-crear-encuesta--neutro {
+    background: #ffffff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+  }
+  .nem-btn-crear-encuesta--neutro:hover {
+    background: #eef2ff;
+    border-color: #a5b4fc;
+  }
+  .nem-btn-crear-encuesta--neutro:active {
+    background: #e0e7ff;
+    transform: translateY(1px);
+  }
+
+  @media (max-width: 620px) {
+    .nem-seccion-exelearning { padding: 10px 10px 12px; }
+    .nem-btn-crear-encuesta { margin-left: 0; width: 100%; justify-content: center; }
+  }
+```
+
+### 3. Contrato de marcado
+
+```html
+<section class="nem-seccion-exelearning">
+  <div class="nem-seccion-exelearning__cab">
+    <h4 class="nem-seccion-exelearning__titulo">Constructor eXeLearning</h4>
+    <span class="nem-seccion-exelearning__hint">Bloques modulares opcionales</span>
+    <button type="button" class="nem-btn-crear-encuesta"
+            onclick="insertariDeviceSesion_('encuesta')">+ Crear nueva Encuesta / Quiz</button>
+  </div>
+
+  <div class="idevice-bar"><!-- botones de iDevice existentes --></div>
+  <div id="contenedorIDevicesDinamicos" aria-live="polite"></div>
+</section>
+```
+
+**Clases nuevas, todas presentacionales:**
+
+| Clase | Función |
+| :--- | :--- |
+| `.nem-seccion-exelearning` | Contenedor: fondo `#f8fafc`, borde `#e2e8f0`, franja superior índigo de 3 px, radio 12 |
+| `.nem-seccion-exelearning__cab` | Fila de cabecera con título, pista y acción |
+| `.nem-seccion-exelearning__titulo` | Rótulo en versalitas con barra índigo (`::before`) |
+| `.nem-seccion-exelearning__hint` | Texto de apoyo gris |
+| `.nem-btn-crear-encuesta` | Botón plano índigo `#6366f1`, radio 8, sin sombra |
+| `.nem-btn-crear-encuesta--neutro` | Variante blanca con borde, por si convive con «Guardar Sesión» |
+
+### 4. Decisiones
+
+1. **El botón es plano de verdad:** sin `box-shadow`, sin degradado, un solo color y `translateY(1px)` al pulsar. Es el lenguaje de los botones ST90.
+2. **La barra de iDevices se integra, no se duplica:** dentro de la sección, `.idevice-bar` pierde el borde punteado y pasa a blanco sólido, para que no parezca una caja suelta sobre otra caja.
+3. **`margin-left: auto` en el botón** lo pega a la derecha de la cabecera; en móvil (≤620 px) se vuelve de ancho completo y centrado.
+4. **Sin `!important` y sin tocar IDs.** El `onclick` del ejemplo es el que ya existe en `AdminPlaneacion.html` (`insertariDeviceSesion_('encuesta')`), así que Cursor solo tiene que envolver el bloque actual con la sección.
+
+### 5. Verificación
+
+| Comprobación | Resultado |
+| :--- | :--- |
+| Llaves CSS balanceadas | `AdminPlaneacionCSS.html` 403/403 |
+| Render a 940 px | ✅ sección separada, botón a la derecha, bloques contenidos |
+| Foco visible del botón | ✅ `:focus-visible` con anillo índigo |
+| IDs / `.gs` / JS | sin cambios |
+
+Evidencia: `evidencia_ola3/seccion_exelearning.png`.
+
+### 6. Rollback
+
+Borrar las líneas 2622–2737 de `AdminPlaneacionCSS.html`, o restaurar:
+`C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_ola3exe.html`

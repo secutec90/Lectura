@@ -9,9 +9,23 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: PLAN MAESTRO EN 4 OLAS (`build-568` a `build-571`)
-- **Estado:** 🟢 PROGRAMADA (LISTA PARA EJECUTAR — PRIORIDAD INMEDIATA: OLA 1 `build-568` Y OLA 2 `build-569`)
-- **Archivos objetivo:** `AdminPlanJS_04.html`, `AdminPlanJS_05.html`, `ClaseJS_06.html`, `ClaseJS_07.html`, `AyudaJS.html`, `AdminEncJS_*.html`, `FormEncJS_*.html`
+## 🎯 PARTITURA ASIGNADA: OLA 3 (`build-576`) — INTEGRACIÓN TOTAL CONSTRUCTOR DE CLASES & CONSTRUCTOR DUAL ENCUESTA/QUIZ
+- **Estado:** 🟢 PROGRAMADA (EJECUTAR AHORA)
+- **Archivos objetivo:** `AdminPlanJS_05.html`, `ClaseJS_07.html`, `AyudaJS.html`, `AdminEncJS_04.html`
+
+### 📋 Tareas Específicas para Cursor:
+1. **Separación Limpia de la Vista de Sesión:**
+   - En `#editorSesionActiva`, mantener los 4 momentos didácticos compactos.
+   - Colocar el contenedor de autor eXeLearning con el título institucional: `🧩 Constructor de Clase Interactiva (eXeLearning)` conteniendo la barra de iDevices (`.idevice-bar`).
+2. **Acción de Creación Rápida en el iDevice Encuesta / Quiz:**
+   - En el iDevice de encuesta (`pintarTarjetaIDevice_` / `idevice-bloque[data-tipo="encuesta"]`), además del `<select class="sel-catalogo-encuesta-id">`, agregar un botón plano de acción rápida:
+     `➕ Crear nueva Encuesta / Quiz`
+   - Al pulsar este botón, invocar `abrirModalCrearEncuestaDesdeSesion_(card.id)` que abre el modal del constructor dual (`#modalConstructorEncuesta` / `conmutarModoConstructor`) precargando la asignatura y grado de la clase actual.
+   - Al guardar la encuesta/quiz, asociar de inmediato su ID al select del iDevice y seleccionar el modo evaluativo o diagnóstico según corresponda.
+3. **Serialización Segura:**
+   - Asegurar que `serializarIDevicesSesion_()` guarde de forma transparente tanto quizzes como encuestas en `extra` sin alterar el guion de voz.
+4. **Modo Centinela:**
+   - Al terminar de guardar el código JS en este buzón, ejecutar de inmediato: `node herramientas/centinela_buzon.js cursor`.
 
 ---
 

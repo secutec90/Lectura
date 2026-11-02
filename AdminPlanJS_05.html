@@ -398,6 +398,7 @@
       } catch (e) {}
       document.getElementById('sesNotasDocente').value = gDoc.notas || '';
       window._encuestasExtraPendientes_ = (gDoc.extra && gDoc.extra.idevicesEncuesta) || [];
+      window._exelearningPendiente_ = (gDoc.extra && gDoc.extra.exelearning) || null;
     }
 
     function generarGuionDesdeMomentos() {

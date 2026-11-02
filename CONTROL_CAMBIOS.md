@@ -2,6 +2,18 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-01] - [Entorno de Autor eXeLearning 3.0: Árbol de Páginas con Indentación, Catálogo Accordion en 7 Familias, Barra Rápida Flotante e iDevices para Inglés y Ofimática (build-578)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(exelearning): entorno completo de autor eXeLearning 3.0 (arbol de jerarquia, acordeon de 7 familias, barra rapida flotante, componentes curriculares para ingles y tecnologia ofimatica) en build-578`
+- **Causa Raíz / Requerimiento:**
+  1. El docente requería que el constructor de clases interactivo reprodujera fielmente el entorno de autor de eXeLearning, con un árbol jerárquico de páginas (`Documento sin título ✏️`, flechas `[↑][↓][←][→]`, acciones `[🗑️][📋][📤][➕]`, recuadro teal para la página activa).
+  2. Integrar el catálogo accordion de iDevices organizado por propósitos pedagógicos (Información y presentación, Evaluación y seguimiento, Juegos, Actividades interactivas, Ciencias) más dos familias especializadas solicitadas: Lengua Extranjera (Inglés) y Tecnología Ofimática.
+  3. Proporcionar una barra rápida flotante con iconos multicolor y tarjetas *Lego* modulares con persistencia en `extra.exelearning` sin alterar los 4 momentos sintéticos oficiales de la planeación didáctica.
+- **Cambios Realizados:**
+  - **DeepSeek (Diseño UI/UX & CSS en `AdminPlaneacionCSS.html`):** Diseñadas las reglas para `.sidebar-exe`, `.box-arbol`, `.arbol-toolbar`, `.nodo-item.seleccionado` (borde `#14b8a6`, fondo `#f0fdfa`), `.cat-accordion`, `.cat-header`, `.cat-items`, `.idevice-pill-add`, `.quick-ribbon`, `.quick-btn`, `.idevice-card`, `.badge-ingles`, `.badge-tecnologia`, `.player-listening` con control de velocidad, `.flip-card-bilingue` con volteo 3D, mini grid de hoja de cálculo `.sim-hoja-calculo` y caja de algoritmo con bloques de diagrama.
+  - **Cursor (Frontend & DOM en `AyudaJS.html`, `AdminPlanJS_05.html`, `ClaseJS_07.html`, `ClaseJS_08.html`):** Implementada la estructura `META_TARJETA_EXE_` con 19 tipos de iDevices; gestor del árbol de páginas (`agregarNodoSesion_`, `eliminarNodoSesion_`, `moverNodoSesion_`, `cambiarNivelNodoSesion_`, `seleccionarNodoSesion_`, `renombrarNodoSesion_`); controladores interactivos de listening, pronunciación (`webkitSpeechRecognition`), flashcards bilingües y fórmulas de hoja de cálculo (`=SUMA`, `=PROMEDIO`); y sincronización bidireccional `extra.exelearning` en `guionDocenteConEncuestas_()` y `deserializarIDevicesSesion_()`.
+  - **Antigravity (Backend, Auditoría & Despliegue):** Auditoría de selectores e IDs, verificación sintáctica con `node herramientas/manifiesto.js`, incremento de versión a `build-578` (`v419`) y sincronización con GitHub y los 5 endpoints de Google Apps Script.
+- **Archivos Afectados:** `00_Constantes.gs`, `AdminPlaneacionCSS.html`, `AyudaJS.html`, `AdminPlanJS_05.html`, `ClaseJS_07.html`, `ClaseJS_08.html`, `ENTREGA_DEEPSEEK.md`, `ENTREGA_CURSOR.md`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`
+
 ### 🛠️ [2026-11-01] - [Plan Maestro en 4 Olas: Membrete Configurable, Chips DUA, Lista de Cotejo + Rúbrica Analítica en PDF NL, iDevice Encuesta en Constructor de Clases y Constructor Dual Encuesta/Quiz Tipo Google Forms (build-568 a build-571)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(st90): integrar olas 1 a 4 (membrete oficial, chips DUA, lista de cotejo y rubrica PDF NL, iDevice encuesta y constructor dual quiz/forms) en build-571`
 - **Causa Raíz / Requerimiento:**

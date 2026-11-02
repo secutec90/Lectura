@@ -258,7 +258,8 @@
       const meta = catalogo[tipo];
       if (!meta) return;
 
-      const idUnico = 'idevice_' + Date.now();
+      window._seqIDeviceExe_ = (window._seqIDeviceExe_ || 0) + 1;
+      const idUnico = 'idevice_' + Date.now() + '_' + window._seqIDeviceExe_;
       const div = document.createElement('div');
       div.id = idUnico;
       div.setAttribute('data-tipo', tipo);

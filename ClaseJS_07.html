@@ -259,6 +259,7 @@
       } catch (e) {}
       document.getElementById('sesNotasDocente').value = gDoc.notas || '';
       window._encuestasExtraPendientes_ = (gDoc.extra && gDoc.extra.idevicesEncuesta) || [];
+      window._exelearningPendiente_ = (gDoc.extra && gDoc.extra.exelearning) || null;
       if (window._encuestasExtraPendientes_.length && typeof window.restaurarEncuestasExtraSesion_ === 'function') {
         window.restaurarEncuestasExtraSesion_(window._encuestasExtraPendientes_);
         window._encuestasExtraPendientes_ = null;

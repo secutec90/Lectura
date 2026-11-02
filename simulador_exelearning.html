@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Autor: Entorno eXeLearning 3.0 para Sesiones de Clase</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --exe-teal: #0d9488;
+      --exe-teal-light: #ccfbf1;
+      --exe-teal-dark: #0f766e;
+      --exe-bg-sidebar: #f8fafc;
+      --exe-bg-canvas: #f1f5f9;
+      --exe-border: #cbd5e1;
+      --exe-text: #0f172a;
+      --exe-muted: #64748b;
+      --exe-blue: #0284c7;
+      --exe-green: #16a34a;
+      --exe-amber: #d97706;
+      --exe-purple: #7c3aed;
+      --exe-rose: #e11d48;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      color: var(--exe-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* BARRA SUPERIOR DE CONTEXTO Y CONMUTACIÓN */
+    .top-header {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--exe-teal);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .top-header-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-exe {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #38bdf8;
+    }
+    .meta-clase-badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-modo-conmutador {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+    }
+    .btn-modo-conmutador.activo {
+      background: var(--exe-teal);
+      color: #fff;
+    }
+    .btn-modo-conmutador:not(.activo) {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+    .btn-modo-conmutador:not(.activo):hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+
+    /* BARRA DE GUÍA DE SECUENCIA PEDAGÓGICA (1, 2, 3, 4) */
+    .secuencia-barra {
+      background: #ffffff;
+      border-bottom: 1px solid var(--exe-border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pasos-secuencia {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .paso-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+    }
+    .paso-item.activo {
+      color: var(--exe-teal-dark);
+      font-weight: 800;
+    }
+    .paso-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .paso-item.activo .paso-num {
+      background: var(--exe-teal);
+      color: #ffffff;
+    }
+    .paso-flecha {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    /* CONTENEDOR PRINCIPAL TIPO EXELEARNING */
+    .app-workspace {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 110px);
+      background: #ffffff;
+    }
+
+    /* PANEL LATERAL IZQUIERDO (ÁRBOL + CATÁLOGO ACCORDION DE IDEVICES) */
+    .sidebar-exe {
+      width: 330px;
+      min-width: 330px;
+      background: var(--exe-bg-sidebar);
+      border-right: 1px solid var(--exe-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* BLOQUE 1: ESTRUCTURA DE CONTENIDOS (ÁRBOL DE PÁGINAS) */
+    .box-arbol {
+      padding: 16px;
+      border-bottom: 1px solid var(--exe-border);
+      background: #ffffff;
+    }
+    .arbol-titulo-fila {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .doc-titulo {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-edit-title {
+      color: var(--exe-teal);
+      cursor: pointer;
+      font-size: 14px;
+      background: none;
+      border: 0;
+      padding: 2px 4px;
+    }
+    .arbol-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .nav-flechas {
+      display: inline-flex;
+      background: #f0fdfa;
+      border: 1px solid #ccfbf1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .nav-btn {
+      background: transparent;
+      border: 0;
+      padding: 5px 9px;
+      color: var(--exe-teal-dark);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background .15s;
+    }
+    .nav-btn:hover {
+      background: #ccfbf1;
+    }
+    .nav-acciones {
+      display: inline-flex;
+      background: #f0fdfa;
+      border: 1px solid #ccfbf1;
+      border-radius: 6px;
+      overflow: hidden;
+      align-items: center;
+    }
+    .btn-action-teal {
+      background: transparent;
+      border: 0;
+      padding: 5px 9px;
+      color: var(--exe-teal-dark);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background .15s;
+    }
+    .btn-action-teal:hover {
+      background: #ccfbf1;
+    }
+    .btn-action-teal.add-node {
+      background: var(--exe-teal);
+      color: #ffffff;
+      font-weight: bold;
+    }
+    .btn-action-teal.add-node:hover {
+      background: var(--exe-teal-dark);
+    }
+
+    /* LISTA DE NODOS (PÁGINAS) */
+    .nodos-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nodo-item {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      background: #f8fafc;
+      color: #334155;
+      transition: all .15s ease;
+    }
+    .nodo-item:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    /* Estilo exacto de la imagen 4 (recuadro teal con fondo claro) */
+    .nodo-item.seleccionado {
+      background: #f0fdfa;
+      border-color: #14b8a6;
+      color: #0f766e;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(20, 184, 166, 0.15);
+    }
+    .nodo-item .nodo-tag {
+      font-size: 11px;
+      background: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #64748b;
+    }
+    .nodo-item.seleccionado .nodo-tag {
+      background: #ccfbf1;
+      color: #0f766e;
+    }
+    .nodo-indent {
+      margin-left: 14px;
+    }
+
+    /* BLOQUE 2: MENÚ ACCORDION DE IDEVICES (Fiel a la Imagen 2) */
+    .box-idevice-menu {
+      padding: 14px 16px;
+      flex: 1;
+    }
+    .idevice-menu-titulo {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: none;
+    }
+    .cat-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .cat-header {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      transition: all .15s ease;
+      user-select: none;
+    }
+    .cat-header:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: var(--exe-teal-dark);
+    }
+    .cat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cat-header-icon {
+      font-size: 16px;
+    }
+    .cat-chevron {
+      font-size: 12px;
+      color: #94a3b8;
+      transition: transform .2s ease;
+    }
+    .cat-group.abierto .cat-chevron {
+      transform: rotate(90deg);
+    }
+    .cat-group.abierto .cat-header {
+      background: #f0fdfa;
+      border-color: #99f6e4;
+      color: #0f766e;
+    }
+
+    /* ITEMS DENTRO DE CADA CATEGORÍA */
+    .cat-items {
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      padding: 6px 4px 8px 18px;
+    }
+    .cat-group.abierto .cat-items {
+      display: flex;
+    }
+    .idevice-pill-add {
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all .15s ease;
+    }
+    .idevice-pill-add:hover {
+      background: #f8fafc;
+      border-color: var(--exe-teal);
+      color: var(--exe-teal-dark);
+      transform: translateX(3px);
+    }
+    .idevice-pill-add .btn-mas {
+      font-size: 11px;
+      background: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #64748b;
+    }
+    .idevice-pill-add:hover .btn-mas {
+      background: var(--exe-teal);
+      color: #ffffff;
+    }
+
+    /* LIENZO DE TRABAJO DERECHO (CANVAS) */
+    .canvas-exe {
+      flex: 1;
+      background: var(--exe-bg-canvas);
+      padding: 24px 32px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .canvas-container {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* BARRA FLOTANTE DE ACCESO RÁPIDO (Fiel a la Imagen 3) */
+    .quick-ribbon {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      width: fit-content;
+      margin: 0 auto;
+      gap: 12px;
+    }
+    .quick-icons-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding-right: 14px;
+      border-right: 1px solid #e2e8f0;
+    }
+    .quick-btn {
+      background: none;
+      border: 0;
+      cursor: pointer;
+      font-size: 22px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .15s, opacity .15s;
+      position: relative;
+    }
+    .quick-btn:hover {
+      transform: scale(1.15);
+    }
+    .quick-btn.text-icon { color: #1e40af; }
+    .quick-btn.flower-icon { color: #f43f5e; }
+    .quick-btn.checklist-icon { color: #0284c7; }
+    .quick-btn.file-icon { color: #ea580c; }
+    .quick-btn.gallery-icon { color: #c026d3; }
+    .quick-btn.settings-icon { color: #64748b; font-size: 20px; }
+
+    /* CABECERA DE LA PÁGINA ACTIVA EN EL LIENZO */
+    .pagina-banner {
+      background: #ffffff;
+      border: 1px solid var(--exe-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pagina-banner-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pagina-banner-desc {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    /* BLOQUES MODULARES (LEGO CARDS DE IDEVICES EN EL LIENZO) */
+    .idevice-card {
+      background: #ffffff;
+      border: 1px solid var(--exe-border);
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .idevice-card:hover {
+      border-color: #94a3b8;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+    .idevice-card-header {
+      background: #f8fafc;
+      padding: 12px 18px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .idevice-card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .idevice-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-card-ctrl {
+      background: none;
+      border: 0;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all .15s;
+    }
+    .btn-card-ctrl:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .btn-card-ctrl.del:hover {
+      color: #e11d48;
+      background: #ffe4e6;
+    }
+    .idevice-card-body {
+      padding: 18px 20px;
+    }
+    .campo-grupo {
+      margin-bottom: 14px;
+    }
+    .campo-grupo:last-child {
+      margin-bottom: 0;
+    }
+    .campo-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .campo-input, .campo-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: #0f172a;
+      transition: border-color .15s;
+    }
+    .campo-input:focus, .campo-textarea:focus {
+      outline: none;
+      border-color: var(--exe-teal);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    }
+    .campo-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* BADGES DE CATEGORÍAS */
+    .badge-info { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-eval { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-juego { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-interact { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .badge-ciencias { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    /* FOOTER DEL SIMULADOR */
+    .footer-nota {
+      background: #1e293b;
+      color: #94a3b8;
+      padding: 12px 24px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #334155;
+    }
+    .btn-al-navegador {
+      background: var(--exe-teal);
+      color: #ffffff;
+      border: 0;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-al-navegador:hover {
+      background: var(--exe-teal-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA SUPERIOR -->
+  <header class="top-header">
+    <div class="top-header-info">
+      <div class="logo-exe">
+        <i class="bi bi-box-seam-fill"></i>
+        <span>eXeLearning 3.0</span>
+        <span style="font-weight:400; color:#94a3b8; font-size:13px;">| Modo Autor NEM</span>
+      </div>
+      <div class="meta-clase-badge">
+        <i class="bi bi-mortarboard me-1"></i> MATEMÁTICAS 1°A · <strong>Sesión 3: Socialización e integración final</strong>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-modo-conmutador activo" id="btnModoAutor" onclick="cambiarVista('autor')">
+        <i class="bi bi-pencil-square"></i> Entorno de Autor (eXeLearning)
+      </button>
+      <button class="btn-modo-conmutador" id="btnModoEstudiante" onclick="cambiarVista('estudiante')">
+        <i class="bi bi-eye"></i> Vista Estudiante (Clase.html)
+      </button>
+      <button class="btn-modo-conmutador" id="btnModoPlano" onclick="cambiarVista('plano')">
+        <i class="bi bi-file-earmark-text"></i> Plano Didáctico (Oficial)
+      </button>
+    </div>
+  </header>
+
+  <!-- BARRA DE SECUENCIA PEDAGÓGICA CLARA (Paso a Paso) -->
+  <div class="secuencia-barra">
+    <div class="pasos-secuencia">
+      <div class="paso-item activo" id="paso1">
+        <span class="paso-num">1</span>
+        <span>Estructura de Páginas (Árbol)</span>
+      </div>
+      <i class="bi bi-chevron-right paso-flecha"></i>
+      <div class="paso-item activo" id="paso2">
+        <span class="paso-num">2</span>
+        <span>Selección de iDevices (Catálogo)</span>
+      </div>
+      <i class="bi bi-chevron-right paso-flecha"></i>
+      <div class="paso-item" id="paso3">
+        <span class="paso-num">3</span>
+        <span>Edición de Bloques (Lego Cards)</span>
+      </div>
+      <i class="bi bi-chevron-right paso-flecha"></i>
+      <div class="paso-item" id="paso4">
+        <span class="paso-num">4</span>
+        <span>Publicar y Audio DUA</span>
+      </div>
+    </div>
+    <div style="font-size:12.5px; color:#475569; display:flex; align-items:center; gap:8px;">
+      <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:4px; font-weight:700;">ST90 Validado</span>
+      <span>Total iDevices en esta sesión: <strong id="contadorIdevices" style="color:var(--exe-teal-dark);">3 bloques</strong></span>
+    </div>
+  </div>
+
+  <!-- ESPACIO DE TRABAJO (SIDEBAR + CANVAS) -->
+  <div class="app-workspace" id="vistaAutor">
+    
+    <!-- BARRA LATERAL IZQUIERDA -->
+    <aside class="sidebar-exe">
+
+      <!-- 1. BARRA DE ÁRBOL Y JERARQUÍA (Fiel a Imagen 4) -->
+      <div class="box-arbol">
+        <div class="arbol-titulo-fila">
+          <div class="doc-titulo">
+            <span id="labelDocTitulo">Sesión 3: Fracciones y Decimales</span>
+            <button class="btn-edit-title" title="Renombrar sesión" onclick="renombrarSesion()"><i class="bi bi-pencil"></i></button>
+          </div>
+        </div>
+
+        <!-- Toolbar con flechas y acciones (Exacto a la Imagen 4) -->
+        <div class="arbol-toolbar">
+          <div class="nav-flechas" title="Reordenar e indentar páginas de la sesión">
+            <button class="nav-btn" title="Subir página" onclick="moverNodo(-1)"><i class="bi bi-arrow-up"></i></button>
+            <button class="nav-btn" title="Bajar página" onclick="moverNodo(1)"><i class="bi bi-arrow-down"></i></button>
+            <button class="nav-btn" title="Desindentar (Subir nivel)" onclick="cambiarNivel(-1)"><i class="bi bi-arrow-left"></i></button>
+            <button class="nav-btn" title="Indentar (Hacer sub-página)" onclick="cambiarNivel(1)"><i class="bi bi-arrow-right"></i></button>
+          </div>
+
+          <div class="nav-acciones">
+            <button class="btn-action-teal" title="Eliminar página activa" onclick="eliminarNodo()"><i class="bi bi-trash"></i></button>
+            <button class="btn-action-teal" title="Duplicar página" onclick="duplicarNodo()"><i class="bi bi-copy"></i></button>
+            <button class="btn-action-teal" title="Exportar página" onclick="alert('Exportando página a SCORM / HTML...')"><i class="bi bi-upload"></i></button>
+            <button class="btn-action-teal add-node" title="Añadir nueva página" onclick="agregarNodo()"><i class="bi bi-plus-lg"></i></button>
+          </div>
+        </div>
+
+        <!-- Lista de Páginas / Nodos (con recuadro Teal en el seleccionado) -->
+        <div class="nodos-lista" id="listaNodos">
+          <div class="nodo-item seleccionado" onclick="seleccionarNodo(0, this)">
+            <span><i class="bi bi-file-earmark-text me-2"></i> 1. Saberes Previos y DUA</span>
+            <span class="nodo-tag">Activa</span>
+          </div>
+          <div class="nodo-item" onclick="seleccionarNodo(1, this)">
+            <span><i class="bi bi-file-earmark-text me-2"></i> 2. Lectura y Conceptos</span>
+            <span class="nodo-tag">2 iDev</span>
+          </div>
+          <div class="nodo-item" onclick="seleccionarNodo(2, this)">
+            <span><i class="bi bi-file-earmark-text me-2"></i> 3. Actividad y Reto</span>
+            <span class="nodo-tag">1 iDev</span>
+          </div>
+          <div class="nodo-item" onclick="seleccionarNodo(3, this)">
+            <span><i class="bi bi-file-earmark-text me-2"></i> 4. Evaluación y Quiz</span>
+            <span class="nodo-tag">Quiz</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CATÁLOGO ACCORDION DE IDEVICES (Fiel a Imagen 2) -->
+      <div class="box-idevice-menu">
+        <div class="idevice-menu-titulo">
+          <i class="bi bi-chevron-down" style="color:var(--exe-teal);"></i>
+          <span>iDevices de Aprendizaje</span>
+        </div>
+
+        <div class="cat-accordion">
+          
+          <!-- Categoría 1: Información y presentación -->
+          <div class="cat-group abierto" id="cat-info">
+            <div class="cat-header" onclick="toggleCat('cat-info')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#0284c7;"><strong>T</strong></span>
+                <span>Información y presentación</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('texto_dua')">
+                <span><i class="bi bi-headphones me-2" style="color:#0284c7;"></i> Lectura Guiada DUA</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('objetivos')">
+                <span><i class="bi bi-bullseye me-2" style="color:#0284c7;"></i> Objetivos de Clase</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('galeria')">
+                <span><i class="bi bi-images me-2" style="color:#0284c7;"></i> Galería de Imágenes</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('fichero')">
+                <span><i class="bi bi-paperclip me-2" style="color:#0284c7;"></i> Archivo o Fichero Adjunto</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoría 2: Evaluación y seguimiento -->
+          <div class="cat-group abierto" id="cat-eval">
+            <div class="cat-header" onclick="toggleCat('cat-eval')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#16a34a;"><i class="bi bi-pencil"></i></span>
+                <span>Evaluación y seguimiento</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('quiz_evaluativo')">
+                <span><i class="bi bi-check2-square me-2" style="color:#16a34a;"></i> Quiz Evaluativo (Puntos)</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('encuesta')">
+                <span><i class="bi bi-bar-chart-line me-2" style="color:#16a34a;"></i> Encuesta / Diagnóstico</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('vf')">
+                <span><i class="bi bi-toggle2-on me-2" style="color:#16a34a;"></i> Pregunta Verdadero / Falso</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('huecos')">
+                <span><i class="bi bi-input-cursor-text me-2" style="color:#16a34a;"></i> Rellenar Huecos</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoría 3: Juegos -->
+          <div class="cat-group" id="cat-juegos">
+            <div class="cat-header" onclick="toggleCat('cat-juegos')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#d97706;"><i class="bi bi-controller"></i></span>
+                <span>Juegos</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('rosco')">
+                <span><i class="bi bi-circle me-2" style="color:#d97706;"></i> Rosco de Palabras (Pasapalabra)</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('sopa')">
+                <span><i class="bi bi-grid-3x3 me-2" style="color:#d97706;"></i> Sopa de Letras</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('adivina')">
+                <span><i class="bi bi-lightbulb me-2" style="color:#d97706;"></i> Adivina el Concepto</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('desafio')">
+                <span><i class="bi bi-trophy me-2" style="color:#d97706;"></i> Desafío / Escape Room NEM</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoría 4: Actividades interactivas -->
+          <div class="cat-group" id="cat-interact">
+            <div class="cat-header" onclick="toggleCat('cat-interact')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#7c3aed;"><i class="bi bi-stars"></i></span>
+                <span>Actividades interactivas</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('video_interactivo')">
+                <span><i class="bi bi-play-circle me-2" style="color:#7c3aed;"></i> Vídeo Interactivo con Pausas</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('embebido')">
+                <span><i class="bi bi-window me-2" style="color:#7c3aed;"></i> Embebido Genially / Canva / H5P</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('geogebra')">
+                <span><i class="bi bi-bounding-box-circles me-2" style="color:#7c3aed;"></i> Geogebra / Simulador</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoría 5: Lengua Extranjera (Inglés) -->
+          <div class="cat-group" id="cat-ingles">
+            <div class="cat-header" onclick="toggleCat('cat-ingles')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#2563eb;"><i class="bi bi-translate"></i></span>
+                <span>Lengua Extranjera (Inglés)</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('listening')">
+                <span><i class="bi bi-earbuds me-2" style="color:#2563eb;"></i> Audio Listening & Comprensión</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('pronunciacion')">
+                <span><i class="bi bi-mic me-2" style="color:#2563eb;"></i> Práctica de Pronunciación (Voz)</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('flashcards')">
+                <span><i class="bi bi-card-text me-2" style="color:#2563eb;"></i> Flashcards Bilingües</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoría 6: Tecnología y Ofimática -->
+          <div class="cat-group" id="cat-tecnologia">
+            <div class="cat-header" onclick="toggleCat('cat-tecnologia')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#059669;"><i class="bi bi-laptop"></i></span>
+                <span>Tecnología y Ofimática</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('sim_ofimatica')">
+                <span><i class="bi bi-table me-2" style="color:#059669;"></i> Práctica de Hoja de Cálculo / Docs</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('algoritmo')">
+                <span><i class="bi bi-diagram-3 me-2" style="color:#059669;"></i> Diagrama de Flujo / Algoritmo</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('codigo')">
+                <span><i class="bi bi-code-slash me-2" style="color:#059669;"></i> Editor de Código / Sintaxis</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoría 7: Ciencias -->
+          <div class="cat-group" id="cat-ciencias">
+            <div class="cat-header" onclick="toggleCat('cat-ciencias')">
+              <div class="cat-header-left">
+                <span class="cat-header-icon" style="color:#e11d48;"><i class="bi bi-flask"></i></span>
+                <span>Ciencias</span>
+              </div>
+              <i class="bi bi-chevron-right cat-chevron"></i>
+            </div>
+            <div class="cat-items">
+              <div class="idevice-pill-add" onclick="insertarIdevice('reto_ciencias')">
+                <span><i class="bi bi-calculator me-2" style="color:#e11d48;"></i> Problema Matemático Situado</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('formula')">
+                <span><i class="bi bi-regex me-2" style="color:#e11d48;"></i> Fórmulas LaTeX / KaTeX</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+    <!-- LIENZO DE AUTOR CENTRAL (CANVAS DE PÁGINA) -->
+    <main class="canvas-exe">
+      <div class="canvas-container">
+
+        <!-- 3. BARRA FLOTANTE DE ACCESO RÁPIDO (Exacta a Imagen 3) -->
+        <div class="quick-ribbon" title="Inserción rápida de bloques frecuentes en la página activa">
+          <div class="quick-icons-group">
+            <button class="quick-btn text-icon" title="Añadir Texto DUA / Lectura" onclick="insertarIdevice('texto_dua')">
+              <i class="bi bi-file-earmark-text"></i>
+            </button>
+            <button class="quick-btn flower-icon" title="Añadir Objetivos o Insignia" onclick="insertarIdevice('objetivos')">
+              <i class="bi bi-flower1"></i>
+            </button>
+            <button class="quick-btn checklist-icon" title="Añadir Quiz o Preguntas" onclick="insertarIdevice('quiz_evaluativo')">
+              <i class="bi bi-card-checklist"></i>
+            </button>
+            <button class="quick-btn file-icon" title="Añadir Archivo o Fichero" onclick="insertarIdevice('fichero')">
+              <i class="bi bi-file-arrow-down"></i>
+            </button>
+            <button class="quick-btn gallery-icon" title="Añadir Galería de Imágenes" onclick="insertarIdevice('galeria')">
+              <i class="bi bi-images"></i>
+            </button>
+          </div>
+          <button class="quick-btn settings-icon" title="Configurar apariencia de la sesión eXeLearning" onclick="alert('Configuración de tema y tipografía eXeLearning')">
+            <i class="bi bi-gear"></i>
+          </button>
+        </div>
+
+        <!-- ENCABEZADO DE LA PÁGINA SELECCIONADA -->
+        <div class="pagina-banner">
+          <div>
+            <div class="pagina-banner-title">
+              <i class="bi bi-bookmark-check-fill" style="color:var(--exe-teal);"></i>
+              <span id="bannerTituloPagina">1. Saberes Previos y DUA (Página activa)</span>
+            </div>
+            <div class="pagina-banner-desc">
+              Bloques interactivos asignados a este momento de la clase. Los alumnos lo verán exactamente en este orden.
+            </div>
+          </div>
+          <div>
+            <button class="btn-modo-conmutador activo" style="padding:6px 12px; font-size:12px;" onclick="previsualizarPagina()">
+              <i class="bi bi-play-circle"></i> Probar en vivo
+            </button>
+          </div>
+        </div>
+
+        <!-- CONTENEDOR DE CARDS / IDEVICES INSERTADOS (PILA LEGO) -->
+        <div id="pilaIdevices" style="display:flex; flex-direction:column; gap:16px;">
+
+          <!-- Card 1: Lectura Guiada DUA -->
+          <div class="idevice-card" id="card-1">
+            <div class="idevice-card-header">
+              <div class="idevice-card-title">
+                <span class="badge badge-info" style="padding:3px 8px; border-radius:4px; font-size:11px;">INFORMACIÓN</span>
+                <i class="bi bi-headphones" style="color:#0284c7;"></i>
+                <span>Lectura Guiada DUA con Audio Síntesis</span>
+              </div>
+              <div class="idevice-card-actions">
+                <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
+                <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
+                <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('card-1')"><i class="bi bi-trash"></i></button>
+              </div>
+            </div>
+            <div class="idevice-card-body">
+              <div class="campo-grupo">
+                <label class="campo-label">Título del iDevice:</label>
+                <input type="text" class="campo-input" value="Contexto Inicial: Medir en la Comunidad">
+              </div>
+              <div class="campo-grupo">
+                <label class="campo-label">Texto DUA que leerá y escuchará el alumno:</label>
+                <textarea class="campo-textarea">Bienvenidos al proyecto de medición y fracciones. En esta sesión analizaremos cómo el carpintero Don José y la comerciante Doña Tere utilizan fracciones de metro y medios kilos para registrar sus compras cotidianas.</textarea>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+                <div style="font-size:12px; color:#64748b;">
+                  <i class="bi bi-check-circle-fill text-success me-1"></i> Audio síntesis activado automáticamente (DUA)
+                </div>
+                <button type="button" class="btn-modo-conmutador" style="background:#e0f2fe; color:#0369a1; padding:4px 10px; font-size:12px;" onclick="alert('Escuchando síntesis de voz en español...')">
+                  <i class="bi bi-volume-up"></i> Escuchar prueba de voz
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Encuesta / Diagnóstico previo -->
+          <div class="idevice-card" id="card-2">
+            <div class="idevice-card-header">
+              <div class="idevice-card-title">
+                <span class="badge badge-eval" style="padding:3px 8px; border-radius:4px; font-size:11px;">EVALUACIÓN</span>
+                <i class="bi bi-bar-chart-line" style="color:#16a34a;"></i>
+                <span>Encuesta / Diagnóstico de Saberes Previos</span>
+              </div>
+              <div class="idevice-card-actions">
+                <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
+                <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
+                <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('card-2')"><i class="bi bi-trash"></i></button>
+              </div>
+            </div>
+            <div class="idevice-card-body">
+              <div class="campo-grupo">
+                <label class="campo-label">Pregunta activadora para el grupo:</label>
+                <input type="text" class="campo-input" value="¿En cuál de estas situaciones has usado más los números decimales o fracciones?">
+              </div>
+              <div class="campo-grupo">
+                <label class="campo-label">Opciones de respuesta:</label>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <input type="text" class="campo-input" value="A) Al comprar medio kilo o tres cuartos en la tiendita">
+                  <input type="text" class="campo-input" value="B) Al medir madera o tela con cinta métrica">
+                  <input type="text" class="campo-input" value="C) Al calcular el cambio del transporte">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Rosco de Palabras (Juego) -->
+          <div class="idevice-card" id="card-3">
+            <div class="idevice-card-header">
+              <div class="idevice-card-title">
+                <span class="badge badge-juego" style="padding:3px 8px; border-radius:4px; font-size:11px;">JUEGOS</span>
+                <i class="bi bi-controller" style="color:#d97706;"></i>
+                <span>Juego: Rosco de Palabras NEM</span>
+              </div>
+              <div class="idevice-card-actions">
+                <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
+                <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
+                <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('card-3')"><i class="bi bi-trash"></i></button>
+              </div>
+            </div>
+            <div class="idevice-card-body">
+              <div class="campo-grupo">
+                <label class="campo-label">Letra D - Definición:</label>
+                <input type="text" class="campo-input" value="Número que expresa una cantidad dividida entre diez, cien o mil partes.">
+              </div>
+              <div class="campo-grupo">
+                <label class="campo-label">Palabra correcta:</label>
+                <input type="text" class="campo-input" value="DECIMAL" style="font-weight:700; color:#d97706;">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTÓN INFERIOR DE ACCIÓN GUARDAR SESIÓN -->
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:10px;">
+          <button class="btn-modo-conmutador" style="background:#e2e8f0; color:#475569;" onclick="agregarNodo()">
+            <i class="bi bi-plus-circle"></i> Añadir otra página a la sesión
+          </button>
+          <button class="btn-al-navegador" onclick="alert('¡Sesión 3 guardada con éxito en el formato eXeLearning!')">
+            <i class="bi bi-cloud-arrow-up-fill"></i> Guardar y Desplegar Clase
+          </button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- VISTA PREVIA SIMULADA DE ESTUDIANTE (OCULTA POR DEFECTO) -->
+  <div id="vistaEstudiante" style="display:none; flex:1; background:#f8fafc; padding:30px; justify-content:center;">
+    <div style="max-width:850px; width:100%; background:#fff; border-radius:12px; border:1px solid #cbd5e1; box-shadow:0 10px 30px rgba(0,0,0,0.06); padding:30px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:16px; margin-bottom:24px;">
+        <div>
+          <span style="font-size:12px; font-weight:800; color:#0d9488; text-transform:uppercase;">Clase en Vivo</span>
+          <h2 style="margin:4px 0 0; font-size:22px;">Sesión 3: Fracciones y Decimales en Nuestra Comunidad</h2>
+        </div>
+        <button class="btn-modo-conmutador" style="background:#f1f5f9; color:#475569;" onclick="cambiarVista('autor')">
+          <i class="bi bi-arrow-left"></i> Volver al Editor
+        </button>
+      </div>
+
+      <!-- Barra de navegación del alumno entre páginas -->
+      <div style="display:flex; gap:8px; margin-bottom:24px; border-bottom:2px solid #f1f5f9; padding-bottom:12px;">
+        <button class="btn-modo-conmutador activo" style="font-size:12.5px; padding:6px 14px;">1. Saberes Previos</button>
+        <button class="btn-modo-conmutador" style="font-size:12.5px; padding:6px 14px; background:#f1f5f9; color:#64748b;">2. Lectura Central</button>
+        <button class="btn-modo-conmutador" style="font-size:12.5px; padding:6px 14px; background:#f1f5f9; color:#64748b;">3. Actividad Reto</button>
+        <button class="btn-modo-conmutador" style="font-size:12.5px; padding:6px 14px; background:#f1f5f9; color:#64748b;">4. Quiz</button>
+      </div>
+
+      <!-- Contenido interactivo que vive el alumno -->
+      <div style="background:#f0fdfa; border-left:4px solid #0d9488; padding:16px 20px; border-radius:0 8px 8px 0; margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <h4 style="margin:0; font-size:16px; color:#0f766e;"><i class="bi bi-headphones me-2"></i> Lectura Guiada DUA</h4>
+          <button style="background:#0d9488; color:#fff; border:0; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; cursor:pointer;" onclick="alert('Reproduciendo voz con Web Speech API')">
+            <i class="bi bi-play-fill"></i> Escuchar Audio
+          </button>
+        </div>
+        <p style="margin:0; font-size:14.5px; line-height:1.6; color:#334155;">
+          Bienvenidos al proyecto de medición y fracciones. En esta sesión analizaremos cómo el carpintero Don José y la comerciante Doña Tere utilizan fracciones de metro y medios kilos para registrar sus compras cotidianas.
+        </p>
+      </div>
+
+      <div style="background:#ffffff; border:1px solid #cbd5e1; padding:20px; border-radius:8px; margin-bottom:24px;">
+        <h4 style="margin:0 0 12px; font-size:15px; color:#1e293b;"><i class="bi bi-bar-chart-line text-success me-2"></i> Diagnóstico Grupal</h4>
+        <p style="font-size:14px; margin-bottom:14px;">¿En cuál de estas situaciones has usado más los números decimales o fracciones?</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <label style="padding:10px; border:1px solid #e2e8f0; border-radius:6px; cursor:pointer; font-size:13.5px; display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="encuesta_demo"> Al comprar medio kilo o tres cuartos en la tiendita
+          </label>
+          <label style="padding:10px; border:1px solid #e2e8f0; border-radius:6px; cursor:pointer; font-size:13.5px; display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="encuesta_demo"> Al medir madera o tela con cinta métrica
+          </label>
+          <label style="padding:10px; border:1px solid #e2e8f0; border-radius:6px; cursor:pointer; font-size:13.5px; display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="encuesta_demo"> Al calcular el cambio del transporte
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA PREVIA SIMULADA DE PLANO DIDÁCTICO -->
+  <div id="vistaPlano" style="display:none; flex:1; background:#f1f5f9; padding:30px; justify-content:center;">
+    <div style="max-width:850px; width:100%; background:#fff; border-radius:12px; border:1px solid #cbd5e1; padding:30px;">
+      <div style="border-bottom:2px solid #0f172a; padding-bottom:14px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h2 style="margin:0; font-size:18px;">FORMATO OFICIAL DE PLANO DIDÁCTICO (NEM)</h2>
+          <span style="font-size:12px; color:#64748b;">Alineado a los 4 momentos sintéticos para supervisión escolar y descarga PDF</span>
+        </div>
+        <button class="btn-modo-conmutador" style="background:#f1f5f9; color:#475569;" onclick="cambiarVista('autor')">
+          <i class="bi bi-arrow-left"></i> Volver a eXeLearning
+        </button>
+      </div>
+
+      <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
+        <tr style="background:#f8fafc;">
+          <th style="border:1px solid #cbd5e1; padding:8px; width:25%;">1. Apertura (5 min)</th>
+          <th style="border:1px solid #cbd5e1; padding:8px; width:25%;">2. Desarrollo (10 min)</th>
+          <th style="border:1px solid #cbd5e1; padding:8px; width:25%;">3. Actividad (20 min)</th>
+          <th style="border:1px solid #cbd5e1; padding:8px; width:25%;">4. Cierre (5 min)</th>
+        </tr>
+        <tr>
+          <td style="border:1px solid #cbd5e1; padding:10px; vertical-align:top;">Encuadre y activación con contexto comunitario.</td>
+          <td style="border:1px solid #cbd5e1; padding:10px; vertical-align:top;">Explicación de conversión fracción-decimal con libro SEP Pág. 14-48.</td>
+          <td style="border:1px solid #cbd5e1; padding:10px; vertical-align:top;">Resolución de problemas situados y registro en libreta.</td>
+          <td style="border:1px solid #cbd5e1; padding:10px; vertical-align:top;">Evaluación formativa y metacognición grupal.</td>
+        </tr>
+      </table>
+      <div style="text-align:right;">
+        <button class="btn-al-navegador" onclick="alert('Descargando PDF Oficial del Plano Didáctico...')">
+          <i class="bi bi-file-earmark-pdf"></i> Descargar PDF Oficial
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="footer-nota">
+    <div>
+      <strong>Simulador Interactivo de Arquitectura:</strong> Reproduce fielmente las categorías e iconografía de eXeLearning solicitadas.
+    </div>
+    <div>
+      <span style="color:#38bdf8;">Orquesta: Antigravity + DeepSeek + Cursor</span>
+    </div>
+  </footer>
+
+  <!-- LÓGICA INTERACTIVA DEL SIMULADOR -->
+  <script>
+    let nodos = [
+      { id: 0, titulo: "1. Saberes Previos y DUA", nivel: 0, itemsCount: 3 },
+      { id: 1, titulo: "2. Lectura y Conceptos", nivel: 0, itemsCount: 2 },
+      { id: 2, titulo: "3. Actividad y Reto", nivel: 0, itemsCount: 1 },
+      { id: 3, titulo: "4. Evaluación y Quiz", nivel: 0, itemsCount: 1 }
+    ];
+    let nodoActivoIndex = 0;
+    let cardCount = 3;
+
+    function toggleCat(catId) {
+      const el = document.getElementById(catId);
+      if (el) {
+        el.classList.toggle('abierto');
+      }
+    }
+
+    function seleccionarNodo(idx, domEl) {
+      nodoActivoIndex = idx;
+      document.querySelectorAll('.nodo-item').forEach(el => el.classList.remove('seleccionado'));
+      if (domEl) {
+        domEl.classList.add('seleccionado');
+      }
+      document.getElementById('bannerTituloPagina').textContent = nodos[idx].titulo + " (Página activa)";
+    }
+
+    function agregarNodo() {
+      const nuevoNum = nodos.length + 1;
+      const nuevoTitulo = `${nuevoNum}. Nueva Página`;
+      nodos.push({ id: nodos.length, titulo: nuevoTitulo, nivel: 0, itemsCount: 0 });
+      renderNodos();
+      seleccionarNodo(nodos.length - 1, document.querySelectorAll('.nodo-item')[nodos.length - 1]);
+    }
+
+    function eliminarNodo() {
+      if (nodos.length <= 1) {
+        alert("Debe existir al menos una página en la sesión.");
+        return;
+      }
+      nodos.splice(nodoActivoIndex, 1);
+      nodoActivoIndex = Math.max(0, nodoActivoIndex - 1);
+      renderNodos();
+      seleccionarNodo(nodoActivoIndex, document.querySelectorAll('.nodo-item')[nodoActivoIndex]);
+    }
+
+    function moverNodo(delta) {
+      const nuevoIdx = nodoActivoIndex + delta;
+      if (nuevoIdx >= 0 && nuevoIdx < nodos.length) {
+        const temp = nodos[nodoActivoIndex];
+        nodos[nodoActivoIndex] = nodos[nuevoIdx];
+        nodos[nuevoIdx] = temp;
+        nodoActivoIndex = nuevoIdx;
+        renderNodos();
+        seleccionarNodo(nodoActivoIndex, document.querySelectorAll('.nodo-item')[nodoActivoIndex]);
+      }
+    }
+
+    function cambiarNivel(delta) {
+      if (nodos[nodoActivoIndex]) {
+        nodos[nodoActivoIndex].nivel = Math.max(0, Math.min(2, nodos[nodoActivoIndex].nivel + delta));
+        renderNodos();
+        seleccionarNodo(nodoActivoIndex, document.querySelectorAll('.nodo-item')[nodoActivoIndex]);
+      }
+    }
+
+    function renombrarSesion() {
+      const nuevo = prompt("Introduce el título del documento o tema de la sesión:", document.getElementById('labelDocTitulo').textContent);
+      if (nuevo) {
+        document.getElementById('labelDocTitulo').textContent = nuevo;
+      }
+    }
+
+    function renderNodos() {
+      const cont = document.getElementById('listaNodos');
+      cont.innerHTML = '';
+      nodos.forEach((n, i) => {
+        const div = document.createElement('div');
+        div.className = `nodo-item ${i === nodoActivoIndex ? 'seleccionado' : ''}`;
+        if (n.nivel > 0) {
+          div.style.marginLeft = `${n.nivel * 16}px`;
+        }
+        div.onclick = () => seleccionarNodo(i, div);
+        div.innerHTML = `
+          <span><i class="bi bi-file-earmark-text me-2"></i> ${n.titulo}</span>
+          <span class="nodo-tag">${i === nodoActivoIndex ? 'Activa' : (n.itemsCount + ' iDev')}</span>
+        `;
+        cont.appendChild(div);
+      });
+    }
+
+    function insertarIdevice(tipo) {
+      cardCount++;
+      const pila = document.getElementById('pilaIdevices');
+      const card = document.createElement('div');
+      card.className = 'idevice-card';
+      const cid = `card-${cardCount}`;
+      card.id = cid;
+
+      let badge = 'badge-info';
+      let catText = 'INFORMACIÓN';
+      let icon = 'bi-file-earmark-text';
+      let title = 'Nuevo Bloque';
+      let desc = 'Contenido editable';
+
+      if (tipo === 'texto_dua') {
+        badge = 'badge-info'; catText = 'INFORMACIÓN'; icon = 'bi-headphones'; title = 'Lectura Guiada DUA con Voz';
+        desc = 'Texto redactado con accesibilidad universal y descripción para lectura con voz asistida.';
+      } else if (tipo === 'objetivos') {
+        badge = 'badge-info'; catText = 'INFORMACIÓN'; icon = 'bi-bullseye'; title = 'Objetivos de Aprendizaje';
+        desc = 'Describe lo que lograrán los estudiantes al concluir la sesión.';
+      } else if (tipo === 'galeria') {
+        badge = 'badge-info'; catText = 'INFORMACIÓN'; icon = 'bi-images'; title = 'Galería de Imágenes con Texto';
+        desc = 'Agrega infografías, esquemas y recursos visuales para apoyo conceptual.';
+      } else if (tipo === 'fichero') {
+        badge = 'badge-info'; catText = 'INFORMACIÓN'; icon = 'bi-paperclip'; title = 'Fichero o Documento Adjunto';
+        desc = 'Enlace de descarga o visualización de fichas de trabajo en PDF.';
+      } else if (tipo === 'quiz_evaluativo') {
+        badge = 'badge-eval'; catText = 'EVALUACIÓN'; icon = 'bi-check2-square'; title = 'Quiz Evaluativo (Puntaje)';
+        desc = 'Reactivo formativo con retroalimentación inmediata y calificación automática.';
+      } else if (tipo === 'encuesta') {
+        badge = 'badge-eval'; catText = 'EVALUACIÓN'; icon = 'bi-bar-chart-line'; title = 'Encuesta Diagnóstica';
+        desc = 'Pregunta grupal para recopilar opiniones y saberes previos sin calificación.';
+      } else if (tipo === 'vf') {
+        badge = 'badge-eval'; catText = 'EVALUACIÓN'; icon = 'bi-toggle2-on'; title = 'Pregunta Verdadero / Falso';
+        desc = 'Afirmación contextualizada con justificación para el estudiante.';
+      } else if (tipo === 'huecos') {
+        badge = 'badge-eval'; catText = 'EVALUACIÓN'; icon = 'bi-input-cursor-text'; title = 'Rellenar Huecos';
+        desc = 'Párrafo con palabras clave ocultas para completar.';
+      } else if (tipo === 'rosco') {
+        badge = 'badge-juego'; catText = 'JUEGOS'; icon = 'bi-circle'; title = 'Rosco de Palabras (Pasapalabra)';
+        desc = 'Ronda de letras con definiciones para consolidar vocabulario técnico.';
+      } else if (tipo === 'sopa') {
+        badge = 'badge-juego'; catText = 'JUEGOS'; icon = 'bi-grid-3x3'; title = 'Sopa de Letras Temática';
+        desc = 'Matriz lúdica para descubrir conceptos clave del PDA.';
+      } else if (tipo === 'adivina') {
+        badge = 'badge-juego'; catText = 'JUEGOS'; icon = 'bi-lightbulb'; title = 'Adivina el Concepto';
+        desc = 'Pistas progresivas para deducir el concepto misterioso.';
+      } else if (tipo === 'desafio') {
+        badge = 'badge-juego'; catText = 'JUEGOS'; icon = 'bi-trophy'; title = 'Desafío / Escape Room Situado';
+        desc = 'Misión por etapas con candados virtuales pedagógicos.';
+      } else if (tipo === 'video_interactivo') {
+        badge = 'badge-interact'; catText = 'INTERACTIVO'; icon = 'bi-play-circle'; title = 'Vídeo Interactivo con Pausas';
+        desc = 'Vídeo de YouTube que se pausa automáticamente para lanzar una pregunta al alumno.';
+      } else if (tipo === 'embebido') {
+        badge = 'badge-interact'; catText = 'INTERACTIVO'; icon = 'bi-window'; title = 'Recurso Externo Embebido';
+        desc = 'Pega el código iframe de Genially, Canva, H5P o Google Slides.';
+      } else if (tipo === 'geogebra') {
+        badge = 'badge-interact'; catText = 'INTERACTIVO'; icon = 'bi-bounding-box-circles'; title = 'Simulador GeoGebra';
+        desc = 'Applet matemático dinámico para manipular figuras o gráficas.';
+      } else if (tipo === 'listening') {
+        badge = 'badge-info'; catText = 'INGLÉS'; icon = 'bi-earbuds'; title = 'Audio Listening & Comprensión Oral';
+        desc = 'Pista de audio en inglés con preguntas de opción múltiple para medir la comprensión auditiva del estudiante.';
+      } else if (tipo === 'pronunciacion') {
+        badge = 'badge-eval'; catText = 'INGLÉS'; icon = 'bi-mic'; title = 'Práctica de Pronunciación (Voice Input)';
+        desc = 'El alumno lee en voz alta en inglés y el sistema verifica la fonética correcta.';
+      } else if (tipo === 'flashcards') {
+        badge = 'badge-juego'; catText = 'INGLÉS'; icon = 'bi-card-text'; title = 'Flashcards Bilingües';
+        desc = 'Tarjetas interactivas con vocabulario en inglés, traducción y botón de audio para memorización activa.';
+      } else if (tipo === 'sim_ofimatica') {
+        badge = 'badge-interact'; catText = 'TECNOLOGÍA'; icon = 'bi-table'; title = 'Práctica Ofimática: Hoja de Cálculo';
+        desc = 'Matriz de celdas interactiva para que el estudiante aplique fórmulas (=SUMA, =PROMEDIO) y formato de celdas.';
+      } else if (tipo === 'algoritmo') {
+        badge = 'badge-ciencias'; catText = 'TECNOLOGÍA'; icon = 'bi-diagram-3'; title = 'Diagrama de Flujo y Procesos';
+        desc = 'Esquema secuencial de inicio, proceso, decisión y fin para modelar algoritmos y procesos técnicos.';
+      } else if (tipo === 'codigo') {
+        badge = 'badge-ciencias'; catText = 'TECNOLOGÍA'; icon = 'bi-code-slash'; title = 'Editor de Código / Pseudocódigo';
+        desc = 'Área con sintaxis coloreada para redactar instrucciones, scripts o etiquetas HTML.';
+      } else if (tipo === 'reto_ciencias') {
+        badge = 'badge-ciencias'; catText = 'CIENCIAS'; icon = 'bi-calculator'; title = 'Problema Matemático Situado';
+        desc = 'Caso de la vida real con datos numéricos y guía de resolución por pasos.';
+      } else if (tipo === 'formula') {
+        badge = 'badge-ciencias'; catText = 'CIENCIAS'; icon = 'bi-regex'; title = 'Fórmulas LaTeX / KaTeX';
+        desc = 'Escribe expresiones algebraicas y fórmulas científicas matemáticas.';
+      }
+
+      card.innerHTML = `
+        <div class="idevice-card-header">
+          <div class="idevice-card-title">
+            <span class="badge ${badge}" style="padding:3px 8px; border-radius:4px; font-size:11px;">${catText}</span>
+            <i class="bi ${icon}"></i>
+            <span>${title}</span>
+          </div>
+          <div class="idevice-card-actions">
+            <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
+            <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
+            <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('${cid}')"><i class="bi bi-trash"></i></button>
+          </div>
+        </div>
+        <div class="idevice-card-body">
+          <div class="campo-grupo">
+            <label class="campo-label">Título del iDevice:</label>
+            <input type="text" class="campo-input" value="${title}">
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-label">Instrucciones o contenido para el estudiante:</label>
+            <textarea class="campo-textarea">${desc}</textarea>
+          </div>
+        </div>
+      `;
+      pila.appendChild(card);
+      actualizarContador();
+      card.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function eliminarCard(id) {
+      const card = document.getElementById(id);
+      if (card) {
+        card.remove();
+        actualizarContador();
+      }
+    }
+
+    function actualizarContador() {
+      const total = document.querySelectorAll('.idevice-card').length;
+      document.getElementById('contadorIdevices').textContent = `${total} bloques`;
+      if (nodos[nodoActivoIndex]) {
+        nodos[nodoActivoIndex].itemsCount = total;
+      }
+    }
+
+    function cambiarVista(vista) {
+      document.getElementById('vistaAutor').style.display = vista === 'autor' ? 'flex' : 'none';
+      document.getElementById('vistaEstudiante').style.display = vista === 'estudiante' ? 'flex' : 'none';
+      document.getElementById('vistaPlano').style.display = vista === 'plano' ? 'flex' : 'none';
+
+      document.getElementById('btnModoAutor').className = `btn-modo-conmutador ${vista === 'autor' ? 'activo' : ''}`;
+      document.getElementById('btnModoEstudiante').className = `btn-modo-conmutador ${vista === 'estudiante' ? 'activo' : ''}`;
+      document.getElementById('btnModoPlano').className = `btn-modo-conmutador ${vista === 'plano' ? 'activo' : ''}`;
+    }
+
+    function previsualizarPagina() {
+      cambiarVista('estudiante');
+    }
+  </script>
+</body>
+</html>

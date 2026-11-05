@@ -21,10 +21,10 @@
 ## 2. Prompts de Arranque Rápido para Agentes
 
 ### Para DeepSeek (Harness / Web):
-> *"Actúas como Diseñador UI/UX y Especialista CSS de este proyecto. Tu partitura oficial está en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual designados. Respeta estrictamente los IDs del DOM acordados; no los cambies. Tienes estrictamente prohibido ejecutar git commit/push o comandos de despliegue. Guarda tu entrega en `ENTREGA_DEEPSEEK.md` y al terminar ejecuta `node .rsc/centinela_buzon.js deepseek --intervalo=60 --max-ciclos=0` para revisar cada 60 segundos si Antigravity depositó una tarea nueva."*
+> *"Actúas como Diseñador UI/UX y Especialista CSS de este proyecto. Tu partitura oficial está en `ESTADO_COORDINACION.md`. Solo tocas archivos CSS y estructura visual designados. Respeta estrictamente los IDs del DOM acordados; no los cambies. Tienes estrictamente prohibido ejecutar git commit/push o comandos de despliegue. Guarda tu entrega en `ENTREGA_DEEPSEEK.md` y al terminar ejecuta `node .rsc/centinela_buzon.js deepseek` para revisar cada 60 segundos si Antigravity depositó una tarea nueva."*
 
 ### Para Cursor:
-> *"Actúas como Desarrollador Frontend JS de este proyecto. Tu partitura oficial está en `ESTADO_COORDINACION.md` y tu regla de registro en `.cursor/rules/control-cambios.mdc`. Solo modificas fragmentos JS del cliente y conexión con backend. Respeta estrictamente los IDs del DOM y las clases visuales acordadas. Tienes prohibido hacer commit/push o alterar la base de datos. Guarda tu entrega en `ENTREGA_CURSOR.md` y al terminar ejecuta `node .rsc/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0` para revisar cada 60 segundos si Antigravity depositó una tarea nueva."*
+> *"Actúas como Desarrollador Frontend JS de este proyecto. Tu partitura oficial está en `ESTADO_COORDINACION.md` y tu regla de registro en `.cursor/rules/control-cambios.mdc`. Solo modificas fragmentos JS del cliente y conexión con backend. Respeta estrictamente los IDs del DOM y las clases visuales acordadas. Tienes prohibido hacer commit/push o alterar la base de datos. Guarda tu entrega en `ENTREGA_CURSOR.md` y al terminar ejecuta `node .rsc/centinela_buzon.js cursor` para revisar cada 60 segundos si Antigravity depositó una tarea nueva."*
 
 ---
 

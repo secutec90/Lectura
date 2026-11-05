@@ -16,4 +16,4 @@
    - En el chat solo debes responder con un mensaje conciso:  
      *"✅ Entrega completada y guardada automáticamente en `ENTREGA_DEEPSEEK.md`. Listo para que Antigravity audite e integre."*
 5. **Re-lectura Automática del Buzón cada 60 segundos (Modo Centinela):**
-   - Inmediatamente después de guardar tu entrega en `ENTREGA_DEEPSEEK.md`, ejecuta el comando centinela `node .rsc/centinela_buzon.js deepseek --intervalo=60 --max-ciclos=0` para revisar el buzón cada minuto. Si Antigravity carga una nueva tarea (`🟢`), léela y ejecútala automáticamente sin esperar intervención del usuario.
+   - Inmediatamente después de guardar tu entrega en `ENTREGA_DEEPSEEK.md`, ejecuta el comando centinela `node .rsc/centinela_buzon.js deepseek` para revisar el buzón cada minuto. Si Antigravity carga una nueva tarea (`🟢`), léela y ejecútala automáticamente sin esperar intervención del usuario.

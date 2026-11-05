@@ -334,10 +334,6 @@
       if (!btn || !btn.closest) return;
       const c = btn.closest('.idevice-card');
       if (!c) return;
-      const rich = c.querySelector('.campo-editor-rich');
-      if (rich && rich.id && window.tinymce && window.tinymce.get(rich.id)) {
-        try { window.tinymce.get(rich.id).remove(); } catch (e) {}
-      }
       marcarIDevicesTocados_();
       c.remove();
       const barra = document.querySelector('#editorSesionActiva .idevice-bar .idevice-btn');
@@ -385,26 +381,16 @@
       titulo.placeholder = meta.phTitulo;
       titulo.value = datos.titulo || '';
       titulo.className = 'idevice-campo-titulo';
-      let cuerpo;
-      if (typeof window.montarEditorEnriquecido_ === 'function') {
-        cuerpo = window.montarEditorEnriquecido_(datos.cuerpo || '', idUnico);
-        const rich = cuerpo.querySelector('.campo-editor-rich');
-        if (rich) {
-          rich.id = 'txt_' + idUnico;
-          rich.addEventListener('input', marcarIDevicesTocados_);
-        }
-      } else {
-        cuerpo = document.createElement('textarea');
-        cuerpo.setAttribute('data-campo', 'cuerpo');
-        cuerpo.id = 'txt_' + idUnico;
-        cuerpo.rows = 2;
-        cuerpo.setAttribute('aria-label', 'Contenido del bloque');
-        cuerpo.placeholder = meta.phCuerpo;
-        cuerpo.value = datos.cuerpo || '';
-        cuerpo.className = 'idevice-campo-cuerpo';
-        cuerpo.addEventListener('input', marcarIDevicesTocados_);
-      }
+      const cuerpo = document.createElement('textarea');
+      cuerpo.setAttribute('data-campo', 'cuerpo');
+      cuerpo.id = 'txt_' + idUnico;
+      cuerpo.rows = 2;
+      cuerpo.setAttribute('aria-label', 'Contenido del bloque');
+      cuerpo.placeholder = meta.phCuerpo;
+      cuerpo.value = datos.cuerpo || '';
+      cuerpo.className = 'idevice-campo-cuerpo';
       titulo.addEventListener('input', marcarIDevicesTocados_);
+      cuerpo.addEventListener('input', marcarIDevicesTocados_);
       body.appendChild(titulo);
       body.appendChild(cuerpo);
 
@@ -455,10 +441,7 @@
 
     function textoCampoIDevice_(card, campo) {
       const el = card.querySelector('[data-campo="' + campo + '"]');
-      if (!el) return '';
-      if (campo === 'cuerpo' && typeof window.textoPlanoCampoBloque_ === 'function') return window.textoPlanoCampoBloque_(el);
-      if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return String(el.innerText || el.textContent || '').trim();
-      return String(el.value || '').trim();
+      return String((el && el.value) || '').trim();
     }
 
     function serializarIDevicesSesion_() {
@@ -485,9 +468,6 @@
         bloques.push(linea);
       });
       window._extraIDevicesEncuesta_ = encuestasExtra;
-      if (typeof window.calcularPuntosTotalesSesion_ === 'function') {
-        window._puntosSesion_ = window.calcularPuntosTotalesSesion_();
-      }
       if (!bloques.length) return '';
       return '\n\n' + MARCA_IDEVICES_INI_ + '\n' + bloques.join('\n\n') + '\n' + MARCA_IDEVICES_FIN_;
     }
@@ -630,10 +610,8 @@
       let card = null;
       if (typeof origen === 'string') card = document.getElementById(origen);
       else if (origen && origen.closest) card = origen.closest('.idevice-card');
-      const txtEl = card ? card.querySelector('.campo-editor-rich, [data-campo="cuerpo"], textarea') : null;
-      let texto = '';
-      if (txtEl && typeof window.textoPlanoCampoBloque_ === 'function') texto = window.textoPlanoCampoBloque_(txtEl);
-      else if (txtEl) texto = String(txtEl.value || txtEl.innerText || '').trim();
+      const txtEl = card ? card.querySelector('[data-campo="cuerpo"], textarea') : null;
+      let texto = txtEl ? String(txtEl.value || '').trim() : '';
       if (!texto) texto = 'Por favor escribe un texto en el bloque de lectura para escucharlo.';
       if (!window.speechSynthesis) {
         toast('Este navegador no tiene narración de voz.', 'error');

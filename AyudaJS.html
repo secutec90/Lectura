@@ -1883,8 +1883,8 @@ function irAPasoSesion_(numPaso) {
     }
   }
   if (n === 2) renderAsistenteSecuenciaIA_();
+  if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
   if (n === 4) {
-    if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
     pintarVistaPreviaIntegrada_();
     aplicarColorFondoPreview_();
   }
@@ -5555,6 +5555,9 @@ function cambiarColorFondoLienzo_(color) {
   var picker = document.getElementById('pickerColorFondoPersonalizado');
   if (picker && /^#[0-9a-f]{6}$/i.test(color)) picker.value = color;
   window._colorFondoSesionActiva_ = color;
+  document.querySelectorAll('.browser-frame').forEach(function (marco) {
+    marco.style.backgroundColor = color;
+  });
   var previewPanel = document.querySelector('#modalPreviewAlumno .preview-panel, #vistaPreviaIntegrada .preview-panel');
   if (previewPanel) previewPanel.style.backgroundColor = color;
   if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
@@ -5563,42 +5566,102 @@ function cambiarColorFondoLienzo_(color) {
 function htmlEditorEnriquecido_(idUnico) {
   var idAttr = idUnico ? (' id="rich_editor_' + idUnico + '"') : '';
   return '<div class="editor-enriquecido-wrap">' +
-    '<div class="toolbar-editor-formato">' +
-      // Formato básico
+    // Menubar superior estilo Office / TinyMCE
+    '<div class="menubar-editor-st90">' +
+      '<span class="menu-item-st90" title="Acciones de documento">📄 Archivo</span>' +
+      '<span class="menu-item-st90" title="Deshacer, rehacer o limpiar" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">✏️ Editar</span>' +
+      '<span class="menu-item-st90" title="Insertar imagen, video o enlace" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">➕ Insertar</span>' +
+      '<span class="menu-item-st90" title="Formato de texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'bold\')">🔤 Formato</span>' +
+      '<span class="menu-item-st90" title="Insertar o gestionar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</span>' +
+      '<span class="menu-item-st90" title="Herramientas y accesibilidad DUA">⚙️ Herramientas</span>' +
+    '</div>' +
+    // Barra de herramientas fila 1: Historial, estilo de bloque, fuentes, tamaños e inserción
+    '<div class="toolbar-editor-formato toolbar-fila-1">' +
+      '<button type="button" class="btn-tb" title="Deshacer (Ctrl+Z)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'undo\')">↩️</button>' +
+      '<button type="button" class="btn-tb" title="Rehacer (Ctrl+Y)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'redo\')">↪️</button>' +
+      '<span class="tb-sep"></span>' +
       '<button type="button" class="btn-tb" title="Negrita (Ctrl+B)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'bold\')"><b>B</b></button>' +
       '<button type="button" class="btn-tb" title="Cursiva (Ctrl+I)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'italic\')"><i>I</i></button>' +
       '<button type="button" class="btn-tb" title="Subrayado (Ctrl+U)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'underline\')"><u>U</u></button>' +
       '<button type="button" class="btn-tb" title="Tachado" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'strikeThrough\')"><s>S</s></button>' +
-      '<label class="btn-tb btn-tb-color" title="Color de texto" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
-        '<span style="font-weight:800;color:#0d9488;font-size:13px;border-bottom:2px solid #0d9488;">A</span>' +
-        '<input type="color" value="#0f172a" onchange="cambiarColorTextoEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
-      '</label>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Resaltar texto" onmousedown="event.preventDefault()" onclick="resaltarTextoEditor(this)">🖍️ Resaltar</button>' +
       '<span class="tb-sep"></span>' +
-      // Encabezados
-      '<button type="button" class="btn-tb" title="Párrafo normal" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<p>\')">P</button>' +
-      '<button type="button" class="btn-tb" title="Título H2" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<h2>\')">H2</button>' +
-      '<button type="button" class="btn-tb" title="Subtítulo H3" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<h3>\')">H3</button>' +
-      '<button type="button" class="btn-tb" title="Cita destacada" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<blockquote>\')">“” Cita</button>' +
+      // Selector de Bloque (Párrafo / H1 / H2 / H3 / Cita)
+      '<select class="sel-tb-bloque" title="Estilo de párrafo" onchange="aplicarEstiloTexto(this, \'formatBlock\', this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>Párrafo...</option>' +
+        '<option value="<p>">Párrafo normal</option>' +
+        '<option value="<h1>">Título 1 (H1)</option>' +
+        '<option value="<h2>">Título 2 (H2)</option>' +
+        '<option value="<h3>">Subtítulo 3 (H3)</option>' +
+        '<option value="<blockquote>">Cita destacada</option>' +
+      '</select>' +
+      // Selector de Familia Tipográfica
+      '<select class="sel-tb-fuente" title="Familia tipográfica" onchange="cambiarFuenteEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>Fuente...</option>' +
+        '<option value="sans-serif">Sans-serif</option>' +
+        '<option value="serif">Serif</option>' +
+        '<option value="monospace">Monospace</option>' +
+        '<option value="Georgia, serif">Georgia</option>' +
+        '<option value="Comic Sans MS">Comic Sans MS</option>' +
+      '</select>' +
+      // Selector de Tamaño de Fuente
+      '<select class="sel-tb-tamano" title="Tamaño de letra" onchange="cambiarTamanoEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>Tamaño...</option>' +
+        '<option value="12px">12px</option>' +
+        '<option value="14px">14px</option>' +
+        '<option value="16px">16px</option>' +
+        '<option value="18px">18px</option>' +
+        '<option value="20px">20px</option>' +
+        '<option value="24px">24px</option>' +
+      '</select>' +
       '<span class="tb-sep"></span>' +
-      // Alineación
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗 Link</button>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar imagen con tamaño configurable" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️ Imagen</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'25%\')">25%</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'50%\')">50%</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'75%\')">75%</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'100%\')">100%</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'left\')">Img izq</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'center\')">Img centro</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'right\')">Img der</button>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar video (YouTube o MP4)" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬 Video</button>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar tabla estructurada" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</button>' +
+    '</div>' +
+    // Barra de herramientas fila 2: Alineaciones, listas, colores, cajas DUA y quitar elemento
+    '<div class="toolbar-editor-formato toolbar-fila-2">' +
       '<button type="button" class="btn-tb" title="Alinear a la izquierda" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyLeft\')">⬅️</button>' +
       '<button type="button" class="btn-tb" title="Centrar" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyCenter\')">↔️</button>' +
       '<button type="button" class="btn-tb" title="Alinear a la derecha" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyRight\')">➡️</button>' +
       '<button type="button" class="btn-tb" title="Justificar texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyFull\')">📄</button>' +
-      '<button type="button" class="btn-tb" title="Lista de viñetas" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertUnorderedList\')">• Lista</button>' +
+      '<span class="tb-sep"></span>' +
+      '<button type="button" class="btn-tb" title="Lista con viñetas" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertUnorderedList\')">• Lista</button>' +
       '<button type="button" class="btn-tb" title="Lista numerada" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertOrderedList\')">1. Lista</button>' +
+      '<button type="button" class="btn-tb" title="Reducir sangría" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'outdent\')">⇤</button>' +
+      '<button type="button" class="btn-tb" title="Aumentar sangría" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'indent\')">⇥</button>' +
       '<span class="tb-sep"></span>' +
-      // Edición y Manipulación de Tablas
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar tabla (3x3)" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</button>' +
-      '<button type="button" class="btn-tb" title="Agregar fila a la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">➕ Fila</button>' +
-      '<button type="button" class="btn-tb" title="Eliminar fila actual" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">➖ Fila</button>' +
-      '<button type="button" class="btn-tb" title="Agregar columna a la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">➕ Col</button>' +
-      '<button type="button" class="btn-tb" title="Eliminar columna actual" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">➖ Col</button>' +
-      '<button type="button" class="btn-tb" title="Cambiar color de fondo de la celda" onmousedown="event.preventDefault()" onclick="colorearCeldaEditor(this)">🎨 Celda</button>' +
+      // Selector de Color de Texto
+      '<label class="btn-tb btn-tb-color" title="Color de texto" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
+        '<span style="font-weight:800;color:#0d9488;font-size:13px;border-bottom:2px solid #0d9488;">A</span>' +
+        '<input type="color" value="#0f172a" onchange="cambiarColorTextoEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+      '</label>' +
+      '<label class="btn-tb btn-tb-color" title="Color de resaltado" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
+        '<span style="font-weight:800;background:#fef08a;font-size:13px;">A</span>' +
+        '<input type="color" value="#fef08a" onchange="cambiarResalteEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+      '</label>' +
+      '<button type="button" class="btn-tb" title="Limpiar formato de texto" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">Tx</button>' +
       '<span class="tb-sep"></span>' +
-      // Cuadros de texto, Formas y Multimedia
-      '<select class="sel-tb-cajas" title="Insertar cuadro de texto o forma didáctica" onchange="insertarCajaDidacticaEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+      // Gestión de Filas y Columnas de Tabla
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Fila arriba" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'filaArriba\')">Fila arriba</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Fila abajo" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">Fila abajo</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Quitar fila" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">Quitar fila</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Columna a la izquierda" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'colIzquierda\')">Col izq</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Columna a la derecha" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">Col der</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Quitar columna" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">Quitar col</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Borde de la celda" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'borde\')">Borde</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Eliminar la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarTabla\')">Quitar tabla</button>' +
+      '<button type="button" class="btn-tb" title="Color de fondo de la celda" onmousedown="event.preventDefault()" onclick="colorearCeldaEditor(this)">🎨 Celda</button>' +
+      '<span class="tb-sep"></span>' +
+      // Cuadros Didácticos DUA
+      '<select class="sel-tb-cajas" title="Insertar cuadro de texto o forma didáctica DUA" onchange="insertarCajaDidacticaEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
         '<option value="" disabled selected>📦 Cuadro didáctico...</option>' +
         '<option value="callout">💡 Callout DUA (Verde)</option>' +
         '<option value="nota">📌 Nota Importante (Ámbar)</option>' +
@@ -5607,21 +5670,59 @@ function htmlEditorEnriquecido_(idUnico) {
         '<option value="comparativo">⚖️ Cuadro Comparativo</option>' +
         '<option value="rubrica">📋 Rúbrica Formativa</option>' +
       '</select>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar imagen con tamaño configurable" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️ Imagen</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar video (YouTube o MP4)" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬 Video</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗 Link</button>' +
       '<button type="button" class="btn-tb btn-tb-danger" title="Eliminar elemento seleccionado (tabla, imagen o recuadro)" onmousedown="event.preventDefault()" onclick="eliminarElementoSeleccionadoEditor(this)">🗑️ Quitar elemento</button>' +
     '</div>' +
+    // Cuerpo editable enriquecido
     '<div class="campo-editor-rich idevice-campo-cuerpo"' + idAttr + ' data-campo="cuerpo" contenteditable="true" role="textbox" aria-multiline="true"></div>' +
   '</div>';
+}
+
+function cambiarFuenteEditor(select, fuente) {
+  if (!fuente) return;
+  var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand('fontName', false, fuente); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cambiarTamanoEditor(select, tamano) {
+  if (!tamano) return;
+  var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    var span = document.createElement('span');
+    span.style.fontSize = tamano;
+    var range = sel.getRangeAt(0);
+    try {
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+    } catch (e) {
+      try { document.execCommand('fontSize', false, '3'); } catch (err) {}
+    }
+  } else {
+    try { document.execCommand('fontSize', false, '3'); } catch (e) {}
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function limpiarFormatoEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand('removeFormat', false, null); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
 
 function montarEditorEnriquecido_(html, idUnico) {
   idUnico = idUnico || ('ed_' + Date.now() + '_' + Math.floor(Math.random() * 1000));
   var temp = document.createElement('div');
   temp.innerHTML = htmlEditorEnriquecido_(idUnico);
-  var nodo = temp.firstChild;
-  var editor = nodo.querySelector('.campo-editor-rich');
+  var nodo = temp.firstElementChild || temp.firstChild;
+  var editor = nodo ? nodo.querySelector('.campo-editor-rich') : null;
   if (editor) {
     if (!editor.id) editor.id = 'rich_editor_' + idUnico;
     editor.innerHTML = htmlInicialEditor_(html);
@@ -5734,6 +5835,40 @@ function modificarTablaEditor(btn, accion) {
       if (fila.children[colIdx]) fila.children[colIdx].remove();
     });
     if (!tabla.querySelector('td, th')) tabla.remove();
+  } else if (accion === 'filaArriba') {
+    var filaNueva = tr.cloneNode(false);
+    var nCols = tr.children.length;
+    for (var k = 0; k < nCols; k++) {
+      var celdaNueva = document.createElement(tr.children[k].tagName.toLowerCase() === 'th' ? 'th' : 'td');
+      celdaNueva.style.padding = '8px 12px';
+      celdaNueva.style.border = '1px solid #cbd5e1';
+      celdaNueva.innerHTML = '<br>';
+      filaNueva.appendChild(celdaNueva);
+    }
+    tr.parentNode.insertBefore(filaNueva, tr);
+  } else if (accion === 'colIzquierda') {
+    var idxIzq = Array.prototype.indexOf.call(tr.children, td);
+    tabla.querySelectorAll('tr').forEach(function (fila) {
+      var esHead = fila.parentNode.tagName === 'THEAD' || (fila.children[0] && fila.children[0].tagName === 'TH');
+      var celda = document.createElement(esHead ? 'th' : 'td');
+      celda.style.padding = '8px 12px';
+      celda.style.border = '1px solid #cbd5e1';
+      celda.innerHTML = esHead ? 'Columna' : '<br>';
+      var ref = fila.children[idxIzq];
+      if (ref) fila.insertBefore(celda, ref);
+      else fila.appendChild(celda);
+    });
+  } else if (accion === 'borde') {
+    var bordes = ['1px solid #cbd5e1', '2px solid #0f766e', '2px dashed #0d9488', 'none'];
+    var bordeActual = td.style.border || '';
+    var siguiente = bordes[0];
+    for (var b = 0; b < bordes.length; b++) {
+      if (bordes[b] === bordeActual) siguiente = bordes[(b + 1) % bordes.length];
+    }
+    td.style.border = siguiente;
+    tabla.style.borderCollapse = 'collapse';
+  } else if (accion === 'eliminarTabla') {
+    tabla.remove();
   }
   if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
@@ -5815,50 +5950,126 @@ function insertarCajaDidacticaEditor(select, tipo) {
   if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
 
+function cambiarResalteEditor(input, color) {
+  if (!color) return;
+  var wrap = input && input.closest ? input.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (editor && editor.focus) editor.focus();
+  try {
+    document.execCommand('hiliteColor', false, color);
+  } catch (e) {
+    try { document.execCommand('backColor', false, color); } catch (err) {}
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function imagenActivaEditor_(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var img = nodo && nodo.closest ? nodo.closest('img') : null;
+  if (!img) img = editor.querySelector('img');
+  return img;
+}
+
+function ajustarImagenEditor_(btn, ancho) {
+  var img = imagenActivaEditor_(btn);
+  if (!img || !ancho) return;
+  img.style.width = ancho;
+  img.style.height = 'auto';
+  img.setAttribute('width', String(ancho).replace('%', ''));
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function alinearImagenEditor_(btn, lado) {
+  var img = imagenActivaEditor_(btn);
+  if (!img) return;
+  var figura = img.closest ? img.closest('figure') : null;
+  var caja = figura || img;
+  caja.style.display = 'block';
+  if (lado === 'left') {
+    caja.style.marginLeft = '0';
+    caja.style.marginRight = 'auto';
+    caja.style.textAlign = 'left';
+  } else if (lado === 'right') {
+    caja.style.marginLeft = 'auto';
+    caja.style.marginRight = '0';
+    caja.style.textAlign = 'right';
+  } else {
+    caja.style.marginLeft = 'auto';
+    caja.style.marginRight = 'auto';
+    caja.style.textAlign = 'center';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
 function redimensionarImagenDirecta_(img) {
   if (!img) return;
-  var nuevo = prompt('Escribe el nuevo tamaño para esta imagen (ejemplo: 25%, 50%, 75%, 100% o 350px):', img.style.width || '75%');
-  if (nuevo && nuevo.trim()) {
-    img.style.width = nuevo.trim();
-    img.style.height = 'auto';
-    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
-  }
+  var ciclo = ['25%', '50%', '75%', '100%'];
+  var actual = img.style.width || '100%';
+  var i = ciclo.indexOf(actual);
+  img.style.width = ciclo[(i + 1) % ciclo.length];
+  img.style.height = 'auto';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
 
 
+
+function htmlTablaLibre_(filas, cols) {
+  filas = Math.max(1, Math.min(12, parseInt(filas, 10) || 3));
+  cols = Math.max(1, Math.min(8, parseInt(cols, 10) || 3));
+  var cabeza = '';
+  var c;
+  for (c = 0; c < cols; c++) {
+    cabeza += '<th style="padding:8px 12px;border:1px solid #cbd5e1;background:#f1f5f9;text-align:left;font-weight:700;">Columna ' + (c + 1) + '</th>';
+  }
+  var cuerpo = '';
+  var r;
+  var filasCuerpo = Math.max(1, filas - 1);
+  for (r = 0; r < filasCuerpo; r++) {
+    cuerpo += '<tr>';
+    for (c = 0; c < cols; c++) cuerpo += '<td style="padding:8px 12px;border:1px solid #cbd5e1;"><br></td>';
+    cuerpo += '</tr>';
+  }
+  return '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;border:1.5px solid #cbd5e1;">' +
+    '<thead><tr>' + cabeza + '</tr></thead><tbody>' + cuerpo + '</tbody></table><p><br></p>';
+}
+
+function insertarTablaEnEditor_(editor, filas, cols) {
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var htmlTabla = htmlTablaLibre_(filas, cols);
+  try { document.execCommand('insertHTML', false, htmlTabla); } catch (e) { editor.insertAdjacentHTML('beforeend', htmlTabla); }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
 
 function insertarTablaEditor(btn) {
   var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
   var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
   if (!editor) return;
-  if (editor.focus) editor.focus();
-  var htmlTabla =
-    '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;border:1.5px solid #cbd5e1;border-radius:6px;overflow:hidden;">' +
-      '<thead>' +
-        '<tr style="background:#f1f5f9;border-bottom:2px solid #cbd5e1;">' +
-          '<th style="padding:8px 12px;border:1px solid #cbd5e1;text-align:left;font-weight:700;">Concepto / Aspecto</th>' +
-          '<th style="padding:8px 12px;border:1px solid #cbd5e1;text-align:left;font-weight:700;">Descripción</th>' +
-          '<th style="padding:8px 12px;border:1px solid #cbd5e1;text-align:left;font-weight:700;">Ejemplo / Criterio</th>' +
-        '</tr>' +
-      '</thead>' +
-      '<tbody>' +
-        '<tr>' +
-          '<td style="padding:8px 12px;border:1px solid #cbd5e1;">Fila 1</td>' +
-          '<td style="padding:8px 12px;border:1px solid #cbd5e1;">Detalle explicativo...</td>' +
-          '<td style="padding:8px 12px;border:1px solid #cbd5e1;">Ejemplo práctico...</td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td style="padding:8px 12px;border:1px solid #cbd5e1;">Fila 2</td>' +
-          '<td style="padding:8px 12px;border:1px solid #cbd5e1;">Detalle explicativo...</td>' +
-          '<td style="padding:8px 12px;border:1px solid #cbd5e1;">Ejemplo práctico...</td>' +
-        '</tr>' +
-      '</tbody>' +
-    '</table><p><br></p>';
-  try {
-    document.execCommand('insertHTML', false, htmlTabla);
-  } catch (e) {
-    editor.innerHTML += htmlTabla;
+  if (typeof modal !== 'function') {
+    insertarTablaEnEditor_(editor, 3, 3);
+    return;
   }
+  modal({
+    titulo: 'Insertar tabla',
+    html: '<label>Filas</label><input id="inpFilasTablaST90" type="number" min="1" max="12" value="3">' +
+      '<label>Columnas</label><input id="inpColsTablaST90" type="number" min="1" max="8" value="3">',
+    botones: [{ texto: 'Cancelar', valor: 'cancelar' }, { texto: 'Insertar', valor: 'ok' }],
+    capturar: function (fondo, val) {
+      if (val !== 'ok') return val;
+      return {
+        ok: true,
+        filas: parseInt((fondo.querySelector('#inpFilasTablaST90') || {}).value, 10) || 3,
+        cols: parseInt((fondo.querySelector('#inpColsTablaST90') || {}).value, 10) || 3
+      };
+    }
+  }).then(function (valor) {
+    if (!valor || valor === 'cancelar' || !valor.ok) return;
+    insertarTablaEnEditor_(editor, valor.filas, valor.cols);
+  });
 }
 
 function insertarImagenEditor(btn) {
@@ -6407,6 +6618,9 @@ window.modificarTablaEditor = modificarTablaEditor;
 window.colorearCeldaEditor = colorearCeldaEditor;
 window.eliminarElementoSeleccionadoEditor = eliminarElementoSeleccionadoEditor;
 window.insertarCajaDidacticaEditor = insertarCajaDidacticaEditor;
+window.cambiarFuenteEditor = cambiarFuenteEditor;
+window.cambiarTamanoEditor = cambiarTamanoEditor;
+window.limpiarFormatoEditor = limpiarFormatoEditor;
 window.redimensionarImagenDirecta_ = redimensionarImagenDirecta_;
 window.cambiarColorFondoLienzo_ = cambiarColorFondoLienzo_;
 window.voltearFlashcard3D_ = voltearFlashcard3D_;

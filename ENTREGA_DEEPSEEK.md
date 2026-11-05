@@ -781,4 +781,36 @@ Por favor:
    - Escribe tu código propuesto y confirmación en este archivo (`ENTREGA_DEEPSEEK.md`) y ejecuta inmediatamente:
      `node herramientas/centinela_buzon.js deepseek`
 
+---
+
+## 🎯 PARTITURA ASIGNADA: OLA 16 (`build-598`) — SKIN INSTITUCIONAL ST90 PARA SUITE EDITORIAL WYSIWYG PROFESIONAL (ESTILO TINYMCE 6 / OFFICE / IMAGEN 2)
+- **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
+- **Archivos objetivo:** `ComunCSS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`
+
+### 🎨 Especificaciones de Diseño Visual y CSS (DeepSeek):
+
+1. **Maquetación y Jerarquía Visual de la Suite Editorial (.editor-enriquecido-wrap):**
+   - Diseña el layout visual inspirado en la referencia de la Imagen 2 (estilo TinyMCE / suite ofimática institucional):
+     - **Contenedor exterior:** Borde `#cbd5e1`, esquinas redondeadas `10px`, sombra sutil `0 2px 8px rgba(0,0,0,0.04)`.
+     - **Barra de Menú Superior (Menubar):** Barra horizontal compacta (`Archivo`, `Editar`, `Insertar`, `Formato`, `Tabla`, `Herramientas`) con fondo `#f8fafc`, tipografía 12.5px, hover suave `#f1f5f9` y desplegables elegantes (`.menu-dropdown-st90`) con sombra y bordes finos.
+     - **Barra de Herramientas Principal (Toolbars Multi-Nivel):**
+       - Fila 1: Botones agrupados de Historial (Undo/Redo), Formato de bloque (Párrafo, H1, H2, H3), Selectores estilizados de Fuente y Tamaño (12px, 14px, 16px, 18px...), e Inserción (Enlace, Imagen, Video, Tabla).
+       - Fila 2: Formato de carácter (B, I, U, S, Tx), Botones de Color (Texto 'A' con línea de color, Fondo/Resaltador con franja), Alineación (Izquierda, Centro, Derecha, Justificado), Listas y Sangría.
+       - Fila 3 / Atajos DUA: Selector de cuadros didácticos DUA, Botón de Quitar elemento (`.btn-tb-danger`), y Selector de color de fondo del lienzo (`.canvas-color-picker-wrap`).
+2. **Estilo para Tablas Editoriales y Celdas (.editor-tabla-estilo):**
+   - Cabeceras con gradiente institucional ST90 (`#0f766e` a `#0d9488`), texto blanco y bordes limpios `#cbd5e1`.
+   - Celdas con relleno ergonómico (`8px 12px`), bordes `#cbd5e1` y soporte visual para celdas con color de fondo personalizado (`td[style*="background"]`).
+   - Botones rápidos de filas/columnas (`.btn-tb-tabla`) integrados armoniosamente.
+3. **Manejadores Visuales de Imágenes y Elementos Multimedia:**
+   - Estilo para imágenes dentro del editor con borde sutil al enfocar/seleccionar y barra flotante de opciones (`.barra-opciones-img`).
+   - Contenedor de video responsivo (`.video-embed-responsive`) con esquinas de 10px.
+4. **Cajas Didácticas DUA (.notion-callout, .caja-nota-st90, .caja-reto-st90, .caja-pregunta-st90):**
+   - Acabado estético premium, contraste WCAG AAA, bordes distintivos y microinteracciones.
+5. **Regla de Oro:**
+   - Todo el CSS debe escribirse estrictamente DENTRO de la etiqueta `<style>` y ANTES de `</style>`.
+6. **Protocolo Centinela:**
+   - Escribe tu código propuesto y confirmación en este archivo (`ENTREGA_DEEPSEEK.md`) y ejecuta inmediatamente:
+     `node herramientas/centinela_buzon.js deepseek`
+
+
 

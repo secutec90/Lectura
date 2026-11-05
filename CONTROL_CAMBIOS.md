@@ -2,6 +2,27 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-05] - [Ola 16: Suite Editorial Nativa Completa WYSIWYG Profesional ST90, Menubar y Partituras a Cursor y DeepSeek (build-598)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(editor): suite editorial nativa wysiwyg profesional estilo tinymce con menubar, fuentes, tablas y activacion centinela ola 16 en build-598`
+- **Cambios Realizados:**
+  - **Suite Editorial Nativa Completa WYSIWYG Profesional:**
+    - `AyudaJS.html`: Implementada barra menubar superior (`Archivo`, `Editar`, `Insertar`, `Formato`, `Tabla`, `Herramientas`) y organización de herramientas en dos filas (`.toolbar-fila-1` y `.toolbar-fila-2`).
+    - Selectores de tipografía: Selector de bloque (Párrafo, H1, H2, H3, Cita), selector de fuente (`sans-serif`, `Arial`, `Georgia`, `monospace`) y selector de tamaño (`12px`, `14px`, `16px`, `18px`, `22px`).
+    - Acciones de historial: `Deshacer` y `Rehacer` (`undo`/`redo`).
+    - Limpieza de formato `Tx` (`removeFormat`).
+    - Herramientas completas de tabla: inserción, filas arriba/abajo, columnas izq/der, colorear fondo de celdas (`colorearCeldaEditor`), bordes y quitar elemento.
+    - Cuadros didácticos DUA (Callout DUA, Nota, Reto, Pregunta, Cuadro comparativo, Rúbrica formativa) y botón inteligente `🗑️ Quitar elemento`.
+    - `temp.firstElementChild` en `montarEditorEnriquecido_` para erradicar cualquier error de nodo de texto.
+  - **Estilos Institucionales en ComunCSS.html:**
+    - Maquetación `.editor-enriquecido-wrap`, `.menubar-editor-st90`, `.menu-item-st90`, `.sel-tb-bloque`, `.sel-tb-fuente`, `.sel-tb-tamano`, `.sel-tb-cajas` y `.btn-tb-danger`.
+    - Garantizado `display: block !important` y `min-height: 220px` para `.campo-editor-rich`.
+  - **Orquesta Multi-Agente y Reparto de Tareas:**
+    - Partitura activa **Ola 16 (`build-598`)** asignada a Cursor en `ENTREGA_CURSOR.md` y a DeepSeek en `ENTREGA_DEEPSEEK.md`.
+    - Actualizado `ESTADO_COORDINACION.md`.
+    - Despliegue en los 6 endpoints oficiales `@593`.
+  - `00_Constantes.gs`: Incrementado a `v439 · build-598`.
+- **Archivos Afectados:** `AyudaJS.html`, `ComunCSS.html`, `00_Constantes.gs`, `ESTADO_COORDINACION.md`, `ENTREGA_CURSOR.md`, `ENTREGA_DEEPSEEK.md`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-05] - [Ola 14: Suite Editorial TinyMCE 6 en Bloques del Constructor y Color de Fondo de Página (build-596)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): suite editorial tinymce 6 con tablas avanzadas, tiradores de imagen, cajas didacticas y color de fondo en build-596`
 - **Cambios Realizados:**

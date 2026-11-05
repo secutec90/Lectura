@@ -841,3 +841,85 @@ Tarea única para Cursor:
 4. **Protocolo Centinela:**
    - Escribe y guarda tu entrega en este archivo (`ENTREGA_CURSOR.md`) y ejecuta inmediatamente:
      `node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0`
+
+---
+
+## ✅ ENTREGA CURSOR — Ola 15 (build-597)
+
+- **Estado:** lista para auditoría. Sin `git commit` y sin `clasp push`.
+- **Verificación:** `node --check` de `AyudaJS.html`. La app publicada no se abrió.
+
+### Qué quedó
+
+El menú `Plantillas DUA` de TinyMCE inserta tres formatos: cuadro comparativo de 2 columnas y 3 filas, rúbrica de observación (Criterio / Nivel esperado / Evidencia observable) y esquema de concepto clave con la clase `.notion-callout`. Al entrar al paso 4 y al abrir `#modalPreviewAlumno`, `capturarEstadoExe_()` vuelca el HTML vivo de los editores y el color `_colorFondoSesionActiva_` se pinta en cada `.browser-frame`. `leerCampoBloque_()` guarda el HTML de TinyMCE, con estilos en línea y el ancho y alto de las imágenes. `ClaseJS_08.html` y `AdminPlanJS_06.html` ya inicializan ese mismo editor; no hizo falta otro serializador.
+
+### 🛠️ 2026-11-05 - Plantillas DUA y vista previa
+
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(editor): insertar plantillas dua y reflejarlas en la vista previa`
+- **Cambios Realizados:**
+  - El editor ofrece cuadro comparativo, rúbrica de observación y concepto clave.
+  - El paso 4 y el modal del alumno leen el HTML vivo y el color de fondo de la sesión.
+  - El guardado conserva tablas, estilos en línea y el tamaño de las imágenes.
+- **Archivos Afectados:** `AyudaJS.html`, `ENTREGA_CURSOR.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Las plantillas viven en el botón `plantillas_dua` de TinyMCE y reutilizan `.editor-tabla-estilo` y `.notion-callout`. La vista previa del alumno sale de `capturarEstadoExe_()` después de `triggerSave`. No reabrir un serializador de texto plano para el cuerpo del bloque.
+
+---
+
+## 🎯 PARTITURA ASIGNADA: OLA 16 (`build-598`) — LÓGICA DE CLIENTE Y MANIPULACIÓN DEL DOM PARA LA SUITE EDITORIAL NATIVA WYSIWYG PROFESIONAL (ESTILO TINYMCE 6 / OFFICE / IMAGEN 2)
+- **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
+- **Archivos objetivo:** `AyudaJS.html`, `AdminPlanJS_06.html`, `ClaseJS_08.html`
+
+### 📋 Especificaciones Lógicas y DOM para Cursor:
+
+1. **Menubar y Controles de Formato Profesional (Inspirado en TinyMCE / Imagen 2):**
+   - Menú desplegable o barra de acciones para:
+     - **Tipografía:** Selector de Familia de fuente (`sans-serif`, `serif`, `monospace`, `Georgia`, `Comic Sans MS`).
+     - **Tamaño de texto:** Selector de tamaño de fuente (`12px`, `14px`, `16px`, `18px`, `20px`, `24px`).
+     - **Historial:** Botones `Deshacer` (`document.execCommand('undo')`) y `Rehacer` (`document.execCommand('redo')`).
+     - **Limpiar formato:** Botón `Tx` (`document.execCommand('removeFormat')`).
+     - **Colores:** Selector de color de texto (`foreColor`) y selector de color de fondo/resaltado (`hiliteColor`/`backColor`).
+2. **Edición Completa y Avanzada de Tablas:**
+   - Implementar acciones directas en la tabla activa o mediante menú:
+     - `Insertar tabla` con modal o prompt rápido de filas y columnas.
+     - `➕ Fila arriba`, `➕ Fila abajo`, `➖ Fila actual`.
+     - `➕ Col izquierda`, `➕ Col derecha`, `➖ Col actual`.
+     - `🎨 Color de fondo de celda` (con paleta rápida o picker).
+     - `Borde de tabla / celda` (cambiar estilo/color de líneas).
+     - `🗑️ Eliminar tabla completa`.
+3. **Manejo y Dimensionamiento de Imágenes y Medios:**
+   - Permitir ajustar el tamaño de imágenes insertadas:
+     - Al seleccionar o hacer doble clic en una imagen, ofrecer selector de ancho (`25%`, `50%`, `75%`, `100%` o valor en px).
+     - Alineación de imagen (izquierda, centro, derecha).
+4. **Inserción de Cajas Didácticas DUA y Formas:**
+   - Inserción limpia de cuadros didácticos: Callout DUA (verde), Nota importante (ámbar), Reto de aprendizaje (teal), Pregunta detonadora (azul), Cuadro comparativo DUA (tabla 2 columnas), Rúbrica formativa DUA (tabla 3 columnas).
+5. **Eliminación Segura de Cualquier Elemento (`🗑️ Quitar elemento`):**
+   - Si el cursor o selección está dentro de una tabla, imagen, video o recuadro didáctico, eliminar dicho elemento de forma limpia sin destruir el resto del contenido ni dejar nodos huérfanos.
+6. **Selector de Color de Fondo de Página / Lienzo:**
+   - Conectar el control de color de fondo para que modifique el lienzo en el constructor y se sincronice con la vista previa del alumno (`.browser-frame`) y se guarde en la sesión.
+7. **Preservación y Guardado:**
+   - Comprobar que al guardar la planeación y al alternar entre pasos, todo el contenido HTML (con estilos en línea de fuentes, tamaños, colores, tablas e imágenes) se preserve intacto.
+8. **Protocolo Centinela:**
+   - Escribe y guarda tu entrega en este archivo (`ENTREGA_CURSOR.md`) y ejecuta inmediatamente:
+     `node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0`
+
+---
+
+## ✅ ENTREGA CURSOR — Ola 16 (build-598)
+
+- **Estado:** lista para auditoría. Sin `git commit` y sin `clasp push`.
+- **Verificación:** `node --check` de `AyudaJS.html`. La app publicada no se abrió.
+
+### Qué quedó
+
+La barra nativa del bloque tiene familia (sans-serif, serif, monospace, Georgia, Comic Sans MS), tamaño de 12px a 24px, deshacer, rehacer, limpiar formato (`Tx`) y selectores de color de texto y de resaltado. La tabla se inserta con un modal de filas y columnas, y se puede agregar o quitar filas y columnas, pintar el borde, el fondo de la celda y borrar la tabla. La imagen activa cambia a 25%, 50%, 75% o 100% y se alinea a la izquierda, al centro o a la derecha. Los recuadros DUA, el comparativo y la rúbrica siguen en el selector, y `🗑️ Quitar elemento` saca tabla, imagen, video o recuadro. Al cambiar de paso se llama `capturarEstadoExe_()`; el color del lienzo se guarda en `_colorFondoSesionActiva_` y se pinta en `.browser-frame`. `leerCampoBloque_()` sigue guardando el HTML con los estilos en línea.
+
+### 🛠️ 2026-11-05 - Suite editorial del bloque
+
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(editor): completar la barra nativa de formato tablas e imagenes`
+- **Cambios Realizados:**
+  - La barra aplica fuente, tamaño, historial, colores y limpieza de formato.
+  - Las tablas se arman por filas y columnas y las imágenes cambian de tamaño y de alineación sin un cuadro nativo.
+  - El HTML y el color de fondo se conservan al cambiar de paso y en la vista previa.
+- **Archivos Afectados:** `AyudaJS.html`, `ENTREGA_CURSOR.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** El editor del bloque es el contenteditable nativo, no una segunda instancia de TinyMCE. El tamaño de imagen ya no usa `prompt()`. La tabla nueva sale del modal `modal()` con filas y columnas. No volver a un serializador de texto plano para el cuerpo.
+

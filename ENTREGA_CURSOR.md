@@ -790,3 +790,15 @@ if (document.readyState === 'loading') {
 }
 /* BUILD-578-CURSOR-FIN */
 ```
+
+
+---
+
+## 🎯 PARTITURA ASIGNADA: OLA 12.1 — CENTINELA CONTINUO
+- Estado: 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
+
+Tarea única para Cursor:
+1. Leer esta partitura y ESTADO_COORDINACION.md.
+2. Ejecutar node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0 desde la raíz del proyecto.
+3. No modificar el constructor ni los .gs. No hacer clasp push.
+4. Guardar en ENTREGA_CURSOR.md una sección ## ✅ ENTREGA CURSOR — Ola 12.1 confirmando que la guardia continua quedó arrancada.

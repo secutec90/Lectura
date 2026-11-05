@@ -1883,7 +1883,11 @@ function irAPasoSesion_(numPaso) {
     }
   }
   if (n === 2) renderAsistenteSecuenciaIA_();
-  if (n === 4) pintarVistaPreviaIntegrada_();
+  if (n === 4) {
+    if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+    pintarVistaPreviaIntegrada_();
+    aplicarColorFondoPreview_();
+  }
 }
 
 function marcoPreview_(el) {
@@ -3009,6 +3013,8 @@ function armarMaquetaAlumno_() {
   p4.appendChild(quizCard);
   cuerpo.appendChild(p4);
   anexarContenidosAprendizajePreview_(p1, p2, p3, p4);
+  anexarLienzoVivoPreview_(p2);
+  if (window._colorFondoSesionActiva_) marco.style.backgroundColor = window._colorFondoSesionActiva_;
 
   var cont = document.getElementById('contenedorIDevicesDinamicos');
   if (cont) {
@@ -3048,18 +3054,52 @@ function pintarVistaPreviaIntegrada_() {
   caja.appendChild(armarMaquetaAlumno_());
 }
 
-function abrirVistaPreviaAlumno_() {
+function aplicarColorFondoPreview_() {
+  var color = window._colorFondoSesionActiva_ || '';
+  if (!color) return;
+  document.querySelectorAll('#vistaPreviaIntegrada .browser-frame, #modalPreviewAlumno .browser-frame').forEach(function (marco) {
+    marco.style.backgroundColor = color;
+  });
+}
+
+function anexarLienzoVivoPreview_(panel) {
+  if (!panel) return;
+  var estado = window._extraExelearning_;
+  if (!estado || !estado.paginas) return;
+  estado.paginas.forEach(function (pag) {
+    (pag.idevices || []).forEach(function (bloque) {
+      if (!bloque || !bloque.cuerpo) return;
+      var art = document.createElement('article');
+      art.className = 'idevice-card';
+      var h = document.createElement('h3');
+      h.textContent = bloque.titulo || 'Bloque';
+      var cuerpo = document.createElement('div');
+      cuerpo.innerHTML = String(bloque.cuerpo);
+      art.appendChild(h);
+      art.appendChild(cuerpo);
+      panel.appendChild(art);
+    });
+  });
+}
+
+function abrirModalPreviewAlumno_() {
+  if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
   if (document.getElementById('panelPasoSesion_4') && window._pasoSesionActivo_ !== 4) irAPasoSesion_(4);
   else pintarVistaPreviaIntegrada_();
   var modal = asegurarPreviewAlumno_();
   var cuerpo = modal.querySelector('.preview-cuerpo-web');
   vaciarNodo_(cuerpo);
   cuerpo.appendChild(armarMaquetaAlumno_());
+  aplicarColorFondoPreview_();
   mostrarOverlay_('modalPreviewAlumno');
   var cierre = modal.querySelector('[data-cerrar-preview]');
   if (cierre && cierre.focus) {
     try { cierre.focus(); } catch (err) {}
   }
+}
+
+function abrirVistaPreviaAlumno_() {
+  abrirModalPreviewAlumno_();
 }
 
 function cerrarVistaPreviaAlumno_() {
@@ -3533,6 +3573,7 @@ function iniciarLmsSt90_() {
   window.abrirModalSubirRecurso_ = abrirModalSubirRecurso_;
   window.aplicarAdecuacionCECSE_ = aplicarAdecuacionCECSE_;
   window.abrirVistaPreviaAlumno_ = abrirVistaPreviaAlumno_;
+  window.abrirModalPreviewAlumno_ = abrirModalPreviewAlumno_;
 window.irAPasoSesion_ = irAPasoSesion_;
 window.conmutarMomentoPreview_ = conmutarMomentoPreview_;
 window.mostrarMomentoPreview_ = mostrarMomentoPreview_;
@@ -5467,110 +5508,37 @@ function htmlInicialEditor_(valor) {
   return escaparHtmlEditor_(s).replace(/\n/g, '<br>');
 }
 
-window.tinymce = window.tinymce || {};
-window.tinymce.baseURL = 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3';
+function htmlCuadroComparativoDUA_() {
+  var celda = 'padding:8px 12px;border:1px solid #99f6e4;';
+  var cabeza = 'padding:8px 12px;border:1px solid #5eead4;background:#ccfbf1;text-align:left;font-weight:700;';
+  return '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;">' +
+    '<thead><tr>' +
+      '<th style="' + cabeza + '">Aspecto</th>' +
+      '<th style="' + cabeza + '">Comparación</th>' +
+    '</tr></thead><tbody>' +
+      '<tr><td style="' + celda + '">Criterio 1</td><td style="' + celda + '">Describe la primera diferencia.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 2</td><td style="' + celda + '">Describe la segunda diferencia.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 3</td><td style="' + celda + '">Describe la tercera diferencia.</td></tr>' +
+    '</tbody></table><p><br></p>';
+}
 
-function inicializarTinyMCEParaBloque_(id) {
-  if (!id) return;
-  var el = document.getElementById(id);
-  if (!el) return;
+function htmlRubricaObservacionDUA_() {
+  var celda = 'padding:8px 12px;border:1px solid #cbd5e1;';
+  var cabeza = 'padding:8px 12px;border:1px solid #94a3b8;background:#f1f5f9;text-align:left;font-weight:700;';
+  return '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;">' +
+    '<thead><tr>' +
+      '<th style="' + cabeza + '">Criterio</th>' +
+      '<th style="' + cabeza + '">Nivel esperado</th>' +
+      '<th style="' + cabeza + '">Evidencia observable</th>' +
+    '</tr></thead><tbody>' +
+      '<tr><td style="' + celda + '">Criterio 1</td><td style="' + celda + '">Logrado</td><td style="' + celda + '">Qué se ve en el trabajo.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 2</td><td style="' + celda + '">En proceso</td><td style="' + celda + '">Qué se ve en el trabajo.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 3</td><td style="' + celda + '">Inicial</td><td style="' + celda + '">Qué se ve en el trabajo.</td></tr>' +
+    '</tbody></table><p><br></p>';
+}
 
-  if (!window.tinymce || typeof window.tinymce.init !== 'function') {
-    var intentos = el._tmceIntentos || 0;
-    if (intentos < 15) {
-      el._tmceIntentos = intentos + 1;
-      setTimeout(function () { inicializarTinyMCEParaBloque_(id); }, 300);
-    }
-    return;
-  }
-
-  if (window.tinymce.get(id)) return;
-
-  var wrap = el.closest ? el.closest('.editor-enriquecido-wrap') : null;
-  if (wrap) {
-    var fbTb = wrap.querySelector('.toolbar-editor-formato');
-    if (fbTb) fbTb.style.display = 'none';
-  }
-
-  window.tinymce.init({
-    target: el,
-    min_height: 220,
-    max_height: 600,
-    menubar: 'edit insert format table tools',
-    menu: {
-      edit: { title: 'Editar', items: 'undo redo | cut copy paste | selectall' },
-      insert: { title: 'Insertar', items: 'image link media template hr | charmap' },
-      format: { title: 'Formato', items: 'bold italic underline strikethrough | styles blocks fontfamily fontsize | forecolor backcolor | align lineheight | removeformat' },
-      table: { title: 'Tabla', items: 'inserttable | cell row column | tableprops deletetable' },
-      tools: { title: 'Herramientas', items: 'code wordcount fullscreen' }
-    },
-    plugins: 'advlist autolink lists link image charmap preview searchreplace visualblocks code fullscreen media table wordcount',
-    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table link image media | cajas_didacticas | removeformat | code fullscreen',
-    branding: false,
-    promotion: false,
-    elementpath: false,
-    statusbar: true,
-    resize: true,
-    object_resizing: true,
-    image_advtab: true,
-    image_title: true,
-    image_caption: true,
-    table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | tablecellprops tablemergecells tablesplitcells',
-    table_appearance_options: true,
-    table_cell_appearance_options: true,
-    table_row_appearance_options: true,
-    table_grid: true,
-    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1e293b; line-height: 1.6; padding: 12px; } ' +
-      'table { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1.5px solid #cbd5e1; } ' +
-      'th { background: #f1f5f9; padding: 8px 12px; border: 1px solid #cbd5e1; font-weight: 700; text-align: left; } ' +
-      'td { padding: 8px 12px; border: 1px solid #cbd5e1; } ' +
-      'img { max-width: 100%; height: auto; border-radius: 6px; } ' +
-      '.notion-callout { display: flex; gap: 12px; margin: 12px 0; padding: 12px 16px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; color: #166534; font-size: 14px; } ' +
-      '.caja-nota-st90 { margin: 12px 0; padding: 12px 16px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 6px; color: #92400e; font-size: 14px; } ' +
-      '.caja-reto-st90 { margin: 12px 0; padding: 14px 18px; background: #f0fdfa; border: 2px dashed #0d9488; border-radius: 10px; color: #115e59; font-size: 14px; } ' +
-      '.caja-pregunta-st90 { margin: 12px 0; padding: 12px 16px; background: #f0f9ff; border: 1.5px solid #7dd3fc; border-radius: 10px; color: #0369a1; font-size: 14px; }',
-    setup: function (editor) {
-      editor.ui.registry.addMenuButton('cajas_didacticas', {
-        text: '📦 Cuadro didáctico',
-        tooltip: 'Insertar cuadros de texto con formato pedagógico NEM',
-        fetch: function (callback) {
-          callback([
-            {
-              type: 'menuitem',
-              text: '💡 Callout DUA (Verde suave)',
-              onAction: function () {
-                editor.insertContent('<div class="notion-callout"><span style="font-size:22px;line-height:1;">💡</span><div><strong>Idea Clave:</strong> Escribe tu punto central aquí...</div></div><p><br></p>');
-              }
-            },
-            {
-              type: 'menuitem',
-              text: '📌 Nota Importante (Ámbar)',
-              onAction: function () {
-                editor.insertContent('<div class="caja-nota-st90"><strong>📌 Recordatorio Importante:</strong> Escribe la indicación destacada...</div><p><br></p>');
-              }
-            },
-            {
-              type: 'menuitem',
-              text: '🎯 Reto / Actividad DUA (Teal)',
-              onAction: function () {
-                editor.insertContent('<div class="caja-reto-st90"><strong>🎯 Reto de Aprendizaje:</strong> Escribe la consigna para los alumnos...</div><p><br></p>');
-              }
-            },
-            {
-              type: 'menuitem',
-              text: '💬 Pregunta Detonadora (Azul)',
-              onAction: function () {
-                editor.insertContent('<div class="caja-pregunta-st90"><strong>💬 Pregunta para reflexionar:</strong> ¿Qué descubrimos en este tema?...</div><p><br></p>');
-              }
-            }
-          ]);
-        }
-      });
-      editor.on('change input undo redo KeyUp', function () {
-        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
-      });
-    }
-  });
+function htmlEsquemaConceptoDUA_() {
+  return '<div class="notion-callout"><span style="font-size:28px;line-height:1;">🔑</span><div><strong>Concepto clave</strong><p>Escribe aquí la definición con lenguaje claro para el grupo.</p></div></div><p><br></p>';
 }
 
 function cambiarColorFondoLienzo_(color) {
@@ -5601,7 +5569,11 @@ function htmlEditorEnriquecido_(idUnico) {
       '<button type="button" class="btn-tb" title="Cursiva (Ctrl+I)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'italic\')"><i>I</i></button>' +
       '<button type="button" class="btn-tb" title="Subrayado (Ctrl+U)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'underline\')"><u>U</u></button>' +
       '<button type="button" class="btn-tb" title="Tachado" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'strikeThrough\')"><s>S</s></button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Resaltar texto en amarillo" onmousedown="event.preventDefault()" onclick="resaltarTextoEditor(this)">🎨 Resaltar</button>' +
+      '<label class="btn-tb btn-tb-color" title="Color de texto" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
+        '<span style="font-weight:800;color:#0d9488;font-size:13px;border-bottom:2px solid #0d9488;">A</span>' +
+        '<input type="color" value="#0f172a" onchange="cambiarColorTextoEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+      '</label>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Resaltar texto" onmousedown="event.preventDefault()" onclick="resaltarTextoEditor(this)">🖍️ Resaltar</button>' +
       '<span class="tb-sep"></span>' +
       // Encabezados
       '<button type="button" class="btn-tb" title="Párrafo normal" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<p>\')">P</button>' +
@@ -5614,17 +5586,31 @@ function htmlEditorEnriquecido_(idUnico) {
       '<button type="button" class="btn-tb" title="Centrar" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyCenter\')">↔️</button>' +
       '<button type="button" class="btn-tb" title="Alinear a la derecha" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyRight\')">➡️</button>' +
       '<button type="button" class="btn-tb" title="Justificar texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyFull\')">📄</button>' +
-      '<span class="tb-sep"></span>' +
-      // Listas
       '<button type="button" class="btn-tb" title="Lista de viñetas" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertUnorderedList\')">• Lista</button>' +
       '<button type="button" class="btn-tb" title="Lista numerada" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertOrderedList\')">1. Lista</button>' +
       '<span class="tb-sep"></span>' +
-      // Inserciones profesionales
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar tabla editable" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar imagen por URL" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️ Imagen</button>' +
+      // Edición y Manipulación de Tablas
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar tabla (3x3)" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</button>' +
+      '<button type="button" class="btn-tb" title="Agregar fila a la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">➕ Fila</button>' +
+      '<button type="button" class="btn-tb" title="Eliminar fila actual" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">➖ Fila</button>' +
+      '<button type="button" class="btn-tb" title="Agregar columna a la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">➕ Col</button>' +
+      '<button type="button" class="btn-tb" title="Eliminar columna actual" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">➖ Col</button>' +
+      '<button type="button" class="btn-tb" title="Cambiar color de fondo de la celda" onmousedown="event.preventDefault()" onclick="colorearCeldaEditor(this)">🎨 Celda</button>' +
+      '<span class="tb-sep"></span>' +
+      // Cuadros de texto, Formas y Multimedia
+      '<select class="sel-tb-cajas" title="Insertar cuadro de texto o forma didáctica" onchange="insertarCajaDidacticaEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>📦 Cuadro didáctico...</option>' +
+        '<option value="callout">💡 Callout DUA (Verde)</option>' +
+        '<option value="nota">📌 Nota Importante (Ámbar)</option>' +
+        '<option value="reto">🎯 Reto de Aprendizaje (Teal)</option>' +
+        '<option value="pregunta">💬 Pregunta Detonadora (Azul)</option>' +
+        '<option value="comparativo">⚖️ Cuadro Comparativo</option>' +
+        '<option value="rubrica">📋 Rúbrica Formativa</option>' +
+      '</select>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar imagen con tamaño configurable" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️ Imagen</button>' +
       '<button type="button" class="btn-tb btn-tb-especial" title="Insertar video (YouTube o MP4)" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬 Video</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Recuadro destacado (Notion)" onmousedown="event.preventDefault()" onclick="insertarCalloutEditor(this)">💡 Destacado</button>' +
       '<button type="button" class="btn-tb btn-tb-especial" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗 Link</button>' +
+      '<button type="button" class="btn-tb btn-tb-danger" title="Eliminar elemento seleccionado (tabla, imagen o recuadro)" onmousedown="event.preventDefault()" onclick="eliminarElementoSeleccionadoEditor(this)">🗑️ Quitar elemento</button>' +
     '</div>' +
     '<div class="campo-editor-rich idevice-campo-cuerpo"' + idAttr + ' data-campo="cuerpo" contenteditable="true" role="textbox" aria-multiline="true"></div>' +
   '</div>';
@@ -5639,10 +5625,10 @@ function montarEditorEnriquecido_(html, idUnico) {
   if (editor) {
     if (!editor.id) editor.id = 'rich_editor_' + idUnico;
     editor.innerHTML = htmlInicialEditor_(html);
+    editor.addEventListener('input', function () {
+      if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    });
   }
-  setTimeout(function () {
-    if (editor && editor.id) inicializarTinyMCEParaBloque_(editor.id);
-  }, 60);
   return nodo;
 }
 
@@ -5652,32 +5638,20 @@ function esEditorRico_(el) {
 
 function leerCampoBloque_(el) {
   if (!el) return '';
-  if (el.id && window.tinymce && window.tinymce.get(el.id)) {
-    return window.tinymce.get(el.id).getContent() || '';
-  }
   if (esEditorRico_(el)) return el.innerHTML || '';
   return el.value || '';
 }
 
 function textoPlanoCampoBloque_(el) {
   if (!el) return '';
-  if (el.id && window.tinymce && window.tinymce.get(el.id)) {
-    return String(window.tinymce.get(el.id).getContent({ format: 'text' }) || '').trim();
-  }
   if (esEditorRico_(el)) return String(el.innerText || el.textContent || '').trim();
   return String(el.value || '').trim();
 }
 
 function escribirCampoBloque_(el, valor) {
   if (!el) return;
-  var html = htmlInicialEditor_(valor);
-  if (el.id && window.tinymce && window.tinymce.get(el.id)) {
-    window.tinymce.get(el.id).setContent(html);
-  } else if (esEditorRico_(el)) {
-    el.innerHTML = html;
-  } else {
-    el.value = valor || '';
-  }
+  if (esEditorRico_(el)) el.innerHTML = htmlInicialEditor_(valor);
+  else el.value = valor || '';
 }
 
 function aplicarEstiloTexto(btn, comando, valor) {
@@ -5685,7 +5659,173 @@ function aplicarEstiloTexto(btn, comando, valor) {
   var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
   if (editor && editor.focus) editor.focus();
   try { document.execCommand(comando, false, valor || null); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
+
+function cambiarColorTextoEditor(input, color) {
+  if (!color) return;
+  var wrap = input && input.closest ? input.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand('foreColor', false, color); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function modificarTablaEditor(btn, accion) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = nodo ? nodo.closest('td, th') : null;
+  if (!td) {
+    var tablas = editor.querySelectorAll('table');
+    if (!tablas.length) {
+      alert('Por favor coloca el cursor dentro de la tabla que deseas modificar.');
+      return;
+    }
+    var ultimaTabla = tablas[tablas.length - 1];
+    var celdas = ultimaTabla.querySelectorAll('td, th');
+    td = celdas.length ? celdas[celdas.length - 1] : null;
+  }
+  if (!td) return;
+  var tr = td.closest('tr');
+  var tabla = td.closest('table');
+  if (!tr || !tabla) return;
+
+  if (accion === 'agregarFila') {
+    var nuevaFila = document.createElement('tr');
+    var numCols = tr.children.length;
+    for (var i = 0; i < numCols; i++) {
+      var nuevaCelda = document.createElement('td');
+      nuevaCelda.style.padding = '8px 12px';
+      nuevaCelda.style.border = '1px solid #cbd5e1';
+      nuevaCelda.innerHTML = '<br>';
+      nuevaFila.appendChild(nuevaCelda);
+    }
+    tr.parentNode.insertBefore(nuevaFila, tr.nextSibling);
+  } else if (accion === 'eliminarFila') {
+    if (tabla.querySelectorAll('tr').length <= 1) {
+      tabla.remove();
+    } else {
+      tr.remove();
+    }
+  } else if (accion === 'agregarColumna') {
+    var colIdx = Array.prototype.indexOf.call(tr.children, td);
+    tabla.querySelectorAll('tr').forEach(function (fila) {
+      var esHead = fila.parentNode.tagName === 'THEAD' || fila.children[0].tagName === 'TH';
+      var nuevaCelda = document.createElement(esHead ? 'th' : 'td');
+      nuevaCelda.style.padding = '8px 12px';
+      nuevaCelda.style.border = '1px solid #cbd5e1';
+      if (esHead) {
+        nuevaCelda.style.background = '#f1f5f9';
+        nuevaCelda.style.fontWeight = '700';
+        nuevaCelda.textContent = 'Columna';
+      } else {
+        nuevaCelda.innerHTML = '<br>';
+      }
+      var ref = fila.children[colIdx];
+      if (ref && ref.nextSibling) fila.insertBefore(nuevaCelda, ref.nextSibling);
+      else fila.appendChild(nuevaCelda);
+    });
+  } else if (accion === 'eliminarColumna') {
+    var colIdx = Array.prototype.indexOf.call(tr.children, td);
+    tabla.querySelectorAll('tr').forEach(function (fila) {
+      if (fila.children[colIdx]) fila.children[colIdx].remove();
+    });
+    if (!tabla.querySelector('td, th')) tabla.remove();
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function colorearCeldaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = nodo ? nodo.closest('td, th') : null;
+  if (!td) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) {
+      var celdas = tablas[tablas.length - 1].querySelectorAll('td, th');
+      td = celdas.length ? celdas[celdas.length - 1] : null;
+    }
+  }
+  if (!td) {
+    alert('Haz clic dentro de una celda de la tabla para cambiar su color de fondo.');
+    return;
+  }
+  var colores = ['', '#f1f5f9', '#ccfbf1', '#fef9c3', '#e0f2fe', '#fee2e2'];
+  var actual = td.style.backgroundColor || '';
+  var idx = 1;
+  for (var i = 0; i < colores.length; i++) {
+    if (colores[i] === actual) {
+      idx = (i + 1) % colores.length;
+      break;
+    }
+  }
+  td.style.backgroundColor = colores[idx];
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function eliminarElementoSeleccionadoEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  if (nodo) {
+    var obj = nodo.closest('table, figure, img, .video-embed-responsive, .notion-callout, .caja-nota-st90, .caja-reto-st90, .caja-pregunta-st90, blockquote');
+    if (obj && editor.contains(obj)) {
+      obj.remove();
+      if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      return;
+    }
+  }
+  try { document.execCommand('delete', false, null); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function insertarCajaDidacticaEditor(select, tipo) {
+  if (!tipo) return;
+  var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var html = '';
+  if (tipo === 'callout') {
+    html = '<div class="notion-callout" style="display:flex;gap:12px;margin:12px 0;padding:12px 16px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;color:#166534;"><span style="font-size:22px;line-height:1;">💡</span><div style="flex:1;"><strong>Idea Clave / Callout DUA:</strong> Escribe tu punto central aquí...</div></div><p><br></p>';
+  } else if (tipo === 'nota') {
+    html = '<div class="caja-nota-st90" style="margin:12px 0;padding:12px 16px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:6px;color:#92400e;line-height:1.5;"><strong>📌 Recordatorio Importante:</strong> Escribe la indicación destacada...</div><p><br></p>';
+  } else if (tipo === 'reto') {
+    html = '<div class="caja-reto-st90" style="margin:12px 0;padding:14px 18px;background:#f0fdfa;border:2px dashed #0d9488;border-radius:10px;color:#115e59;line-height:1.5;"><strong>🎯 Reto de Aprendizaje NEM:</strong> Escribe la consigna para los alumnos...</div><p><br></p>';
+  } else if (tipo === 'pregunta') {
+    html = '<div class="caja-pregunta-st90" style="margin:12px 0;padding:12px 16px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;color:#0369a1;line-height:1.5;"><strong>💬 Pregunta Detonadora:</strong> ¿Qué descubrimos en este tema?...</div><p><br></p>';
+  } else if (tipo === 'comparativo') {
+    html = htmlCuadroComparativoDUA_();
+  } else if (tipo === 'rubrica') {
+    html = htmlRubricaObservacionDUA_();
+  }
+  try {
+    document.execCommand('insertHTML', false, html);
+  } catch (e) {
+    editor.innerHTML += html;
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function redimensionarImagenDirecta_(img) {
+  if (!img) return;
+  var nuevo = prompt('Escribe el nuevo tamaño para esta imagen (ejemplo: 25%, 50%, 75%, 100% o 350px):', img.style.width || '75%');
+  if (nuevo && nuevo.trim()) {
+    img.style.width = nuevo.trim();
+    img.style.height = 'auto';
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+}
+
+
 
 function insertarTablaEditor(btn) {
   var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
@@ -5847,12 +5987,6 @@ function crearTarjetaCurricular_(tipo, datos) {
   if (titulo) titulo.value = datos.titulo || meta.titulo;
   if (cuerpo) escribirCampoBloque_(cuerpo, datos.cuerpo || meta.cuerpo);
   cont.appendChild(div);
-  var richEl = div.querySelector('.campo-editor-rich');
-  if (richEl && richEl.id) {
-    setTimeout(function () {
-      inicializarTinyMCEParaBloque_(richEl.id);
-    }, 60);
-  }
   if (tipo === 'flashcards') agregarParFlashcard_(div, null);
   return div;
 }
@@ -6131,6 +6265,9 @@ function insertarBloqueContextual_(idx, tipo) {
 
 function capturarEstadoExe_() {
   asegurarPaginasExe_();
+  if (window.tinymce && typeof window.tinymce.triggerSave === 'function') {
+    try { window.tinymce.triggerSave(); } catch (e) {}
+  }
   var paginas = window.paginasSesionActiva_.map(function (p) {
     return { id: p.id, titulo: p.titulo, nivel: p.nivel || 0, idevices: [] };
   });
@@ -6265,7 +6402,12 @@ window.probarPronunciacionExe_ = probarPronunciacionExe_;
 window.agregarParFlashcard_ = agregarParFlashcard_;
 window.aplicarEstiloTexto = aplicarEstiloTexto;
 window.montarEditorEnriquecido_ = montarEditorEnriquecido_;
-window.inicializarTinyMCEParaBloque_ = inicializarTinyMCEParaBloque_;
+window.cambiarColorTextoEditor = cambiarColorTextoEditor;
+window.modificarTablaEditor = modificarTablaEditor;
+window.colorearCeldaEditor = colorearCeldaEditor;
+window.eliminarElementoSeleccionadoEditor = eliminarElementoSeleccionadoEditor;
+window.insertarCajaDidacticaEditor = insertarCajaDidacticaEditor;
+window.redimensionarImagenDirecta_ = redimensionarImagenDirecta_;
 window.cambiarColorFondoLienzo_ = cambiarColorFondoLienzo_;
 window.voltearFlashcard3D_ = voltearFlashcard3D_;
 window.sincronizarFlashcard3D_ = sincronizarFlashcard3D_;

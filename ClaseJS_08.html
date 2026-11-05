@@ -297,11 +297,6 @@
         cuerpo = window.montarEditorEnriquecido_('', idUnico);
         const rich = cuerpo.querySelector('.campo-editor-rich');
         if (tipo === 'lectura' && rich) rich.id = 'txtLectura_' + idUnico;
-        setTimeout(function () {
-          if (rich && rich.id && typeof window.inicializarTinyMCEParaBloque_ === 'function') {
-            window.inicializarTinyMCEParaBloque_(rich.id);
-          }
-        }, 60);
       } else {
         cuerpo = document.createElement('textarea');
         cuerpo.className = 'idevice-campo-cuerpo';

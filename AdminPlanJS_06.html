@@ -392,11 +392,6 @@
         if (rich) {
           rich.id = 'txt_' + idUnico;
           rich.addEventListener('input', marcarIDevicesTocados_);
-          setTimeout(function () {
-            if (typeof window.inicializarTinyMCEParaBloque_ === 'function') {
-              window.inicializarTinyMCEParaBloque_(rich.id);
-            }
-          }, 60);
         }
       } else {
         cuerpo = document.createElement('textarea');

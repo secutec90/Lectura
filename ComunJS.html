@@ -65,7 +65,7 @@
   }
 
   function modal(opciones) {
-    // opciones: {titulo, mensaje, html, botones: [{texto, clase, valor}], capturar}
+    // opciones: {titulo, mensaje, html, clase, botones: [{texto, clase, valor}], capturar, cerrarFondo, cerrarBtn}
     return new Promise(function (resolve) {
       const fondo = document.createElement('div');
       fondo.className = 'st90-modal-fondo visible';
@@ -75,10 +75,14 @@
           return '<button data-i="' + i + '" class="' + (b.clase || '') + '">' + escaparHtml(b.texto) + '</button>';
         }).join('');
       const cuerpo = opciones.html != null
-        ? '<div>' + opciones.html + '</div>'
-        : '<p>' + escaparHtml(opciones.mensaje || '') + '</p>';
+        ? '<div class="st90-modal-cuerpo">' + opciones.html + '</div>'
+        : '<p class="st90-modal-cuerpo">' + escaparHtml(opciones.mensaje || '') + '</p>';
+      const btnCerrar = opciones.cerrarBtn !== false
+        ? '<button type="button" class="st90-modal-cerrar-x" aria-label="Cerrar ventana">&times;</button>'
+        : '';
       fondo.innerHTML =
         '<div class="st90-modal' + (opciones.clase ? ' ' + opciones.clase : '') + '">' +
+          btnCerrar +
           '<h3>' + escaparHtml(opciones.titulo || '') + '</h3>' +
           cuerpo +
           '<div class="acciones">' + botones + '</div>' +
@@ -91,29 +95,46 @@
           if (inp.select) inp.select();
         }, 30);
       }
+      function cerrarModal_(resultado) {
+        try { if (fondo && fondo.parentNode) fondo.parentNode.removeChild(fondo); } catch (eRem) { fondo.remove(); }
+        resolve(resultado);
+      }
       fondo.addEventListener('click', function (ev) {
-        if (ev.target === fondo && opciones.cerrarFondo) {
-          fondo.remove();
-          resolve(false);
+        if (ev.target === fondo && opciones.cerrarFondo !== false) {
+          cerrarModal_(null);
+          return;
+        }
+        if (ev.target.closest('.st90-modal-cerrar-x')) {
+          cerrarModal_(null);
           return;
         }
         const b = ev.target.closest('button[data-i]');
         if (!b) return;
         const def = listaBotones[Number(b.dataset.i)];
-        let val = def.valor;
-        if (typeof opciones.capturar === 'function') {
-          val = opciones.capturar(fondo, val);
+        let val = def ? def.valor : null;
+        try {
+          if (typeof opciones.capturar === 'function') {
+            val = opciones.capturar(fondo, val);
+          }
+        } catch (eCap) {
+          console.error("Error al capturar datos del modal:", eCap);
+        } finally {
+          cerrarModal_(val);
         }
-        fondo.remove();
-        resolve(val);
       });
-      fondo.addEventListener('keydown', function (ev) {
+      function alPresionarTecla_(ev) {
+        if (ev.key === 'Escape' && opciones.cerrarFondo !== false) {
+          document.removeEventListener('keydown', alPresionarTecla_);
+          cerrarModal_(null);
+          return;
+        }
         if (ev.key !== 'Enter') return;
         if (ev.target && String(ev.target.tagName) === 'TEXTAREA') return;
         ev.preventDefault();
         const aceptar = fondo.querySelector('.acciones button:last-child');
         if (aceptar) aceptar.click();
-      });
+      }
+      document.addEventListener('keydown', alPresionarTecla_);
     });
   }
 

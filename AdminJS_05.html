@@ -220,6 +220,14 @@
       r.onload = function (ev) {
         gsRun('importarHorarioAsc', token, ev.target.result, turno).then(function (res) {
           toast((res && res.mensaje) || 'Horario importado.', 'exito');
+          if (res && res.turno) {
+            if (typeof elegirTurnoHorario_ === 'function') {
+              elegirTurnoHorario_(res.turno);
+            }
+          }
+          if (typeof cargarHorarioMae === 'function') {
+            cargarHorarioMae();
+          }
           cargarContextoAsistencia();
         }).catch(function (e) {
           toast((e && e.message) || String(e), 'error');
@@ -230,6 +238,7 @@
     }
 
     function abrirModalHorarioAsi() {
+      var turnoSel = (typeof turnoHorarioActivo !== 'undefined' && turnoHorarioActivo === 'vespertino') ? 'vespertino' : 'matutino';
       modal({
         titulo: 'Importar horario XML',
         html:
@@ -239,17 +248,18 @@
               '<input type="file" id="xmlHorarioAsi" accept=".xml,text/xml"></div>' +
             '<div class="campo" style="margin:0;"><label for="turnoHorarioAsi">Turno</label>' +
               '<select id="turnoHorarioAsi">' +
-                '<option value="auto">Detectar</option>' +
-                '<option value="matutino">Matutino</option>' +
-                '<option value="vespertino">Vespertino</option>' +
+                '<option value="auto">Detectar turno del archivo</option>' +
+                '<option value="matutino"' + (turnoSel === 'matutino' ? ' selected' : '') + '>☀️ Turno Matutino</option>' +
+                '<option value="vespertino"' + (turnoSel === 'vespertino' ? ' selected' : '') + '>🌙 Turno Vespertino</option>' +
               '</select></div>' +
           '</div>',
         botones: [
           { texto: 'Cancelar', valor: null, clase: 'btn-secundario' },
+          { texto: '🛠️ Editar y Homologar Docentes / Asignaturas', valor: 'homologar', clase: 'btn-secundario' },
           { texto: 'Importar', valor: 'ok' }
         ],
         capturar: function (fondo, val) {
-          if (val === null) return null;
+          if (val === null || val === 'homologar') return val;
           const inp = fondo.querySelector('#xmlHorarioAsi');
           return {
             file: inp && inp.files && inp.files[0],
@@ -257,8 +267,173 @@
           };
         }
       }).then(function (datos) {
+        if (datos === 'homologar') {
+          abrirModalHomologacionHorario();
+          return;
+        }
         if (!datos) return;
         importarHorarioAsi(datos);
+      });
+    }
+
+    function tokenHomologacion_() {
+      if (typeof token !== 'undefined' && token) return token;
+      if (typeof tokenClase !== 'undefined' && tokenClase) return tokenClase;
+      return '';
+    }
+
+    function turnoHomologacion_() {
+      return (typeof turnoHorarioActivo !== 'undefined' && turnoHorarioActivo === 'vespertino') ? 'vespertino' : 'matutino';
+    }
+
+    function listasHomologacion_(res) {
+      var base = res || {};
+      if (base.catalogo && typeof base.catalogo === 'object') {
+        base = Object.assign({}, base, base.catalogo);
+      }
+      return {
+        docentes: base.docentes || base.maestros || [],
+        asignaturas: base.asignaturas || base.materias || []
+      };
+    }
+
+    function filtrarFilasHomologacion_(txt) {
+      var q = String(txt || '').trim().toLowerCase();
+      var filas = document.querySelectorAll('.tabla-homologacion tbody tr');
+      filas.forEach(function (tr) {
+        var textoFila = tr.textContent.toLowerCase();
+        var inputs = tr.querySelectorAll('input');
+        inputs.forEach(function (inp) { textoFila += ' ' + inp.value.toLowerCase(); });
+        tr.style.display = (!q || textoFila.indexOf(q) >= 0) ? '' : 'none';
+      });
+    }
+
+    function htmlTablaHomologacion_(lista, tipo) {
+      if (tipo === 'asignaturas') {
+        var filasAsig = (lista || []).map(function (item) {
+          var original = String((item && (item.original || item.nombre || item.clave)) || '').trim();
+          var oficial = String((item && (item.oficial || item.homologado || item.nombreOficial)) || original).trim();
+          var grado = String((item && item.grado) || '1');
+          var gradoEtq = String((item && item.gradoEtq) || (grado + '°'));
+          var clases = (item && (item.clases != null ? item.clases : item.total));
+          if (clases == null) clases = '';
+          return '<tr>' +
+            '<td style="text-align:center;"><span class="badge-grado badge-grado-' + escaparHtml(grado) + '">' + escaparHtml(gradoEtq) + '</span></td>' +
+            '<td><strong>' + escaparHtml(original) + '</strong></td>' +
+            '<td><input type="text" class="inp-homologa" data-tipo="asignaturas" data-grado="' + escaparHtml(grado) + '" data-original="' + escaparHtml(original) + '" value="' + escaparHtml(oficial) + '" aria-label="Nombre oficial de ' + escaparHtml(original) + ' (' + escaparHtml(gradoEtq) + ')"></td>' +
+            '<td style="text-align:center;"><span class="badge-clases-num">' + escaparHtml(String(clases)) + '</span></td>' +
+          '</tr>';
+        }).join('');
+        if (!filasAsig) return '<p>No hay asignaturas registradas en este turno para homologar.</p>';
+        return '<div class="tabla-homologacion-scroll"><table class="tabla-homologacion"><thead><tr><th style="width:60px;text-align:center;">Grado</th><th>Asignatura en el XML</th><th>Nombre oficial (SEP / NEM)</th><th style="width:70px;text-align:center;">Clases</th></tr></thead><tbody>' + filasAsig + '</tbody></table></div>';
+      }
+
+      var filasDoc = (lista || []).map(function (item) {
+        var original = String((item && (item.original || item.nombre || item.clave)) || '').trim();
+        var oficial = String((item && (item.oficial || item.homologado || item.nombreOficial)) || original).trim();
+        var clases = (item && (item.clases != null ? item.clases : item.total));
+        if (clases == null) clases = '';
+        var detalle = [];
+        if (item && item.asigs && item.asigs.length) detalle.push(item.asigs.slice(0, 3).join(', '));
+        if (item && item.grados && item.grados.length) detalle.push('(' + item.grados.join(' ') + ')');
+        var textoDetalle = detalle.join(' · ');
+        return '<tr>' +
+          '<td><strong>' + escaparHtml(original) + '</strong></td>' +
+          '<td><input type="text" class="inp-homologa" data-tipo="docentes" data-original="' + escaparHtml(original) + '" value="' + escaparHtml(oficial) + '" placeholder="Nombre completo oficial para planeación…" aria-label="Nombre oficial de ' + escaparHtml(original) + '"></td>' +
+          '<td><span class="badge-hint">' + escaparHtml(textoDetalle) + '</span></td>' +
+          '<td style="text-align:center;"><span class="badge-clases-num">' + escaparHtml(String(clases)) + '</span></td>' +
+        '</tr>';
+      }).join('');
+      if (!filasDoc) return '<p>No hay docentes registrados en este turno para homologar.</p>';
+      return '<div class="tabla-homologacion-scroll"><table class="tabla-homologacion"><thead><tr><th>Docente en el XML</th><th>Nombre completo formal (para Planeación)</th><th>Asignaturas / Grados</th><th style="width:70px;text-align:center;">Clases</th></tr></thead><tbody>' + filasDoc + '</tbody></table></div>';
+    }
+
+      function conmutarTabHomologacion_(tab, btn) {
+      var docs = document.getElementById('panelHomologaDocentes');
+      var asigs = document.getElementById('panelHomologaAsignaturas');
+      if (docs) docs.classList.toggle('oculto', tab !== 'docentes');
+      if (asigs) asigs.classList.toggle('oculto', tab !== 'asignaturas');
+      var raiz = (btn && btn.closest) ? btn.closest('.st90-modal') : document.querySelector('.modal-homologacion');
+      if (!raiz) return;
+      raiz.querySelectorAll('.tab-homologa').forEach(function (b) {
+        var on = b.getAttribute('data-tab') === tab;
+        b.classList.toggle('activo', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+
+    function pintarCatalogoHomologacion_(res) {
+      var listas = listasHomologacion_(res);
+      var docs = document.getElementById('panelHomologaDocentes');
+      var asigs = document.getElementById('panelHomologaAsignaturas');
+      if (docs) docs.innerHTML = htmlTablaHomologacion_(listas.docentes, 'docentes');
+      if (asigs) asigs.innerHTML = htmlTablaHomologacion_(listas.asignaturas, 'asignaturas');
+    }
+
+    function leerPayloadHomologacion_(fondo) {
+      var docentes = [];
+      var asignaturas = [];
+      fondo.querySelectorAll('.inp-homologa').forEach(function (inp) {
+        var tipo = inp.getAttribute('data-tipo');
+        var fila = {
+          original: inp.getAttribute('data-original') || '',
+          oficial: String(inp.value || '').trim()
+        };
+        if (tipo === 'asignaturas') {
+          fila.grado = inp.getAttribute('data-grado') || '';
+          asignaturas.push(fila);
+        } else {
+          docentes.push(fila);
+        }
+      });
+      return { turno: turnoHomologacion_(), docentes: docentes, asignaturas: asignaturas };
+    }
+
+    function abrirModalHomologacionHorario() {
+      var turno = turnoHomologacion_();
+      var etiqueta = turno === 'vespertino' ? '🌙 Turno Vespertino' : '☀️ Turno Matutino';
+      modal({
+        titulo: 'Homologar docentes y asignaturas',
+        clase: 'modal-homologacion',
+        cerrarFondo: true,
+        html:
+          '<div id="cajaHomologacionHorario">' +
+            '<p style="margin:0 0 10px;font-size:13px;color:#475569;">Turno activo: <strong>' + etiqueta + '</strong>. Los nombres oficiales actualizan el horario y la planeación institucional.</p>' +
+            '<input type="search" class="homologa-buscador" placeholder="🔍 Filtrar por nombre de docente o asignatura…" oninput="filtrarFilasHomologacion_(this.value)" aria-label="Filtrar">' +
+            '<div class="tabs-homologa" role="tablist" aria-label="Catálogo a homologar">' +
+              '<button type="button" class="tab-homologa activa activo" data-tab="docentes" role="tab" aria-selected="true" onclick="conmutarTabHomologacion_(\'docentes\', this)">Docentes</button>' +
+              '<button type="button" class="tab-homologa" data-tab="asignaturas" role="tab" aria-selected="false" onclick="conmutarTabHomologacion_(\'asignaturas\', this)">Asignaturas por Grado</button>' +
+            '</div>' +
+            '<div id="panelHomologaDocentes" role="tabpanel"><p>Cargando docentes…</p></div>' +
+            '<div id="panelHomologaAsignaturas" class="oculto" role="tabpanel"></div>' +
+          '</div>',
+        botones: [
+          { texto: 'Cerrar', valor: null, clase: 'btn-secundario' },
+          { texto: 'Guardar homologación', valor: 'guardar' }
+        ],
+        capturar: function (fondo, val) {
+          if (val !== 'guardar') return null;
+          return leerPayloadHomologacion_(fondo);
+        }
+      }).then(function (payload) {
+        if (!payload) return;
+        gsRun('guardarHomologacionDocenteAsignatura', tokenHomologacion_(), payload).then(function (res) {
+          toast((res && (res.mensaje || res.error)) || 'Homologación guardada.', (res && res.ok === false) ? 'error' : 'exito');
+          if (typeof cargarHorarioMae === 'function') cargarHorarioMae();
+        }).catch(function (e) {
+          toast((e && e.message) || String(e), 'error');
+        });
+      });
+      gsRun('obtenerCatalogoHomologacionHorario', tokenHomologacion_(), turno).then(function (res) {
+        if (res && res.ok === false) {
+          pintarCatalogoHomologacion_({ docentes: [], asignaturas: [] });
+          toast(res.error || res.mensaje || 'No se pudo leer el catálogo.', 'error');
+          return;
+        }
+        pintarCatalogoHomologacion_(res);
+      }).catch(function (e) {
+        var docs = document.getElementById('panelHomologaDocentes');
+        if (docs) docs.innerHTML = '<p>' + escaparHtml((e && e.message) || String(e)) + '</p>';
       });
     }
 

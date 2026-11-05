@@ -5,8 +5,8 @@
 
 const URL_BASE_DEEPSEEK = "https://api.deepseek.com/chat/completions";
 const NOMBRE_ESCUELA = "Secundaria Técnica 90";
-const VERSION_APP = "v420";
-const BUILD_APP = "build-579";
+const VERSION_APP = "v440";
+const BUILD_APP = "build-602";
 const USUARIO_ADMIN_ASISTENCIA = "admin";
 const URL_SITIO_ALUMNO_DEFAULT = "https://sites.google.com/view/lec90/alumno";
 const URL_SITIO_DOCENTE_DEFAULT = "https://sites.google.com/view/lec90/docente";

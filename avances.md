@@ -2,7 +2,7 @@
 
 **Plataforma:** Sistema Integral de Comprensión Lectora, Planeación Didáctica NEM y Aula Hablada  
 **Fecha de corte:** Noviembre 2026  
-**Última versión desplegada:** `@576` (`v420 · build-579`)  
+**Última versión desplegada:** `@584` (`v430 · build-589`)  
 **URL de producción activa:** [https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin](https://script.google.com/macros/s/AKfycbzPQDTjMqHGpSfBg3KMrDBpxSweOAk2x5adcMLJ4aJHvM2ETGtGI-rm1bz3aDRxj-FAgQ/exec?pagina=admin)
 
 ---
@@ -14,6 +14,61 @@ En las iteraciones recientes del proyecto, la plataforma evolucionó de un siste
 ---
 
 ## Hitos y Desarrollos Recientes
+
+### 37. Gestión Dual de Turnos, Homologación por Grado de Asignaturas y Cierre Resiliente de Modales (@584 · build-589)
+- **Selector de Turno en Ribbon (`#btnClaseTurno`):** Integración homogénea como botón select-overlay (`.ribbon-btn.ribbon-btn-select-wrap`) con iconos dinámicos (☀️ sol / 🌙 luna), selección nativa amigable y recarga reactiva sin desbordamiento.
+- **Protección del Horario Vespertino en Backend:** Eliminación de la condición de reemplazo forzoso `esOficialCompleto` en [ClaseLogica.gs](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ClaseLogica.gs) y [PlaneacionNEM.gs](file:///g:/Mi%20unidad/PROYECTOS/Lectura/PlaneacionNEM.gs), garantizando que las asignaciones importadas del Turno Vespertino se visualicen en pantalla sin sobrescrituras accidentales.
+- **Homologación de Asignaturas por Grado:** Discriminación por `Grado + Asignatura` en [Asistencia.gs](file:///g:/Mi%20unidad/PROYECTOS/Lectura/Asistencia.gs) y [AdminJS_05.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/AdminJS_05.html), permitiendo asignar nombres oficiales diferenciados (ej. Ciencias 1° ➔ Biología, Ciencias 2° ➔ Física, Ciencias 3° ➔ Química) con sugerencias automáticas SEP/NEM.
+- **Nombres Formales de Docentes:** Captura de nombres completos de maestros para los formatos oficiales de planeación con detalle contextual de grados y materias asignadas.
+- **Cierre Seguro de Modales:** Blindaje en [ComunJS.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/ComunJS.html) con bloque `try...finally`, botón de cierre `✕`, tecla `Escape` y cierre por clic exterior, con contenedor scrollable `.tabla-homologacion-scroll` y buscador en vivo.
+
+### 36. Desglose IA Resiliente con Fallback DUA y Limpieza de Toolbar Superior (@582 · build-586)
+- **Desglose IA Garantizado al 100%:** Se implementó `generarDesgloseSesionesDUAFallback_()` en [PlaneacionNEM.gs](file:///g:/Mi%20unidad/PROYECTOS/Lectura/PlaneacionNEM.gs) y se desacopló la obligatoriedad de tener la planeación guardada en base de datos en [AdminPlanJS_04.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/AdminPlanJS_04.html). Si no hay clave de DeepSeek configurada o hay latencia, el botón `✨ Desglosar con IA (40 min DUA)` genera de inmediato la secuencia formativa estructurada para todas las sesiones.
+- **Depuración Visual de Toolbar:** Se eliminó el botón flotante redundante `👁️ Vista Previa Alumno` de la cabecera superior en [AdminPlaneacion.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/AdminPlaneacion.html) y [Clase.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/Clase.html), centralizando toda la vista previa de forma limpia y directa en la Pestaña 4 del stepper.
+
+### 35. Maqueta de Navegador Elegante del Alumno (Estilo Apple Education / Google Classroom) (@581 · build-585)
+- **Marco Institucional `.browser-frame`:** Barra superior oscura `#0f172a` con controles de ventana, membrete de la Secundaria Técnica 90 y URL institucional segura `https://sites.google.com/view/lec90/alumno`.
+- **Hero Banner con Progreso DUA:** Gradiente azul zafiro/noche, pulso live pulsante (`.live-pulse`), campo formativo y barra de porcentaje dinámico (`Paso 1 de 4 · 25%`).
+- **Menú de 4 Momentos Espacioso:** Cuadrícula con separación generosa (12px gap), franja indicadora de 3px en la pestaña activa y microinteracción `:hover`.
+- **Tarjetas Interactivas de Contenido:**
+  - *Momento 1 (Apertura):* Reproductor de audio DUA con ondas sonoras animadas y narración en español de México (Web Speech API). Párrafo espacioso con interlineado 1.8.
+  - *Momento 2 (Desarrollo):* Vinculación conceptual al libro de texto gratuito SEP Fase 6.
+  - *Momento 3 (Actividad):* Reto práctico con buzón drag & drop punteado para fotografía de evidencias o cuaderno.
+  - *Momento 4 (Cierre):* Quiz interactivo con tarjetas de opción A/B/C/D, selección visual verde esmeralda y comprobación con retroalimentación formativa y puntaje.
+  - *Pie de Navegación:* Botones `← Momento Anterior` y `Siguiente Momento →`.
+
+### 34. Stepper Horizontal Guiado en 4 Tabs y Cero Transparencias (@580 · build-584)
+- **Reorganización en 4 Pestañas:** `#editorSesionActiva` estructurado en pestañas horizontales guiadas: `1. Guion Pedagógico` ➔ `2. Asistente Lucy IA` ➔ `3. Constructor eXeLearning` ➔ `4. Vista Previa Alumno`.
+- **Eliminación de Transparencias:** Modal `#modalPreviewAlumno` blindado con overlay oscuro desenfocado y contenedor `.preview-panel` 100% blanco y sólido.
+
+### 33. Flujo Lógico Didáctico (Guion ➔ Lucy ➔ Constructor), Ayuda & Audio DUA y Calificaciones (@579 · build-583)
+- **Secuencia Pedagógica Reordenada:** Paso 1 (Guion de 4 momentos con botones `?` de ayuda contextual y `🔊` de narración DUA individual) ➔ Conector Lucy IA ➔ Paso 2 (Constructor interactivo eXeLearning).
+- **Modelo de Calificaciones Transparente:** Sumatoria ponderada de reactivos evaluables y evidencias prácticas con visualización en `#lblPuntosTotalesSesion`.
+
+### 32. Encuesta/Diagnóstico en Menú de Contenidos y Erradicación Total de Barra Modular (@578 · build-581)
+- **Erradicación Total y Candado contra `.idevice-bar`:**
+  - Se eliminó del marcado de [AdminPlaneacion.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/AdminPlaneacion.html) y [Clase.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/Clase.html) el contenedor `.idevice-bar` (imagen 1).
+  - Cursor implementó `erradicarBarraModularExe_()` y un `MutationObserver` (`vigilarInyeccionBarraModularExe_`) que neutraliza y remueve cualquier intento de inyección residual en el DOM.
+  - DeepSeek blindó las reglas CSS (`.idevice-bar`, `#editorSesionActiva .idevice-bar`, `#lienzoExeActivo .idevice-bar` con `display: none !important;`) y evitó el hueco fantasma con `#contenedorIDevicesDinamicos:empty { display: none; }`.
+- **Integración de `📊 Encuesta / Diagnóstico` en Menú Lateral (imagen 2):**
+  - Se integró la píldora en la sección colapsable *Evaluación y seguimiento* del menú acordeón lateral de "Contenidos de Aprendizaje".
+  - Al pulsar sobre la píldora, se dispara `insertariDeviceSesion_('encuesta')`, conectando el bloque interactivo con `completarIDeviceEncuesta_()`.
+  - DeepSeek dotó a la píldora de acento verde esmeralda (`#16a34a`), microinteracción `:hover` con traslación sutil `translateX(3px)` y animación ecualizadora de barras estadísticas.
+- **Orquestación Multi-Agente:** Cursor (DOM y observador), DeepSeek (CSS y microinteracciones) y Antigravity (auditoría, manifiesto AST 0 errores e integración de producción).
+
+### 31. Panel de Inicio Limpio en Entorno de Autor y Asistente IA de Secuencia Didáctica en 4 Momentos (@577 · build-580)
+- **Erradicación de la Barra Redundante e Inicio Limpio del Lienzo:**
+  - Se eliminó del canvas de trabajo la barra `.idevice-bar` ("iDevices Modulares Opcional") con botones obsoletos que generaba ruido visual en la interfaz.
+  - El espacio de trabajo inicia completamente despejado y pulcro, mostrando exclusivamente la barra rápida contextual (`quick-ribbon`), la cabecera de la página activa, el contador dinámico de bloques y el contenedor de tarjetas.
+- **Asistente Pedagógico IA de Secuencia y Arquitectura de Clase (Lucy ST90):**
+  - Se diseñó e integró en el lienzo un panel asistente (`#panelAsistenteSecuenciaIA`) contextualizado a la planeación previa del docente (`planTitulo`, `planCampoFormativo`, `planAsignatura`, `planPDA`, `planProposito` y los 4 momentos sintéticos `sesApertura`, `sesDesarrollo`, `sesActividad`, `sesCierre`).
+  - El asistente presenta al profesor la secuencia didáctica pedagógica recomendada en 4 etapas ordenadas:
+    1. **Apertura / Saberes Previos (5 min):** Lectura guiada DUA con síntesis oral para motivar y activar conocimientos previos.
+    2. **Desarrollo / Explicación (10 min):** Objetivos formativos y conceptos estructurados (adaptado a Listening en Inglés o Hoja de Cálculo en Tecnología).
+    3. **Actividad / Producción Situada (20 min):** Ficha de trabajo descargable o desafío práctico en equipo articulado al PDA.
+    4. **Cierre / Evaluación Formativa (5 min):** Quiz interactivo con retroalimentación inmediata y autoevaluación.
+  - **Construcción en 1 Clic (`construirSecuenciaCompletaIA_`):** Permite al docente generar instantáneamente los 4 bloques estructurados y precargados a partir de su planeación, o bien añadirlos paso a paso con los botones individuales `[+ Añadir]`.
+  - **Botón de Cabecera `✨ Asistente IA` (`#btnAsistenteSecuenciaIA`):** Permite alternar y consultar la sugerencia didáctica en cualquier momento, aun cuando la página ya contenga bloques agregados.
 
 ### 30. Entorno de Autor eXeLearning 3.0, Contenidos Curriculares Especializados y Despliegue Multi-Agente (@576 · build-579)
 - **Transformación al Entorno de Autor eXeLearning 3.0:**

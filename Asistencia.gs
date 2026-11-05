@@ -1707,6 +1707,261 @@ function importarHorarioAsc(token, xmlTexto, turnoForzado) {
   };
 }
 
+/**
+ * Obtiene el catálogo de docentes y asignaturas agrupados con su conteo de clases
+ * para la interfaz de homologación y corrección de nombres del horario.
+ * Soporta discriminación de asignaturas por grado (ej. Ciencias 1° Biología, 2° Física, 3° Química)
+ * y nombres formales completos de docentes para la planeación didáctica.
+ */
+function obtenerCatalogoHomologacionHorario(token, turno) {
+  const ses = sesionAsistencia_(token);
+  if (!ses) throw new Error("Sesión inválida o expirada.");
+  const turnoNorm = turno ? turnoDe_(turno) : "";
+
+  let filas = _leerFilas_("Horarios");
+  if ((!filas || !filas.length) && typeof obtenerFilasHorarioOficialAsc_ === "function") {
+    const oficiales = obtenerFilasHorarioOficialAsc_();
+    const enc = ENCABEZADOS.Horarios;
+    filas = oficiales.map(function (row) {
+      const obj = {};
+      enc.forEach(function (h, idx) {
+        obj[h] = row[idx];
+        obj[h.toLowerCase()] = row[idx];
+      });
+      return obj;
+    });
+  }
+
+  const mapaDoc = {};
+  const mapaAsig = {};
+
+  function sugerirNombreOficialAsignatura_(grado, original) {
+    const orig = String(original || "").trim();
+    const gr = String(grado || "").trim();
+    const u = orig.toUpperCase();
+    if (u.indexOf("CIEN") >= 0) {
+      if (gr === "1") return "Ciencias y Tecnología (Biología)";
+      if (gr === "2") return "Ciencias y Tecnología (Física)";
+      if (gr === "3") return "Ciencias y Tecnología (Química)";
+      return "Ciencias y Tecnología";
+    }
+    if (u.indexOf("ESPA") >= 0 || u.indexOf("LENGUA") >= 0) {
+      return "Lengua Materna (Español)";
+    }
+    if (u.indexOf("INGL") >= 0) {
+      return "Lengua Extranjera (Inglés)";
+    }
+    if (u.indexOf("MATE") >= 0) {
+      return "Matemáticas";
+    }
+    if (u.indexOf("HIST") >= 0) {
+      return "Historia";
+    }
+    if (u.indexOf("GEOG") >= 0) {
+      return "Geografía";
+    }
+    if (u.indexOf("FCE") >= 0 || u.indexOf("CIVIC") >= 0 || u.indexOf("ETICA") >= 0) {
+      return "Formación Cívica y Ética";
+    }
+    if (u.indexOf("ARTE") >= 0) {
+      return "Artes";
+    }
+    if (u.indexOf("FISIC") >= 0 && u.indexOf("ED") >= 0) {
+      return "Educación Física";
+    }
+    if (u.indexOf("TECN") >= 0 || u.indexOf("TALLER") >= 0) {
+      return "Tecnología";
+    }
+    if (u.indexOf("TUTO") >= 0 || u.indexOf("SOCIO") >= 0) {
+      return "Tutoría y Educación Socioemocional";
+    }
+    return orig;
+  }
+
+  filas.forEach(function (f) {
+    const tFila = turnoDe_(f["Turno"] || f["turno"] || "");
+    if (turnoNorm && tFila && tFila !== turnoNorm) return;
+
+    const gr = String(f["Grado"] || f["grado"] || "").trim() || "1";
+    const doc = String(f["Maestro"] || f["maestro"] || "").trim();
+    const asig = String(f["Asignatura"] || f["asignatura"] || "").trim();
+
+    if (doc) {
+      if (!mapaDoc[doc]) {
+        mapaDoc[doc] = { original: doc, oficial: doc, clases: 0, grados: {}, asigs: {} };
+      }
+      mapaDoc[doc].clases++;
+      if (gr) mapaDoc[doc].grados[gr + "°"] = true;
+      if (asig) mapaDoc[doc].asigs[asig] = true;
+    }
+
+    if (asig) {
+      const kAsig = gr + "|" + asig;
+      if (!mapaAsig[kAsig]) {
+        const sugerido = sugerirNombreOficialAsignatura_(gr, asig);
+        mapaAsig[kAsig] = {
+          grado: gr,
+          gradoEtq: gr + "°",
+          original: asig,
+          oficial: sugerido || asig,
+          clases: 0
+        };
+      }
+      mapaAsig[kAsig].clases++;
+    }
+  });
+
+  const docentes = Object.keys(mapaDoc).sort(function (a, b) {
+    return a.localeCompare(b, "es");
+  }).map(function (k) {
+    const d = mapaDoc[k];
+    return {
+      original: d.original,
+      oficial: d.oficial,
+      clases: d.clases,
+      grados: Object.keys(d.grados).sort(),
+      asigs: Object.keys(d.asigs).sort()
+    };
+  });
+
+  const asignaturas = Object.keys(mapaAsig).sort(function (a, b) {
+    const ga = mapaAsig[a].grado || "";
+    const gb = mapaAsig[b].grado || "";
+    if (ga !== gb) return ga.localeCompare(gb);
+    return mapaAsig[a].original.localeCompare(mapaAsig[b].original, "es");
+  }).map(function (k) { return mapaAsig[k]; });
+
+  return {
+    ok: true,
+    turno: turnoNorm || "matutino",
+    docentes: docentes,
+    asignaturas: asignaturas
+  };
+}
+
+/**
+ * Guarda en lote las homologaciones de docentes y asignaturas en la hoja Horarios.
+ * Permite actualizar asignaturas por grado y nombres formales completos de docentes.
+ */
+function guardarHomologacionDocenteAsignatura(token, payload) {
+  const ses = sesionAsistencia_(token);
+  if (ses.rol !== "admin" && ses.rol !== "maestro") {
+    throw new Error("No tienes permisos para modificar el catálogo del horario.");
+  }
+  if (!payload || typeof payload !== "object") {
+    throw new Error("Payload de homologación inválido.");
+  }
+
+  const turnoNorm = payload.turno ? turnoDe_(payload.turno) : "";
+  const docs = Array.isArray(payload.docentes) ? payload.docentes : [];
+  const asigs = Array.isArray(payload.asignaturas) ? payload.asignaturas : [];
+
+  const mapaDocCambios = {};
+  docs.forEach(function (d) {
+    if (d && d.original && d.oficial && String(d.original).trim() !== String(d.oficial).trim()) {
+      mapaDocCambios[String(d.original).trim()] = String(d.oficial).trim();
+    }
+  });
+
+  const mapaAsigPorGrado = {};
+  const mapaAsigCambios = {};
+  asigs.forEach(function (a) {
+    if (a && a.original && a.oficial) {
+      const orig = String(a.original).trim();
+      const ofi = String(a.oficial).trim();
+      const gr = String(a.grado || "").trim();
+      if (orig !== ofi) {
+        if (gr) {
+          mapaAsigPorGrado[gr + "|" + orig] = ofi;
+        }
+        mapaAsigCambios[orig] = ofi;
+      }
+    }
+  });
+
+  const numCambiosDoc = Object.keys(mapaDocCambios).length;
+  const numCambiosAsig = Object.keys(mapaAsigPorGrado).length || Object.keys(mapaAsigCambios).length;
+  if (!numCambiosDoc && !numCambiosAsig) {
+    return { ok: true, mensaje: "No se detectaron cambios de nombres para guardar." };
+  }
+
+  _verificarYCrearPestanas_();
+  const libro = _obtenerLibro_();
+  const hoja = libro.getSheetByName("Horarios");
+  if (!hoja || hoja.getLastRow() < 2) {
+    return { ok: true, mensaje: "No hay filas en la hoja Horarios." };
+  }
+
+  const datos = hoja.getDataRange().getValues();
+  const enc = datos[0];
+  const idxTurno = enc.indexOf("Turno");
+  const idxGrado = enc.indexOf("Grado");
+  const idxDoc = enc.indexOf("Maestro");
+  const idxAsig = enc.indexOf("Asignatura");
+
+  let filasModificadas = 0;
+  for (let r = 1; r < datos.length; r++) {
+    const fila = datos[r];
+    const tFila = idxTurno >= 0 ? turnoDe_(fila[idxTurno]) : "";
+    if (turnoNorm && tFila && tFila !== turnoNorm) continue;
+    const grFila = idxGrado >= 0 ? String(fila[idxGrado] || "").trim() : "";
+
+    let cambio = false;
+    if (idxDoc >= 0) {
+      const docOrig = String(fila[idxDoc] || "").trim();
+      if (mapaDocCambios[docOrig]) {
+        fila[idxDoc] = mapaDocCambios[docOrig];
+        cambio = true;
+      }
+    }
+    if (idxAsig >= 0) {
+      const asigOrig = String(fila[idxAsig] || "").trim();
+      const kGr = grFila + "|" + asigOrig;
+      if (mapaAsigPorGrado[kGr]) {
+        fila[idxAsig] = mapaAsigPorGrado[kGr];
+        cambio = true;
+      } else if (mapaAsigCambios[asigOrig]) {
+        fila[idxAsig] = mapaAsigCambios[asigOrig];
+        cambio = true;
+      }
+    }
+    if (cambio) filasModificadas++;
+  }
+
+  if (filasModificadas > 0) {
+    hoja.getRange(1, 1, datos.length, enc.length).setValues(datos);
+    SpreadsheetApp.flush();
+  }
+
+  // Sincronizar nombres completos en MaestrosClase si existe
+  if (numCambiosDoc > 0) {
+    try {
+      const hojaMae = libro.getSheetByName("MaestrosClase");
+      if (hojaMae && hojaMae.getLastRow() > 1) {
+        const dMae = hojaMae.getDataRange().getValues();
+        let modMae = false;
+        for (let m = 1; m < dMae.length; m++) {
+          const nomActual = String(dMae[m][1] || "").trim();
+          if (mapaDocCambios[nomActual]) {
+            dMae[m][1] = mapaDocCambios[nomActual];
+            modMae = true;
+          }
+        }
+        if (modMae) {
+          hojaMae.getRange(1, 1, dMae.length, dMae[0].length).setValues(dMae);
+          SpreadsheetApp.flush();
+        }
+      }
+    } catch (eMae) {}
+  }
+
+  return {
+    ok: true,
+    modificadas: filasModificadas,
+    mensaje: "Homologación completada: " + filasModificadas + " clases actualizadas en el horario."
+  };
+}
+
 function catalogoPrefectasDemo_() {
   return [
     { id: "P-LAURA", nombre: "Laura Méndez", usuario: "laura", grupos: ["1a", "1b", "1c"] },

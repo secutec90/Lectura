@@ -1170,14 +1170,14 @@ function asegurarDrawerAsistente_() {
     btn.id = 'btnAsistenteFlotanteIA';
     btn.className = 'btn-asistente-flotante';
     btn.setAttribute('aria-controls', 'drawerAsistenteIA');
-    btn.setAttribute('aria-label', 'Abrir a Lucy, asesora pedagógica de planeación');
-    btn.setAttribute('title', 'Lucy · Asesora Pedagógica NEM');
+    btn.setAttribute('aria-label', 'Abrir a Asistente pedagógico de planeación');
+    btn.setAttribute('title', 'Asistente Pedagógico NEM');
     btn.setAttribute('aria-expanded', 'false');
-    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Lucy · Asesora Pedagógica" />';
+    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Asistente Pedagógico" />';
     document.body.appendChild(btn);
   } else if (!btn.querySelector('img')) {
-    btn.setAttribute('title', 'Lucy · Asesora Pedagógica NEM');
-    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Lucy · Asesora Pedagógica" />';
+    btn.setAttribute('title', 'Asistente Pedagógico NEM');
+    btn.innerHTML = '<img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-btn-avatar-img" alt="Asistente Pedagógico" />';
   }
 
   var drawer = nodo_('drawerAsistenteIA');
@@ -1190,15 +1190,15 @@ function asegurarDrawerAsistente_() {
 
   drawer.innerHTML =
     '<div class="ia-drawer-cabecera">' +
-      '<div class="ia-avatar"><img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-avatar-img" alt="Lucy · Asesora Pedagógica ST90" /></div>' +
+      '<div class="ia-avatar"><img src="' + AVATAR_ASESOR_NEM_B64_ + '" class="ia-avatar-img" alt="Asistente Pedagógico ST90" /></div>' +
       '<div class="ia-titular">' +
-        '<h3 class="ia-drawer-titulo">Lucy · Asesora Pedagógica NEM</h3>' +
+        '<h3 class="ia-drawer-titulo">Asistente Pedagógico NEM</h3>' +
       '</div>' +
       '<span class="ia-chip-contexto" id="chipContextoAsistente">📍 Planeación NEM</span>' +
       '<button type="button" class="ia-drawer-cerrar" id="btnCerrarDrawerIA" data-cerrar-drawer-ia="1" aria-label="Cerrar asistente">×</button>' +
     '</div>' +
     '<div class="ia-cuerpo" id="chatAsistenteCuerpo" aria-live="polite">' +
-      '<div class="ia-vacio">👋 ¡Hola! Soy <strong>Lucy</strong>, tu asesora pedagógica de planeación didáctica NEM.<br>Puedo sugerirte títulos contextualizados, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
+      '<div class="ia-vacio">👋 ¡Hola! Soy tu <strong>Asistente Pedagógico NEM</strong> para la planeación didáctica.<br>Puedo sugerirte títulos contextualizados, redactar propósitos o alinear tu clase al programa SEP del trimestre.</div>' +
     '</div>' +
     '<div class="ia-sugerencias">' +
       '<button type="button" class="ia-chip" data-sugerencia-ia="💡 Dame 3 ideas para mi grado">💡 Dame 3 ideas para mi grado</button>' +
@@ -1206,7 +1206,7 @@ function asegurarDrawerAsistente_() {
       '<button type="button" class="ia-chip" data-sugerencia-ia="✨ Redactar ejemplo viable">✨ Redactar ejemplo viable</button>' +
     '</div>' +
     '<div class="ia-composer">' +
-      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Pregúntale a Lucy tu consulta pedagógica..." aria-label="Mensaje para la asesora pedagógica Lucy"></textarea>' +
+      '<textarea id="txtMensajeAsistente" rows="1" placeholder="Escribe tu consulta pedagógica para la clase..." aria-label="Mensaje para la asesora pedagógica Lucy"></textarea>' +
       '<button type="button" id="btnMicrofonoIA" class="btn-microfono-ia" title="Dictar por voz" aria-label="Dictar consulta por voz">🎙️</button>' +
       '<button type="button" id="btnEnviarAsistenteIA" class="nem-btn-accion nem-btn-primario" title="Enviar consulta">Enviar</button>' +
     '</div>';
@@ -1277,7 +1277,7 @@ function enviarMensajeAsistente_(textoForzado) {
   enviandoAsistente_ = true;
   var btn = nodo_('btnEnviarAsistenteIA');
   if (btn) btn.disabled = true;
-  var espera = pintarBurbuja_('msg-ia', '⏳ Lucy está analizando los planes SEP para ' + meta.asignatura + ' ' + meta.grado + '° (T' + meta.trimestre + ')…');
+  var espera = pintarBurbuja_('msg-ia', '⏳ Analizando los planes SEP para ' + meta.asignatura + ' ' + meta.grado + '° (T' + meta.trimestre + ')…');
   gsRun('consultarAsistenteIAPaso', tk, payloadContexto, texto).then(function (r) {
     if (espera && espera.parentNode) espera.parentNode.removeChild(espera);
     if (r && r.ok === false) {
@@ -1742,17 +1742,27 @@ function asegurarPreviewAlumno_() {
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.setAttribute('aria-label', 'Vista previa del alumno');
-  if (!modal.querySelector('[data-vista-alumno]')) {
-    var cuerpo = document.createElement('div');
-    cuerpo.setAttribute('data-vista-alumno', '1');
-    modal.appendChild(cuerpo);
-  }
-  if (!modal.querySelector('[data-cerrar-preview]')) {
+  if (!modal.querySelector('.preview-panel')) {
+    vaciarNodo_(modal);
+    var panel = document.createElement('div');
+    panel.className = 'preview-panel';
+    panel.style.background = '#ffffff';
+    var marco = document.createElement('div');
+    marco.className = 'preview-mockup-browser';
+    marco.innerHTML = '<span class="preview-dot"></span><span class="preview-dot"></span><span class="preview-dot"></span><span class="preview-url">https://sites.google.com/view/lec90/alumno</span>';
     var cerrar = document.createElement('button');
     cerrar.type = 'button';
+    cerrar.className = 'preview-cerrar';
     cerrar.setAttribute('data-cerrar-preview', '1');
-    cerrar.textContent = 'Cerrar';
-    modal.appendChild(cerrar);
+    cerrar.setAttribute('aria-label', 'Cerrar vista previa');
+    cerrar.textContent = '✕';
+    marco.appendChild(cerrar);
+    var cuerpo = document.createElement('div');
+    cuerpo.className = 'preview-cuerpo-web';
+    cuerpo.setAttribute('data-vista-alumno', '1');
+    panel.appendChild(marco);
+    panel.appendChild(cuerpo);
+    modal.appendChild(panel);
   }
   return modal;
 }
@@ -1762,45 +1772,1334 @@ function textoMomento_(id, alias) {
   return el ? String(el.value || '').trim() : '';
 }
 
-function abrirVistaPreviaAlumno_() {
-  var modal = asegurarPreviewAlumno_();
-  var cuerpo = modal.querySelector('[data-vista-alumno]');
-  vaciarNodo_(cuerpo);
-  var momentos = [
-    ['sesApertura', 'planApertura', 'Inicio'],
-    ['sesDesarrollo', 'planDesarrollo', 'Desarrollo'],
-    ['sesActividad', 'planActividad', 'Actividad'],
-    ['sesCierre', 'planCierre', 'Cierre']
-  ];
-  momentos.forEach(function (def) {
-    var sec = document.createElement('section');
-    var h = document.createElement('h3');
-    h.textContent = def[2];
-    var p = document.createElement('p');
-    p.textContent = textoMomento_(def[0], def[1]) || 'Sin texto en este momento.';
-    sec.appendChild(h);
-    sec.appendChild(p);
-    cuerpo.appendChild(sec);
-  });
-  var cont = nodo_('contenedorIDevicesDinamicos');
+function reproducirVozMomento_(idMomento, btn) {
+  var el = document.getElementById(idMomento);
+  var texto = el ? String(el.value || '').trim() : '';
+  if (!texto) {
+    avisar_('Escribe este momento para escucharlo en voz alta.', 'info');
+    return;
+  }
+  narrarTextoNEM_(texto, btn || null);
+}
+
+var AYUDA_POR_MOMENTO_ = {
+  1: {
+    titulo: '1. Apertura · Saberes previos',
+    proposito: 'Activa lo que el grupo ya sabe y plantea un detonador breve antes de explicar el tema.',
+    comoLlenar: 'Escribe una pregunta, un reto o una escena de 5 minutos. Evita empezar con la definición.',
+    ejemplo: '¿Qué cruces de la colonia se sienten inseguros al salir de la escuela, y por qué?'
+  },
+  2: {
+    titulo: '2. Desarrollo · Conceptos clave y Libro SEP',
+    proposito: 'Explica los conceptos centrales y ancla la explicación en las páginas del libro de texto.',
+    comoLlenar: 'Nombra el concepto, la página SEP y un ejemplo situado en la comunidad del grupo.',
+    ejemplo: 'Fracción como parte de un entero. Libro SEP, págs. 46-48: repartir un trayecto de 2 km.'
+  },
+  3: {
+    titulo: '3. Actividad · Producción situada',
+    proposito: 'El alumno produce una evidencia concreta, solo o en equipo, ligada al problema de la comunidad.',
+    comoLlenar: 'Indica el producto, los pasos, el tiempo y cómo se entrega.',
+    ejemplo: 'En equipos, elaboran un croquis del cruce y proponen una mejora. Lo entregan en el buzón de la actividad.'
+  },
+  4: {
+    titulo: '4. Cierre · Metacognición',
+    proposito: 'El grupo reconoce qué aprendió, qué le faltó y cómo lo usará fuera del aula.',
+    comoLlenar: 'Cierra con una pregunta de reflexión y la forma de comprobar la respuesta.',
+    ejemplo: '¿Qué cambiarías mañana en tu camino a la escuela con lo que trabajamos hoy?'
+  }
+};
+
+function abrirAyudaMomento_(numMomento, disparador) {
+  var d = AYUDA_POR_MOMENTO_[Number(numMomento) || 1] || AYUDA_POR_MOMENTO_[1];
+  if (disparador) ultimoDisparadorAyuda_ = disparador;
+  abrirAyudaPedagogica(d);
+}
+
+function calcularPuntosTotalesSesion_() {
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  var puntosQuiz = 0;
+  var puntosActividad = 0;
+  var pondQuiz = 1;
+  var pondActividad = 1;
+  var hayPondQuiz = false;
+  var hayPondAct = false;
   if (cont) {
     cont.querySelectorAll('.idevice-card').forEach(function (card) {
+      if (card.style.display === 'none') return;
       var tipo = card.getAttribute('data-tipo') || '';
-      var tit = card.querySelector('[data-campo="titulo"]');
-      var cue = card.querySelector('[data-campo="cuerpo"]');
-      cuerpo.appendChild(bloqueSoloLectura_(
-        tipo,
-        tit ? tit.value : '',
-        cue ? cue.value : '',
-        card.getAttribute('data-url') || ''
-      ));
+      if (tipo === 'quiz_evaluativo' || tipo === 'pregunta') {
+        card.querySelectorAll('.inp-puntos-quiz, .quiz-puntos-input').forEach(function (inp) {
+          puntosQuiz += Number(inp.value) || 0;
+        });
+        var pq = card.querySelector('.inp-ponderacion-quiz');
+        if (pq && !hayPondQuiz) { pondQuiz = Number(pq.value) || 1; hayPondQuiz = true; }
+      }
+      if (tipo === 'reto' || tipo === 'reto_ciencias' || tipo === 'fichero' || tipo === 'encuesta') {
+        card.querySelectorAll('.inp-puntos-actividad').forEach(function (inp) {
+          puntosActividad += Number(inp.value) || 0;
+        });
+        var pa = card.querySelector('.inp-ponderacion-actividad');
+        if (pa && !hayPondAct) { pondActividad = Number(pa.value) || 1; hayPondAct = true; }
+      }
+      if (tipo === 'encuesta') {
+        var modo = (card.querySelector('.sel-modo-encuesta-idevice') || {}).value;
+        if (modo === 'actividad_activa') {
+          var pondEnc = Number((card.querySelector('.inp-ponderacion-encuesta') || {}).value || 0);
+          if (!puntosActividad && pondEnc) puntosActividad = pondEnc;
+          if (!hayPondAct && pondEnc) { pondActividad = 1; }
+        }
+      }
     });
   }
+  var total = (puntosQuiz * pondQuiz) + (puntosActividad * pondActividad);
+  var resumen = {
+    puntosQuiz: puntosQuiz,
+    ponderacionQuiz: pondQuiz,
+    puntosActividad: puntosActividad,
+    ponderacionActividad: pondActividad,
+    total: total
+  };
+  window._puntosSesion_ = resumen;
+  var lbl = document.getElementById('lblPuntosTotalesSesion');
+  if (lbl) lbl.textContent = 'Puntos de la sesión: ' + total;
+  return resumen;
+}
+
+function irAPasoSesion_(numPaso) {
+  var n = Math.max(1, Math.min(4, parseInt(numPaso, 10) || 1));
+  window._pasoSesionActivo_ = n;
+  for (var i = 1; i <= 4; i++) {
+    var tab = document.getElementById('tabPasoSesion_' + i);
+    var panel = document.getElementById('panelPasoSesion_' + i);
+    var on = i === n;
+    if (tab) {
+      tab.classList.toggle('activo', on);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    }
+    if (panel) {
+      panel.classList.toggle('activo', on);
+      panel.classList.toggle('oculto', !on);
+      panel.hidden = !on;
+    }
+  }
+  if (n === 2) renderAsistenteSecuenciaIA_();
+  if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+  if (n === 4) {
+    pintarVistaPreviaIntegrada_();
+    aplicarColorFondoPreview_();
+  }
+}
+
+function marcoPreview_(el) {
+  if (el && el.closest) {
+    var propio = el.closest('.browser-frame');
+    if (propio) return propio;
+  }
+  return document.querySelector('.browser-frame');
+}
+
+function nodoPreview_(tag, clase, texto) {
+  var n = document.createElement(tag);
+  if (clase) n.className = clase;
+  if (texto != null) n.textContent = texto;
+  return n;
+}
+
+function valorCampoPreview_(id, defecto) {
+  var el = document.getElementById(id);
+  var texto = el ? String(el.value || '').trim() : '';
+  return texto || defecto || '';
+}
+
+function mostrarMomentoPreview_(num, disparador) {
+  var n = Math.max(1, Math.min(4, parseInt(num, 10) || 1));
+  var marco = marcoPreview_(disparador);
+  if (!marco) return;
+  if (marco._audioPreview_ && window.speechSynthesis) window.speechSynthesis.cancel();
+  marco._audioPreview_ = false;
+  marco._momentoPreview_ = n;
+  var nombres = ['Apertura', 'Desarrollo', 'Actividad', 'Cierre'];
+  var porcentajes = ['25%', '50%', '75%', '100%'];
+  marco.querySelectorAll('.moment-tab').forEach(function (tab, i) {
+    tab.classList.toggle('active', i === n - 1);
+  });
+  marco.querySelectorAll('.moment-panel').forEach(function (panel) {
+    panel.classList.toggle('active', String(panel.getAttribute('data-momento')) === String(n));
+  });
+  var fill = marco.querySelector('.session-progress-fill');
+  var text = marco.querySelector('.session-progress-text');
+  if (fill) fill.style.width = porcentajes[n - 1];
+  if (text) text.textContent = 'Paso ' + n + ' de 4 · ' + nombres[n - 1] + ' (' + porcentajes[n - 1] + ')';
+  var prev = marco.querySelector('.btn-footer-prev');
+  var next = marco.querySelector('.btn-footer-next');
+  var play = marco.querySelector('.btn-play-dua');
+  var status = marco.querySelector('.player-status');
+  if (play) play.textContent = '▶';
+  if (status) status.textContent = 'Voz guiada en español de México · Pulsa reproducir';
+  if (prev) prev.style.visibility = n === 1 ? 'hidden' : 'visible';
+  if (next) next.textContent = n === 4 ? '🎉 Finalizar Clase' : ('Siguiente: ' + nombres[n] + ' →');
+}
+
+function cambiarMomentoPreview_(delta, btn) {
+  var marco = marcoPreview_(btn);
+  var actual = (marco && marco._momentoPreview_) || 1;
+  var nuevo = actual + delta;
+  if (nuevo >= 1 && nuevo <= 4) mostrarMomentoPreview_(nuevo, btn);
+  else if (nuevo > 4) avisar_('Completaste los cuatro momentos de la sesión.', 'ok');
+}
+
+function conmutarMomentoPreview_(num, btn) {
+  mostrarMomentoPreview_(num, btn);
+}
+
+function toggleAudioDuaPreview_(btn) {
+  var marco = marcoPreview_(btn);
+  if (!marco || !window.speechSynthesis) {
+    avisar_('Este navegador no tiene síntesis de voz.', 'info');
+    return;
+  }
+  var status = marco.querySelector('.player-status');
+  if (marco._audioPreview_) {
+    marco._audioPreview_ = false;
+    if (btn) btn.textContent = '▶';
+    if (status) status.textContent = 'Audio en pausa · Pulsa para reanudar';
+    window.speechSynthesis.cancel();
+    return;
+  }
+  var paso = marco.querySelector('.moment-panel.active .reading-passage') || marco.querySelector('.reading-passage');
+  var texto = paso ? String(paso.textContent || '').replace(/\s+/g, ' ').trim() : '';
+  if (!texto) {
+    avisar_('Escribe este momento para escucharlo en voz alta.', 'info');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  marco._audioPreview_ = true;
+  if (btn) btn.textContent = '⏸';
+  if (status) status.textContent = 'Reproduciendo narración en voz alta con sintetizador DUA...';
+  var utter = new SpeechSynthesisUtterance(texto);
+  utter.lang = 'es-MX';
+  var voz = (typeof elegirVozFemeninaEspanol_ === 'function') ? elegirVozFemeninaEspanol_() : null;
+  if (voz) {
+    utter.voice = voz;
+    if (voz.lang) utter.lang = voz.lang;
+  }
+  utter.onend = function () {
+    marco._audioPreview_ = false;
+    if (btn) btn.textContent = '▶';
+    if (status) status.textContent = 'Lectura finalizada · Pulsa para repetir';
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+function leerTextoVozPreview_(btn) {
+  toggleAudioDuaPreview_(btn);
+}
+
+function seleccionarOpcionQuizPreview_(opcionEl, esCorrecta) {
+  var marco = marcoPreview_(opcionEl);
+  if (!marco || !opcionEl) return;
+  marco.querySelectorAll('.quiz-option').forEach(function (el) { el.classList.remove('selected'); });
+  opcionEl.classList.add('selected');
+  marco._quizElegida_ = true;
+  marco._quizCorrecta_ = !!esCorrecta;
+  marco._quizYaSumado_ = false;
+}
+
+function verificarQuizPreview_(btn) {
+  var marco = marcoPreview_(btn);
+  if (!marco) return;
+  var feedback = marco.querySelector('.quiz-feedback');
+  if (!feedback) return;
+  feedback.style.display = 'block';
+  if (!marco._quizElegida_) {
+    feedback.className = 'quiz-feedback';
+    feedback.textContent = 'Selecciona una opción antes de comprobar.';
+    return;
+  }
+  var puntos = Number(marco._puntosQuiz_) || 4;
+  if (marco._quizCorrecta_) {
+    feedback.className = 'quiz-feedback success';
+    feedback.textContent = 'Excelente respuesta. Sumaste ' + puntos + ' puntos formativos.';
+    if (!marco._quizYaSumado_) {
+      window._puntosFormativosPreview_ = (window._puntosFormativosPreview_ || 0) + puntos;
+      marco._quizYaSumado_ = true;
+    }
+  } else {
+    feedback.className = 'quiz-feedback';
+    feedback.textContent = 'Aún no es la correcta. Revisa el cierre de la clase y vuelve a intentar.';
+  }
+}
+
+function autocalificarQuizPreview_(btn) {
+  verificarQuizPreview_(btn);
+}
+
+function simularCargaEvidenciaPreview_(zona) {
+  var marco = marcoPreview_(zona);
+  var input = marco && marco.querySelector('.inp-evidencia-preview');
+  if (input) input.click();
+}
+
+function marcarEvidenciaPreview_(input) {
+  var marco = marcoPreview_(input);
+  var txt = marco && marco.querySelector('.dropzone-subtitle');
+  var nombre = input && input.files && input.files[0] ? input.files[0].name : '';
+  if (!txt) return;
+  txt.textContent = nombre ? ('Archivo seleccionado: ' + nombre + ' · Listo para enviar') : 'Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)';
+}
+
+function momentoDeBloquePreview_(tipo) {
+  if (tipo === 'lectura' || tipo === 'texto_dua' || tipo === 'video' || tipo === 'video_interactivo') return 1;
+  if (tipo === 'objetivos' || tipo === 'listening' || tipo === 'galeria' || tipo === 'pronunciacion' || tipo === 'flashcards') return 2;
+  if (tipo === 'quiz_evaluativo' || tipo === 'pregunta' || tipo === 'encuesta' || tipo === 'vf' || tipo === 'huecos') return 4;
+  return 3;
+}
+
+function tarjetaPreviewBloque_(card) {
+  var tipo = card.getAttribute('data-tipo') || '';
+  var tit = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+  var cue = card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo');
+  var tituloTexto = tit ? (tit.value || textoPlanoCampoBloque_(tit)) : etiquetaAlumno_(tipo);
+  var cuerpoTexto = textoPlanoCampoBloque_(cue);
+
+  var iconMap = {
+    lectura: '🎧', texto_dua: '🎧', video: '🎬', video_interactivo: '▶️',
+    objetivos: '🎯', listening: '🎵', galeria: '🖼️', pronunciacion: '🗣️', flashcards: '🗂️',
+    reto: '✍️', reto_ciencias: '🔬', fichero: '📁', sim_ofimatica: '📊', algoritmo: '🧩',
+    quiz_evaluativo: '🎯', pregunta: '❓', encuesta: '📊', vf: '⚖️', huecos: '📝'
+  };
+  var icono = iconMap[tipo] || '📌';
+
+  var art = document.createElement('article');
+  art.className = 'content-card tarjeta-alumno-bloque';
+
+  var head = document.createElement('div');
+  head.className = 'card-header';
+  var wrap = document.createElement('div');
+  wrap.className = 'card-title-wrap';
+  var bubble = document.createElement('div');
+  bubble.className = 'card-icon-bubble';
+  bubble.textContent = icono;
+  var txtWrap = document.createElement('div');
+  var h = document.createElement('h2');
+  h.className = 'card-title';
+  h.textContent = tituloTexto;
+  txtWrap.appendChild(h);
+  wrap.appendChild(bubble);
+  wrap.appendChild(txtWrap);
+  head.appendChild(wrap);
+  var badge = document.createElement('span');
+  badge.className = 'card-badge';
+  badge.textContent = etiquetaAlumno_(tipo);
+  head.appendChild(badge);
+  art.appendChild(head);
+
+  if (cuerpoTexto) {
+    var p = document.createElement('div');
+    p.className = 'reading-passage';
+    p.setAttribute('data-texto-voz', '1');
+    p.textContent = cuerpoTexto;
+    art.appendChild(p);
+  }
+
+  if (tipo === 'lectura' || tipo === 'texto_dua') {
+    var player = document.createElement('div');
+    player.className = 'audio-dua-player';
+    var left = document.createElement('div');
+    left.className = 'player-left';
+    var play = document.createElement('button');
+    play.type = 'button';
+    play.className = 'btn-play-dua';
+    play.textContent = '▶';
+    play.title = 'Escuchar narración en voz alta';
+    play.addEventListener('click', function () { toggleAudioDuaPreview_(play); });
+    var info = document.createElement('div');
+    info.className = 'player-info';
+    var h4 = document.createElement('h4');
+    h4.textContent = 'Narración Asistida DUA';
+    var pStatus = document.createElement('p');
+    pStatus.className = 'player-status';
+    pStatus.textContent = 'Voz guiada en español de México · Pulsa reproducir';
+    info.appendChild(h4);
+    info.appendChild(pStatus);
+    left.appendChild(play);
+    left.appendChild(info);
+    var waves = document.createElement('div');
+    waves.className = 'waveform-bars';
+    for (var w = 0; w < 6; w++) {
+      var bar = document.createElement('span');
+      bar.className = 'wave-bar';
+      waves.appendChild(bar);
+    }
+    player.appendChild(left);
+    player.appendChild(waves);
+    art.appendChild(player);
+  }
+
+  if (tipo === 'fichero' || tipo === 'reto' || tipo === 'reto_ciencias' || tipo === 'encuesta') {
+    var drop = document.createElement('div');
+    drop.className = 'dropzone-box';
+    var dropIcon = document.createElement('div');
+    dropIcon.className = 'dropzone-icon';
+    dropIcon.textContent = '☁️';
+    var dropTitle = document.createElement('div');
+    dropTitle.className = 'dropzone-title';
+    dropTitle.textContent = 'Subir evidencia de ' + tituloTexto;
+    var dropSub = document.createElement('div');
+    dropSub.className = 'dropzone-subtitle';
+    dropSub.textContent = 'Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)';
+    var btnEx = document.createElement('button');
+    btnEx.type = 'button';
+    btnEx.className = 'btn-browse';
+    btnEx.textContent = 'Examinar mi dispositivo';
+    var fileInp = document.createElement('input');
+    fileInp.type = 'file';
+    fileInp.className = 'inp-evidencia-preview';
+    fileInp.accept = '.pdf,.jpg,.jpeg,.png';
+    fileInp.style.display = 'none';
+    fileInp.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    fileInp.addEventListener('change', function () { marcarEvidenciaPreview_(fileInp); });
+    drop.addEventListener('click', function (ev) {
+      if (ev.target === fileInp) return;
+      simularCargaEvidenciaPreview_(drop);
+    });
+    drop.appendChild(dropIcon);
+    drop.appendChild(dropTitle);
+    drop.appendChild(dropSub);
+    drop.appendChild(btnEx);
+    drop.appendChild(fileInp);
+    art.appendChild(drop);
+  }
+
+  if (tipo === 'quiz_evaluativo' || tipo === 'pregunta') {
+    var quizWrap = document.createElement('div');
+    quizWrap.className = 'quiz-options';
+    var filas = card.querySelectorAll('.fila-opcion-quiz');
+    var letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+    if (!filas.length) {
+      ['Opción A (Incorrecta)', 'Opción B (Correcta)'].forEach(function (txt, i) {
+        var opt = document.createElement('div');
+        opt.className = 'quiz-option';
+        var letSpan = document.createElement('span');
+        letSpan.className = 'option-letter';
+        letSpan.textContent = letras[i] || String(i + 1);
+        var txtSpan = document.createElement('span');
+        txtSpan.textContent = txt;
+        opt.appendChild(letSpan);
+        opt.appendChild(txtSpan);
+        opt.addEventListener('click', function () { seleccionarOpcionQuizPreview_(opt, i === 1); });
+        quizWrap.appendChild(opt);
+      });
+    } else {
+      filas.forEach(function (fila, i) {
+        var origen = fila.querySelector('input[type="radio"]');
+        var campo = fila.querySelector('.inp-opcion-texto');
+        var esCorrecta = !!(origen && origen.checked);
+        var opt = document.createElement('div');
+        opt.className = 'quiz-option';
+        var letSpan = document.createElement('span');
+        letSpan.className = 'option-letter';
+        letSpan.textContent = letras[i] || String(i + 1);
+        var txtSpan = document.createElement('span');
+        txtSpan.textContent = (campo && campo.value) || ('Opción ' + letras[i]);
+        opt.appendChild(letSpan);
+        opt.appendChild(txtSpan);
+        opt.addEventListener('click', function () { seleccionarOpcionQuizPreview_(opt, esCorrecta); });
+        quizWrap.appendChild(opt);
+      });
+    }
+    art.appendChild(quizWrap);
+    var act = document.createElement('div');
+    act.className = 'quiz-actions';
+    var checkBtn = document.createElement('button');
+    checkBtn.type = 'button';
+    checkBtn.className = 'btn-check-answer';
+    checkBtn.textContent = 'Comprobar Respuesta';
+    checkBtn.addEventListener('click', function () { verificarQuizPreview_(checkBtn); });
+    var fb = document.createElement('div');
+    fb.className = 'quiz-feedback';
+    act.appendChild(checkBtn);
+    act.appendChild(fb);
+    art.appendChild(act);
+  }
+
+  return art;
+}
+
+/* BUILD-587 — clase interactiva NEM: 7 contenidos y vista previa del alumno */
+var TIPOS_CONTENIDO_NEM_ = {
+  contenido_teoria: 1,
+  contenido_ejemplo: 2,
+  contenido_ejercicio: 2,
+  contenido_autoevaluacion: 3,
+  contenido_lista_cotejo: 3,
+  contenido_rubrica: 4,
+  contenido_evidencia: 4
+};
+
+function textoPlanoContenido_(v) {
+  if (v == null) return '';
+  if (typeof v === 'string') return v.trim();
+  if (typeof v === 'number') return String(v);
+  return '';
+}
+
+function listaTextosContenido_(v) {
+  if (!v) return [];
+  if (typeof v === 'string') {
+    return v.split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
+  }
+  if (!Array.isArray(v)) return [];
+  return v.map(function (item) {
+    if (typeof item === 'string') return item.trim();
+    if (!item) return '';
+    return textoPlanoContenido_(item.texto || item.criterio || item.paso || item.nombre || item.descripcion || item.consigna);
+  }).filter(Boolean);
+}
+
+function tipoContenidoNEM_(tipo) {
+  var t = String(tipo || '').trim().toLowerCase().replace(/\s+/g, '_');
+  if (!t) return '';
+  if (t.indexOf('contenido_') === 0) return t;
+  var alias = {
+    teoria: 'contenido_teoria',
+    texto: 'contenido_teoria',
+    ejemplo: 'contenido_ejemplo',
+    modelado: 'contenido_ejemplo',
+    ejercicio: 'contenido_ejercicio',
+    practica: 'contenido_ejercicio',
+    autoevaluacion: 'contenido_autoevaluacion',
+    lista_cotejo: 'contenido_lista_cotejo',
+    cotejo: 'contenido_lista_cotejo',
+    rubrica: 'contenido_rubrica',
+    evidencia: 'contenido_evidencia',
+    producto: 'contenido_evidencia'
+  };
+  return alias[t] || ('contenido_' + t);
+}
+
+function indiceSesionNEM_() {
+  if (typeof sesionActivaIdx === 'undefined' || sesionActivaIdx == null) return 0;
+  var n = parseInt(sesionActivaIdx, 10);
+  return isNaN(n) ? 0 : n;
+}
+
+function leerClaseInteractivaCruda_() {
+  if (typeof sesionesActualesNEM === 'undefined' || !sesionesActualesNEM) return null;
+  var s = sesionesActualesNEM[indiceSesionNEM_()];
+  return (s && s.claseInteractiva) ? s.claseInteractiva : null;
+}
+
+function normalizarClaseInteractiva_(raw) {
+  var ci = raw || {};
+  if (ci.claseInteractiva && typeof ci.claseInteractiva === 'object') ci = ci.claseInteractiva;
+  var nodos = Array.isArray(ci.nodos) ? ci.nodos : (Array.isArray(ci.momentos) ? ci.momentos : []);
+  var textos = {
+    apertura: textoPlanoContenido_(ci.apertura || ci.Apertura || ci.aperturaTexto || ci.AperturaTexto),
+    desarrollo: textoPlanoContenido_(ci.desarrollo || ci.Desarrollo || ci.desarrolloTexto || ci.DesarrolloTexto),
+    actividad: textoPlanoContenido_(ci.actividad || ci.Actividad || ci.actividadTexto || ci.ActividadTexto),
+    cierre: textoPlanoContenido_(ci.cierre || ci.Cierre || ci.cierreTexto || ci.CierreTexto)
+  };
+  var claves = ['apertura', 'desarrollo', 'actividad', 'cierre'];
+  nodos.forEach(function (nodo, i) {
+    if (!nodo || typeof nodo !== 'object') return;
+    var mom = parseInt(nodo.momento || nodo.paso || (i + 1), 10) || (i + 1);
+    var clave = claves[mom - 1] || '';
+    var t = textoPlanoContenido_(nodo.texto || nodo.guion || nodo.cuerpo);
+    if (clave && t && !textos[clave]) textos[clave] = t;
+    claves.forEach(function (k) {
+      var alt = textoPlanoContenido_(nodo[k] || nodo[k + 'Texto']);
+      if (alt && !textos[k]) textos[k] = alt;
+    });
+  });
+  var bloques = [];
+  function empujar(lista, momentoPadre) {
+    (lista || []).forEach(function (b) {
+      if (!b || typeof b !== 'object') return;
+      var tipo = tipoContenidoNEM_(b.tipo || b.clave);
+      if (!tipo) return;
+      var mom = parseInt(b.momento || b.paso || momentoPadre || TIPOS_CONTENIDO_NEM_[tipo] || 2, 10);
+      if (isNaN(mom) || mom < 1 || mom > 4) mom = TIPOS_CONTENIDO_NEM_[tipo] || 2;
+      bloques.push({
+        tipo: tipo,
+        momento: mom,
+        titulo: textoPlanoContenido_(b.titulo || b.nombre),
+        cuerpo: textoPlanoContenido_(b.cuerpo || b.texto || b.teoria || b.explicacion),
+        consigna: textoPlanoContenido_(b.consigna || b.instruccion || b.practica),
+        pasos: listaTextosContenido_(b.pasos || b.modelado),
+        criterios: b.criterios || b.items || b.lista || [],
+        pregunta: textoPlanoContenido_(b.pregunta),
+        opciones: Array.isArray(b.opciones) ? b.opciones : [],
+        retroError: textoPlanoContenido_(b.retroError || b.retroalimentacion || (b.retro && (b.retro.fallo || b.retro)))
+      });
+    });
+  }
+  empujar(ci.bloques || ci.contenidos, 0);
+  nodos.forEach(function (nodo, i) {
+    if (!nodo || typeof nodo !== 'object') return;
+    empujar(nodo.bloques || nodo.contenidos, parseInt(nodo.momento || nodo.paso || (i + 1), 10));
+  });
+  return { textos: textos, bloques: bloques };
+}
+
+function nivelesRubricaPreview_(item) {
+  var vacio = ['', '', '', ''];
+  if (!item) return { nombre: 'Criterio', niveles: vacio.slice() };
+  if (typeof item === 'string') return { nombre: item, niveles: vacio.slice() };
+  var niveles = item.niveles || item.descriptores || item.columnas;
+  if (!Array.isArray(niveles)) {
+    niveles = [
+      item.destacado || item.nivel4 || '',
+      item.satisfactorio || item.nivel3 || '',
+      item.suficiente || item.nivel2 || '',
+      item.insuficiente || item.nivel1 || ''
+    ];
+  }
+  while (niveles.length < 4) niveles.push('');
+  return {
+    nombre: textoPlanoContenido_(item.nombre || item.criterio || item.texto) || 'Criterio',
+    niveles: niveles.slice(0, 4).map(function (n) {
+      if (typeof n === 'string') return n.trim();
+      return textoPlanoContenido_(n && (n.texto || n.descriptor || n.descripcion));
+    })
+  };
+}
+
+function encabezadoContenidoPreview_(icono, titulo, sub, badge) {
+  var head = nodoPreview_('div', 'card-header');
+  var wrap = nodoPreview_('div', 'card-title-wrap');
+  wrap.appendChild(nodoPreview_('div', 'card-icon-bubble', icono));
+  var textos = nodoPreview_('div');
+  textos.appendChild(nodoPreview_('h2', 'card-title', titulo || 'Contenido'));
+  if (sub) textos.appendChild(nodoPreview_('p', '', sub));
+  wrap.appendChild(textos);
+  head.appendChild(wrap);
+  if (badge) head.appendChild(nodoPreview_('span', 'card-badge', badge));
+  return head;
+}
+
+function tarjetaTeoriaPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card');
+  art.setAttribute('data-tipo', 'contenido_teoria');
+  art.appendChild(encabezadoContenidoPreview_('🎧', bloque.titulo || 'Teoría con apoyo DUA', 'Explicación para leer y escuchar', 'Teoría DUA'));
+  art.appendChild(nodoPreview_('div', 'reading-passage', bloque.cuerpo || bloque.consigna || 'El docente explica el concepto con un ejemplo cercano.'));
+  return art;
+}
+
+function tarjetaEjemploPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card contenido-bloque-ejemplo');
+  art.setAttribute('data-tipo', 'contenido_ejemplo');
+  art.appendChild(encabezadoContenidoPreview_('💡', bloque.titulo || 'Caso de estudio', 'Modelado paso a paso', 'Caso de Estudio / Ejemplo Guiado'));
+  var pasos = bloque.pasos.length ? bloque.pasos : listaTextosContenido_(bloque.cuerpo);
+  if (!pasos.length) pasos = ['Observa el caso.', 'Sigue el procedimiento en voz alta.', 'Comprueba el resultado con el grupo.'];
+  var lista = nodoPreview_('ol');
+  pasos.forEach(function (paso) {
+    lista.appendChild(nodoPreview_('li', 'ejemplo-paso-item', paso));
+  });
+  art.appendChild(lista);
+  return art;
+}
+
+function tarjetaEjercicioPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card contenido-bloque-ejercicio');
+  art.setAttribute('data-tipo', 'contenido_ejercicio');
+  art.appendChild(encabezadoContenidoPreview_('✏️', bloque.titulo || 'Práctica autónoma', 'Resuelve la consigna en tu borrador', 'Ejercicio'));
+  art.appendChild(nodoPreview_('div', 'reading-passage', bloque.consigna || bloque.cuerpo || 'Resuelve la situación con el procedimiento modelado.'));
+  var borrador = document.createElement('textarea');
+  borrador.className = 'campo-textarea';
+  borrador.setAttribute('aria-label', 'Borrador de la práctica');
+  borrador.placeholder = 'Escribe aquí tu procedimiento y tu respuesta.';
+  art.appendChild(borrador);
+  return art;
+}
+
+function tarjetaAutoevaluacionPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card');
+  art.setAttribute('data-tipo', 'contenido_autoevaluacion');
+  art.appendChild(encabezadoContenidoPreview_('🔎', bloque.titulo || 'Autoevaluación del error', 'Elige la corrección y lee la retroalimentación', 'Error conceptual'));
+  if (bloque.pregunta || bloque.cuerpo) {
+    art.appendChild(nodoPreview_('div', 'quiz-question', bloque.pregunta || bloque.cuerpo));
+  }
+  var opciones = bloque.opciones.length ? bloque.opciones : [
+    { texto: 'Repito el mismo paso sin revisar el dato.', correcta: false },
+    { texto: 'Regreso al dato y corrijo el paso donde cambió el resultado.', correcta: true }
+  ];
+  var caja = nodoPreview_('div', 'quiz-options');
+  var feedback = nodoPreview_('div', 'quiz-feedback');
+  var letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+  opciones.forEach(function (op, i) {
+    var texto = textoPlanoContenido_(typeof op === 'string' ? op : (op && (op.texto || op.opcion))) || ('Opción ' + (i + 1));
+    var correcta = !!(op && (op.correcta || op.esCorrecta));
+    var retro = textoPlanoContenido_(op && (op.retro || op.retroalimentacion)) || (correcta
+      ? 'Identificaste el error y lo corregiste.'
+      : (bloque.retroError || 'Ese camino repite el error. Vuelve al dato de partida.'));
+    var opt = nodoPreview_('div', 'quiz-option');
+    opt.appendChild(nodoPreview_('span', 'option-letter', letras[i] || String(i + 1)));
+    opt.appendChild(nodoPreview_('span', '', texto));
+    opt.addEventListener('click', function () {
+      caja.querySelectorAll('.quiz-option').forEach(function (el) { el.classList.remove('selected'); });
+      opt.classList.add('selected');
+      feedback.style.display = 'block';
+      feedback.className = 'quiz-feedback' + (correcta ? ' success' : '');
+      feedback.textContent = retro;
+    });
+    caja.appendChild(opt);
+  });
+  art.appendChild(caja);
+  art.appendChild(feedback);
+  return art;
+}
+
+function tarjetaCotejoPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card contenido-lista-cotejo');
+  art.setAttribute('data-tipo', 'contenido_lista_cotejo');
+  art.appendChild(encabezadoContenidoPreview_('✅', bloque.titulo || 'Mi lista de cotejo', 'Marco lo que ya puedo hacer', 'Autoevaluación'));
+  var criterios = listaTextosContenido_(bloque.criterios);
+  if (!criterios.length) {
+    criterios = [
+      'Identifico el propósito de la actividad.',
+      'Explico el procedimiento con mis propias palabras.',
+      'Reconozco el error y lo corrijo.'
+    ];
+  }
+  var wrap = nodoPreview_('div', 'cotejo-progreso-wrap');
+  wrap.setAttribute('role', 'progressbar');
+  wrap.setAttribute('aria-valuemin', '0');
+  wrap.setAttribute('aria-valuemax', '100');
+  wrap.setAttribute('aria-valuenow', '0');
+  wrap.setAttribute('aria-label', 'Avance de la autoevaluación');
+  var barra = nodoPreview_('div', 'cotejo-progreso-bar');
+  barra.style.width = '0%';
+  wrap.appendChild(barra);
+  wrap.appendChild(nodoPreview_('span', 'cotejo-progreso-porcentaje', '0 de ' + criterios.length + ' criterios (0%)'));
+  art.appendChild(wrap);
+  criterios.forEach(function (txt) {
+    var item = nodoPreview_('label', 'cotejo-item');
+    var chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.setAttribute('aria-label', txt);
+    chk.addEventListener('change', function () { marcarCotejoPreview_(chk); });
+    item.appendChild(chk);
+    item.appendChild(nodoPreview_('span', '', txt));
+    art.appendChild(item);
+  });
+  return art;
+}
+
+function tarjetaRubricaPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card');
+  art.setAttribute('data-tipo', 'contenido_rubrica');
+  art.appendChild(encabezadoContenidoPreview_('📏', bloque.titulo || 'Rúbrica analítica SEP', 'Elige el nivel que describe tu evidencia', '4 niveles SEP'));
+  var tabla = document.createElement('table');
+  tabla.className = 'contenido-rubrica-sep';
+  var thead = document.createElement('thead');
+  var hr = document.createElement('tr');
+  ['Criterio', 'Destacado (10-9)', 'Satisfactorio (8-7)', 'Suficiente (6)', 'Insuficiente (5)'].forEach(function (txt) {
+    var th = document.createElement('th');
+    th.textContent = txt;
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr);
+  tabla.appendChild(thead);
+  var cuerpo = document.createElement('tbody');
+  var criterios = Array.isArray(bloque.criterios) && bloque.criterios.length ? bloque.criterios : [
+    { nombre: 'Comprensión del propósito', destacado: 'Explica el propósito con un ejemplo propio.', satisfactorio: 'Explica el propósito con apoyo.', suficiente: 'Reconoce el propósito si se lo recuerdan.', insuficiente: 'Aún no identifica el propósito.' }
+  ];
+  var fallback = ['Destacado', 'Satisfactorio', 'Suficiente', 'Insuficiente'];
+  criterios.forEach(function (raw) {
+    var c = nivelesRubricaPreview_(raw);
+    var tr = document.createElement('tr');
+    var th = document.createElement('th');
+    th.scope = 'row';
+    th.textContent = c.nombre;
+    tr.appendChild(th);
+    c.niveles.forEach(function (desc, i) {
+      var td = document.createElement('td');
+      td.tabIndex = 0;
+      td.setAttribute('role', 'button');
+      td.setAttribute('aria-pressed', 'false');
+      td.textContent = desc || fallback[i];
+      td.addEventListener('click', function () { seleccionarNivelRubricaPreview_(td); });
+      td.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          seleccionarNivelRubricaPreview_(td);
+        }
+      });
+      tr.appendChild(td);
+    });
+    cuerpo.appendChild(tr);
+  });
+  tabla.appendChild(cuerpo);
+  art.appendChild(tabla);
+  return art;
+}
+
+function tarjetaEvidenciaPreview_(bloque) {
+  var art = nodoPreview_('article', 'content-card');
+  art.setAttribute('data-tipo', 'contenido_evidencia');
+  art.appendChild(encabezadoContenidoPreview_('☁️', bloque.titulo || 'Evidencia de cierre', bloque.consigna || bloque.cuerpo || 'Deja aquí el producto de la sesión', 'Buzón'));
+  var drop = nodoPreview_('div', 'dropzone-box');
+  drop.appendChild(nodoPreview_('div', 'dropzone-icon', '☁️'));
+  drop.appendChild(nodoPreview_('div', 'dropzone-title', 'Subir evidencia'));
+  drop.appendChild(nodoPreview_('div', 'dropzone-subtitle', 'Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)'));
+  var examinar = nodoPreview_('button', 'btn-browse', 'Examinar mi dispositivo');
+  examinar.type = 'button';
+  var input = nodoPreview_('input', 'inp-evidencia-preview');
+  input.type = 'file';
+  input.accept = '.pdf,.jpg,.jpeg,.png';
+  input.style.display = 'none';
+  input.addEventListener('click', function (ev) { ev.stopPropagation(); });
+  input.addEventListener('change', function () { marcarEvidenciaPreview_(input); });
+  drop.addEventListener('click', function (ev) {
+    if (ev.target === input) return;
+    simularCargaEvidenciaPreview_(drop);
+  });
+  drop.appendChild(examinar);
+  drop.appendChild(input);
+  art.appendChild(drop);
+  return art;
+}
+
+function tarjetaContenidoNEMPreview_(bloque) {
+  if (!bloque) return null;
+  if (bloque.tipo === 'contenido_teoria') return tarjetaTeoriaPreview_(bloque);
+  if (bloque.tipo === 'contenido_ejemplo') return tarjetaEjemploPreview_(bloque);
+  if (bloque.tipo === 'contenido_ejercicio') return tarjetaEjercicioPreview_(bloque);
+  if (bloque.tipo === 'contenido_autoevaluacion') return tarjetaAutoevaluacionPreview_(bloque);
+  if (bloque.tipo === 'contenido_lista_cotejo') return tarjetaCotejoPreview_(bloque);
+  if (bloque.tipo === 'contenido_rubrica') return tarjetaRubricaPreview_(bloque);
+  if (bloque.tipo === 'contenido_evidencia') return tarjetaEvidenciaPreview_(bloque);
+  var art = nodoPreview_('article', 'content-card');
+  art.setAttribute('data-tipo', bloque.tipo || 'contenido');
+  art.appendChild(encabezadoContenidoPreview_('📌', bloque.titulo || 'Contenido', '', 'Aprendizaje'));
+  if (bloque.cuerpo || bloque.consigna) art.appendChild(nodoPreview_('div', 'reading-passage', bloque.cuerpo || bloque.consigna));
+  return art;
+}
+
+function anexarContenidosAprendizajePreview_(p1, p2, p3, p4) {
+  var crudo = leerClaseInteractivaCruda_();
+  if (!crudo) return;
+  var norm = normalizarClaseInteractiva_(crudo);
+  var paneles = { 1: p1, 2: p2, 3: p3, 4: p4 };
+  norm.bloques.forEach(function (bloque) {
+    var nodo = tarjetaContenidoNEMPreview_(bloque);
+    var panel = paneles[bloque.momento] || p2;
+    if (nodo && panel) panel.appendChild(nodo);
+  });
+}
+
+function marcarCotejoPreview_(chk) {
+  var caja = chk && chk.closest ? chk.closest('.contenido-lista-cotejo') : null;
+  if (!caja) return;
+  var checks = caja.querySelectorAll('input[type="checkbox"]');
+  var y = checks.length;
+  var x = 0;
+  for (var i = 0; i < checks.length; i++) if (checks[i].checked) x += 1;
+  var z = y ? Math.round((x / y) * 100) : 0;
+  var txt = caja.querySelector('.cotejo-progreso-porcentaje');
+  if (txt) txt.textContent = x + ' de ' + y + ' criterios (' + z + '%)';
+  caja.setAttribute('aria-valuenow', String(z));
+  var barra = caja.querySelector('.cotejo-progreso-bar');
+  if (barra) barra.style.width = z + '%';
+}
+
+function seleccionarNivelRubricaPreview_(celda) {
+  if (!celda) return;
+  var fila = celda.closest ? celda.closest('tr') : null;
+  if (!fila) return;
+  var celdas = fila.querySelectorAll('td');
+  for (var i = 0; i < celdas.length; i++) {
+    var on = celdas[i] === celda;
+    celdas[i].classList.toggle('rubrica-celda-activa', on);
+    celdas[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+}
+
+function recolectarPayloadClaseInteractiva_() {
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value || '').trim() : '';
+  }
+  var criterios = [];
+  if (Array.isArray(window.criteriosCotejoPlanNEM_)) {
+    criterios = window.criteriosCotejoPlanNEM_.map(function (c) { return String(c || '').trim(); }).filter(Boolean);
+  }
+  return {
+    etapa1: {
+      titulo: val('planTitulo'),
+      campoFormativo: val('planCampoFormativo'),
+      metodologia: val('planMetodologia'),
+      numSesiones: val('planNumSesiones'),
+      grado: val('planGrado'),
+      grupo: val('planGrupo'),
+      asignatura: val('planAsignatura')
+    },
+    etapa2: {
+      contenidoSintetico: val('planContenidoSintetico'),
+      pda: val('planPDA')
+    },
+    etapa3: {
+      problema: val('planProblema'),
+      ajustesRazonables: val('planAjustesRazonables')
+    },
+    etapa4: {
+      proposito: val('planProposito'),
+      criteriosCotejo: criterios
+    },
+    sesion: {
+      indice: indiceSesionNEM_(),
+      titulo: val('sesTitulo'),
+      apertura: val('sesApertura'),
+      desarrollo: val('sesDesarrollo'),
+      actividad: val('sesActividad'),
+      cierre: val('sesCierre')
+    }
+  };
+}
+
+function aplicarTextosClaseInteractiva_(norm) {
+  if (typeof sesionesActualesNEM === 'undefined' || !sesionesActualesNEM) return;
+  var idx = indiceSesionNEM_();
+  if (!sesionesActualesNEM[idx]) sesionesActualesNEM[idx] = { numero: idx + 1 };
+  var s = sesionesActualesNEM[idx];
+  [
+    ['sesApertura', 'apertura', 'AperturaTexto', 'aperturaTexto'],
+    ['sesDesarrollo', 'desarrollo', 'DesarrolloTexto', 'desarrolloTexto'],
+    ['sesActividad', 'actividad', 'ActividadTexto', 'actividadTexto'],
+    ['sesCierre', 'cierre', 'CierreTexto', 'cierreTexto']
+  ].forEach(function (fila) {
+    var texto = norm && norm.textos ? norm.textos[fila[1]] : '';
+    if (!texto) return;
+    var el = document.getElementById(fila[0]);
+    if (el) {
+      el.value = texto;
+      try { el.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+    }
+    s[fila[2]] = texto;
+    s[fila[3]] = texto;
+  });
+}
+
+function tipoTarjetaDesdeContenido_(tipo) {
+  var t = String(tipo || '');
+  var mapa = {
+    contenido_teoria: 'texto_dua',
+    contenido_ejemplo: 'callout',
+    contenido_ejercicio: 'objetivos',
+    contenido_autoevaluacion: 'quiz_evaluativo',
+    contenido_lista_cotejo: 'toggle_notion',
+    contenido_rubrica: 'tabla_notion',
+    contenido_evidencia: 'fichero'
+  };
+  if (mapa[t]) return mapa[t];
+  if (ALIAS_IDEVICE_EXE_[t] || META_TARJETA_EXE_[t] || BASE_IDEVICE_EXE_[t]) return t;
+  return 'texto_dua';
+}
+
+function datosTarjetaDesdeContenido_(b) {
+  var partes = [];
+  if (b.cuerpo) partes.push(b.cuerpo);
+  if (b.consigna) partes.push(b.consigna);
+  if (b.pregunta) partes.push(b.pregunta);
+  if (b.pasos && b.pasos.length) {
+    partes.push(b.pasos.map(function (p, i) { return (i + 1) + '. ' + p; }).join('\n'));
+  }
+  var criterios = listaTextosContenido_(b.criterios);
+  if (criterios.length && b.tipo !== 'contenido_rubrica') partes.push(criterios.join('\n'));
+  return {
+    titulo: b.titulo || '',
+    cuerpo: partes.join('\n\n'),
+    extra: {
+      emoji: '💡',
+      fases: b.pasos || [],
+      filas: b.tipo === 'contenido_rubrica' ? criterios.map(function (c) { return [c, '']; }) : [],
+      url: b.url || ''
+    }
+  };
+}
+
+function volcarBloquesIAEnLienzo_(norm) {
+  if (typeof montarEntornoExeLearning_ === 'function') montarEntornoExeLearning_();
+  asegurarPaginasExe_();
+  var cuenta = (typeof contarBloquesPaginaExe_ === 'function') ? contarBloquesPaginaExe_(idPaginaActivaExe_()) : 0;
+  if (cuenta > 0 && typeof confirm === 'function') {
+    var deseaReemplazar = confirm(
+      '⚠️ Esta página ya contiene ' + cuenta + ' bloque(s) de contenido.\n\n' +
+      '¿Deseas REEMPLAZAR los bloques actuales con la nueva clase generada por IA?\n\n' +
+      '• Aceptar: Reemplaza los bloques existentes de esta página.\n' +
+      '• Cancelar: Mantiene los bloques actuales y agrega la clase al final.'
+    );
+    if (deseaReemplazar && typeof limpiarBloquesPaginaActivaExe_ === 'function') {
+      limpiarBloquesPaginaActivaExe_();
+    }
+  }
+  var bloques = (norm && norm.bloques) || [];
+  var pid = idPaginaActivaExe_();
+  bloques.forEach(function (b) {
+    var tipo = tipoTarjetaDesdeContenido_(b.tipo);
+    var datos = datosTarjetaDesdeContenido_(b);
+    var card = insertarBloqueExe_(tipo, datos, pid);
+    if (!card) insertarBloqueExe_('texto_dua', datos, pid);
+  });
+  if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+  repintarDivisoresExe_();
+}
+
+function generarClaseInteractivaCompletaIA(btn) {
+  if (!btn || !btn.tagName) btn = document.querySelector('[data-accion="generar-clase-interactiva"]');
+  var payload = recolectarPayloadClaseInteractiva_();
+  var hayPlan = payload.etapa1.titulo || payload.etapa2.contenidoSintetico || payload.etapa2.pda || payload.etapa4.proposito;
+  if (!hayPlan) {
+    avisar_('Completa el título, el contenido o el PDA de la planeación antes de generar la clase.', 'error');
+    return;
+  }
+  var txt = btn ? btn.textContent : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Generando clase interactiva...';
+  }
+  function restaurar() {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = txt;
+    }
+  }
+  var tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : (typeof token !== 'undefined' ? token : ''));
+  if (typeof gsRun !== 'function') {
+    restaurar();
+    avisar_('No hay conexión con el servidor para generar la clase.', 'error');
+    return;
+  }
+  return gsRun('generarClaseInteractivaCompletaNEM', tk, payload).then(function (res) {
+    restaurar();
+    if (!res || res.ok === false) {
+      avisar_((res && (res.error || res.mensaje)) || 'No se pudo generar la clase interactiva.', 'error');
+      return;
+    }
+    var crudo = res.claseInteractiva || null;
+    if (!crudo && (res.nodos || res.bloques || res.contenidos || res.apertura || res.AperturaTexto)) crudo = res;
+    if (!crudo) {
+      avisar_('El servidor no devolvió la clase interactiva.', 'error');
+      return;
+    }
+    if (typeof sesionesActualesNEM !== 'undefined' && sesionesActualesNEM) {
+      var idx = payload.sesion.indice;
+      if (!sesionesActualesNEM[idx]) sesionesActualesNEM[idx] = { numero: idx + 1 };
+      sesionesActualesNEM[idx].claseInteractiva = (res && res.claseInteractiva) ? res.claseInteractiva : crudo;
+    }
+    aplicarTextosClaseInteractiva_(normalizarClaseInteractiva_(crudo));
+    var normClase = normalizarClaseInteractiva_(crudo);
+    volcarBloquesIAEnLienzo_(normClase);
+    if (typeof irAPasoSesion_ === 'function') irAPasoSesion_(3);
+    if (typeof pintarVistaPreviaIntegrada_ === 'function') pintarVistaPreviaIntegrada_();
+    avisar_('Clase interactiva lista en el constructor. Revisa las tarjetas del paso 3.', 'ok');
+  }).catch(function (err) {
+    restaurar();
+    avisar_('Error al generar la clase: ' + ((err && err.message) || String(err)), 'error');
+  });
+}
+
+function opcionesQuizPreview_() {
+  var salida = [];
+  var puntos = 4;
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (cont) {
+    var cards = cont.querySelectorAll('.idevice-card');
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      if (card.style.display === 'none') continue;
+      var tipo = card.getAttribute('data-tipo') || '';
+      if (tipo !== 'quiz_evaluativo' && tipo !== 'pregunta') continue;
+      var pond = card.querySelector('.inp-puntos-quiz, .quiz-puntos-input');
+      if (pond) puntos = Number(pond.value) || puntos;
+      card.querySelectorAll('.fila-opcion-quiz').forEach(function (fila) {
+        var campo = fila.querySelector('.inp-opcion-texto');
+        var radio = fila.querySelector('input[type="radio"]');
+        salida.push({
+          texto: (campo && campo.value) || 'Opción',
+          correcta: !!(radio && radio.checked)
+        });
+      });
+      if (salida.length) break;
+    }
+  }
+  if (!salida.length) {
+    salida = [
+      { texto: '500 gramos (0.50 kg)', correcta: false },
+      { texto: '750 gramos (0.75 kg)', correcta: true },
+      { texto: '250 gramos (0.25 kg)', correcta: false },
+      { texto: '800 gramos (0.80 kg)', correcta: false }
+    ];
+  }
+  return { opciones: salida, puntos: puntos };
+}
+
+function armarMaquetaAlumno_() {
+  var titulo = valorCampoPreview_('sesTitulo', 'Clase del alumno');
+  var campo = valorCampoPreview_('planCampoFormativo', 'Saberes y Pensamiento Científico');
+  var pda = valorCampoPreview_('planPDA', '');
+  var grado = valorCampoPreview_('planGrado', '1');
+  var apertura = valorCampoPreview_('sesApertura', 'En este momento activamos lo que el grupo ya sabe antes de explicar el tema.');
+  var desarrollo = valorCampoPreview_('sesDesarrollo', 'Aquí se explican los conceptos centrales y se vinculan con el libro de texto.');
+  var actividad = valorCampoPreview_('sesActividad', 'El grupo produce una evidencia y la deja en el buzón de la actividad.');
+  var cierre = valorCampoPreview_('sesCierre', 'Si en la carnicería pides 3/4 de kilogramo de carne, ¿cuántos gramos exactos deben marcar la báscula?');
+  var quiz = opcionesQuizPreview_();
+  var marco = nodoPreview_('div', 'browser-frame');
+  marco._momentoPreview_ = 1;
+  marco._puntosQuiz_ = quiz.puntos;
+
+  var top = nodoPreview_('div', 'browser-topbar');
+  var dots = nodoPreview_('div', 'browser-dots');
+  dots.appendChild(nodoPreview_('span', 'dot dot-red'));
+  dots.appendChild(nodoPreview_('span', 'dot dot-yellow'));
+  dots.appendChild(nodoPreview_('span', 'dot dot-green'));
+  var address = nodoPreview_('div', 'browser-address', '🔒 ');
+  address.appendChild(nodoPreview_('span', '', 'https://sites.google.com/view/lec90/alumno'));
+  address.appendChild(document.createTextNode(' · Sesión Activa'));
+  top.appendChild(dots);
+  top.appendChild(address);
+  top.appendChild(nodoPreview_('div', 'school-badge', 'SECUNDARIA TÉCNICA 90'));
+  marco.appendChild(top);
+
+  var hero = nodoPreview_('header', 'class-hero');
+  var meta = nodoPreview_('div', 'hero-meta');
+  meta.appendChild(nodoPreview_('span', 'meta-tag', 'Fase 6 · ' + grado + '° Grado'));
+  meta.appendChild(nodoPreview_('span', 'meta-tag', campo));
+  var vivo = nodoPreview_('span', 'meta-tag live');
+  vivo.appendChild(nodoPreview_('span', 'live-pulse'));
+  vivo.appendChild(document.createTextNode(' Clase en Vivo'));
+  meta.appendChild(vivo);
+  hero.appendChild(meta);
+  hero.appendChild(nodoPreview_('h1', 'class-title', titulo));
+  hero.appendChild(nodoPreview_('p', 'class-subtitle', pda || 'Sesión didáctica de la Secundaria Técnica 90.'));
+  var progreso = nodoPreview_('div', 'session-progress-wrap');
+  var barra = nodoPreview_('div', 'session-progress-bar');
+  var fill = nodoPreview_('div', 'session-progress-fill');
+  fill.style.width = '25%';
+  barra.appendChild(fill);
+  progreso.appendChild(barra);
+  progreso.appendChild(nodoPreview_('span', 'session-progress-text', 'Paso 1 de 4 · Apertura (25%)'));
+  hero.appendChild(progreso);
+  marco.appendChild(hero);
+
+  var navWrap = nodoPreview_('nav', 'moments-nav-wrapper');
+  var nav = nodoPreview_('div', 'moments-nav');
+  var pestanas = [
+    ['Paso 1', '⏱️ 1. Apertura', '5 min · Saberes previos'],
+    ['Paso 2', '📖 2. Desarrollo', '10 min · Libro SEP'],
+    ['Paso 3', '✍️ 3. Actividad', '20 min · Reto situado'],
+    ['Paso 4', '🎯 4. Cierre', '5 min · Quiz formativo']
+  ];
+  pestanas.forEach(function (item, i) {
+    var b = nodoPreview_('button', 'moment-tab' + (i === 0 ? ' active' : ''));
+    b.type = 'button';
+    b.appendChild(nodoPreview_('span', 'tab-step', item[0]));
+    b.appendChild(nodoPreview_('span', 'tab-name', item[1]));
+    b.appendChild(nodoPreview_('span', 'tab-time', item[2]));
+    b.addEventListener('click', function () { mostrarMomentoPreview_(i + 1, b); });
+    nav.appendChild(b);
+  });
+  navWrap.appendChild(nav);
+  marco.appendChild(navWrap);
+
+  var cuerpo = nodoPreview_('main', 'classroom-body');
+  function panelMomento(num, activo) {
+    var sec = nodoPreview_('section', 'moment-panel' + (activo ? ' active' : ''));
+    sec.setAttribute('data-momento', String(num));
+    return sec;
+  }
+  function encabezado(icono, tituloCard, sub, badge) {
+    var card = nodoPreview_('div', 'content-card');
+    var head = nodoPreview_('div', 'card-header');
+    var wrap = nodoPreview_('div', 'card-title-wrap');
+    wrap.appendChild(nodoPreview_('div', 'card-icon-bubble', icono));
+    var textos = nodoPreview_('div');
+    textos.appendChild(nodoPreview_('h2', 'card-title', tituloCard));
+    textos.appendChild(nodoPreview_('p', '', sub));
+    wrap.appendChild(textos);
+    head.appendChild(wrap);
+    head.appendChild(nodoPreview_('span', 'card-badge', badge));
+    card.appendChild(head);
+    return card;
+  }
+
+  var p1 = panelMomento(1, true);
+  var c1 = encabezado('🎧', 'Saberes Previos y Lectura Guiada DUA', 'Activación de conocimientos mediante situación detonadora', 'Accesibilidad DUA con Audio');
+  var player = nodoPreview_('div', 'audio-dua-player');
+  var left = nodoPreview_('div', 'player-left');
+  var play = nodoPreview_('button', 'btn-play-dua', '▶');
+  play.type = 'button';
+  play.title = 'Escuchar narración en voz alta';
+  play.addEventListener('click', function () { toggleAudioDuaPreview_(play); });
+  var info = nodoPreview_('div', 'player-info');
+  info.appendChild(nodoPreview_('h4', '', 'Narración Asistida de la Sesión'));
+  info.appendChild(nodoPreview_('p', 'player-status', 'Voz guiada en español de México · Pulsa reproducir'));
+  left.appendChild(play);
+  left.appendChild(info);
+  var waves = nodoPreview_('div', 'waveform-bars');
+  for (var w = 0; w < 6; w++) waves.appendChild(nodoPreview_('span', 'wave-bar'));
+  player.appendChild(left);
+  player.appendChild(waves);
+  c1.appendChild(player);
+  c1.appendChild(nodoPreview_('div', 'reading-passage', apertura));
+  p1.appendChild(c1);
+  cuerpo.appendChild(p1);
+
+  var p2 = panelMomento(2, false);
+  var c2 = encabezado('📖', 'Conceptos Centrales y Libro SEP', campo, 'Fase 6 · SEP');
+  c2.appendChild(nodoPreview_('div', 'reading-passage', desarrollo));
+  p2.appendChild(c2);
+  cuerpo.appendChild(p2);
+
+  var p3 = panelMomento(3, false);
+  var c3 = encabezado('✍️', 'Actividad situada', 'Evidencia del alumno', 'Evidencia Evaluable');
+  c3.appendChild(nodoPreview_('p', 'reading-passage', actividad));
+  var drop = nodoPreview_('div', 'dropzone-box');
+  drop.appendChild(nodoPreview_('div', 'dropzone-icon', '☁️'));
+  drop.appendChild(nodoPreview_('div', 'dropzone-title', 'Subir evidencia de la actividad'));
+  drop.appendChild(nodoPreview_('div', 'dropzone-subtitle', 'Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)'));
+  var examinar = nodoPreview_('button', 'btn-browse', 'Examinar mi dispositivo');
+  examinar.type = 'button';
+  var input = nodoPreview_('input', 'inp-evidencia-preview');
+  input.type = 'file';
+  input.accept = '.pdf,.jpg,.jpeg,.png';
+  input.style.display = 'none';
+  input.addEventListener('click', function (ev) { ev.stopPropagation(); });
+  input.addEventListener('change', function () { marcarEvidenciaPreview_(input); });
+  drop.addEventListener('click', function (ev) {
+    if (ev.target === input) return;
+    simularCargaEvidenciaPreview_(drop);
+  });
+  drop.appendChild(examinar);
+  drop.appendChild(input);
+  c3.appendChild(drop);
+  p3.appendChild(c3);
+  cuerpo.appendChild(p3);
+
+  var p4 = panelMomento(4, false);
+  var quizCard = nodoPreview_('div', 'quiz-card');
+  var qHead = nodoPreview_('div', 'card-header');
+  var qWrap = nodoPreview_('div', 'card-title-wrap');
+  qWrap.appendChild(nodoPreview_('div', 'card-icon-bubble', '🎯'));
+  var qTextos = nodoPreview_('div');
+  qTextos.appendChild(nodoPreview_('h2', 'card-title', 'Quiz Formativo de Cierre'));
+  qTextos.appendChild(nodoPreview_('p', '', 'Autocalificación inmediata · ' + quiz.puntos + ' puntos'));
+  qWrap.appendChild(qTextos);
+  qHead.appendChild(qWrap);
+  qHead.appendChild(nodoPreview_('span', 'card-badge', 'Autocalificable'));
+  quizCard.appendChild(qHead);
+  var pregunta = nodoPreview_('div', 'quiz-question');
+  pregunta.appendChild(nodoPreview_('span', '', '1.'));
+  pregunta.appendChild(nodoPreview_('span', '', cierre));
+  quizCard.appendChild(pregunta);
+  var opciones = nodoPreview_('div', 'quiz-options');
+  var letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+  quiz.opciones.forEach(function (op, i) {
+    var opt = nodoPreview_('div', 'quiz-option');
+    opt.appendChild(nodoPreview_('span', 'option-letter', letras[i] || String(i + 1)));
+    opt.appendChild(nodoPreview_('span', '', op.texto));
+    opt.addEventListener('click', function () { seleccionarOpcionQuizPreview_(opt, op.correcta); });
+    opciones.appendChild(opt);
+  });
+  quizCard.appendChild(opciones);
+  var acciones = nodoPreview_('div', 'quiz-actions');
+  var comprobar = nodoPreview_('button', 'btn-check-answer', 'Comprobar Respuesta');
+  comprobar.type = 'button';
+  comprobar.addEventListener('click', function () { verificarQuizPreview_(comprobar); });
+  acciones.appendChild(comprobar);
+  acciones.appendChild(nodoPreview_('div', 'quiz-feedback'));
+  quizCard.appendChild(acciones);
+  p4.appendChild(quizCard);
+  cuerpo.appendChild(p4);
+  anexarContenidosAprendizajePreview_(p1, p2, p3, p4);
+  anexarLienzoVivoPreview_(p2);
+  if (window._colorFondoSesionActiva_) marco.style.backgroundColor = window._colorFondoSesionActiva_;
+
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (cont) {
+    var cards = cont.querySelectorAll('.idevice-card');
+    cards.forEach(function (c) {
+      if (c.style.display === 'none') return;
+      var t = c.getAttribute('data-tipo') || '';
+      var m = momentoDeBloquePreview_(t);
+      var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
+      if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
+        panelDest.appendChild(tarjetaPreviewBloque_(c));
+      }
+    });
+  }
+
+  marco.appendChild(cuerpo);
+
+  var footer = nodoPreview_('footer', 'classroom-footer');
+  var anterior = nodoPreview_('button', 'btn-footer-nav btn-footer-prev', '← Momento Anterior');
+  anterior.type = 'button';
+  anterior.style.visibility = 'hidden';
+  anterior.addEventListener('click', function () { cambiarMomentoPreview_(-1, anterior); });
+  var siguiente = nodoPreview_('button', 'btn-footer-nav btn-footer-next', 'Siguiente: Desarrollo →');
+  siguiente.type = 'button';
+  siguiente.addEventListener('click', function () { cambiarMomentoPreview_(1, siguiente); });
+  footer.appendChild(anterior);
+  footer.appendChild(nodoPreview_('div', '', 'Plataforma Escolar ST90 · Diseño Universal para el Aprendizaje (DUA)'));
+  footer.appendChild(siguiente);
+  marco.appendChild(footer);
+  return marco;
+}
+
+function pintarVistaPreviaIntegrada_() {
+  var caja = document.getElementById('vistaPreviaIntegrada');
+  if (!caja) return;
+  vaciarNodo_(caja);
+  caja.appendChild(armarMaquetaAlumno_());
+}
+
+function aplicarColorFondoPreview_() {
+  var color = window._colorFondoSesionActiva_ || '';
+  if (!color) return;
+  document.querySelectorAll('#vistaPreviaIntegrada .browser-frame, #modalPreviewAlumno .browser-frame').forEach(function (marco) {
+    marco.style.backgroundColor = color;
+  });
+}
+
+function anexarLienzoVivoPreview_(panel) {
+  if (!panel) return;
+  var estado = window._extraExelearning_;
+  if (!estado || !estado.paginas) return;
+  estado.paginas.forEach(function (pag) {
+    (pag.idevices || []).forEach(function (bloque) {
+      if (!bloque || !bloque.cuerpo) return;
+      var art = document.createElement('article');
+      art.className = 'idevice-card';
+      var h = document.createElement('h3');
+      h.textContent = bloque.titulo || 'Bloque';
+      var cuerpo = document.createElement('div');
+      cuerpo.innerHTML = String(bloque.cuerpo);
+      art.appendChild(h);
+      art.appendChild(cuerpo);
+      panel.appendChild(art);
+    });
+  });
+}
+
+function abrirModalPreviewAlumno_() {
+  if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+  if (document.getElementById('panelPasoSesion_4') && window._pasoSesionActivo_ !== 4) irAPasoSesion_(4);
+  else pintarVistaPreviaIntegrada_();
+  var modal = asegurarPreviewAlumno_();
+  var cuerpo = modal.querySelector('.preview-cuerpo-web');
+  vaciarNodo_(cuerpo);
+  cuerpo.appendChild(armarMaquetaAlumno_());
+  aplicarColorFondoPreview_();
   mostrarOverlay_('modalPreviewAlumno');
   var cierre = modal.querySelector('[data-cerrar-preview]');
   if (cierre && cierre.focus) {
     try { cierre.focus(); } catch (err) {}
   }
+}
+
+function abrirVistaPreviaAlumno_() {
+  abrirModalPreviewAlumno_();
 }
 
 function cerrarVistaPreviaAlumno_() {
@@ -2274,6 +3573,20 @@ function iniciarLmsSt90_() {
   window.abrirModalSubirRecurso_ = abrirModalSubirRecurso_;
   window.aplicarAdecuacionCECSE_ = aplicarAdecuacionCECSE_;
   window.abrirVistaPreviaAlumno_ = abrirVistaPreviaAlumno_;
+  window.abrirModalPreviewAlumno_ = abrirModalPreviewAlumno_;
+window.irAPasoSesion_ = irAPasoSesion_;
+window.conmutarMomentoPreview_ = conmutarMomentoPreview_;
+window.mostrarMomentoPreview_ = mostrarMomentoPreview_;
+window.toggleAudioDuaPreview_ = toggleAudioDuaPreview_;
+window.seleccionarOpcionQuizPreview_ = seleccionarOpcionQuizPreview_;
+window.verificarQuizPreview_ = verificarQuizPreview_;
+window.autocalificarQuizPreview_ = autocalificarQuizPreview_;
+window.marcarCotejoPreview_ = marcarCotejoPreview_;
+window.seleccionarNivelRubricaPreview_ = seleccionarNivelRubricaPreview_;
+window.generarClaseInteractivaCompletaIA = generarClaseInteractivaCompletaIA;
+window.reproducirVozMomento_ = reproducirVozMomento_;
+window.abrirAyudaMomento_ = abrirAyudaMomento_;
+window.calcularPuntosTotalesSesion_ = calcularPuntosTotalesSesion_;
   window.insertarBloqueIframe_ = insertarBloqueIframe_;
   window.actualizarContextoAsistenteIA_ = actualizarContextoAsistenteIA_;
   window.detenerVozNEM_ = detenerVozNEM_;
@@ -3075,7 +4388,7 @@ function leerTodosLosContenidosDeSesion_() {
     salida.push({
       tipo: tipo,
       titulo: titulo,
-      cuerpo: ((card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo') || {}).value || '')
+      cuerpo: textoPlanoCampoBloque_(card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo'))
     });
   });
   return salida;
@@ -3196,6 +4509,12 @@ var META_TARJETA_EXE_ = {
   video_interactivo: { badge: 'badge-interact', etiqueta: 'INTERACTIVO', titulo: 'Vídeo Interactivo', cuerpo: 'Pega la URL del video y la pregunta de la pausa.' },
   embebido: { badge: 'badge-interact', etiqueta: 'INTERACTIVO', titulo: 'Recurso Embebido', cuerpo: 'Pega el enlace de Genially, Canva, H5P o Slides.' },
   geogebra: { badge: 'badge-interact', etiqueta: 'INTERACTIVO', titulo: 'GeoGebra / Simulador', cuerpo: 'Pega el enlace del applet.' },
+  video_local: { badge: 'badge-interact', etiqueta: 'INTERACTIVO', titulo: 'Video local', cuerpo: 'Elige un MP4 o WebM de este equipo. No se sube a la nube.' },
+  h5p_interactivo: { badge: 'badge-interact', etiqueta: 'INTERACTIVO', titulo: 'Interactivo H5P / Lumi', cuerpo: 'Pega la URL del paquete H5P o de Lumi.' },
+  callout: { badge: 'badge-info', etiqueta: 'ESTRUCTURA', titulo: 'Recuadro destacado', cuerpo: 'Escribe el aviso o el encuadre de la actividad.' },
+  timeline: { badge: 'badge-info', etiqueta: 'ESTRUCTURA', titulo: 'Línea de fases', cuerpo: 'Ordena las fases de la clase.' },
+  tabla_notion: { badge: 'badge-info', etiqueta: 'ESTRUCTURA', titulo: 'Tabla', cuerpo: 'Usa la tabla de abajo para criterios o comparaciones.' },
+  toggle_notion: { badge: 'badge-info', etiqueta: 'ESTRUCTURA', titulo: 'Desplegable', cuerpo: 'El título va arriba y el detalle se abre al pulsar la flecha.' },
   listening: { badge: 'badge-ingles', etiqueta: 'INGLÉS', titulo: 'Audio Listening y Comprensión', cuerpo: 'Instrucción para el alumno antes de escuchar.', familia: 'ingles' },
   pronunciacion: { badge: 'badge-ingles', etiqueta: 'INGLÉS', titulo: 'Práctica de Pronunciación', cuerpo: 'Pide al alumno leer la frase en voz alta.', familia: 'ingles' },
   flashcards: { badge: 'badge-ingles', etiqueta: 'INGLÉS', titulo: 'Flashcards Bilingües', cuerpo: 'Repasa cada par y escucha la palabra.', familia: 'ingles' },
@@ -3221,44 +4540,98 @@ function idPaginaActivaExe_() {
   return p ? p.id : 0;
 }
 
+function alternarTodasCatsExe_() {
+  var grupos = document.querySelectorAll('.cat-accordion .cat-group');
+  var algunoCerrado = Array.from(grupos).some(function (g) { return !g.classList.contains('abierto'); });
+  grupos.forEach(function (g) {
+    g.classList.toggle('abierto', algunoCerrado);
+  });
+}
+window.alternarTodasCatsExe_ = alternarTodasCatsExe_;
+
 function htmlCatalogoExe_() {
   var cats = [
-    { id: 'cat-info', titulo: 'Información y presentación', abierto: true, items: [
-      ['texto_dua', 'Lectura Guiada DUA'], ['objetivos', 'Objetivos de Clase'], ['galeria', 'Galería de Imágenes'], ['fichero', 'Archivo o Fichero Adjunto']
+    { id: 'cat-info', icon: '📖', titulo: 'Información & Notion', abierto: true, items: [
+      ['texto_dua', '📖 Lectura Guiada DUA (Voz)'],
+      ['objetivos', '🎯 Objetivos de Clase'],
+      ['callout', '💡 Callout / Recuadro (Notion)'],
+      ['timeline', '⏱️ Timeline / Fases NEM (Notion)'],
+      ['tabla_notion', '📊 Tabla Dinámica (Notion)'],
+      ['toggle_notion', '🔽 Toggle / Desplegable (Notion)'],
+      ['galeria', '🖼️ Galería de Imágenes'],
+      ['fichero', '📎 Archivo o Fichero Adjunto']
     ]},
-    { id: 'cat-eval', titulo: 'Evaluación y seguimiento', abierto: true, items: [
-      ['quiz_evaluativo', 'Quiz Evaluativo (Puntos)'], ['encuesta', 'Encuesta / Diagnóstico'], ['vf', 'Pregunta Verdadero / Falso'], ['huecos', 'Rellenar Huecos']
+    { id: 'cat-eval', icon: '📝', titulo: 'Evaluación y Seguimiento', abierto: true, items: [
+      ['quiz_evaluativo', '📝 Quiz Evaluativo (Puntos)'],
+      ['encuesta', '📊 Encuesta / Diagnóstico'],
+      ['vf', '✅ Pregunta Verdadero / Falso'],
+      ['huecos', '✏️ Rellenar Huecos']
     ]},
-    { id: 'cat-juegos', titulo: 'Juegos', abierto: false, items: [
-      ['rosco', 'Rosco de Palabras'], ['sopa', 'Sopa de Letras'], ['adivina', 'Adivina el Concepto'], ['desafio', 'Desafío / Escape Room NEM']
+    { id: 'cat-interact', icon: '🧩', titulo: 'Multimedia & H5P', abierto: true, items: [
+      ['h5p_interactivo', '🧩 H5P / Lumi Interactivo'],
+      ['video_local', '🎬 Video Local (Offline / MP4)'],
+      ['video_interactivo', '🎥 Vídeo con Pausas (YouTube)'],
+      ['embebido', '🌐 Embebido Canva / Genially / Slides'],
+      ['geogebra', '📐 GeoGebra / Simulador']
     ]},
-    { id: 'cat-interact', titulo: 'Actividades interactivas', abierto: false, items: [
-      ['video_interactivo', 'Vídeo Interactivo con Pausas'], ['embebido', 'Embebido Genially / Canva / H5P'], ['geogebra', 'Geogebra / Simulador']
+    { id: 'cat-ingles', icon: '🗣️', titulo: 'Inglés & Flashcards 3D', abierto: true, items: [
+      ['flashcards', '🃏 Flashcards 3D (Notion)'],
+      ['listening', '🎧 Audio Listening y Comprensión'],
+      ['pronunciacion', '🎙️ Práctica de Pronunciación (Voz)']
     ]},
-    { id: 'cat-ingles', titulo: 'Lengua Extranjera (Inglés)', abierto: false, items: [
-      ['listening', 'Audio Listening y Comprensión'], ['pronunciacion', 'Práctica de Pronunciación (Voz)'], ['flashcards', 'Flashcards Bilingües']
+    { id: 'cat-juegos', icon: '🎮', titulo: 'Juegos Pedagógicos', abierto: false, items: [
+      ['rosco', '🔤 Rosco de Palabras'],
+      ['sopa', '🔍 Sopa de Letras'],
+      ['adivina', '❓ Adivina el Concepto'],
+      ['desafio', '🏆 Desafío / Escape Room NEM']
     ]},
-    { id: 'cat-tecnologia', titulo: 'Tecnología y Ofimática', abierto: false, items: [
-      ['sim_ofimatica', 'Práctica de Hoja de Cálculo'], ['algoritmo', 'Diagrama de Flujo / Algoritmo'], ['codigo', 'Editor de Código / Sintaxis']
+    { id: 'cat-tecnologia', icon: '💻', titulo: 'Tecnología y Ofimática', abierto: false, items: [
+      ['sim_ofimatica', '📊 Práctica de Hoja de Cálculo'],
+      ['algoritmo', '🔀 Diagrama de Flujo / Algoritmo'],
+      ['codigo', '💻 Editor de Código / Sintaxis']
     ]},
-    { id: 'cat-ciencias', titulo: 'Ciencias', abierto: false, items: [
-      ['reto_ciencias', 'Problema Matemático Situado'], ['formula', 'Fórmulas']
+    { id: 'cat-ciencias', icon: '🔬', titulo: 'Ciencias y Matemáticas', abierto: false, items: [
+      ['reto_ciencias', '🔬 Problema Situado'],
+      ['formula', '📐 Fórmulas Matemáticas (KaTeX)']
     ]}
   ];
-  return cats.map(function (cat) {
+  var toolbar = '<div class="cat-toolbar-wrap" style="display:flex;justify-content:flex-end;margin-bottom:6px;"><button type="button" class="btn-toggle-todas-cats" onclick="alternarTodasCatsExe_()" style="font-size:11px;color:#0d9488;background:transparent;border:none;cursor:pointer;font-weight:700;padding:2px 4px;">▾ Desplegar / Colapsar todo</button></div>';
+  return toolbar + cats.map(function (cat) {
     var items = cat.items.map(function (it) {
-      return '<div class="idevice-pill-add" onclick="insertariDeviceSesion_(\'' + it[0] + '\')"><span>' + it[1] + '</span><span class="btn-mas">Añadir</span></div>';
+      return '<div class="idevice-pill-add" data-tipo="' + it[0] + '" onclick="insertariDeviceSesion_(\'' + it[0] + '\')"><span>' + it[1] + '</span><span class="btn-mas">Añadir</span></div>';
     }).join('');
     return '<div class="cat-group' + (cat.abierto ? ' abierto' : '') + '" id="' + cat.id + '">' +
-      '<div class="cat-header" onclick="toggleCatIDevices_(\'' + cat.id + '\')"><div class="cat-header-left"><span>' + cat.titulo + '</span></div><i class="cat-chevron"></i></div>' +
+      '<div class="cat-header" onclick="toggleCatIDevices_(\'' + cat.id + '\')"><div class="cat-header-left">' + (cat.icon ? ('<span class="cat-header-icon" style="margin-right:6px;">' + cat.icon + '</span>') : '') + '<span>' + cat.titulo + '</span></div><i class="cat-chevron"></i></div>' +
       '<div class="cat-items">' + items + '</div></div>';
   }).join('');
 }
 
+/* BUILD-581 — la barra .idevice-bar no se publica en el lienzo. Cualquier inyección se retira. */
+function erradicarBarraModularExe_() {
+  var nodos = document.querySelectorAll('#editorSesionActiva .idevice-bar, .nem-seccion-exelearning .idevice-bar, #lienzoExeActivo .idevice-bar, .canvas-exe .idevice-bar, #vistaAutorExe .idevice-bar');
+  nodos.forEach(function (b) {
+    if (b && b.parentNode) b.parentNode.removeChild(b);
+  });
+}
+
+function vigilarInyeccionBarraModularExe_() {
+  if (window._obsBarraModularExe_) return;
+  var raiz = document.getElementById('editorSesionActiva') || document.querySelector('.nem-seccion-exelearning');
+  if (!raiz || typeof MutationObserver !== 'function') return;
+  var obs = new MutationObserver(function () { erradicarBarraModularExe_(); });
+  obs.observe(raiz, { childList: true, subtree: true });
+  window._obsBarraModularExe_ = obs;
+  erradicarBarraModularExe_();
+}
+
 function montarEntornoExeLearning_() {
+  erradicarBarraModularExe_();
+  vigilarInyeccionBarraModularExe_();
   var seccion = document.querySelector('#editorSesionActiva .nem-seccion-exelearning') || document.querySelector('.nem-seccion-exelearning');
   if (!seccion || document.getElementById('listaNodos')) {
     asegurarPaginasExe_();
+    erradicarBarraModularExe_();
+    renderAsistenteSecuenciaIA_();
     return;
   }
   var workspace = document.createElement('div');
@@ -3285,30 +4658,38 @@ function montarEntornoExeLearning_() {
       '<div class="box-idevice-menu"><div class="idevice-menu-titulo"><span>Contenidos de Aprendizaje</span></div><div class="cat-accordion">' + htmlCatalogoExe_() + '</div></div>' +
     '</aside>' +
     '<main class="canvas-exe"><div class="canvas-container" id="lienzoExeActivo">' +
-      '<div class="quick-ribbon" title="Inserción rápida de bloques en la página activa">' +
-        '<div class="quick-icons-group">' +
-          '<button type="button" class="quick-btn text-icon" title="Lectura DUA" onclick="insertariDeviceSesion_(\'texto_dua\')">T</button>' +
-          '<button type="button" class="quick-btn flower-icon" title="Objetivos" onclick="insertariDeviceSesion_(\'objetivos\')">✿</button>' +
-          '<button type="button" class="quick-btn checklist-icon" title="Quiz" onclick="insertariDeviceSesion_(\'quiz_evaluativo\')">✓</button>' +
-          '<button type="button" class="quick-btn file-icon" title="Archivo" onclick="insertariDeviceSesion_(\'fichero\')">↓</button>' +
-          '<button type="button" class="quick-btn gallery-icon" title="Galería" onclick="insertariDeviceSesion_(\'galeria\')">▣</button>' +
+      '<div class="pagina-banner"><div class="pagina-banner-title"><span id="bannerTituloPagina">Página activa</span></div>' +
+        '<div class="pagina-banner-acciones">' +
+          '<div class="canvas-color-picker-wrap" title="Cambiar color de fondo del lienzo">' +
+            '<label for="selColorFondoLienzo" style="font-size:11.5px;font-weight:700;color:#0f766e;cursor:pointer;">🎨 Fondo:</label>' +
+            '<select id="selColorFondoLienzo" class="sel-color-fondo-st90" onchange="cambiarColorFondoLienzo_(this.value)" style="padding:2px 6px;font-size:11.5px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;cursor:pointer;">' +
+              '<option value="#ffffff">⚪ Blanco</option>' +
+              '<option value="#f8fafc">🔘 Gris suave</option>' +
+              '<option value="#f0fdfa">🟢 Menta DUA</option>' +
+              '<option value="#f0f9ff">🔵 Cielo</option>' +
+              '<option value="#fefce8">🟡 Crema</option>' +
+              '<option value="#faf5ff">🟣 Lavanda</option>' +
+              '<option value="#fdf6e2">📜 Sepia</option>' +
+            '</select>' +
+            '<input type="color" id="pickerColorFondoPersonalizado" value="#ffffff" onchange="cambiarColorFondoLienzo_(this.value)" title="Elegir color personalizado" style="width:20px;height:20px;padding:0;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;vertical-align:middle;">' +
+          '</div>' +
+          '<button type="button" class="btn-action-teal" title="¿Cómo funciona el constructor?" onclick="abrirAyudaConstructor_()">❓ Ayuda</button>' +
+          '<button type="button" class="btn-action-teal" title="Escuchar instrucciones en voz alta" onclick="reproducirVozGuiaConstructor_()">🔊 Escuchar guía</button>' +
         '</div>' +
       '</div>' +
-      '<div class="pagina-banner"><div class="pagina-banner-title"><span id="bannerTituloPagina">Página activa</span></div>' +
-        '<button type="button" class="btn-edit-title" onclick="renombrarNodoSesion_()">Renombrar</button></div>' +
       '<div id="contadorIdevices">0 bloques</div>' +
     '</div></main>';
   seccion.appendChild(workspace);
+  erradicarBarraModularExe_();
   var lienzo = document.getElementById('lienzoExeActivo');
-  var barra = seccion.querySelector('.idevice-bar');
   var cont = document.getElementById('contenedorIDevicesDinamicos');
-  if (barra && lienzo) lienzo.appendChild(barra);
   if (cont && lienzo) lienzo.appendChild(cont);
   var tit = document.getElementById('sesTitulo');
   var label = document.getElementById('labelDocTitulo');
   if (label && tit && tit.value) label.textContent = tit.value;
   asegurarPaginasExe_();
   renderArbolSesion_();
+  renderAsistenteSecuenciaIA_();
 }
 
 function renderArbolSesion_() {
@@ -3352,6 +4733,7 @@ function aplicarFiltroPaginaExe_() {
     if (!pid) card.setAttribute('data-pagina-id', activa);
     card.style.display = String(card.getAttribute('data-pagina-id')) === activa ? '' : 'none';
   });
+  repintarDivisoresExe_();
 }
 
 function actualizarContadorIDevicesExe_() {
@@ -3365,6 +4747,289 @@ function actualizarContadorIDevicesExe_() {
     });
   }
   el.textContent = n + (n === 1 ? ' bloque' : ' bloques');
+  renderAsistenteSecuenciaIA_();
+  if (typeof calcularPuntosTotalesSesion_ === 'function') calcularPuntosTotalesSesion_();
+}
+
+function obtenerContextoPlaneacionPrevia_() {
+  var titulo = ((document.getElementById('planTitulo') || {}).value || '').trim();
+  var asig = ((document.getElementById('planAsignatura') || {}).value || '').trim();
+  var grado = ((document.getElementById('planGrado') || {}).value || '1').trim();
+  var grupo = ((document.getElementById('planGrupo') || {}).value || 'A').trim();
+  var pda = ((document.getElementById('planPDA') || {}).value || '').trim();
+  var contSint = ((document.getElementById('planContenidoSintetico') || {}).value || '').trim();
+  var prob = ((document.getElementById('planProblema') || {}).value || '').trim();
+  var prop = ((document.getElementById('planProposito') || {}).value || '').trim();
+
+  var sesTit = ((document.getElementById('sesTitulo') || {}).value || '').trim();
+  var sesAp = ((document.getElementById('sesApertura') || {}).value || '').trim();
+  var sesDes = ((document.getElementById('sesDesarrollo') || {}).value || '').trim();
+  var sesAct = ((document.getElementById('sesActividad') || {}).value || '').trim();
+  var sesCie = ((document.getElementById('sesCierre') || {}).value || '').trim();
+
+  return {
+    titulo: titulo || sesTit || 'Proyecto Didáctico NEM',
+    asignatura: asig || 'Secundaria',
+    grado: grado,
+    grupo: grupo,
+    pda: pda || contSint || 'Aprendizaje fundamental articulado',
+    problema: prob,
+    proposito: prop,
+    sesTitulo: sesTit,
+    sesApertura: sesAp,
+    sesDesarrollo: sesDes,
+    sesActividad: sesAct,
+    sesCierre: sesCie
+  };
+}
+
+function hablarTextoGuia_(texto) {
+  if (!window.speechSynthesis) {
+    if (typeof toast === 'function') toast(texto, 'info');
+    else alert(texto);
+    return;
+  }
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'es-MX';
+    u.rate = 1.0;
+    window.speechSynthesis.speak(u);
+  } catch (e) {
+    if (typeof toast === 'function') toast(texto, 'info');
+  }
+}
+window.hablarTextoGuia_ = hablarTextoGuia_;
+
+function abrirAyudaPaso2_() {
+  var msg = 'Paso 2 · Estructuración de la Clase:\n\n' +
+    'Tienes dos formas de armar la sesión para tus alumnos:\n\n' +
+    '1. 📋 "Trasladar mi Guion Pedagógico a Bloques":\n' +
+    '   Convierte los 4 momentos que redactaste en el Paso 1 (Apertura, Desarrollo, Actividad y Cierre) en bloques interactivos listos para enriquecer.\n\n' +
+    '2. 🤖 "Generar Clase Interactiva con IA NEM":\n' +
+    '   La inteligencia artificial analiza tu PDA y genera explicaciones formativas, retos contextualizados, actividades prácticas y quizzes con retroalimentación automática.\n\n' +
+    'Elige la opción que prefieras para avanzar al constructor.';
+  if (typeof toast === 'function') toast(msg, 'info');
+  else alert(msg);
+}
+window.abrirAyudaPaso2_ = abrirAyudaPaso2_;
+
+function reproducirVozGuiaPaso2_() {
+  hablarTextoGuia_('Paso 2: Estructuración de la clase. Puedes trasladar tu guion pedagógico directamente al constructor o generar una clase interactiva completa con inteligencia artificial. Elige la opción que prefieras para continuar.');
+}
+window.reproducirVozGuiaPaso2_ = reproducirVozGuiaPaso2_;
+
+function abrirAyudaConstructor_() {
+  var msg = 'Paso 3 · Constructor de Clase Interactiva:\n\n' +
+    '• Edición enriquecida: En cada bloque puedes alinear texto, crear encabezados H2 y H3, e insertar Tablas, Imágenes, Videos de YouTube o Recuadros Destacados directamente dentro del contenido.\n' +
+    '• Menú lateral izquierdo: Agrega nuevos bloques interactivos (quizzes, timelines, flashcards 3D, simuladores, H5P).\n' +
+    '• Gestión de páginas: Usa el botón + para añadir nuevas páginas a la sesión y el lápiz para renombrarlas.';
+  if (typeof toast === 'function') toast(msg, 'info');
+  else alert(msg);
+}
+window.abrirAyudaConstructor_ = abrirAyudaConstructor_;
+
+function reproducirVozGuiaConstructor_() {
+  hablarTextoGuia_('Paso 3: Constructor de clase. Aquí puedes modificar cada bloque con la barra de formato, alinear párrafos, e insertar tablas, imágenes o videos. Desde el menú lateral izquierdo puedes añadir más contenidos y actividades interactivas.');
+}
+window.reproducirVozGuiaConstructor_ = reproducirVozGuiaConstructor_;
+
+function limpiarBloquesPaginaActivaExe_() {
+  var pid = String(idPaginaActivaExe_());
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (cont) {
+    cont.querySelectorAll('.idevice-card').forEach(function (card) {
+      var cardPid = card.getAttribute('data-pagina-id');
+      if (cardPid == null || cardPid === '' || String(cardPid) === pid) {
+        card.remove();
+      }
+    });
+  }
+  actualizarContadorIDevicesExe_();
+}
+window.limpiarBloquesPaginaActivaExe_ = limpiarBloquesPaginaActivaExe_;
+
+function renderAsistenteSecuenciaIA_() {
+  var pPaso2 = document.getElementById('panelAsistenteSecuenciaIA');
+  var pCanvas = document.getElementById('panelAsistenteSecuenciaIA_Canvas');
+  if (pCanvas) {
+    pCanvas.innerHTML = '';
+    pCanvas.style.display = 'none';
+  }
+  if (!pPaso2) return;
+
+  var ctx = obtenerContextoPlaneacionPrevia_();
+  var esIngles = /ingl[eé]s/i.test(ctx.asignatura);
+  var esTecno = /tecnolog/i.test(ctx.asignatura);
+
+  var esc = (typeof _escPdf_ === 'function') ? _escPdf_ : function (s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+
+  var pdaResumen = ctx.pda.length > 90 ? (ctx.pda.slice(0, 90) + '...') : ctx.pda;
+
+  var html =
+    '<div class="asistente-ia-card">' +
+      '<div class="asistente-ia-cabecera">' +
+        '<div class="asistente-ia-identidad">' +
+          '<span class="asistente-ia-avatar">🎓</span>' +
+          '<div>' +
+            '<div class="asistente-ia-tag">Asistente Pedagógico NEM (Secundaria Técnica 90)</div>' +
+            '<strong class="asistente-ia-titulo">¿Cómo deseas estructurar tu clase interactiva?</strong>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button type="button" class="btn-action-teal" onclick="abrirAyudaPaso2_()">❓ ¿Cómo funciona?</button>' +
+          '<button type="button" class="btn-action-teal" onclick="reproducirVozGuiaPaso2_()">🔊 Escuchar guía</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="asistente-ia-cuerpo">' +
+        '<div class="asistente-ia-resumen-plan">' +
+          '<span class="badge-plan-asig">' + esc(ctx.asignatura) + ' ' + esc(ctx.grado) + '° ' + esc(ctx.grupo) + '</span>' +
+          '<span class="texto-plan-contexto">Planeación: <strong>' + esc(ctx.titulo) + '</strong> · PDA: <em>' + esc(pdaResumen) + '</em></span>' +
+        '</div>' +
+        '<div class="opciones-construccion-grid">' +
+          '<div class="opcion-construccion-card">' +
+            '<div class="opcion-cabecera">' +
+              '<span class="opcion-icono">📋</span>' +
+              '<div>' +
+                '<strong style="font-size:14px;color:#0f172a;">Opción 1: Trasladar mi Guion Pedagógico a Bloques</strong>' +
+                '<div style="font-size:11px;color:#0d9488;font-weight:700;">Rápido · Fiel a tus 4 momentos del Paso 1</div>' +
+              '</div>' +
+            '</div>' +
+            '<p class="opcion-desc">Toma directamente los textos de Apertura, Desarrollo, Actividad y Cierre que redactaste en el Paso 1 y los convierte en 4 bloques interactivos editables listos para que agregues tablas, imágenes o videos.</p>' +
+            '<button type="button" class="btn-construir-secuencia-completa" onclick="construirSecuenciaCompletaIA_()">' +
+              '📋 Trasladar Guion al Constructor' +
+            '</button>' +
+          '</div>' +
+          '<div class="opcion-construccion-card opcion-ia-card">' +
+            '<div class="opcion-cabecera">' +
+              '<span class="opcion-icono">🤖</span>' +
+              '<div>' +
+                '<strong style="font-size:14px;color:#0f172a;">Opción 2: Generar Clase Interactiva con IA NEM</strong>' +
+                '<div style="font-size:11px;color:#0284c7;font-weight:700;">Profundo · Actividades, Quizzes y Rúbricas</div>' +
+              '</div>' +
+            '</div>' +
+            '<p class="opcion-desc">La IA analiza tu PDA y redacta una clase interactiva completa con explicaciones formativas, actividades prácticas situadas y un quiz evaluativo con retroalimentación automática.</p>' +
+            '<button type="button" class="btn-construir-secuencia-completa btn-ia-profunda" data-accion="generar-clase-interactiva" onclick="generarClaseInteractivaCompletaIA(this)">' +
+              '✨ Generar con IA Avanzada' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pasos-manuales-separador">' +
+          '<span style="font-size:12px;color:#64748b;font-weight:700;">O agrega momentos individuales a la página activa:</span>' +
+        '</div>' +
+        '<div class="asistente-ia-pasos-grid" style="grid-template-columns: repeat(4, 1fr); gap: 10px;">' +
+          '<div class="paso-card paso-1" style="padding:10px;">' +
+            '<strong style="font-size:12px;display:block;margin-bottom:4px;">1. Apertura (5 min)</strong>' +
+            '<button type="button" class="btn-paso-accion" onclick="insertarPasoSecuenciaIA_(1)">+ Añadir Lectura DUA</button>' +
+          '</div>' +
+          '<div class="paso-card paso-2" style="padding:10px;">' +
+            '<strong style="font-size:12px;display:block;margin-bottom:4px;">2. Desarrollo (10 min)</strong>' +
+            '<button type="button" class="btn-paso-accion" onclick="insertarPasoSecuenciaIA_(2)">+ Añadir ' + (esIngles ? 'Listening' : (esTecno ? 'Hoja Cálculo' : 'Explicación')) + '</button>' +
+          '</div>' +
+          '<div class="paso-card paso-3" style="padding:10px;">' +
+            '<strong style="font-size:12px;display:block;margin-bottom:4px;">3. Actividad (20 min)</strong>' +
+            '<button type="button" class="btn-paso-accion" onclick="insertarPasoSecuenciaIA_(3)">+ Añadir Actividad</button>' +
+          '</div>' +
+          '<div class="paso-card paso-4" style="padding:10px;">' +
+            '<strong style="font-size:12px;display:block;margin-bottom:4px;">4. Cierre (5 min)</strong>' +
+            '<button type="button" class="btn-paso-accion" onclick="insertarPasoSecuenciaIA_(4)">+ Añadir Quiz</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  pPaso2.innerHTML = html;
+}
+
+function toggleAsistenteSecuenciaIA_() {
+  if (typeof irAPasoSesion_ === 'function') irAPasoSesion_(2);
+}
+
+function insertarPasoSecuenciaIA_(pasoNum) {
+  var ctx = obtenerContextoPlaneacionPrevia_();
+  var esIngles = /ingl[eé]s/i.test(ctx.asignatura);
+  var esTecno = /tecnolog/i.test(ctx.asignatura);
+  var pid = idPaginaActivaExe_();
+  var card = null;
+
+  if (pasoNum === 1) {
+    var apTexto = ctx.sesApertura || ('Iniciamos reflexionando sobre ' + ctx.titulo + '. ' + (ctx.pda ? ('Propósito: ' + ctx.pda) : 'Activa tus saberes previos escuchando el audio guiado.'));
+    card = insertarBloqueExe_('texto_dua', {
+      titulo: '1. Saberes Previos y Lectura Guiada DUA',
+      cuerpo: apTexto
+    }, pid);
+  } else if (pasoNum === 2) {
+    if (esIngles) {
+      card = insertarBloqueExe_('listening', {
+        titulo: '2. Audio Listening and Comprehension',
+        cuerpo: ctx.sesDesarrollo || 'Listen carefully to the audio and answer the questions.'
+      }, pid);
+    } else if (esTecno) {
+      card = insertarBloqueExe_('sim_ofimatica', {
+        titulo: '2. Práctica de Hoja de Cálculo Interactiva',
+        cuerpo: ctx.sesDesarrollo || 'Captura los datos y comprueba el cálculo automático con las fórmulas =SUMA y =PROMEDIO.'
+      }, pid);
+    } else {
+      card = insertarBloqueExe_('objetivos', {
+        titulo: '2. Desarrollo y Conceptos Clave',
+        cuerpo: ctx.sesDesarrollo || ('Objetivos de la sesión:\n• Comprender ' + (ctx.pda || ctx.titulo) + '.\n• Analizar ejemplos aplicados a nuestro contexto comunitario.')
+      }, pid);
+    }
+  } else if (pasoNum === 3) {
+    var actTexto = ctx.sesActividad || ('Realiza la siguiente actividad práctica situada en equipo o individual:\n' + (ctx.proposito || 'Elabora el producto o evidencia requerida para consolidar el aprendizaje.'));
+    card = insertarBloqueExe_('fichero', {
+      titulo: '3. Actividad Práctica Situada',
+      cuerpo: actTexto
+    }, pid);
+  } else if (pasoNum === 4) {
+    var cieTexto = ctx.sesCierre || 'Responde este reactivo formativo de metacognición para valorar lo aprendido en la sesión.';
+    card = insertarBloqueExe_('quiz_evaluativo', {
+      titulo: '4. Evaluación Formativa y Cierre',
+      cuerpo: cieTexto
+    }, pid);
+  }
+
+  aplicarFiltroPaginaExe_();
+  actualizarContadorIDevicesExe_();
+  renderArbolSesion_();
+  if (card && card.scrollIntoView) {
+    setTimeout(function () {
+      try { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+    }, 100);
+  }
+  if (typeof toast === 'function') {
+    toast('Momento ' + pasoNum + ' añadido a la página activa.', 'ok');
+  }
+  return card;
+}
+
+function construirSecuenciaCompletaIA_() {
+  var cuenta = contarBloquesPaginaExe_(idPaginaActivaExe_());
+  if (cuenta > 0) {
+    var deseaReemplazar = confirm(
+      '⚠️ Esta página ya contiene ' + cuenta + ' bloque(s) de contenido.\n\n' +
+      '¿Deseas REEMPLAZAR los bloques actuales con el nuevo guion pedagógico?\n\n' +
+      '• Aceptar: Reemplaza los bloques existentes de esta página.\n' +
+      '• Cancelar: Mantiene los bloques actuales y agrega los nuevos al final.'
+    );
+    if (deseaReemplazar) {
+      limpiarBloquesPaginaActivaExe_();
+    }
+  }
+  insertarPasoSecuenciaIA_(1);
+  insertarPasoSecuenciaIA_(2);
+  insertarPasoSecuenciaIA_(3);
+  insertarPasoSecuenciaIA_(4);
+  window._asistenteIAAbierto_ = false;
+  actualizarContadorIDevicesExe_();
+  renderArbolSesion_();
+  renderAsistenteSecuenciaIA_();
+  if (typeof irAPasoSesion_ === 'function') irAPasoSesion_(3);
+  if (typeof toast === 'function') {
+    toast('📋 ¡Guion trasladado al Constructor con éxito!', 'ok');
+  }
 }
 
 function agregarNodoSesion_() {
@@ -3507,14 +5172,89 @@ function agregarParFlashcard_(origen, par) {
   if (!lista) return;
   var fila = document.createElement('div');
   fila.className = 'fila-flashcard';
-  fila.innerHTML = '<input type="text" class="campo-input inp-palabra" placeholder="Word in English">' +
-    '<input type="text" class="campo-input inp-traduccion" placeholder="Traducción">' +
-    '<button type="button" class="nem-btn-accion" onclick="hablarFlashcardExe_(this)">Escuchar</button>';
+  fila.innerHTML = '<input type="text" class="campo-input inp-palabra" placeholder="Word in English" oninput="sincronizarFlashcard3D_(this)">' +
+    '<input type="text" class="campo-input inp-traduccion" placeholder="Traducción" oninput="sincronizarFlashcard3D_(this)">' +
+    '<button type="button" class="nem-btn-accion" onmousedown="event.preventDefault()" onclick="hablarFlashcardExe_(this)">Escuchar</button>' +
+    '<div class="flashcard-3d" onclick="voltearFlashcard3D_(this)">' +
+      '<div class="flashcard-inner">' +
+        '<div class="flashcard-cara flashcard-frente"><span>Pregunta</span><strong class="txt-frente"></strong></div>' +
+        '<div class="flashcard-cara flashcard-reverso"><span>Respuesta</span><strong class="txt-reverso"></strong></div>' +
+      '</div></div>';
   if (par) {
     fila.querySelector('.inp-palabra').value = par.palabra || '';
     fila.querySelector('.inp-traduccion').value = par.traduccion || '';
+    sincronizarFlashcard3D_(fila.querySelector('.inp-palabra'));
   }
   lista.appendChild(fila);
+}
+
+function voltearFlashcard3D_(caja) {
+  var el = caja && caja.classList && caja.classList.contains('flashcard-3d') ? caja : (caja && caja.closest ? caja.closest('.flashcard-3d') : null);
+  if (el) el.classList.toggle('flipped');
+}
+
+function sincronizarFlashcard3D_(input) {
+  var fila = input && input.closest ? input.closest('.fila-flashcard') : null;
+  if (!fila) return;
+  var frente = fila.querySelector('.txt-frente');
+  var reverso = fila.querySelector('.txt-reverso');
+  if (frente) frente.textContent = ((fila.querySelector('.inp-palabra') || {}).value || '');
+  if (reverso) reverso.textContent = ((fila.querySelector('.inp-traduccion') || {}).value || '');
+}
+
+function agregarPasoTimeline_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  var lista = card ? card.querySelector('.timeline-steps-wrap') : null;
+  if (!lista && btn && btn.classList && btn.classList.contains('timeline-steps-wrap')) lista = btn;
+  if (!lista) return;
+  var n = lista.querySelectorAll('.timeline-paso').length + 1;
+  var paso = document.createElement('div');
+  paso.className = 'timeline-paso';
+  paso.innerHTML = '<span class="timeline-num">' + n + '</span><input type="text" class="campo-input inp-timeline" aria-label="Fase ' + n + '">';
+  lista.appendChild(paso);
+}
+
+function agregarFilaTablaNotion_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  var cuerpo = card ? card.querySelector('.tabla-notion tbody') : null;
+  if (!cuerpo) return;
+  var tr = document.createElement('tr');
+  tr.innerHTML = '<td contenteditable="true"></td><td contenteditable="true"></td>';
+  cuerpo.appendChild(tr);
+}
+
+function conmutarToggleNotion_(btn) {
+  var item = btn && btn.closest ? btn.closest('.toggle-notion-item') : null;
+  if (!item) return;
+  var cuerpo = item.querySelector('.toggle-notion-cuerpo');
+  var flecha = item.querySelector('.toggle-notion-flecha');
+  if (cuerpo) cuerpo.classList.toggle('oculto');
+  if (flecha) flecha.style.transform = (cuerpo && cuerpo.classList.contains('oculto')) ? '' : 'rotate(90deg)';
+}
+
+function cargarVideoLocalExe_(input) {
+  var file = input && input.files && input.files[0];
+  var caja = input && input.closest ? input.closest('.video-local-container') : null;
+  var video = caja ? caja.querySelector('video') : null;
+  if (!file || !video) return;
+  if (video._urlLocal) URL.revokeObjectURL(video._urlLocal);
+  video._urlLocal = URL.createObjectURL(file);
+  video.src = video._urlLocal;
+  var card = input.closest('.idevice-card');
+  if (card) card.setAttribute('data-video-nombre', file.name);
+}
+
+function actualizarMarcoH5P_(input) {
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!card) return;
+  var url = String(input.value || '').trim();
+  var frame = card.querySelector('.h5p-frame');
+  var enlace = card.querySelector('.btn-h5p-externo');
+  if (frame) frame.src = url || 'about:blank';
+  if (enlace) {
+    enlace.href = url || '#';
+    if (!url) enlace.removeAttribute('href');
+  }
 }
 
 function hablarFlashcardExe_(btn) {
@@ -3601,15 +5341,52 @@ function htmlEspecialExe_(tipo, datos) {
   var extra = datos.extra || {};
   
   if (tipo === 'texto_dua' || tipo === 'lectura') {
-    return '<div class="toolbar-enriquecida">' +
-      '<button type="button" class="btn-tool-formato" title="Negrita" onclick="formatearTextoExe_(this, \'**\')"><strong>B</strong></button>' +
-      '<button type="button" class="btn-tool-formato" title="Cursiva" onclick="formatearTextoExe_(this, \'*\')"><em>I</em></button>' +
-      '<button type="button" class="btn-tool-formato" title="Subrayado" onclick="formatearTextoExe_(this, \'__\')"><u>U</u></button>' +
-      '<button type="button" class="btn-tool-formato" title="Título" onclick="formatearTextoExe_(this, \'### \')">H3</button>' +
-      '<button type="button" class="btn-tool-formato" title="Viñeta" onclick="formatearTextoExe_(this, \'• \')">• Lista</button>' +
-      '<button type="button" class="btn-tool-formato" title="Cita" onclick="formatearTextoExe_(this, \'> \')">“” Cita</button>' +
-      '<span class="pill-audio-dua" onclick="reproducirAudioDuaCard_(this)">🔊 Síntesis de Voz DUA (Probar)</span>' +
+    return '<span class="pill-audio-dua" onmousedown="event.preventDefault()" onclick="reproducirAudioDuaCard_(this)">🔊 Síntesis de Voz DUA (Probar)</span>';
+  }
+
+  if (tipo === 'callout') {
+    return '<div class="notion-callout">' +
+      '<select class="sel-emoji-callout" aria-label="Emoji del recuadro" onmousedown="event.preventDefault()">' +
+        '<option>💡</option><option>⚠️</option><option>✅</option><option>📌</option><option>🎯</option>' +
+      '</select>' +
+      '<span>El texto del recuadro se escribe en el editor de arriba.</span>' +
     '</div>';
+  }
+
+  if (tipo === 'timeline') {
+    return '<div class="timeline-steps-wrap">' +
+      '<div class="timeline-paso"><span class="timeline-num">1</span><input type="text" class="campo-input inp-timeline" value="Apertura" aria-label="Fase 1"></div>' +
+      '<div class="timeline-paso"><span class="timeline-num">2</span><input type="text" class="campo-input inp-timeline" value="Desarrollo" aria-label="Fase 2"></div>' +
+      '<div class="timeline-paso"><span class="timeline-num">3</span><input type="text" class="campo-input inp-timeline" value="Cierre" aria-label="Fase 3"></div>' +
+    '</div>' +
+    '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="agregarPasoTimeline_(this)">+ Fase</button>';
+  }
+
+  if (tipo === 'tabla_notion') {
+    return '<div class="notion-table-wrap"><table class="tabla-notion"><thead><tr><th>Criterio</th><th>Evidencia</th></tr></thead><tbody>' +
+      '<tr><td contenteditable="true"></td><td contenteditable="true"></td></tr>' +
+      '</tbody></table></div>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="agregarFilaTablaNotion_(this)">+ Añadir fila</button>';
+  }
+
+  if (tipo === 'toggle_notion') {
+    return '<div class="toggle-notion-item">' +
+      '<button type="button" class="toggle-notion-cabecera" onmousedown="event.preventDefault()" onclick="conmutarToggleNotion_(this)"><span class="toggle-notion-flecha">▸</span> Desplegar detalle</button>' +
+      '<div class="toggle-notion-cuerpo oculto">El detalle también puede escribirse en el editor de arriba.</div>' +
+    '</div>';
+  }
+
+  if (tipo === 'video_local') {
+    return '<div class="video-local-container">' +
+      '<input type="file" accept="video/mp4,video/webm" aria-label="Video local" onchange="cargarVideoLocalExe_(this)">' +
+      '<video class="video-local-player" controls></video>' +
+    '</div>';
+  }
+
+  if (tipo === 'h5p_interactivo') {
+    return '<label>URL del interactivo</label><input type="url" class="campo-input inp-h5p-url" placeholder="https://..." oninput="actualizarMarcoH5P_(this)">' +
+      '<div class="h5p-frame-container"><iframe class="h5p-frame" title="Interactivo H5P" allow="autoplay; fullscreen; geolocation; microphone; camera" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>' +
+      '<div class="h5p-fallback-bar"><a class="btn-h5p-externo" href="#" target="_blank" rel="noopener">↗ Abrir interactivo H5P a pantalla completa</a></div>';
   }
 
   if (tipo === 'video_interactivo') {
@@ -3719,6 +5496,682 @@ function htmlEspecialExe_(tipo, datos) {
   return '';
 }
 
+function escaparHtmlEditor_(s) {
+  if (typeof escaparHtml === 'function') return escaparHtml(s);
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function htmlInicialEditor_(valor) {
+  var s = String(valor || '');
+  if (!s) return '';
+  if (/<[a-z][\s\S]*>/i.test(s)) return s;
+  return escaparHtmlEditor_(s).replace(/\n/g, '<br>');
+}
+
+function htmlCuadroComparativoDUA_() {
+  var celda = 'padding:8px 12px;border:1px solid #99f6e4;';
+  var cabeza = 'padding:8px 12px;border:1px solid #5eead4;background:#ccfbf1;text-align:left;font-weight:700;';
+  return '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;">' +
+    '<thead><tr>' +
+      '<th style="' + cabeza + '">Aspecto</th>' +
+      '<th style="' + cabeza + '">Comparación</th>' +
+    '</tr></thead><tbody>' +
+      '<tr><td style="' + celda + '">Criterio 1</td><td style="' + celda + '">Describe la primera diferencia.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 2</td><td style="' + celda + '">Describe la segunda diferencia.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 3</td><td style="' + celda + '">Describe la tercera diferencia.</td></tr>' +
+    '</tbody></table><p><br></p>';
+}
+
+function htmlRubricaObservacionDUA_() {
+  var celda = 'padding:8px 12px;border:1px solid #cbd5e1;';
+  var cabeza = 'padding:8px 12px;border:1px solid #94a3b8;background:#f1f5f9;text-align:left;font-weight:700;';
+  return '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;">' +
+    '<thead><tr>' +
+      '<th style="' + cabeza + '">Criterio</th>' +
+      '<th style="' + cabeza + '">Nivel esperado</th>' +
+      '<th style="' + cabeza + '">Evidencia observable</th>' +
+    '</tr></thead><tbody>' +
+      '<tr><td style="' + celda + '">Criterio 1</td><td style="' + celda + '">Logrado</td><td style="' + celda + '">Qué se ve en el trabajo.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 2</td><td style="' + celda + '">En proceso</td><td style="' + celda + '">Qué se ve en el trabajo.</td></tr>' +
+      '<tr><td style="' + celda + '">Criterio 3</td><td style="' + celda + '">Inicial</td><td style="' + celda + '">Qué se ve en el trabajo.</td></tr>' +
+    '</tbody></table><p><br></p>';
+}
+
+function htmlEsquemaConceptoDUA_() {
+  return '<div class="notion-callout"><span style="font-size:28px;line-height:1;">🔑</span><div><strong>Concepto clave</strong><p>Escribe aquí la definición con lenguaje claro para el grupo.</p></div></div><p><br></p>';
+}
+
+function cambiarColorFondoLienzo_(color) {
+  if (!color) color = '#ffffff';
+  var lienzo = document.getElementById('lienzoExeActivo') || document.querySelector('.canvas-exe');
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (lienzo) lienzo.style.backgroundColor = color;
+  if (cont) cont.style.backgroundColor = color;
+  var sel = document.getElementById('selColorFondoLienzo');
+  if (sel && sel.value !== color) {
+    var opt = sel.querySelector('option[value="' + color + '"]');
+    if (opt) sel.value = color;
+  }
+  var picker = document.getElementById('pickerColorFondoPersonalizado');
+  if (picker && /^#[0-9a-f]{6}$/i.test(color)) picker.value = color;
+  window._colorFondoSesionActiva_ = color;
+  document.querySelectorAll('.browser-frame').forEach(function (marco) {
+    marco.style.backgroundColor = color;
+  });
+  var previewPanel = document.querySelector('#modalPreviewAlumno .preview-panel, #vistaPreviaIntegrada .preview-panel');
+  if (previewPanel) previewPanel.style.backgroundColor = color;
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function htmlEditorEnriquecido_(idUnico) {
+  var idAttr = idUnico ? (' id="rich_editor_' + idUnico + '"') : '';
+  return '<div class="editor-enriquecido-wrap">' +
+    // Menubar superior estilo Office / TinyMCE
+    '<div class="menubar-editor-st90">' +
+      '<span class="menu-item-st90" title="Acciones de documento">📄 Archivo</span>' +
+      '<span class="menu-item-st90" title="Deshacer, rehacer o limpiar" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">✏️ Editar</span>' +
+      '<span class="menu-item-st90" title="Insertar imagen, video o enlace" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">➕ Insertar</span>' +
+      '<span class="menu-item-st90" title="Formato de texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'bold\')">🔤 Formato</span>' +
+      '<span class="menu-item-st90" title="Insertar o gestionar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</span>' +
+      '<span class="menu-item-st90" title="Herramientas y accesibilidad DUA">⚙️ Herramientas</span>' +
+    '</div>' +
+    // Barra de herramientas fila 1: Historial, estilo de bloque, fuentes, tamaños e inserción
+    '<div class="toolbar-editor-formato toolbar-fila-1">' +
+      '<button type="button" class="btn-tb" title="Deshacer (Ctrl+Z)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'undo\')">↩️</button>' +
+      '<button type="button" class="btn-tb" title="Rehacer (Ctrl+Y)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'redo\')">↪️</button>' +
+      '<span class="tb-sep"></span>' +
+      '<button type="button" class="btn-tb" title="Negrita (Ctrl+B)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'bold\')"><b>B</b></button>' +
+      '<button type="button" class="btn-tb" title="Cursiva (Ctrl+I)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'italic\')"><i>I</i></button>' +
+      '<button type="button" class="btn-tb" title="Subrayado (Ctrl+U)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'underline\')"><u>U</u></button>' +
+      '<button type="button" class="btn-tb" title="Tachado" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'strikeThrough\')"><s>S</s></button>' +
+      '<span class="tb-sep"></span>' +
+      // Selector de Bloque (Párrafo / H1 / H2 / H3 / Cita)
+      '<select class="sel-tb-bloque" title="Estilo de párrafo" onchange="aplicarEstiloTexto(this, \'formatBlock\', this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>Párrafo...</option>' +
+        '<option value="<p>">Párrafo normal</option>' +
+        '<option value="<h1>">Título 1 (H1)</option>' +
+        '<option value="<h2>">Título 2 (H2)</option>' +
+        '<option value="<h3>">Subtítulo 3 (H3)</option>' +
+        '<option value="<blockquote>">Cita destacada</option>' +
+      '</select>' +
+      // Selector de Familia Tipográfica
+      '<select class="sel-tb-fuente" title="Familia tipográfica" onchange="cambiarFuenteEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>Fuente...</option>' +
+        '<option value="sans-serif">Sans-serif</option>' +
+        '<option value="serif">Serif</option>' +
+        '<option value="monospace">Monospace</option>' +
+        '<option value="Georgia, serif">Georgia</option>' +
+        '<option value="Comic Sans MS">Comic Sans MS</option>' +
+      '</select>' +
+      // Selector de Tamaño de Fuente
+      '<select class="sel-tb-tamano" title="Tamaño de letra" onchange="cambiarTamanoEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>Tamaño...</option>' +
+        '<option value="12px">12px</option>' +
+        '<option value="14px">14px</option>' +
+        '<option value="16px">16px</option>' +
+        '<option value="18px">18px</option>' +
+        '<option value="20px">20px</option>' +
+        '<option value="24px">24px</option>' +
+      '</select>' +
+      '<span class="tb-sep"></span>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗 Link</button>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar imagen con tamaño configurable" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️ Imagen</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'25%\')">25%</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'50%\')">50%</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'75%\')">75%</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'100%\')">100%</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'left\')">Img izq</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'center\')">Img centro</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'right\')">Img der</button>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar video (YouTube o MP4)" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬 Video</button>' +
+      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar tabla estructurada" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</button>' +
+    '</div>' +
+    // Barra de herramientas fila 2: Alineaciones, listas, colores, cajas DUA y quitar elemento
+    '<div class="toolbar-editor-formato toolbar-fila-2">' +
+      '<button type="button" class="btn-tb" title="Alinear a la izquierda" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyLeft\')">⬅️</button>' +
+      '<button type="button" class="btn-tb" title="Centrar" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyCenter\')">↔️</button>' +
+      '<button type="button" class="btn-tb" title="Alinear a la derecha" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyRight\')">➡️</button>' +
+      '<button type="button" class="btn-tb" title="Justificar texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyFull\')">📄</button>' +
+      '<span class="tb-sep"></span>' +
+      '<button type="button" class="btn-tb" title="Lista con viñetas" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertUnorderedList\')">• Lista</button>' +
+      '<button type="button" class="btn-tb" title="Lista numerada" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertOrderedList\')">1. Lista</button>' +
+      '<button type="button" class="btn-tb" title="Reducir sangría" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'outdent\')">⇤</button>' +
+      '<button type="button" class="btn-tb" title="Aumentar sangría" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'indent\')">⇥</button>' +
+      '<span class="tb-sep"></span>' +
+      // Selector de Color de Texto
+      '<label class="btn-tb btn-tb-color" title="Color de texto" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
+        '<span style="font-weight:800;color:#0d9488;font-size:13px;border-bottom:2px solid #0d9488;">A</span>' +
+        '<input type="color" value="#0f172a" onchange="cambiarColorTextoEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+      '</label>' +
+      '<label class="btn-tb btn-tb-color" title="Color de resaltado" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
+        '<span style="font-weight:800;background:#fef08a;font-size:13px;">A</span>' +
+        '<input type="color" value="#fef08a" onchange="cambiarResalteEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+      '</label>' +
+      '<button type="button" class="btn-tb" title="Limpiar formato de texto" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">Tx</button>' +
+      '<span class="tb-sep"></span>' +
+      // Gestión de Filas y Columnas de Tabla
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Fila arriba" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'filaArriba\')">Fila arriba</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Fila abajo" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">Fila abajo</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Quitar fila" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">Quitar fila</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Columna a la izquierda" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'colIzquierda\')">Col izq</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Columna a la derecha" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">Col der</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Quitar columna" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">Quitar col</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Borde de la celda" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'borde\')">Borde</button>' +
+      '<button type="button" class="btn-tb btn-tb-tabla" title="Eliminar la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarTabla\')">Quitar tabla</button>' +
+      '<button type="button" class="btn-tb" title="Color de fondo de la celda" onmousedown="event.preventDefault()" onclick="colorearCeldaEditor(this)">🎨 Celda</button>' +
+      '<span class="tb-sep"></span>' +
+      // Cuadros Didácticos DUA
+      '<select class="sel-tb-cajas" title="Insertar cuadro de texto o forma didáctica DUA" onchange="insertarCajaDidacticaEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
+        '<option value="" disabled selected>📦 Cuadro didáctico...</option>' +
+        '<option value="callout">💡 Callout DUA (Verde)</option>' +
+        '<option value="nota">📌 Nota Importante (Ámbar)</option>' +
+        '<option value="reto">🎯 Reto de Aprendizaje (Teal)</option>' +
+        '<option value="pregunta">💬 Pregunta Detonadora (Azul)</option>' +
+        '<option value="comparativo">⚖️ Cuadro Comparativo</option>' +
+        '<option value="rubrica">📋 Rúbrica Formativa</option>' +
+      '</select>' +
+      '<button type="button" class="btn-tb btn-tb-danger" title="Eliminar elemento seleccionado (tabla, imagen o recuadro)" onmousedown="event.preventDefault()" onclick="eliminarElementoSeleccionadoEditor(this)">🗑️ Quitar elemento</button>' +
+    '</div>' +
+    // Cuerpo editable enriquecido
+    '<div class="campo-editor-rich idevice-campo-cuerpo"' + idAttr + ' data-campo="cuerpo" contenteditable="true" role="textbox" aria-multiline="true"></div>' +
+  '</div>';
+}
+
+function cambiarFuenteEditor(select, fuente) {
+  if (!fuente) return;
+  var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand('fontName', false, fuente); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cambiarTamanoEditor(select, tamano) {
+  if (!tamano) return;
+  var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    var span = document.createElement('span');
+    span.style.fontSize = tamano;
+    var range = sel.getRangeAt(0);
+    try {
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+    } catch (e) {
+      try { document.execCommand('fontSize', false, '3'); } catch (err) {}
+    }
+  } else {
+    try { document.execCommand('fontSize', false, '3'); } catch (e) {}
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function limpiarFormatoEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand('removeFormat', false, null); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function montarEditorEnriquecido_(html, idUnico) {
+  idUnico = idUnico || ('ed_' + Date.now() + '_' + Math.floor(Math.random() * 1000));
+  var temp = document.createElement('div');
+  temp.innerHTML = htmlEditorEnriquecido_(idUnico);
+  var nodo = temp.firstElementChild || temp.firstChild;
+  var editor = nodo ? nodo.querySelector('.campo-editor-rich') : null;
+  if (editor) {
+    if (!editor.id) editor.id = 'rich_editor_' + idUnico;
+    editor.innerHTML = htmlInicialEditor_(html);
+    editor.addEventListener('input', function () {
+      if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    });
+  }
+  return nodo;
+}
+
+function esEditorRico_(el) {
+  return !!(el && el.getAttribute && el.getAttribute('contenteditable') === 'true');
+}
+
+function leerCampoBloque_(el) {
+  if (!el) return '';
+  if (esEditorRico_(el)) return el.innerHTML || '';
+  return el.value || '';
+}
+
+function textoPlanoCampoBloque_(el) {
+  if (!el) return '';
+  if (esEditorRico_(el)) return String(el.innerText || el.textContent || '').trim();
+  return String(el.value || '').trim();
+}
+
+function escribirCampoBloque_(el, valor) {
+  if (!el) return;
+  if (esEditorRico_(el)) el.innerHTML = htmlInicialEditor_(valor);
+  else el.value = valor || '';
+}
+
+function aplicarEstiloTexto(btn, comando, valor) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand(comando, false, valor || null); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cambiarColorTextoEditor(input, color) {
+  if (!color) return;
+  var wrap = input && input.closest ? input.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (editor && editor.focus) editor.focus();
+  try { document.execCommand('foreColor', false, color); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function modificarTablaEditor(btn, accion) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = nodo ? nodo.closest('td, th') : null;
+  if (!td) {
+    var tablas = editor.querySelectorAll('table');
+    if (!tablas.length) {
+      alert('Por favor coloca el cursor dentro de la tabla que deseas modificar.');
+      return;
+    }
+    var ultimaTabla = tablas[tablas.length - 1];
+    var celdas = ultimaTabla.querySelectorAll('td, th');
+    td = celdas.length ? celdas[celdas.length - 1] : null;
+  }
+  if (!td) return;
+  var tr = td.closest('tr');
+  var tabla = td.closest('table');
+  if (!tr || !tabla) return;
+
+  if (accion === 'agregarFila') {
+    var nuevaFila = document.createElement('tr');
+    var numCols = tr.children.length;
+    for (var i = 0; i < numCols; i++) {
+      var nuevaCelda = document.createElement('td');
+      nuevaCelda.style.padding = '8px 12px';
+      nuevaCelda.style.border = '1px solid #cbd5e1';
+      nuevaCelda.innerHTML = '<br>';
+      nuevaFila.appendChild(nuevaCelda);
+    }
+    tr.parentNode.insertBefore(nuevaFila, tr.nextSibling);
+  } else if (accion === 'eliminarFila') {
+    if (tabla.querySelectorAll('tr').length <= 1) {
+      tabla.remove();
+    } else {
+      tr.remove();
+    }
+  } else if (accion === 'agregarColumna') {
+    var colIdx = Array.prototype.indexOf.call(tr.children, td);
+    tabla.querySelectorAll('tr').forEach(function (fila) {
+      var esHead = fila.parentNode.tagName === 'THEAD' || fila.children[0].tagName === 'TH';
+      var nuevaCelda = document.createElement(esHead ? 'th' : 'td');
+      nuevaCelda.style.padding = '8px 12px';
+      nuevaCelda.style.border = '1px solid #cbd5e1';
+      if (esHead) {
+        nuevaCelda.style.background = '#f1f5f9';
+        nuevaCelda.style.fontWeight = '700';
+        nuevaCelda.textContent = 'Columna';
+      } else {
+        nuevaCelda.innerHTML = '<br>';
+      }
+      var ref = fila.children[colIdx];
+      if (ref && ref.nextSibling) fila.insertBefore(nuevaCelda, ref.nextSibling);
+      else fila.appendChild(nuevaCelda);
+    });
+  } else if (accion === 'eliminarColumna') {
+    var colIdx = Array.prototype.indexOf.call(tr.children, td);
+    tabla.querySelectorAll('tr').forEach(function (fila) {
+      if (fila.children[colIdx]) fila.children[colIdx].remove();
+    });
+    if (!tabla.querySelector('td, th')) tabla.remove();
+  } else if (accion === 'filaArriba') {
+    var filaNueva = tr.cloneNode(false);
+    var nCols = tr.children.length;
+    for (var k = 0; k < nCols; k++) {
+      var celdaNueva = document.createElement(tr.children[k].tagName.toLowerCase() === 'th' ? 'th' : 'td');
+      celdaNueva.style.padding = '8px 12px';
+      celdaNueva.style.border = '1px solid #cbd5e1';
+      celdaNueva.innerHTML = '<br>';
+      filaNueva.appendChild(celdaNueva);
+    }
+    tr.parentNode.insertBefore(filaNueva, tr);
+  } else if (accion === 'colIzquierda') {
+    var idxIzq = Array.prototype.indexOf.call(tr.children, td);
+    tabla.querySelectorAll('tr').forEach(function (fila) {
+      var esHead = fila.parentNode.tagName === 'THEAD' || (fila.children[0] && fila.children[0].tagName === 'TH');
+      var celda = document.createElement(esHead ? 'th' : 'td');
+      celda.style.padding = '8px 12px';
+      celda.style.border = '1px solid #cbd5e1';
+      celda.innerHTML = esHead ? 'Columna' : '<br>';
+      var ref = fila.children[idxIzq];
+      if (ref) fila.insertBefore(celda, ref);
+      else fila.appendChild(celda);
+    });
+  } else if (accion === 'borde') {
+    var bordes = ['1px solid #cbd5e1', '2px solid #0f766e', '2px dashed #0d9488', 'none'];
+    var bordeActual = td.style.border || '';
+    var siguiente = bordes[0];
+    for (var b = 0; b < bordes.length; b++) {
+      if (bordes[b] === bordeActual) siguiente = bordes[(b + 1) % bordes.length];
+    }
+    td.style.border = siguiente;
+    tabla.style.borderCollapse = 'collapse';
+  } else if (accion === 'eliminarTabla') {
+    tabla.remove();
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function colorearCeldaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = nodo ? nodo.closest('td, th') : null;
+  if (!td) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) {
+      var celdas = tablas[tablas.length - 1].querySelectorAll('td, th');
+      td = celdas.length ? celdas[celdas.length - 1] : null;
+    }
+  }
+  if (!td) {
+    alert('Haz clic dentro de una celda de la tabla para cambiar su color de fondo.');
+    return;
+  }
+  var colores = ['', '#f1f5f9', '#ccfbf1', '#fef9c3', '#e0f2fe', '#fee2e2'];
+  var actual = td.style.backgroundColor || '';
+  var idx = 1;
+  for (var i = 0; i < colores.length; i++) {
+    if (colores[i] === actual) {
+      idx = (i + 1) % colores.length;
+      break;
+    }
+  }
+  td.style.backgroundColor = colores[idx];
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function eliminarElementoSeleccionadoEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  if (nodo) {
+    var obj = nodo.closest('table, figure, img, .video-embed-responsive, .notion-callout, .caja-nota-st90, .caja-reto-st90, .caja-pregunta-st90, blockquote');
+    if (obj && editor.contains(obj)) {
+      obj.remove();
+      if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      return;
+    }
+  }
+  try { document.execCommand('delete', false, null); } catch (e) {}
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function insertarCajaDidacticaEditor(select, tipo) {
+  if (!tipo) return;
+  var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var html = '';
+  if (tipo === 'callout') {
+    html = '<div class="notion-callout" style="display:flex;gap:12px;margin:12px 0;padding:12px 16px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;color:#166534;"><span style="font-size:22px;line-height:1;">💡</span><div style="flex:1;"><strong>Idea Clave / Callout DUA:</strong> Escribe tu punto central aquí...</div></div><p><br></p>';
+  } else if (tipo === 'nota') {
+    html = '<div class="caja-nota-st90" style="margin:12px 0;padding:12px 16px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:6px;color:#92400e;line-height:1.5;"><strong>📌 Recordatorio Importante:</strong> Escribe la indicación destacada...</div><p><br></p>';
+  } else if (tipo === 'reto') {
+    html = '<div class="caja-reto-st90" style="margin:12px 0;padding:14px 18px;background:#f0fdfa;border:2px dashed #0d9488;border-radius:10px;color:#115e59;line-height:1.5;"><strong>🎯 Reto de Aprendizaje NEM:</strong> Escribe la consigna para los alumnos...</div><p><br></p>';
+  } else if (tipo === 'pregunta') {
+    html = '<div class="caja-pregunta-st90" style="margin:12px 0;padding:12px 16px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;color:#0369a1;line-height:1.5;"><strong>💬 Pregunta Detonadora:</strong> ¿Qué descubrimos en este tema?...</div><p><br></p>';
+  } else if (tipo === 'comparativo') {
+    html = htmlCuadroComparativoDUA_();
+  } else if (tipo === 'rubrica') {
+    html = htmlRubricaObservacionDUA_();
+  }
+  try {
+    document.execCommand('insertHTML', false, html);
+  } catch (e) {
+    editor.innerHTML += html;
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cambiarResalteEditor(input, color) {
+  if (!color) return;
+  var wrap = input && input.closest ? input.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (editor && editor.focus) editor.focus();
+  try {
+    document.execCommand('hiliteColor', false, color);
+  } catch (e) {
+    try { document.execCommand('backColor', false, color); } catch (err) {}
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function imagenActivaEditor_(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  if (!editor) return null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var img = nodo && nodo.closest ? nodo.closest('img') : null;
+  if (!img) img = editor.querySelector('img');
+  return img;
+}
+
+function ajustarImagenEditor_(btn, ancho) {
+  var img = imagenActivaEditor_(btn);
+  if (!img || !ancho) return;
+  img.style.width = ancho;
+  img.style.height = 'auto';
+  img.setAttribute('width', String(ancho).replace('%', ''));
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function alinearImagenEditor_(btn, lado) {
+  var img = imagenActivaEditor_(btn);
+  if (!img) return;
+  var figura = img.closest ? img.closest('figure') : null;
+  var caja = figura || img;
+  caja.style.display = 'block';
+  if (lado === 'left') {
+    caja.style.marginLeft = '0';
+    caja.style.marginRight = 'auto';
+    caja.style.textAlign = 'left';
+  } else if (lado === 'right') {
+    caja.style.marginLeft = 'auto';
+    caja.style.marginRight = '0';
+    caja.style.textAlign = 'right';
+  } else {
+    caja.style.marginLeft = 'auto';
+    caja.style.marginRight = 'auto';
+    caja.style.textAlign = 'center';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function redimensionarImagenDirecta_(img) {
+  if (!img) return;
+  var ciclo = ['25%', '50%', '75%', '100%'];
+  var actual = img.style.width || '100%';
+  var i = ciclo.indexOf(actual);
+  img.style.width = ciclo[(i + 1) % ciclo.length];
+  img.style.height = 'auto';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+
+
+function htmlTablaLibre_(filas, cols) {
+  filas = Math.max(1, Math.min(12, parseInt(filas, 10) || 3));
+  cols = Math.max(1, Math.min(8, parseInt(cols, 10) || 3));
+  var cabeza = '';
+  var c;
+  for (c = 0; c < cols; c++) {
+    cabeza += '<th style="padding:8px 12px;border:1px solid #cbd5e1;background:#f1f5f9;text-align:left;font-weight:700;">Columna ' + (c + 1) + '</th>';
+  }
+  var cuerpo = '';
+  var r;
+  var filasCuerpo = Math.max(1, filas - 1);
+  for (r = 0; r < filasCuerpo; r++) {
+    cuerpo += '<tr>';
+    for (c = 0; c < cols; c++) cuerpo += '<td style="padding:8px 12px;border:1px solid #cbd5e1;"><br></td>';
+    cuerpo += '</tr>';
+  }
+  return '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;border:1.5px solid #cbd5e1;">' +
+    '<thead><tr>' + cabeza + '</tr></thead><tbody>' + cuerpo + '</tbody></table><p><br></p>';
+}
+
+function insertarTablaEnEditor_(editor, filas, cols) {
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var htmlTabla = htmlTablaLibre_(filas, cols);
+  try { document.execCommand('insertHTML', false, htmlTabla); } catch (e) { editor.insertAdjacentHTML('beforeend', htmlTabla); }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function insertarTablaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (!editor) return;
+  if (typeof modal !== 'function') {
+    insertarTablaEnEditor_(editor, 3, 3);
+    return;
+  }
+  modal({
+    titulo: 'Insertar tabla',
+    html: '<label>Filas</label><input id="inpFilasTablaST90" type="number" min="1" max="12" value="3">' +
+      '<label>Columnas</label><input id="inpColsTablaST90" type="number" min="1" max="8" value="3">',
+    botones: [{ texto: 'Cancelar', valor: 'cancelar' }, { texto: 'Insertar', valor: 'ok' }],
+    capturar: function (fondo, val) {
+      if (val !== 'ok') return val;
+      return {
+        ok: true,
+        filas: parseInt((fondo.querySelector('#inpFilasTablaST90') || {}).value, 10) || 3,
+        cols: parseInt((fondo.querySelector('#inpColsTablaST90') || {}).value, 10) || 3
+      };
+    }
+  }).then(function (valor) {
+    if (!valor || valor === 'cancelar' || !valor.ok) return;
+    insertarTablaEnEditor_(editor, valor.filas, valor.cols);
+  });
+}
+
+function insertarImagenEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (!editor) return;
+  var url = prompt('Pega el enlace (URL) de la imagen (JPG, PNG, WebP):', 'https://');
+  if (!url || url === 'https://' || !url.trim()) return;
+  url = url.trim();
+  var desc = prompt('Pie de imagen o descripción breve (opcional):', 'Figura ilustrativa');
+  if (editor.focus) editor.focus();
+  var htmlImg =
+    '<figure style="margin:14px 0;text-align:center;">' +
+      '<img src="' + url + '" alt="' + (desc || 'Imagen de la clase') + '" style="max-width:100%;max-height:400px;height:auto;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid #e2e8f0;display:inline-block;">' +
+      '<figcaption style="font-size:12px;color:#64748b;margin-top:6px;font-style:italic;">' + (desc || '') + '</figcaption>' +
+    '</figure><p><br></p>';
+  try {
+    document.execCommand('insertHTML', false, htmlImg);
+  } catch (e) {
+    editor.innerHTML += htmlImg;
+  }
+}
+
+function insertarVideoEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (!editor) return;
+  var url = prompt('Pega el enlace de YouTube o video:\n(ejemplo: https://www.youtube.com/watch?v=... o https://youtu.be/...)', 'https://www.youtube.com/watch?v=');
+  if (!url || url.indexOf('watch?v=') === url.length - 8 || !url.trim()) return;
+  url = url.trim();
+  var vidId = '';
+  var m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (m && m[1]) vidId = m[1];
+  if (editor.focus) editor.focus();
+  var htmlVid = '';
+  if (vidId) {
+    htmlVid =
+      '<div class="video-embed-responsive" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;margin:14px 0;background:#000;">' +
+        '<iframe src="https://www.youtube-nocookie.com/embed/' + vidId + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>' +
+      '</div><p><br></p>';
+  } else if (/\.mp4(\?.*)?$/i.test(url)) {
+    htmlVid =
+      '<div style="margin:14px 0;text-align:center;">' +
+        '<video src="' + url + '" controls style="max-width:100%;border-radius:10px;border:1px solid #cbd5e1;"></video>' +
+      '</div><p><br></p>';
+  } else {
+    htmlVid = '<p><a href="' + url + '" target="_blank" rel="noopener" style="color:#0d9488;font-weight:700;">🎥 Ver video de la clase</a></p><p><br></p>';
+  }
+  try {
+    document.execCommand('insertHTML', false, htmlVid);
+  } catch (e) {
+    editor.innerHTML += htmlVid;
+  }
+}
+
+function insertarCalloutEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  var htmlCallout =
+    '<div class="notion-callout" style="display:flex;align-items:flex-start;gap:12px;margin:12px 0;padding:12px 16px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;color:#166534;font-size:13.5px;line-height:1.55;">' +
+      '<span style="font-size:22px;line-height:1;">💡</span>' +
+      '<div style="flex:1;"><strong>Punto clave / Pregunta detonadora:</strong> Escribe aquí la indicación destacada...</div>' +
+    '</div><p><br></p>';
+  try {
+    document.execCommand('insertHTML', false, htmlCallout);
+  } catch (e) {
+    editor.innerHTML += htmlCallout;
+  }
+}
+
+function insertarEnlaceEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (!editor) return;
+  var url = prompt('Ingresa el enlace web (URL):', 'https://');
+  if (!url || url === 'https://' || !url.trim()) return;
+  if (editor.focus) editor.focus();
+  try { document.execCommand('createLink', false, url.trim()); } catch (e) {}
+}
+
+function resaltarTextoEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
+  if (!editor) return;
+  if (editor.focus) editor.focus();
+  try {
+    document.execCommand('hiliteColor', false, '#fef08a');
+  } catch (e) {
+    try { document.execCommand('backColor', false, '#fef08a'); } catch (err) {}
+  }
+}
+
+window.insertarTablaEditor = insertarTablaEditor;
+window.insertarImagenEditor = insertarImagenEditor;
+window.insertarVideoEditor = insertarVideoEditor;
+window.insertarCalloutEditor = insertarCalloutEditor;
+window.insertarEnlaceEditor = insertarEnlaceEditor;
+window.resaltarTextoEditor = resaltarTextoEditor;
+window.aplicarEstiloTexto = aplicarEstiloTexto;
+
 function crearTarjetaCurricular_(tipo, datos) {
   var meta = META_TARJETA_EXE_[tipo];
   if (!meta) return null;
@@ -3737,13 +6190,13 @@ function crearTarjetaCurricular_(tipo, datos) {
     '<button type="button" class="idevice-btn" onclick="eliminarIDeviceCard_(this)">Quitar</button></div>' +
     '<div class="idevice-body idevice-card-body">' +
       '<input type="text" class="campo-input idevice-campo-titulo" data-campo="titulo" value="">' +
-      '<textarea class="campo-textarea idevice-campo-cuerpo" data-campo="cuerpo" rows="2"></textarea>' +
+      htmlEditorEnriquecido_(id) +
       htmlEspecialExe_(tipo) +
     '</div>';
   var titulo = campoTarjetaExe_(div, 'titulo');
   var cuerpo = campoTarjetaExe_(div, 'cuerpo');
   if (titulo) titulo.value = datos.titulo || meta.titulo;
-  if (cuerpo) cuerpo.value = datos.cuerpo || meta.cuerpo;
+  if (cuerpo) escribirCampoBloque_(cuerpo, datos.cuerpo || meta.cuerpo);
   cont.appendChild(div);
   if (tipo === 'flashcards') agregarParFlashcard_(div, null);
   return div;
@@ -3790,6 +6243,22 @@ function leerTarjetaExe_(card) {
     card.querySelectorAll('.paso-algoritmo').forEach(function (inp) {
       extra[inp.getAttribute('data-paso')] = inp.value || '';
     });
+  } else if (tipo === 'callout') {
+    extra = { emoji: ((card.querySelector('.sel-emoji-callout') || {}).value || '💡') };
+  } else if (tipo === 'timeline') {
+    extra = { fases: [] };
+    card.querySelectorAll('.inp-timeline').forEach(function (inp) { extra.fases.push(inp.value || ''); });
+  } else if (tipo === 'tabla_notion') {
+    extra = { filas: [] };
+    card.querySelectorAll('.tabla-notion tbody tr').forEach(function (tr) {
+      var celdas = [];
+      tr.querySelectorAll('td').forEach(function (td) { celdas.push(td.innerHTML || ''); });
+      extra.filas.push(celdas);
+    });
+  } else if (tipo === 'h5p_interactivo') {
+    extra = { url: ((card.querySelector('.inp-h5p-url') || {}).value || '') };
+  } else if (tipo === 'video_local') {
+    extra = { nombre: card.getAttribute('data-video-nombre') || '' };
   } else if (tipo === 'encuesta' && typeof serializarEncuestaIDevice_ === 'function') {
     try { extra = JSON.parse(serializarEncuestaIDevice_(card)); } catch (e) { extra = {}; }
   }
@@ -3798,7 +6267,7 @@ function leerTarjetaExe_(card) {
     tipo: tipo,
     paginaId: card.getAttribute('data-pagina-id') || String(idPaginaActivaExe_()),
     titulo: tituloEl ? tituloEl.value : '',
-    cuerpo: cuerpoEl ? cuerpoEl.value : '',
+    cuerpo: cuerpoEl ? leerCampoBloque_(cuerpoEl) : '',
     extra: extra
   };
 }
@@ -3808,7 +6277,7 @@ function rellenarTarjetaExe_(card, datos) {
   var titulo = campoTarjetaExe_(card, 'titulo');
   var cuerpo = campoTarjetaExe_(card, 'cuerpo');
   if (titulo && datos.titulo) titulo.value = datos.titulo;
-  if (cuerpo && datos.cuerpo) cuerpo.value = datos.cuerpo;
+  if (cuerpo && datos.cuerpo) escribirCampoBloque_(cuerpo, datos.cuerpo);
   var extra = datos.extra || {};
   var tipo = card.getAttribute('data-tipo');
   if (tipo === 'listening') {
@@ -3840,6 +6309,40 @@ function rellenarTarjetaExe_(card, datos) {
       var paso = inp.getAttribute('data-paso');
       if (extra[paso] != null) inp.value = extra[paso];
     });
+  } else if (tipo === 'callout') {
+    var emoji = card.querySelector('.sel-emoji-callout');
+    if (emoji && extra.emoji) emoji.value = extra.emoji;
+  } else if (tipo === 'timeline' && extra.fases && extra.fases.length) {
+    var pasos = card.querySelectorAll('.inp-timeline');
+    extra.fases.forEach(function (fase, i) {
+      if (pasos[i]) pasos[i].value = fase;
+      else if (i >= pasos.length) {
+        agregarPasoTimeline_(card.querySelector('.timeline-steps-wrap') || card);
+        var nuevos = card.querySelectorAll('.inp-timeline');
+        if (nuevos[i]) nuevos[i].value = fase;
+      }
+    });
+  } else if (tipo === 'tabla_notion' && extra.filas && extra.filas.length) {
+    var cuerpoTabla = card.querySelector('.tabla-notion tbody');
+    if (cuerpoTabla) {
+      cuerpoTabla.innerHTML = '';
+      extra.filas.forEach(function (fila) {
+        var tr = document.createElement('tr');
+        (fila || ['', '']).forEach(function (celda) {
+          var td = document.createElement('td');
+          td.contentEditable = 'true';
+          td.innerHTML = htmlInicialEditor_(celda);
+          tr.appendChild(td);
+        });
+        cuerpoTabla.appendChild(tr);
+      });
+    }
+  } else if (tipo === 'h5p_interactivo') {
+    var urlH5 = card.querySelector('.inp-h5p-url');
+    if (urlH5) {
+      urlH5.value = extra.url || '';
+      actualizarMarcoH5P_(urlH5);
+    }
   } else if (tipo === 'encuesta') {
     var modoSel = card.querySelector('.sel-modo-encuesta-idevice');
     if (modoSel && extra.modo) {
@@ -3873,12 +6376,109 @@ function insertarBloqueExe_(tipo, datos, paginaId) {
   }
   if (!card) return null;
   card.setAttribute('data-pagina-id', String(paginaId != null ? paginaId : idPaginaActivaExe_()));
+  if (t === 'encuesta' || base === 'encuesta') {
+    card.classList.add('idevice-bloque');
+    card.setAttribute('data-tipo', 'encuesta');
+    if (typeof completarIDeviceEncuesta_ === 'function') completarIDeviceEncuesta_(card, datos || {});
+  }
   if (datos) rellenarTarjetaExe_(card, datos);
+  erradicarBarraModularExe_();
+  repintarDivisoresExe_();
+  return card;
+}
+
+function repintarDivisoresExe_() {
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (!cont) return;
+  cont.querySelectorAll('.divisor-insertar-bloque').forEach(function (d) { d.remove(); });
+  var cards = [];
+  cont.querySelectorAll('.idevice-card').forEach(function (c) {
+    if (c.style.display === 'none') return;
+    cards.push(c);
+  });
+  cards.forEach(function (card, i) {
+    if (i >= cards.length - 1) return;
+    var div = document.createElement('div');
+    div.className = 'divisor-insertar-bloque';
+    var boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'btn-tb';
+    boton.textContent = '+';
+    boton.setAttribute('aria-label', 'Insertar bloque aquí');
+    boton.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
+    boton.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      abrirMenuDivisorExe_(div, i);
+    });
+    div.appendChild(boton);
+    if (card.nextSibling) card.parentNode.insertBefore(div, card.nextSibling);
+    else card.parentNode.appendChild(div);
+  });
+}
+
+function abrirMenuDivisorExe_(divisor, idx) {
+  var viejo = document.getElementById('menuDivisorExe');
+  if (viejo) viejo.remove();
+  var menu = document.createElement('div');
+  menu.id = 'menuDivisorExe';
+  menu.className = 'cat-items';
+  [
+    ['texto_dua', 'Lectura DUA'], ['callout', 'Recuadro'], ['timeline', 'Fases'],
+    ['tabla_notion', 'Tabla'], ['toggle_notion', 'Desplegable'], ['flashcards', 'Flashcards'],
+    ['video_local', 'Video local'], ['h5p_interactivo', 'H5P'], ['quiz_evaluativo', 'Quiz']
+  ].forEach(function (it) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'idevice-pill-add';
+    b.textContent = it[1];
+    b.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
+    b.addEventListener('click', function () {
+      insertarBloqueContextual_(idx, it[0]);
+      var abierto = document.getElementById('menuDivisorExe');
+      if (abierto) abierto.remove();
+    });
+    menu.appendChild(b);
+  });
+  divisor.appendChild(menu);
+}
+
+function insertarBloqueContextual_(idx, tipo) {
+  asegurarPaginasExe_();
+  var card = insertarBloqueExe_(tipo, null, idPaginaActivaExe_());
+  if (!card) return null;
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  var activos = [];
+  if (cont) {
+    cont.querySelectorAll('.idevice-card').forEach(function (c) {
+      if (c !== card && c.style.display !== 'none') activos.push(c);
+    });
+  }
+  var ancla = activos[idx];
+  if (ancla && cont) {
+    var siguiente = ancla.nextElementSibling;
+    while (siguiente && !siguiente.classList.contains('idevice-card')) siguiente = siguiente.nextElementSibling;
+    if (siguiente) cont.insertBefore(card, siguiente);
+    else cont.appendChild(card);
+  }
+  var pag = window.paginasSesionActiva_[window._nodoSesionActivo_ || 0];
+  if (pag) {
+    if (!Array.isArray(pag.idevices)) pag.idevices = [];
+    var nuevoBloque = leerTarjetaExe_(card);
+    var sinNuevo = pag.idevices.filter(function (b) { return !b || b.id !== card.id; });
+    if (!sinNuevo.length && activos.length) sinNuevo = activos.map(leerTarjetaExe_);
+    pag.idevices = sinNuevo;
+    pag.idevices.splice(idx + 1, 0, nuevoBloque);
+  }
+  repintarDivisoresExe_();
+  actualizarContadorIDevicesExe_();
   return card;
 }
 
 function capturarEstadoExe_() {
   asegurarPaginasExe_();
+  if (window.tinymce && typeof window.tinymce.triggerSave === 'function') {
+    try { window.tinymce.triggerSave(); } catch (e) {}
+  }
   var paginas = window.paginasSesionActiva_.map(function (p) {
     return { id: p.id, titulo: p.titulo, nivel: p.nivel || 0, idevices: [] };
   });
@@ -3892,13 +6492,25 @@ function capturarEstadoExe_() {
       if (dest) dest.idevices.push(bloque);
     });
   }
-  var estado = { paginas: paginas, nodoActivo: window._nodoSesionActivo_ || 0 };
+  var estado = {
+    paginas: paginas,
+    nodoActivo: window._nodoSesionActivo_ || 0,
+    colorFondo: window._colorFondoSesionActiva_ || '#ffffff'
+  };
+  paginas.forEach(function (p, i) {
+    if (window.paginasSesionActiva_[i]) window.paginasSesionActiva_[i].idevices = p.idevices;
+  });
   window._extraExelearning_ = estado;
   return estado;
 }
 
 function deserializarIDevicesSesion_(data) {
   if (!data || !data.paginas || !data.paginas.length) return;
+  if (data.colorFondo) {
+    cambiarColorFondoLienzo_(data.colorFondo);
+  } else {
+    cambiarColorFondoLienzo_('#ffffff');
+  }
   var momentos = ['sesApertura', 'sesDesarrollo', 'sesActividad', 'sesCierre'].map(function (id) {
     var el = document.getElementById(id);
     return { el: el, valor: el ? el.value : null };
@@ -3938,9 +6550,11 @@ function engancharOla578_() {
   if (typeof window.insertariDeviceSesion_ === 'function' && !window.insertariDeviceSesion_._st90Exe) {
     window._insertariDeviceOriginal_ = window.insertariDeviceSesion_;
     window.insertariDeviceSesion_ = function (tipo) {
+      erradicarBarraModularExe_();
       var card = insertarBloqueExe_(tipo, null, idPaginaActivaExe_());
       aplicarFiltroPaginaExe_();
       actualizarContadorIDevicesExe_();
+      erradicarBarraModularExe_();
       if (card && card.scrollIntoView) card.scrollIntoView({ block: 'nearest' });
       return card;
     };
@@ -3958,9 +6572,17 @@ function engancharOla578_() {
   if (typeof window.eliminarIDeviceCard_ === 'function' && !window.eliminarIDeviceCard_._st90Exe) {
     var previaDel = window.eliminarIDeviceCard_;
     window.eliminarIDeviceCard_ = function (btn) {
+      var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+      if (card) {
+        var richEl = card.querySelector('.campo-editor-rich');
+        if (richEl && richEl.id && window.tinymce && window.tinymce.get(richEl.id)) {
+          try { window.tinymce.get(richEl.id).remove(); } catch (e) {}
+        }
+      }
       previaDel(btn);
       actualizarContadorIDevicesExe_();
       renderArbolSesion_();
+      repintarDivisoresExe_();
     };
     window.eliminarIDeviceCard_._st90Exe = true;
   }
@@ -3989,11 +6611,36 @@ window.toggleCatIDevices_ = toggleCatIDevices_;
 window.reproducirListeningExe_ = reproducirListeningExe_;
 window.probarPronunciacionExe_ = probarPronunciacionExe_;
 window.agregarParFlashcard_ = agregarParFlashcard_;
+window.aplicarEstiloTexto = aplicarEstiloTexto;
+window.montarEditorEnriquecido_ = montarEditorEnriquecido_;
+window.cambiarColorTextoEditor = cambiarColorTextoEditor;
+window.modificarTablaEditor = modificarTablaEditor;
+window.colorearCeldaEditor = colorearCeldaEditor;
+window.eliminarElementoSeleccionadoEditor = eliminarElementoSeleccionadoEditor;
+window.insertarCajaDidacticaEditor = insertarCajaDidacticaEditor;
+window.cambiarFuenteEditor = cambiarFuenteEditor;
+window.cambiarTamanoEditor = cambiarTamanoEditor;
+window.limpiarFormatoEditor = limpiarFormatoEditor;
+window.redimensionarImagenDirecta_ = redimensionarImagenDirecta_;
+window.cambiarColorFondoLienzo_ = cambiarColorFondoLienzo_;
+window.voltearFlashcard3D_ = voltearFlashcard3D_;
+window.sincronizarFlashcard3D_ = sincronizarFlashcard3D_;
+window.agregarPasoTimeline_ = agregarPasoTimeline_;
+window.agregarFilaTablaNotion_ = agregarFilaTablaNotion_;
+window.conmutarToggleNotion_ = conmutarToggleNotion_;
+window.cargarVideoLocalExe_ = cargarVideoLocalExe_;
+window.actualizarMarcoH5P_ = actualizarMarcoH5P_;
+window.insertarBloqueContextual_ = insertarBloqueContextual_;
 window.hablarFlashcardExe_ = hablarFlashcardExe_;
 window.recalcularHojaExe_ = recalcularHojaExe_;
 window.capturarEstadoExe_ = capturarEstadoExe_;
 window.deserializarIDevicesSesion_ = deserializarIDevicesSesion_;
 window.montarEntornoExeLearning_ = montarEntornoExeLearning_;
+window.erradicarBarraModularExe_ = erradicarBarraModularExe_;
+window.renderAsistenteSecuenciaIA_ = renderAsistenteSecuenciaIA_;
+window.toggleAsistenteSecuenciaIA_ = toggleAsistenteSecuenciaIA_;
+window.insertarPasoSecuenciaIA_ = insertarPasoSecuenciaIA_;
+window.construirSecuenciaCompletaIA_ = construirSecuenciaCompletaIA_;
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', engancharOla578_);
 } else {
@@ -5404,6 +8051,903 @@ if (document.readyState === 'loading') {
 } else {
   iniciarLmsSt90_();
 }
+
+/* OLA17-CURSOR-INICIO — build-602+ constructor fusión. No renombra IDs ni bloques previos. */
+(function engancharOla17_() {
+  if (window._ola17Enganchada_) return;
+  window._ola17Enganchada_ = true;
+
+  if (typeof META_TARJETA_EXE_ === 'object' && META_TARJETA_EXE_) {
+    if (!META_TARJETA_EXE_.word_shape) {
+      META_TARJETA_EXE_.word_shape = { badge: 'badge-info', etiqueta: 'FORMA WORD', titulo: 'Cuadro de Texto / Forma DUA', cuerpo: 'Escribe el texto o consigna destacada...' };
+    }
+    if (!META_TARJETA_EXE_.excel_split_table) {
+      META_TARJETA_EXE_.excel_split_table = { badge: 'badge-tecnologia', etiqueta: 'TABLA EXCEL', titulo: 'Tabla Dividida Multicelda', cuerpo: '', familia: 'tecnologia' };
+    }
+    if (!META_TARJETA_EXE_.geogebra_param) {
+      META_TARJETA_EXE_.geogebra_param = { badge: 'badge-ciencias', etiqueta: 'GEOGEBRA', titulo: 'Simulador GeoGebra con Parámetros', cuerpo: '' };
+    }
+  }
+
+  var CATALOGO_POPUP_OLA17_ = [
+    ['texto_dua', '📖 Lectura DUA'],
+    ['callout', '💡 Recuadro'],
+    ['word_shape', '▢ Forma Word'],
+    ['excel_split_table', '📊 Tabla Excel'],
+    ['tabla_notion', '▦ Tabla'],
+    ['video_interactivo', '🎥 Video'],
+    ['geogebra_param', '📐 GeoGebra'],
+    ['quiz_evaluativo', '📝 Quiz'],
+    ['toggle_notion', '▾ Desplegable']
+  ];
+
+  var FONDOS_CELDA_EXCEL_ = {
+    white: { hex: '#ffffff', clase: 'cell-bg-white' },
+    blue: { hex: '#f0f9ff', clase: 'cell-bg-soft-blue' },
+    teal: { hex: '#f0fdfa', clase: 'cell-bg-soft-teal' },
+    amber: { hex: '#fffbeb', clase: 'cell-bg-soft-amber' },
+    gray: { hex: '#f8fafc', clase: 'cell-bg-soft-gray' }
+  };
+
+  var ANCHOS_EXCEL_ = {
+    '50-50': ['50%', '50%'],
+    '33-33-33': ['33.33%', '33.33%', '33.34%'],
+    '70-30': ['70%', '30%'],
+    '25-75': ['25%', '75%']
+  };
+
+  var ESTILOS_FORMA_WORD_ = {
+    'shape-blue': 'Forma Word: Azul primario',
+    'shape-teal': 'Forma Word: Teal institucional (NEM)',
+    'shape-amber': 'Forma Word: Ámbar alerta (DUA)',
+    'shape-purple': 'Forma Word: Púrpura reflexión'
+  };
+
+  var ETIQUETAS_PEGADO_EXCEL_ = { b: 1, strong: 1, i: 1, em: 1, u: 1, br: 1, p: 1, ul: 1, ol: 1, li: 1, a: 1, span: 1, div: 1 };
+
+  function attrOla17_(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
+  function claseFondoPorHex_(hex) {
+    var buscado = String(hex || '').toLowerCase();
+    var clave;
+    for (clave in FONDOS_CELDA_EXCEL_) {
+      if (FONDOS_CELDA_EXCEL_[clave].hex === buscado) return FONDOS_CELDA_EXCEL_[clave].clase;
+    }
+    return 'cell-bg-white';
+  }
+
+  function pillHtmlOla17_(tipo, etiqueta) {
+    return '<div class="idevice-pill-add" data-tipo="' + tipo + '" onclick="insertariDeviceSesion_(\'' + tipo + '\')"><span>' + etiqueta + '</span><span class="btn-mas">Añadir</span></div>';
+  }
+
+  function insertarPillTrasAncla_(html, tipoAncla, tipoNuevo, etiqueta) {
+    if (!html || html.indexOf('data-tipo="' + tipoNuevo + '"') >= 0) return html;
+    var token = "insertariDeviceSesion_('" + tipoAncla + "')";
+    var i = html.indexOf(token);
+    if (i < 0) return html;
+    var fin = html.indexOf('</div>', i);
+    if (fin < 0) return html;
+    fin += 6;
+    return html.slice(0, fin) + pillHtmlOla17_(tipoNuevo, etiqueta) + html.slice(fin);
+  }
+
+  function enriquecerCatalogoHtml_(html) {
+    html = insertarPillTrasAncla_(html, 'fichero', 'word_shape', '▢ Cuadro de forma (Word)');
+    html = insertarPillTrasAncla_(html, 'codigo', 'excel_split_table', '📊 Tabla dividida (Excel)');
+    html = insertarPillTrasAncla_(html, 'formula', 'geogebra_param', '📐 GeoGebra con parámetros');
+    return html;
+  }
+
+  function inyectarPillsCatalogoDom_() {
+    function poner(ancla, tipo, etiqueta) {
+      if (document.querySelector('.idevice-pill-add[data-tipo="' + tipo + '"]')) return;
+      var nodo = document.querySelector('.idevice-pill-add[data-tipo="' + ancla + '"]');
+      if (nodo) nodo.insertAdjacentHTML('afterend', pillHtmlOla17_(tipo, etiqueta));
+    }
+    poner('fichero', 'word_shape', '▢ Cuadro de forma (Word)');
+    poner('codigo', 'excel_split_table', '📊 Tabla dividida (Excel)');
+    poner('formula', 'geogebra_param', '📐 GeoGebra con parámetros');
+  }
+
+  if (typeof htmlCatalogoExe_ === 'function' && !htmlCatalogoExe_._st90Ola17) {
+    var catalogoPrevio = htmlCatalogoExe_;
+    htmlCatalogoExe_ = function () {
+      return enriquecerCatalogoHtml_(catalogoPrevio());
+    };
+    htmlCatalogoExe_._st90Ola17 = true;
+  }
+
+  function htmlBarraCeldaExcel_() {
+    return '<div class="celda-props-bar" contenteditable="false">' +
+      '<button type="button" class="color-swatch" data-color="white" title="Blanco" aria-label="Fondo blanco" onmousedown="event.preventDefault()" onclick="aplicarColorCeldaExcel_(this)"></button>' +
+      '<button type="button" class="color-swatch" data-color="blue" title="Azul suave" aria-label="Fondo azul suave" onmousedown="event.preventDefault()" onclick="aplicarColorCeldaExcel_(this)"></button>' +
+      '<button type="button" class="color-swatch" data-color="teal" title="Teal suave" aria-label="Fondo teal suave" onmousedown="event.preventDefault()" onclick="aplicarColorCeldaExcel_(this)"></button>' +
+      '<button type="button" class="color-swatch" data-color="amber" title="Ámbar suave" aria-label="Fondo ámbar suave" onmousedown="event.preventDefault()" onclick="aplicarColorCeldaExcel_(this)"></button>' +
+      '<button type="button" class="color-swatch" data-color="gray" title="Gris suave" aria-label="Fondo gris suave" onmousedown="event.preventDefault()" onclick="aplicarColorCeldaExcel_(this)"></button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="insertarMedioCeldaExcel_(this, \'imagen\')">📷 Imagen</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="insertarMedioCeldaExcel_(this, \'video\')">🎬 Video/Drive</button>' +
+      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="limpiarFormatoCeldaExcel_(this)">Limpiar formato</button>' +
+    '</div>';
+  }
+
+  function htmlCeldaExcel_(celda) {
+    celda = celda || {};
+    var hex = celda.bg || '#ffffff';
+    var ancho = celda.ancho || '50%';
+    return '<td class="excel-layout-cell ' + claseFondoPorHex_(hex) + '" contenteditable="true" data-ancho="' + attrOla17_(ancho) + '" data-bg="' + attrOla17_(hex) + '" style="background:' + attrOla17_(hex) + '">' +
+      htmlBarraCeldaExcel_() +
+      '<div data-excel-editor="1" contenteditable="true" style="min-height:72px">' + (celda.html || '') + '</div>' +
+    '</td>';
+  }
+
+  function htmlExcelSplitOla17_(datos) {
+    var extra = (datos && datos.extra) || {};
+    var dist = ANCHOS_EXCEL_[extra.distribucion] ? extra.distribucion : '50-50';
+    var anchos = ANCHOS_EXCEL_[dist];
+    var previas = extra.celdas || [];
+    var celdas = anchos.map(function (ancho, i) {
+      var previa = previas[i] || {};
+      return { ancho: ancho, bg: previa.bg || '#ffffff', html: previa.html || '' };
+    });
+    var cols = celdas.map(function () { return '<col>'; }).join('');
+    var tds = celdas.map(htmlCeldaExcel_).join('');
+    function opcion(valor, texto) {
+      return '<option value="' + valor + '"' + (valor === dist ? ' selected' : '') + '>' + texto + '</option>';
+    }
+    return '<label class="campo-label">Distribución de columnas</label>' +
+      '<select class="campo-input" data-accion="excel-distribucion" aria-label="Distribución de columnas" onchange="cambiarDistribucionExcel_(this)">' +
+        opcion('50-50', '50% / 50%') +
+        opcion('33-33-33', '33% / 33% / 33%') +
+        opcion('70-30', '70% / 30%') +
+        opcion('25-75', '25% / 75%') +
+      '</select>' +
+      '<div class="tabla-scroll-touch"><table class="excel-split-table cols-' + dist + '"><colgroup>' + cols + '</colgroup><tbody><tr>' + tds + '</tr></tbody></table></div>';
+  }
+
+  function htmlWordShapeOla17_(datos) {
+    var extra = (datos && datos.extra) || {};
+    var estilo = ESTILOS_FORMA_WORD_[extra.estiloForma] ? extra.estiloForma : 'shape-teal';
+    var texto = extra.texto || ((datos && datos.cuerpo) || 'Escribe el texto o consigna destacada...');
+    function opcion(valor, etiqueta) {
+      return '<option value="' + valor + '"' + (valor === estilo ? ' selected' : '') + '>' + etiqueta + '</option>';
+    }
+    return '<label class="campo-label">Estilo de la forma</label>' +
+      '<select class="campo-input" data-accion="estilo-forma" aria-label="Estilo de la forma" onchange="aplicarEstiloFormaWord_(this)">' +
+        opcion('shape-blue', 'Azul Primario (Word)') +
+        opcion('shape-teal', 'Teal Institucional (NEM)') +
+        opcion('shape-amber', 'Ámbar Alerta (DUA)') +
+        opcion('shape-purple', 'Púrpura Reflexión') +
+      '</select>' +
+      '<div class="word-shape-box ' + estilo + '" contenteditable="true" data-estilo-forma="' + estilo + '">' + texto + '</div>' +
+      '<div class="shape-badge-meta" data-shape-badge="1">' + ESTILOS_FORMA_WORD_[estilo] + '</div>';
+  }
+
+  function htmlGeoGebraParamOla17_(datos) {
+    var extra = (datos && datos.extra) || {};
+    var id = extra.materialId || '';
+    var ancho = extra.ancho || '100%';
+    var alto = extra.alto || '420';
+    return '<div class="geogebra-card-frame">' +
+      '<div class="geogebra-card-header">' +
+        '<input type="text" data-ggb="material" aria-label="ID o URL del material GeoGebra" placeholder="m9xqz8tw o URL" value="' + attrOla17_(id) + '">' +
+        '<input type="text" data-ggb="ancho" aria-label="Ancho del simulador" placeholder="100% u 800" value="' + attrOla17_(ancho) + '">' +
+        '<input type="text" data-ggb="alto" aria-label="Alto del simulador en píxeles" placeholder="420" value="' + attrOla17_(alto) + '">' +
+        '<button type="button" class="btn-tb" data-accion="cargar-ggb" onclick="cargarSimuladorGeoGebra_(this)">Cargar Simulador</button>' +
+        '<button type="button" class="btn-fullscreen" aria-label="Pantalla completa" onclick="pantallaCompletaGeoGebra_(this)">⛶</button>' +
+      '</div>' +
+      '<iframe data-ggb-marco="1" title="Simulador GeoGebra" allow="fullscreen" allowfullscreen></iframe>' +
+    '</div>';
+  }
+
+  function htmlEspecialOla17_(tipo, datos) {
+    if (tipo === 'excel_split_table') return htmlExcelSplitOla17_(datos);
+    if (tipo === 'word_shape') return htmlWordShapeOla17_(datos);
+    if (tipo === 'geogebra_param') return htmlGeoGebraParamOla17_(datos);
+    return '';
+  }
+
+  if (typeof htmlEspecialExe_ === 'function' && !htmlEspecialExe_._st90Ola17) {
+    var htmlEspecialPrevio = htmlEspecialExe_;
+    htmlEspecialExe_ = function (tipo, datos) {
+      var propio = htmlEspecialOla17_(tipo, datos);
+      if (propio) return '<div data-ola17-host="' + tipo + '">' + propio + '</div>';
+      return htmlEspecialPrevio(tipo, datos);
+    };
+    htmlEspecialExe_._st90Ola17 = true;
+  }
+
+  function hostOla17_(card) {
+    return card ? card.querySelector('[data-ola17-host]') : null;
+  }
+
+  function editorCeldaExcel_(td) {
+    if (!td) return null;
+    return td.querySelector('[data-excel-editor]') || td;
+  }
+
+  function htmlGuardadoCelda_(td) {
+    var editor = td.querySelector('[data-excel-editor]');
+    return editor ? editor.innerHTML : '';
+  }
+
+  function leerExcelOla17_(card) {
+    var sel = card.querySelector('[data-accion="excel-distribucion"]');
+    var celdas = [];
+    card.querySelectorAll('.excel-layout-cell').forEach(function (td) {
+      celdas.push({
+        ancho: td.getAttribute('data-ancho') || '',
+        bg: td.getAttribute('data-bg') || '#ffffff',
+        html: htmlGuardadoCelda_(td)
+      });
+    });
+    return { distribucion: sel ? sel.value : '50-50', celdas: celdas };
+  }
+
+  function leerWordOla17_(card) {
+    var caja = card.querySelector('.word-shape-box');
+    return {
+      estiloForma: caja ? (caja.getAttribute('data-estilo-forma') || 'shape-teal') : 'shape-teal',
+      texto: caja ? caja.innerHTML : ''
+    };
+  }
+
+  function leerGgbOla17_(card) {
+    function val(clave) {
+      var el = card.querySelector('[data-ggb="' + clave + '"]');
+      return el ? el.value : '';
+    }
+    return { materialId: extraerIdGeoGebra_(val('material')) || val('material').trim(), ancho: val('ancho') || '100%', alto: val('alto') || '420' };
+  }
+
+  if (typeof leerTarjetaExe_ === 'function' && !leerTarjetaExe_._st90Ola17) {
+    var leerPrevio = leerTarjetaExe_;
+    leerTarjetaExe_ = function (card) {
+      var base = leerPrevio(card);
+      if (!card || !base) return base;
+      if (base.tipo === 'excel_split_table') base.extra = leerExcelOla17_(card);
+      else if (base.tipo === 'word_shape') base.extra = leerWordOla17_(card);
+      else if (base.tipo === 'geogebra_param') base.extra = leerGgbOla17_(card);
+      return base;
+    };
+    leerTarjetaExe_._st90Ola17 = true;
+    window.leerTarjetaExe_ = leerTarjetaExe_;
+  }
+
+  if (typeof rellenarTarjetaExe_ === 'function' && !rellenarTarjetaExe_._st90Ola17) {
+    var rellenarPrevio = rellenarTarjetaExe_;
+    rellenarTarjetaExe_ = function (card, datos) {
+      rellenarPrevio(card, datos);
+      if (!card || !datos) return;
+      var tipo = card.getAttribute('data-tipo');
+      if (tipo !== 'excel_split_table' && tipo !== 'word_shape' && tipo !== 'geogebra_param') return;
+      var host = hostOla17_(card);
+      if (!host) return;
+      host.innerHTML = htmlEspecialOla17_(tipo, datos);
+      if (tipo === 'geogebra_param' && datos.extra && datos.extra.materialId) {
+        var btn = host.querySelector('[data-accion="cargar-ggb"]');
+        if (btn) cargarSimuladorGeoGebra_(btn);
+      }
+    };
+    rellenarTarjetaExe_._st90Ola17 = true;
+    window.rellenarTarjetaExe_ = rellenarTarjetaExe_;
+  }
+
+  function cerrarMenusInsercionExe_() {
+    document.querySelectorAll('.inserter-popup-dropdown').forEach(function (m) {
+      if (m.parentNode) m.parentNode.removeChild(m);
+    });
+    var viejo = document.getElementById('menuDivisorExe');
+    if (viejo && viejo.parentNode) viejo.parentNode.removeChild(viejo);
+  }
+
+  function abrirMenuInsercionExe_(fila) {
+    cerrarMenusInsercionExe_();
+    var menu = document.createElement('div');
+    menu.className = 'inserter-popup-dropdown';
+    menu.setAttribute('role', 'menu');
+    var grid = document.createElement('div');
+    grid.className = 'inserter-popup-grid inserter-popup-grid--tres';
+    CATALOGO_POPUP_OLA17_.forEach(function (it) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'popup-inserter-item';
+      b.setAttribute('role', 'menuitem');
+      b.textContent = it[1];
+      b.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
+      b.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        insertarBloqueEnPosicion_(it[0], fila);
+      });
+      grid.appendChild(b);
+    });
+    menu.appendChild(grid);
+    fila.appendChild(menu);
+  }
+
+  function crearFilaInsercionExe_() {
+    var fila = document.createElement('div');
+    fila.className = 'block-inserter-row';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-block-plus';
+    btn.textContent = '+';
+    btn.setAttribute('aria-label', 'Insertar bloque aquí');
+    btn.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
+    btn.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (fila.querySelector('.inserter-popup-dropdown')) cerrarMenusInsercionExe_();
+      else abrirMenuInsercionExe_(fila);
+    });
+    fila.appendChild(btn);
+    return fila;
+  }
+
+  function asegurarBotonMenosExe_(card) {
+    if (!card) return;
+    var viejo = card.querySelector('.btn-block-minus');
+    if (viejo) viejo.remove();
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-block-minus';
+    btn.textContent = '−';
+    btn.setAttribute('aria-label', 'Eliminar bloque');
+    btn.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
+    btn.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (card.id) eliminarBloqueTarjeta_(card.id);
+    });
+    card.appendChild(btn);
+  }
+
+  function repintarDivisoresExe_() {
+    var cont = document.getElementById('contenedorIDevicesDinamicos');
+    if (!cont) return;
+    cont.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque').forEach(function (d) { d.remove(); });
+    var cards = [];
+    cont.querySelectorAll('.idevice-card').forEach(function (c) {
+      asegurarBotonMenosExe_(c);
+      if (c.style.display !== 'none') cards.push(c);
+    });
+    if (!cards.length) {
+      cont.appendChild(crearFilaInsercionExe_());
+      return;
+    }
+    var primera = cards[0];
+    if (primera.parentNode) primera.parentNode.insertBefore(crearFilaInsercionExe_(), primera);
+    cards.forEach(function (card) {
+      var fila = crearFilaInsercionExe_();
+      if (card.nextSibling) card.parentNode.insertBefore(fila, card.nextSibling);
+      else card.parentNode.appendChild(fila);
+    });
+  }
+  window.repintarDivisoresExe_ = repintarDivisoresExe_;
+
+  function insertarBloqueEnPosicion_(tipo, btnReferencia) {
+    var filaRef = null;
+    if (btnReferencia) {
+      if (btnReferencia.classList && btnReferencia.classList.contains('block-inserter-row')) filaRef = btnReferencia;
+      else if (btnReferencia.closest) filaRef = btnReferencia.closest('.block-inserter-row');
+    }
+    cerrarMenusInsercionExe_();
+    var card = (typeof crearTarjetaCurricular_ === 'function') ? crearTarjetaCurricular_(tipo, null) : null;
+    if (!card) return null;
+    if (typeof idPaginaActivaExe_ === 'function') card.setAttribute('data-pagina-id', String(idPaginaActivaExe_()));
+    var padre = (filaRef && filaRef.parentNode) || card.parentNode;
+    if (filaRef && padre) {
+      padre.insertBefore(card, filaRef.nextSibling);
+      var nuevaFila = crearFilaInsercionExe_();
+      padre.insertBefore(nuevaFila, card.nextSibling);
+    }
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    if (typeof aplicarFiltroPaginaExe_ === 'function') aplicarFiltroPaginaExe_();
+    else repintarDivisoresExe_();
+    if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
+    if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+    if (card.scrollIntoView) card.scrollIntoView({ block: 'nearest' });
+    return card;
+  }
+
+  function mostrarPastillaDeshacerBloque_() {
+    var pill = document.getElementById('pastillaDeshacerBloque');
+    if (!pill) {
+      pill = document.createElement('div');
+      pill.id = 'pastillaDeshacerBloque';
+      pill.setAttribute('role', 'status');
+      pill.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1200;display:flex;gap:12px;align-items:center;background:#0f172a;color:#ffffff;padding:10px 14px;border-radius:999px;font:600 13px/1.3 sans-serif;box-shadow:0 8px 24px rgba(15,23,42,.25);';
+      document.body.appendChild(pill);
+    }
+    pill.innerHTML = '<span>Bloque eliminado.</span>';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Deshacer';
+    btn.style.cssText = 'border:0;border-radius:999px;background:#14b8a6;color:#042f2e;font:800 12px/1 sans-serif;padding:6px 10px;cursor:pointer;';
+    btn.addEventListener('click', function () { deshacerEliminarBloque_(); });
+    pill.appendChild(btn);
+    clearTimeout(window._timerPastillaDeshacer_);
+    window._timerPastillaDeshacer_ = setTimeout(function () {
+      var nodo = document.getElementById('pastillaDeshacerBloque');
+      if (nodo && nodo.parentNode) nodo.parentNode.removeChild(nodo);
+    }, 5000);
+  }
+
+  function eliminarBloqueTarjeta_(idBloque) {
+    var el = typeof idBloque === 'string' ? document.getElementById(idBloque) : idBloque;
+    if (!el || !el.classList || !el.classList.contains('idevice-card')) return;
+    var padre = el.parentNode;
+    var siguiente = el.nextSibling;
+    var ancla = el.nextElementSibling;
+    while (ancla && !ancla.classList.contains('idevice-card')) ancla = ancla.nextElementSibling;
+    window.ultimoBloqueEliminado_ = {
+      id: el.id,
+      html: el.outerHTML,
+      siguienteHermano: siguiente,
+      padre: padre,
+      anclaId: ancla ? ancla.id : '',
+      datos: (typeof leerTarjetaExe_ === 'function') ? leerTarjetaExe_(el) : null
+    };
+    var rich = el.querySelector('.campo-editor-rich');
+    if (rich && rich.id && window.tinymce && window.tinymce.get(rich.id)) {
+      try { window.tinymce.get(rich.id).remove(); } catch (e) {}
+    }
+    var sep = el.nextElementSibling;
+    if (sep && (sep.classList.contains('block-inserter-row') || sep.classList.contains('divisor-insertar-bloque'))) sep.remove();
+    if (el.parentNode) el.parentNode.removeChild(el);
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    repintarDivisoresExe_();
+    if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
+    if (typeof renderArbolSesion_ === 'function') renderArbolSesion_();
+    if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+    mostrarPastillaDeshacerBloque_();
+  }
+
+  function deshacerEliminarBloque_() {
+    var buf = window.ultimoBloqueEliminado_;
+    if (!buf || !buf.html) return;
+    window.ultimoBloqueEliminado_ = null;
+    var padre = (buf.padre && buf.padre.isConnected) ? buf.padre : document.getElementById('contenedorIDevicesDinamicos');
+    if (!padre) return;
+    var cont = document.createElement('div');
+    cont.innerHTML = buf.html;
+    var card = cont.firstElementChild;
+    if (!card) return;
+    var ancla = buf.anclaId ? document.getElementById(buf.anclaId) : null;
+    if (ancla && ancla.parentNode === padre) padre.insertBefore(card, ancla);
+    else if (buf.siguienteHermano && buf.siguienteHermano.parentNode === padre) padre.insertBefore(card, buf.siguienteHermano);
+    else padre.appendChild(card);
+    if (typeof aplicarFiltroPaginaExe_ === 'function') aplicarFiltroPaginaExe_();
+    else repintarDivisoresExe_();
+    if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
+    if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+    var pill = document.getElementById('pastillaDeshacerBloque');
+    if (pill && pill.parentNode) pill.parentNode.removeChild(pill);
+    clearTimeout(window._timerPastillaDeshacer_);
+  }
+
+  function cambiarDistribucionExcel_(select) {
+    var card = select && select.closest ? select.closest('.idevice-card') : null;
+    if (!card) return;
+    var extra = leerExcelOla17_(card);
+    extra.distribucion = select.value;
+    var host = hostOla17_(card);
+    if (host) host.innerHTML = htmlExcelSplitOla17_({ extra: extra });
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+
+  function aplicarColorCeldaExcel_(btn) {
+    var td = btn && btn.closest ? btn.closest('.excel-layout-cell') : null;
+    var info = FONDOS_CELDA_EXCEL_[btn.getAttribute('data-color')] || FONDOS_CELDA_EXCEL_.white;
+    if (!td) return;
+    td.setAttribute('data-bg', info.hex);
+    td.style.background = info.hex;
+    td.classList.remove('cell-bg-white', 'cell-bg-soft-blue', 'cell-bg-soft-teal', 'cell-bg-soft-amber', 'cell-bg-soft-gray');
+    td.classList.add(info.clase);
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+
+  function insertarMedioCeldaExcel_(btn, tipo) {
+    var td = btn && btn.closest ? btn.closest('.excel-layout-cell') : null;
+    var editor = editorCeldaExcel_(td);
+    if (!editor) return;
+    var url = window.prompt(tipo === 'imagen' ? 'Pega la URL de la imagen (https):' : 'Pega la URL del video o de Google Drive:', 'https://');
+    if (!url) return;
+    url = String(url).trim();
+    if (!/^https:\/\//i.test(url)) {
+      if (typeof avisar_ === 'function') avisar_('Solo se aceptan enlaces https.', 'error');
+      return;
+    }
+    var nodo;
+    if (tipo === 'imagen') {
+      nodo = document.createElement('img');
+      nodo.src = url;
+      nodo.alt = 'Imagen de la celda';
+      nodo.style.maxWidth = '100%';
+      nodo.style.borderRadius = '8px';
+    } else {
+      var yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      var drive = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      nodo = document.createElement('iframe');
+      nodo.title = 'Video de la celda';
+      nodo.setAttribute('allowfullscreen', '');
+      nodo.style.width = '100%';
+      nodo.style.height = '220px';
+      nodo.style.border = '0';
+      if (yt) nodo.src = 'https://www.youtube-nocookie.com/embed/' + yt[1];
+      else if (drive) nodo.src = 'https://drive.google.com/file/d/' + drive[1] + '/preview';
+      else {
+        nodo = document.createElement('a');
+        nodo.href = url;
+        nodo.target = '_blank';
+        nodo.rel = 'noopener';
+        nodo.textContent = 'Abrir video o archivo';
+      }
+    }
+    editor.appendChild(nodo);
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+
+  function limpiarFormatoCeldaExcel_(btn) {
+    var td = btn && btn.closest ? btn.closest('.excel-layout-cell') : null;
+    var editor = td ? td.querySelector('[data-excel-editor]') : null;
+    if (!editor) return;
+    editor.textContent = editor.innerText || '';
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+
+  function sanitizarPegadoExcel_(html) {
+    var doc;
+    try { doc = new DOMParser().parseFromString(String(html || ''), 'text/html'); }
+    catch (e) { return ''; }
+    function limpiar(nodo) {
+      var hijos = Array.prototype.slice.call(nodo.childNodes || []);
+      hijos.forEach(function (h) {
+        if (h.nodeType === 3) return;
+        if (h.nodeType !== 1) {
+          if (h.parentNode) h.parentNode.removeChild(h);
+          return;
+        }
+        var tag = h.tagName.toLowerCase();
+        if (tag === 'script' || tag === 'style' || tag === 'meta' || tag === 'link' || tag === 'iframe' || tag === 'object' || tag === 'embed') {
+          nodo.removeChild(h);
+          return;
+        }
+        if (!ETIQUETAS_PEGADO_EXCEL_[tag]) {
+          limpiar(h);
+          while (h.firstChild) nodo.insertBefore(h.firstChild, h);
+          nodo.removeChild(h);
+          return;
+        }
+        var href = tag === 'a' ? (h.getAttribute('href') || '') : '';
+        Array.prototype.slice.call(h.attributes).forEach(function (a) { h.removeAttribute(a.name); });
+        if (tag === 'a' && /^https?:\/\//i.test(href)) {
+          h.setAttribute('href', href);
+          h.setAttribute('rel', 'noopener');
+          h.setAttribute('target', '_blank');
+        }
+        limpiar(h);
+      });
+    }
+    limpiar(doc.body);
+    return doc.body.innerHTML;
+  }
+
+  function aplicarEstiloFormaWord_(select) {
+    var host = select && select.closest ? select.closest('[data-ola17-host]') : null;
+    if (!host) return;
+    var caja = host.querySelector('.word-shape-box');
+    var badge = host.querySelector('[data-shape-badge]');
+    var estilo = ESTILOS_FORMA_WORD_[select.value] ? select.value : 'shape-teal';
+    if (caja) {
+      caja.classList.remove('shape-blue', 'shape-teal', 'shape-amber', 'shape-purple', 'shape-rose');
+      caja.classList.add(estilo);
+      caja.setAttribute('data-estilo-forma', estilo);
+    }
+    if (badge) badge.textContent = ESTILOS_FORMA_WORD_[estilo];
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+
+  function extraerIdGeoGebra_(valor) {
+    var s = String(valor || '').trim();
+    if (!s) return '';
+    var m = s.match(/material\/(?:iframe\/id\/)?([a-zA-Z0-9]+)/i);
+    if (m && m[1] && m[1].toLowerCase() !== 'iframe') return m[1];
+    m = s.match(/\/m\/([a-zA-Z0-9]+)/i);
+    if (m && m[1]) return m[1];
+    m = s.match(/[?&]id=([a-zA-Z0-9]+)/);
+    if (m && m[1]) return m[1];
+    if (/^[a-zA-Z0-9]+$/.test(s)) return s;
+    return '';
+  }
+
+  function segmentoMedidaGgb_(valor, defecto) {
+    var s = String(valor || '').trim();
+    if (/^\d+(\.\d+)?%$/.test(s)) return String(defecto);
+    var n = parseInt(s, 10);
+    if (!isNaN(n) && n > 0) return String(n);
+    return String(defecto);
+  }
+
+  function cargarSimuladorGeoGebra_(btn) {
+    var marco = btn && btn.closest ? btn.closest('.geogebra-card-frame') : null;
+    if (!marco) return;
+    var id = extraerIdGeoGebra_((marco.querySelector('[data-ggb="material"]') || {}).value);
+    var anchoIn = (marco.querySelector('[data-ggb="ancho"]') || {}).value || '100%';
+    var altoIn = (marco.querySelector('[data-ggb="alto"]') || {}).value || '420';
+    var iframe = marco.querySelector('[data-ggb-marco]');
+    if (!id) {
+      if (typeof avisar_ === 'function') avisar_('Escribe el ID o la URL del material de GeoGebra.', 'error');
+      return;
+    }
+    var campoId = marco.querySelector('[data-ggb="material"]');
+    if (campoId) campoId.value = id;
+    if (!iframe) return;
+    var w = segmentoMedidaGgb_(anchoIn, 800);
+    var h = segmentoMedidaGgb_(altoIn, 420);
+    iframe.src = 'https://www.geogebra.org/material/iframe/id/' + wEncode_(id) +
+      '/width/' + w + '/height/' + h +
+      '/border/888888/sfsb/true/smb/false/stb/false/stbh/false/ai/true/asb/false/sri/false/rc/false/ld/false/sdz/false/ctl/false';
+    var anchoCss = String(anchoIn || '100%').trim();
+    if (/^\d+$/.test(anchoCss)) anchoCss += 'px';
+    iframe.style.width = anchoCss || '100%';
+    iframe.style.height = h + 'px';
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+
+  function wEncode_(s) {
+    return encodeURIComponent(String(s || ''));
+  }
+
+  function pantallaCompletaGeoGebra_(btn) {
+    var marco = btn && btn.closest ? btn.closest('.geogebra-card-frame') : null;
+    var iframe = marco ? marco.querySelector('[data-ggb-marco]') : null;
+    if (iframe && iframe.requestFullscreen) {
+      try { iframe.requestFullscreen(); } catch (e) {}
+    }
+  }
+
+  function tipoTarjetaFusionIA_(b) {
+    b = b || {};
+    var tipo = String(b.tipo || '');
+    var blob = [b.titulo, b.cuerpo, b.consigna, b.url].map(function (x) { return String(x || ''); }).join(' ').toLowerCase();
+    if (tipo === 'contenido_teoria') return 'texto_dua';
+    if (tipo === 'contenido_ejemplo') return /youtu\.be|youtube\.com|drive\.google\.com/.test(blob) ? 'video_interactivo' : 'excel_split_table';
+    if (tipo === 'contenido_ejercicio') {
+      if (/hoja de c[aá]lculo|ofim[aá]tica/.test(blob)) return 'sim_ofimatica';
+      if (/escape|desaf[ií]o|candado/.test(blob)) return 'desafio';
+      return 'geogebra_param';
+    }
+    if (tipo === 'contenido_autoevaluacion') return 'quiz_evaluativo';
+    if (tipo === 'contenido_lista_cotejo') return 'toggle_notion';
+    if (tipo === 'contenido_rubrica') return 'tabla_notion';
+    if (tipo === 'contenido_evidencia') return 'fichero';
+    var mom = parseInt(b.momento, 10) || 0;
+    if (mom === 1) return 'callout';
+    if (mom === 2) return /youtu\.be|youtube\.com|drive\.google\.com/.test(blob) ? 'video_interactivo' : 'excel_split_table';
+    if (mom === 3) return 'geogebra_param';
+    if (mom === 4) return 'quiz_evaluativo';
+    if (typeof tipoTarjetaDesdeContenido_ === 'function') return tipoTarjetaDesdeContenido_(tipo);
+    return 'texto_dua';
+  }
+
+  function datosTarjetaFusionIA_(b, tipoDestino) {
+    var base = (typeof datosTarjetaDesdeContenido_ === 'function')
+      ? datosTarjetaDesdeContenido_(b)
+      : { titulo: (b && b.titulo) || '', cuerpo: (b && b.cuerpo) || '', extra: {} };
+    var extra = base.extra || {};
+    var texto = base.cuerpo || '';
+    if (tipoDestino === 'excel_split_table') {
+      extra.distribucion = '50-50';
+      extra.celdas = [
+        { ancho: '50%', bg: '#f0fdfa', html: (typeof escaparHtmlEditor_ === 'function' ? escaparHtmlEditor_(texto) : texto).replace(/\n/g, '<br>') },
+        { ancho: '50%', bg: '#ffffff', html: (b && b.consigna && b.consigna !== texto) ? ((typeof escaparHtmlEditor_ === 'function' ? escaparHtmlEditor_(b.consigna) : b.consigna).replace(/\n/g, '<br>')) : '' }
+      ];
+    } else if (tipoDestino === 'word_shape') {
+      extra.estiloForma = 'shape-teal';
+      extra.texto = (typeof escaparHtmlEditor_ === 'function' ? escaparHtmlEditor_(texto) : texto).replace(/\n/g, '<br>');
+    } else if (tipoDestino === 'geogebra_param') {
+      extra.materialId = extraerIdGeoGebra_(b && b.url);
+      extra.ancho = '100%';
+      extra.alto = '420';
+    }
+    base.extra = extra;
+    return base;
+  }
+
+  if (typeof volcarBloquesIAEnLienzo_ === 'function' && !volcarBloquesIAEnLienzo_._st90Ola17) {
+    volcarBloquesIAEnLienzo_ = function (norm) {
+      if (typeof montarEntornoExeLearning_ === 'function') montarEntornoExeLearning_();
+      if (typeof asegurarPaginasExe_ === 'function') asegurarPaginasExe_();
+      var cuenta = (typeof contarBloquesPaginaExe_ === 'function' && typeof idPaginaActivaExe_ === 'function') ? contarBloquesPaginaExe_(idPaginaActivaExe_()) : 0;
+      if (cuenta > 0 && typeof confirm === 'function') {
+        var deseaReemplazar = confirm(
+          '⚠️ Esta página ya contiene ' + cuenta + ' bloque(s) de contenido.\n\n' +
+          '¿Deseas REEMPLAZAR los bloques actuales con la nueva clase generada por IA?\n\n' +
+          '• Aceptar: Reemplaza los bloques existentes de esta página.\n' +
+          '• Cancelar: Mantiene los bloques actuales y agrega la clase al final.'
+        );
+        if (deseaReemplazar && typeof limpiarBloquesPaginaActivaExe_ === 'function') limpiarBloquesPaginaActivaExe_();
+      }
+      var bloques = (norm && norm.bloques) || [];
+      var pid = (typeof idPaginaActivaExe_ === 'function') ? idPaginaActivaExe_() : 0;
+      bloques.forEach(function (b) {
+        var tipo = tipoTarjetaFusionIA_(b);
+        var datos = datosTarjetaFusionIA_(b, tipo);
+        var card = (typeof insertarBloqueExe_ === 'function') ? insertarBloqueExe_(tipo, datos, pid) : null;
+        if (!card && typeof insertarBloqueExe_ === 'function') card = insertarBloqueExe_('texto_dua', datos, pid);
+        if (card && tipo === 'video_interactivo') {
+          var fuente = [b && b.cuerpo, b && b.consigna, b && b.url].filter(Boolean).join('\n');
+          var murl = fuente.match(/https?:\/\/[^\s)]+/);
+          var inp = card.querySelector('.inp-video-url');
+          if (murl && inp) {
+            inp.value = murl[0];
+            if (typeof actualizarPreviewVideo_ === 'function') actualizarPreviewVideo_(inp);
+          }
+        }
+      });
+      if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
+      repintarDivisoresExe_();
+    };
+    volcarBloquesIAEnLienzo_._st90Ola17 = true;
+    window.volcarBloquesIAEnLienzo_ = volcarBloquesIAEnLienzo_;
+  }
+
+  if (typeof avisar_ === 'function' && !avisar_._st90Ola17) {
+    var avisarPrevio = avisar_;
+    avisar_ = function (mensaje, tipo) {
+      if (mensaje === 'Clase interactiva lista en el constructor. Revisa las tarjetas del paso 3.') {
+        mensaje = 'Secuencia didáctica generada en el lienzo. Edita y personaliza cada bloque.';
+      }
+      return avisarPrevio(mensaje, tipo);
+    };
+    avisar_._st90Ola17 = true;
+    window.avisar_ = avisar_;
+  }
+
+  function asegurarChromeDrawerExe_() {
+    var workspace = document.getElementById('vistaAutorExe') || document.querySelector('.app-workspace');
+    if (!workspace) return;
+    var backdrop = workspace.querySelector('.backdrop-mobile');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'backdrop-mobile';
+      backdrop.setAttribute('aria-hidden', 'true');
+      workspace.appendChild(backdrop);
+    }
+    if (!backdrop._ola17Click) {
+      backdrop.addEventListener('click', cerrarDrawerCatalogo_);
+      backdrop._ola17Click = true;
+    }
+    var btn = workspace.querySelector('.btn-toggle-drawer');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-toggle-drawer';
+      btn.textContent = '☰';
+      btn.setAttribute('aria-label', 'Abrir catálogo de contenidos');
+      workspace.appendChild(btn);
+    }
+    if (!btn._ola17Click) {
+      btn.addEventListener('click', abrirDrawerCatalogo_);
+      btn._ola17Click = true;
+    }
+  }
+
+  function sidebarExe_() {
+    return document.querySelector('#vistaAutorExe .sidebar-exe') || document.querySelector('.app-workspace .sidebar-exe');
+  }
+
+  function abrirDrawerCatalogo_() {
+    var side = sidebarExe_();
+    if (side) side.classList.add('drawer-abierto');
+    var workspace = document.getElementById('vistaAutorExe') || document.querySelector('.app-workspace');
+    var backdrop = workspace ? workspace.querySelector('.backdrop-mobile') : null;
+    if (backdrop) {
+      backdrop.classList.add('backdrop-visible');
+      backdrop.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  function cerrarDrawerCatalogo_() {
+    var side = sidebarExe_();
+    if (side) side.classList.remove('drawer-abierto');
+    var workspace = document.getElementById('vistaAutorExe') || document.querySelector('.app-workspace');
+    var backdrop = workspace ? workspace.querySelector('.backdrop-mobile') : null;
+    if (backdrop) {
+      backdrop.classList.remove('backdrop-visible');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (typeof montarEntornoExeLearning_ === 'function' && !montarEntornoExeLearning_._st90Ola17) {
+    var montarPrevio = montarEntornoExeLearning_;
+    montarEntornoExeLearning_ = function () {
+      var r = montarPrevio.apply(this, arguments);
+      asegurarChromeDrawerExe_();
+      inyectarPillsCatalogoDom_();
+      repintarDivisoresExe_();
+      return r;
+    };
+    montarEntornoExeLearning_._st90Ola17 = true;
+    window.montarEntornoExeLearning_ = montarEntornoExeLearning_;
+  }
+
+  if (typeof window.eliminarIDeviceCard_ === 'function' && !window.eliminarIDeviceCard_._st90Ola17) {
+    var quitarPrevio = window.eliminarIDeviceCard_;
+    window.eliminarIDeviceCard_ = function (btn) {
+      var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+      if (card && card.id) {
+        eliminarBloqueTarjeta_(card.id);
+        return;
+      }
+      return quitarPrevio(btn);
+    };
+    window.eliminarIDeviceCard_._st90Ola17 = true;
+  }
+
+  if (!window._ola17Eventos_) {
+    window._ola17Eventos_ = true;
+    document.addEventListener('click', function (ev) {
+      if (ev.target && ev.target.closest && ev.target.closest('.block-inserter-row')) return;
+      cerrarMenusInsercionExe_();
+    });
+    document.addEventListener('paste', function (ev) {
+      var editor = ev.target && ev.target.closest ? ev.target.closest('[data-excel-editor]') : null;
+      if (!editor && ev.target && ev.target.closest) {
+        var td = ev.target.closest('.excel-layout-cell');
+        editor = td ? td.querySelector('[data-excel-editor]') : null;
+      }
+      if (!editor) return;
+      ev.preventDefault();
+      var cd = ev.clipboardData;
+      var html = cd ? cd.getData('text/html') : '';
+      var texto = cd ? cd.getData('text/plain') : '';
+      var limpio = html ? sanitizarPegadoExcel_(html) : ((typeof escaparHtmlEditor_ === 'function' ? escaparHtmlEditor_(texto) : texto).replace(/\n/g, '<br>'));
+      if (editor.focus) editor.focus();
+      var ok = false;
+      try { ok = document.execCommand('insertHTML', false, limpio); } catch (e) { ok = false; }
+      if (!ok) editor.insertAdjacentHTML('beforeend', limpio);
+      if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    }, true);
+    document.addEventListener('input', function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      if (t.closest('.excel-layout-cell, .word-shape-box, .geogebra-card-frame') && typeof marcarIDevicesTocados_ === 'function') {
+        marcarIDevicesTocados_();
+      }
+    });
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Escape') return;
+      cerrarMenusInsercionExe_();
+      cerrarDrawerCatalogo_();
+    });
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 860) cerrarDrawerCatalogo_();
+    });
+  }
+
+  window.insertarBloqueEnPosicion_ = insertarBloqueEnPosicion_;
+  window.eliminarBloqueTarjeta_ = eliminarBloqueTarjeta_;
+  window.deshacerEliminarBloque_ = deshacerEliminarBloque_;
+  window.cambiarDistribucionExcel_ = cambiarDistribucionExcel_;
+  window.aplicarColorCeldaExcel_ = aplicarColorCeldaExcel_;
+  window.insertarMedioCeldaExcel_ = insertarMedioCeldaExcel_;
+  window.limpiarFormatoCeldaExcel_ = limpiarFormatoCeldaExcel_;
+  window.aplicarEstiloFormaWord_ = aplicarEstiloFormaWord_;
+  window.cargarSimuladorGeoGebra_ = cargarSimuladorGeoGebra_;
+  window.pantallaCompletaGeoGebra_ = pantallaCompletaGeoGebra_;
+  window.abrirDrawerCatalogo_ = abrirDrawerCatalogo_;
+  window.cerrarDrawerCatalogo_ = cerrarDrawerCatalogo_;
+  window.extraerIdGeoGebra_ = extraerIdGeoGebra_;
+
+  inyectarPillsCatalogoDom_();
+  asegurarChromeDrawerExe_();
+  if (document.getElementById('contenedorIDevicesDinamicos')) repintarDivisoresExe_();
+})();
+/* OLA17-CURSOR-FIN */
 
 /* ENTREGA-AYUDAJS-FIN */
 </script>

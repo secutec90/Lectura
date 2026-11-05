@@ -15,6 +15,13 @@
   var aluClaseSel = typeof aluClaseSel !== 'undefined' ? aluClaseSel : '';
   var slotMaeSel = typeof slotMaeSel !== 'undefined' ? slotMaeSel : null;
   var fechaClaseEtiquetaManual = false;
+  var turnoHorarioActivo = (function () {
+    try {
+      var guardado = localStorage.getItem('st90_turno_horario');
+      if (guardado === 'vespertino' || guardado === 'matutino') return guardado;
+    } catch (e) {}
+    return 'matutino';
+  })();
 
   function getTokenPlan_() {
     var tk = '';
@@ -73,8 +80,12 @@
     setBtn('btnClaseFecha', fechaClaseEtiquetaManual, fechaClaseEtiquetaManual ? fmtFechaCortaClase_(fe) : 'Fecha');
     const g = valorSel_('selGrupoClase');
     setBtn('btnClaseGrupo', !!g, g ? recortarEtq_(textoOpcionClase_('selGrupoClase'), 8) : 'Grupo');
+    const doc = valorSel_('selDocenteClase');
+    setBtn('btnClaseDocente', !!doc, doc ? recortarEtq_(textoOpcionClase_('selDocenteClase'), 12) : 'Docente');
     const a = valorSel_('selAluClase');
-    setBtn('btnClaseAlumno', !!a, a ? recortarEtq_(textoOpcionClase_('selAluClase'), 10) : 'Alumno');
+    if (document.getElementById('btnClaseAlumno')) {
+      setBtn('btnClaseAlumno', !!a, a ? recortarEtq_(textoOpcionClase_('selAluClase'), 10) : 'Alumno');
+    }
     const as = valorSel_('selAsigClase');
     setBtn('btnClaseAsig', !!as, as ? recortarEtq_(textoOpcionClase_('selAsigClase'), 10) : 'Asignatura');
   }
@@ -234,7 +245,15 @@
       cargarHorarioMae();
     }
 
-    function cambiarAlumnoClase() {
+    var docenteClaseSel = '';
+
+  function cambiarDocenteClase() {
+    docenteClaseSel = valorSel_('selDocenteClase');
+    pintarEtqFiltroClase_();
+    cargarHorarioMae();
+  }
+
+  function cambiarAlumnoClase() {
       aluClaseSel = valorSel_('selAluClase');
       pintarEtqFiltroClase_();
       const alu = ((panelMaeUlt && panelMaeUlt.alumnos) || []).filter(function (a) {
@@ -249,12 +268,56 @@
       actualizarHintMae_(panelMaeUlt || {});
     }
 
+  function alCambiarTurnoClase(turno) {
+    turnoHorarioActivo = (turno === 'vespertino') ? 'vespertino' : 'matutino';
+    try { localStorage.setItem('st90_turno_horario', turnoHorarioActivo); } catch (e) {}
+    pintarBotonTurnoClase_();
+    if (typeof cargarHorarioMae === 'function') cargarHorarioMae();
+  }
+
+  function elegirTurnoHorario_(turno) {
+    alCambiarTurnoClase(turno);
+  }
+
+  function pintarBotonTurnoClase_() {
+    var vespertino = (typeof turnoHorarioActivo !== 'undefined' && turnoHorarioActivo === 'vespertino');
+    var texto = vespertino ? 'Vespertino' : 'Matutino';
+    var sel = document.getElementById('selTurnoClase');
+    var lbl = document.getElementById('lblClaseTurno');
+    var btn = document.getElementById('btnClaseTurno');
+    var svg = document.getElementById('svgClaseTurno');
+    if (sel && sel.value !== (vespertino ? 'vespertino' : 'matutino')) {
+      sel.value = vespertino ? 'vespertino' : 'matutino';
+    }
+    if (lbl) lbl.textContent = texto;
+    if (btn) {
+      btn.setAttribute('aria-label', 'Turno: ' + texto);
+      btn.classList.toggle('activo', vespertino);
+      if (vespertino) {
+        btn.classList.remove('ribbon-ico-ambar');
+        btn.classList.add('ribbon-ico-indigo');
+      } else {
+        btn.classList.remove('ribbon-ico-indigo');
+        btn.classList.add('ribbon-ico-ambar');
+      }
+    }
+    if (svg) {
+      if (vespertino) {
+        svg.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      } else {
+        svg.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+    }
+  }
+  pintarBotonTurnoClase_();
+
     function cargarHorarioMae() {
       const fe = valorSel_('fechaMaeClase');
       const grupo = valorSel_('selGrupoClase');
       const asig = valorSel_('selAsigClase');
+      docenteClaseSel = valorSel_('selDocenteClase') || docenteClaseSel;
       aluClaseSel = valorSel_('selAluClase') || aluClaseSel;
-      gsRun('horarioMaestroClase', tokenClase, fe, grupo, asig, modoCalMae).then(function (r) {
+      gsRun('horarioMaestroClase', tokenClase, fe, grupo, asig, modoCalMae, turnoHorarioActivo, docenteClaseSel).then(function (r) {
         panelMaeUlt = r;
         const selG = document.getElementById('selGrupoClase');
         const grupoUso = grupo || r.grupoClave || ((r.grupos && r.grupos[0] && r.grupos[0].clave) ? r.grupos[0].clave : '');
@@ -264,9 +327,17 @@
         if (selG && !selG.value && grupoUso) {
           selG.value = grupoUso;
         }
-        llenarOpciones_(document.getElementById('selAluClase'), (r.alumnos || []).map(function (a) {
-          return { valor: a.matricula, etq: a.nombre + (a.usuario ? (' · ' + a.usuario) : '') };
-        }), aluClaseSel, '<option value="">Elige alumno…</option>');
+        const selDoc = document.getElementById('selDocenteClase');
+        if (selDoc) {
+          llenarOpciones_(selDoc, (r.docentes || []).map(function (d) {
+            return { valor: d, etq: d };
+          }), r.docente || docenteClaseSel, '<option value="">Todos los docentes</option>');
+        }
+        if (document.getElementById('selAluClase')) {
+          llenarOpciones_(document.getElementById('selAluClase'), (r.alumnos || []).map(function (a) {
+            return { valor: a.matricula, etq: a.nombre + (a.usuario ? (' · ' + a.usuario) : '') };
+          }), aluClaseSel, '<option value="">Elige alumno…</option>');
+        }
         llenarOpciones_(document.getElementById('selAsigClase'), (r.asignaturas || []).map(function (n) {
           return { valor: n, etq: n };
         }), r.asignatura || '', '<option value="">Todas las del grupo</option>');

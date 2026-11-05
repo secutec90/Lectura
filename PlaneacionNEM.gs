@@ -54,11 +54,7 @@ function contextoInicialPlaneacionNEM(token) {
   let asignaciones = [];
 
   let todasHoras = _leerFilas_("Horarios");
-  const esOficialCompleto = todasHoras.length >= 500 && todasHoras.some(function (f) {
-    const m = String(f["Maestro"] || "").toUpperCase();
-    return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
-  });
-  if (!esOficialCompleto && typeof obtenerFilasHorarioOficialAsc_ === "function") {
+  if ((!todasHoras || !todasHoras.length) && typeof obtenerFilasHorarioOficialAsc_ === "function") {
     const oficiales = obtenerFilasHorarioOficialAsc_();
     const enc = ENCABEZADOS.Horarios;
     todasHoras = oficiales.map(function (row) {
@@ -1369,19 +1365,37 @@ function asistirDisenoProyectoNEM(token, peticion) {
 /**
  * Sugiere el desglose formativo de sesiones de 40 minutos con enfoque DUA.
  */
+function generarDesgloseSesionesDUAFallback_(titulo, asignatura, grado, contenido, pdas, numSes) {
+  const lista = [];
+  const temas = [
+    { etapa: "Encuadre, saberes previos y exploración comunitaria", tiempoA: 5, tiempoD: 10, tiempoAc: 20, tiempoC: 5 },
+    { etapa: "Profundización conceptual y modelado guiado", tiempoA: 5, tiempoD: 10, tiempoAc: 20, tiempoC: 5 },
+    { etapa: "Producción situada y aplicación práctica en equipo", tiempoA: 5, tiempoD: 10, tiempoAc: 20, tiempoC: 5 },
+    { etapa: "Consolidación de evidencias y evaluación formativa", tiempoA: 5, tiempoD: 10, tiempoAc: 20, tiempoC: 5 },
+    { etapa: "Socialización de resultados y metacognición final", tiempoA: 5, tiempoD: 10, tiempoAc: 20, tiempoC: 5 }
+  ];
+
+  for (let i = 0; i < numSes; i++) {
+    const num = i + 1;
+    const t = temas[i % temas.length];
+    lista.push({
+      numero: num,
+      titulo: "Sesión " + num + ": " + t.etapa + " — " + titulo,
+      apertura: "Presentación del propósito de la sesión " + num + " del proyecto \"" + titulo + "\". Activación de saberes previos con lluvia de ideas y pregunta detonadora situada sobre el contexto escolar y comunitario.",
+      desarrollo: "Explicación modelada por el docente sobre los conceptos clave de " + asignatura + " (" + grado + "° Secundaria) articulados al PDA: \"" + (pdas || contenido || titulo) + "\", apoyándose en recursos visuales y auditivos DUA.",
+      actividad: "En binas o equipos colaborativos, los alumnos desarrollan el reto de aprendizaje resolviendo los ejercicios de aplicación y registrando sus hallazgos en su cuaderno.",
+      cierre: "Puesta en común de conclusiones colectivas, aclaración de dudas, autoevaluación formativa y síntesis: ¿Qué logramos comprender hoy y qué descubriremos en la siguiente sesión?",
+      recursoVisualTitulo: "Infografía DUA Sesión " + num + " — " + titulo,
+      recursoVisualDescripcion: "Esquema visual accesible con macrotipo de alto contraste que sintetiza los pasos esenciales y conceptos abordados en la sesión " + num + "."
+    });
+  }
+  return { ok: true, sesiones: lista, asistidoPor: "algoritmo_pedagogico_dua" };
+}
+
 function asistirDesgloseSesionesNEM(token, peticion) {
   const ses = exigirClaseRol_(token, ["admin", "maestro"]);
   if (!peticion || typeof peticion !== "object") {
     throw new Error("Datos de planeación no proporcionados para asistir el desglose.");
-  }
-
-  const clave = typeof obtenerClaveDeepSeek_ === "function" ? obtenerClaveDeepSeek_() : "";
-  if (!clave) {
-    return {
-      ok: false,
-      sinClave: true,
-      error: "No hay clave de DeepSeek configurada en el sistema. Puedes redactar los momentos de cada sesión manualmente."
-    };
   }
 
   const numSes = Math.max(1, Math.min(10, Number(peticion.numSesiones) || 3));
@@ -1391,6 +1405,11 @@ function asistirDesgloseSesionesNEM(token, peticion) {
   const contenido = String(peticion.contenidoSintetico || "").trim();
   let pdas = peticion.pda || peticion.pdas || "";
   if (Array.isArray(pdas)) pdas = pdas.join(" | ");
+
+  const clave = typeof obtenerClaveDeepSeek_ === "function" ? obtenerClaveDeepSeek_() : "";
+  if (!clave) {
+    return generarDesgloseSesionesDUAFallback_(titulo, asignatura, grado, contenido, pdas, numSes);
+  }
 
   const instruccion = "Eres un especialista pedagógico de secundaria (México, NEM Fase 6).\n" +
     "Desglosa una secuencia de " + numSes + " sesiones de 40 minutos con enfoque DUA (Diseño Universal para el Aprendizaje) para la siguiente planeación:\n" +
@@ -1437,7 +1456,7 @@ function asistirDesgloseSesionesNEM(token, peticion) {
 
     const code = r.getResponseCode();
     if (code < 200 || code >= 300) {
-      return { ok: false, error: "Error HTTP " + code + " al consultar DeepSeek: " + r.getContentText().slice(0, 150) };
+      return generarDesgloseSesionesDUAFallback_(titulo, asignatura, grado, contenido, pdas, numSes);
     }
 
     const j = JSON.parse(r.getContentText());
@@ -1450,15 +1469,252 @@ function asistirDesgloseSesionesNEM(token, peticion) {
       parsed = { sesiones: [] };
     }
 
-    return {
-      ok: true,
-      sesiones: Array.isArray(parsed.sesiones) ? parsed.sesiones : []
-    };
+    if (Array.isArray(parsed.sesiones) && parsed.sesiones.length) {
+      return {
+        ok: true,
+        sesiones: parsed.sesiones
+      };
+    }
+    return generarDesgloseSesionesDUAFallback_(titulo, asignatura, grado, contenido, pdas, numSes);
   } catch (err) {
-    return {
-      ok: false,
-      error: "No se pudo conectar con el servicio de IA: " + String(err.message || err)
-    };
+    return generarDesgloseSesionesDUAFallback_(titulo, asignatura, grado, contenido, pdas, numSes);
+  }
+}
+
+/**
+ * Genera el paquete completo de la clase interactiva con los 7 contenidos de aprendizaje NEM
+ * usando un algoritmo pedagógico DUA resiliente cuando no hay conexión a la API o como respaldo.
+ */
+function generarClaseInteractivaDUAFallback_(peticion) {
+  const e1 = (peticion && peticion.etapa1) || {};
+  const e2 = (peticion && peticion.etapa2) || {};
+  const e3 = (peticion && peticion.etapa3) || {};
+  const e4 = (peticion && peticion.etapa4) || {};
+  const ses = (peticion && peticion.sesion) || {};
+
+  const num = (ses.indice != null ? Number(ses.indice) + 1 : 1);
+  const titulo = String(e1.titulo || ses.titulo || "Proyecto Didáctico").trim();
+  const asignatura = String(e1.asignatura || "Español").trim();
+  const grado = String(e1.grado || "1").trim();
+  const campo = String(e1.campoFormativo || "Lenguajes").trim();
+  const pda = String(e2.pda || e2.contenidoSintetico || titulo).trim();
+  const problema = String(e3.problema || "Retos en la comunidad escolar").trim();
+  const proposito = String(e4.proposito || ("Comprender y aplicar saberes de " + asignatura)).trim();
+
+  let criteriosCotejo = Array.isArray(e4.criteriosCotejo) && e4.criteriosCotejo.length ? e4.criteriosCotejo : [
+    "Identifiqué la relación entre el tema y la problemática de mi comunidad.",
+    "Analicé con atención el ejemplo modelado y seguí los pasos de resolución.",
+    "Participé activamente en la actividad práctica y registré mis hallazgos.",
+    "Completé la autoevaluación formativa y reflexioné sobre mis aciertos y dudas."
+  ];
+
+  const aperturaTxt = "Presentación del propósito de la sesión: " + proposito + ". " +
+    "Activación de saberes previos con una situación detonadora vinculada a: " + problema + ". " +
+    "¿Qué conocemos previamente sobre " + asignatura + " y cómo podemos relacionarlo con nuestro entorno?";
+
+  const desarrolloTxt = "Explicación clara y estructurada sobre los conceptos clave de " + asignatura + " (" + grado + "° de Secundaria), " +
+    "articulados al PDA: \"" + pda + "\". " +
+    "Revisión guiada del libro de texto y modelado sensorial con apoyos visuales y auditivos DUA.";
+
+  const actividadTxt = "En equipos colaborativos o de manera individual, los alumnos desarrollan el reto situado, " +
+    "aplicando lo aprendido en una producción contextualizada y redactando sus evidencias en su cuaderno o borrador.";
+
+  const cierreTxt = "Puesta en común de conclusiones colectivas, autoevaluación procesual con lista de cotejo y resolución del quiz formativo de cierre con retroalimentación inmediata.";
+
+  return {
+    ok: true,
+    asistidoPor: "algoritmo_pedagogico_dua",
+    claseInteractiva: {
+      apertura: aperturaTxt,
+      desarrollo: desarrolloTxt,
+      actividad: actividadTxt,
+      cierre: cierreTxt,
+      nodos: [
+        { momento: 1, paso: 1, nombre: "Momento 1: Inicio y Saberes Previos", texto: aperturaTxt },
+        { momento: 2, paso: 2, nombre: "Momento 2: Desarrollo y Modelado", texto: desarrolloTxt },
+        { momento: 3, paso: 3, nombre: "Momento 3: Actividad y Autoevaluación", texto: actividadTxt },
+        { momento: 4, paso: 4, nombre: "Momento 4: Cierre y Evaluación", texto: cierreTxt }
+      ],
+      bloques: [
+        {
+          tipo: "contenido_teoria",
+          momento: 1,
+          titulo: "Lectura Guiada DUA: Saberes Iniciales",
+          cuerpo: "Bienvenidas y bienvenidos a la sesión " + num + ". En este espacio exploraremos cómo los saberes de " + asignatura + " nos ayudan a resolver situaciones reales de nuestro entorno escolar.",
+          textoDua: aperturaTxt
+        },
+        {
+          tipo: "contenido_ejemplo",
+          momento: 2,
+          titulo: "💡 Caso Modelado Paso a Paso",
+          intro: "Observemos con atención cómo se aplica el concepto central en una situación de la comunidad:",
+          pasos: [
+            "Paso 1: Identificar los datos y elementos esenciales de la situación.",
+            "Paso 2: Relacionar los conceptos clave de " + asignatura + " con el reto a resolver.",
+            "Paso 3: Proponer una solución fundamentada y argumentar las decisiones tomadas."
+          ]
+        },
+        {
+          tipo: "contenido_ejercicio",
+          momento: 2,
+          titulo: "✏️ Ahora te toca a ti: Práctica Situada",
+          consigna: "Con base en el ejemplo modelado, analiza la situación planteada en clase y anota tus reflexiones y cálculos en el borrador digital o en tu libreta."
+        },
+        {
+          tipo: "contenido_lista_cotejo",
+          momento: 3,
+          titulo: "📋 Lista de Cotejo de Avance del Estudiante",
+          criterios: criteriosCotejo
+        },
+        {
+          tipo: "contenido_autoevaluacion",
+          momento: 3,
+          pregunta: "¿Cuál es el propósito formativo central que orienta las actividades de esta sesión?",
+          puntos: 4,
+          opciones: [
+            { texto: proposito, correcta: true, retro: "¡Excelente! Has identificado con precisión el propósito formativo de la sesión." },
+            { texto: "Memorizar definiciones teóricas sin aplicación práctica.", correcta: false, retro: "Error conceptual: en la Nueva Escuela Mexicana los aprendizajes se sitúan y aplican en el contexto real." },
+            { texto: "Realizar únicamente actividades mecánicas sin reflexión.", correcta: false, retro: "Atención: el enfoque formativo busca la indagación activa y la comprensión crítica." }
+          ]
+        },
+        {
+          tipo: "contenido_evidencia",
+          momento: 4,
+          titulo: "☁️ Buzón de Entrega: Evidencia del Reto",
+          consigna: "Sube aquí el producto o evidencia elaborada durante la sesión (PDF, imagen o documento digital).",
+          puntos: 6
+        },
+        {
+          tipo: "contenido_rubrica",
+          momento: 4,
+          titulo: "📊 Rúbrica Analítica SEP (4 Niveles Oficiales)",
+          criterios: [
+            {
+              nombre: "Apropiación del Contenido y PDA",
+              destacado: "Demuestra dominio integral y profundo del PDA, aplicando los saberes de forma creativa y contextualizada.",
+              satisfactorio: "Comprende y aplica correctamente los conceptos clave en la solución de la actividad propuesta.",
+              suficiente: "Identifica nociones básicas del tema pero requiere orientación para vincularlas a la práctica.",
+              insuficiente: "Muestra dificultades para reconocer los elementos esenciales del contenido abordado."
+            },
+            {
+              nombre: "Colaboración y Reflexión Crítica",
+              destacado: "Participa con liderazgo propositivo, argumenta con claridad y respeta las aportaciones de sus pares.",
+              satisfactorio: "Colabora de manera respetuosa y cumple con su rol en las tareas de indagación.",
+              suficiente: "Interviene de forma ocasional y requiere motivación para integrarse al diálogo colectivo.",
+              insuficiente: "No se involucra en las dinámicas reflexivas ni en el trabajo en equipo."
+            }
+          ]
+        }
+      ]
+    }
+  };
+}
+
+/**
+ * Endpoint oficial invocado desde el cliente (AyudaJS.html) para generar la clase interactiva completa.
+ */
+function generarClaseInteractivaCompletaNEM(token, peticion) {
+  const ses = exigirClaseRol_(token, ["admin", "maestro"]);
+  if (!peticion || typeof peticion !== "object") {
+    throw new Error("Datos de planeación no proporcionados para generar la clase interactiva.");
+  }
+
+  const clave = typeof obtenerClaveDeepSeek_ === "function" ? obtenerClaveDeepSeek_() : "";
+  if (!clave) {
+    return generarClaseInteractivaDUAFallback_(peticion);
+  }
+
+  const e1 = peticion.etapa1 || {};
+  const e2 = peticion.etapa2 || {};
+  const e3 = peticion.etapa3 || {};
+  const e4 = peticion.etapa4 || {};
+  const sesion = peticion.sesion || {};
+
+  const promptSistema = "Eres el Motor de Arquitectura Tecno-Pedagógica integrado en el constructor web ST90 (Nueva Escuela Mexicana, Fase 6).\n" +
+    "Tu misión es procesar la planeación didáctica y generar la estructura completa de una clase interactiva con enfoque DUA.\n" +
+    "Genera 4 momentos (1: Apertura, 2: Desarrollo, 3: Actividad/Consolidación, 4: Cierre) y los 7 bloques de contenido:\n" +
+    "1. contenido_teoria (píldora conceptual accesible apta para voz DUA)\n" +
+    "2. contenido_ejemplo (caso modelado con pasos numerados)\n" +
+    "3. contenido_ejercicio (reto de aplicación con consigna clara)\n" +
+    "4. contenido_lista_cotejo (3-5 criterios en 1ª persona: 'He verificado...')\n" +
+    "5. contenido_autoevaluacion (reactivo con retroalimentación para cada distractor y puntos)\n" +
+    "6. contenido_evidencia (buzón de entrega de evidencia con puntos)\n" +
+    "7. contenido_rubrica (tabla con 4 niveles SEP: destacado, satisfactorio, suficiente, insuficiente).\n\n" +
+    "Devuelve ÚNICAMENTE un JSON válido sin markdown adicional.";
+
+  const promptUsuario = "Genera la clase interactiva para:\n" +
+    "- Proyecto: " + (e1.titulo || "Proyecto Didáctico") + "\n" +
+    "- Asignatura: " + (e1.asignatura || "Español") + " (" + (e1.grado || "1") + "° Secundaria)\n" +
+    "- Campo Formativo: " + (e1.campoFormativo || "") + "\n" +
+    "- Metodología: " + (e1.metodologia || "") + "\n" +
+    "- Contenido: " + (e2.contenidoSintetico || "") + "\n" +
+    "- PDA: " + (e2.pda || "") + "\n" +
+    "- Problema Comunitario: " + (e3.problema || "") + "\n" +
+    "- Propósito: " + (e4.proposito || "") + "\n" +
+    "- Sesión activa: " + ((sesion.indice != null ? Number(sesion.indice) + 1 : 1)) + "\n\n" +
+    "Estructura JSON esperada:\n" +
+    "{\n" +
+    "  \"claseInteractiva\": {\n" +
+    "    \"apertura\": \"texto resumen momento 1\",\n" +
+    "    \"desarrollo\": \"texto resumen momento 2\",\n" +
+    "    \"actividad\": \"texto resumen momento 3\",\n" +
+    "    \"cierre\": \"texto resumen momento 4\",\n" +
+    "    \"bloques\": [\n" +
+    "      { \"tipo\": \"contenido_teoria\", \"momento\": 1, \"titulo\": \"...\", \"cuerpo\": \"...\" },\n" +
+    "      { \"tipo\": \"contenido_ejemplo\", \"momento\": 2, \"titulo\": \"...\", \"intro\": \"...\", \"pasos\": [\"...\"] },\n" +
+    "      { \"tipo\": \"contenido_ejercicio\", \"momento\": 2, \"titulo\": \"...\", \"consigna\": \"...\" },\n" +
+    "      { \"tipo\": \"contenido_lista_cotejo\", \"momento\": 3, \"titulo\": \"...\", \"criterios\": [\"...\"] },\n" +
+    "      { \"tipo\": \"contenido_autoevaluacion\", \"momento\": 3, \"pregunta\": \"...\", \"puntos\": 4, \"opciones\": [{ \"texto\": \"...\", \"correcta\": true, \"retro\": \"...\" }] },\n" +
+    "      { \"tipo\": \"contenido_evidencia\", \"momento\": 4, \"titulo\": \"...\", \"consigna\": \"...\", \"puntos\": 6 },\n" +
+    "      { \"tipo\": \"contenido_rubrica\", \"momento\": 4, \"titulo\": \"...\", \"criterios\": [{ \"nombre\": \"...\", \"destacado\": \"...\", \"satisfactorio\": \"...\", \"suficiente\": \"...\", \"insuficiente\": \"...\" }] }\n" +
+    "    ]\n" +
+    "  }\n" +
+    "}";
+
+  try {
+    const r = UrlFetchApp.fetch(URL_BASE_DEEPSEEK, {
+      method: "post",
+      contentType: "application/json",
+      headers: { Authorization: "Bearer " + clave },
+      payload: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: promptSistema },
+          { role: "user", content: promptUsuario }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.35,
+        max_tokens: 2200
+      }),
+      muteHttpExceptions: true
+    });
+
+    const code = r.getResponseCode();
+    if (code < 200 || code >= 300) {
+      return generarClaseInteractivaDUAFallback_(peticion);
+    }
+
+    const j = JSON.parse(r.getContentText());
+    const contenidoMsg = j && j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
+    let parsed = {};
+    try {
+      const limpio = contenidoMsg.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+      parsed = JSON.parse(limpio);
+    } catch (eParse) {
+      parsed = null;
+    }
+
+    if (parsed && (parsed.claseInteractiva || parsed.bloques || parsed.apertura)) {
+      const ci = parsed.claseInteractiva || parsed;
+      return {
+        ok: true,
+        claseInteractiva: ci,
+        asistidoPor: "deepseek"
+      };
+    }
+    return generarClaseInteractivaDUAFallback_(peticion);
+  } catch (err) {
+    return generarClaseInteractivaDUAFallback_(peticion);
   }
 }
 
@@ -2116,6 +2372,62 @@ function guardarMembreteInstitucionalNEM(token, payload) {
   }, false);
   return obtenerMembreteInstitucionalNEM();
 }
+
+/**
+ * Guarda un archivo multimedia (imagen, video local, PDF o audio) en la carpeta ST90_MEDIOS_CLASES de Google Drive.
+ * @param {string} token
+ * @param {Object} payload { nombre, mime, base64 }
+ * @return {Object} { exito: boolean, url, descargaUrl, fileId, nombre }
+ */
+function guardarMedioClaseEnDrive(token, payload) {
+  try {
+    try {
+      exigirClaseRol_(token, ["admin", "maestro"]);
+    } catch (eRol) {
+      const sVal = (typeof obtenerSesionValida_ === "function") ? obtenerSesionValida_(token) : null;
+      if (!sVal || (sVal.rol !== "admin" && sVal.rol !== "maestro" && sVal.rol !== "docente")) {
+        throw eRol;
+      }
+    }
+
+    if (!payload || !payload.base64) {
+      return { exito: false, error: "Datos de archivo multimedia no proporcionados." };
+    }
+
+    let carpeta;
+    const itCarpetas = DriveApp.getFoldersByName("ST90_MEDIOS_CLASES");
+    if (itCarpetas.hasNext()) {
+      carpeta = itCarpetas.next();
+    } else {
+      carpeta = DriveApp.createFolder("ST90_MEDIOS_CLASES");
+    }
+
+    const nombreLimpio = String(payload.nombre || ("medio_clase_" + Date.now())).replace(/[^a-zA-Z0-9._-]/g, "_");
+    const mime = String(payload.mime || "application/octet-stream");
+    const bytes = Utilities.base64Decode(payload.base64);
+    const blob = Utilities.newBlob(bytes, mime, nombreLimpio);
+    const archivo = carpeta.createFile(blob);
+
+    try {
+      archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (eShare) {
+      try {
+        archivo.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (eDom) {}
+    }
+
+    return {
+      exito: true,
+      url: archivo.getUrl(),
+      descargaUrl: archivo.getDownloadUrl(),
+      fileId: archivo.getId(),
+      nombre: archivo.getName()
+    };
+  } catch (err) {
+    return { exito: false, error: err.message || String(err) };
+  }
+}
+
 
 
 

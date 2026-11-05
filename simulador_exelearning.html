@@ -195,6 +195,24 @@
       border: 0;
       padding: 2px 4px;
     }
+    .btn-renombrar-nodo {
+      border: 0;
+      background: transparent;
+      color: var(--exe-teal, #0d9488);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-left: 2px;
+      opacity: 0.85;
+      line-height: 1;
+      transition: opacity .15s, background .15s;
+      flex-shrink: 0;
+    }
+    .btn-renombrar-nodo:hover {
+      opacity: 1;
+      background: var(--exe-teal-light, #ccfbf1);
+    }
     .arbol-toolbar {
       display: flex;
       justify-content: space-between;
@@ -418,8 +436,9 @@
       gap: 20px;
     }
 
-    /* BARRA FLOTANTE DE ACCESO RÁPIDO (Fiel a la Imagen 3) */
+    /* BARRA FLOTANTE DE ACCESO RÁPIDO (Oculta) */
     .quick-ribbon {
+      display: none !important;
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
@@ -606,6 +625,187 @@
     .btn-al-navegador:hover {
       background: var(--exe-teal-dark);
     }
+
+    /* ASISTENTE PEDAGÓGICO IA — SECUENCIA DIDÁCTICA (build-580) */
+    .btn-asistente-ia-sesion {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #ffffff !important;
+      border: 1px solid #4338ca;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-asistente-ia-sesion:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+    }
+    .panel-asistente-secuencia-ia {
+      margin: 14px 0;
+    }
+    .asistente-ia-card {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1.5px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.08);
+      position: relative;
+    }
+    .asistente-ia-card__cabecera {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e0e7ff;
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .asistente-ia-card__avatar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .asistente-ia-card__avatar-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+    .asistente-ia-card__titulo {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin: 0;
+    }
+    .asistente-ia-card__subtitulo {
+      font-size: 11.5px;
+      color: #4338ca;
+      font-weight: 600;
+      margin: 2px 0 0;
+    }
+    .asistente-ia-card__badge-nem {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .asistente-ia-card__sugerencia-txt {
+      font-size: 12.5px;
+      color: #334155;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .asistente-ia-pasos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .asistente-ia-paso {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+    .asistente-ia-paso:hover {
+      border-color: #6366f1;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+      transform: translateY(-2px);
+    }
+    .asistente-ia-paso__num {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6366f1;
+      margin-bottom: 4px;
+    }
+    .asistente-ia-paso__nombre {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .asistente-ia-paso__desc {
+      font-size: 11.5px;
+      color: #64748b;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+    .asistente-ia-paso__btn {
+      width: 100%;
+      padding: 6px 10px;
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .asistente-ia-paso__btn:hover {
+      background: #4338ca;
+      color: #ffffff;
+      border-color: #4338ca;
+    }
+    .asistente-ia-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e0e7ff;
+      flex-wrap: wrap;
+    }
+    .btn-construir-secuencia-completa {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
+      color: #ffffff !important;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-construir-secuencia-completa:hover {
+      background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
+    }
   </style>
 </head>
 <body>
@@ -645,7 +845,7 @@
       <i class="bi bi-chevron-right paso-flecha"></i>
       <div class="paso-item activo" id="paso2">
         <span class="paso-num">2</span>
-        <span>Selección de iDevices (Catálogo)</span>
+        <span>Selección de Contenidos (Catálogo)</span>
       </div>
       <i class="bi bi-chevron-right paso-flecha"></i>
       <div class="paso-item" id="paso3">
@@ -660,7 +860,7 @@
     </div>
     <div style="font-size:12.5px; color:#475569; display:flex; align-items:center; gap:8px;">
       <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:4px; font-weight:700;">ST90 Validado</span>
-      <span>Total iDevices en esta sesión: <strong id="contadorIdevices" style="color:var(--exe-teal-dark);">3 bloques</strong></span>
+      <span>Total de contenidos en esta sesión: <strong id="contadorIdevices" style="color:var(--exe-teal-dark);">0 bloques</strong></span>
     </div>
   </div>
 
@@ -696,22 +896,34 @@
           </div>
         </div>
 
-        <!-- Lista de Páginas / Nodos (con recuadro Teal en el seleccionado) -->
+        <!-- Lista de Páginas / Nodos (con lápiz ✏️ para renombrar cada página) -->
         <div class="nodos-lista" id="listaNodos">
           <div class="nodo-item seleccionado" onclick="seleccionarNodo(0, this)">
-            <span><i class="bi bi-file-earmark-text me-2"></i> 1. Saberes Previos y DUA</span>
+            <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;">
+              <span><i class="bi bi-file-earmark-text me-1"></i> 1. Saberes Previos y DUA</span>
+              <button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(0)">✏️</button>
+            </div>
             <span class="nodo-tag">Activa</span>
           </div>
           <div class="nodo-item" onclick="seleccionarNodo(1, this)">
-            <span><i class="bi bi-file-earmark-text me-2"></i> 2. Lectura y Conceptos</span>
-            <span class="nodo-tag">2 iDev</span>
+            <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;">
+              <span><i class="bi bi-file-earmark-text me-1"></i> 2. Lectura y Conceptos</span>
+              <button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(1)">✏️</button>
+            </div>
+            <span class="nodo-tag">2 Cont.</span>
           </div>
           <div class="nodo-item" onclick="seleccionarNodo(2, this)">
-            <span><i class="bi bi-file-earmark-text me-2"></i> 3. Actividad y Reto</span>
-            <span class="nodo-tag">1 iDev</span>
+            <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;">
+              <span><i class="bi bi-file-earmark-text me-1"></i> 3. Actividad y Reto</span>
+              <button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(2)">✏️</button>
+            </div>
+            <span class="nodo-tag">1 Cont.</span>
           </div>
           <div class="nodo-item" onclick="seleccionarNodo(3, this)">
-            <span><i class="bi bi-file-earmark-text me-2"></i> 4. Evaluación y Quiz</span>
+            <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;">
+              <span><i class="bi bi-file-earmark-text me-1"></i> 4. Evaluación y Quiz</span>
+              <button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(3)">✏️</button>
+            </div>
             <span class="nodo-tag">Quiz</span>
           </div>
         </div>
@@ -752,6 +964,10 @@
                 <span><i class="bi bi-paperclip me-2" style="color:#0284c7;"></i> Archivo o Fichero Adjunto</span>
                 <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
               </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('word_shape')">
+                <span><i class="bi bi-square me-2" style="color:#0284c7;"></i> ▢ Cuadro de Forma (Word)</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
             </div>
           </div>
 
@@ -770,7 +986,7 @@
                 <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
               </div>
               <div class="idevice-pill-add" onclick="insertarIdevice('encuesta')">
-                <span><i class="bi bi-bar-chart-line me-2" style="color:#16a34a;"></i> Encuesta / Diagnóstico</span>
+                <span><i class="bi bi-bar-chart-fill me-2" style="color:#059669;"></i> 📊 Encuesta / Diagnóstico</span>
                 <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
               </div>
               <div class="idevice-pill-add" onclick="insertarIdevice('vf')">
@@ -835,6 +1051,10 @@
                 <span><i class="bi bi-bounding-box-circles me-2" style="color:#7c3aed;"></i> Geogebra / Simulador</span>
                 <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
               </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('geogebra_param')">
+                <span><i class="bi bi-bounding-box-circles me-2" style="color:#7c3aed;"></i> 📐 GeoGebra con Parámetros</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
             </div>
           </div>
 
@@ -883,6 +1103,10 @@
               </div>
               <div class="idevice-pill-add" onclick="insertarIdevice('codigo')">
                 <span><i class="bi bi-code-slash me-2" style="color:#059669;"></i> Editor de Código / Sintaxis</span>
+                <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
+              </div>
+              <div class="idevice-pill-add" onclick="insertarIdevice('excel_split_table')">
+                <span><i class="bi bi-layout-split me-2" style="color:#059669;"></i> 📊 Tabla Dividida (Excel)</span>
                 <span class="btn-mas"><i class="bi bi-plus"></i> Añadir</span>
               </div>
             </div>
@@ -952,107 +1176,69 @@
               Bloques interactivos asignados a este momento de la clase. Los alumnos lo verán exactamente en este orden.
             </div>
           </div>
-          <div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" class="btn-asistente-ia-sesion" id="btnAsistenteSecuenciaIA" onclick="toggleAsistenteSecuenciaIA()" title="Asistente Pedagógico IA para estructurar la clase">
+              ✨ Asistente IA
+            </button>
             <button class="btn-modo-conmutador activo" style="padding:6px 12px; font-size:12px;" onclick="previsualizarPagina()">
               <i class="bi bi-play-circle"></i> Probar en vivo
             </button>
           </div>
         </div>
 
-        <!-- CONTENEDOR DE CARDS / IDEVICES INSERTADOS (PILA LEGO) -->
-        <div id="pilaIdevices" style="display:flex; flex-direction:column; gap:16px;">
-
-          <!-- Card 1: Lectura Guiada DUA -->
-          <div class="idevice-card" id="card-1">
-            <div class="idevice-card-header">
-              <div class="idevice-card-title">
-                <span class="badge badge-info" style="padding:3px 8px; border-radius:4px; font-size:11px;">INFORMACIÓN</span>
-                <i class="bi bi-headphones" style="color:#0284c7;"></i>
-                <span>Lectura Guiada DUA con Audio Síntesis</span>
-              </div>
-              <div class="idevice-card-actions">
-                <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
-                <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
-                <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('card-1')"><i class="bi bi-trash"></i></button>
-              </div>
-            </div>
-            <div class="idevice-card-body">
-              <div class="campo-grupo">
-                <label class="campo-label">Título del iDevice:</label>
-                <input type="text" class="campo-input" value="Contexto Inicial: Medir en la Comunidad">
-              </div>
-              <div class="campo-grupo">
-                <label class="campo-label">Texto DUA que leerá y escuchará el alumno:</label>
-                <textarea class="campo-textarea">Bienvenidos al proyecto de medición y fracciones. En esta sesión analizaremos cómo el carpintero Don José y la comerciante Doña Tere utilizan fracciones de metro y medios kilos para registrar sus compras cotidianas.</textarea>
-              </div>
-              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
-                <div style="font-size:12px; color:#64748b;">
-                  <i class="bi bi-check-circle-fill text-success me-1"></i> Audio síntesis activado automáticamente (DUA)
-                </div>
-                <button type="button" class="btn-modo-conmutador" style="background:#e0f2fe; color:#0369a1; padding:4px 10px; font-size:12px;" onclick="alert('Escuchando síntesis de voz en español...')">
-                  <i class="bi bi-volume-up"></i> Escuchar prueba de voz
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 2: Encuesta / Diagnóstico previo -->
-          <div class="idevice-card" id="card-2">
-            <div class="idevice-card-header">
-              <div class="idevice-card-title">
-                <span class="badge badge-eval" style="padding:3px 8px; border-radius:4px; font-size:11px;">EVALUACIÓN</span>
-                <i class="bi bi-bar-chart-line" style="color:#16a34a;"></i>
-                <span>Encuesta / Diagnóstico de Saberes Previos</span>
-              </div>
-              <div class="idevice-card-actions">
-                <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
-                <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
-                <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('card-2')"><i class="bi bi-trash"></i></button>
-              </div>
-            </div>
-            <div class="idevice-card-body">
-              <div class="campo-grupo">
-                <label class="campo-label">Pregunta activadora para el grupo:</label>
-                <input type="text" class="campo-input" value="¿En cuál de estas situaciones has usado más los números decimales o fracciones?">
-              </div>
-              <div class="campo-grupo">
-                <label class="campo-label">Opciones de respuesta:</label>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                  <input type="text" class="campo-input" value="A) Al comprar medio kilo o tres cuartos en la tiendita">
-                  <input type="text" class="campo-input" value="B) Al medir madera o tela con cinta métrica">
-                  <input type="text" class="campo-input" value="C) Al calcular el cambio del transporte">
+        <!-- PANEL DE SUGERENCIA Y ARQUITECTURA PEDAGÓGICA IA (LUCY ST90) -->
+        <div id="panelAsistenteSecuenciaIA" class="panel-asistente-secuencia-ia">
+          <div class="asistente-ia-card">
+            <div class="asistente-ia-card__cabecera">
+              <div class="asistente-ia-card__avatar">
+                <div class="asistente-ia-card__avatar-badge">👩‍🏫</div>
+                <div>
+                  <h4 class="asistente-ia-card__titulo">Lucy · Asistente Pedagógica NEM ST90</h4>
+                  <p class="asistente-ia-card__subtitulo">Sugerencia de Arquitectura y Secuencia Didáctica</p>
                 </div>
               </div>
+              <span class="asistente-ia-card__badge-nem">📚 Alineado a Planeación Previa</span>
+            </div>
+            <div class="asistente-ia-card__sugerencia-txt">
+              Para el tema <strong>"Fracciones y Decimales en Nuestra Comunidad"</strong>, te sugiero estructurar la clase en el orden pedagógico recomendado de <strong>4 momentos</strong>. Puedes insertar cada bloque con su botón o armar toda la clase con un solo clic:
+            </div>
+            <div class="asistente-ia-pasos-grid">
+              <div class="asistente-ia-paso">
+                <div class="asistente-ia-paso__num">Paso 1 · 5 min</div>
+                <div class="asistente-ia-paso__nombre">🎧 Lectura Guiada DUA</div>
+                <div class="asistente-ia-paso__desc">Activación comunitaria y saberes previos con síntesis oral asistida (es-MX).</div>
+                <button type="button" class="asistente-ia-paso__btn" onclick="insertarPasoSecuenciaIA(1)">+ Insertar Paso 1</button>
+              </div>
+              <div class="asistente-ia-paso">
+                <div class="asistente-ia-paso__num">Paso 2 · 10 min</div>
+                <div class="asistente-ia-paso__nombre">🎯 Objetivos / Vídeo</div>
+                <div class="asistente-ia-paso__desc">Explicación conceptual con metas claras y vídeo interactivo con pausas reflexivas.</div>
+                <button type="button" class="asistente-ia-paso__btn" onclick="insertarPasoSecuenciaIA(2)">+ Insertar Paso 2</button>
+              </div>
+              <div class="asistente-ia-paso">
+                <div class="asistente-ia-paso__num">Paso 3 · 20 min</div>
+                <div class="asistente-ia-paso__nombre">📄 Ficha / Práctica</div>
+                <div class="asistente-ia-paso__desc">Actividad práctica situada con documento descargable o simulación en hoja de cálculo.</div>
+                <button type="button" class="asistente-ia-paso__btn" onclick="insertarPasoSecuenciaIA(3)">+ Insertar Paso 3</button>
+              </div>
+              <div class="asistente-ia-paso">
+                <div class="asistente-ia-paso__num">Paso 4 · 5 min</div>
+                <div class="asistente-ia-paso__nombre">✓ Quiz Evaluativo</div>
+                <div class="asistente-ia-paso__desc">Cierre formativo interactivo con calificación automática y retroalimentación explicativa.</div>
+                <button type="button" class="asistente-ia-paso__btn" onclick="insertarPasoSecuenciaIA(4)">+ Insertar Paso 4</button>
+              </div>
+            </div>
+            <div class="asistente-ia-card__footer">
+              <span style="font-size:12px;color:#64748b;">El panel inicia limpio para que construyas paso a paso con acompañamiento IA.</span>
+              <button type="button" class="btn-construir-secuencia-completa" onclick="construirSecuenciaCompletaIA()">
+                ✨ Construir Secuencia Completa con IA (4 Momentos)
+              </button>
             </div>
           </div>
-
-          <!-- Card 3: Rosco de Palabras (Juego) -->
-          <div class="idevice-card" id="card-3">
-            <div class="idevice-card-header">
-              <div class="idevice-card-title">
-                <span class="badge badge-juego" style="padding:3px 8px; border-radius:4px; font-size:11px;">JUEGOS</span>
-                <i class="bi bi-controller" style="color:#d97706;"></i>
-                <span>Juego: Rosco de Palabras NEM</span>
-              </div>
-              <div class="idevice-card-actions">
-                <button class="btn-card-ctrl" title="Subir"><i class="bi bi-arrow-up"></i></button>
-                <button class="btn-card-ctrl" title="Bajar"><i class="bi bi-arrow-down"></i></button>
-                <button class="btn-card-ctrl del" title="Eliminar bloque" onclick="eliminarCard('card-3')"><i class="bi bi-trash"></i></button>
-              </div>
-            </div>
-            <div class="idevice-card-body">
-              <div class="campo-grupo">
-                <label class="campo-label">Letra D - Definición:</label>
-                <input type="text" class="campo-input" value="Número que expresa una cantidad dividida entre diez, cien o mil partes.">
-              </div>
-              <div class="campo-grupo">
-                <label class="campo-label">Palabra correcta:</label>
-                <input type="text" class="campo-input" value="DECIMAL" style="font-weight:700; color:#d97706;">
-              </div>
-            </div>
-          </div>
-
         </div>
+
+        <!-- CONTENEDOR DE CARDS / IDEVICES INSERTADOS (PILA LEGO) -->
+        <div id="pilaIdevices" style="display:flex; flex-direction:column; gap:16px;"></div>
 
         <!-- BOTÓN INFERIOR DE ACCIÓN GUARDAR SESIÓN -->
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:10px;">
@@ -1168,13 +1354,13 @@
   <!-- LÓGICA INTERACTIVA DEL SIMULADOR -->
   <script>
     let nodos = [
-      { id: 0, titulo: "1. Saberes Previos y DUA", nivel: 0, itemsCount: 3 },
-      { id: 1, titulo: "2. Lectura y Conceptos", nivel: 0, itemsCount: 2 },
-      { id: 2, titulo: "3. Actividad y Reto", nivel: 0, itemsCount: 1 },
-      { id: 3, titulo: "4. Evaluación y Quiz", nivel: 0, itemsCount: 1 }
+      { id: 0, titulo: "1. Saberes Previos y DUA", nivel: 0, itemsCount: 0 },
+      { id: 1, titulo: "2. Lectura y Conceptos", nivel: 0, itemsCount: 0 },
+      { id: 2, titulo: "3. Actividad y Reto", nivel: 0, itemsCount: 0 },
+      { id: 3, titulo: "4. Evaluación y Quiz", nivel: 0, itemsCount: 0 }
     ];
     let nodoActivoIndex = 0;
-    let cardCount = 3;
+    let cardCount = 0;
 
     function toggleCat(catId) {
       const el = document.getElementById(catId);
@@ -1263,12 +1449,30 @@
         div.innerHTML = `
           <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;">
             <span><i class="bi bi-file-earmark-text me-1"></i> ${n.titulo}</span>
-            <button type="button" class="btn-edit-title" style="padding:1px 4px;font-size:12px;opacity:0.75;" title="Renombrar esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(${i})"><i class="bi bi-pencil"></i></button>
+            <button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarPaginaEspecifica(${i})">✏️</button>
           </div>
           <span class="nodo-tag">${i === nodoActivoIndex ? 'Activa' : (n.itemsCount + ' Cont.')}</span>
         `;
         cont.appendChild(div);
       });
+    }
+
+    function cambiarFormaColor(btn, claseColor) {
+      const card = btn.closest('.idevice-card');
+      if (!card) return;
+      const box = card.querySelector('.word-shape-box');
+      if (!box) return;
+      box.className = `word-shape-box ${claseColor}`;
+      const estilos = {
+        'shape-blue': { border: '5px solid #0284c7', bg: '#f0f9ff', color: '#0369a1' },
+        'shape-teal': { border: '5px solid #0d9488', bg: '#f0fdfa', color: '#134e4a' },
+        'shape-amber': { border: '5px solid #d97706', bg: '#fffbeb', color: '#92400e' },
+        'shape-purple': { border: '5px solid #7c3aed', bg: '#faf5ff', color: '#581c87' }
+      };
+      const est = estilos[claseColor] || estilos['shape-teal'];
+      box.style.borderLeft = est.border;
+      box.style.background = est.bg;
+      box.style.color = est.color;
     }
 
     function insertarIdevice(tipo) {
@@ -1288,6 +1492,15 @@
       if (tipo === 'texto_dua') {
         badge = 'badge-info'; catText = 'INFORMACIÓN'; icon = 'bi-headphones'; title = 'Lectura Guiada DUA con Voz';
         desc = 'Texto redactado con accesibilidad universal y descripción para lectura con voz asistida.';
+      } else if (tipo === 'word_shape') {
+        badge = 'badge-info'; catText = 'NOTION / WORD'; icon = 'bi-square'; title = 'Cuadro de Texto / Forma DUA (Word)';
+        desc = 'Escribe aquí la consigna destacada o cuadro de texto con formato Word...';
+      } else if (tipo === 'excel_split_table') {
+        badge = 'badge-interact'; catText = 'TECNOLOGÍA'; icon = 'bi-layout-split'; title = 'Tabla Dividida Multicelda (Excel)';
+        desc = 'Distribución en columnas independientes con color de fondo y medios...';
+      } else if (tipo === 'geogebra_param' || tipo === 'geogebra') {
+        badge = 'badge-interact'; catText = 'CIENCIAS'; icon = 'bi-bounding-box-circles'; title = 'Simulador GeoGebra con Parámetros';
+        desc = 'Applet matemático interactivo con manipulación dinámica en tiempo real.';
       } else if (tipo === 'objetivos') {
         badge = 'badge-info'; catText = 'INFORMACIÓN'; icon = 'bi-bullseye'; title = 'Objetivos de Aprendizaje';
         desc = 'Describe lo que lograrán los estudiantes al concluir la sesión.';
@@ -1327,9 +1540,6 @@
       } else if (tipo === 'embebido') {
         badge = 'badge-interact'; catText = 'INTERACTIVO'; icon = 'bi-window'; title = 'Recurso Externo Embebido';
         desc = 'Pega el código iframe de Genially, Canva, H5P o Google Slides.';
-      } else if (tipo === 'geogebra') {
-        badge = 'badge-interact'; catText = 'INTERACTIVO'; icon = 'bi-bounding-box-circles'; title = 'Simulador GeoGebra';
-        desc = 'Applet matemático dinámico para manipular figuras o gráficas.';
       } else if (tipo === 'listening') {
         badge = 'badge-info'; catText = 'INGLÉS'; icon = 'bi-earbuds'; title = 'Audio Listening & Comprensión Oral';
         desc = 'Pista de audio en inglés con preguntas de opción múltiple para medir la comprensión auditiva del estudiante.';
@@ -1357,18 +1567,123 @@
       }
 
       let herramientasHtml = '';
-      if (tipo === 'texto_dua') {
+      if (tipo === 'texto_dua' || tipo === 'objetivos' || tipo === 'reto_ciencias' || tipo === 'formula') {
         herramientasHtml = `
-          <div style="display:flex;gap:4px;background:#f8fafc;padding:6px;border:1px solid #e2e8f0;border-radius:6px 6px 0 0;border-bottom:0;">
+          <div style="display:flex;gap:4px;background:#f8fafc;padding:6px;border:1px solid #e2e8f0;border-radius:6px 6px 0 0;border-bottom:0;flex-wrap:wrap;align-items:center;">
             <button type="button" class="btn-tool-formato" style="padding:2px 8px;font-weight:bold;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">B</button>
             <button type="button" class="btn-tool-formato" style="padding:2px 8px;font-style:italic;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">I</button>
             <button type="button" class="btn-tool-formato" style="padding:2px 8px;text-decoration:underline;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">U</button>
             <button type="button" class="btn-tool-formato" style="padding:2px 8px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">H3</button>
             <button type="button" class="btn-tool-formato" style="padding:2px 8px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">• Viñeta</button>
             <button type="button" class="btn-tool-formato" style="padding:2px 8px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer;">“” Cita</button>
-            <span style="margin-left:auto;font-size:11.5px;color:#0f766e;font-weight:700;display:flex;align-items:center;gap:4px;background:#ccfbf1;padding:2px 8px;border-radius:999px;">
+            ${tipo === 'texto_dua' ? `<span style="margin-left:auto;font-size:11.5px;color:#0f766e;font-weight:700;display:flex;align-items:center;gap:4px;background:#ccfbf1;padding:2px 8px;border-radius:999px;">
               <i class="bi bi-volume-up"></i> Síntesis de voz DUA activa
-            </span>
+            </span>` : ''}
+          </div>
+          <div contenteditable="true" style="min-height:90px;padding:10px;border:1px solid #e2e8f0;border-radius:0 0 6px 6px;background:#fff;outline:none;" class="editor-enriquecido-simulador">${desc}</div>
+        `;
+      } else if (tipo === 'word_shape') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Estilo de la Forma:</label>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColor(this, 'shape-blue')">🔵 Azul</button>
+            <button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#ccfbf1;color:#0f766e;border:1px solid #99f6e4;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColor(this, 'shape-teal')">🟢 Teal NEM</button>
+            <button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColor(this, 'shape-amber')">🟡 Ámbar DUA</button>
+            <button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColor(this, 'shape-purple')">🟣 Púrpura</button>
+          </div>
+          <div class="word-shape-box shape-teal" contenteditable="true" style="padding:16px;border-radius:8px;border-left:5px solid #0d9488;background:#f0fdfa;color:#134e4a;font-size:14px;min-height:70px;">
+            ${desc}
+          </div>
+        `;
+      } else if (tipo === 'excel_split_table') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Distribución de Columnas:</label>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #0d9488;background:#0d9488;color:#fff;font-size:12px;cursor:pointer;">50% / 50%</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">33% / 33% / 33%</button>
+            <button type="button" style="padding:4px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-size:12px;cursor:pointer;">70% / 30%</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="excel-split-table" style="width:100%;border-collapse:separate;border-spacing:8px;">
+              <tbody>
+                <tr>
+                  <td class="excel-layout-cell cell-bg-soft-teal" style="width:50%;padding:10px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;vertical-align:top;">
+                    <div style="display:flex;gap:4px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #ccfbf1;">
+                      <button type="button" style="font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">📷 Imagen</button>
+                      <button type="button" style="font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">🎬 Video/Drive</button>
+                    </div>
+                    <div contenteditable="true" style="min-height:60px;font-size:13px;outline:none;">Contenido columna izquierda (explicación, imagen o fórmula)...</div>
+                  </td>
+                  <td class="excel-layout-cell cell-bg-white" style="width:50%;padding:10px;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;vertical-align:top;">
+                    <div style="display:flex;gap:4px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #e2e8f0;">
+                      <button type="button" style="font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">📷 Imagen</button>
+                      <button type="button" style="font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">🎬 Video/Drive</button>
+                    </div>
+                    <div contenteditable="true" style="min-height:60px;font-size:13px;outline:none;">Contenido columna derecha (reto guiado, preguntas o datos)...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (tipo === 'geogebra_param' || tipo === 'geogebra') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Parámetros del Simulador GeoGebra:</label>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;align-items:end;margin-bottom:8px;">
+            <div>
+              <label style="font-size:11px;color:#64748b;display:block;">ID o URL del Material:</label>
+              <input type="text" class="campo-input" value="m9xqz8tw" placeholder="ID o enlace de GeoGebra">
+            </div>
+            <div>
+              <label style="font-size:11px;color:#64748b;display:block;">Ancho:</label>
+              <input type="text" class="campo-input" value="100%">
+            </div>
+            <div>
+              <label style="font-size:11px;color:#64748b;display:block;">Alto (px):</label>
+              <input type="number" class="campo-input" value="380">
+            </div>
+            <button type="button" style="padding:7px 12px;background:#0d9488;color:#fff;border:0;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;height:36px;">Cargar</button>
+          </div>
+          <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:12px;text-align:center;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <i class="bi bi-bounding-box-circles text-primary" style="font-size:32px;"></i>
+            <div style="font-weight:700;margin-top:6px;color:#1e293b;">Simulador GeoGebra Interactivo</div>
+            <div style="font-size:12px;color:#64748b;">El estudiante interactúa con gráficas, figuras y parámetros en vivo.</div>
+          </div>
+        `;
+      } else if (tipo === 'sim_ofimatica') {
+        herramientasHtml = `
+          <label class="campo-label" style="font-weight:700;margin-top:6px;">Hoja de Cálculo Interactiva (Ofimática):</label>
+          <div style="margin-bottom:6px;display:flex;gap:6px;align-items:center;">
+            <span style="font-size:11.5px;color:#0f766e;font-weight:700;background:#ccfbf1;padding:2px 8px;border-radius:4px;">fx Fórmulas: =SUMA(A1:A3), =PROMEDIO(B1:B3)</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12.5px;text-align:center;border:1px solid #cbd5e1;">
+              <thead>
+                <tr style="background:#f1f5f9;color:#475569;">
+                  <th style="border:1px solid #cbd5e1;width:40px;padding:4px;">#</th>
+                  <th style="border:1px solid #cbd5e1;padding:4px;">A (Concepto)</th>
+                  <th style="border:1px solid #cbd5e1;padding:4px;">B (Valor 1)</th>
+                  <th style="border:1px solid #cbd5e1;padding:4px;">C (Valor 2)</th>
+                  <th style="border:1px solid #cbd5e1;padding:4px;">D (Total)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="background:#f8fafc;border:1px solid #cbd5e1;font-weight:700;">1</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;text-align:left;">Materiales</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;">150</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;">200</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;background:#f0fdfa;font-weight:700;">=SUMA(B1:C1)</td>
+                </tr>
+                <tr>
+                  <td style="background:#f8fafc;border:1px solid #cbd5e1;font-weight:700;">2</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;text-align:left;">Herramientas</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;">80</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;">120</td>
+                  <td contenteditable="true" style="border:1px solid #cbd5e1;padding:4px;background:#f0fdfa;font-weight:700;">=SUMA(B2:C2)</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         `;
       } else if (tipo === 'video_interactivo') {
@@ -1454,7 +1769,7 @@
         </div>
         <div class="idevice-card-body">
           <div class="campo-grupo">
-            <label class="campo-label">Título del iDevice:</label>
+            <label class="campo-label">Título del Contenido:</label>
             <input type="text" class="campo-input" value="${title}">
           </div>
           <div class="campo-grupo">
@@ -1496,6 +1811,35 @@
     function previsualizarPagina() {
       cambiarVista('estudiante');
     }
+
+    function toggleAsistenteSecuenciaIA() {
+      const panel = document.getElementById('panelAsistenteSecuenciaIA');
+      if (panel) {
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    function insertarPasoSecuenciaIA(pasoNum) {
+      if (pasoNum === 1) {
+        insertarIdevice('texto_dua');
+      } else if (pasoNum === 2) {
+        insertarIdevice('objetivos');
+      } else if (pasoNum === 3) {
+        insertarIdevice('fichero');
+      } else if (pasoNum === 4) {
+        insertarIdevice('quiz_evaluativo');
+      }
+    }
+
+    function construirSecuenciaCompletaIA() {
+      const tipos = ['texto_dua', 'objetivos', 'fichero', 'quiz_evaluativo'];
+      tipos.forEach(t => insertarIdevice(t));
+      const panel = document.getElementById('panelAsistenteSecuenciaIA');
+      if (panel) panel.style.display = 'none';
+    }
+
+    // Inicializar árbol de páginas con lápiz de renombrado y estado inicial
+    renderNodos();
   </script>
 </body>
 </html>

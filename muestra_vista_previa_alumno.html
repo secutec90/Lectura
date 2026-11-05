@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secundaria Técnica 90 — Aula Digital Interactiva (Vista Alumno)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --teal: #0d9488;
+      --teal-light: #f0fdfa;
+      --surface: #ffffff;
+      --background: #f8fafc;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --success: #16a34a;
+      --success-light: #dcfce7;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.07), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 30px -10px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      color: var(--text-main);
+      padding: 28px 20px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .browser-frame {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      overflow: hidden;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .browser-topbar {
+      background: #0f172a;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .browser-address {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .browser-address span {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    .school-badge {
+      font-size: 11.5px;
+      color: #cbd5e1;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .class-hero {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 40%, #0f172a 100%);
+      color: #ffffff;
+      padding: 36px 36px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .class-hero::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .meta-tag {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .meta-tag.live {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-pulse {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .class-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      max-width: 820px;
+    }
+
+    .class-subtitle {
+      font-size: 14.5px;
+      color: #e0f2fe;
+      max-width: 780px;
+      margin-bottom: 18px;
+      opacity: 0.95;
+    }
+
+    .session-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(15, 23, 42, 0.3);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(6px);
+      width: fit-content;
+    }
+
+    .session-progress-bar {
+      width: 140px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .session-progress-fill {
+      width: 25%;
+      height: 100%;
+      background: #38bdf8;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .session-progress-text {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .moments-nav-wrapper {
+      background: #ffffff;
+      padding: 18px 36px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .moments-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .moment-tab {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .moment-tab:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .moment-tab.active {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
+    }
+
+    .moment-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 15%;
+      width: 70%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tab-step {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .moment-tab.active .tab-step {
+      color: var(--primary);
+    }
+
+    .tab-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-time {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .classroom-body {
+      padding: 36px;
+      background: #f8fafc;
+      min-height: 480px;
+    }
+
+    .moment-panel {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .moment-panel.active {
+      display: block;
+    }
+
+    .content-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .card-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon-bubble {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .card-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .audio-dua-player {
+      background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+      border: 1px solid #bbf7d0;
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .player-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-play-dua {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-play-dua:hover {
+      background: var(--primary-dark);
+      transform: scale(1.06);
+    }
+
+    .player-info h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .player-info p {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .waveform-bars {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 24px;
+    }
+
+    .wave-bar {
+      width: 3.5px;
+      background: var(--primary);
+      border-radius: 3px;
+      animation: wave 1.2s ease-in-out infinite alternate;
+    }
+
+    .wave-bar:nth-child(1) { height: 8px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(2) { height: 18px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { height: 22px; animation-delay: 0.4s; }
+    .wave-bar:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+    .wave-bar:nth-child(6) { height: 9px; animation-delay: 0.35s; }
+
+    @keyframes wave {
+      0% { transform: scaleY(0.4); opacity: 0.5; }
+      100% { transform: scaleY(1.1); opacity: 1; }
+    }
+
+    .reading-passage {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #334155;
+      padding: 20px 24px;
+      background: #fdfdfe;
+      border-left: 4px solid var(--primary);
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 18px;
+    }
+
+    .reading-passage strong {
+      color: #0f172a;
+      background: #fef08a;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .quiz-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 26px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quiz-question {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #334155;
+      transition: all 0.18s ease;
+    }
+
+    .quiz-option:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      transform: translateX(3px);
+    }
+
+    .quiz-option.selected {
+      background: #f0fdf4;
+      border-color: var(--success);
+      color: #14532d;
+    }
+
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .quiz-option.selected .option-letter {
+      background: var(--success);
+      color: #ffffff;
+      border-color: var(--success);
+    }
+
+    .quiz-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-check-answer {
+      background: var(--success);
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-check-answer:hover {
+      background: #15803d;
+      transform: translateY(-1px);
+    }
+
+    .quiz-feedback {
+      display: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .quiz-feedback.success {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--success-light);
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .dropzone-box {
+      border: 2px dashed #93c5fd;
+      background: #eff6ff;
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dropzone-box:hover {
+      background: #dbeafe;
+      border-color: #3b82f6;
+    }
+
+    .dropzone-icon {
+      font-size: 36px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .dropzone-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 4px;
+    }
+
+    .dropzone-subtitle {
+      font-size: 12.5px;
+      color: #64748b;
+      margin-bottom: 14px;
+    }
+
+    .btn-browse {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .classroom-footer {
+      padding: 20px 36px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn-footer-nav {
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-footer-prev {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn-footer-prev:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-footer-next {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-footer-next:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .moments-nav { grid-template-columns: repeat(2, 1fr); }
+      .classroom-body { padding: 20px; }
+      .class-hero { padding: 24px; }
+      .class-title { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="browser-frame">
+    
+    <!-- BARRA SUPERIOR INSTITUCIONAL (SIMULADOR DE NAVEGADOR WEB) -->
+    <div class="browser-topbar">
+      <div class="browser-dots">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <div class="browser-address">
+        🔒 <span>https://sites.google.com/view/lec90/alumno</span> · Sesión Activa
+      </div>
+      <div class="school-badge">
+        🏛️ SECUNDARIA TÉCNICA 90
+      </div>
+    </div>
+
+    <!-- HERO DE LA CLASE -->
+    <header class="class-hero">
+      <div class="hero-meta">
+        <span class="meta-tag">Fase 6 · 1° Grado</span>
+        <span class="meta-tag">Saberes y Pensamiento Científico</span>
+        <span class="meta-tag live"><span class="live-pulse"></span> Clase en Vivo</span>
+      </div>
+      <h1 class="class-title">Fracciones y Decimales en Nuestra Comunidad: Medimos, Comparamos y Decidimos</h1>
+      <p class="class-subtitle">Sesión 1: Encuadre y saberes previos en situaciones cotidianas de compra, venta y mediciones locales.</p>
+      
+      <div class="session-progress-wrap">
+        <div class="session-progress-bar">
+          <div class="session-progress-fill" id="progressFill"></div>
+        </div>
+        <span class="session-progress-text" id="progressText">Paso 1 de 4 · Apertura (25%)</span>
+      </div>
+    </header>
+
+    <!-- MENÚ DE MOMENTOS DIDÁCTICOS (ESPACIOSO Y ELEGANTE) -->
+    <nav class="moments-nav-wrapper">
+      <div class="moments-nav">
+        <button class="moment-tab active" onclick="mostrarMomento(1)">
+          <span class="tab-step">Paso 1</span>
+          <span class="tab-name">⏱️ 1. Apertura</span>
+          <span class="tab-time">5 min · Saberes previos</span>
+        </button>
+        <button class="moment-tab" onclick="mostrarMomento(2)">
+          <span class="tab-step">Paso 2</span>
+          <span class="tab-name">📖 2. Desarrollo</span>
+          <span class="tab-time">10 min · Libro SEP</span>
+        </button>
+        <button class="moment-tab" onclick="mostrarMomento(3)">
+          <span class="tab-step">Paso 3</span>
+          <span class="tab-name">✍️ 3. Actividad</span>
+          <span class="tab-time">20 min · Reto situado</span>
+        </button>
+        <button class="moment-tab" onclick="mostrarMomento(4)">
+          <span class="tab-step">Paso 4</span>
+          <span class="tab-name">🎯 4. Cierre</span>
+          <span class="tab-time">5 min · Quiz formativo</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ÁREA DE CONTENIDO DEL ESTUDIANTE -->
+    <main class="classroom-body">
+
+      <!-- PANEL 1: APERTURA -->
+      <section class="moment-panel active" id="panel-1">
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <div class="card-icon-bubble">🎧</div>
+              <div>
+                <h2 class="card-title">Saberes Previos y Lectura Guiada DUA</h2>
+                <p style="font-size:13px;color:var(--text-muted);">Activación de conocimientos mediante situación detonadora</p>
+              </div>
+            </div>
+            <span class="card-badge">Accesibilidad DUA con Audio</span>
+          </div>
+
+          <!-- REPRODUCTOR DE VOZ DUA -->
+          <div class="audio-dua-player">
+            <div class="player-left">
+              <button class="btn-play-dua" id="btnPlayDua" onclick="toggleAudioDemo()" title="Escuchar narración en voz alta">▶</button>
+              <div class="player-info">
+                <h4>Narración Asistida de la Sesión</h4>
+                <p id="playerStatus">Voz guiada en español de México · Pulsa reproducir</p>
+              </div>
+            </div>
+            <div class="waveform-bars">
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+            </div>
+          </div>
+
+          <!-- PÁRRAFO DE LECTURA ESPACIOSO -->
+          <div class="reading-passage">
+            «Bienvenidos a esta sesión de exploración matemática en nuestra comunidad. Hoy descubriremos que las <strong>fracciones y los decimales no están solo en el pizarrón</strong>, sino en cada compra que hacemos en la tiendita de la esquina al pedir medio kilo de tortillas, tres cuartos de queso o al calcular el cambio del transporte escolar. A lo largo de esta clase aprenderemos a comparar estas cantidades para tomar las mejores decisiones cotidianas.»
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 2: DESARROLLO -->
+      <section class="moment-panel" id="panel-2">
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <div class="card-icon-bubble">📖</div>
+              <div>
+                <h2 class="card-title">Conceptos Centrales y Libro SEP</h2>
+                <p style="font-size:13px;color:var(--text-muted);">Colección Ximhai 1° de Secundaria · Págs. 14 a 48</p>
+              </div>
+            </div>
+            <span class="card-badge">Fase 6 · SEP</span>
+          </div>
+          <div class="reading-passage">
+            «Una fracción representa la parte de un todo que ha sido dividido en partes iguales. Por ejemplo, al comprar <strong>3/4 de kilo</strong>, dividimos 1 kilogramo (1000 g) en 4 partes de 250 g y tomamos 3, sumando <strong>750 gramos o 0.75 kg</strong> en notación decimal.»
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 3: ACTIVIDAD SITUADA -->
+      <section class="moment-panel" id="panel-3">
+        <div class="content-card">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <div class="card-icon-bubble">✍️</div>
+              <div>
+                <h2 class="card-title">Reto Práctico: Desafío de la Tiendita Escolar</h2>
+                <p style="font-size:13px;color:var(--text-muted);">Trabajo en binas · Ponderación: 60% (6 puntos)</p>
+              </div>
+            </div>
+            <span class="card-badge" style="background:#fef3c7;color:#92400e;">Evidencia Evaluable</span>
+          </div>
+
+          <p style="margin-bottom:18px;font-size:14.5px;color:#334155;">
+            En binas, resuelvan el problema de comparación en su cuaderno: <em>¿Qué resulta más económico: comprar 3 paquetes de 1/4 kg de jamón a $28 cada uno, o un solo paquete de 1/2 kg a $52?</em> Tomen una fotografía clara de su procedimiento y súbanla al siguiente buzón:
+          </p>
+
+          <!-- BUZÓN ELEGANTE DE SUBIDA DE EVIDENCIAS -->
+          <div class="dropzone-box" onclick="simularSubidaArchivo()">
+            <div class="dropzone-icon">☁️</div>
+            <div class="dropzone-title">Subir Fotografía de la Evidencia o Cuaderno</div>
+            <div class="dropzone-subtitle" id="dropzoneText">Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)</div>
+            <button type="button" class="btn-browse">Examinar mi dispositivo</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 4: QUIZ Y CIERRE -->
+      <section class="moment-panel" id="panel-4">
+        <div class="quiz-card">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <div class="card-icon-bubble" style="background:#dcfce7;color:#16a34a;">🎯</div>
+              <div>
+                <h2 class="card-title">Quiz Formativo de Cierre</h2>
+                <p style="font-size:13px;color:var(--text-muted);">Autocalificación inmediata · Ponderación: 40% (4 puntos)</p>
+              </div>
+            </div>
+            <span class="card-badge" style="background:#dcfce7;color:#166534;">Autocalificable</span>
+          </div>
+
+          <div class="quiz-question">
+            <span>1.</span>
+            <span>Si en la carnicería don Pepe pides <strong>3/4 de kilogramo</strong> de carne, ¿cuántos gramos exactos te deben despachar en la báscula digital?</span>
+          </div>
+
+          <div class="quiz-options">
+            <div class="quiz-option" onclick="seleccionarOpcion(this, false)">
+              <span class="option-letter">A</span>
+              <span>500 gramos (0.50 kg)</span>
+            </div>
+            <div class="quiz-option" onclick="seleccionarOpcion(this, true)">
+              <span class="option-letter">B</span>
+              <span>750 gramos (0.75 kg)</span>
+            </div>
+            <div class="quiz-option" onclick="seleccionarOpcion(this, false)">
+              <span class="option-letter">C</span>
+              <span>250 gramos (0.25 kg)</span>
+            </div>
+            <div class="quiz-option" onclick="seleccionarOpcion(this, false)">
+              <span class="option-letter">D</span>
+              <span>800 gramos (0.80 kg)</span>
+            </div>
+          </div>
+
+          <div class="quiz-actions">
+            <button type="button" class="btn-check-answer" onclick="verificarRespuesta()">Comprobar Respuesta</button>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER CON BOTONES DE NAVEGACIÓN PASO A PASO -->
+    <footer class="classroom-footer">
+      <button class="btn-footer-nav btn-footer-prev" id="btnPrev" onclick="cambiarMomentoRelativo(-1)" style="visibility:hidden;">
+        ← Momento Anterior
+      </button>
+      <div style="font-size:12.5px;color:var(--text-muted);font-weight:600;">
+        Plataforma Escolar ST90 · Diseño Universal para el Aprendizaje (DUA)
+      </div>
+      <button class="btn-footer-nav btn-footer-next" id="btnNext" onclick="cambiarMomentoRelativo(1)">
+        Siguiente: Desarrollo →
+      </button>
+    </footer>
+
+  </div>
+
+  <script>
+    let momentoActual = 1;
+    let opcionSeleccionadaEsCorrecta = null;
+    let reproduciendoAudio = false;
+
+    function mostrarMomento(num) {
+      momentoActual = num;
+      const tabs = document.querySelectorAll('.moment-tab');
+      tabs.forEach((tab, index) => {
+        tab.classList.toggle('active', index === (num - 1));
+      });
+
+      for (let i = 1; i <= 4; i++) {
+        const panel = document.getElementById('panel-' + i);
+        if (panel) panel.classList.toggle('active', i === num);
+      }
+
+      const fill = document.getElementById('progressFill');
+      const text = document.getElementById('progressText');
+      const nombres = ['Apertura', 'Desarrollo', 'Actividad', 'Cierre'];
+      const porcentajes = ['25%', '50%', '75%', '100%'];
+      
+      fill.style.width = porcentajes[num - 1];
+      text.textContent = `Paso ${num} de 4 · ${nombres[num - 1]} (${porcentajes[num - 1]})`;
+
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+
+      btnPrev.style.visibility = num === 1 ? 'hidden' : 'visible';
+      if (num === 4) {
+        btnNext.textContent = '🎉 Finalizar Clase';
+        btnNext.style.background = '#16a34a';
+      } else {
+        btnNext.textContent = `Siguiente: ${nombres[num]} →`;
+        btnNext.style.background = '#0284c7';
+      }
+    }
+
+    function cambiarMomentoRelativo(delta) {
+      const nuevo = momentoActual + delta;
+      if (nuevo >= 1 && nuevo <= 4) {
+        mostrarMomento(nuevo);
+      } else if (nuevo > 4) {
+        alert('¡Felicitaciones! Has completado todos los momentos de la sesión.');
+      }
+    }
+
+    function toggleAudioDemo() {
+      const btn = document.getElementById('btnPlayDua');
+      const status = document.getElementById('playerStatus');
+      reproduciendoAudio = !reproduciendoAudio;
+
+      if (reproduciendoAudio) {
+        btn.textContent = '⏸';
+        btn.style.background = '#0d9488';
+        status.textContent = 'Reproduciendo narración en voz alta con sintetizador DUA...';
+        if ('speechSynthesis' in window) {
+          const texto = document.querySelector('.reading-passage').textContent;
+          const utter = new SpeechSynthesisUtterance(texto);
+          utter.lang = 'es-MX';
+          utter.onend = () => {
+            reproduciendoAudio = false;
+            btn.textContent = '▶';
+            btn.style.background = '#0284c7';
+            status.textContent = 'Lectura finalizada · Pulsa para repetir';
+          };
+          window.speechSynthesis.speak(utter);
+        }
+      } else {
+        btn.textContent = '▶';
+        btn.style.background = '#0284c7';
+        status.textContent = 'Audio en pausa · Pulsa para reanudar';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    function seleccionarOpcion(elemento, esCorrecta) {
+      document.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
+      elemento.classList.add('selected');
+      opcionSeleccionadaEsCorrecta = esCorrecta;
+    }
+
+    function verificarRespuesta() {
+      const feedback = document.getElementById('quizFeedback');
+      if (opcionSeleccionadaEsCorrecta === null) {
+        feedback.style.display = 'block';
+        feedback.className = 'quiz-feedback';
+        feedback.style.background = '#fef3c7';
+        feedback.style.color = '#92400e';
+        feedback.textContent = '⚠️ Por favor selecciona una de las opciones antes de comprobar.';
+        return;
+      }
+
+      feedback.style.display = 'flex';
+      if (opcionSeleccionadaEsCorrecta) {
+        feedback.className = 'quiz-feedback success';
+        feedback.innerHTML = '✅ <strong>¡Excelente respuesta!</strong> 3/4 de kilogramo equivalen exactamente a 750 gramos (0.75 kg). Sumaste 4 puntos.';
+      } else {
+        feedback.className = 'quiz-feedback';
+        feedback.style.background = '#fee2e2';
+        feedback.style.color = '#991b1b';
+        feedback.innerHTML = '❌ <strong>Aún no es la correcta.</strong> Recuerda que 1 kg = 1000 g. Divide 1000 entre 4 (250 g) y multiplícalo por 3.';
+      }
+    }
+
+    function simularSubidaArchivo() {
+      const dropText = document.getElementById('dropzoneText');
+      dropText.innerHTML = '📁 <strong>Archivo seleccionado:</strong> <code>ejercicios_tiendita_equipo3.jpg</code> · ¡Listo para enviar!';
+      dropText.style.color = '#15803d';
+    }
+  </script>
+</body>
+</html>
+

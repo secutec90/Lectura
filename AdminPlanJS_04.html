@@ -392,23 +392,32 @@
   }
 
   function solicitarDesgloseSesionesIA() {
-    if (!planActualNEM || !planActualNEM.id) {
-      toast('Guarda primero la planeación antes de desglosar sus sesiones con IA.', 'error');
-      return;
-    }
-
     const btn = document.getElementById('btnDesglosarSesionesIA');
     const txtOriginal = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Desglosando momentos DUA...'; }
 
+    const titEl = document.getElementById('planTitulo');
+    const asigEl = document.getElementById('planAsignatura');
+    const gradEl = document.getElementById('planGrado');
+    const pdaEl = document.getElementById('planPDA');
+    const contEl = document.getElementById('planContenidoSintetico');
+    const numSesEl = document.getElementById('planNumSesiones');
+
+    const tituloVal = (planActualNEM && (planActualNEM.titulo || planActualNEM.Titulo)) || (titEl && titEl.value) || 'Proyecto Didáctico';
+    const asigVal = (planActualNEM && (planActualNEM.asignatura || planActualNEM.Asignatura)) || (asigEl && asigEl.value) || 'Español';
+    const gradoVal = (planActualNEM && (planActualNEM.grado || planActualNEM.Grado)) || (gradEl && gradEl.value) || '1';
+    const pdaVal = (planActualNEM && (planActualNEM.pda || planActualNEM.PDA)) || (pdaEl && pdaEl.value) || '';
+    const contVal = (planActualNEM && (planActualNEM.contenidoSintetico || planActualNEM.ContenidoSintetico)) || (contEl && contEl.value) || '';
+    const nSes = (sesionesActualesNEM && sesionesActualesNEM.length) || (planActualNEM && (planActualNEM.numSesiones || planActualNEM.NumSesiones)) || (numSesEl && parseInt(numSesEl.value, 10)) || 3;
+
     const payload = {
-      idPlaneacion: planActualNEM.id,
-      numSesiones: sesionesActualesNEM.length || planActualNEM.numSesiones || 3,
-      titulo: planActualNEM.titulo || 'Proyecto Didáctico',
-      grado: planActualNEM.grado || '1',
-      asignatura: planActualNEM.asignatura || 'Español',
-      contenidoSintetico: planActualNEM.contenidoSintetico || '',
-      pda: planActualNEM.pda || ''
+      idPlaneacion: (planActualNEM && (planActualNEM.id || planActualNEM.Id)) || '',
+      numSesiones: nSes,
+      titulo: tituloVal,
+      grado: gradoVal,
+      asignatura: asigVal,
+      contenidoSintetico: contVal,
+      pda: pdaVal
     };
 
     const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
@@ -425,22 +434,43 @@
         return;
       }
 
+      // Asegurar que existan suficientes sesiones en memoria para recibir el desglose
+      if (!Array.isArray(sesionesActualesNEM) || !sesionesActualesNEM.length) {
+        sesionesActualesNEM = [];
+        for (let k = 0; k < lista.length; k++) {
+          sesionesActualesNEM.push({
+            numero: k + 1,
+            titulo: 'Sesión ' + (k + 1) + ' (40 min)',
+            duracionMin: 40,
+            aperturaTexto: '',
+            desarrolloTexto: '',
+            actividadTexto: '',
+            cierreTexto: ''
+          });
+        }
+      }
+
       // Aplicar momentos a cada sesión en memoria
       lista.forEach(function (item, idx) {
-        if (sesionesActualesNEM[idx]) {
-          const s = sesionesActualesNEM[idx];
-          if (item.titulo) s.titulo = item.titulo;
-          if (item.apertura) s.aperturaTexto = item.apertura;
-          if (item.desarrollo) s.desarrolloTexto = item.desarrollo;
-          if (item.actividad) s.actividadTexto = item.actividad;
-          if (item.cierre) s.cierreTexto = item.cierre;
-          if (item.recursoVisualTitulo || item.recursoVisualDescripcion) {
-            s.recursosVisuales = [{
-              titulo: item.recursoVisualTitulo || 'Recurso visual de la sesión',
-              descripcionAuditiva: item.recursoVisualDescripcion || '',
-              url: ''
-            }];
-          }
+        if (!sesionesActualesNEM[idx]) {
+          sesionesActualesNEM[idx] = {
+            numero: idx + 1,
+            titulo: item.titulo || ('Sesión ' + (idx + 1) + ' (40 min)'),
+            duracionMin: 40
+          };
+        }
+        const s = sesionesActualesNEM[idx];
+        if (item.titulo) s.titulo = item.titulo;
+        if (item.apertura) s.aperturaTexto = item.apertura;
+        if (item.desarrollo) s.desarrolloTexto = item.desarrollo;
+        if (item.actividad) s.actividadTexto = item.actividad;
+        if (item.cierre) s.cierreTexto = item.cierre;
+        if (item.recursoVisualTitulo || item.recursoVisualDescripcion) {
+          s.recursosVisuales = [{
+            titulo: item.recursoVisualTitulo || 'Recurso visual de la sesión',
+            descripcionAuditiva: item.recursoVisualDescripcion || '',
+            url: ''
+          }];
         }
       });
 

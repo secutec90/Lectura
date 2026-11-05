@@ -1005,15 +1005,12 @@ function etiquetaGrupoClase_(grado, grupo) {
   return String(etq).toUpperCase();
 }
 
-function gruposDeSesionClase_(ses) {
+function gruposDeSesionClase_(ses, turno) {
   const mapa = {};
+  const turnoNorm = turno ? turnoDe_(turno) : "";
   let filasH = _leerFilas_("Horarios");
-  const esOficialCompleto = filasH && filasH.length >= 500 && filasH.some(function (f) {
-    const m = String(f["Maestro"] || "").toUpperCase();
-    return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
-  });
 
-  if (!esOficialCompleto && typeof obtenerFilasHorarioOficialAsc_ === "function") {
+  if ((!filasH || !filasH.length) && typeof obtenerFilasHorarioOficialAsc_ === "function") {
     const oficiales = obtenerFilasHorarioOficialAsc_();
     const enc = ENCABEZADOS.Horarios;
     filasH = oficiales.map(function (row) {
@@ -1027,6 +1024,10 @@ function gruposDeSesionClase_(ses) {
   }
 
   filasH.forEach(function (f) {
+    if (turnoNorm) {
+      const tFila = turnoDe_(f["Turno"] || f["turno"] || "");
+      if (tFila && tFila !== turnoNorm) return;
+    }
     if (ses.rol === "maestro" && normalizarNombrePref_(f["Maestro"] || f["maestro"] || "") !== normalizarNombrePref_(ses.maestroNombre || "")) return;
     const gr = String(f["Grado"] || f["grado"] || "").trim();
     const gp = String(f["Grupo"] || f["grupo"] || "").trim().toLowerCase();
@@ -1147,19 +1148,16 @@ function etiquetaSemanaClase_(fechaIni, fechaFin) {
   return a.getDate() + " de " + meses[a.getMonth()] + " – " + b.getDate() + " de " + meses[b.getMonth()] + " de " + b.getFullYear();
 }
 
-function horarioSemanaDeGrupoClase_(grado, grupo) {
+function horarioSemanaDeGrupoClase_(grado, grupo, turno) {
   const k = claveGrupoAsi_(grado, grupo);
+  const turnoNorm = turno ? turnoDe_(turno) : "";
   const porDia = {
     lunes: [], martes: [], miercoles: [], jueves: [], viernes: [], sabado: [], domingo: [], todos: []
   };
 
   let filasH = _leerFilas_("Horarios");
-  const esOficialCompleto = filasH && filasH.length >= 500 && filasH.some(function (f) {
-    const m = String(f["Maestro"] || "").toUpperCase();
-    return m.indexOf("MIGUEL") >= 0 || m.indexOf("KRISTEL") >= 0;
-  });
 
-  if (!esOficialCompleto && typeof obtenerFilasHorarioOficialAsc_ === "function") {
+  if ((!filasH || !filasH.length) && typeof obtenerFilasHorarioOficialAsc_ === "function") {
     const oficiales = obtenerFilasHorarioOficialAsc_();
     const enc = ENCABEZADOS.Horarios;
     filasH = oficiales.map(function (row) {
@@ -1174,6 +1172,10 @@ function horarioSemanaDeGrupoClase_(grado, grupo) {
 
   filasH.forEach(function (f) {
     if (claveGrupoAsi_(f["Grado"] || f["grado"], f["Grupo"] || f["grupo"]) !== k) return;
+    if (turnoNorm) {
+      const tFila = turnoDe_(f["Turno"] || f["turno"] || "");
+      if (tFila && tFila !== turnoNorm) return;
+    }
     const h = filaHorarioClase_(f);
     const dia = h.dia || "todos";
     if (!porDia[dia]) porDia[dia] = [];
@@ -1372,24 +1374,55 @@ function sembrarHorarioDemoSiVacio_() {
   SpreadsheetApp.flush();
 }
 
-function horarioMaestroClase(token, fecha, grupoClave, asignatura, modo) {
+function horarioMaestroClase(token, fecha, grupoClave, asignatura, modo, turno, docenteFiltro) {
   const ses = exigirClaseRol_(token, ["admin", "maestro"]);
   sembrarHorarioDemoSiVacio_();
   const fe = String(fecha || fechaHoyAsi_());
   const hoy = fechaHoyAsi_();
   const esMaestro = ses.rol === "maestro";
   const nomMae = normalizarNombrePref_(ses.maestroNombre || "");
+  const turnoNorm = turno ? turnoDe_(turno) : "matutino";
+  const docPedida = String(docenteFiltro || "").trim();
 
-  const grupos = gruposDeSesionClase_(ses);
+  // Obtener catálogo de docentes del turno
+  const mapaTodosDoc = {};
+  let filasHTurn = _leerFilas_("Horarios");
+  if ((!filasHTurn || !filasHTurn.length) && typeof obtenerFilasHorarioOficialAsc_ === "function") {
+    const oficiales = obtenerFilasHorarioOficialAsc_();
+    const enc = ENCABEZADOS.Horarios;
+    filasHTurn = oficiales.map(function (row) {
+      const obj = {};
+      enc.forEach(function (h, idx) { obj[h] = row[idx]; obj[h.toLowerCase()] = row[idx]; });
+      return obj;
+    });
+  }
+  filasHTurn.forEach(function (f) {
+    if (turnoNorm) {
+      const tFila = turnoDe_(f["Turno"] || f["turno"] || "");
+      if (tFila && tFila !== turnoNorm) return;
+    }
+    const m = String(f["Maestro"] || f["maestro"] || "").trim();
+    if (m) mapaTodosDoc[m] = true;
+  });
+  const docentes = Object.keys(mapaTodosDoc).sort(function (a, b) {
+    return a.localeCompare(b, "es");
+  });
+  const docExiste = docentes.some(function (n) {
+    return normalizarNombrePref_(n) === normalizarNombrePref_(docPedida);
+  });
+  const docUso = docExiste ? docPedida : "";
+
+  const grupos = gruposDeSesionClase_(ses, turnoNorm);
   let gUso = String(grupoClave || "").trim();
-  if (!gUso && grupos.length > 0) {
+  const grupoValido = grupos.some(function (g) { return g.clave === gUso; });
+  if (!grupoValido && grupos.length > 0) {
     gUso = grupos[0].clave;
   }
   const partes = gUso.split("|");
   const grado = String(partes[0] || "").trim();
   const grupo = String(partes[1] || "").trim().toLowerCase();
   const alumnos = alumnosConAccesoClase_(ses, grado, grupo);
-  const porDia = (grado && grupo) ? horarioSemanaDeGrupoClase_(grado, grupo) : {};
+  const porDia = (grado && grupo) ? horarioSemanaDeGrupoClase_(grado, grupo, turnoNorm) : {};
   const haySab = ((porDia.sabado || []).length > 0);
   const diasSem = (grado && grupo) ? diasPeriodoClase_(fe, modo, haySab) : [];
 
@@ -1415,6 +1448,11 @@ function horarioMaestroClase(token, fecha, grupoClave, asignatura, modo) {
     if (asUso) {
       uso = uso.filter(function (h) {
         return normalizarNombrePref_(h.asignatura) === normalizarNombrePref_(asUso);
+      });
+    }
+    if (docUso) {
+      uso = uso.filter(function (h) {
+        return normalizarNombrePref_(h.maestro) === normalizarNombrePref_(docUso);
       });
     }
     const curso = (fechaDia === hoy) ? claseEnCursoDe_(uso) : { actual: null };
@@ -1482,6 +1520,7 @@ function horarioMaestroClase(token, fecha, grupoClave, asignatura, modo) {
 
   return {
     ok: true,
+    turno: turnoNorm,
     fecha: fe,
     modo: modo || "semana",
     dia: diaHoyClase_(),
@@ -1493,6 +1532,8 @@ function horarioMaestroClase(token, fecha, grupoClave, asignatura, modo) {
     alumnos: alumnos,
     asignaturas: asignaturas,
     asignatura: asUso,
+    docentes: docentes,
+    docente: docUso,
     semanaInicio: semanaIni,
     semanaFin: semanaFin,
     semanaEtq: diasSem.length ? etiquetaSemanaClase_(semanaIni, semanaFin) : "",

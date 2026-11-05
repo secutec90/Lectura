@@ -348,8 +348,12 @@
       setBtn('btnClaseFecha', fechaClaseEtiquetaManual, fechaClaseEtiquetaManual ? fmtFechaCortaClase_(fe) : 'Fecha');
       const g = valorSel_('selGrupoClase');
       setBtn('btnClaseGrupo', !!g, g ? recortarEtq_(textoOpcionClase_('selGrupoClase'), 8) : 'Grupo');
+      const doc = valorSel_('selDocenteClase');
+      setBtn('btnClaseDocente', !!doc, doc ? recortarEtq_(textoOpcionClase_('selDocenteClase'), 12) : 'Docente');
       const a = valorSel_('selAluClase');
-      setBtn('btnClaseAlumno', !!a, a ? recortarEtq_(textoOpcionClase_('selAluClase'), 10) : 'Alumno');
+      if (document.getElementById('btnClaseAlumno')) {
+        setBtn('btnClaseAlumno', !!a, a ? recortarEtq_(textoOpcionClase_('selAluClase'), 10) : 'Alumno');
+      }
       const as = valorSel_('selAsigClase');
       setBtn('btnClaseAsig', !!as, as ? recortarEtq_(textoOpcionClase_('selAsigClase'), 10) : 'Asignatura');
     }
@@ -404,6 +408,7 @@
       }
       const mapa = {
         grupo: { id: 'selGrupoClase', titulo: 'Grupo', after: cambiarGrupoClase },
+        docente: { id: 'selDocenteClase', titulo: 'Docente', after: cambiarDocenteClase },
         alumno: { id: 'selAluClase', titulo: 'Alumno', after: cambiarAlumnoClase },
         asig: { id: 'selAsigClase', titulo: 'Asignatura', after: function () { cargarHorarioMae(); } }
       };

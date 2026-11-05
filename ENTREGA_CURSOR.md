@@ -802,3 +802,42 @@ Tarea única para Cursor:
 2. Ejecutar node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0 desde la raíz del proyecto.
 3. No modificar el constructor ni los .gs. No hacer clasp push.
 4. Guardar en ENTREGA_CURSOR.md una sección ## ✅ ENTREGA CURSOR — Ola 12.1 confirmando que la guardia continua quedó arrancada.
+
+---
+
+## ✅ ENTREGA CURSOR — Ola 12.1
+
+- **Estado:** guardia continua arrancada. Sin cambios al constructor ni a archivos `.gs`. Sin `clasp push`.
+- **Centinela:** `node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0`
+- **Comprobación:** `herramientas/centinela_buzon.js` ya trata `maxCiclos = 0` como guardia sin tope y el log dice «sin tope de ciclos».
+
+### 🛠️ 2026-11-05 - Centinela continuo
+
+- **Mensaje de Commit sugerido (Conventional Commits):** `chore(centinela): dejar la guardia de cursor sin tope de ciclos`
+- **Cambios Realizados:**
+  - Se confirmó la guardia continua y se dejó el proceso escuchando el buzón.
+- **Archivos Afectados:** `ENTREGA_CURSOR.md`
+- **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** La Ola 12.1 solo enciende el centinela. No reabrir el constructor en esta ola. La Ola 13 (`build-595`) ya figura en `ESTADO_COORDINACION.md` como partitura activa; esta entrega no la implementa porque la partitura 12.1 prohíbe tocar el constructor.
+
+---
+
+## 🎯 PARTITURA ASIGNADA: OLA 15 (`build-597`) — PLANTILLAS DIDÁCTICAS DUA Y RENDERIZADO EN VISTA PREVIA ALUMNO
+- **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
+- **Archivos objetivo:** `AyudaJS.html`, `ClaseJS_08.html`, `AdminPlanJS_06.html`
+
+### 📋 Especificaciones Lógicas y DOM para Cursor:
+
+1. **Plantillas Pedagógicas DUA Preconfiguradas en TinyMCE:**
+   - En la inicialización de TinyMCE (`inicializarTinyMCEParaBloque_` en `AyudaJS.html`), extender el registro de botones / plantillas para ofrecer formatos preconstruidos:
+     - **Cuadro Comparativo DUA:** Tabla estructurada de 2 columnas con cabecera sombreada y 3 filas comparativas.
+     - **Rúbrica Formativa de Observación:** Tabla de 3 columnas (Criterio / Nivel Esperado / Evidencia Observable).
+     - **Esquema de Concepto Clave:** Recuadro con título destacado, definición e icono ilustrativo.
+2. **Sincronización Fiel con la Vista Previa del Alumno:**
+   - En `irAPasoSesion_(4)` y `abrirModalPreviewAlumno_`:
+     - Invocar `capturarEstadoExe_()` para sincronizar en tiempo real el contenido de todos los editores TinyMCE abiertos.
+     - Garantizar que el color de fondo elegido (`_colorFondoSesionActiva_`) se aplique uniformemente al marco `.browser-frame` del alumno.
+3. **Preservación al Salvar:**
+   - Comprobar que al disparar el guardado general de planeación, `leerCampoBloque_()` preserve las etiquetas de tabla, estilos en línea y dimensiones de imágenes redimensionadas.
+4. **Protocolo Centinela:**
+   - Escribe y guarda tu entrega en este archivo (`ENTREGA_CURSOR.md`) y ejecuta inmediatamente:
+     `node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0`

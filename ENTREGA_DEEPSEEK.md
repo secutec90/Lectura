@@ -9,760 +9,776 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: OLA 5 (`build-578`) — DISEÑO VISUAL EXELEARNING 3.0 & ESPECIALIDADES INGLES / OFIMÁTICA
+## 🎯 PARTITURA ASIGNADA: OLA 13 (build-595) — SUITE DE EDICIÓN ENRIQUECIDA PROFESIONAL, MODALES FLOTANTES ST90 Y PASO 2 SIN LUCY
 - **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
-- **Archivos objetivo:** `AdminPlaneacionCSS.html`, `ComunCSS.html`
-- **Referencia visual interactiva:** Ver [simulador_exelearning.html](file:///g:/Mi%20unidad/PROYECTOS/Lectura/simulador_exelearning.html) en la raíz del proyecto.
+- **Archivos objetivo:** `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `ComunCSS.html`
+- **Referencia del Plan Maestro:** Requerimiento docente de profesionalización visual de bloques (cero `prompt` nativo, alineación, tablas, imágenes, videos y estructuración clara sin Lucy).
+
+### Especificaciones de Diseño Visual y CSS (DeepSeek):
+
+1. **Cuatro Modales Flotantes Estilizados ST90 (Cero `prompt()` nativo):**
+   - Diseña el layout CSS y clases para los 4 modales institucionales:
+     - `#modalInsertarTablaST90`: Contenedor modal con encabezado teal, inputs numéricos estilizados para filas y columnas, select de estilo (simple, encabezado sombreado, celdas alternadas) y botones de acción (Confirmar / Cancelar).
+     - `#modalInsertarImagenST90`: Campo de URL, contenedor de previsualización `#previewImgST90` con marco y spinner de carga, campo para pie/descripción y selector de alineación (Izquierda, Centrado, Ancho completo).
+     - `#modalInsertarVideoST90`: Campo de URL (YouTube/MP4), contenedor responsivo `#previewVideoST90` (16:9) con marco negro y bordes redondeados `10px`.
+     - `#modalConfirmarReemplazoBloquesST90`: Diálogo modal de alerta pedagógica. Fondo blanco, borde suave, icono de advertencia DUA, texto claro de confirmación y dos botones principales: `.btn-reemplazar-bloques` (fondo teal institucional `#0d9488`, texto blanco) y `.btn-apilar-bloques` (borde teal, fondo blanco, texto teal).
+   - Estilo de backdrop `.st90-modal-overlay`: fondo `rgba(15, 23, 42, 0.45)`, desenfoque suave `backdrop-filter: blur(2px);`, animación de entrada `fadeIn` / `scaleIn`.
+
+2. **Iconografía Vectorial SVG en la Barra de Formato (.toolbar-editor-formato):**
+   - Diseña la apariencia de los botones `.btn-tb` y `.btn-tb-especial` con iconos SVG vectoriales nítidos (14x14px o 16x16px) en lugar de emojis:
+     - Alineación: Izquierda (líneas alineadas a la izquierda), Centro (líneas centradas), Derecha, Justificado.
+     - Elementos: Icono de Tabla (grilla 2x2), Imagen (paisaje/montaña), Video (pantalla con botón play), Callout (bombilla estilizada), Enlace (cadena), Resaltado (marcador).
+   - Efecto `:hover` con fondo `#ccfbf1` y color `#0f766e`, y estado activo `.activo` con fondo `#0d9488` y color blanco.
+
+3. **Tarjetas de Elección del Paso 2 (Estructuración de la Clase - Cero "Lucy"):**
+   - Perfeccionar `.opciones-construccion-grid`, `.opcion-construccion-card` y `.opcion-ia-card`.
+   - `.opcion-construccion-card`: borde `1.5px solid #e2e8f0`, radio `14px`, sombra sutil, cabecera con icono destacado en círculo suave, descripción legible y botón inferior con ancho completo `100%`.
+   - `.opcion-ia-card`: gradiente suave `linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%)`, borde `#5eead4`, botón con gradiente institucional `linear-gradient(135deg, #0d9488 0%, #0284c7 100%)`.
+
+4. **Botones de Audio-Guía en Cabeceras con Onda Sonora Animada:**
+   - Botón `.btn-audio-guia-st90` con icono de altavoz.
+   - Estado `.reproduciendo-audio`: animación de pulso sutil o barras ecualizadoras simuladas (`@keyframes ondaAudio`).
+
+5. **Salida y Centinela:**
+   - Escribe y guarda todo tu bloque CSS y propuesta de estructura HTML en este archivo (`ENTREGA_DEEPSEEK.md`).
+   - Al terminar, ejecuta inmediatamente: `node herramientas/centinela_buzon.js deepseek`.
 
 ---
 
-### 📋 Especificaciones de Diseño para DeepSeek:
+---
 
-1. **Panel Lateral de Jerarquía & Árbol de Páginas (`.sidebar-exe` y `.box-arbol`):**
-   - Ancho fijo de 320px–340px, fondo `#f8fafc` y borde derecho `#cbd5e1`.
-   - Barra de título del documento `.doc-titulo` con icono de lápiz `.btn-edit-title`.
-   - Barra de herramientas `.arbol-toolbar` con grupo de flechas `.nav-flechas` (botones en fondo `#f0fdfa` y borde `#ccfbf1`) y grupo de acciones `.nav-acciones` con botón teal destacado `.add-node` (`background: #0d9488`).
-   - Elementos de lista de páginas `.nodo-item`: bordes redondeados (6px), con estado activo `.nodo-item.seleccionado` idéntico a eXeLearning (borde verde azulado `#14b8a6`, fondo `#f0fdfa`, texto `#0f766e`, sombra suave). Soporte para indentación de niveles (`margin-left: 14px * nivel`).
+## ✅ ENTREGA DEEPSEEK — OLA 13 (`build-595`) · Suite de edición profesional, modales ST90 y Paso 2 sin "Lucy"
 
-2. **Menú Acordeón de iDevices por Categorías (`.cat-accordion`):**
-   - Cabecera `.cat-header` con estilo colapsable, icono chevron que rota 90° con clase `.cat-group.abierto`.
-   - Tarjetas de inserción `.idevice-pill-add` con microinteracción `:hover` (desplazamiento sutil a la derecha `translateX(3px)` y borde teal `#0d9488`).
-   - Categorías con colores distintivos:
-     - `Información y presentación` (Azul `#0284c7`)
-     - `Evaluación y seguimiento` (Verde `#16a34a`)
-     - `Juegos pedagógicos` (Ámbar `#d97706`)
-     - `Actividades interactivas` (Púrpura `#7c3aed`)
-     - `Lengua Extranjera - Inglés` (Azul zafiro `#2563eb`)
-     - `Tecnología y Ofimática` (Esmeralda `#059669`)
-     - `Ciencias` (Rojo/Carmesí `#e11d48`)
-
-3. **Barra Flotante Superior de Acceso Rápido (`.quick-ribbon`):**
-   - Cápsula blanca centrada (`background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 4px 12px rgba(15,23,42,0.05); padding: 8px 16px;`).
-   - Iconos de colores con efecto `:hover` (scale 1.15):
-     - `.quick-btn.text-icon` (Azul `#1e40af`)
-     - `.quick-btn.flower-icon` (Rosa `#f43f5e`)
-     - `.quick-btn.checklist-icon` (Cian `#0284c7`)
-     - `.quick-btn.file-icon` (Naranja `#ea580c`)
-     - `.quick-btn.gallery-icon` (Fucsia `#c026d3`)
-     - Separador y engranaje de configuración `.quick-btn.settings-icon`.
-
-4. **Tarjetas Modulares de Contenido en el Lienzo (`.idevice-card`):**
-   - Encabezado `.idevice-card-header` con fondo `#f8fafc`, botones de control (subir, bajar, eliminar en hover rojo) y cuerpo `.idevice-card-body`.
-   - Insignias de categoría temáticas (`.badge-info`, `.badge-eval`, `.badge-juego`, `.badge-interact`, `.badge-ingles`, `.badge-tecnologia`, `.badge-ciencias`).
-   - Campos de formulario uniformes `.campo-input` y `.campo-textarea` con foco en azul/teal.
-   - Componentes especiales para:
-     - **Inglés:** Reproductor de listening con badge de velocidad (`.player-listening`), tarjeta de flashcard con animación de vuelta (`.flip-card-bilingue`).
-     - **Tecnología Ofimática:** Mini tabla simulada de hoja de cálculo (`.sim-hoja-calculo` con filas y columnas A, B, C, 1, 2, 3) y caja de algoritmo con bloques de diagrama.
+**Fecha:** 2026-11-05 · **Autor:** DeepSeek (UI/CSS) · **Estado:** 🟢 LISTA PARA INTEGRAR
+**Archivo destino:** `ComunCSS.html` (bloque único).
 
 ---
 
-### 📦 ENTREGA DE DEEPSEEK (ESCRIBE TU CÓDIGO CSS AQUÍ ABAJO):
-*(DeepSeek escribirá aquí su propuesta de código CSS y la guardará automáticamente)*
+## ⚠️ 0. ALERTA BLOQUEANTE ANTES DE APLICAR
+
+`ComunCSS.html` tiene **un solo `<style>`** que abre en la línea 1 y **cierra en la 3805**, pero el archivo llega a la **3911**.
+
+| Hecho | Consecuencia |
+|---|---|
+| Líneas **3807–3911** son CSS **fuera** del bloque `<style>` | **No se aplican.** Son texto inerte |
+| Ahí viven `.btn-tb-especial`, `.opciones-construccion-grid`, `.opcion-construccion-card`, `.opcion-ia-card`, `.opcion-cabecera`, `.opcion-icono`, `.opcion-desc`, `.editor-tabla-estilo`, `.video-embed-responsive`, `.pasos-manuales-separador` y `.btn-construir-secuencias-completa` | La partitura pide **«perfeccionar»** clases que hoy **no tienen ningún efecto** |
+| La OLA 12 sí quedó bien: `.toolbar-editor-formato` (3295), `.campo-editor-rich` (3335), `.notion-callout` (3372), `.flashcard-cara` (3455), `.drawer-mobile-lateral` (3706) | Esas sí están dentro del `<style>` y funcionan |
+
+**Acción obligatoria antes de pegar mi CSS:**
+1. Cortar el tramo **3807–3911** y pegarlo **antes** de la línea 3805 (`</style>`).
+2. Borrar la copia que queda después de `</style>`.
+3. Verificar que el archivo termina en `</style>` (o justo después).
+
+Mi bloque de la sección 2 **reemplaza** el tramo rescatado del Paso 2, así que si se aplica completo no hay que mover dos veces: basta con **insertar mi bloque antes de `</style>`** y **eliminar** el añadido exterior.
 
 ---
 
-## ✍️ ENTREGA DEEPSEEK — OLA 5 (`build-578`) · eXeLearning 3.0, Inglés y Ofimática
+## 1. Contrato de marcado
 
-**Fecha:** 2026-11-01 · **Archivo:** `AdminPlaneacionCSS.html`, líneas 2737–3308
-**Referencia seguida:** `simulador_exelearning.html` (se portaron sus valores exactos, no una interpretación).
-
-### 1. Correspondencia punto por punto
-
-| Punto de la partitura | Implementado | Notas |
-| :--- | :--- | :--- |
-| `.sidebar-exe` 320–340 px, `#f8fafc`, borde derecho `#cbd5e1` | ✅ | 330 px con `min/max` acotados |
-| `.box-arbol`, `.doc-titulo`, `.btn-edit-title` | ✅ | Lápiz teal con hover y foco |
-| `.arbol-toolbar`, `.nav-flechas`, `.nav-acciones`, `.add-node` | ✅ | Flechas en `#f0fdfa` / borde `#ccfbf1`; `+` en `#0d9488` |
-| `.nodo-item` (6 px, `.seleccionado` teal, indentación) | ✅ | Borde `#14b8a6`, fondo `#f0fdfa`, texto `#0f766e`, sombra suave |
-| `.cat-accordion`, `.cat-header`, chevron 90° en `.cat-group.abierto` | ✅ | Chevron rota con `transform` |
-| `.idevice-pill-add` con `translateX(3px)` y borde teal | ✅ | El `+` cambia a teal en hover |
-| 7 colores de categoría | ✅ | Clases `.cat-header-icon.cat-*` |
-| `.quick-ribbon` cápsula blanca centrada | ✅ | Sombra `0 4px 12px rgba(15,23,42,.05)` |
-| 6 `.quick-btn` con color y `scale(1.15)` | ✅ | Incluye separador y engranaje |
-| `.idevice-card`, header, body, `.btn-card-ctrl` | ✅ | Eliminar en rojo `#e11d48` |
-| 7 insignias (`.badge-*`) | ✅ | Se añadieron `--ingles` y `--tecnologia` |
-| `.campo-input` / `.campo-textarea` con foco | ✅ | Foco teal con anillo de 3 px |
-| `.player-listening` + badge de velocidad | ✅ | Botón play, onda y pastilla `1.0×` |
-| `.flip-card-bilingue` | ✅ | Volteo 3D en hover o con `.volteada` |
-| `.sim-hoja-calculo` (A/B/C, 1/2/3) | ✅ | Encabezados `#f1f5f9`, celdas enfocables |
-| Caja de algoritmo con bloques | ✅ | `.caja-algoritmo` + `.bloque-diagrama` con flechas |
-
-### 2. CSS entregado
-
-```css
-  /* ============================================================
-     OLA 5 · build-578 — eXeLearning 3.0 + Inglés / Ofimática
-     Porte fiel de la paleta y las piezas del simulador de referencia
-     (simulador_exelearning.html), ampliado con los componentes
-     bilingües y de hoja de cálculo que pide la partitura.
-     ============================================================ */
-  :root {
-    --exe-teal: #0d9488;
-    --exe-teal-light: #ccfbf1;
-    --exe-teal-dark: #0f766e;
-    --exe-bg-sidebar: #f8fafc;
-    --exe-bg-canvas: #f1f5f9;
-    --exe-border: #cbd5e1;
-    --exe-muted: #64748b;
-  }
-
-  /* ---------- 1 · Panel lateral y árbol de páginas ---------- */
-  .sidebar-exe {
-    width: 330px;
-    min-width: 330px;
-    max-width: 340px;
-    background: var(--exe-bg-sidebar);
-    border-right: 1px solid var(--exe-border);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-  .box-arbol {
-    padding: 16px;
-    border-bottom: 1px solid var(--exe-border);
-    background: #ffffff;
-  }
-  .arbol-titulo-fila {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .doc-titulo {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #1e293b;
-  }
-  .btn-edit-title {
-    padding: 2px 4px;
-    border: 0;
-    background: none;
-    color: var(--exe-teal);
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 150ms ease, color 150ms ease;
-  }
-  .btn-edit-title:hover { background: var(--exe-teal-light); color: var(--exe-teal-dark); }
-  .btn-edit-title:focus-visible { outline: 2px solid var(--exe-teal); outline-offset: 2px; }
-
-  .arbol-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .nav-flechas,
-  .nav-acciones {
-    display: inline-flex;
-    align-items: center;
-    background: #f0fdfa;
-    border: 1px solid #ccfbf1;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .nav-btn,
-  .btn-action-teal {
-    padding: 5px 9px;
-    border: 0;
-    background: transparent;
-    color: var(--exe-teal-dark);
-    font-size: 13px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 150ms ease;
-  }
-  .nav-btn:hover,
-  .btn-action-teal:hover { background: #ccfbf1; }
-  .nav-btn:focus-visible,
-  .btn-action-teal:focus-visible { outline: 2px solid var(--exe-teal); outline-offset: -2px; }
-  .btn-action-teal.add-node {
-    background: var(--exe-teal);
-    color: #ffffff;
-    font-weight: 800;
-  }
-  .btn-action-teal.add-node:hover { background: var(--exe-teal-dark); }
-
-  .nodos-lista {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .nodo-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border: 1.5px solid transparent;
-    border-radius: 6px;
-    background: #f8fafc;
-    color: #334155;
-    font-size: 13.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
-  }
-  .nodo-item:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-  }
-  .nodo-item.seleccionado {
-    background: #f0fdfa;
-    border-color: #14b8a6;
-    color: var(--exe-teal-dark);
-    font-weight: 700;
-    box-shadow: 0 1px 3px rgba(20, 184, 166, 0.15);
-  }
-  .nodo-item .nodo-tag {
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #e2e8f0;
-    color: var(--exe-muted);
-    font-size: 11px;
-  }
-  .nodo-item.seleccionado .nodo-tag {
-    background: var(--exe-teal-light);
-    color: var(--exe-teal-dark);
-  }
-  .nodo-indent { margin-left: 14px; }
-
-  /* ---------- 2 · Acordeón de iDevices ---------- */
-  .box-idevice-menu {
-    flex: 1;
-    padding: 14px 16px;
-  }
-  .idevice-menu-titulo {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 12px;
-    font-size: 14px;
-    font-weight: 800;
-    color: #1e293b;
-  }
-  .cat-accordion {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .cat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #334155;
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
-    user-select: none;
-    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-  }
-  .cat-header:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    color: var(--exe-teal-dark);
-  }
-  .cat-header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .cat-header-icon { font-size: 16px; line-height: 1; }
-  .cat-chevron {
-    font-size: 12px;
-    color: #94a3b8;
-    transition: transform 200ms ease;
-  }
-  .cat-group.abierto .cat-chevron { transform: rotate(90deg); }
-  .cat-group.abierto .cat-header {
-    background: #f0fdfa;
-    border-color: #99f6e4;
-    color: var(--exe-teal-dark);
-  }
-  .cat-items {
-    display: none;
-    flex-direction: column;
-    gap: 3px;
-    padding: 6px 4px 8px 18px;
-  }
-  .cat-group.abierto .cat-items { display: flex; }
-
-  /* Acento cromático por categoría (se aplica al icono de la cabecera) */
-  .cat-header-icon.cat-info { color: #0284c7; }
-  .cat-header-icon.cat-eval { color: #16a34a; }
-  .cat-header-icon.cat-juego { color: #d97706; }
-  .cat-header-icon.cat-interact { color: #7c3aed; }
-  .cat-header-icon.cat-ingles { color: #2563eb; }
-  .cat-header-icon.cat-tecnologia { color: #059669; }
-  .cat-header-icon.cat-ciencias { color: #e11d48; }
-
-  .idevice-pill-add {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 7px 10px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background: #ffffff;
-    color: #475569;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
-  }
-  .idevice-pill-add:hover {
-    background: #f8fafc;
-    border-color: var(--exe-teal);
-    color: var(--exe-teal-dark);
-    transform: translateX(3px);
-  }
-  .idevice-pill-add .btn-mas {
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #e2e8f0;
-    color: var(--exe-muted);
-    font-size: 11px;
-  }
-  .idevice-pill-add:hover .btn-mas {
-    background: var(--exe-teal);
-    color: #ffffff;
-  }
-
-  /* ---------- 3 · Barra flotante de acceso rápido ---------- */
-  .quick-ribbon {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: fit-content;
-    margin: 0 auto;
-    padding: 8px 16px;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
-  }
-  .quick-icons-group {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding-right: 14px;
-    border-right: 1px solid #e2e8f0;
-  }
-  .quick-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border: 0;
-    background: none;
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
-    transition: transform 150ms ease, opacity 150ms ease;
-  }
-  .quick-btn:hover { transform: scale(1.15); }
-  .quick-btn:focus-visible { outline: 2px solid #0d9488; outline-offset: 3px; border-radius: 6px; }
-  .quick-btn.text-icon { color: #1e40af; }
-  .quick-btn.flower-icon { color: #f43f5e; }
-  .quick-btn.checklist-icon { color: #0284c7; }
-  .quick-btn.file-icon { color: #ea580c; }
-  .quick-btn.gallery-icon { color: #c026d3; }
-  .quick-btn.settings-icon { color: #64748b; font-size: 20px; }
-
-  /* ---------- 4 · Tarjetas modulares del lienzo ---------- */
-  .idevice-card {
-    background: #ffffff;
-    border: 1px solid var(--exe-border);
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
-  }
-  .idevice-card:hover {
-    border-color: #94a3b8;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-  }
-  .idevice-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 18px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  .idevice-card-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14.5px;
-    font-weight: 700;
-  }
-  .idevice-card-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn-card-ctrl {
-    padding: 4px;
-    border: 0;
-    border-radius: 4px;
-    background: none;
-    color: var(--exe-muted);
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 150ms ease, color 150ms ease;
-  }
-  .btn-card-ctrl:hover { background: #e2e8f0; color: #0f172a; }
-  .btn-card-ctrl.del:hover { color: #e11d48; background: #ffe4e6; }
-  .btn-card-ctrl:focus-visible { outline: 2px solid var(--exe-teal); outline-offset: 1px; }
-  .idevice-card-body { padding: 18px 20px; }
-
-  .campo-grupo { margin-bottom: 14px; }
-  .campo-grupo:last-child { margin-bottom: 0; }
-  .campo-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #334155;
-  }
-  .campo-input,
-  .campo-textarea {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 13.5px;
-    color: #0f172a;
-    background: #ffffff;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
-  }
-  .campo-input:focus,
-  .campo-textarea:focus {
-    outline: none;
-    border-color: var(--exe-teal);
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
-  }
-  .campo-textarea { resize: vertical; min-height: 80px; }
-
-  /* ---------- 5 · Insignias de categoría ---------- */
-  .badge-info,
-  .badge-eval,
-  .badge-juego,
-  .badge-interact,
-  .badge-ingles,
-  .badge-tecnologia,
-  .badge-ciencias {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: .02em;
-    white-space: nowrap;
-  }
-  .badge-info { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-  .badge-eval { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-  .badge-juego { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
-  .badge-interact { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
-  .badge-ingles { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-  .badge-tecnologia { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
-  .badge-ciencias { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
-
-  /* ---------- 6 · Inglés: listening y flashcard ---------- */
-  .player-listening {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 8px 0 0;
-    padding: 9px 12px;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 10px;
-  }
-  .player-listening .btn-play {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 999px;
-    background: #2563eb;
-    color: #ffffff;
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 150ms ease, transform 120ms ease;
-  }
-  .player-listening .btn-play:hover { background: #1d4ed8; transform: scale(1.05); }
-  .player-listening .btn-play:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
-  .player-listening .onda {
-    flex: 1 1 auto;
-    height: 6px;
-    border-radius: 999px;
-    background: #bfdbfe;
-    overflow: hidden;
-  }
-  .player-listening .onda__fill {
-    height: 100%;
-    width: 0;
-    border-radius: 999px;
-    background: #2563eb;
-    transition: width 200ms linear;
-  }
-  .player-listening .badge-velocidad {
-    padding: 2px 8px;
-    border: 1px solid #93c5fd;
-    border-radius: 999px;
-    background: #ffffff;
-    color: #1d4ed8;
-    font-size: 10.5px;
-    font-weight: 800;
-    white-space: nowrap;
-  }
-
-  .flip-card-bilingue {
-    perspective: 1000px;
-    width: 100%;
-    height: 130px;
-    margin: 10px 0 0;
-    cursor: pointer;
-  }
-  .flip-card-bilingue .flip-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 600ms cubic-bezier(.2, .8, .2, 1);
-  }
-  .flip-card-bilingue:hover .flip-inner,
-  .flip-card-bilingue.volteada .flip-inner { transform: rotateY(180deg); }
-  .flip-card-bilingue .flip-front,
-  .flip-card-bilingue .flip-back {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 14px;
-    border-radius: 12px;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    text-align: center;
-  }
-  .flip-card-bilingue .flip-front {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #1e3a8a;
-  }
-  .flip-card-bilingue .flip-back {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #065f46;
-    transform: rotateY(180deg);
-  }
-  .flip-card-bilingue .flip-en { font-size: 15px; font-weight: 800; }
-  .flip-card-bilingue .flip-es { font-size: 13px; font-weight: 700; }
-  @media (prefers-reduced-motion: reduce) {
-    .flip-card-bilingue .flip-inner { transition: none; }
-  }
-
-  /* ---------- 7 · Ofimática: hoja de cálculo y algoritmo ---------- */
-  .sim-hoja-calculo {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0 0;
-    font-size: 12px;
-    table-layout: fixed;
-    background: #ffffff;
-  }
-  .sim-hoja-calculo th,
-  .sim-hoja-calculo td {
-    border: 1px solid #d7dde5;
-    padding: 5px 8px;
-    height: 26px;
-    text-align: left;
-    color: #1e293b;
-  }
-  .sim-hoja-calculo thead th,
-  .sim-hoja-calculo tbody th {
-    background: #f1f5f9;
-    color: #475569;
-    font-weight: 800;
-    text-align: center;
-    font-size: 10.5px;
-    letter-spacing: .04em;
-  }
-  .sim-hoja-calculo tbody th { width: 34px; }
-  .sim-hoja-calculo td:focus {
-    outline: 2px solid #059669;
-    outline-offset: -2px;
-    background: #f0fdf4;
-  }
-
-  .caja-algoritmo {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 10px 0 0;
-    padding: 12px;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 10px;
-  }
-  .bloque-diagrama {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 11px;
-    background: #ffffff;
-    border: 1px solid #a7f3d0;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: #065f46;
-  }
-  .bloque-diagrama + .bloque-diagrama { position: relative; }
-  .bloque-diagrama + .bloque-diagrama::before {
-    content: '↓';
-    position: absolute;
-    margin-left: -2px;
-    transform: translateY(-14px);
-    color: #34d399;
-    font-weight: 800;
-  }
-  .bloque-diagrama .num-paso {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    background: #059669;
-    color: #ffffff;
-    font-size: 10.5px;
-    font-weight: 800;
-  }
-```
-
-### 3. Contrato de marcado
+**1.1 Estructura compartida de los cuatro modales**
 
 ```html
-<aside class="sidebar-exe">
-  <div class="box-arbol">
-    <div class="arbol-titulo-fila">
-      <div class="doc-titulo">Movilidad segura <button class="btn-edit-title">✎</button></div>
+<div class="st90-modal-overlay" role="dialog" aria-modal="true">
+  <div class="st90-modal-card" id="modalInsertarTablaST90">
+    <div class="st90-modal-head">
+      <strong>Insertar tabla</strong>
+      <button type="button" class="btn-modal-cerrar" aria-label="Cerrar">✕</button>
     </div>
-    <div class="arbol-toolbar">
-      <div class="nav-flechas"><button class="nav-btn">↑</button><button class="nav-btn">↓</button></div>
-      <div class="nav-acciones">
-        <button class="btn-action-teal">⧉</button>
-        <button class="btn-action-teal">✕</button>
-        <button class="btn-action-teal add-node">+</button>
-      </div>
-    </div>
-    <div class="nodos-lista">
-      <div class="nodo-item seleccionado">Inicio <span class="nodo-tag">Página</span></div>
-      <div class="nodo-item nodo-indent">Diagnóstico <span class="nodo-tag">Tarea</span></div>
-    </div>
-  </div>
-
-  <div class="box-idevice-menu">
-    <div class="idevice-menu-titulo">iDevices disponibles</div>
-    <div class="cat-accordion">
-      <div class="cat-group abierto">
-        <div class="cat-header">
-          <span class="cat-header-left">
-            <span class="cat-header-icon cat-ingles">🌐</span> Lengua Extranjera - Inglés
-          </span>
-          <span class="cat-chevron">›</span>
-        </div>
-        <div class="cat-items">
-          <div class="idevice-pill-add">Listening guiado <span class="btn-mas">+</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<div class="quick-ribbon">
-  <div class="quick-icons-group">
-    <button class="quick-btn text-icon">T</button>
-    <button class="quick-btn flower-icon">✿</button>
-    <button class="quick-btn checklist-icon">☑</button>
-    <button class="quick-btn file-icon">📄</button>
-    <button class="quick-btn gallery-icon">🖼</button>
-  </div>
-  <button class="quick-btn settings-icon">⚙</button>
-</div>
-
-<div class="idevice-card">
-  <div class="idevice-card-header">
-    <div class="idevice-card-title"><span class="badge-ingles">Inglés</span> Listening</div>
-    <div class="idevice-card-actions">
-      <button class="btn-card-ctrl">↑</button>
-      <button class="btn-card-ctrl">↓</button>
-      <button class="btn-card-ctrl del">✕</button>
-    </div>
-  </div>
-  <div class="idevice-card-body">
-    <div class="campo-grupo">
-      <label class="campo-label">Instrucción</label>
-      <input class="campo-input" value="Listen and choose the correct option.">
-    </div>
-    <div class="player-listening">
-      <button class="btn-play">▶</button>
-      <span class="onda"><span class="onda__fill" style="width:38%"></span></span>
-      <span class="badge-velocidad">1.0×</span>
-    </div>
-    <div class="flip-card-bilingue">
-      <div class="flip-inner">
-        <div class="flip-front"><span class="flip-en">Crosswalk</span></div>
-        <div class="flip-back"><span class="flip-es">Paso peatonal</span></div>
-      </div>
+    <div class="st90-modal-body"> …campos… </div>
+    <div class="st90-modal-foot">
+      <button type="button" class="btn-modal">Cancelar</button>
+      <button type="button" class="btn-modal btn-modal--primario">Confirmar</button>
     </div>
   </div>
 </div>
 ```
 
-### 4. Decisiones
+Se usa la misma estructura para los cuatro, cambiando solo el contenido del cuerpo:
+`#modalInsertarTablaST90`, `#modalInsertarImagenST90`, `#modalInsertarVideoST90` y `#modalConfirmarReemplazoBloquesST90`.
 
-1. **Porte literal, no reinterpretación.** Los valores de sidebar, nodos, acordeón, ribbon y tarjetas se copiaron del simulador; así el constructor real queda idéntico a la referencia que ya aprobó el usuario.
-2. **Los 7 colores de categoría se aplican al icono**, no al fondo de la cabecera: mantener el fondo blanco permite que el estado abierto (teal) siga siendo el que comunica interacción, sin competir con siete colores a la vez.
-3. **`.flip-card-bilingue` con altura fija de 130 px.** Con `min-height` la tarjeta crecía porque sus caras son absolutas; ahora el volteo mantiene el layout estable.
-4. **Las flechas del algoritmo no dependen del marcado:** `.bloque-diagrama + .bloque-diagrama { position: relative }` está en el CSS, así que el `↓` se dibuja bien aunque Cursor no añada estilos en línea.
-5. **Todo respeta `prefers-reduced-motion`** en el volteo de la flashcard.
+**1.2 Campos de los modales**
 
-### 5. Verificación
+```html
+<div class="campo-modal">
+  <label for="tablaFilasST90">Filas</label>
+  <input type="number" id="tablaFilasST90" min="1" value="3">
+</div>
 
-| Comprobación | Resultado |
-| :--- | :--- |
-| Llaves CSS balanceadas | `AdminPlaneacionCSS.html` 510/510 |
-| Render a 1180 px | ✅ sidebar 330, ribbon centrada, tarjetas y tabla correctas |
-| Insignias nuevas | ✅ `badge-ingles` (azul zafiro) y `badge-tecnologia` (esmeralda) |
-| IDs / `.gs` / JS | sin cambios |
+<div class="campo-modal-fila">
+  <div class="campo-modal"><label>Filas</label><input type="number" value="3"></div>
+  <div class="campo-modal"><label>Columnas</label><input type="number" value="3"></div>
+</div>
 
-Evidencia: `evidencia_ola5/exelearning_3.png`.
+<div class="campo-modal">
+  <label for="tablaEstiloST90">Estilo</label>
+  <select id="tablaEstiloST90">
+    <option value="simple">Simple</option>
+    <option value="encabezado">Encabezado sombreado</option>
+    <option value="cebra">Celdas alternadas</option>
+  </select>
+</div>
+```
 
-### 6. Rollback
+**1.3 Modal de imagen**
 
-Borrar las líneas 2737–3308 de `AdminPlaneacionCSS.html` o restaurar:
-`C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_ola5.html`
+```html
+<div class="campo-modal">
+  <label for="imgUrlST90">URL de la imagen</label>
+  <input type="url" id="imgUrlST90" placeholder="https://…">
+</div>
+<div class="preview-media" id="previewImgST90">
+  <div class="spinner-modal" aria-label="Cargando"></div>
+</div>
+<div class="campo-modal">
+  <label for="imgPieST90">Pie o descripción</label>
+  <input type="text" id="imgPieST90">
+</div>
+<div class="campo-modal">
+  <label for="imgAlineacionST90">Alineación</label>
+  <select id="imgAlineacionST90">
+    <option value="izquierda">Izquierda</option>
+    <option value="centrado" selected>Centrado</option>
+    <option value="ancho">Ancho completo</option>
+  </select>
+</div>
+```
+
+**1.4 Modal de video**
+
+```html
+<div class="campo-modal">
+  <label for="videoUrlST90">URL del video (YouTube o MP4)</label>
+  <input type="url" id="videoUrlST90" placeholder="https://youtu.be/…">
+</div>
+<div id="previewVideoST90"></div>
+```
+
+**1.5 Modal de confirmación pedagógica**
+
+```html
+<div class="modal-alerta-dua">
+  <span class="icono-alerta" aria-hidden="true">⚠️</span>
+  <div>Ya tienes bloques en esta sesión. Si generas la secuencia completa se pueden duplicar los momentos.</div>
+</div>
+<div class="st90-modal-foot">
+  <button type="button" class="btn-modal">Cancelar</button>
+  <button type="button" class="btn-modal btn-apilar-bloques">Apilar bloques nuevos</button>
+  <button type="button" class="btn-modal btn-reemplazar-bloques">Reemplazar contenido</button>
+</div>
+```
+
+**1.6 Botones de la barra de formato con SVG**
+
+```html
+<button type="button" class="btn-tb" aria-label="Alinear a la izquierda">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="15" y2="12"></line><line x1="3" y1="18" x2="18" y2="18"></line>
+  </svg>
+</button>
+<button type="button" class="btn-tb btn-tb-especial" aria-label="Insertar tabla">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="12" x2="21" y2="12"></line><line x1="12" y1="3" x2="12" y2="21"></line>
+  </svg>
+</button>
+```
+
+Los iconos van a **16 px**, sin emoji.
+
+**1.7 Tarjetas del Paso 2**
+
+```html
+<div class="opciones-construccion-grid">
+  <div class="opcion-construccion-card">
+    <div class="opcion-cabecera">
+      <span class="opcion-icono" aria-hidden="true">🧩</span>
+      <strong>Construir paso a paso</strong>
+    </div>
+    <p class="opcion-desc">Armar la secuencia eligiendo cada momento.</p>
+    <button type="button" class="btn-modal btn-modal--primario">Empezar</button>
+  </div>
+  <div class="opcion-construccion-card opcion-ia-card">
+    <div class="opcion-cabecera">
+      <span class="opcion-icono" aria-hidden="true">🤖</span>
+      <strong>Secuencia completa con IA</strong>
+    </div>
+    <p class="opcion-desc">Genera los cuatro momentos y ajústalos después.</p>
+    <button type="button" class="btn-modal btn-construir-secuencia-completa btn-ia-profunda">Generar completa</button>
+  </div>
+</div>
+```
+
+**1.8 Botón de audio-guía**
+
+```html
+<button type="button" class="btn-audio-guia-st90" aria-pressed="false">
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+  </svg>
+  <span>Escuchar guía</span>
+  <span class="onda" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+</button>
+```
+
+El JS solo alterna la clase `reproduciendo-audio` y actualiza `aria-pressed`.
+
+---
+
+## 2. Bloque CSS completo — insertar **antes de la línea 3805** (`</style>`) de `ComunCSS.html`
+
+```css
+/* ============================================================
+   OLA 13 · MODALES FLOTANTES ST90, ICONOGRAFÍA SVG,
+   PASO 2 PROFESIONAL Y AUDIO-GUÍA CON ONDA
+   ============================================================ */
+
+/* ---------- A · Overlay y tarjeta modal compartida ---------- */
+.st90-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, .45);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  animation: st90FadeIn .18s ease-out;
+}
+.st90-modal-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, .28);
+  animation: st90ScaleIn .2s ease-out;
+}
+.st90-modal-card--ancho { max-width: 640px; }
+
+@keyframes st90FadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes st90ScaleIn {
+  from { opacity: 0; transform: translateY(8px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.st90-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #0d9488;
+  color: #ffffff;
+  border-radius: 14px 14px 0 0;
+}
+.st90-modal-head strong { font-size: 13.5px; font-weight: 700; }
+.btn-modal-cerrar {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .18);
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.btn-modal-cerrar:hover { background: rgba(255, 255, 255, .3); }
+
+.st90-modal-body { padding: 16px 18px; }
+.st90-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 18px 16px;
+}
+
+/* ---------- B · Campos de modal ---------- */
+.campo-modal { margin: 0 0 12px; }
+.campo-modal label {
+  display: block;
+  margin: 0 0 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #475569;
+}
+.campo-modal input[type="text"],
+.campo-modal input[type="url"],
+.campo-modal input[type="number"],
+.campo-modal select,
+.campo-modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: #1e293b;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+.campo-modal input:hover,
+.campo-modal select:hover { border-color: #94a3b8; }
+.campo-modal input:focus,
+.campo-modal select:focus,
+.campo-modal textarea:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, .2);
+}
+.campo-modal-fila {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+}
+.campo-modal-fila > .campo-modal { flex: 1 1 120px; margin-bottom: 0; }
+
+/* ---------- C · Previsualizaciones ---------- */
+.preview-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  margin: 0 0 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.preview-media img {
+  display: block;
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 8px;
+}
+.spinner-modal {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #ccfbf1;
+  border-top-color: #0d9488;
+  border-radius: 50%;
+  animation: st90Spin .8s linear infinite;
+}
+@keyframes st90Spin { to { transform: rotate(360deg); } }
+
+#previewVideoST90 {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 12px;
+  background: #000000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#previewVideoST90 iframe,
+#previewVideoST90 video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* ---------- D · Alerta pedagógica y botones de decisión ---------- */
+.modal-alerta-dua {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  color: #78350f;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.modal-alerta-dua .icono-alerta {
+  flex: 0 0 auto;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.btn-modal {
+  padding: 8px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+}
+.btn-modal:hover { background: #f1f5f9; border-color: #94a3b8; }
+.btn-modal:focus-visible { outline: 2px solid #0d9488; outline-offset: 2px; }
+
+.btn-modal--primario {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+}
+.btn-modal--primario:hover { background: #0f766e; border-color: #0f766e; }
+
+.btn-reemplazar-bloques {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+}
+.btn-reemplazar-bloques:hover { background: #0f766e; border-color: #0f766e; }
+
+.btn-apilar-bloques {
+  background: #ffffff;
+  border-color: #0d9488;
+  color: #0d9488;
+}
+.btn-apilar-bloques:hover { background: #f0fdfa; border-color: #0f766e; color: #0f766e; }
+
+/* ---------- E · Iconografía SVG de la barra de formato ---------- */
+.toolbar-editor-formato .btn-tb,
+.btn-tb-especial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #334155;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.toolbar-editor-formato .btn-tb svg,
+.btn-tb-especial svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: block;
+}
+.toolbar-editor-formato .btn-tb:hover,
+.btn-tb-especial:hover {
+  background: #ccfbf1;
+  color: #0f766e;
+  border-color: #5eead4;
+}
+.toolbar-editor-formato .btn-tb.activo {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+}
+.btn-tb-especial {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* ---------- F · Tarjetas del Paso 2 ---------- */
+.opciones-construccion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.opcion-construccion-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, .04);
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.opcion-construccion-card:hover {
+  transform: translateY(-2px);
+  border-color: #0d9488;
+  box-shadow: 0 8px 20px rgba(13, 148, 136, .12);
+}
+.opcion-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+.opcion-cabecera strong { font-size: 13px; color: #0f172a; }
+.opcion-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f0fdfa;
+  color: #0d9488;
+  font-size: 19px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.opcion-desc {
+  flex: 1 1 auto;
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #475569;
+}
+.opcion-construccion-card > button { width: 100%; }
+
+.opcion-ia-card {
+  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+  border-color: #5eead4;
+}
+.opcion-ia-card .opcion-icono { background: #ccfbf1; }
+
+.btn-construir-secuencia-completa.btn-ia-profunda {
+  background: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+  border-color: transparent;
+  color: #ffffff;
+}
+.btn-construir-secuencia-completa.btn-ia-profunda:hover { filter: brightness(1.06); }
+
+.pasos-manuales-separador {
+  margin: 14px 0 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #cbd5e1;
+  text-align: center;
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+/* Tabla del editor y video embebido (rescatados del bloque inerte) */
+.editor-tabla-estilo {
+  width: 100%;
+  margin: 12px 0;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  border-collapse: collapse;
+  font-size: 13px;
+  overflow: hidden;
+}
+.editor-tabla-estilo th {
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+}
+.editor-tabla-estilo td {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+.video-embed-responsive {
+  position: relative;
+  height: 0;
+  padding-bottom: 56.25%;
+  margin: 14px 0;
+  background: #000000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ---------- G · Audio-guía con onda animada ---------- */
+.btn-audio-guia-st90 {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid #5eead4;
+  border-radius: 999px;
+  background: #f0fdfa;
+  color: #0f766e;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.btn-audio-guia-st90:hover { background: #ccfbf1; border-color: #2dd4bf; }
+.btn-audio-guia-st90:focus-visible { outline: 2px solid #0d9488; outline-offset: 2px; }
+.btn-audio-guia-st90 svg { width: 15px; height: 15px; flex: 0 0 auto; }
+
+.btn-audio-guia-st90 .onda {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.btn-audio-guia-st90 .onda i {
+  width: 2px;
+  height: 4px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: .55;
+}
+.btn-audio-guia-st90.reproduciendo-audio {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+}
+.btn-audio-guia-st90.reproduciendo-audio .onda i {
+  opacity: 1;
+  animation: ondaAudio .9s ease-in-out infinite;
+}
+.btn-audio-guia-st90.reproduciendo-audio .onda i:nth-child(2) { animation-delay: .15s; }
+.btn-audio-guia-st90.reproduciendo-audio .onda i:nth-child(3) { animation-delay: .3s; }
+.btn-audio-guia-st90.reproduciendo-audio .onda i:nth-child(4) { animation-delay: .45s; }
+
+@keyframes ondaAudio {
+  0%, 100% { height: 4px; }
+  50%      { height: 12px; }
+}
+
+/* ---------- H · Móvil, impresión y movimiento reducido ---------- */
+@media (max-width: 860px) {
+  .st90-modal-overlay { padding: 12px; align-items: flex-end; }
+  .st90-modal-card { max-width: 100%; max-height: 92vh; border-radius: 14px; }
+  .st90-modal-foot { padding: 0 14px 14px; }
+  .st90-modal-foot .btn-modal,
+  .st90-modal-foot .btn-reemplazar-bloques,
+  .st90-modal-foot .btn-apilar-bloques { flex: 1 1 100%; min-height: 44px; }
+  .btn-audio-guia-st90 { min-height: 44px; }
+  .toolbar-editor-formato .btn-tb { min-width: 44px; min-height: 44px; }
+}
+
+@media print {
+  .st90-modal-overlay,
+  .toolbar-editor-formato,
+  .btn-audio-guia-st90 { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .st90-modal-overlay,
+  .st90-modal-card,
+  .btn-audio-guia-st90.reproduciendo-audio .onda i,
+  .opcion-construccion-card { animation: none !important; transition: none !important; }
+  .btn-audio-guia-st90.reproduciendo-audio .onda i { height: 8px; }
+}
+```
+
+---
+
+## 3. Correspondencia con la partitura
+
+| Punto | Implementado | Cómo |
+|---|:---:|---|
+| 4 modales con encabezado teal | ✅ | `.st90-modal-card` + `.st90-modal-head` en `#0d9488`, estructura única reutilizada |
+| `#modalInsertarTablaST90`: filas, columnas, select de estilo | ✅ | `.campo-modal`, `.campo-modal-fila` y select con foco teal |
+| `#modalInsertarImagenST90`: URL, preview con spinner, pie, alineación | ✅ | `.preview-media`, `.spinner-modal` y los tres campos |
+| `#modalInsertarVideoST90`: preview 16:9 negra | ✅ | `#previewVideoST90` con `aspect-ratio: 16/9`, fondo negro y radio 10px |
+| `#modalConfirmarReemplazoBloquesST90` con alerta DUA y dos botones | ✅ | `.modal-alerta-dua`, `.btn-reemplazar-bloques` (teal lleno) y `.btn-apilar-bloques` (teal hueco) |
+| `.st90-modal-overlay`: `rgba(15,23,42,.45)`, blur 2px, `fadeIn`/`scaleIn` | ✅ | `backdrop-filter: blur(2px)` y keyframes `st90FadeIn` / `st90ScaleIn` |
+| `.btn-tb` y `.btn-tb-especial` con SVG de 16px, sin emojis | ✅ | `svg { width:16px; height:16px }` y botones `inline-flex` |
+| Alineación, tabla, imagen, video, callout, enlace, resaltado | ✅ | Contrato de marcado de §1.6: cada botón lleva su `<svg>` de 16px |
+| Hover `#ccfbf1` / `#0f766e` y activo `#0d9488` blanco | ✅ | Sustituye el hover gris de la OLA 12 |
+| `.opcion-construccion-card` borde 1.5px, radio 14px, icono en círculo, botón 100% | ✅ | Radio 14px, `.opcion-icono` de 38px circular y `> button { width:100% }` |
+| `.opcion-ia-card` con gradiente y botón institucional | ✅ | `linear-gradient(180deg,#f0fdfa,#fff)` + `.btn-ia-profunda` con `#0d9488 → #0284c7` |
+| `.btn-audio-guia-st90` con altavoz y onda | ✅ | Botón píldora teal con cuatro barras `.onda i` |
+| `.reproduciendo-audio` con `@keyframes ondaAudio` | ✅ | Barras que suben y bajan con retardos escalonados |
+
+---
+
+## 4. Notas de integración
+
+1. **El tramo inerte se resuelve con esta misma entrega.** Mi bloque incluye las versiones corregidas de `.opcion-*`, `.btn-tb-especial`, `.editor-tabla-estilo`, `.video-embed-responsive` y `.pasos-manuales-separador`. Basta insertarlo **antes de `</style>`** y **borrar** el añadido exterior de las líneas 3807–3911.
+2. **Sustitución consciente:** el hover de `.btn-tb` cambia de `#e2e8f0` (OLA 12) a `#ccfbf1 / #0f766e` (OLA 13). Es lo que pide la partitura; conviene saber que es un reemplazo, no una suma.
+3. **Los cuatro modales comparten estructura.** Si mañana se agrega un quinto, hereda el estilo sin CSS nuevo.
+4. **`.btn-apilar-bloques` es la acción segura** (no destruye), por eso va antes que `.btn-reemplazar-bloques` en el pie y en estilo hueco.
+5. **La onda usa cuatro `<i>` vacíos**, no una imagen ni un SVG animado: pesa nada y se detiene con `prefers-reduced-motion`.
+6. **Sin ids nuevos, sin `onclick` nuevos y sin tooltips.** Los ids de los modales son los que fija la partitura.
+
+---
+
+## 5. Pendiente para Cursor / Antigravity
+
+- Mover el tramo 3807–3911 dentro del `<style>` o eliminarlo (lo sustituye este bloque).
+- Generar los cuatro modales con la estructura de §1 y abrirlos desde los botones de la barra.
+- Alternar `.reproduciendo-audio` y `aria-pressed` en el botón de audio-guía.
+
+---
+
+## 6. INFORME PARA ANTIGRAVITY
+
+```text
+DeepSeek propone/hizo los siguientes cambios de diseño:
+
+INFORME PARA ANTIGRAVITY:
+- Archivos involucrados: ComunCSS.html (único archivo). El bloque debe insertarse ANTES de la línea 3805
+  (cierre de </style>) y eliminarse el añadido exterior de las líneas 3807–3911.
+- Propósito del cambio:
+    1. CORREGIR UN DEFECTO: 105 líneas de CSS viven hoy FUERA del bloque <style> (ComunCSS.html 3807–3911)
+       y por tanto no se aplican. Afecta a .btn-tb-especial, .opciones-construccion-grid,
+       .opcion-construccion-card, .opcion-ia-card, .opcion-cabecera, .opcion-icono, .opcion-desc,
+       .editor-tabla-estilo, .video-embed-responsive y .pasos-manuales-separador.
+    2. Entregar los cuatro modales institucionales con overlay, animaciones, encabezado teal y alerta DUA.
+    3. Sustituir emojis de la barra de formato por SVG de 16px con hover #ccfbf1 / activo #0d9488.
+    4. Profesionalizar las tarjetas del Paso 2 y añadir el botón de audio-guía con onda animada.
+- Selectores o fragmentos modificados: insertar el bloque completo de la sección 2 antes de </style>.
+    * .st90-modal-overlay, .st90-modal-card (+ --ancho), @keyframes st90FadeIn / st90ScaleIn,
+      .st90-modal-head, .btn-modal-cerrar, .st90-modal-body, .st90-modal-foot
+    * .campo-modal (+ label, inputs, select, textarea, :focus), .campo-modal-fila
+    * .preview-media, .spinner-modal, @keyframes st90Spin, #previewVideoST90
+    * .modal-alerta-dua (+ .icono-alerta), .btn-modal (+ --primario), .btn-reemplazar-bloques,
+      .btn-apilar-bloques
+    * .toolbar-editor-formato .btn-tb, .btn-tb-especial (svg 16px; hover #ccfbf1/#0f766e; .activo #0d9488)
+    * .opciones-construccion-grid, .opcion-construccion-card, .opcion-cabecera, .opcion-icono,
+      .opcion-desc, .opcion-ia-card, .btn-construir-secuencia-completa.btn-ia-profunda,
+      .pasos-manuales-separador, .editor-tabla-estilo, .video-embed-responsive
+    * .btn-audio-guia-st90 (+ .onda i, .reproduciendo-audio), @keyframes ondaAudio
+    * @media (max-width: 860px), @media print, @media (prefers-reduced-motion: reduce)
+- Precauciones:
+  * CRÍTICO: el bloque debe quedar DENTRO de <style>. Si se vuelve a pegar después de </style>, no se aplica.
+  * Sustituye el tramo 3807–3911: no duplicar esas reglas, o ganarán por orden las versiones muertas.
+  * El hover de .btn-tb cambia de #e2e8f0 (OLA 12) a #ccfbf1/#0f766e: es un reemplazo intencional.
+  * Los modales deben compartir la estructura de §1.1 (.st90-modal-overlay > .st90-modal-card >
+    head/body/foot) para heredar el estilo; los ids de la partitura se conservan.
+  * .btn-apilar-bloques es la acción no destructiva: debe quedar antes de .btn-reemplazar-bloques.
+  * El botón de audio requiere cuatro <i> vacíos dentro de .onda; el JS solo alterna
+    .reproduciendo-audio y aria-pressed.
+  * Sin ids nuevos, sin onclick nuevos y sin tooltips.
+
+Por favor:
+1. Revisa que respete el Design System ST90 y que no rompa la funcionalidad JS ni los IDs existentes.
+2. Aplícalo en los archivos correspondientes.
+3. Despliégalo a Google Apps Script (clasp push & deploy) para que lo vea en mi Google Sites.
+```
+```
+
+---
+
+## 🎯 PARTITURA ASIGNADA: OLA 15 (`build-597`) — SKIN INSTITUCIONAL ST90 PARA TINYMCE, TABLAS Y RESPONSIVE
+- **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
+- **Archivos objetivo:** `ComunCSS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`
+
+### 📋 Especificaciones de Diseño Visual y CSS (DeepSeek):
+
+1. **Tema Institucional para TinyMCE (.tox-tinymce):**
+   - Diseña reglas CSS para armonizar la interfaz del editor TinyMCE con la paleta de la Escuela Secundaria Técnica 90:
+     - Barra de herramientas con borde `#cbd5e1`, fondo `#f8fafc`, radio `10px`.
+     - Botones activos en teal `#0d9488` con texto blanco y hover suave `#ccfbf1`.
+     - Menú contextual y menubar con tipografía legible `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto` de 13px.
+2. **Estilo para Tablas Editoriales y Cajas Didácticas DUA:**
+   - `.editor-tabla-estilo`: Cabeceras con gradiente sutil `#0f766e` a `#0d9488`, texto blanco, bordes finos `#cbd5e1`, celdas alternadas `#f8fafc`.
+   - `.caja-nota-st90`, `.caja-reto-st90`, `.caja-pregunta-st90`, `.notion-callout`: Sombras suaves `0 2px 6px rgba(0,0,0,0.04)`, radios de `10px` y contrastes accesibles WCAG AAA.
+3. **Selector de Color de Fondo (.canvas-color-picker-wrap):**
+   - Pulido estético del contenedor de selección de color de fondo en la cabecera del lienzo, con microinteracciones hover y soporte responsivo en pantallas móviles `<= 768px`.
+4. **Regla de Oro:**
+   - Todo el CSS debe escribirse estrictamente DENTRO de la etiqueta `<style>` y ANTES de `</style>`.
+5. **Protocolo Centinela:**
+   - Escribe tu código propuesto y confirmación en este archivo (`ENTREGA_DEEPSEEK.md`) y ejecuta inmediatamente:
+     `node herramientas/centinela_buzon.js deepseek`
+
+

@@ -216,7 +216,13 @@
     function eliminarIDeviceCard_(btn) {
       if (!btn) return;
       const c = btn.closest('.idevice-card');
-      if (c) c.remove();
+      if (c) {
+        const rich = c.querySelector('.campo-editor-rich');
+        if (rich && rich.id && window.tinymce && window.tinymce.get(rich.id)) {
+          try { window.tinymce.get(rich.id).remove(); } catch (e) {}
+        }
+        c.remove();
+      }
     }
 
     function eliminarLegoCard_(btn) {
@@ -286,12 +292,24 @@
       titulo.className = 'idevice-campo-titulo';
       titulo.placeholder = meta.phTitulo;
       titulo.setAttribute('aria-label', 'Título del bloque');
-      const cuerpo = document.createElement('textarea');
-      cuerpo.className = 'idevice-campo-cuerpo';
-      cuerpo.rows = 2;
-      cuerpo.placeholder = meta.phCuerpo;
-      cuerpo.setAttribute('aria-label', 'Contenido del bloque');
-      if (tipo === 'lectura') cuerpo.id = 'txtLectura_' + idUnico;
+      let cuerpo;
+      if (typeof window.montarEditorEnriquecido_ === 'function') {
+        cuerpo = window.montarEditorEnriquecido_('', idUnico);
+        const rich = cuerpo.querySelector('.campo-editor-rich');
+        if (tipo === 'lectura' && rich) rich.id = 'txtLectura_' + idUnico;
+        setTimeout(function () {
+          if (rich && rich.id && typeof window.inicializarTinyMCEParaBloque_ === 'function') {
+            window.inicializarTinyMCEParaBloque_(rich.id);
+          }
+        }, 60);
+      } else {
+        cuerpo = document.createElement('textarea');
+        cuerpo.className = 'idevice-campo-cuerpo';
+        cuerpo.rows = 2;
+        cuerpo.placeholder = meta.phCuerpo;
+        cuerpo.setAttribute('aria-label', 'Contenido del bloque');
+        if (tipo === 'lectura') cuerpo.id = 'txtLectura_' + idUnico;
+      }
       body.appendChild(titulo);
       body.appendChild(cuerpo);
 
@@ -316,6 +334,7 @@
       if (tipo === 'encuesta' && !window._st90RestaurandoEnc_ && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
         window.cargarCatalogoEnSelectiDevice_(div.id, '');
       }
+      if (typeof window.erradicarBarraModularExe_ === 'function') window.erradicarBarraModularExe_();
       if (!window._st90RestaurandoEnc_) toast('Bloque ' + tipo.toUpperCase() + ' insertado en la sesión.', 'info');
     }
 
@@ -323,8 +342,9 @@
       let texto = '';
       if (btn && btn.closest) {
         const card = btn.closest('.idevice-card');
-        const txtEl = card ? card.querySelector('textarea') : null;
-        texto = txtEl ? txtEl.value.trim() : '';
+        const txtEl = card ? card.querySelector('.campo-editor-rich, [data-campo="cuerpo"], textarea') : null;
+        if (txtEl && typeof window.textoPlanoCampoBloque_ === 'function') texto = window.textoPlanoCampoBloque_(txtEl);
+        else texto = txtEl ? String(txtEl.value || txtEl.innerText || '').trim() : '';
       }
       if (!texto) texto = 'Por favor escribe un texto en el bloque de lectura para escucharlo.';
       if (window.speechSynthesis) {

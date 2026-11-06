@@ -7117,6 +7117,71 @@
     outline-offset: 1px;
   }
 
+  /* ---------- Barra de herramientas de solo iconos (build-605) ---------- */
+  .toolbar-iconos-compacta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 0;
+  }
+  .toolbar-iconos-compacta .btn-tb {
+    min-width: 28px;
+    height: 28px;
+    padding: 2px 6px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 150ms ease, border-color 150ms ease;
+  }
+  .toolbar-iconos-compacta .btn-tb:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+  .btn-toggle-sidebar-floating {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #0d9488;
+    color: #ffffff;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+    transition: background 150ms ease, transform 150ms ease;
+  }
+  .btn-toggle-sidebar-floating:hover {
+    background: #0f766e;
+    transform: scale(1.04);
+    color: #ffffff;
+  }
+  .bloque-vf-interactivo,
+  .bloque-word-shape,
+  .bloque-geogebra,
+  .bloque-tabla-notion {
+    margin-top: 6px;
+  }
+  .word-shape-box.shape-blue { border-left-color: #0284c7 !important; background: #f0f9ff !important; color: #0c4a6e !important; }
+  .word-shape-box.shape-teal { border-left-color: #0d9488 !important; background: #f0fdfa !important; color: #134e4a !important; }
+  .word-shape-box.shape-amber { border-left-color: #f59e0b !important; background: #fffbeb !important; color: #78350f !important; }
+  .word-shape-box.shape-purple { border-left-color: #9333ea !important; background: #faf5ff !important; color: #581c87 !important; }
+
   @media (max-width: 860px) {
     .grid-col-2,
     .grid-col-70-30,

@@ -4640,7 +4640,10 @@ function montarEntornoExeLearning_() {
   workspace.innerHTML =
     '<aside class="sidebar-exe">' +
       '<div class="box-arbol">' +
-        '<div class="arbol-titulo-fila"><div class="doc-titulo"><span id="labelDocTitulo">Sesión</span></div></div>' +
+        '<div class="arbol-titulo-fila">' +
+          '<div class="doc-titulo"><span id="labelDocTitulo">Sesión</span></div>' +
+          '<button type="button" class="btn-toggle-sidebar-exe" id="btnToggleSidebar" title="Colapsar menú lateral" onclick="alternarSidebarExe_()">◀</button>' +
+        '</div>' +
         '<div class="arbol-toolbar">' +
           '<div class="nav-flechas">' +
             '<button type="button" class="nav-btn" title="Subir página" onclick="moverNodoSesion_(-1)">↑</button>' +
@@ -4657,7 +4660,8 @@ function montarEntornoExeLearning_() {
       '</div>' +
       '<div class="box-idevice-menu"><div class="idevice-menu-titulo"><span>Contenidos de Aprendizaje</span></div><div class="cat-accordion">' + htmlCatalogoExe_() + '</div></div>' +
     '</aside>' +
-    '<main class="canvas-exe"><div class="canvas-container" id="lienzoExeActivo">' +
+    '<main class="canvas-exe"><div class="canvas-container" id="lienzoExeActivo" style="position:relative;">' +
+      '<button type="button" class="btn-toggle-sidebar-exe btn-toggle-sidebar-floating" id="btnToggleSidebarFloat" style="display:none;" title="Expandir menú lateral" onclick="alternarSidebarExe_(false)">▶ Contenidos</button>' +
       '<div class="pagina-banner"><div class="pagina-banner-title"><span id="bannerTituloPagina">Página activa</span></div>' +
         '<div class="pagina-banner-acciones">' +
           '<div class="canvas-color-picker-wrap" title="Cambiar color de fondo del lienzo">' +
@@ -5218,9 +5222,95 @@ function agregarFilaTablaNotion_(btn) {
   var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
   var cuerpo = card ? card.querySelector('.tabla-notion tbody') : null;
   if (!cuerpo) return;
+  var cols = (card.querySelector('.tabla-notion thead tr') || {}).children || [];
+  var n = Math.max(2, cols.length);
   var tr = document.createElement('tr');
-  tr.innerHTML = '<td contenteditable="true"></td><td contenteditable="true"></td>';
+  var html = '';
+  for (var i = 0; i < n; i++) html += '<td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;"></td>';
+  tr.innerHTML = html;
   cuerpo.appendChild(tr);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function eliminarFilaTablaNotion_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  var cuerpo = card ? card.querySelector('.tabla-notion tbody') : null;
+  if (cuerpo && cuerpo.children.length > 1) {
+    cuerpo.removeChild(cuerpo.lastElementChild);
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+}
+
+function agregarColumnaTablaNotion_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  var theadTr = card.querySelector('.tabla-notion thead tr');
+  if (theadTr) {
+    var th = document.createElement('th');
+    th.setAttribute('contenteditable', 'true');
+    th.style.cssText = 'padding:8px;border:1px solid #cbd5e1;text-align:left;';
+    th.textContent = 'Columna ' + (theadTr.children.length + 1);
+    theadTr.appendChild(th);
+  }
+  card.querySelectorAll('.tabla-notion tbody tr').forEach(function (tr) {
+    var td = document.createElement('td');
+    td.setAttribute('contenteditable', 'true');
+    td.style.cssText = 'padding:8px;border:1px solid #cbd5e1;';
+    tr.appendChild(td);
+  });
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function eliminarColumnaTablaNotion_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  var theadTr = card.querySelector('.tabla-notion thead tr');
+  if (theadTr && theadTr.children.length > 1) {
+    theadTr.removeChild(theadTr.lastElementChild);
+    card.querySelectorAll('.tabla-notion tbody tr').forEach(function (tr) {
+      if (tr.children.length > 1) tr.removeChild(tr.lastElementChild);
+    });
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+}
+
+function cambiarFormaColorCard_(btn, claseColor) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  var box = card.querySelector('.word-shape-box');
+  if (!box) return;
+  box.classList.remove('shape-blue', 'shape-teal', 'shape-amber', 'shape-purple');
+  box.classList.add(claseColor);
+  if (claseColor === 'shape-blue') {
+    box.style.borderLeftColor = '#0284c7';
+    box.style.background = '#f0f9ff';
+    box.style.color = '#0c4a6e';
+  } else if (claseColor === 'shape-teal') {
+    box.style.borderLeftColor = '#0d9488';
+    box.style.background = '#f0fdfa';
+    box.style.color = '#134e4a';
+  } else if (claseColor === 'shape-amber') {
+    box.style.borderLeftColor = '#f59e0b';
+    box.style.background = '#fffbeb';
+    box.style.color = '#78350f';
+  } else if (claseColor === 'shape-purple') {
+    box.style.borderLeftColor = '#9333ea';
+    box.style.background = '#faf5ff';
+    box.style.color = '#581c87';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cargarGeoGebraCard_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  var id = ((card.querySelector('.inp-geogebra-id') || {}).value || '').trim();
+  var alto = ((card.querySelector('.inp-geogebra-alto') || {}).value || '380').trim();
+  var box = card.querySelector('.geogebra-preview-box');
+  if (!box || !id) return;
+  var embedUrl = id.indexOf('http') === 0 ? id : ('https://www.geogebra.org/material/iframe/id/' + id);
+  box.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="' + alto + 'px" style="border:1px solid #cbd5e1;border-radius:8px;" allowfullscreen></iframe>';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
 
 function conmutarToggleNotion_(btn) {
@@ -5336,12 +5426,96 @@ function recalcularHojaExe_(input) {
   });
 }
 
-function htmlEspecialExe_(tipo, datos) {
+function htmlEspecialExe_(tipo, datos, idUnico) {
   datos = datos || {};
   var extra = datos.extra || {};
   
   if (tipo === 'texto_dua' || tipo === 'lectura') {
     return '<span class="pill-audio-dua" onmousedown="event.preventDefault()" onclick="reproducirAudioDuaCard_(this)">🔊 Síntesis de Voz DUA (Probar)</span>';
+  }
+
+  if (tipo === 'vf') {
+    var cid = idUnico || ('vf_' + Date.now());
+    var af = (datos && (datos.cuerpo || (datos.extra && datos.extra.afirmacion))) || 'Escribe la afirmación que el alumno evaluará...';
+    var esV = !(datos && datos.extra && datos.extra.correcta === 'F');
+    return '<div class="bloque-vf-interactivo" style="padding:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin-top:6px;">' +
+      '<label class="campo-label" style="font-weight:700;margin-bottom:4px;display:block;color:#1e293b;">Afirmación a evaluar:</label>' +
+      '<textarea class="campo-textarea idevice-campo-cuerpo txt-afirmacion-vf" data-campo="cuerpo" rows="2" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;" placeholder="Escribe aquí la afirmación...">' + escaparHtmlEditor_(af) + '</textarea>' +
+      '<div style="margin:10px 0;display:flex;gap:18px;align-items:center;">' +
+        '<span style="font-weight:700;font-size:13px;color:#0f172a;">Respuesta Correcta:</span>' +
+        '<label style="display:inline-flex;align-items:center;gap:6px;font-weight:700;color:#059669;cursor:pointer;">' +
+          '<input type="radio" name="correcta_vf_' + cid + '" value="V"' + (esV ? ' checked' : '') + '> 🟢 Verdadero' +
+        '</label>' +
+        '<label style="display:inline-flex;align-items:center;gap:6px;font-weight:700;color:#dc2626;cursor:pointer;">' +
+          '<input type="radio" name="correcta_vf_' + cid + '" value="F"' + (!esV ? ' checked' : '') + '> 🔴 Falso' +
+        '</label>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:100px 1fr;gap:10px;margin-top:8px;">' +
+        '<div><label class="campo-label" style="font-weight:700;font-size:12px;color:#64748b;display:block;">Puntos:</label><input type="number" class="campo-input inp-puntos-vf" value="' + (datos && datos.extra && datos.extra.puntos || 10) + '" style="width:100%;padding:6px;border:1px solid #cbd5e1;border-radius:6px;"></div>' +
+        '<div><label class="campo-label" style="font-weight:700;font-size:12px;color:#64748b;display:block;">Retroalimentación DUA (Justificación):</label><input type="text" class="campo-input inp-retro-vf" value="' + escaparHtmlEditor_((datos && datos.extra && datos.extra.retro) || '¡Correcto! Esta afirmación se basa en lo visto en clase.') + '" style="width:100%;padding:6px;border:1px solid #cbd5e1;border-radius:6px;" placeholder="Explicación tras responder"></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  if (tipo === 'tabla_notion' || tipo === 'tabla') {
+    return '<div class="bloque-tabla-notion" style="margin-top:6px;">' +
+      '<div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">' +
+        '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="agregarFilaTablaNotion_(this)">➕ Fila</button>' +
+        '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="eliminarFilaTablaNotion_(this)">➖ Fila</button>' +
+        '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="agregarColumnaTablaNotion_(this)">➕ Columna</button>' +
+        '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="eliminarColumnaTablaNotion_(this)">➖ Columna</button>' +
+      '</div>' +
+      '<div class="notion-table-wrap" style="overflow-x:auto;">' +
+        '<table class="tabla-notion idevice-campo-cuerpo" data-campo="cuerpo" style="width:100%;border-collapse:collapse;border:1px solid #cbd5e1;">' +
+          '<thead><tr style="background:#f1f5f9;color:#334155;">' +
+            '<th contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;text-align:left;">Criterio / Categoría</th>' +
+            '<th contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;text-align:left;">Evidencia / Descripción</th>' +
+          '</tr></thead>' +
+          '<tbody>' +
+            '<tr><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Elemento 1</td><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Detalle 1</td></tr>' +
+            '<tr><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Elemento 2</td><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Detalle 2</td></tr>' +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+    '</div>';
+  }
+
+  if (tipo === 'word_shape') {
+    var txt = (datos && (datos.cuerpo || (datos.extra && datos.extra.texto))) || 'Escribe aquí la consigna destacada o cuadro de texto con formato Word...';
+    return '<div class="bloque-word-shape" style="margin-top:6px;">' +
+      '<label class="campo-label" style="font-weight:700;margin-bottom:6px;display:block;color:#1e293b;">Estilo de la Forma Word:</label>' +
+      '<div style="display:flex;gap:6px;margin-bottom:8px;">' +
+        '<button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColorCard_(this, \'shape-blue\')">🔵 Azul</button>' +
+        '<button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#ccfbf1;color:#0f766e;border:1px solid #99f6e4;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColorCard_(this, \'shape-teal\')">🟢 Teal NEM</button>' +
+        '<button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColorCard_(this, \'shape-amber\')">🟡 Ámbar DUA</button>' +
+        '<button type="button" class="btn-swatch-shape" style="padding:4px 10px;border-radius:6px;background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff;font-size:12px;font-weight:700;cursor:pointer;" onclick="cambiarFormaColorCard_(this, \'shape-purple\')">🟣 Púrpura</button>' +
+      '</div>' +
+      '<div class="word-shape-box shape-teal idevice-campo-cuerpo" data-campo="cuerpo" contenteditable="true" style="padding:16px;border-radius:8px;border-left:5px solid #0d9488;background:#f0fdfa;color:#134e4a;font-size:14px;min-height:70px;outline:none;">' +
+        escaparHtmlEditor_(txt) +
+      '</div>' +
+    '</div>';
+  }
+
+  if (tipo === 'excel_split_table') {
+    return (typeof htmlExcelSplitOla17_ === 'function') ? htmlExcelSplitOla17_(datos) : '';
+  }
+
+  if (tipo === 'geogebra' || tipo === 'geogebra_param') {
+    var geoId = (datos && datos.extra && datos.extra.id) || 'm9xqz8tw';
+    return '<div class="bloque-geogebra" style="margin-top:6px;">' +
+      '<label class="campo-label" style="font-weight:700;margin-bottom:6px;display:block;color:#1e293b;">Parámetros del Simulador GeoGebra:</label>' +
+      '<div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;align-items:end;margin-bottom:8px;">' +
+        '<div><label style="font-size:11px;color:#64748b;display:block;">ID o URL del Applet:</label><input type="text" class="campo-input inp-geogebra-id" value="' + geoId + '" placeholder="ej. m9xqz8tw" style="padding:6px;border:1px solid #cbd5e1;border-radius:6px;width:100%;"></div>' +
+        '<div><label style="font-size:11px;color:#64748b;display:block;">Ancho:</label><input type="text" class="campo-input inp-geogebra-ancho" value="100%" style="padding:6px;border:1px solid #cbd5e1;border-radius:6px;width:100%;"></div>' +
+        '<div><label style="font-size:11px;color:#64748b;display:block;">Alto (px):</label><input type="number" class="campo-input inp-geogebra-alto" value="380" style="padding:6px;border:1px solid #cbd5e1;border-radius:6px;width:100%;"></div>' +
+        '<button type="button" class="btn-tb" style="height:34px;background:#0d9488;color:#fff;border:0;border-radius:6px;font-size:12px;font-weight:700;padding:0 12px;cursor:pointer;" onclick="cargarGeoGebraCard_(this)">Cargar</button>' +
+      '</div>' +
+      '<div class="geogebra-preview-box" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:16px;text-align:center;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;">' +
+        '<span style="font-size:32px;">📐</span>' +
+        '<div style="font-weight:700;margin-top:6px;color:#1e293b;">Simulador GeoGebra Dinámico</div>' +
+        '<div style="font-size:12px;color:#64748b;">El estudiante interactúa con gráficas, figuras y parámetros en vivo.</div>' +
+      '</div>' +
+    '</div>';
   }
 
   if (tipo === 'callout') {
@@ -5360,13 +5534,6 @@ function htmlEspecialExe_(tipo, datos) {
       '<div class="timeline-paso"><span class="timeline-num">3</span><input type="text" class="campo-input inp-timeline" value="Cierre" aria-label="Fase 3"></div>' +
     '</div>' +
     '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="agregarPasoTimeline_(this)">+ Fase</button>';
-  }
-
-  if (tipo === 'tabla_notion') {
-    return '<div class="notion-table-wrap"><table class="tabla-notion"><thead><tr><th>Criterio</th><th>Evidencia</th></tr></thead><tbody>' +
-      '<tr><td contenteditable="true"></td><td contenteditable="true"></td></tr>' +
-      '</tbody></table></div>' +
-      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="agregarFilaTablaNotion_(this)">+ Añadir fila</button>';
   }
 
   if (tipo === 'toggle_notion') {
@@ -5566,17 +5733,8 @@ function cambiarColorFondoLienzo_(color) {
 function htmlEditorEnriquecido_(idUnico) {
   var idAttr = idUnico ? (' id="rich_editor_' + idUnico + '"') : '';
   return '<div class="editor-enriquecido-wrap">' +
-    // Menubar superior estilo Office / TinyMCE
-    '<div class="menubar-editor-st90">' +
-      '<span class="menu-item-st90" title="Acciones de documento">📄 Archivo</span>' +
-      '<span class="menu-item-st90" title="Deshacer, rehacer o limpiar" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">✏️ Editar</span>' +
-      '<span class="menu-item-st90" title="Insertar imagen, video o enlace" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">➕ Insertar</span>' +
-      '<span class="menu-item-st90" title="Formato de texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'bold\')">🔤 Formato</span>' +
-      '<span class="menu-item-st90" title="Insertar o gestionar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</span>' +
-      '<span class="menu-item-st90" title="Herramientas y accesibilidad DUA">⚙️ Herramientas</span>' +
-    '</div>' +
-    // Barra de herramientas fila 1: Historial, estilo de bloque, fuentes, tamaños e inserción
-    '<div class="toolbar-editor-formato toolbar-fila-1">' +
+    // Barra de herramientas: SOLO ICONOS CON TOOLTIPS
+    '<div class="toolbar-editor-formato toolbar-iconos-compacta">' +
       '<button type="button" class="btn-tb" title="Deshacer (Ctrl+Z)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'undo\')">↩️</button>' +
       '<button type="button" class="btn-tb" title="Rehacer (Ctrl+Y)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'redo\')">↪️</button>' +
       '<span class="tb-sep"></span>' +
@@ -5584,93 +5742,31 @@ function htmlEditorEnriquecido_(idUnico) {
       '<button type="button" class="btn-tb" title="Cursiva (Ctrl+I)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'italic\')"><i>I</i></button>' +
       '<button type="button" class="btn-tb" title="Subrayado (Ctrl+U)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'underline\')"><u>U</u></button>' +
       '<button type="button" class="btn-tb" title="Tachado" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'strikeThrough\')"><s>S</s></button>' +
+      '<button type="button" class="btn-tb" title="Subtítulo H3" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<h3>\')"><b>H3</b></button>' +
       '<span class="tb-sep"></span>' +
-      // Selector de Bloque (Párrafo / H1 / H2 / H3 / Cita)
-      '<select class="sel-tb-bloque" title="Estilo de párrafo" onchange="aplicarEstiloTexto(this, \'formatBlock\', this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
-        '<option value="" disabled selected>Párrafo...</option>' +
-        '<option value="<p>">Párrafo normal</option>' +
-        '<option value="<h1>">Título 1 (H1)</option>' +
-        '<option value="<h2>">Título 2 (H2)</option>' +
-        '<option value="<h3>">Subtítulo 3 (H3)</option>' +
-        '<option value="<blockquote>">Cita destacada</option>' +
-      '</select>' +
-      // Selector de Familia Tipográfica
-      '<select class="sel-tb-fuente" title="Familia tipográfica" onchange="cambiarFuenteEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
-        '<option value="" disabled selected>Fuente...</option>' +
-        '<option value="sans-serif">Sans-serif</option>' +
-        '<option value="serif">Serif</option>' +
-        '<option value="monospace">Monospace</option>' +
-        '<option value="Georgia, serif">Georgia</option>' +
-        '<option value="Comic Sans MS">Comic Sans MS</option>' +
-      '</select>' +
-      // Selector de Tamaño de Fuente
-      '<select class="sel-tb-tamano" title="Tamaño de letra" onchange="cambiarTamanoEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
-        '<option value="" disabled selected>Tamaño...</option>' +
-        '<option value="12px">12px</option>' +
-        '<option value="14px">14px</option>' +
-        '<option value="16px">16px</option>' +
-        '<option value="18px">18px</option>' +
-        '<option value="20px">20px</option>' +
-        '<option value="24px">24px</option>' +
-      '</select>' +
-      '<span class="tb-sep"></span>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗 Link</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar imagen con tamaño configurable" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️ Imagen</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'25%\')">25%</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'50%\')">50%</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'75%\')">75%</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" onmousedown="event.preventDefault()" onclick="ajustarImagenEditor_(this, \'100%\')">100%</button>' +
-      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'left\')">Img izq</button>' +
-      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'center\')">Img centro</button>' +
-      '<button type="button" class="btn-tb" onmousedown="event.preventDefault()" onclick="alinearImagenEditor_(this, \'right\')">Img der</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar video (YouTube o MP4)" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬 Video</button>' +
-      '<button type="button" class="btn-tb btn-tb-especial" title="Insertar tabla estructurada" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">📊 Tabla</button>' +
-    '</div>' +
-    // Barra de herramientas fila 2: Alineaciones, listas, colores, cajas DUA y quitar elemento
-    '<div class="toolbar-editor-formato toolbar-fila-2">' +
       '<button type="button" class="btn-tb" title="Alinear a la izquierda" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyLeft\')">⬅️</button>' +
       '<button type="button" class="btn-tb" title="Centrar" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyCenter\')">↔️</button>' +
       '<button type="button" class="btn-tb" title="Alinear a la derecha" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyRight\')">➡️</button>' +
-      '<button type="button" class="btn-tb" title="Justificar texto" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyFull\')">📄</button>' +
       '<span class="tb-sep"></span>' +
-      '<button type="button" class="btn-tb" title="Lista con viñetas" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertUnorderedList\')">• Lista</button>' +
-      '<button type="button" class="btn-tb" title="Lista numerada" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertOrderedList\')">1. Lista</button>' +
+      '<button type="button" class="btn-tb" title="Lista con viñetas" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertUnorderedList\')">•≡</button>' +
+      '<button type="button" class="btn-tb" title="Lista numerada" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'insertOrderedList\')">1≡</button>' +
       '<button type="button" class="btn-tb" title="Reducir sangría" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'outdent\')">⇤</button>' +
       '<button type="button" class="btn-tb" title="Aumentar sangría" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'indent\')">⇥</button>' +
       '<span class="tb-sep"></span>' +
-      // Selector de Color de Texto
       '<label class="btn-tb btn-tb-color" title="Color de texto" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
         '<span style="font-weight:800;color:#0d9488;font-size:13px;border-bottom:2px solid #0d9488;">A</span>' +
         '<input type="color" value="#0f172a" onchange="cambiarColorTextoEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
       '</label>' +
       '<label class="btn-tb btn-tb-color" title="Color de resaltado" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
-        '<span style="font-weight:800;background:#fef08a;font-size:13px;">A</span>' +
+        '<span style="font-weight:800;background:#fef08a;font-size:13px;padding:0 2px;border-radius:2px;">🖍️</span>' +
         '<input type="color" value="#fef08a" onchange="cambiarResalteEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
       '</label>' +
-      '<button type="button" class="btn-tb" title="Limpiar formato de texto" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">Tx</button>' +
       '<span class="tb-sep"></span>' +
-      // Gestión de Filas y Columnas de Tabla
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Fila arriba" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'filaArriba\')">Fila arriba</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Fila abajo" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">Fila abajo</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Quitar fila" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">Quitar fila</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Columna a la izquierda" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'colIzquierda\')">Col izq</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Columna a la derecha" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">Col der</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Quitar columna" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">Quitar col</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Borde de la celda" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'borde\')">Borde</button>' +
-      '<button type="button" class="btn-tb btn-tb-tabla" title="Eliminar la tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarTabla\')">Quitar tabla</button>' +
-      '<button type="button" class="btn-tb" title="Color de fondo de la celda" onmousedown="event.preventDefault()" onclick="colorearCeldaEditor(this)">🎨 Celda</button>' +
-      '<span class="tb-sep"></span>' +
-      // Cuadros Didácticos DUA
-      '<select class="sel-tb-cajas" title="Insertar cuadro de texto o forma didáctica DUA" onchange="insertarCajaDidacticaEditor(this, this.value); this.selectedIndex=0;" onmousedown="event.stopPropagation()">' +
-        '<option value="" disabled selected>📦 Cuadro didáctico...</option>' +
-        '<option value="callout">💡 Callout DUA (Verde)</option>' +
-        '<option value="nota">📌 Nota Importante (Ámbar)</option>' +
-        '<option value="reto">🎯 Reto de Aprendizaje (Teal)</option>' +
-        '<option value="pregunta">💬 Pregunta Detonadora (Azul)</option>' +
-        '<option value="comparativo">⚖️ Cuadro Comparativo</option>' +
-        '<option value="rubrica">📋 Rúbrica Formativa</option>' +
-      '</select>' +
-      '<button type="button" class="btn-tb btn-tb-danger" title="Eliminar elemento seleccionado (tabla, imagen o recuadro)" onmousedown="event.preventDefault()" onclick="eliminarElementoSeleccionadoEditor(this)">🗑️ Quitar elemento</button>' +
+      '<button type="button" class="btn-tb" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗</button>' +
+      '<button type="button" class="btn-tb" title="Insertar imagen" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️</button>' +
+      '<button type="button" class="btn-tb" title="Insertar video" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬</button>' +
+      '<button type="button" class="btn-tb" title="Insertar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">▦</button>' +
+      '<button type="button" class="btn-tb" title="Limpiar formato" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">🧹</button>' +
     '</div>' +
     // Cuerpo editable enriquecido
     '<div class="campo-editor-rich rich-editable-area idevice-campo-cuerpo"' + idAttr + ' data-campo="cuerpo" contenteditable="true" role="textbox" aria-multiline="true"></div>' +
@@ -6172,6 +6268,10 @@ window.insertarEnlaceEditor = insertarEnlaceEditor;
 window.resaltarTextoEditor = resaltarTextoEditor;
 window.aplicarEstiloTexto = aplicarEstiloTexto;
 
+function necesitaEditorEnriquecido_(tipo) {
+  return tipo === 'texto_dua' || tipo === 'lectura' || tipo === 'objetivos' || tipo === 'reto_ciencias' || tipo === 'formula' || tipo === 'callout';
+}
+
 function crearTarjetaCurricular_(tipo, datos) {
   var meta = META_TARJETA_EXE_[tipo];
   if (!meta) return null;
@@ -6185,18 +6285,25 @@ function crearTarjetaCurricular_(tipo, datos) {
   div.setAttribute('data-tipo', tipo);
   div.className = 'idevice-card idevice-bloque idevice-container' + (meta.familia === 'ingles' ? ' idevice-ingles' : '') + (meta.familia === 'tecnologia' ? ' idevice-tecnologia' : '');
   var badge = meta.badge + (meta.familia === 'ingles' ? ' badge-ingles' : '') + (meta.familia === 'tecnologia' ? ' badge-tecnologia' : '');
+  
+  var cuerpoHtml = '';
+  if (necesitaEditorEnriquecido_(tipo)) {
+    cuerpoHtml = htmlEditorEnriquecido_(id) + htmlEspecialExe_(tipo, datos, id);
+  } else {
+    cuerpoHtml = htmlEspecialExe_(tipo, datos, id);
+  }
+
   div.innerHTML =
     '<div class="idevice-header idevice-card-header"><div class="idevice-card-title"><span class="badge ' + badge + '">' + meta.etiqueta + '</span><span class="idevice-tag">' + meta.titulo + '</span></div>' +
     '<button type="button" class="idevice-btn" onclick="eliminarIDeviceCard_(this)">Quitar</button></div>' +
     '<div class="idevice-body idevice-card-body">' +
       '<input type="text" class="campo-input idevice-campo-titulo" data-campo="titulo" value="">' +
-      htmlEditorEnriquecido_(id) +
-      htmlEspecialExe_(tipo) +
+      cuerpoHtml +
     '</div>';
   var titulo = campoTarjetaExe_(div, 'titulo');
   var cuerpo = campoTarjetaExe_(div, 'cuerpo');
   if (titulo) titulo.value = datos.titulo || meta.titulo;
-  if (cuerpo) escribirCampoBloque_(cuerpo, datos.cuerpo || meta.cuerpo);
+  if (cuerpo && necesitaEditorEnriquecido_(tipo)) escribirCampoBloque_(cuerpo, datos.cuerpo || meta.cuerpo);
   cont.appendChild(div);
   if (tipo === 'flashcards') agregarParFlashcard_(div, null);
   return div;
@@ -6214,7 +6321,33 @@ function leerTarjetaExe_(card) {
   var tituloEl = campoTarjetaExe_(card, 'titulo');
   var cuerpoEl = campoTarjetaExe_(card, 'cuerpo');
   var extra = {};
-  if (tipo === 'listening') {
+  if (tipo === 'vf') {
+    var radioV = card.querySelector('input[type="radio"][value="V"]');
+    extra = {
+      afirmacion: cuerpoEl ? (cuerpoEl.value || cuerpoEl.textContent || '') : '',
+      correcta: (radioV && radioV.checked) ? 'V' : 'F',
+      puntos: ((card.querySelector('.inp-puntos-vf') || {}).value || 10),
+      retro: ((card.querySelector('.inp-retro-vf') || {}).value || '')
+    };
+  } else if (tipo === 'word_shape') {
+    var shapeBox = card.querySelector('.word-shape-box');
+    var claseColor = 'shape-teal';
+    if (shapeBox) {
+      ['shape-blue', 'shape-teal', 'shape-amber', 'shape-purple'].forEach(function(c) {
+        if (shapeBox.classList.contains(c)) claseColor = c;
+      });
+    }
+    extra = {
+      color: claseColor,
+      texto: shapeBox ? shapeBox.innerHTML : ''
+    };
+  } else if (tipo === 'geogebra' || tipo === 'geogebra_param') {
+    extra = {
+      id: ((card.querySelector('.inp-geogebra-id') || {}).value || ''),
+      ancho: ((card.querySelector('.inp-geogebra-ancho') || {}).value || '100%'),
+      alto: ((card.querySelector('.inp-geogebra-alto') || {}).value || '380')
+    };
+  } else if (tipo === 'listening') {
     extra = {
       audioUrl: ((card.querySelector('.inp-audio-url') || {}).value || ''),
       transcripcion: ((card.querySelector('.txt-transcripcion') || {}).value || ''),
@@ -9003,12 +9136,17 @@ if (document.readyState === 'loading') {
 
   function pintarBotonSidebar_(ws) {
     if (!ws) return;
-    var btn = ws.querySelector('.btn-toggle-sidebar-exe');
-    if (!btn) return;
+    var btn = ws.querySelector('.sidebar-exe .btn-toggle-sidebar-exe') || document.getElementById('btnToggleSidebar');
+    var btnFloat = ws.querySelector('.btn-toggle-sidebar-floating') || document.getElementById('btnToggleSidebarFloat');
     var colapsado = ws.classList.contains('sidebar-colapsado');
-    btn.textContent = colapsado ? '▶' : '◀';
-    btn.title = colapsado ? 'Expandir menú de contenidos' : 'Colapsar menú lateral (Modo pantalla completa)';
-    btn.setAttribute('aria-label', btn.title);
+    if (btn) {
+      btn.textContent = colapsado ? '▶' : '◀';
+      btn.title = colapsado ? 'Expandir menú lateral' : 'Colapsar menú lateral (Modo pantalla completa)';
+      btn.setAttribute('aria-label', btn.title);
+    }
+    if (btnFloat) {
+      btnFloat.style.display = colapsado ? 'inline-flex' : 'none';
+    }
   }
 
   function alternarSidebarExe_(colapsado) {
@@ -9025,16 +9163,34 @@ if (document.readyState === 'loading') {
 
   function asegurarBotonSidebarExe_() {
     var ws = workspaceExe_();
-    if (!ws || ws.querySelector('.btn-toggle-sidebar-exe')) {
-      pintarBotonSidebar_(ws);
-      return;
+    if (!ws) return;
+    // Purgar de las acciones del banner si quedó incrustado por error
+    ws.querySelectorAll('.pagina-banner-acciones > .btn-toggle-sidebar-exe').forEach(function (b) {
+      b.remove();
+    });
+    var filaTitulo = ws.querySelector('.sidebar-exe .arbol-titulo-fila');
+    if (filaTitulo && !filaTitulo.querySelector('.btn-toggle-sidebar-exe')) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-toggle-sidebar-exe';
+      btn.id = 'btnToggleSidebar';
+      btn.textContent = '◀';
+      btn.title = 'Colapsar menú lateral';
+      btn.addEventListener('click', function () { alternarSidebarExe_(); });
+      filaTitulo.appendChild(btn);
     }
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn-toggle-sidebar-exe';
-    btn.addEventListener('click', function () { alternarSidebarExe_(); });
-    var ancla = ws.querySelector('.pagina-banner-acciones') || ws.querySelector('.canvas-exe') || ws;
-    ancla.insertBefore(btn, ancla.firstChild);
+    var canvas = ws.querySelector('.canvas-container') || ws.querySelector('.canvas-exe');
+    if (canvas && !canvas.querySelector('.btn-toggle-sidebar-floating')) {
+      var btnFloat = document.createElement('button');
+      btnFloat.type = 'button';
+      btnFloat.className = 'btn-toggle-sidebar-exe btn-toggle-sidebar-floating';
+      btnFloat.id = 'btnToggleSidebarFloat';
+      btnFloat.style.display = ws.classList.contains('sidebar-colapsado') ? 'inline-flex' : 'none';
+      btnFloat.textContent = '▶ Contenidos';
+      btnFloat.title = 'Expandir menú lateral';
+      btnFloat.addEventListener('click', function () { alternarSidebarExe_(false); });
+      canvas.insertBefore(btnFloat, canvas.firstChild);
+    }
     pintarBotonSidebar_(ws);
   }
 

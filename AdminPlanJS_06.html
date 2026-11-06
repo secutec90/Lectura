@@ -450,6 +450,7 @@
       const div = pintarTarjetaIDevice_(tipoNorm, null);
       if (!div) return;
       contenedor.appendChild(div);
+      if (typeof window.colocarModuloEnColumnaActiva_ === 'function') window.colocarModuloEnColumnaActiva_(div);
       if (tipoNorm === 'encuesta' && !window._st90RestaurandoEnc_ && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
         window.cargarCatalogoEnSelectiDevice_(div.id, '');
       }

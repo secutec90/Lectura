@@ -165,6 +165,56 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.2s ease;
+    }
+
+    .app-workspace.sidebar-colapsado .sidebar-exe,
+    .sidebar-exe.colapsado {
+      width: 0 !important;
+      min-width: 0 !important;
+      max-width: 0 !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      border-right: none !important;
+    }
+    .app-workspace.sidebar-colapsado .canvas-exe {
+      max-width: 100% !important;
+      flex: 1 1 100% !important;
+    }
+
+    .btn-toggle-sidebar-exe {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 1px solid #99f6e4;
+      border-radius: 6px;
+      background: #f0fdfa;
+      color: #0f766e;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+      transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+    .btn-toggle-sidebar-exe:hover {
+      background: #ccfbf1;
+      border-color: #5eead4;
+    }
+    .btn-toggle-sidebar-floating {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 100;
+      width: auto;
+      padding: 4px 10px;
+      gap: 6px;
+      font-size: 12px;
     }
 
     /* BLOQUE 1: ESTRUCTURA DE CONTENIDOS (ÁRBOL DE PÁGINAS) */
@@ -877,6 +927,7 @@
             <span id="labelDocTitulo">Sesión 3: Fracciones y Decimales</span>
             <button class="btn-edit-title" title="Renombrar sesión" onclick="renombrarSesion()"><i class="bi bi-pencil"></i></button>
           </div>
+          <button type="button" class="btn-toggle-sidebar-exe" id="btnToggleSidebar" title="Colapsar menú lateral" onclick="alternarSidebarExe()"><i class="bi bi-chevron-left"></i></button>
         </div>
 
         <!-- Toolbar con flechas y acciones (Exacto a la Imagen 4) -->
@@ -1139,7 +1190,8 @@
 
     <!-- LIENZO DE AUTOR CENTRAL (CANVAS DE PÁGINA) -->
     <main class="canvas-exe">
-      <div class="canvas-container">
+      <div class="canvas-container" style="position:relative;">
+        <button type="button" class="btn-toggle-sidebar-exe btn-toggle-sidebar-floating" id="btnToggleSidebarFloat" style="display:none;" title="Expandir menú lateral" onclick="alternarSidebarExe()"><i class="bi bi-chevron-right"></i> Contenidos</button>
 
         <!-- 3. BARRA FLOTANTE DE ACCESO RÁPIDO (Exacta a Imagen 3) -->
         <div class="quick-ribbon" title="Inserción rápida de bloques frecuentes en la página activa">
@@ -1836,6 +1888,19 @@
       tipos.forEach(t => insertarIdevice(t));
       const panel = document.getElementById('panelAsistenteSecuenciaIA');
       if (panel) panel.style.display = 'none';
+    }
+
+    function alternarSidebarExe() {
+      const ws = document.getElementById('vistaAutor');
+      const btnFloat = document.getElementById('btnToggleSidebarFloat');
+      const btnIcon = document.querySelector('#btnToggleSidebar i');
+      if (!ws) return;
+      const colapsado = ws.classList.toggle('sidebar-colapsado');
+      if (btnFloat) btnFloat.style.display = colapsado ? 'inline-flex' : 'none';
+      if (btnIcon) {
+        btnIcon.className = colapsado ? 'bi bi-chevron-right' : 'bi bi-chevron-left';
+      }
+      window.dispatchEvent(new Event('resize'));
     }
 
     // Inicializar árbol de páginas con lápiz de renombrado y estado inicial

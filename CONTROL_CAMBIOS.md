@@ -2,6 +2,30 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-05] - [Ola 17: Arquitectura Visual DIVI Real, Bubble Toolbar Contextual Notion y Menú Lateral Colapsable en build-603]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): arquitectura visual divi real, bubble toolbar contextual notion, menu lateral colapsable y controles en build-603`
+- **Cambios Realizados:**
+  - **Erradicación de Barras Fijas Superiores y Lienzo Despejado:**
+    - Erradicadas las barras fijas horizontales `.editor-master-toolbar` y `.clean-wysiwyg-toolbar` sobre el lienzo `#lienzoExeActivo`.
+  - **Pastilla Flotante Contextual (*Bubble Toolbar* Notion/Medium):**
+    - Inyectado contenedor `#bubbleToolbar` (`.floating-bubble-toolbar`) con micro-botones (`B`, `I`, `U`, `H3`, `•`, `🔗`).
+    - Listener `selectionchange` sobre áreas `.rich-editable-area` y `[contenteditable="true"]` con cálculo de offset relativo a `#lienzoExeActivo` y `scrollTop`.
+  - **Arquitectura de 4 Capas DIVI Puras:**
+    - Sección azul (`.divi-section`, `#0284c7`), Fila verde (`.divi-row`, `#10b981`), Columna dropzone (`.divi-column`) con borde punteado y foco activo (`.active-target` con anillo teal).
+    - Fila separadora con botón verde `(+)` (`.btn-plus-green`) que despliega el selector flotante `.divi-columns-picker` (`col-1`, `col-2`, `col-2-70-30`, `col-3`).
+    - Botón `[+ Añadir Módulo]` dentro de cada columna conectado con el Catálogo Lateral de las 7 familias curriculares con fallback inteligente a la última columna.
+  - **Menú Lateral Colapsable (`alternarSidebarExe_`):**
+    - Botón conmutador `.btn-toggle-sidebar-exe` con iconos `◀` / `▶`.
+    - Modo colapsado (`.sidebar-colapsado`) que oculta el sidebar con transición fluida (`0.25s`) y expande el lienzo de autor al 100% del ancho para modo concentración.
+    - Soporte integrado en `AyudaJS.html`, `AdminPlaneacionCSS.html` y `simulador_exelearning.html`.
+  - **Reordenamiento Vertical DOM (▲ / ▼) y Eliminación:**
+    - Función `moverElementoDOM_(el, direccion)` con `insertBefore` para Secciones, Filas y Módulos.
+    - Eliminación con buffer de deshacer y pastilla `#pastillaDeshacerBloque`.
+  - **Versión:**
+    - Actualizado `00_Constantes.gs` a `v440 · build-603`.
+- **Archivos Afectados:** `AyudaJS.html`, `AdminPlaneacionCSS.html`, `AdminPlanJS_06.html`, `ClaseJS_08.html`, `simulador_exelearning.html`, `00_Constantes.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`.
+
+
 ### 🛠️ [2026-11-05] - [Ola 17: Constructor Tecno-Pedagógico Fusión (Divi + Elementor + Notion + eXeLearning) en build-602]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): constructor tecno-pedagogico fusion con insercion continua, tablas divididas excel, formas word, geogebra real, lapiz de renombrado y despliegue a drive en build-602`
 - **Cambios Realizados:**

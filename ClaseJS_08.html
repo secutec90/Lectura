@@ -333,6 +333,7 @@
         window.completarIDeviceEncuesta_(div, {});
       }
       contenedor.appendChild(div);
+      if (typeof window.colocarModuloEnColumnaActiva_ === 'function') window.colocarModuloEnColumnaActiva_(div);
       if (tipo === 'encuesta' && !window._st90RestaurandoEnc_ && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
         window.cargarCatalogoEnSelectiDevice_(div.id, '');
       }

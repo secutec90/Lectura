@@ -632,15 +632,36 @@
 
           <!-- SECCIÓN 3: Gestor y Editor de Sesiones DUA (40 min) -->
           <div id="cajaSesionesPlanNEM" class="oculto">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
-              <div>
+            <!-- CABECERA UNIFICADA DE PLANEACIÓN Y SESIÓN EN UNA SOLA FILA -->
+            <div class="nem-header-planeacion-unificada">
+              <div class="nem-header-plan-info">
                 <div style="display:flex;align-items:center;gap:8px;">
-                  <h2 id="titPlanSesiones" style="font-size:18px;color:var(--st90-azul);margin:0;">Sesiones Didácticas</h2>
+                  <h2 id="titPlanSesiones" style="font-size:16px;font-weight:800;color:var(--st90-azul);margin:0;">Sesiones Didácticas</h2>
                   <span id="badgeEstadoPlan" class="badge-nem badge-borrador">BORRADOR</span>
                 </div>
-                <p id="subMetaPlanSesiones" class="hint" style="margin:4px 0 0;"></p>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                  <p id="subMetaPlanSesiones" class="hint" style="margin:0;font-size:12px;"></p>
+                  <span style="color:#cbd5e1;font-size:11px;">•</span>
+                  <span id="progSesionActiva" style="font-size:11.5px;color:#64748b;font-weight:600;">Sin fecha asignada</span>
+                  <span id="titSesionActiva" class="oculto"></span>
+                </div>
               </div>
-              <div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
+
+              <!-- TODAS LAS ACCIONES E ICONOS EN UNA SOLA FILA CONTINUA -->
+              <div class="nem-toolbar-iconos-fila">
+                <!-- Selector de sesiones compacto en iconos S1, S2, S3... -->
+                <div id="tabsSesionesPlan" class="nem-sesiones-tabs-iconos" title="Seleccionar sesión"></div>
+
+                <span class="toolbar-vsep" aria-hidden="true"></span>
+
+                <!-- Acciones de la sesión activa -->
+                <button type="button" class="nem-btn-icon-action nem-btn-icon-action--soft-blue" onclick="abrirModalLibrosSEP_()" id="btnVincularLibroSEP" title="Vincular Libro SEP Fase 6" aria-label="Vincular Libro SEP Fase 6">📚</button>
+                <button type="button" class="nem-btn-icon-action" onclick="abrirModalCalendarizarSesion()" id="btnCalSesion" title="Calendarizar en Horario" aria-label="Calendarizar en Horario">📅</button>
+                <button type="button" class="nem-btn-icon-action nem-btn-icon-action--primary" onclick="guardarSesionActiva()" id="btnGuardarSesionActiva" title="Guardar Sesión" aria-label="Guardar Sesión">💾</button>
+
+                <span class="toolbar-vsep" aria-hidden="true"></span>
+
+                <!-- Acciones de la planeación general -->
                 <button type="button" class="nem-btn-icon-action nem-btn-icon-action--soft-blue" onclick="abrirVistaPreviaPDFPlaneacionNEM()" title="Descargar Formato Oficial PDF" aria-label="Descargar Formato Oficial PDF">📄</button>
                 <button type="button" class="nem-btn-icon-action nem-btn-icon-action--primary" onclick="solicitarDesgloseSesionesIA()" id="btnDesglosarSesionesIA" title="Desglosar con IA (40 min DUA)" aria-label="Desglosar con IA (40 min DUA)">✨</button>
                 <button type="button" class="nem-btn-icon-action nem-btn-icon-action--success" onclick="aprobarPlaneacionActual()" id="btnAprobarPlan" title="Aprobar Planeación" aria-label="Aprobar Planeación">✓</button>
@@ -648,35 +669,12 @@
               </div>
             </div>
 
-            <!-- Guía rápida de uso del Gestor de Sesiones -->
-            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:#14532d;">
-              <div>
-                <strong>💡 ¿Cómo funciona esta vista?</strong>
-                <span><strong>1)</strong> Cada sesión ya incluye una secuencia base (o pulsa <strong>✨ Desglosar con IA</strong> para redactar todas con IA). <strong>2)</strong> Opcionalmente vincula páginas del <strong>📚 Libro SEP</strong> o asigna fecha con <strong>📅 Calendarizar</strong>. <strong>3)</strong> Pulsa <strong>💾 Guardar</strong> o descarga tu <strong>📄 Formato Oficial PDF</strong>.</span>
-              </div>
-            </div>
-
-            <!-- Pestañas de Sesiones -->
-            <div id="tabsSesionesPlan" class="nem-sesiones-tabs"></div>
-
             <!-- Editor de la Sesión Activa -->
             <div id="editorSesionActiva" class="oculto">
-              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-                <div>
-                  <h3 id="titSesionActiva" style="margin:0;font-size:16px;color:#0f172a;">Sesión 1 (40 min)</h3>
-                  <p id="progSesionActiva" style="margin:4px 0 0;font-size:12px;color:#64748b;font-weight:600;"></p>
-                </div>
-                <div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap;">
-                  <button type="button" class="nem-btn-icon-action nem-btn-icon-action--soft-blue" onclick="abrirModalLibrosSEP_()" id="btnVincularLibroSEP" title="Vincular Libro SEP Fase 6" aria-label="Vincular Libro SEP Fase 6">📚</button>
-                  <button type="button" class="nem-btn-icon-action" onclick="abrirModalCalendarizarSesion()" id="btnCalSesion" title="Calendarizar en Horario" aria-label="Calendarizar en Horario">📅</button>
-                  <button type="button" class="nem-btn-icon-action nem-btn-icon-action--primary" onclick="guardarSesionActiva()" id="btnGuardarSesionActiva" title="Guardar Sesión" aria-label="Guardar Sesión">💾</button>
-                </div>
-              </div>
-
               <div class="stepper-tabs-sesion" role="tablist" aria-label="Pasos de la sesión">
                 <button type="button" class="tab-sesion activo" id="tabPasoSesion_1" role="tab" aria-selected="true" aria-controls="panelPasoSesion_1" onclick="irAPasoSesion_(1)">📝 1. Guion Pedagógico</button>
                 <button type="button" class="tab-sesion" id="tabPasoSesion_2" role="tab" aria-selected="false" aria-controls="panelPasoSesion_2" onclick="irAPasoSesion_(2)">✨ 2. Asistente Pedagógico IA</button>
-                <button type="button" class="tab-sesion" id="tabPasoSesion_3" role="tab" aria-selected="false" aria-controls="panelPasoSesion_3" onclick="irAPasoSesion_(3)">🧩 3. Constructor eXeLearning</button>
+                <button type="button" class="tab-sesion" id="tabPasoSesion_3" role="tab" aria-selected="false" aria-controls="panelPasoSesion_3" onclick="irAPasoSesion_(3)">🧩 3. Constructor de Clase</button>
                 <button type="button" class="tab-sesion" id="tabPasoSesion_4" role="tab" aria-selected="false" aria-controls="panelPasoSesion_4" onclick="irAPasoSesion_(4)">👁️ 4. Vista Previa Alumno</button>
               </div>
 
@@ -750,8 +748,8 @@
               <section class="flujo-paso-constructor" aria-label="Paso 3: Clase interactiva">
               <section class="nem-seccion-exelearning">
                 <div class="nem-seccion-exelearning__cab">
-                  <h3 class="nem-seccion-exelearning__titulo">Paso 2: Clase Interactiva eXeLearning (Lo que experimentará el alumno)</h3>
-                  <span class="nem-seccion-exelearning__hint">Los cuatro momentos ya están redactados. Aquí armas los bloques que verá el alumno.</span>
+                  <h3 class="nem-seccion-exelearning__titulo">Paso 3: Clase Interactiva (Lo que experimentará el alumno)</h3>
+                  <span class="nem-seccion-exelearning__hint">Aquí armas los bloques interactivos para cada uno de los cuatro momentos pedagógicos.</span>
                   <span id="lblPuntosTotalesSesion" class="nem-seccion-exelearning__hint">Puntos de la sesión: 0</span>
                 </div>
               <div id="contenedorIDevicesDinamicos" aria-live="polite" aria-label="Bloques de contenido de la sesión"></div>

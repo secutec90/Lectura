@@ -2,6 +2,28 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-06] - [Ola 17: Unificación de Cabecera en Una Sola Fila, Erradicación de 'eXeLearning', Corrección de Persistencia de Borrado y Sincronización de los 4 Momentos en build-607]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): unificacion de cabecera en una fila, sincronizacion de los 4 momentos pedagógicos y correccion de persistencia de borrado en build-607`
+- **Cambios Realizados:**
+  - **Cabecera Unificada y Selector de Sesiones en Una Fila (`AdminPlaneacion.html`, `AdminPlaneacionCSS.html`, `AdminPlanJS_05.html`):**
+    - Unificadas las 4 filas verticales previas en una sola cabecera compacta `.nem-header-planeacion-unificada`.
+    - Selector de sesiones rediseñado a pastillas iconográficas compactas `S1`, `S2`, `S3` (`.nem-btn-icon-sesion`) con tooltip de duración y estado.
+    - Barra de herramientas única (`.nem-toolbar-iconos-fila`) integrando acciones de sesión activa (`📚` SEP, `📅` Calendarizar, `💾` Guardar) y de planeación (`📄` PDF, `✨` IA, `✓` Aprobar, `←` Volver) separadas por divisores verticales `.toolbar-vsep`.
+  - **Erradicación de "eXeLearning" y Numeración de Etapas (`AdminPlaneacion.html`, `Clase.html`):**
+    - Eliminado el término "eXeLearning" de los nombres visibles al usuario, estableciendo "Constructor de Clase".
+    - Corregida la etiqueta del constructor que decía "Paso 2" a "Paso 3: Clase Interactiva (Lo que experimentará el alumno)" alineada con la pestaña 3 del stepper.
+  - **Corrección de Persistencia de Bloques al Eliminar (`AyudaJS.html`, `AdminPlanJS_06.html`):**
+    - Erradicada la regeneración automática incondicional en `irAPasoSesion_(3)` que recreaba bloques con IA cada vez que la cuenta de tarjetas llegaba a 0.
+    - Exportadas `window.volcarIDevicesEnGuion_`, `window.marcarIDevicesTocados_` y `window.rehidratarIDevicesDesdeGuion_` al objeto global.
+    - Enlazada `eliminarBloqueTarjeta_` para ejecutar el volcado en `sesGuionEstudiante` inmediatamente, erradicando la reaparición accidental de bloques borrados.
+  - **Sincronización Total de los 4 Momentos entre Árbol y Vista Previa (`AyudaJS.html`):**
+    - Árbol lateral de autor configurado con las 4 páginas pedagógicas por defecto (`⏱️ 1. Apertura`, `📖 2. Desarrollo`, `✍️ 3. Actividad`, `🎯 4. Cierre`), reflejando la misma estructura de la Vista Previa del Alumno.
+    - `insertarPasoSecuenciaIA_` asocia cada paso pedagógico al ID de su momento correspondiente.
+    - `armarMaquetaAlumno_` en Vista Previa distribuye los bloques directamente a sus paneles `p1, p2, p3, p4` evaluando `data-pagina-id`, sin omitir bloques por estado de visibilidad del editor.
+  - **Versión:**
+    - Actualizado `00_Constantes.gs` a `v440 · build-607`.
+- **Archivos Afectados:** `AdminPlaneacion.html`, `AdminPlaneacionCSS.html`, `AdminPlanJS_05.html`, `AdminPlanJS_06.html`, `AyudaJS.html`, `Clase.html`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-05] - [Ola 17: Iconificación de Cabeceras, Erradicación de Controles de Lienzo y Auto-Adopción Divi de Bloques en build-606]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): iconificacion de cabeceras en una sola fila, erradicacion de controles en banner de lienzo y auto-adopcion divi de bloques en build-606`
 - **Cambios Realizados:**

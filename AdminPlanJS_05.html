@@ -350,12 +350,12 @@
       sesionesActualesNEM.forEach(function (s, idx) {
         const act = (idx === sesionActivaIdx) ? ' activa' : '';
         const num = s.NumeroSesion || (idx + 1);
-        const est = s.Estado ? (' · ' + s.Estado) : '';
-        const estado = String(s.Estado || '').toUpperCase();
+        const est = s.Estado || 'BORRADOR';
+        const estado = String(est).toUpperCase();
         const claseEstado = estado.indexOf('APROB') >= 0 ? ' aprobada'
                           : estado.indexOf('BORRAD') >= 0 ? ' borrador' : '';
-        html += '<button type="button" class="nem-tab-sesion' + act + claseEstado + '" onclick="seleccionarSesionNEM(' + idx + ')">';
-        html += 'Sesión ' + num + ' (40 min)' + escaparHtml(est);
+        html += '<button type="button" class="nem-btn-icon-sesion' + act + claseEstado + '" onclick="seleccionarSesionNEM(' + idx + ')" title="Sesión ' + num + ' (40 min) · ' + escaparHtml(est) + '" aria-label="Sesión ' + num + '">';
+        html += '<span class="sesion-pill-tag">S' + num + '</span>';
         html += '</button>';
       });
       tabs.innerHTML = html;

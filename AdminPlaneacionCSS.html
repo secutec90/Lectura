@@ -7247,6 +7247,76 @@
     color: #1d4ed8;
   }
 
+  /* Cabecera unificada en una sola fila para el Gestor de Sesiones */
+  .nem-header-planeacion-unificada {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  }
+  .nem-header-plan-info {
+    min-width: 200px;
+    flex: 1 1 auto;
+  }
+  .nem-toolbar-iconos-fila {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+  .toolbar-vsep {
+    display: inline-block;
+    width: 1px;
+    height: 24px;
+    background: #e2e8f0;
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+  .nem-sesiones-tabs-iconos {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nem-btn-icon-sesion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 150ms ease;
+  }
+  .nem-btn-icon-sesion:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+  }
+  .nem-btn-icon-sesion.activa {
+    background: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(29, 78, 216, 0.35);
+  }
+  .nem-btn-icon-sesion.aprobada:not(.activa) {
+    border-color: #86efac;
+    background: #f0fdf4;
+    color: #166534;
+  }
+
   @media (max-width: 860px) {
     .grid-col-2,
     .grid-col-70-30,

@@ -1887,15 +1887,6 @@ function irAPasoSesion_(numPaso) {
     if (typeof montarEntornoExeLearning_ === 'function') montarEntornoExeLearning_();
     if (typeof asegurarSeccionDivi_ === 'function') asegurarSeccionDivi_();
     if (typeof adoptarTarjetasEnDivi_ === 'function') adoptarTarjetasEnDivi_();
-    var contBloques = document.getElementById('contenedorIDevicesDinamicos');
-    var totalCards = contBloques ? contBloques.querySelectorAll('.idevice-card').length : 0;
-    if (totalCards === 0) {
-      var ap = (document.getElementById('sesApertura') || {}).value || '';
-      var des = (document.getElementById('sesDesarrollo') || {}).value || '';
-      if ((ap.trim() || des.trim()) && typeof construirSecuenciaCompletaIA_ === 'function') {
-        construirSecuenciaCompletaIA_();
-      }
-    }
     if (typeof aplicarFiltroPaginaExe_ === 'function') aplicarFiltroPaginaExe_();
     if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
   }
@@ -3036,9 +3027,8 @@ function armarMaquetaAlumno_() {
   if (cont) {
     var cards = cont.querySelectorAll('.idevice-card');
     cards.forEach(function (c) {
-      if (c.style.display === 'none') return;
-      var t = c.getAttribute('data-tipo') || '';
-      var m = momentoDeBloquePreview_(t);
+      var pagId = parseInt(c.getAttribute('data-pagina-id'), 10);
+      var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(c.getAttribute('data-tipo') || '');
       var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
       if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
         panelDest.appendChild(tarjetaPreviewBloque_(c));
@@ -4542,9 +4532,16 @@ var META_TARJETA_EXE_ = {
 var ALIAS_IDEVICE_EXE_ = { texto_dua: 'lectura', quiz_evaluativo: 'pregunta', reto_ciencias: 'reto' };
 var BASE_IDEVICE_EXE_ = { lectura: 1, pregunta: 1, reto: 1, encuesta: 1 };
 
+var PAGINAS_MOMENTOS_DEFECTO_ = [
+  { id: 0, titulo: '⏱️ 1. Apertura', sub: '5 min · Saberes previos', nivel: 0, idevices: [] },
+  { id: 1, titulo: '📖 2. Desarrollo', sub: '10 min · Libro SEP', nivel: 0, idevices: [] },
+  { id: 2, titulo: '✍️ 3. Actividad', sub: '20 min · Reto situado', nivel: 0, idevices: [] },
+  { id: 3, titulo: '🎯 4. Cierre', sub: '5 min · Quiz formativo', nivel: 0, idevices: [] }
+];
+
 function asegurarPaginasExe_() {
-  if (!window.paginasSesionActiva_ || !window.paginasSesionActiva_.length) {
-    window.paginasSesionActiva_ = [{ id: 0, titulo: '1. Saberes Previos y DUA', nivel: 0, idevices: [] }];
+  if (!window.paginasSesionActiva_ || !window.paginasSesionActiva_.length || (window.paginasSesionActiva_.length === 1 && String(window.paginasSesionActiva_[0].titulo || '').indexOf('Saberes Previos y DUA') >= 0)) {
+    window.paginasSesionActiva_ = JSON.parse(JSON.stringify(PAGINAS_MOMENTOS_DEFECTO_));
     window._nodoSesionActivo_ = 0;
   }
   if (window._nodoSesionActivo_ == null) window._nodoSesionActivo_ = 0;
@@ -4706,7 +4703,8 @@ function renderArbolSesion_() {
     div.style.marginLeft = ((n.nivel || 0) * 16) + 'px';
     div.onclick = function () { seleccionarNodoSesion_(i); };
     var cuenta = contarBloquesPaginaExe_(n.id);
-    div.innerHTML = '<div class="nodo-titulo-wrap"><span class="nodo-texto">' + (n.titulo || ('Página ' + (i + 1))) + '</span><button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de esta página" onclick="event.stopPropagation(); renombrarNodoEspecificoSesion_(' + i + ')">✏️</button></div><span class="nodo-tag">' + (i === activo ? 'Activa' : (cuenta + ' Cont.')) + '</span>';
+    var subHtml = n.sub ? ('<span class="nodo-sub" style="display:block;font-size:10.5px;color:#64748b;font-weight:600;margin-top:2px;">' + n.sub + '</span>') : '';
+    div.innerHTML = '<div class="nodo-titulo-wrap"><div style="overflow:hidden;text-overflow:ellipsis;flex:1;"><span class="nodo-texto" style="font-weight:700;">' + (n.titulo || ('Momento ' + (i + 1))) + '</span>' + subHtml + '</div><button type="button" class="btn-renombrar-nodo" title="Cambiar nombre de este momento" onclick="event.stopPropagation(); renombrarNodoEspecificoSesion_(' + i + ')">✏️</button></div><span class="nodo-tag">' + (i === activo ? 'Activo' : (cuenta + ' Bloq.')) + '</span>';
     cont.appendChild(div);
   });
   var banner = document.getElementById('bannerTituloPagina');
@@ -4953,7 +4951,9 @@ function insertarPasoSecuenciaIA_(pasoNum) {
   var ctx = obtenerContextoPlaneacionPrevia_();
   var esIngles = /ingl[eé]s/i.test(ctx.asignatura);
   var esTecno = /tecnolog/i.test(ctx.asignatura);
-  var pid = idPaginaActivaExe_();
+  if (typeof asegurarPaginasExe_ === 'function') asegurarPaginasExe_();
+  var pagMomento = (window.paginasSesionActiva_ && window.paginasSesionActiva_[pasoNum - 1]) || null;
+  var pid = pagMomento ? pagMomento.id : idPaginaActivaExe_();
   var card = null;
 
   if (pasoNum === 1) {
@@ -4996,30 +4996,35 @@ function insertarPasoSecuenciaIA_(pasoNum) {
   aplicarFiltroPaginaExe_();
   actualizarContadorIDevicesExe_();
   renderArbolSesion_();
+  if (typeof window.marcarIDevicesTocados_ === 'function') window.marcarIDevicesTocados_();
+  if (typeof window.volcarIDevicesEnGuion_ === 'function') window.volcarIDevicesEnGuion_();
   if (card && card.scrollIntoView) {
     setTimeout(function () {
       try { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
     }, 100);
   }
   if (typeof toast === 'function') {
-    toast('Momento ' + pasoNum + ' añadido a la página activa.', 'ok');
+    toast('Momento ' + pasoNum + ' añadido a su sección pedagógica.', 'ok');
   }
   return card;
 }
 
 function construirSecuenciaCompletaIA_() {
-  var cuenta = contarBloquesPaginaExe_(idPaginaActivaExe_());
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  var cuenta = cont ? cont.querySelectorAll('.idevice-card').length : 0;
   if (cuenta > 0) {
     var deseaReemplazar = confirm(
-      '⚠️ Esta página ya contiene ' + cuenta + ' bloque(s) de contenido.\n\n' +
-      '¿Deseas REEMPLAZAR los bloques actuales con el nuevo guion pedagógico?\n\n' +
-      '• Aceptar: Reemplaza los bloques existentes de esta página.\n' +
-      '• Cancelar: Mantiene los bloques actuales y agrega los nuevos al final.'
+      '⚠️ El constructor ya contiene ' + cuenta + ' bloque(s) de contenido.\n\n' +
+      '¿Deseas REEMPLAZAR los bloques actuales con el guion pedagógico de los 4 momentos?\n\n' +
+      '• Aceptar: Reemplaza los bloques existentes en los 4 momentos.\n' +
+      '• Cancelar: Mantiene los bloques actuales y agrega los nuevos.'
     );
     if (deseaReemplazar) {
-      limpiarBloquesPaginaActivaExe_();
+      if (cont) cont.textContent = '';
+      if (typeof window.marcarIDevicesTocados_ === 'function') window.marcarIDevicesTocados_();
     }
   }
+  if (typeof asegurarPaginasExe_ === 'function') asegurarPaginasExe_();
   insertarPasoSecuenciaIA_(1);
   insertarPasoSecuenciaIA_(2);
   insertarPasoSecuenciaIA_(3);
@@ -5030,7 +5035,7 @@ function construirSecuenciaCompletaIA_() {
   renderAsistenteSecuenciaIA_();
   if (typeof irAPasoSesion_ === 'function') irAPasoSesion_(3);
   if (typeof toast === 'function') {
-    toast('📋 ¡Guion trasladado al Constructor con éxito!', 'ok');
+    toast('📋 ¡Guion de los 4 momentos trasladado al Constructor con éxito!', 'ok');
   }
 }
 
@@ -8594,6 +8599,8 @@ if (document.readyState === 'loading') {
     if (sep && (sep.classList.contains('block-inserter-row') || sep.classList.contains('divisor-insertar-bloque'))) sep.remove();
     if (el.parentNode) el.parentNode.removeChild(el);
     if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    if (typeof window.marcarIDevicesTocados_ === 'function') window.marcarIDevicesTocados_();
+    if (typeof window.volcarIDevicesEnGuion_ === 'function') window.volcarIDevicesEnGuion_();
     repintarDivisoresExe_();
     if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
     if (typeof renderArbolSesion_ === 'function') renderArbolSesion_();

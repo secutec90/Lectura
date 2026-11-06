@@ -2,6 +2,29 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-05] - [Ola 17: Iconificación de Cabeceras, Erradicación de Controles de Lienzo y Auto-Adopción Divi de Bloques en build-606]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): iconificacion de cabeceras en una sola fila, erradicacion de controles en banner de lienzo y auto-adopcion divi de bloques en build-606`
+- **Cambios Realizados:**
+  - **Erradicación de Controles Residuales en Banner de Lienzo (`AyudaJS.html`):**
+    - Erradicado el bloque de controles `.pagina-banner-acciones` (`[ 🎨 Fondo ]`, `❓ Ayuda`, `🔊 Escuchar guía`) de la cabecera de la página activa en el lienzo de autor, dejando una barra limpia de solo título.
+  - **Iconificación de Acciones de Cabecera en Una Sola Fila (`AdminPlaneacion.html`, `AdminPlaneacionCSS.html`, `AdminPlanJS_04.html`):**
+    - Convertidos los botones de acción del gestor de planeación y editor de sesión a botones compactos de solo iconos con tooltips nativos (`title="..."`) y accesibilidad (`aria-label="..."`):
+      - `📄` Descargar Formato Oficial PDF
+      - `✨` Desglosar con IA (40 min DUA) — con estado de carga `⏳` y restauración automática
+      - `✓` Aprobar Planeación
+      - `←` Volver a lista de planeaciones
+      - `📚` Vincular Libro SEP Fase 6
+      - `📅` Calendarizar en Horario
+      - `💾` Guardar Sesión
+    - Maquetada la clase `.nem-btn-icon-action` (36x36px, esquinas redondeadas, elevación sutil y variantes primary/success/soft-blue).
+  - **Auto-Adopción Divi y Sincronización Guion ➔ Constructor (`AyudaJS.html`, `AdminPlanJS_06.html`):**
+    - Función `adoptarTarjetasEnDivi_()`: Adopta automáticamente cualquier bloque `.idevice-card` no anidado o deserializado como hijo directo de `#contenedorIDevicesDinamicos`, garantizando su inserción en columnas Divi con marco azul/verde y controles de reordenamiento y borrado.
+    - Llamada automática en `irAPasoSesion_(3)`: al entrar al constructor, si la página no tiene bloques pero el guion ya tiene momentos redactados (Apertura/Desarrollo), traslada automáticamente la secuencia completa a bloques Divi (`construirSecuenciaCompletaIA_()`), resolviendo la discrepancia entre el constructor y la vista previa del alumno.
+    - Integración de `colocarModuloEnColumnaActiva_` en `insertarBloqueExe_` y `rehidratarIDevicesDesdeGuion_`.
+  - **Versión:**
+    - Actualizado `00_Constantes.gs` a `v440 · build-606`.
+- **Archivos Afectados:** `AyudaJS.html`, `AdminPlaneacion.html`, `AdminPlaneacionCSS.html`, `AdminPlanJS_04.html`, `AdminPlanJS_06.html`, `00_Constantes.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-05] - [Ola 17: Arquitectura Visual DIVI Real, Bubble Toolbar Contextual Notion y Menú Lateral Colapsable en build-603]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): arquitectura visual divi real, bubble toolbar contextual notion, menu lateral colapsable y controles en build-603`
 - **Cambios Realizados:**

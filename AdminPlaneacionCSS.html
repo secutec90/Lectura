@@ -7182,6 +7182,71 @@
   .word-shape-box.shape-amber { border-left-color: #f59e0b !important; background: #fffbeb !important; color: #78350f !important; }
   .word-shape-box.shape-purple { border-left-color: #9333ea !important; background: #faf5ff !important; color: #581c87 !important; }
 
+  /* ---------- Botones de acción compactos (solo iconos + tooltips en una fila) ---------- */
+  .nem-btn-icon-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 150ms ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    flex-shrink: 0;
+  }
+  .nem-btn-icon-action:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(15, 23, 42, 0.1);
+  }
+  .nem-btn-icon-action:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  .nem-btn-icon-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .nem-btn-icon-action--primary {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: #1d4ed8;
+  }
+  .nem-btn-icon-action--primary:hover {
+    background: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+  }
+  .nem-btn-icon-action--success {
+    background: #059669;
+    color: #ffffff;
+    border-color: #059669;
+  }
+  .nem-btn-icon-action--success:hover {
+    background: #047857;
+    border-color: #047857;
+    color: #ffffff;
+  }
+  .nem-btn-icon-action--soft-blue {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+  }
+  .nem-btn-icon-action--soft-blue:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+  }
+
   @media (max-width: 860px) {
     .grid-col-2,
     .grid-col-70-30,

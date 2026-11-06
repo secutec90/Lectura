@@ -1883,6 +1883,22 @@ function irAPasoSesion_(numPaso) {
     }
   }
   if (n === 2) renderAsistenteSecuenciaIA_();
+  if (n === 3) {
+    if (typeof montarEntornoExeLearning_ === 'function') montarEntornoExeLearning_();
+    if (typeof asegurarSeccionDivi_ === 'function') asegurarSeccionDivi_();
+    if (typeof adoptarTarjetasEnDivi_ === 'function') adoptarTarjetasEnDivi_();
+    var contBloques = document.getElementById('contenedorIDevicesDinamicos');
+    var totalCards = contBloques ? contBloques.querySelectorAll('.idevice-card').length : 0;
+    if (totalCards === 0) {
+      var ap = (document.getElementById('sesApertura') || {}).value || '';
+      var des = (document.getElementById('sesDesarrollo') || {}).value || '';
+      if ((ap.trim() || des.trim()) && typeof construirSecuenciaCompletaIA_ === 'function') {
+        construirSecuenciaCompletaIA_();
+      }
+    }
+    if (typeof aplicarFiltroPaginaExe_ === 'function') aplicarFiltroPaginaExe_();
+    if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
+  }
   if (typeof capturarEstadoExe_ === 'function') capturarEstadoExe_();
   if (n === 4) {
     pintarVistaPreviaIntegrada_();
@@ -4662,25 +4678,7 @@ function montarEntornoExeLearning_() {
     '</aside>' +
     '<main class="canvas-exe"><div class="canvas-container" id="lienzoExeActivo" style="position:relative;">' +
       '<button type="button" class="btn-toggle-sidebar-exe btn-toggle-sidebar-floating" id="btnToggleSidebarFloat" style="display:none;" title="Expandir menú lateral" onclick="alternarSidebarExe_(false)">▶ Contenidos</button>' +
-      '<div class="pagina-banner"><div class="pagina-banner-title"><span id="bannerTituloPagina">Página activa</span></div>' +
-        '<div class="pagina-banner-acciones">' +
-          '<div class="canvas-color-picker-wrap" title="Cambiar color de fondo del lienzo">' +
-            '<label for="selColorFondoLienzo" style="font-size:11.5px;font-weight:700;color:#0f766e;cursor:pointer;">🎨 Fondo:</label>' +
-            '<select id="selColorFondoLienzo" class="sel-color-fondo-st90" onchange="cambiarColorFondoLienzo_(this.value)" style="padding:2px 6px;font-size:11.5px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;cursor:pointer;">' +
-              '<option value="#ffffff">⚪ Blanco</option>' +
-              '<option value="#f8fafc">🔘 Gris suave</option>' +
-              '<option value="#f0fdfa">🟢 Menta DUA</option>' +
-              '<option value="#f0f9ff">🔵 Cielo</option>' +
-              '<option value="#fefce8">🟡 Crema</option>' +
-              '<option value="#faf5ff">🟣 Lavanda</option>' +
-              '<option value="#fdf6e2">📜 Sepia</option>' +
-            '</select>' +
-            '<input type="color" id="pickerColorFondoPersonalizado" value="#ffffff" onchange="cambiarColorFondoLienzo_(this.value)" title="Elegir color personalizado" style="width:20px;height:20px;padding:0;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;vertical-align:middle;">' +
-          '</div>' +
-          '<button type="button" class="btn-action-teal" title="¿Cómo funciona el constructor?" onclick="abrirAyudaConstructor_()">❓ Ayuda</button>' +
-          '<button type="button" class="btn-action-teal" title="Escuchar instrucciones en voz alta" onclick="reproducirVozGuiaConstructor_()">🔊 Escuchar guía</button>' +
-        '</div>' +
-      '</div>' +
+      '<div class="pagina-banner"><div class="pagina-banner-title"><span id="bannerTituloPagina">Página activa</span></div></div>' +
       '<div id="contadorIdevices">0 bloques</div>' +
     '</div></main>';
   seccion.appendChild(workspace);
@@ -6516,6 +6514,7 @@ function insertarBloqueExe_(tipo, datos, paginaId) {
   }
   if (datos) rellenarTarjetaExe_(card, datos);
   erradicarBarraModularExe_();
+  if (typeof colocarModuloEnColumnaActiva_ === 'function') colocarModuloEnColumnaActiva_(card);
   repintarDivisoresExe_();
   return card;
 }
@@ -6671,6 +6670,7 @@ function deserializarIDevicesSesion_(data) {
   });
   window._st90RestaurandoEnc_ = false;
   window._st90RestaurandoExe_ = false;
+  if (typeof adoptarTarjetasEnDivi_ === 'function') adoptarTarjetasEnDivi_();
   renderArbolSesion_();
   aplicarFiltroPaginaExe_();
   momentos.forEach(function (m) {
@@ -9388,6 +9388,34 @@ if (document.readyState === 'loading') {
     });
   }
 
+  function adoptarTarjetasEnDivi_() {
+    var cont = document.getElementById('contenedorIDevicesDinamicos');
+    if (!cont) return;
+    var sec = asegurarSeccionDivi_();
+    if (!sec) return;
+
+    var sueltas = [];
+    Array.prototype.forEach.call(cont.children, function (hijo) {
+      if (hijo && hijo.classList && hijo.classList.contains('idevice-card')) {
+        sueltas.push(hijo);
+      }
+    });
+
+    if (sueltas.length > 0) {
+      sueltas.forEach(function (card) {
+        colocarModuloEnColumnaActiva_(card);
+      });
+      repintarPlusVerdesDivi_(sec);
+    }
+
+    cont.querySelectorAll('.divi-column > .idevice-card').forEach(function (card) {
+      card.classList.add('divi-module');
+      asegurarControlesModulo_(card);
+      marcarAreasEditablesDivi_(card);
+    });
+  }
+  window.adoptarTarjetasEnDivi_ = adoptarTarjetasEnDivi_;
+
   function envolverRepintadoDivi_() {
     if (!window.repintarDivisoresExe_ || window.repintarDivisoresExe_._st90Divi603) return;
     window.repintarDivisoresExe_ = function () {
@@ -9396,6 +9424,7 @@ if (document.readyState === 'loading') {
       var cont = document.getElementById('contenedorIDevicesDinamicos');
       var anidadas = [];
       try {
+        adoptarTarjetasEnDivi_();
         if (cont) {
           cont.querySelectorAll('.divi-column > .idevice-card').forEach(function (card) {
             anidadas.push({ card: card, parent: card.parentNode, next: card.nextSibling });

@@ -393,8 +393,11 @@
 
   function solicitarDesgloseSesionesIA() {
     const btn = document.getElementById('btnDesglosarSesionesIA');
-    const txtOriginal = btn ? btn.textContent : '';
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ Desglosando momentos DUA...'; }
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '⏳';
+      btn.title = 'Desglosando momentos DUA con IA...';
+    }
 
     const titEl = document.getElementById('planTitulo');
     const asigEl = document.getElementById('planAsignatura');
@@ -422,7 +425,7 @@
 
     const tk = (typeof getTokenPlan_ === 'function') ? getTokenPlan_() : (typeof tokenClase !== 'undefined' ? tokenClase : '');
     gsRun('asistirDesgloseSesionesNEM', tk, payload).then(function (res) {
-      if (btn) { btn.disabled = false; btn.textContent = txtOriginal; }
+      if (btn) { btn.disabled = false; btn.innerHTML = '✨'; btn.title = 'Desglosar con IA (40 min DUA)'; }
       if (!res || !res.ok) {
         toast((res && res.error) || 'No se pudo generar el desglose con IA.', 'error');
         return;
@@ -478,7 +481,7 @@
       cargarSesionActivaEnEditor(sesionActivaIdx || 0);
       toast('Sesiones de 40 minutos desglosadas con enfoque DUA. Revisa y pulsa Guardar Sesión.', 'ok');
     }).catch(function (err) {
-      if (btn) { btn.disabled = false; btn.textContent = txtOriginal; }
+      if (btn) { btn.disabled = false; btn.innerHTML = '✨'; btn.title = 'Desglosar con IA (40 min DUA)'; }
       toast('Error al desglosar sesiones: ' + (err.message || String(err)), 'error');
     });
   }

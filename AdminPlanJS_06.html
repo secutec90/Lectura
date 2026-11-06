@@ -564,16 +564,22 @@
       const contenedor = document.getElementById('contenedorIDevicesDinamicos');
       if (!contenedor) return;
       contenedor.textContent = '';
+      if (typeof window.asegurarSeccionDivi_ === 'function') window.asegurarSeccionDivi_();
       const campo = document.getElementById('sesGuionEstudiante');
       parsearBloqueIDevices_(campo ? campo.value : '').forEach(function (bloque) {
         const card = pintarTarjetaIDevice_(bloque.tipo, bloque);
-        if (card) contenedor.appendChild(card);
+        if (card) {
+          contenedor.appendChild(card);
+          if (typeof window.colocarModuloEnColumnaActiva_ === 'function') window.colocarModuloEnColumnaActiva_(card);
+        }
         if (bloque.tipo === 'encuesta' && card && typeof window.cargarCatalogoEnSelectiDevice_ === 'function') {
           var prevEnc = {};
           try { prevEnc = JSON.parse(bloque.cuerpo || '{}'); } catch (eEnc) { prevEnc = {}; }
           window.cargarCatalogoEnSelectiDevice_(card.id, prevEnc.idEncuesta || '');
         }
       });
+      if (typeof window.adoptarTarjetasEnDivi_ === 'function') window.adoptarTarjetasEnDivi_();
+      if (typeof window.actualizarContadorIDevicesExe_ === 'function') window.actualizarContadorIDevicesExe_();
       idevicesTocados_ = false;
     }
 

@@ -8344,45 +8344,18 @@ if (document.readyState === 'loading') {
 
   function abrirMenuInsercionExe_(fila) {
     cerrarMenusInsercionExe_();
-    var menu = document.createElement('div');
-    menu.className = 'inserter-popup-dropdown';
-    menu.setAttribute('role', 'menu');
-    var grid = document.createElement('div');
-    grid.className = 'inserter-popup-grid inserter-popup-grid--tres';
-    CATALOGO_POPUP_OLA17_.forEach(function (it) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'popup-inserter-item';
-      b.setAttribute('role', 'menuitem');
-      b.textContent = it[1];
-      b.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
-      b.addEventListener('click', function (ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        insertarBloqueEnPosicion_(it[0], fila);
-      });
-      grid.appendChild(b);
-    });
-    menu.appendChild(grid);
-    fila.appendChild(menu);
+    if (typeof abrirSelectorColumnas_ === 'function' && fila) {
+      abrirSelectorColumnas_(fila);
+      return;
+    }
   }
 
   function crearFilaInsercionExe_() {
+    if (typeof crearPlusVerde_ === 'function') {
+      return crearPlusVerde_();
+    }
     var fila = document.createElement('div');
-    fila.className = 'block-inserter-row';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn-block-plus';
-    btn.textContent = '+';
-    btn.setAttribute('aria-label', 'Insertar bloque aquí');
-    btn.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
-    btn.addEventListener('click', function (ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      if (fila.querySelector('.inserter-popup-dropdown')) cerrarMenusInsercionExe_();
-      else abrirMenuInsercionExe_(fila);
-    });
-    fila.appendChild(btn);
+    fila.className = 'divi-plus-row';
     return fila;
   }
 
@@ -8407,23 +8380,13 @@ if (document.readyState === 'loading') {
   function repintarDivisoresExe_() {
     var cont = document.getElementById('contenedorIDevicesDinamicos');
     if (!cont) return;
-    cont.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque').forEach(function (d) { d.remove(); });
-    var cards = [];
+    cont.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque, .inserter-popup-dropdown').forEach(function (d) { d.remove(); });
     cont.querySelectorAll('.idevice-card').forEach(function (c) {
       asegurarBotonMenosExe_(c);
-      if (c.style.display !== 'none') cards.push(c);
     });
-    if (!cards.length) {
-      cont.appendChild(crearFilaInsercionExe_());
-      return;
+    if (typeof repintarPlusVerdesDivi_ === 'function') {
+      repintarPlusVerdesDivi_();
     }
-    var primera = cards[0];
-    if (primera.parentNode) primera.parentNode.insertBefore(crearFilaInsercionExe_(), primera);
-    cards.forEach(function (card) {
-      var fila = crearFilaInsercionExe_();
-      if (card.nextSibling) card.parentNode.insertBefore(fila, card.nextSibling);
-      else card.parentNode.appendChild(fila);
-    });
   }
   window.repintarDivisoresExe_ = repintarDivisoresExe_;
 
@@ -9264,25 +9227,13 @@ if (document.readyState === 'loading') {
   }
 
   function limpiarInsertoresDentroDeColumnas_() {
-    document.querySelectorAll('.divi-column .block-inserter-row, .divi-column .divisor-insertar-bloque, .divi-section > .block-inserter-row').forEach(function (nodo) {
+    document.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque, .inserter-popup-dropdown').forEach(function (nodo) {
       if (nodo.parentNode) nodo.parentNode.removeChild(nodo);
-    });
-    var cont = document.getElementById('contenedorIDevicesDinamicos');
-    if (!cont || !cont.querySelector('.divi-section')) return;
-    var sueltas = 0;
-    Array.prototype.forEach.call(cont.children, function (hijo) {
-      if (hijo.classList && hijo.classList.contains('idevice-card')) sueltas += 1;
-    });
-    if (sueltas) return;
-    Array.prototype.slice.call(cont.children).forEach(function (hijo) {
-      if (!hijo.classList) return;
-      if (hijo.classList.contains('block-inserter-row') || hijo.classList.contains('divisor-insertar-bloque')) hijo.remove();
     });
   }
 
   function envolverRepintadoDivi_() {
     if (!window.repintarDivisoresExe_ || window.repintarDivisoresExe_._st90Divi603) return;
-    var previo = window.repintarDivisoresExe_;
     window.repintarDivisoresExe_ = function () {
       if (window._repintandoDivi603_) return;
       window._repintandoDivi603_ = true;
@@ -9294,8 +9245,8 @@ if (document.readyState === 'loading') {
             anidadas.push({ card: card, parent: card.parentNode, next: card.nextSibling });
             card.remove();
           });
+          cont.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque, .inserter-popup-dropdown').forEach(function (d) { d.remove(); });
         }
-        previo();
         anidadas.forEach(function (item) {
           if (!item.parent || !item.parent.isConnected) return;
           if (item.next && item.next.parentNode === item.parent) item.parent.insertBefore(item.card, item.next);

@@ -6365,56 +6365,12 @@
     outline-offset: 2px;
   }
 
-  .block-inserter-row {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 24px;
-    margin: 2px 0;
-    border-radius: 999px;
-    transition: background 150ms ease;
-  }
-  .block-inserter-row::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1px;
-    background: #e2e8f0;
-    transition: background 150ms ease;
-  }
-  .block-inserter-row:hover::before { background: #99f6e4; }
-
-  .btn-block-plus {
-    position: relative;
-    z-index: 1;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 999px;
-    background: #0d9488;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 800;
-    line-height: 1;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);
-    transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
-  }
-  .btn-block-plus:hover {
-    background: #0f766e;
-    transform: scale(1.18);
-    box-shadow: 0 3px 10px rgba(13, 148, 136, 0.35);
-  }
-  .btn-block-plus:focus-visible {
-    outline: 2px solid #0f766e;
-    outline-offset: 3px;
+  /* Legado OLA16 suprimido en favor del Constructor DIVI Real OLA17 */
+  .block-inserter-row,
+  .divisor-insertar-bloque,
+  .btn-block-plus,
+  .inserter-popup-dropdown {
+    display: none !important;
   }
 
   /* Menú emergente de inserción */

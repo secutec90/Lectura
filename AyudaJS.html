@@ -9786,3 +9786,25 @@ if (document.readyState === 'loading') {
 
 /* ENTREGA-AYUDAJS-FIN */
 </script>
+/* BUILD-608-CURSOR */
+function configurarSelectorColumnasOla18_() {
+  document.querySelectorAll('.btn-plus-green').forEach(btn => {
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      const popover = document.querySelector('.columns-popover');
+      if (popover) popover.classList.toggle('visible');
+    };
+  });
+}
+
+function insertarFilaGridOla18_(distribucion) {
+  const lienzo = document.getElementById('lienzoExeActivo') || document.body;
+  const fila = document.createElement('div');
+  fila.className = `divi-row ${distribucion}`;
+  fila.innerHTML = `
+    <div class="divi-column active-target" onclick="activarColumnaObjetivo_(this)">
+      <button type="button" class="btn-add-module-inside">+</button>
+    </div>`;
+  lienzo.appendChild(fila);
+}
+/* BUILD-608-CURSOR-FIN */

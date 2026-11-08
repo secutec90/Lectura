@@ -2,6 +2,27 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-08] - [Ola 19: Consolidación de Arquitectura Maestra Integral V609 — Puente Divi al Portal del Alumno, Motor Evaluativo SEP (5-10), Sincronización Google Calendar y Cierre de Deuda Técnica en build-609]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola19): arquitectura maestra integral v609, puente divi en portal alumno, calificarQuizAlumnoST90 escala SEP 5-10 y CalendarApp en build-609`
+- **Cambios Realizados:**
+  - **Auditoría y Cierre de Deuda Técnica Documental (`ARQUITECTURA_MAESTRA_INTEGRAL_ST90_V609.md`, `ESTADO_COORDINACION.md`):**
+    - Incorporación formal de los acuerdos de `Plan_Implementacion_Constructor_Avanzado_ST90.md` (Fases 1, 2 y 3), `ENTREGA_CONSTRUCTOR_ENCUESTAS_BUILD_569.md` (Modo Dual de Encuestas) y `ENTREGA_CONSTRUCTOR_DUAL_ENCUESTA_QUIZ_BUILD_570.md` (Motor Evaluativo Híbrido).
+  - **Motor Evaluativo SEP (5.0 a 10.0) y Asiento en Base de Datos (`PlaneacionNEM.gs`, `Encuestas.gs`, `AyudaJS.html`):**
+    - Programado el endpoint `calificarQuizAlumnoST90(tokenOrDatos, optPayload)` en `PlaneacionNEM.gs` apoyado en `_calificarQuizFormularioBaseST90_` (`Encuestas.gs`), normalizando la calificación a la **escala oficial SEP (5.0 a 10.0)**, generando retroalimentación diferenciada (acierto vs. error) y registrando la calificación tanto en `Respuestas` como en `EntregasActividades` vinculada a la matrícula del alumno.
+    - Conectada `calificarQuiziDeviceVivo_` (`AyudaJS.html`) para invocar asíncronamente a `calificarQuizAlumnoST90()`.
+  - **Sincronización Real con Google Calendar (`PlaneacionNEM.gs`):**
+    - Actualizada `calendarizarSesionNEM(token, idSesion, idHorario, fecha)` para invocar `CalendarApp.getDefaultCalendar().createEvent(...)` con nomenclatura oficial `[${gradoGrupo}] ${asignatura}: ${nombreProyecto} / Sesión ${numSesion} (${duracionMin} min)`, detección de bloques dobles contiguos (80 min), descripción con desglose de los 4 momentos pedagógicos, enlace directo al portal del alumno (`?p=alumno&sec=${idH}&s=${numSesion}`) y persistencia del `eventId` en `SesionesNEM`.
+  - **Puente de Retículas Divi hacia el Portal Real del Alumno (`ClaseLogica.gs`, `ClaseJS_07.html`, `AdminPlanJS_05.html`, `ClaseCSS.html`, `AdminPlaneacionCSS.html`):**
+    - Enriquecida `mapaContenidosClase_()` en `ClaseLogica.gs` para adjuntar `guionDocenteJSON` desde `SesionesNEM` a las clases publicadas.
+    - Actualizada `renderizarTextoClaseDUA(cont)` en `ClaseJS_07.html` y `AdminPlanJS_05.html` para parsear `GuionDocenteJSON` y renderizar las filas `.divi-row` y columnas `.divi-column` en el portal del estudiante, conservando `GuionEstudianteAccesible` para lectura en voz alta DUA.
+  - **Desacoplamiento del Popover de Columnas (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Montaje directo de `.divi-columns-picker.columns-popover` en `document.body` con `position: fixed; z-index: 99999;` y coordenadas dinámicas calculadas vía `getBoundingClientRect()`.
+  - **Conexión del Modo Dual en iDevice Encuesta (`AyudaJS.html`):**
+    - `completarIDeviceEncuesta_` dispara automáticamente `cargarCatalogoEnSelectiDevice_` al insertar la tarjeta y proyecta `ResumenIA` en Modo Datos Previos o configura ponderación SEP (5–10) en Modo Actividad Evaluable.
+  - **Validación Estricta del Manifiesto:**
+    - Verificación con `node herramientas/manifiesto.js` confirmando **79 documentos exactos** y `0` documentos sin parsear.
+- **Archivos Afectados:** `ARQUITECTURA_MAESTRA_INTEGRAL_ST90_V609.md`, `PlaneacionNEM.gs`, `Encuestas.gs`, `ClaseLogica.gs`, `AyudaJS.html`, `ClaseJS_07.html`, `AdminPlanJS_05.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `ESTADO_COORDINACION.md`, `ENTREGA_CURSOR.md`, `ENTREGA_DEEPSEEK.md`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-07] - [Ola 19: Corrección de Desbordamiento en Grillas Divi, Persistencia Estructurada y Renderizado Fiel en Vista Alumno en build-609]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(ola19): correccion desbordamiento columnas col-3, persistencia estructurada filas/columnas y renderizado fiel en vista previa alumno en build-609`
 - **Cambios Realizados:**

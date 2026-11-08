@@ -4966,4 +4966,64 @@
     }
     .cotejo-item.completado .cotejo-texto { opacity: 1; }
   }
+
+  /* ============================================================
+     OLA 19 · build-609 — RETÍCULAS DIVI EN PORTAL DEL ALUMNO Y POPOVER
+     ============================================================ */
+  .divi-columns-picker,
+  .columns-popover {
+    position: fixed;
+    z-index: 99999;
+    box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.25);
+  }
+  .dua-clase-contenedor .divi-row,
+  .browser-frame .divi-row,
+  .moment-panel .divi-row {
+    margin: 0 0 18px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .dua-clase-contenedor .divi-columns-grid,
+  .browser-frame .divi-columns-grid,
+  .moment-panel .divi-columns-grid {
+    display: grid;
+    gap: 14px;
+    align-items: stretch;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .dua-clase-contenedor .grid-col-1, .browser-frame .grid-col-1, .moment-panel .grid-col-1 { grid-template-columns: minmax(0, 1fr) !important; }
+  .dua-clase-contenedor .grid-col-2, .browser-frame .grid-col-2, .moment-panel .grid-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 14px; }
+  .dua-clase-contenedor .grid-col-70-30, .browser-frame .grid-col-70-30, .moment-panel .grid-col-70-30 { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr) !important; gap: 14px; }
+  .dua-clase-contenedor .grid-col-3, .browser-frame .grid-col-3, .moment-panel .grid-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px; }
+  .dua-clase-contenedor .divi-column,
+  .browser-frame .divi-column,
+  .moment-panel .divi-column {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+  .dua-clase-contenedor .divi-column .content-card,
+  .browser-frame .divi-column .content-card,
+  .moment-panel .divi-column .content-card {
+    height: 100%;
+    margin-bottom: 0;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+  @media (max-width: 760px) {
+    .dua-clase-contenedor .grid-col-2,
+    .dua-clase-contenedor .grid-col-70-30,
+    .dua-clase-contenedor .grid-col-3 {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+  }
 </style>

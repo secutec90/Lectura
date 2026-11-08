@@ -6989,11 +6989,11 @@
   /* ---------- 3 · Selector Popover de Columnas Divi (Retícula 2x2 Fiel) ---------- */
   .divi-columns-picker,
   .columns-popover {
-    position: absolute;
+    position: fixed;
     top: 38px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1100;
+    z-index: 99999;
     display: none;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px;
@@ -7447,28 +7447,31 @@
   .divi-row.col-2-70-30 > .divi-columns-grid, .divi-row.grid-col-2-70-30 > .divi-columns-grid, .grid-col-70-30 { display: grid !important; grid-template-columns: minmax(0, 7fr) minmax(0, 3fr) !important; gap: 12px; width: 100% !important; }
   .divi-row.col-3 > .divi-columns-grid, .divi-row.grid-col-3 > .divi-columns-grid, .grid-col-3 { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 10px; width: 100% !important; }
 
-  /* Vista Previa Alumno: Soporte de Retículas Divi sin bordes de edición */
+  /* Vista Previa Alumno y Portal Real Alumno: Soporte de Retículas Divi sin bordes de edición */
   .browser-frame .divi-row,
-  .moment-panel .divi-row {
+  .moment-panel .divi-row,
+  .dua-clase-contenedor .divi-row {
     margin: 0 0 20px;
     padding: 0;
     background: transparent;
     border: none;
   }
   .browser-frame .divi-columns-grid,
-  .moment-panel .divi-columns-grid {
+  .moment-panel .divi-columns-grid,
+  .dua-clase-contenedor .divi-columns-grid {
     display: grid;
     gap: 16px;
     align-items: stretch;
     width: 100%;
     box-sizing: border-box;
   }
-  .browser-frame .grid-col-1, .moment-panel .grid-col-1 { grid-template-columns: minmax(0, 1fr); }
-  .browser-frame .grid-col-2, .moment-panel .grid-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .browser-frame .grid-col-70-30, .moment-panel .grid-col-70-30 { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 16px; }
-  .browser-frame .grid-col-3, .moment-panel .grid-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .browser-frame .grid-col-1, .moment-panel .grid-col-1, .dua-clase-contenedor .grid-col-1 { grid-template-columns: minmax(0, 1fr); }
+  .browser-frame .grid-col-2, .moment-panel .grid-col-2, .dua-clase-contenedor .grid-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .browser-frame .grid-col-70-30, .moment-panel .grid-col-70-30, .dua-clase-contenedor .grid-col-70-30 { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 16px; }
+  .browser-frame .grid-col-3, .moment-panel .grid-col-3, .dua-clase-contenedor .grid-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .browser-frame .divi-column,
-  .moment-panel .divi-column {
+  .moment-panel .divi-column,
+  .dua-clase-contenedor .divi-column {
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
@@ -7477,7 +7480,8 @@
     padding: 0;
   }
   .browser-frame .divi-column .content-card,
-  .moment-panel .divi-column .content-card {
+  .moment-panel .divi-column .content-card,
+  .dua-clase-contenedor .divi-column .content-card {
     height: 100%;
     margin-bottom: 0;
     box-sizing: border-box;
@@ -7578,7 +7582,8 @@
   }
   .sidebar-exe .box-idevice-menu .modulo-card-lateral[hidden] { display: none; }
 
-  .sidebar-exe .box-idevice-menu .card-lateral-cuerpo {
+  .sidebar-exe .box-idevice-menu .card-lateral-cuerpo,
+  .sidebar-exe .box-idevice-menu .modulo-card-header {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -7603,7 +7608,8 @@
     min-width: 0;
     flex: 1 1 auto;
   }
-  .sidebar-exe .box-idevice-menu .card-lateral-titulo {
+  .sidebar-exe .box-idevice-menu .card-lateral-titulo,
+  .sidebar-exe .box-idevice-menu .modulo-card-title {
     display: block;
     font-size: 11.5px;
     font-weight: 700;
@@ -7613,7 +7619,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .sidebar-exe .box-idevice-menu .card-lateral-sub {
+  .sidebar-exe .box-idevice-menu .card-lateral-sub,
+  .sidebar-exe .box-idevice-menu .modulo-card-sub {
     display: block;
     margin-top: 1px;
     font-size: 10px;

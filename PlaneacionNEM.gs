@@ -1209,7 +1209,8 @@ function calendarizarSesionNEM(token, idSesion, idHorario, fecha) {
   })[0];
   exigirPropietarioPlaneacion_(ses, planDeSesion);
 
-  const filaH = _leerFilas_("Horarios").filter(function (f) {
+  const todosHorarios = _leerFilas_("Horarios");
+  const filaH = todosHorarios.filter(function (f) {
     return idHorarioClase_(f["Id"] || f["id"] || f["ID"]) === idH;
   })[0];
   if (!filaH) throw new Error("El bloque de horario indicado no existe en la escuela.");
@@ -1218,10 +1219,84 @@ function calendarizarSesionNEM(token, idSesion, idHorario, fecha) {
   const idxEstado = ENCABEZADOS.SesionesNEM.indexOf("Estado") + 1;
   const idxIdHorario = ENCABEZADOS.SesionesNEM.indexOf("IdHorario") + 1;
   const idxFechaProg = ENCABEZADOS.SesionesNEM.indexOf("FechaProgramada") + 1;
+  const idxGuionDocente = ENCABEZADOS.SesionesNEM.indexOf("GuionDocenteJSON") + 1;
 
   pSes.getRange(sesion._fila, idxEstado).setValue("PROGRAMADO");
   pSes.getRange(sesion._fila, idxIdHorario).setValue(idH);
   pSes.getRange(sesion._fila, idxFechaProg).setNumberFormat("@").setValue(fe);
+
+  // Sincronización Real con Google Calendar (CalendarApp) — build-609
+  let eventId = "";
+  try {
+    const grado = String((planDeSesion && planDeSesion["Grado"]) || filaH["Grado"] || "1").trim();
+    const grupo = String((planDeSesion && planDeSesion["Grupo"]) || filaH["Grupo"] || "A").trim();
+    const gradoGrupo = grado + "°" + grupo;
+    const asignatura = String((planDeSesion && planDeSesion["Asignatura"]) || filaH["Asignatura"] || "Asignatura").trim();
+    const nombreProyecto = String((planDeSesion && planDeSesion["Titulo"]) || sesion["Titulo"] || "Proyecto NEM").trim();
+    const numSesion = String(sesion["NumeroSesion"] || "1").trim();
+
+    const horaIniStr = String(filaH["Hora inicio"] || filaH["HoraInicio"] || "07:00").trim();
+    const horaFinStr = String(filaH["Hora fin"] || filaH["HoraFin"] || "07:40").trim();
+    const bloqueActual = Number(filaH["Bloque"] || 1) || 1;
+    const diaActual = String(filaH["Dia"] || "").trim().toLowerCase();
+
+    // Detectar bloques contiguos dobles (80 min) del mismo grupo y asignatura en el mismo día
+    const bloqueContiguo = todosHorarios.filter(function (h) {
+      return String(h["Grado"] || "").trim() === String(filaH["Grado"] || "").trim() &&
+             String(h["Grupo"] || "").trim() === String(filaH["Grupo"] || "").trim() &&
+             String(h["Asignatura"] || "").trim() === String(filaH["Asignatura"] || "").trim() &&
+             String(h["Dia"] || "").trim().toLowerCase() === diaActual &&
+             (Number(h["Bloque"] || 0) === bloqueActual + 1 || String(h["Hora inicio"] || "").trim() === horaFinStr);
+    })[0];
+
+    const duracionMin = bloqueContiguo ? 80 : (Number(sesion["DuracionMin"]) || 40);
+    const partesFe = fe.split("-");
+    const partesIni = horaIniStr.split(":");
+    const fechaIni = new Date(
+      Number(partesFe[0]),
+      Number(partesFe[1]) - 1,
+      Number(partesFe[2]),
+      Number(partesIni[0] || 7),
+      Number(partesIni[1] || 0),
+      0
+    );
+    const fechaFin = new Date(fechaIni.getTime() + duracionMin * 60000);
+
+    const tituloEvento = "[" + gradoGrupo + "] " + asignatura + ": " + nombreProyecto + " / Sesión " + numSesion + " (" + duracionMin + " min)";
+    let baseUrl = "";
+    try { baseUrl = ScriptApp.getService().getUrl() || ""; } catch (eUrl) { baseUrl = ""; }
+    const linkAlumno = (baseUrl ? baseUrl : "") + "?p=alumno&sec=" + encodeURIComponent(idH) + "&s=" + encodeURIComponent(numSesion);
+
+    const descEvento =
+      "📚 SUITE ESCOLAR ST90 — PLANEACIÓN DIDÁCTICA NEM\n" +
+      "Proyecto: " + nombreProyecto + " (Sesión " + numSesion + " · " + duracionMin + " min)\n\n" +
+      "⏱️ 1. APERTURA (" + (sesion["AperturaMin"] || 5) + " min):\n" + String(sesion["AperturaTexto"] || "Activación de saberes previos.").trim() + "\n\n" +
+      "📖 2. DESARROLLO (" + (sesion["DesarrolloMin"] || 10) + " min):\n" + String(sesion["DesarrolloTexto"] || "Trabajo conceptual con Libro SEP.").trim() + "\n\n" +
+      "✍️ 3. ACTIVIDAD (" + (sesion["ActividadMin"] || 20) + " min):\n" + String(sesion["ActividadTexto"] || "Reto situado en aula.").trim() + "\n\n" +
+      "🎯 4. CIERRE (" + (sesion["CierreMin"] || 5) + " min):\n" + String(sesion["CierreTexto"] || "Evaluación formativa y metacognición.").trim() + "\n\n" +
+      "🔗 Portal del Alumno (Aula Hablada / Retículas Divi):\n" + linkAlumno;
+
+    if (typeof CalendarApp !== "undefined" && CalendarApp.getDefaultCalendar) {
+      const cal = CalendarApp.getDefaultCalendar();
+      if (cal) {
+        const ev = cal.createEvent(tituloEvento, fechaIni, fechaFin, { description: descEvento });
+        if (ev && typeof ev.getId === "function") {
+          eventId = String(ev.getId() || "");
+        }
+      }
+    }
+
+    if (eventId && idxGuionDocente > 0) {
+      let docObj = {};
+      try { docObj = JSON.parse(String(sesion["GuionDocenteJSON"] || "{}")); } catch (eJ) { docObj = { notas: String(sesion["GuionDocenteJSON"] || "") }; }
+      docObj.extra = docObj.extra || {};
+      docObj.extra.calendarEventId = eventId;
+      docObj.extra.calendarDuracionMin = duracionMin;
+      pSes.getRange(sesion._fila, idxGuionDocente).setValue(JSON.stringify(docObj));
+    }
+  } catch (eCal) {
+    console.warn("Sincronización CalendarApp omitida o sin permisos activos: " + (eCal && eCal.message ? eCal.message : eCal));
+  }
 
   // Sincronizar con ContenidosClase (Aula Hablada)
   const textoParaAulaHablada = String(sesion["GuionEstudianteAccesible"] || "").trim();
@@ -1242,8 +1317,107 @@ function calendarizarSesionNEM(token, idSesion, idHorario, fecha) {
     idSesion: idSes,
     fecha: fe,
     idHorario: idH,
-    mensaje: "Sesión programada y publicada exitosamente en el calendario y en Aula Hablada."
+    eventId: eventId,
+    mensaje: eventId
+      ? "Sesión programada en Google Calendar, Horario Escolar y publicada en Aula Hablada."
+      : "Sesión programada y publicada exitosamente en el calendario y en Aula Hablada."
   };
+}
+
+/**
+ * Motor de Quizzes Calificables ST90 (build-609).
+ * Evalúa cuestionarios de la hoja Formulario (columna 11 extra JSON) o reactivos en vivo del Constructor,
+ * convierte el puntaje a la escala oficial SEP (5.0 a 10.0) y asienta en Respuestas y EntregasActividades.
+ */
+function calificarQuizAlumnoST90(tokenOrDatos, optPayload) {
+  let token = "";
+  let datos = {};
+  if (typeof tokenOrDatos === "string" || optPayload !== undefined) {
+    token = String(tokenOrDatos || "");
+    datos = optPayload || {};
+  } else {
+    datos = tokenOrDatos || {};
+    token = String(datos.token || "");
+  }
+
+  let ses = null;
+  if (token && typeof obtenerSesionValida_ === "function") {
+    try { ses = obtenerSesionValida_(token); } catch (eSes) { ses = null; }
+  }
+
+  let resQuiz;
+  if (Array.isArray(datos.reactivos) && datos.reactivos.length > 0 && !datos.preguntas) {
+    // Normalizar reactivos en vivo del iDevice Quiz hacia el formato estándar
+    const preguntasNorm = datos.reactivos.map(function (r, idx) {
+      return {
+        id: String(r.id || ("q_" + (idx + 1))),
+        etiqueta: String(r.pregunta || r.etiqueta || ("Reactivo " + (idx + 1))),
+        tipo: String(r.tipo || "unica"),
+        extra: {
+          esQuiz: true,
+          puntos: Number(r.puntos != null ? r.puntos : 1) || 1,
+          respuestaCorrecta: r.respuestaCorrecta != null ? r.respuestaCorrecta : "",
+          retroalimentacion: r.retroalimentacion || {
+            acierto: r.retroAcierto || "¡Excelente respuesta! Has comprendido el concepto clave.",
+            fallo: r.retroFallo || "Revisa nuevamente el desarrollo de la sesión e inténtalo otra vez."
+          }
+        }
+      };
+    });
+    resQuiz = _calificarQuizFormularioBaseST90_(Object.assign({}, datos, { preguntas: preguntasNorm }));
+  } else if (typeof _calificarQuizFormularioBaseST90_ === "function") {
+    resQuiz = _calificarQuizFormularioBaseST90_(datos);
+  } else {
+    return { ok: false, exito: false, mensaje: "Motor base de cuestionarios no disponible." };
+  }
+
+  if (!resQuiz || (!resQuiz.exito && !resQuiz.ok)) {
+    return resQuiz || { ok: false, exito: false, mensaje: "No fue posible calificar el quiz." };
+  }
+
+  // Asentar en EntregasActividades vinculado a la matrícula del alumno para impactar la sábana trimestral
+  try {
+    const matricula = String(datos.matricula || (ses && (ses.matricula || ses.usuario)) || "").trim();
+    const nombreAlu = String(datos.nombreAlumno || (ses && ses.nombre) || "Estudiante").trim();
+    const gradoAlu = String(datos.grado || (ses && ses.grado) || "").trim();
+    const grupoAlu = String(datos.grupo || (ses && ses.grupo) || "").trim();
+    if (matricula || ses) {
+      const libro = _obtenerLibro_();
+      let hojaEnt = _obtenerHojaRobusta_(libro, "EntregasActividades");
+      if (!hojaEnt) {
+        hojaEnt = libro.insertSheet("EntregasActividades");
+        hojaEnt.appendRow(["IdEntrega", "IdActividad", "IdClase", "Matricula", "NombreAlumno", "Grado", "Grupo", "RespuestasJSON", "Calificacion", "Retroalimentacion", "FechaEntrega", "Estado"]);
+      }
+      const idEntrega = "ENT-QUIZ-" + Utilities.getUuid().slice(0, 8).toUpperCase();
+      const idActividad = String(datos.idActividad || datos.idEncuesta || "QUIZ-SESION").trim();
+      const idSesion = String(datos.idSesion || datos.idClase || "").trim();
+      hojaEnt.appendRow([
+        idEntrega,
+        idActividad,
+        idSesion,
+        matricula || "ESTUDIANTE",
+        nombreAlu,
+        gradoAlu,
+        grupoAlu,
+        JSON.stringify({
+          tipo: "quiz_sep",
+          puntosObtenidos: resQuiz.puntosObtenidos,
+          puntosMaximos: resQuiz.puntosMaximos,
+          calificacionSEP: resQuiz.calificacion,
+          desglose: resQuiz.desglose || []
+        }),
+        resQuiz.calificacion,
+        "Evaluación formativa SEP (escala 5.0 a 10.0): " + resQuiz.calificacion + "/10",
+        new Date(),
+        "CALIFICADO"
+      ]);
+      resQuiz.idEntrega = idEntrega;
+    }
+  } catch (eEnt) {
+    console.warn("Registro en EntregasActividades tras quiz: " + (eEnt && eEnt.message ? eEnt.message : eEnt));
+  }
+
+  return resQuiz;
 }
 
 /**********************************************************************

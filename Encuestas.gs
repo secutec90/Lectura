@@ -1249,47 +1249,58 @@ function obtenerDelBanco(credenciales, id) {
  * calcula el puntaje obtenido, genera retroalimentación por reactivo
  * y guarda la respuesta en la hoja Respuestas.
  */
-function calificarQuizAlumnoST90(datos) {
+function _calificarQuizFormularioBaseST90_(datos) {
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(30000)) return { exito: false, mensaje: "El sistema está ocupado. Intenta de nuevo." };
+  if (!lock.tryLock(30000)) return { exito: false, ok: false, mensaje: "El sistema está ocupado. Intenta de nuevo." };
 
   try {
-    const preguntas = leerPreguntas(true);
-    const config = leerConfigEncuestas();
+    const idEnc = datos && (datos.idEncuesta || datos.hojaId) ? String(datos.idEncuesta || datos.hojaId).trim() : "";
+    let libroQuiz = null;
+    if (idEnc && idEnc.indexOf("ENC-BASE-") !== 0) {
+      try { libroQuiz = _abrirLibroPorId_(idEnc); } catch (eLib) { libroQuiz = null; }
+    }
+    const hojaForm = libroQuiz ? libroQuiz.getSheetByName(HOJA_FORMULARIO) : null;
+    const preguntas = Array.isArray(datos && datos.preguntas) && datos.preguntas.length
+      ? datos.preguntas
+      : leerPreguntas(true, hojaForm);
+    const config = leerConfigEncuestas(libroQuiz);
     const respuestas = (datos && datos.respuestas) || {};
 
-    const problema = validarRespuestas(preguntas, respuestas);
-    if (problema) return { exito: false, mensaje: problema };
+    if (!Array.isArray(datos && datos.preguntas)) {
+      const problema = validarRespuestas(preguntas, respuestas);
+      if (problema) return { exito: false, ok: false, mensaje: problema };
+    }
 
     let puntosObtenidos = 0;
     let puntosMaximos = 0;
     const desgloseReactivos = [];
 
     preguntas.forEach(function (p) {
-      if (!condicionVisible(p, respuestas)) return;
+      if (typeof condicionVisible === "function" && !Array.isArray(datos && datos.preguntas) && !condicionVisible(p, respuestas)) return;
       const ext = p.extra || {};
-      const pts = Number(ext.puntos) || 0;
-      const correcta = ext.respuestaCorrecta;
+      const pts = Number(ext.puntos != null ? ext.puntos : (p.puntos != null ? p.puntos : 1)) || 0;
+      const correcta = ext.respuestaCorrecta != null ? ext.respuestaCorrecta : p.respuestaCorrecta;
       const respAlumno = respuestas[p.id];
 
-      if (!ext.esQuiz || pts <= 0 || correcta == null || String(correcta).trim() === "") {
+      if ((ext.esQuiz === false) || pts <= 0 || correcta == null || String(correcta).trim() === "") {
         return;
       }
 
       puntosMaximos += pts;
       let esCorrecta = false;
+      const tipoP = String(p.tipo || "unica").toLowerCase();
 
-      if (p.tipo === "unica" || p.tipo === "sino" || p.tipo === "escala") {
+      if (tipoP === "unica" || tipoP === "sino" || tipoP === "escala") {
         esCorrecta = String(respAlumno || "").trim().toLowerCase() === String(correcta).trim().toLowerCase();
-      } else if (p.tipo === "numero") {
+      } else if (tipoP === "numero") {
         esCorrecta = Number(respAlumno) === Number(correcta);
-      } else if (p.tipo === "multiple") {
+      } else if (tipoP === "multiple") {
         const arrAlumno = (Array.isArray(respAlumno) ? respAlumno : String(respAlumno || "").split(";"))
           .map(function (s) { return String(s).trim().toLowerCase(); }).filter(Boolean).sort();
         const arrCorrecta = (Array.isArray(correcta) ? correcta : String(correcta || "").split(";"))
           .map(function (s) { return String(s).trim().toLowerCase(); }).filter(Boolean).sort();
         esCorrecta = JSON.stringify(arrAlumno) === JSON.stringify(arrCorrecta);
-      } else if (p.tipo === "texto") {
+      } else if (tipoP === "texto") {
         const claves = String(correcta).split("|").map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
         const rLimpia = String(respAlumno || "").trim().toLowerCase();
         esCorrecta = claves.indexOf(rLimpia) !== -1;
@@ -1299,16 +1310,17 @@ function calificarQuizAlumnoST90(datos) {
       puntosObtenidos += ganados;
 
       let retroTexto = "";
-      if (ext.retroalimentacion && typeof ext.retroalimentacion === "object") {
-        retroTexto = esCorrecta ? String(ext.retroalimentacion.acierto || "") : String(ext.retroalimentacion.fallo || "");
+      const retroSrc = ext.retroalimentacion != null ? ext.retroalimentacion : p.retroalimentacion;
+      if (retroSrc && typeof retroSrc === "object") {
+        retroTexto = esCorrecta ? String(retroSrc.acierto || "") : String(retroSrc.fallo || "");
       } else {
-        retroTexto = String(ext.retroalimentacion || "");
+        retroTexto = String(retroSrc || "");
       }
 
       desgloseReactivos.push({
         idPregunta: p.id,
-        etiqueta: p.etiqueta,
-        respuestaAlumno: valorRespuesta(p, respAlumno),
+        etiqueta: p.etiqueta || p.pregunta || p.id,
+        respuestaAlumno: typeof valorRespuesta === "function" ? valorRespuesta(p, respAlumno) : String(respAlumno || ""),
         respuestaCorrecta: Array.isArray(correcta) ? correcta.join("; ") : String(correcta),
         esCorrecta: esCorrecta,
         puntosGanados: ganados,
@@ -1317,35 +1329,50 @@ function calificarQuizAlumnoST90(datos) {
       });
     });
 
-    const calificacionBase10 = puntosMaximos > 0
-      ? Math.round(((puntosObtenidos / puntosMaximos) * 10) * 10) / 10
-      : 10;
+    const ratio = puntosMaximos > 0 ? (puntosObtenidos / puntosMaximos) : 1;
+    const calificacionBruta10 = Math.round((ratio * 10) * 10) / 10;
+    // Escala oficial SEP (Acuerdo 10/09/23): rango normativo de 5.0 a 10.0
+    const calificacionSEP = puntosMaximos > 0
+      ? Math.max(5.0, Math.min(10.0, Math.round((5 + ratio * 5) * 10) / 10))
+      : 10.0;
 
-    const hoja = _getHojaRespuestas_();
-    let maximo = 2;
-    preguntas.forEach(function (p) { if (p.columna > maximo) maximo = p.columna; });
-    const fila = new Array(maximo + 2).fill("");
-    fila[0] = new Date();
-    fila[1] = "Quiz (" + calificacionBase10 + "/10)";
-    preguntas.forEach(function (p) {
-      fila[p.columna - 1] = condicionVisible(p, respuestas) ? valorRespuesta(p, respuestas[p.id]) : "";
-    });
-    fila[maximo] = puntosObtenidos + "/" + puntosMaximos;
-    fila[maximo + 1] = calificacionBase10;
-    hoja.appendRow(fila);
+    if (!Array.isArray(datos && datos.preguntas)) {
+      try {
+        const hoja = _getHojaRespuestas_(libroQuiz);
+        let maximo = 2;
+        preguntas.forEach(function (p) { if (p.columna > maximo) maximo = p.columna; });
+        const fila = new Array(maximo + 2).fill("");
+        fila[0] = new Date();
+        fila[1] = "Quiz SEP (" + calificacionSEP + "/10)";
+        preguntas.forEach(function (p) {
+          if (p.columna) {
+            fila[p.columna - 1] = condicionVisible(p, respuestas) ? valorRespuesta(p, respuestas[p.id]) : "";
+          }
+        });
+        fila[maximo] = puntosObtenidos + "/" + puntosMaximos;
+        fila[maximo + 1] = calificacionSEP;
+        hoja.appendRow(fila);
+      } catch (eResp) {
+        console.error("guardar fila Respuestas quiz: " + eResp);
+      }
+    }
 
     return {
+      ok: true,
       exito: true,
       esQuiz: true,
       puntosObtenidos: puntosObtenidos,
       puntosMaximos: puntosMaximos,
-      calificacion: calificacionBase10,
+      calificacion: calificacionSEP,
+      calificacionSEP: calificacionSEP,
+      calificacionBruta10: calificacionBruta10,
+      escala: "SEP 5.0-10.0",
       mostrarRetroalimentacion: String(config.mostrarRetroalimentacion || "SI") !== "NO",
       desglose: desgloseReactivos
     };
   } catch (error) {
-    console.error("calificarQuizAlumnoST90: " + (error && error.stack ? error.stack : error));
-    return { exito: false, mensaje: "No se pudo evaluar el cuestionario: " + error.message };
+    console.error("_calificarQuizFormularioBaseST90_: " + (error && error.stack ? error.stack : error));
+    return { ok: false, exito: false, mensaje: "No se pudo evaluar el cuestionario: " + error.message };
   } finally {
     if (lock.hasLock()) lock.releaseLock();
   }

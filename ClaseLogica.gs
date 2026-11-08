@@ -1234,13 +1234,37 @@ function claveAltContenidoClase_(grado, grupo, asig, bloque, fecha) {
 
 function mapaContenidosClase_() {
   const mapa = {};
+  const mapaSes = {};
+  try {
+    _leerFilas_("SesionesNEM").forEach(function (s) {
+      const idHS = idHorarioClase_(s["IdHorario"] || s["idhorario"] || "");
+      const feS = fechaIsoClase_(s["FechaProgramada"] || s["fechaprogramada"] || "");
+      const gDoc = String(s["GuionDocenteJSON"] || s["guiondocentejson"] || "").trim();
+      if (idHS && gDoc) {
+        const infoSes = {
+          idSesion: String(s["Id"] || s["id"] || ""),
+          guionDocenteJSON: gDoc,
+          aperturaTexto: String(s["AperturaTexto"] || ""),
+          desarrolloTexto: String(s["DesarrolloTexto"] || ""),
+          actividadTexto: String(s["ActividadTexto"] || ""),
+          cierreTexto: String(s["CierreTexto"] || "")
+        };
+        if (feS) mapaSes[idHS + "|" + feS] = infoSes;
+        mapaSes[idHS + "|"] = infoSes;
+      }
+    });
+  } catch (eSesMap) {}
+
   _leerFilas_("ContenidosClase").forEach(function (f) {
     const idH = idHorarioClase_(f["Id horario"]);
     const feF = fechaIsoClase_(f["Fecha"]);
+    const sesMatch = (idH && (mapaSes[idH + "|" + feF] || mapaSes[idH + "|"])) || null;
     const c = {
       id: String(f["Id"] || ""),
+      idSesion: sesMatch ? sesMatch.idSesion : "",
       titulo: String(f["Titulo"] || f["Título"] || ""),
       texto: String(f["Texto"] || ""),
+      guionDocenteJSON: sesMatch ? sesMatch.guionDocenteJSON : "",
       publicado: String(f["Publicado"] || "SI").toUpperCase() !== "NO",
       fecha: feF
     };

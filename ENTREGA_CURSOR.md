@@ -9,22 +9,22 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: OLA 19 (`build-609`) — LÓGICA DOM Y BUSCADOR EN TIEMPO REAL DEL CATÁLOGO LATERAL (7 FAMILIAS)
-- **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
-- **Archivos objetivo:** `AyudaJS.html`, `ClaseJS_08.html`, `AdminPlanJS_06.html`
+## 🎯 PARTITURA ASIGNADA: OLA 19 (`build-609`) — ARQUITECTURA MAESTRA INTEGRAL: PUENTE DIVI AL PORTAL DEL ALUMNO, POPOVER EN BODY, QUIZ SEP Y MODO DUAL DE ENCUESTAS
+- **Estado:** 🟢 AUDITADA E INTEGRADA EN BUILD-609
+- **Archivos objetivo:** `AyudaJS.html`, `ClaseJS_07.html`, `AdminPlanJS_05.html`, `AdminPlanJS_06.html`
 
 ---
 
 ## ✅ ENTREGA CURSOR — OLA 19 (build-609)
-- **Estado:** 🟢 LISTA PARA AUDITORÍA
+- **Estado:** 🟢 LISTA Y CONSOLIDADA
 - **Marcador:** `BUILD-609-CURSOR` en `AyudaJS.html` (`htmlCatalogoExe_`)
 - **Alcance:**
-  - Catálogo lateral en **mini-cards** (`.modulo-card-lateral`) con metadatos `[tipo, icono, titulo, subtitulo, tema]` para las 7 familias; incluye `word_shape`, `excel_split_table` y `geogebra_param`.
-  - Barra de búsqueda `#inputBuscarModulosCatalogo`, filtrado en vivo sin acentos, auto-expansión de `.cat-group.abierto`, ocultación de cabeceras vacías, botón `#btnLimpiarBusquedaModulos` y mensaje `.sin-resultados-catalogo`.
-  - Inserción vía `invocarInsertarDesdeCatalogo609_` → `insertarModuloEnColumnaActiva_` / dropzone `.divi-column.active-target`.
-  - `montarEntornoExeLearning_` invoca `configurarBuscadorCatalogo_()` tras montar el acordeón.
-  - Puente en `AdminPlanJS_06.html` y `ClaseJS_08.html`: delegación a `insertarModuloEnColumnaActiva_` cuando el motor Divi está activo.
-- **Validación local:** `node --check` sobre script de `AyudaJS.html` OK · `node herramientas/manifiesto.js` → 79 documentos, 0 sin parsear.
+  1. **Renderizado Jerárquico en Portal del Alumno (`ClaseJS_07.html` y `AdminPlanJS_05.html`):** `renderizarTextoClaseDUA(cont)` parsea `cont.guionDocenteJSON` (`extra.exelearning.paginas`) y pinta las retículas `.divi-row`, `.divi-columns-grid` y `.divi-column` con sus tarjetas `.content-card.dua-bloque-idevice`, sincronizando los textos con la síntesis de voz DUA (`parrafosVozAlu_`).
+  2. **Popover de Columnas Desacoplado (`AyudaJS.html`):** `abrirSelectorColumnas_(filaPlus, btnPlus)` monta `.divi-columns-picker.columns-popover.visible` directamente en `document.body` con `position: fixed; z-index: 99999;` y cálculo dinámico vía `boton.getBoundingClientRect()`.
+  3. **Conexión Asíncrona de Quiz Evaluable (`AyudaJS.html`):** `calificarQuiziDeviceVivo_(btn)` invoca `gsRun('calificarQuizAlumnoST90', token, payloadQuiz)` y muestra la calificación en **escala oficial SEP (5.0 a 10.0)** junto con la retroalimentación diferenciada.
+  4. **Selector de Modo Dual en iDevice Encuesta (`AyudaJS.html`):** `completarIDeviceEncuesta_` asigna ID único, invoca automáticamente `cargarCatalogoEnSelectiDevice_` al insertar el bloque y conecta `conmutarModoEncuestaiDevice_` (*Datos Previos* con proyección de `ResumenIA` vs. *Actividad Evaluable* vinculada a matrícula).
+  5. **Catálogo Lateral en Mini-Cards (`.modulo-card-lateral`):** 7 familias curriculares con buscador `#inputBuscarModulosCatalogo` en tiempo real e inserción en `.divi-column.active-target`.
+- **Validación local:** `node herramientas/manifiesto.js` → 79 documentos, 0 sin parsear.
 
 ### Bloque de controladores (referencia en `AyudaJS.html`)
 - `escAttrCatalogo609_`, `normalizarTextoBusquedaCatalogo609_`

@@ -176,7 +176,8 @@ Aplica clases específicas al contenedor o al badge de icono:
   }
   .sidebar-exe .box-idevice-menu .modulo-card-lateral[hidden] { display: none; }
 
-  .sidebar-exe .box-idevice-menu .card-lateral-cuerpo {
+  .sidebar-exe .box-idevice-menu .card-lateral-cuerpo,
+  .sidebar-exe .box-idevice-menu .modulo-card-header {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -201,7 +202,8 @@ Aplica clases específicas al contenedor o al badge de icono:
     min-width: 0;
     flex: 1 1 auto;
   }
-  .sidebar-exe .box-idevice-menu .card-lateral-titulo {
+  .sidebar-exe .box-idevice-menu .card-lateral-titulo,
+  .sidebar-exe .box-idevice-menu .modulo-card-title {
     display: block;
     font-size: 11.5px;
     font-weight: 700;
@@ -211,7 +213,8 @@ Aplica clases específicas al contenedor o al badge de icono:
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .sidebar-exe .box-idevice-menu .card-lateral-sub {
+  .sidebar-exe .box-idevice-menu .card-lateral-sub,
+  .sidebar-exe .box-idevice-menu .modulo-card-sub {
     display: block;
     margin-top: 1px;
     font-size: 10px;
@@ -344,6 +347,18 @@ Aplica clases específicas al contenedor o al badge de icono:
 
 La clase `tema-*` va **en la tarjeta**, no en el badge: así el hover del borde y el color del icono se resuelven con un solo atributo.
 
+### 4-bis. Discrepancia de nombres detectada (importante para Cursor)
+
+`ESTADO_COORDINACION.md` (línea 86, escrita a las 22:00) pide **`.modulo-card-header`** y **`.modulo-card-sub`**, mientras que la partitura del buzón pedía `.card-lateral-cuerpo`, `.card-lateral-titulo` y `.card-lateral-sub`. Para que el ensamble no se rompa si Cursor sigue la coordinación, el CSS acepta **ambos juegos de nombres** como alias:
+
+| Coordinación | Buzón | Resultado |
+| :--- | :--- | :--- |
+| `.modulo-card-header` | `.card-lateral-cuerpo` | mismo contenedor flex |
+| `.modulo-card-title` | `.card-lateral-titulo` | mismo título |
+| `.modulo-card-sub` | `.card-lateral-sub` | mismo subtítulo |
+
+Los alias conservan el prefijo de aislamiento. **Recomendación a Antigravity:** unificar partitura y coordinación en un solo juego de nombres; si sobran, el CSS se adelgaza después.
+
 ### 5. Decisiones
 
 1. **El foco del buscador usa `outline: 2px solid #ccfbf1`** tal como pide la partitura, en lugar del `box-shadow` de otros componentes. Es intencional: el catálogo convive con muchos bordes y un halo suave lo diferenciaría mal.
@@ -358,6 +373,7 @@ La clase `tema-*` va **en la tarjeta**, no en el badge: así el hover del borde 
 | :--- | :--- |
 | Llaves CSS balanceadas | `AdminPlaneacionCSS.html` 1166/1166 |
 | Reglas sin prefijo de aislamiento | **0** |
+| Alias `.modulo-card-*` activos | ✅ 3 (header, title, sub) |
 | Render a 900 px | ✅ buscador con lupa y limpieza, siete tarjetas con su color, botones `+` |
 | Render a 380 px | el sidebar pasa a drawer (OLA 17), por eso se valida en escritorio |
 | IDs / `.gs` / JS | sin cambios |

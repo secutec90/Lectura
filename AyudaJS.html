@@ -2012,7 +2012,7 @@ function seleccionarOpcionQuizPreview_(opcionEl, esCorrecta) {
   marco._quizYaSumado_ = false;
 }
 
-function verificarQuizPreview_(btn) {
+function calificarQuiziDeviceVivo_(btn) {
   var marco = marcoPreview_(btn);
   if (!marco) return;
   var feedback = marco.querySelector('.quiz-feedback');
@@ -2024,22 +2024,56 @@ function verificarQuizPreview_(btn) {
     return;
   }
   var puntos = Number(marco._puntosQuiz_) || 4;
+  var opcionSel = marco.querySelector('.quiz-option.selected');
+  var textoElegido = opcionSel ? String(opcionSel.textContent || '').trim() : (marco._quizCorrecta_ ? 'CORRECTA' : 'INCORRECTA');
+  var textoCorrecto = marco._quizCorrecta_ ? textoElegido : 'OPCION_CORRECTA';
+
   if (marco._quizCorrecta_) {
     feedback.className = 'quiz-feedback success';
-    feedback.textContent = 'Excelente respuesta. Sumaste ' + puntos + ' puntos formativos.';
+    feedback.textContent = '¡Excelente respuesta! Calificación SEP: 10.0 / 10 (Sumaste ' + puntos + ' puntos formativos).';
     if (!marco._quizYaSumado_) {
       window._puntosFormativosPreview_ = (window._puntosFormativosPreview_ || 0) + puntos;
       marco._quizYaSumado_ = true;
     }
   } else {
     feedback.className = 'quiz-feedback';
-    feedback.textContent = 'Aún no es la correcta. Revisa el cierre de la clase y vuelve a intentar.';
+    feedback.textContent = 'Aún no es la correcta (Escala mínima SEP: 5.0 / 10). Revisa el desarrollo de la clase y vuelve a intentar.';
+  }
+
+  if (typeof gsRun === 'function') {
+    var payloadQuiz = {
+      idActividad: marco.getAttribute('data-id-actividad') || 'QUIZ-SESION',
+      idSesion: (window.sesionesActualesNEM && window.sesionesActualesNEM[window.sesionActivaIdx || 0] && window.sesionesActualesNEM[window.sesionActivaIdx || 0].Id) || '',
+      reactivos: [{
+        id: 'q_1',
+        pregunta: (marco.querySelector('.quiz-question') || {}).textContent || 'Reactivo de cierre',
+        tipo: 'unica',
+        puntos: puntos,
+        respuestaCorrecta: textoCorrecto,
+        retroAcierto: '¡Excelente respuesta! Dominio acreditado en escala SEP.',
+        retroFallo: 'Revisa el contenido de la sesión y vuelve a intentarlo.'
+      }],
+      respuestas: { q_1: textoElegido }
+    };
+    gsRun('calificarQuizAlumnoST90', (typeof _tokenClienteST90_ === 'function' ? _tokenClienteST90_() : ''), payloadQuiz).then(function (res) {
+      if (res && (res.ok || res.exito) && res.calificacion != null) {
+        var det = (res.desglose && res.desglose[0] && res.desglose[0].retroalimentacion) || '';
+        feedback.textContent = (marco._quizCorrecta_ ? '✅ ' : 'ℹ️ ') +
+          'Calificación oficial SEP: ' + Number(res.calificacion).toFixed(1) + ' / 10.0 · ' +
+          (det || (marco._quizCorrecta_ ? ('Sumaste ' + puntos + ' puntos formativos.') : 'Revisa el cierre de la clase.'));
+      }
+    }).catch(function () {});
   }
 }
 
-function autocalificarQuizPreview_(btn) {
-  verificarQuizPreview_(btn);
+function verificarQuizPreview_(btn) {
+  calificarQuiziDeviceVivo_(btn);
 }
+
+function autocalificarQuizPreview_(btn) {
+  calificarQuiziDeviceVivo_(btn);
+}
+window.calificarQuiziDeviceVivo_ = calificarQuiziDeviceVivo_;
 
 function simularCargaEvidenciaPreview_(zona) {
   var marco = marcoPreview_(zona);
@@ -4238,6 +4272,7 @@ function _tokenClienteST90_() {
 
 function completarIDeviceEncuesta_(card, datos) {
   if (!card || card.querySelector('.sel-modo-encuesta-idevice')) return;
+  if (!card.id) card.id = 'idevice-enc-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
   var guardado = {};
   try {
     if (datos && datos.cuerpo && String(datos.cuerpo).charAt(0) === '{') guardado = JSON.parse(datos.cuerpo);
@@ -4258,15 +4293,15 @@ function completarIDeviceEncuesta_(card, datos) {
       '<button type="button" class="nem-btn-crear-encuesta" onclick="abrirModalCrearEncuestaDesdeSesion_(\'' + String(card.id || '').replace(/'/g, '') + '\')">➕ Crear nueva Encuesta / Quiz</button>' +
     '</div>' +
     '<div class="panel-modo-datos">' +
-      '<label>Resumen para la sesión</label>' +
-      '<textarea class="txt-resumen-encuesta" rows="3"></textarea>' +
+      '<label>Resumen pedagógico IA para la sesión</label>' +
+      '<textarea class="txt-resumen-encuesta" rows="3" placeholder="Selecciona una encuesta del directorio para proyectar su resumen diagnóstico IA..."></textarea>' +
       '<label><input type="checkbox" class="chk-incluir-graficas"> Incluir gráficas comparativas</label>' +
     '</div>' +
     '<div class="panel-modo-actividad" hidden>' +
-      '<label>Ponderación</label>' +
-      '<input type="number" class="inp-ponderacion-encuesta" min="1" max="10" value="10">' +
+      '<label>Ponderación (Escala SEP 5 a 10)</label>' +
+      '<input type="number" class="inp-ponderacion-encuesta" min="5" max="10" value="10">' +
       '<label>Registro</label>' +
-      '<select class="sel-registro-modo"><option value="matricula">Vinculado a matrícula</option><option value="anonimo">Anónimo</option></select>' +
+      '<select class="sel-registro-modo"><option value="matricula">Vinculado a matrícula (EntregasActividades)</option><option value="anonimo">Anónimo</option></select>' +
     '</div>';
   var body = card.querySelector('.idevice-body') || card;
   body.appendChild(panel);
@@ -4281,6 +4316,7 @@ function completarIDeviceEncuesta_(card, datos) {
   var reg = card.querySelector('.sel-registro-modo');
   if (reg && guardado.registro) reg.value = guardado.registro;
   conmutarModoEncuestaiDevice_(modo);
+  cargarCatalogoEnSelectiDevice_(card.id, guardado.idEncuesta || '');
 }
 
 function abrirModalCrearEncuestaDesdeSesion_(idCard) {
@@ -4467,7 +4503,8 @@ function cargarResumenEncuestaiDevice_(selectEl) {
     if (String(items[i].id || items[i].hojaId || '') === String(id)) { item = items[i]; break; }
   }
   var resumen = card.querySelector('.txt-resumen-encuesta');
-  if (resumen && item && item.resumen && !resumen.value) resumen.value = item.resumen;
+  var textoRes = item ? (item.resumen || item.resumenIA || item.ResumenIA || item.proposito || '') : '';
+  if (resumen && textoRes) resumen.value = textoRes;
   var titulo = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
   if (titulo && item && !titulo.value) titulo.value = item.nombre || item.titulo || '';
 }
@@ -9544,7 +9581,8 @@ if (document.readyState === 'loading') {
   }
 
   function cerrarSelectoresColumnas_() {
-    document.querySelectorAll('.divi-columns-picker').forEach(function (menu) {
+    window._filaPlusOrigenPopover_ = null;
+    document.querySelectorAll('.divi-columns-picker, .columns-popover').forEach(function (menu) {
       if (menu.parentNode) menu.parentNode.removeChild(menu);
     });
   }
@@ -9555,6 +9593,8 @@ if (document.readyState === 'loading') {
     var menu = document.createElement('div');
     menu.className = 'divi-columns-picker columns-popover visible';
     menu.setAttribute('role', 'menu');
+    menu._filaPlusOrigen_ = filaPlus || null;
+    window._filaPlusOrigenPopover_ = filaPlus || null;
     [
       ['col-1', '1 Columna', 'preview-1', 1],
       ['col-2', '50 / 50', 'preview-2', 2],
@@ -9572,14 +9612,14 @@ if (document.readyState === 'loading') {
       b.innerHTML = '<div class="preview-mini ' + op[2] + '">' + spans + '</div><span class="option-label">' + op[1] + '</span>';
       menu.appendChild(b);
     });
-    filaPlus.style.position = 'relative';
-    filaPlus.appendChild(menu);
-    var boton = btnPlus || filaPlus.querySelector('.btn-plus-green');
-    if (boton && boton.getBoundingClientRect && filaPlus.getBoundingClientRect) {
+    document.body.appendChild(menu);
+    var boton = btnPlus || (filaPlus && filaPlus.querySelector('.btn-plus-green'));
+    if (boton && boton.getBoundingClientRect) {
       var rBtn = boton.getBoundingClientRect();
-      var rFila = filaPlus.getBoundingClientRect();
-      var topPx = Math.max(30, Math.round(rBtn.bottom - rFila.top + 6));
-      var leftPx = Math.round((rBtn.left - rFila.left) + (rBtn.width / 2));
+      var topPx = Math.max(12, Math.round(rBtn.bottom + 8));
+      var leftPx = Math.round(rBtn.left + (rBtn.width / 2));
+      menu.style.position = 'fixed';
+      menu.style.zIndex = '99999';
       menu.style.top = topPx + 'px';
       menu.style.left = leftPx + 'px';
       menu.style.transform = 'translateX(-50%)';
@@ -10038,7 +10078,8 @@ if (document.readyState === 'loading') {
       var opcion = t.closest('.divi-columns-picker [data-distribucion], .columns-popover [data-distribucion]');
       if (opcion) {
         ev.preventDefault();
-        var filaOpcion = opcion.closest('.divi-plus-row');
+        var picker = opcion.closest('.divi-columns-picker, .columns-popover');
+        var filaOpcion = (picker && picker._filaPlusOrigen_) || window._filaPlusOrigenPopover_ || opcion.closest('.divi-plus-row');
         insertarFilaDivi_(opcion.getAttribute('data-distribucion'), filaOpcion);
         cerrarSelectoresColumnas_();
         return;
@@ -10047,7 +10088,7 @@ if (document.readyState === 'loading') {
       if (plus) {
         ev.preventDefault();
         var fila = plus.closest('.divi-plus-row, .inserter-row-divi');
-        var yaAbierto = fila && fila.querySelector('.divi-columns-picker, .columns-popover');
+        var yaAbierto = !!(fila && (window._filaPlusOrigenPopover_ === fila || fila.querySelector('.divi-columns-picker, .columns-popover')) && document.querySelector('.divi-columns-picker, .columns-popover'));
         cerrarSelectoresColumnas_();
         if (!yaAbierto && fila) abrirSelectorColumnas_(fila, plus);
         return;

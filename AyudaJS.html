@@ -9549,7 +9549,7 @@ if (document.readyState === 'loading') {
     });
   }
 
-  function abrirSelectorColumnas_(filaPlus) {
+  function abrirSelectorColumnas_(filaPlus, btnPlus) {
     cerrarSelectoresColumnas_();
     if (typeof window.cerrarMenusInsercionExe_ === 'function') window.cerrarMenusInsercionExe_();
     var menu = document.createElement('div');
@@ -9572,7 +9572,18 @@ if (document.readyState === 'loading') {
       b.innerHTML = '<div class="preview-mini ' + op[2] + '">' + spans + '</div><span class="option-label">' + op[1] + '</span>';
       menu.appendChild(b);
     });
+    filaPlus.style.position = 'relative';
     filaPlus.appendChild(menu);
+    var boton = btnPlus || filaPlus.querySelector('.btn-plus-green');
+    if (boton && boton.getBoundingClientRect && filaPlus.getBoundingClientRect) {
+      var rBtn = boton.getBoundingClientRect();
+      var rFila = filaPlus.getBoundingClientRect();
+      var topPx = Math.max(30, Math.round(rBtn.bottom - rFila.top + 6));
+      var leftPx = Math.round((rBtn.left - rFila.left) + (rBtn.width / 2));
+      menu.style.top = topPx + 'px';
+      menu.style.left = leftPx + 'px';
+      menu.style.transform = 'translateX(-50%)';
+    }
   }
 
   function repintarPlusVerdesDivi_(seccionUnica) {
@@ -10035,10 +10046,10 @@ if (document.readyState === 'loading') {
       var plus = t.closest('.btn-plus-green');
       if (plus) {
         ev.preventDefault();
-        var fila = plus.closest('.divi-plus-row');
+        var fila = plus.closest('.divi-plus-row, .inserter-row-divi');
         var yaAbierto = fila && fila.querySelector('.divi-columns-picker, .columns-popover');
         cerrarSelectoresColumnas_();
-        if (!yaAbierto && fila) abrirSelectorColumnas_(fila);
+        if (!yaAbierto && fila) abrirSelectorColumnas_(fila, plus);
         return;
       }
       var colClick = t.closest('.divi-column');

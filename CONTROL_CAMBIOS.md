@@ -2,9 +2,13 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
-### 🛠️ [2026-11-08] - [Ola 19: Consolidación de Arquitectura Maestra Integral V609 — Puente Divi al Portal del Alumno, Motor Evaluativo SEP (5-10), Sincronización Google Calendar y Cierre de Deuda Técnica en build-609]
-- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola19): arquitectura maestra integral v609, puente divi en portal alumno, calificarQuizAlumnoST90 escala SEP 5-10 y CalendarApp en build-609`
+### 🛠️ [2026-11-08] - [Ola 19: Consolidación de Arquitectura Maestra Integral V609, Catálogo Lateral en Cuadrícula 2 Columnas Estilo GrapesJS (Drag & Drop), Puente Divi al Portal del Alumno, Motor Evaluativo SEP (5-10) y Sincronización Google Calendar en build-609]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola19): catalogo lateral en cuadricula 2 columnas estilo GrapesJS con drag and drop, puente divi en portal alumno y motor evaluativo SEP en build-609`
 - **Cambios Realizados:**
+  - **Catálogo Lateral en Cuadrícula de 2 Columnas Estilo GrapesJS Block Manager (`AdminPlaneacionCSS.html`, `ClaseCSS.html`, `AyudaJS.html`):**
+    - Transformado el cuerpo de los acordeones (`.cat-group-body` / `.cat-items`) en una cuadrícula compacta de 2 columnas (`grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 10px; background: #f8fafc;`).
+    - Rediseñadas las tarjetas de módulo (`.modulo-card-lateral`) en formato vertical compacto (`min-height: 76px`, icono de `22px` centrado, título a 2 líneas de `11px` y borde superior temático por familia curricular `.tema-notion`, `.tema-eval`, `.tema-h5p`, `.tema-ingles`, `.tema-juegos`, `.tema-tecno`, `.tema-ciencias`).
+    - Habilitada toda la superficie de la tarjeta para inserción directa en `.divi-column.active-target` con validación accesible (toast si no hay columna seleccionada) y soporte completo **Drag & Drop** (`draggable="true"`, `dragstart`, `dragover`, `drop` con resaltado `.drag-over-target`).
   - **Auditoría y Cierre de Deuda Técnica Documental (`ARQUITECTURA_MAESTRA_INTEGRAL_ST90_V609.md`, `ESTADO_COORDINACION.md`):**
     - Incorporación formal de los acuerdos de `Plan_Implementacion_Constructor_Avanzado_ST90.md` (Fases 1, 2 y 3), `ENTREGA_CONSTRUCTOR_ENCUESTAS_BUILD_569.md` (Modo Dual de Encuestas) y `ENTREGA_CONSTRUCTOR_DUAL_ENCUESTA_QUIZ_BUILD_570.md` (Motor Evaluativo Híbrido).
   - **Motor Evaluativo SEP (5.0 a 10.0) y Asiento en Base de Datos (`PlaneacionNEM.gs`, `Encuestas.gs`, `AyudaJS.html`):**

@@ -4718,11 +4718,55 @@ function normalizarTextoBusquedaCatalogo609_(texto) {
 
 function invocarInsertarDesdeCatalogo609_(tipo) {
   if (!tipo) return;
+  var cont = document.getElementById('contenedorIDevicesDinamicos');
+  if (cont) {
+    var colActiva = cont.querySelector('.divi-column.active-target') ||
+      (window._columnaObjetivoActiva_ && window._columnaObjetivoActiva_.isConnected ? window._columnaObjetivoActiva_ : null);
+    var todasCols = cont.querySelectorAll('.divi-column');
+    if (todasCols.length > 0 && !colActiva) {
+      if (typeof toast === 'function') {
+        toast('Selecciona primero una columna en el lienzo (+ Añadir Módulo) para insertar este bloque.', 'info');
+      }
+      return;
+    }
+    if (colActiva) {
+      window._columnaObjetivoActiva_ = colActiva;
+    }
+  }
+  if (typeof insertarBloqueExe_ === 'function') {
+    var card = insertarBloqueExe_(tipo, null, typeof idPaginaActivaExe_ === 'function' ? idPaginaActivaExe_() : 0);
+    if (typeof aplicarFiltroPaginaExe_ === 'function') aplicarFiltroPaginaExe_();
+    if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
+    if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
+  }
   if (typeof window.insertarModuloEnColumnaActiva_ === 'function') {
     window.insertarModuloEnColumnaActiva_(tipo);
     return;
   }
   if (typeof window.insertariDeviceSesion_ === 'function') window.insertariDeviceSesion_(tipo);
+}
+
+function iniciarArrastreModuloCatalogo609_(ev, tipo) {
+  window._moduloArrastradoCatalogo_ = String(tipo || '');
+  if (ev && ev.currentTarget && ev.currentTarget.classList) {
+    ev.currentTarget.classList.add('dragging');
+  }
+  if (ev && ev.dataTransfer) {
+    try {
+      ev.dataTransfer.effectAllowed = 'copy';
+      ev.dataTransfer.setData('text/plain', String(tipo || ''));
+    } catch (e) {}
+  }
+}
+
+function finalizarArrastreModuloCatalogo609_(ev) {
+  if (ev && ev.currentTarget && ev.currentTarget.classList) {
+    ev.currentTarget.classList.remove('dragging');
+  }
+  document.querySelectorAll('.divi-column.drag-over-target').forEach(function (col) {
+    col.classList.remove('drag-over-target');
+  });
 }
 
 function htmlMiniCardCatalogo609_(mod) {
@@ -4732,15 +4776,15 @@ function htmlMiniCardCatalogo609_(mod) {
   var sub = escAttrCatalogo609_(mod.sub);
   var tema = escAttrCatalogo609_(mod.tema || 'tema-notion');
   var icono = mod.icono || '📦';
-  return '<div class="modulo-card-lateral ' + tema + '" data-tipo="' + tipo + '" data-nombre="' + titulo + '" data-sub="' + sub + '" role="button" tabindex="0" title="' + titulo + ' — ' + sub + '">' +
-    '<div class="card-lateral-cuerpo" onclick="invocarInsertarDesdeCatalogo609_(\'' + tipo + '\')">' +
+  return '<div class="modulo-card-lateral ' + tema + '" draggable="true" data-tipo="' + tipo + '" data-nombre="' + titulo + '" data-sub="' + sub + '" role="button" tabindex="0" title="' + titulo + (sub ? ' — ' + sub : '') + '" onclick="invocarInsertarDesdeCatalogo609_(\'' + tipo + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();invocarInsertarDesdeCatalogo609_(\'' + tipo + '\');}" ondragstart="iniciarArrastreModuloCatalogo609_(event, \'' + tipo + '\')" ondragend="finalizarArrastreModuloCatalogo609_(event)">' +
+    '<div class="card-lateral-cuerpo">' +
       '<span class="card-lateral-icon-badge" aria-hidden="true">' + icono + '</span>' +
       '<div class="card-lateral-textos">' +
         '<span class="card-lateral-titulo">' + titulo + '</span>' +
         '<span class="card-lateral-sub">' + sub + '</span>' +
       '</div>' +
     '</div>' +
-    '<button type="button" class="btn-card-add" title="Añadir a la columna activa" aria-label="Añadir ' + titulo + '" onclick="event.stopPropagation(); invocarInsertarDesdeCatalogo609_(\'' + tipo + '\');">+</button>' +
+    '<span class="btn-card-add" aria-hidden="true">+</span>' +
   '</div>';
 }
 
@@ -4811,6 +4855,8 @@ function configurarBuscadorCatalogo_() {
 }
 
 window.invocarInsertarDesdeCatalogo609_ = invocarInsertarDesdeCatalogo609_;
+window.iniciarArrastreModuloCatalogo609_ = iniciarArrastreModuloCatalogo609_;
+window.finalizarArrastreModuloCatalogo609_ = finalizarArrastreModuloCatalogo609_;
 window.limpiarBusquedaCatalogo_ = limpiarBusquedaCatalogo_;
 window.configurarBuscadorCatalogo_ = configurarBuscadorCatalogo_;
 
@@ -4874,7 +4920,7 @@ function htmlCatalogoExe_() {
     var items = cat.items.map(htmlMiniCardCatalogo609_).join('');
     return '<div class="cat-group' + (cat.abierto ? ' abierto' : '') + '" id="' + cat.id + '">' +
       '<div class="cat-header" onclick="toggleCatIDevices_(\'' + cat.id + '\')"><div class="cat-header-left">' + (cat.icon ? ('<span class="cat-header-icon" style="margin-right:6px;">' + cat.icon + '</span>') : '') + '<span>' + cat.titulo + '</span></div><i class="cat-chevron"></i></div>' +
-      '<div class="cat-items">' + items + '</div></div>';
+      '<div class="cat-items cat-group-body">' + items + '</div></div>';
   }).join('');
   return buscador + toolbar + acordeon;
 }
@@ -10101,6 +10147,47 @@ if (document.readyState === 'loading') {
     });
     document.addEventListener('keydown', function (ev) {
       if (ev.key === 'Escape') cerrarSelectoresColumnas_();
+    });
+    document.addEventListener('dragover', function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var col = t.closest('#contenedorIDevicesDinamicos .divi-column');
+      var grid = !col ? t.closest('#contenedorIDevicesDinamicos .divi-columns-grid') : null;
+      if (grid && !col) col = grid.querySelector('.divi-column');
+      if (!col) return;
+      ev.preventDefault();
+      if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'copy';
+      document.querySelectorAll('.divi-column.drag-over-target').forEach(function (c) {
+        if (c !== col) c.classList.remove('drag-over-target');
+      });
+      col.classList.add('drag-over-target');
+    });
+    document.addEventListener('dragleave', function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var col = t.closest('#contenedorIDevicesDinamicos .divi-column');
+      if (col && (!ev.relatedTarget || !col.contains(ev.relatedTarget))) {
+        col.classList.remove('drag-over-target');
+      }
+    });
+    document.addEventListener('drop', function (ev) {
+      var t = ev.target;
+      if (!t || !t.closest) return;
+      var col = t.closest('#contenedorIDevicesDinamicos .divi-column');
+      var grid = !col ? t.closest('#contenedorIDevicesDinamicos .divi-columns-grid') : null;
+      if (grid && !col) col = grid.querySelector('.divi-column');
+      if (!col) return;
+      ev.preventDefault();
+      col.classList.remove('drag-over-target');
+      var tipo = '';
+      if (ev.dataTransfer) {
+        try { tipo = ev.dataTransfer.getData('text/plain') || ''; } catch (e) {}
+      }
+      if (!tipo) tipo = window._moduloArrastradoCatalogo_ || '';
+      window._moduloArrastradoCatalogo_ = '';
+      if (!tipo) return;
+      marcarColumnaActiva_(col, false);
+      invocarInsertarDesdeCatalogo609_(tipo);
     });
   }
 

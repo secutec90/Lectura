@@ -5026,4 +5026,65 @@
       grid-template-columns: minmax(0, 1fr) !important;
     }
   }
+  /* ============================================================
+     BUILD-609 · TAREA B — RETÍCULAS DIVI EN EL PORTAL DEL ALUMNO
+     El preview (.browser-frame / .moment-panel) ya las tenía; el portal
+     real (.dua-clase-contenedor) no. Mismas reglas, mismo aislamiento.
+     ============================================================ */
+  .dua-clase-contenedor .divi-row {
+    margin: 0 0 14px;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  .dua-clase-contenedor .divi-row:last-child { margin-bottom: 0; }
+
+  .dua-clase-contenedor .divi-columns-grid {
+    display: grid;
+    gap: 14px;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dua-clase-contenedor .grid-col-1 { grid-template-columns: minmax(0, 1fr); }
+  .dua-clase-contenedor .grid-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dua-clase-contenedor .grid-col-70-30 { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); }
+  .dua-clase-contenedor .grid-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+
+  .dua-clase-contenedor .divi-column {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  .dua-clase-contenedor .divi-column > * {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+  }
+  /* Las tablas e imágenes dentro de una columna nunca empujan el layout */
+  .dua-clase-contenedor .divi-column table,
+  .dua-clase-contenedor .divi-column pre {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .dua-clase-contenedor .divi-column img,
+  .dua-clase-contenedor .divi-column iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 860px) {
+    .dua-clase-contenedor .grid-col-2,
+    .dua-clase-contenedor .grid-col-70-30,
+    .dua-clase-contenedor .grid-col-3 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
 </style>

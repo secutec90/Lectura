@@ -9254,10 +9254,10 @@ if (document.readyState === 'loading') {
     menu.className = 'divi-columns-picker columns-popover visible';
     menu.setAttribute('role', 'menu');
     [
-      ['col-1', '1 Columna [100%]', 'preview-1'],
-      ['col-2', '2 Columnas [50 / 50]', 'preview-2'],
-      ['col-2-70-30', '2 Columnas [70 / 30]', 'preview-70-30'],
-      ['col-3', '3 Columnas [33 / 33 / 33]', 'preview-3']
+      ['col-1', '1 Columna', 'preview-1', 1],
+      ['col-2', '50 / 50', 'preview-2', 2],
+      ['col-2-70-30', '70 / 30', 'preview-70-30', 2],
+      ['col-3', '33 / 33 / 33', 'preview-3', 3]
     ].forEach(function (op) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -9265,7 +9265,9 @@ if (document.readyState === 'loading') {
       b.setAttribute('data-distribucion', op[0]);
       b.setAttribute('role', 'menuitem');
       b.title = op[1];
-      b.innerHTML = '<div class="preview-mini ' + op[2] + '"><span></span>' + (op[0] === 'col-1' ? '' : (op[0] === 'col-3' ? '<span></span><span></span>' : '<span></span>')) + '</div><span class="option-label">' + op[1] + '</span>';
+      var spans = '';
+      for (var s = 0; s < op[3]; s++) spans += '<span></span>';
+      b.innerHTML = '<div class="preview-mini ' + op[2] + '">' + spans + '</div><span class="option-label">' + op[1] + '</span>';
       menu.appendChild(b);
     });
     filaPlus.appendChild(menu);

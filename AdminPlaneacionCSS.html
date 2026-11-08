@@ -6939,66 +6939,107 @@
     background: #d1fae5;
   }
 
-  .divi-columns-picker {
+  /* ---------- 3 · Selector Popover de Columnas Divi (Retícula 2x2 Fiel) ---------- */
+  .divi-columns-picker,
+  .columns-popover {
     position: absolute;
-    top: 32px;
+    top: 38px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1060;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    z-index: 1100;
+    display: none;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+    width: 290px;
+    min-width: 290px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16), 0 4px 10px rgba(15, 23, 42, 0.06);
+    box-sizing: border-box;
+  }
+  .divi-columns-picker[hidden] { display: none !important; }
+  .divi-columns-picker.visible,
+  .columns-popover.visible,
+  .divi-columns-picker:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .divi-col-option,
+  .col-card-option {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 8px;
-    min-width: 288px;
-    padding: 12px;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-  .divi-columns-picker[hidden] { display: none; }
-  .divi-col-option {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 9px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #ffffff;
+    width: 100% !important;
+    height: 74px !important;
+    padding: 8px 10px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
     cursor: pointer;
-    transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+    box-sizing: border-box;
+    transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .divi-col-option:hover {
-    border-color: var(--divi-green);
-    background: #f0fdf4;
-    transform: translateY(-1px);
+  .divi-col-option:hover,
+  .col-card-option:hover {
+    border-color: #10b981 !important;
+    background: #f0fdf4 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18);
+    transform: translateY(-2px);
   }
-  .divi-col-option:focus-visible {
+  .divi-col-option:focus-visible,
+  .col-card-option:focus-visible {
     outline: 2px solid var(--divi-teal);
     outline-offset: 2px;
   }
-  .divi-col-option .preview-mini {
-    display: grid;
-    gap: 3px;
-    height: 26px;
+
+  /* Previsualización miniatura de las columnas (rectángulos grises/azulados) */
+  .divi-col-option .preview-mini,
+  .col-card-option .preview-mini {
+    display: grid !important;
+    width: 100% !important;
+    height: 28px !important;
+    box-sizing: border-box;
   }
-  .divi-col-option .preview-mini span {
-    background: #e2e8f0;
-    border: 1px solid #cbd5e1;
-    border-radius: 3px;
+  .preview-1 { grid-template-columns: 1fr !important; }
+  .preview-2 { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+  .preview-70-30 { grid-template-columns: 7fr 3fr !important; gap: 6px !important; }
+  .preview-3 { grid-template-columns: 1fr 1fr 1fr !important; gap: 4px !important; }
+
+  .divi-col-option .preview-mini span,
+  .col-card-option .preview-mini span {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #dbeafe !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 4px !important;
+    box-sizing: border-box;
+    transition: background 150ms ease, border-color 150ms ease;
   }
-  .divi-col-option:hover .preview-mini span {
-    background: #bbf7d0;
-    border-color: #86efac;
+  .divi-col-option:hover .preview-mini span,
+  .col-card-option:hover .preview-mini span {
+    background: #bbf7d0 !important;
+    border-color: #86efac !important;
   }
-  .preview-1 { grid-template-columns: 1fr; }
-  .preview-2 { grid-template-columns: 1fr 1fr; }
-  .preview-70-30 { grid-template-columns: 7fr 3fr; }
-  .preview-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .divi-col-option .option-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #475569;
-    text-align: center;
+
+  .divi-col-option .option-label,
+  .col-card-option .option-label {
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    color: #334155 !important;
+    text-align: center !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+    letter-spacing: .02em;
+  }
+  .divi-col-option:hover .option-label,
+  .col-card-option:hover .option-label {
+    color: #065f46 !important;
   }
 
   /* ---------- 4 · Pastilla flotante contextual (Notion/Medium) ---------- */
@@ -7331,46 +7372,9 @@
     .divi-col-option,
     #bubbleToolbar.visible { animation: none; transition: none; }
   }
-  /* BUILD-608-DEEPSEEK: Unificación de Retículas Divi y Popover de Columnas */
+  /* BUILD-608-DEEPSEEK: Unificación de Retículas Divi */
   .divi-row.col-1, .divi-row.grid-col-1 { display: grid; grid-template-columns: 1fr; gap: 12px; }
   .divi-row.col-2, .divi-row.grid-col-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .divi-row.col-2-70-30, .divi-row.grid-col-2-70-30 { display: grid; grid-template-columns: 7fr 3fr; gap: 12px; }
   .divi-row.col-3, .divi-row.grid-col-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-
-  .columns-popover {
-    display: none;
-    position: absolute;
-    top: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1060;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    padding: 12px;
-    gap: 8px;
-  }
-  .columns-popover.visible,
-  .divi-columns-picker:not([hidden]) {
-    display: flex !important;
-  }
-  .col-card-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 54px;
-    height: 48px;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 6px;
-    cursor: pointer;
-    background: #f8fafc;
-    transition: all 0.15s ease-in-out;
-  }
-  .col-card-option:hover {
-    border-color: #10b981;
-    background: #ecfdf5;
-    transform: translateY(-2px);
-  }
 </style>

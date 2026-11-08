@@ -1700,12 +1700,32 @@ function varianteAlumno_(tipo) {
 }
 
 function etiquetaAlumno_(tipo) {
-  if (tipo === 'lectura') return 'Lectura guiada';
-  if (tipo === 'pregunta') return 'Pregunta formativa';
-  if (tipo === 'reto') return 'Reto práctico';
-  if (tipo === 'video') return 'Video';
-  if (tipo === 'quiz') return 'Quiz';
-  if (tipo === 'iframe') return 'Contenido externo';
+  if (tipo === 'lectura' || tipo === 'texto_dua') return 'Lectura guiada DUA';
+  if (tipo === 'objetivos') return 'Objetivos y PDA';
+  if (tipo === 'callout') return 'Recuadro DUA';
+  if (tipo === 'timeline') return 'Línea de Fases';
+  if (tipo === 'tabla_notion' || tipo === 'tabla') return 'Tabla Dinámica';
+  if (tipo === 'excel_split_table') return 'Tabla Multicelda';
+  if (tipo === 'word_shape') return 'Cuadro de Forma';
+  if (tipo === 'toggle_notion') return 'Sección Desplegable';
+  if (tipo === 'galeria') return 'Galería DUA';
+  if (tipo === 'fichero') return 'Fichero Adjunto';
+  if (tipo === 'pregunta' || tipo === 'quiz_evaluativo' || tipo === 'quiz') return 'Quiz Formativo';
+  if (tipo === 'encuesta') return 'Encuesta DUA';
+  if (tipo === 'vf') return 'Verdadero / Falso';
+  if (tipo === 'huecos') return 'Rellenar Huecos';
+  if (tipo === 'reto' || tipo === 'reto_ciencias') return 'Reto Situado';
+  if (tipo === 'video' || tipo === 'video_interactivo' || tipo === 'video_local') return 'Video Interactivo';
+  if (tipo === 'h5p_interactivo' || tipo === 'embebido' || tipo === 'iframe') return 'Recurso Interactivo';
+  if (tipo === 'geogebra' || tipo === 'geogebra_param') return 'Simulador GeoGebra';
+  if (tipo === 'flashcards') return 'Flashcards 3D';
+  if (tipo === 'listening') return 'Audio Listening';
+  if (tipo === 'pronunciacion') return 'Pronunciación';
+  if (tipo === 'rosco' || tipo === 'sopa' || tipo === 'adivina' || tipo === 'desafio') return 'Juego Pedagógico';
+  if (tipo === 'sim_ofimatica') return 'Hoja de Cálculo';
+  if (tipo === 'algoritmo') return 'Diagrama de Flujo';
+  if (tipo === 'codigo') return 'Editor de Código';
+  if (tipo === 'formula') return 'Fórmula Matemática';
   return 'Bloque';
 }
 
@@ -1894,6 +1914,11 @@ function irAPasoSesion_(numPaso) {
   if (n === 4) {
     pintarVistaPreviaIntegrada_();
     aplicarColorFondoPreview_();
+    var momActivo = Math.max(1, Math.min(4, (Number(window._nodoSesionActivo_) || 0) + 1));
+    var marcoInt = document.querySelector('#vistaPreviaIntegrada .browser-frame');
+    if (marcoInt && typeof mostrarMomentoPreview_ === 'function') {
+      mostrarMomentoPreview_(momActivo, marcoInt);
+    }
   }
 }
 
@@ -2102,17 +2127,23 @@ function tarjetaPreviewBloque_(card) {
   var cue = card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo');
   var tituloTexto = tit ? (tit.value || textoPlanoCampoBloque_(tit)) : etiquetaAlumno_(tipo);
   var cuerpoTexto = textoPlanoCampoBloque_(cue);
+  var cuerpoHtml = (cue && typeof esEditorRico_ === 'function' && esEditorRico_(cue)) ? String(cue.innerHTML || '').trim() : '';
 
   var iconMap = {
-    lectura: '🎧', texto_dua: '🎧', video: '🎬', video_interactivo: '▶️',
-    objetivos: '🎯', listening: '🎵', galeria: '🖼️', pronunciacion: '🗣️', flashcards: '🗂️',
-    reto: '✍️', reto_ciencias: '🔬', fichero: '📁', sim_ofimatica: '📊', algoritmo: '🧩',
-    quiz_evaluativo: '🎯', pregunta: '❓', encuesta: '📊', vf: '⚖️', huecos: '📝'
+    lectura: '🎧', texto_dua: '🎧', video: '🎬', video_interactivo: '▶️', video_local: '🎬',
+    objetivos: '🎯', callout: '💡', timeline: '⏱️', tabla_notion: '📊', excel_split_table: '📊',
+    word_shape: '▢', toggle_notion: '🔽', galeria: '🖼️', fichero: '📎',
+    listening: '🎵', pronunciacion: '🗣️', flashcards: '🃏',
+    reto: '✍️', reto_ciencias: '🔬', sim_ofimatica: '📊', algoritmo: '🔀', codigo: '💻',
+    geogebra: '📐', geogebra_param: '📐', h5p_interactivo: '🧩', embebido: '🌐', formula: '📐',
+    rosco: '🔤', sopa: '🔍', adivina: '❓', desafio: '🏆',
+    quiz_evaluativo: '🎯', pregunta: '❓', encuesta: '📊', vf: '✅', huecos: '✏️'
   };
   var icono = iconMap[tipo] || '📌';
 
   var art = document.createElement('article');
   art.className = 'content-card tarjeta-alumno-bloque';
+  art.setAttribute('data-tipo-preview', tipo);
   art.style.minWidth = '0';
   art.style.maxWidth = '100%';
   art.style.overflowX = 'auto';
@@ -2139,14 +2170,21 @@ function tarjetaPreviewBloque_(card) {
   head.appendChild(badge);
   art.appendChild(head);
 
-  if (cuerpoTexto) {
+  var omiteCuerpoGenerico = (
+    tipo === 'tabla_notion' || tipo === 'tabla' || tipo === 'excel_split_table' ||
+    tipo === 'word_shape' || tipo === 'vf' || tipo === 'callout' ||
+    tipo === 'toggle_notion' || tipo === 'huecos' || tipo === 'codigo' || tipo === 'formula'
+  );
+  if (!omiteCuerpoGenerico && (cuerpoHtml || cuerpoTexto)) {
     var p = document.createElement('div');
     p.className = 'reading-passage';
     p.setAttribute('data-texto-voz', '1');
-    p.textContent = cuerpoTexto;
+    if (cuerpoHtml) p.innerHTML = cuerpoHtml;
+    else p.textContent = cuerpoTexto;
     art.appendChild(p);
   }
 
+  /* 1. Lectura DUA / Texto con Audio */
   if (tipo === 'lectura' || tipo === 'texto_dua') {
     var player = document.createElement('div');
     player.className = 'audio-dua-player';
@@ -2181,8 +2219,73 @@ function tarjetaPreviewBloque_(card) {
     art.appendChild(player);
   }
 
+  /* 2. Línea de Fases (timeline) */
+  if (tipo === 'timeline') {
+    var pasosInp = card.querySelectorAll('.inp-timeline');
+    var tlWrap = document.createElement('div');
+    tlWrap.className = 'timeline-preview-alumno';
+    tlWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin-top:10px;padding:8px 4px;';
+    var numPaso = 0;
+    pasosInp.forEach(function (inp, idx) {
+      var txtFase = String(inp.value || '').trim();
+      if (!txtFase) return;
+      numPaso += 1;
+      var item = document.createElement('div');
+      item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid #0d9488;border-radius:8px;';
+      var badgeNum = document.createElement('span');
+      badgeNum.style.cssText = 'width:26px;height:26px;border-radius:50%;background:#0d9488;color:#ffffff;font-weight:800;font-size:12px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;';
+      badgeNum.textContent = String(numPaso);
+      var txtEl = document.createElement('div');
+      txtEl.style.cssText = 'font-size:13.5px;font-weight:600;color:#0f172a;line-height:1.4;flex:1;';
+      txtEl.textContent = txtFase;
+      item.appendChild(badgeNum);
+      item.appendChild(txtEl);
+      tlWrap.appendChild(item);
+    });
+    if (numPaso > 0) art.appendChild(tlWrap);
+  }
+
+  /* 3. Recuadro Notion (callout) */
+  if (tipo === 'callout') {
+    var emojiSel = card.querySelector('.sel-emoji-callout');
+    var emojiVal = (emojiSel && emojiSel.value) || '💡';
+    var calloutBox = document.createElement('div');
+    calloutBox.className = 'notion-callout';
+    calloutBox.style.cssText = 'display:flex;gap:12px;align-items:flex-start;margin-top:10px;padding:14px 16px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;color:#14532d;';
+    var emSpan = document.createElement('span');
+    emSpan.style.cssText = 'font-size:24px;line-height:1;';
+    emSpan.textContent = emojiVal;
+    var bodyCallout = document.createElement('div');
+    bodyCallout.style.cssText = 'flex:1;font-size:14px;line-height:1.5;';
+    if (cuerpoHtml) bodyCallout.innerHTML = cuerpoHtml;
+    else bodyCallout.textContent = cuerpoTexto || 'Idea clave de la sesión.';
+    calloutBox.appendChild(emSpan);
+    calloutBox.appendChild(bodyCallout);
+    art.appendChild(calloutBox);
+  }
+
+  /* 4. Sección Desplegable (toggle_notion) */
+  if (tipo === 'toggle_notion') {
+    var details = document.createElement('details');
+    details.open = true;
+    details.style.cssText = 'margin-top:10px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;padding:10px 14px;';
+    var summary = document.createElement('summary');
+    summary.style.cssText = 'font-weight:700;color:#0f766e;cursor:pointer;font-size:13.5px;';
+    summary.textContent = 'Desplegar detalle (' + tituloTexto + ')';
+    var detBody = document.createElement('div');
+    detBody.style.cssText = 'margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0;font-size:13.5px;color:#1e293b;line-height:1.5;';
+    var toggleCuerpo = card.querySelector('.toggle-notion-cuerpo');
+    if (cuerpoHtml) detBody.innerHTML = cuerpoHtml;
+    else if (cuerpoTexto) detBody.textContent = cuerpoTexto;
+    else if (toggleCuerpo) detBody.textContent = toggleCuerpo.textContent || '';
+    details.appendChild(summary);
+    details.appendChild(detBody);
+    art.appendChild(details);
+  }
+
+  /* 5. Tablas (tabla_notion / excel_split_table) */
   if (tipo === 'tabla_notion' || tipo === 'tabla' || tipo === 'excel_split_table') {
-    var tbl = card.querySelector('table.tabla-notion, table.excel-layout-table, table');
+    var tbl = card.querySelector('table.tabla-notion, table.excel-split-table, table.excel-layout-table, table');
     if (tbl) {
       var tblWrap = document.createElement('div');
       tblWrap.className = 'notion-table-wrap preview-table-wrap';
@@ -2192,12 +2295,14 @@ function tarjetaPreviewBloque_(card) {
       tblWrap.style.boxSizing = 'border-box';
       var clonTbl = tbl.cloneNode(true);
       clonTbl.removeAttribute('contenteditable');
+      clonTbl.querySelectorAll('.celda-props-bar').forEach(function (b) { b.remove(); });
       clonTbl.querySelectorAll('[contenteditable]').forEach(function (el) { el.removeAttribute('contenteditable'); });
       tblWrap.appendChild(clonTbl);
       art.appendChild(tblWrap);
     }
   }
 
+  /* 6. Cuadro de Forma Word (word_shape) */
   if (tipo === 'word_shape') {
     var ws = card.querySelector('.word-shape-box');
     if (ws) {
@@ -2205,6 +2310,285 @@ function tarjetaPreviewBloque_(card) {
       clonWs.removeAttribute('contenteditable');
       clonWs.style.marginTop = '8px';
       art.appendChild(clonWs);
+    }
+  }
+
+  /* 7. Verdadero / Falso interactivo (vf) */
+  if (tipo === 'vf') {
+    var txtAf = card.querySelector('.txt-afirmacion-vf');
+    var radioV = card.querySelector('input[type="radio"][value="V"]');
+    var retroInp = card.querySelector('.inp-retro-vf');
+    var afirmacion = (txtAf && txtAf.value) || cuerpoTexto || 'Evalúa la siguiente afirmación:';
+    var correctaVF = (radioV && radioV.checked) ? 'V' : 'F';
+    var retroVF = (retroInp && retroInp.value) || 'Revisa el fundamento visto en la sesión.';
+
+    var pAf = document.createElement('div');
+    pAf.className = 'reading-passage';
+    pAf.style.cssText = 'font-weight:700;font-size:14px;color:#0f172a;margin-top:8px;padding:12px;background:#f8fafc;border-left:4px solid #0284c7;border-radius:6px;';
+    pAf.textContent = afirmacion;
+    art.appendChild(pAf);
+
+    var vfBtns = document.createElement('div');
+    vfBtns.style.cssText = 'display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;';
+    var fbVF = document.createElement('div');
+    fbVF.className = 'quiz-feedback';
+    fbVF.style.marginTop = '10px';
+
+    [['V', '🟢 Verdadero', '#059669'], ['F', '🔴 Falso', '#dc2626']].forEach(function (par) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.style.cssText = 'flex:1;min-width:130px;padding:10px 14px;border-radius:8px;border:1.5px solid ' + par[2] + ';background:#ffffff;color:' + par[2] + ';font-weight:800;font-size:13px;cursor:pointer;';
+      b.textContent = par[1];
+      b.addEventListener('click', function () {
+        var acierto = (par[0] === correctaVF);
+        fbVF.style.display = 'block';
+        fbVF.className = 'quiz-feedback' + (acierto ? ' success' : '');
+        fbVF.textContent = (acierto ? '✅ ¡Correcto! ' : '❌ Respuesta incorrecta. ') + retroVF;
+      });
+      vfBtns.appendChild(b);
+    });
+    art.appendChild(vfBtns);
+    art.appendChild(fbVF);
+  }
+
+  /* 8. Rellenar Huecos (huecos) */
+  if (tipo === 'huecos') {
+    var baseHuecos = cuerpoTexto || 'Completa los espacios ____ con los conceptos clave de la clase.';
+    var huecosBox = document.createElement('div');
+    huecosBox.style.cssText = 'margin-top:10px;padding:14px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;line-height:2;font-size:14px;color:#0f172a;';
+    var partesH = baseHuecos.split(/_{2,}|\[([^\]]+)\]/g);
+    if (partesH.length <= 1) {
+      huecosBox.textContent = baseHuecos + ' ';
+      var inpUnico = document.createElement('input');
+      inpUnico.type = 'text';
+      inpUnico.placeholder = 'Escribe tu respuesta...';
+      inpUnico.style.cssText = 'padding:4px 8px;border:1.5px solid #0d9488;border-radius:6px;font-weight:700;width:160px;';
+      huecosBox.appendChild(inpUnico);
+    } else {
+      baseHuecos.replace(/([^_\[]+)|(_{2,}|\[[^\]]+\])/g, function (_, txtPlano, hueco) {
+        if (txtPlano) huecosBox.appendChild(document.createTextNode(txtPlano));
+        if (hueco) {
+          var inpH = document.createElement('input');
+          inpH.type = 'text';
+          inpH.placeholder = '________';
+          inpH.style.cssText = 'margin:0 4px;padding:3px 8px;border:1.5px solid #0d9488;border-radius:6px;font-weight:700;width:120px;text-align:center;';
+          huecosBox.appendChild(inpH);
+        }
+        return '';
+      });
+    }
+    art.appendChild(huecosBox);
+  }
+
+  /* 9. Flashcards 3D Bilingües (flashcards) */
+  if (tipo === 'flashcards') {
+    var filasFc = card.querySelectorAll('.fila-flashcard');
+    var fcGrid = document.createElement('div');
+    fcGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px;';
+    filasFc.forEach(function (fila) {
+      var pal = ((fila.querySelector('.inp-palabra') || {}).value || '').trim();
+      var trad = ((fila.querySelector('.inp-traduccion') || {}).value || '').trim();
+      if (!pal && !trad) return;
+      var itemFc = document.createElement('div');
+      itemFc.style.cssText = 'padding:12px;border:1.5px solid #bae6fd;border-radius:10px;background:#f0f9ff;text-align:center;cursor:pointer;';
+      var mostrarReverso = false;
+      var lblCara = document.createElement('span');
+      lblCara.style.cssText = 'display:block;font-size:10px;font-weight:800;color:#0284c7;text-transform:uppercase;margin-bottom:4px;';
+      lblCara.textContent = 'FRONT · CLICK TO FLIP';
+      var txtCara = document.createElement('strong');
+      txtCara.style.cssText = 'display:block;font-size:15px;color:#0f172a;margin-bottom:8px;';
+      txtCara.textContent = pal || 'Word';
+      var btnSpeak = document.createElement('button');
+      btnSpeak.type = 'button';
+      btnSpeak.style.cssText = 'padding:4px 10px;font-size:11px;font-weight:700;border-radius:999px;border:1px solid #0284c7;background:#ffffff;color:#0284c7;cursor:pointer;';
+      btnSpeak.textContent = '🔊 Listen';
+      btnSpeak.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        if (typeof hablarInglesExe_ === 'function') hablarInglesExe_(pal);
+      });
+      itemFc.addEventListener('click', function () {
+        mostrarReverso = !mostrarReverso;
+        lblCara.textContent = mostrarReverso ? 'TRADUCCIÓN / MEANING' : 'FRONT · CLICK TO FLIP';
+        txtCara.textContent = mostrarReverso ? (trad || 'Traducción') : (pal || 'Word');
+        itemFc.style.background = mostrarReverso ? '#f0fdf4' : '#f0f9ff';
+      });
+      itemFc.appendChild(lblCara);
+      itemFc.appendChild(txtCara);
+      itemFc.appendChild(btnSpeak);
+      fcGrid.appendChild(itemFc);
+    });
+    if (fcGrid.children.length) art.appendChild(fcGrid);
+  }
+
+  /* 10. Audio Listening y Pronunciación (listening / pronunciacion) */
+  if (tipo === 'listening') {
+    var audioUrl = ((card.querySelector('.inp-audio-url') || {}).value || '').trim();
+    var transc = ((card.querySelector('.txt-transcripcion') || {}).value || '').trim();
+    var reactivoL = ((card.querySelector('.txt-reactivo') || {}).value || '').trim();
+    var boxL = document.createElement('div');
+    boxL.style.cssText = 'margin-top:10px;padding:12px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;display:flex;flex-direction:column;gap:8px;';
+    if (audioUrl) {
+      var aud = document.createElement('audio');
+      aud.controls = true;
+      aud.src = audioUrl;
+      aud.style.width = '100%';
+      boxL.appendChild(aud);
+    }
+    var btnListen = document.createElement('button');
+    btnListen.type = 'button';
+    btnListen.className = 'btn-check-answer';
+    btnListen.style.alignSelf = 'flex-start';
+    btnListen.textContent = '🎧 Escuchar en inglés';
+    btnListen.addEventListener('click', function () {
+      if (typeof hablarInglesExe_ === 'function') hablarInglesExe_(transc || tituloTexto);
+    });
+    boxL.appendChild(btnListen);
+    if (transc) {
+      var pTr = document.createElement('div');
+      pTr.style.cssText = 'font-size:13px;color:#334155;font-style:italic;';
+      pTr.textContent = 'Transcript: "' + transc + '"';
+      boxL.appendChild(pTr);
+    }
+    if (reactivoL) {
+      var pRx = document.createElement('div');
+      pRx.style.cssText = 'font-size:13.5px;font-weight:700;color:#0f172a;margin-top:4px;';
+      pRx.textContent = '❓ ' + reactivoL;
+      boxL.appendChild(pRx);
+    }
+    art.appendChild(boxL);
+  }
+
+  if (tipo === 'pronunciacion') {
+    var fraseIng = ((card.querySelector('.txt-frase-ingles') || {}).value || '').trim() || 'Practice reading aloud in English.';
+    var boxPr = document.createElement('div');
+    boxPr.style.cssText = 'margin-top:10px;padding:12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;display:flex;flex-direction:column;gap:8px;';
+    var fraseEl = document.createElement('div');
+    fraseEl.style.cssText = 'font-size:15px;font-weight:800;color:#0369a1;';
+    fraseEl.textContent = '🗣️ "' + fraseIng + '"';
+    var btnMod = document.createElement('button');
+    btnMod.type = 'button';
+    btnMod.className = 'btn-check-answer';
+    btnMod.style.alignSelf = 'flex-start';
+    btnMod.textContent = '🔊 Escuchar modelo en inglés';
+    btnMod.addEventListener('click', function () {
+      if (typeof hablarInglesExe_ === 'function') hablarInglesExe_(fraseIng);
+    });
+    boxPr.appendChild(fraseEl);
+    boxPr.appendChild(btnMod);
+    art.appendChild(boxPr);
+  }
+
+  /* 11. Tecnología: Hoja de Cálculo, Algoritmo y Código */
+  if (tipo === 'sim_ofimatica') {
+    var hoja = card.querySelector('table.hoja-ofimatica');
+    if (hoja) {
+      var clonHoja = hoja.cloneNode(true);
+      clonHoja.style.marginTop = '10px';
+      var origInps = hoja.querySelectorAll('.celda-hoja');
+      var clonInps = clonHoja.querySelectorAll('.celda-hoja');
+      origInps.forEach(function (inp, idx) {
+        if (clonInps[idx]) clonInps[idx].value = inp.value || '';
+      });
+      art.appendChild(clonHoja);
+    }
+  }
+
+  if (tipo === 'algoritmo') {
+    var pasosAlg = card.querySelectorAll('.paso-algoritmo');
+    var algWrap = document.createElement('div');
+    algWrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-top:10px;';
+    var etiquetasAlg = { inicio: '🟢 Inicio', proceso: '⚙️ Proceso', condicion: '🔀 Condición', fin: '🏁 Fin' };
+    pasosAlg.forEach(function (inp) {
+      var val = String(inp.value || '').trim();
+      if (!val) return;
+      var clave = inp.getAttribute('data-paso') || 'paso';
+      var nodoAlg = document.createElement('div');
+      nodoAlg.style.cssText = 'padding:10px 14px;background:#f8fafc;border:1.5px solid #94a3b8;border-radius:8px;font-size:13px;color:#0f172a;';
+      nodoAlg.innerHTML = '<strong>' + (etiquetasAlg[clave] || clave) + ':</strong> ' + escaparHtmlEditor_(val);
+      algWrap.appendChild(nodoAlg);
+    });
+    if (algWrap.children.length) art.appendChild(algWrap);
+  }
+
+  if (tipo === 'codigo' || tipo === 'formula') {
+    var pre = document.createElement('pre');
+    pre.style.cssText = tipo === 'codigo'
+      ? 'margin-top:10px;padding:14px;background:#0f172a;color:#e2e8f0;border-radius:8px;font-family:monospace;font-size:13px;overflow-x:auto;white-space:pre-wrap;'
+      : 'margin-top:10px;padding:14px;background:#f0fdfa;color:#134e4a;border:1.5px solid #99f6e4;border-radius:8px;font-family:serif;font-size:16px;font-weight:700;text-align:center;';
+    pre.textContent = cuerpoTexto || (tipo === 'codigo' ? '// Escribe tu código o pseudocódigo aquí' : 'f(x) = ax² + bx + c');
+    art.appendChild(pre);
+  }
+
+  /* 12. Multimedia: GeoGebra, H5P, Embebido, Video Local / YouTube, Galería */
+  if (tipo === 'geogebra' || tipo === 'geogebra_param') {
+    var ggbId = ((card.querySelector('.inp-geogebra-id, [data-ggb="material"]') || {}).value || '').trim();
+    var ggbAlto = ((card.querySelector('.inp-geogebra-alto, [data-ggb="alto"]') || {}).value || '380').trim();
+    if (ggbId) {
+      var ggbSrc = ggbId.indexOf('http') === 0 ? ggbId : ('https://www.geogebra.org/material/iframe/id/' + ggbId);
+      var ggbFrame = document.createElement('iframe');
+      ggbFrame.src = ggbSrc;
+      ggbFrame.style.cssText = 'width:100%;height:' + (parseInt(ggbAlto, 10) || 380) + 'px;border:1px solid #cbd5e1;border-radius:8px;margin-top:10px;';
+      ggbFrame.setAttribute('allowfullscreen', '');
+      art.appendChild(ggbFrame);
+    }
+  }
+
+  if (tipo === 'h5p_interactivo' || tipo === 'embebido') {
+    var urlH5p = ((card.querySelector('.inp-h5p-url') || {}).value || cuerpoTexto || '').trim();
+    if (/^https?:\/\//i.test(urlH5p)) {
+      var h5pFrame = document.createElement('iframe');
+      h5pFrame.src = urlH5p;
+      h5pFrame.style.cssText = 'width:100%;height:400px;border:1px solid #cbd5e1;border-radius:8px;margin-top:10px;';
+      h5pFrame.setAttribute('allowfullscreen', '');
+      art.appendChild(h5pFrame);
+    }
+  }
+
+  if (tipo === 'video_interactivo' || tipo === 'video_local') {
+    var vUrl = ((card.querySelector('.inp-video-url') || {}).value || '').trim();
+    var vLocal = card.querySelector('video.video-local-player');
+    var pausaSeg = ((card.querySelector('.inp-pausa-seg') || {}).value || '').trim();
+    var pausaPreg = ((card.querySelector('.inp-pausa-preg') || {}).value || '').trim();
+    if (vUrl) {
+      var ytMatch = vUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      var driveMatch = vUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      var vIframe = document.createElement('iframe');
+      vIframe.style.cssText = 'width:100%;height:315px;border:0;border-radius:8px;margin-top:10px;';
+      vIframe.setAttribute('allowfullscreen', '');
+      vIframe.src = ytMatch ? ('https://www.youtube-nocookie.com/embed/' + ytMatch[1]) : (driveMatch ? ('https://drive.google.com/file/d/' + driveMatch[1] + '/preview') : vUrl);
+      art.appendChild(vIframe);
+    } else if (vLocal && vLocal.src) {
+      var vClon = document.createElement('video');
+      vClon.controls = true;
+      vClon.src = vLocal.src;
+      vClon.style.cssText = 'width:100%;max-height:340px;border-radius:8px;margin-top:10px;background:#000;';
+      art.appendChild(vClon);
+    }
+    if (pausaPreg) {
+      var pBadge = document.createElement('div');
+      pBadge.style.cssText = 'margin-top:8px;padding:10px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:13px;color:#92400e;';
+      pBadge.textContent = '⏸️ Pausa interactiva' + (pausaSeg ? (' (' + pausaSeg + 's)') : '') + ': ' + pausaPreg;
+      art.appendChild(pBadge);
+    }
+  }
+
+  if (tipo === 'galeria') {
+    var imgUrl = ((card.querySelector('.inp-img-url') || {}).value || '').trim();
+    var imgPrev = card.querySelector('.caja-img-prev img');
+    var altDua = ((card.querySelector('.txt-alt-dua') || {}).value || '').trim();
+    var srcFinal = imgUrl || (imgPrev && imgPrev.src) || '';
+    if (srcFinal) {
+      var imgEl = document.createElement('img');
+      imgEl.src = srcFinal;
+      imgEl.alt = altDua || tituloTexto;
+      imgEl.style.cssText = 'max-width:100%;border-radius:8px;margin-top:10px;display:block;';
+      art.appendChild(imgEl);
+    }
+    if (altDua) {
+      var capEl = document.createElement('div');
+      capEl.style.cssText = 'margin-top:6px;font-size:12.5px;color:#475569;background:#f8fafc;padding:8px 10px;border-radius:6px;';
+      capEl.textContent = '🔊 Descripción accesible DUA: ' + altDua;
+      art.appendChild(capEl);
     }
   }
 
@@ -2997,99 +3381,20 @@ function armarMaquetaAlumno_() {
   }
 
   var p1 = panelMomento(1, true);
-  var c1 = encabezado('🎧', 'Saberes Previos y Lectura Guiada DUA', 'Activación de conocimientos mediante situación detonadora', 'Accesibilidad DUA con Audio');
-  var player = nodoPreview_('div', 'audio-dua-player');
-  var left = nodoPreview_('div', 'player-left');
-  var play = nodoPreview_('button', 'btn-play-dua', '▶');
-  play.type = 'button';
-  play.title = 'Escuchar narración en voz alta';
-  play.addEventListener('click', function () { toggleAudioDuaPreview_(play); });
-  var info = nodoPreview_('div', 'player-info');
-  info.appendChild(nodoPreview_('h4', '', 'Narración Asistida de la Sesión'));
-  info.appendChild(nodoPreview_('p', 'player-status', 'Voz guiada en español de México · Pulsa reproducir'));
-  left.appendChild(play);
-  left.appendChild(info);
-  var waves = nodoPreview_('div', 'waveform-bars');
-  for (var w = 0; w < 6; w++) waves.appendChild(nodoPreview_('span', 'wave-bar'));
-  player.appendChild(left);
-  player.appendChild(waves);
-  c1.appendChild(player);
-  c1.appendChild(nodoPreview_('div', 'reading-passage', apertura));
-  p1.appendChild(c1);
   cuerpo.appendChild(p1);
-
   var p2 = panelMomento(2, false);
-  var c2 = encabezado('📖', 'Conceptos Centrales y Libro SEP', campo, 'Fase 6 · SEP');
-  c2.appendChild(nodoPreview_('div', 'reading-passage', desarrollo));
-  p2.appendChild(c2);
   cuerpo.appendChild(p2);
-
   var p3 = panelMomento(3, false);
-  var c3 = encabezado('✍️', 'Actividad situada', 'Evidencia del alumno', 'Evidencia Evaluable');
-  c3.appendChild(nodoPreview_('p', 'reading-passage', actividad));
-  var drop = nodoPreview_('div', 'dropzone-box');
-  drop.appendChild(nodoPreview_('div', 'dropzone-icon', '☁️'));
-  drop.appendChild(nodoPreview_('div', 'dropzone-title', 'Subir evidencia de la actividad'));
-  drop.appendChild(nodoPreview_('div', 'dropzone-subtitle', 'Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)'));
-  var examinar = nodoPreview_('button', 'btn-browse', 'Examinar mi dispositivo');
-  examinar.type = 'button';
-  var input = nodoPreview_('input', 'inp-evidencia-preview');
-  input.type = 'file';
-  input.accept = '.pdf,.jpg,.jpeg,.png';
-  input.style.display = 'none';
-  input.addEventListener('click', function (ev) { ev.stopPropagation(); });
-  input.addEventListener('change', function () { marcarEvidenciaPreview_(input); });
-  drop.addEventListener('click', function (ev) {
-    if (ev.target === input) return;
-    simularCargaEvidenciaPreview_(drop);
-  });
-  drop.appendChild(examinar);
-  drop.appendChild(input);
-  c3.appendChild(drop);
-  p3.appendChild(c3);
   cuerpo.appendChild(p3);
-
   var p4 = panelMomento(4, false);
-  var quizCard = nodoPreview_('div', 'quiz-card');
-  var qHead = nodoPreview_('div', 'card-header');
-  var qWrap = nodoPreview_('div', 'card-title-wrap');
-  qWrap.appendChild(nodoPreview_('div', 'card-icon-bubble', '🎯'));
-  var qTextos = nodoPreview_('div');
-  qTextos.appendChild(nodoPreview_('h2', 'card-title', 'Quiz Formativo de Cierre'));
-  qTextos.appendChild(nodoPreview_('p', '', 'Autocalificación inmediata · ' + quiz.puntos + ' puntos'));
-  qWrap.appendChild(qTextos);
-  qHead.appendChild(qWrap);
-  qHead.appendChild(nodoPreview_('span', 'card-badge', 'Autocalificable'));
-  quizCard.appendChild(qHead);
-  var pregunta = nodoPreview_('div', 'quiz-question');
-  pregunta.appendChild(nodoPreview_('span', '', '1.'));
-  pregunta.appendChild(nodoPreview_('span', '', cierre));
-  quizCard.appendChild(pregunta);
-  var opciones = nodoPreview_('div', 'quiz-options');
-  var letras = ['A', 'B', 'C', 'D', 'E', 'F'];
-  quiz.opciones.forEach(function (op, i) {
-    var opt = nodoPreview_('div', 'quiz-option');
-    opt.appendChild(nodoPreview_('span', 'option-letter', letras[i] || String(i + 1)));
-    opt.appendChild(nodoPreview_('span', '', op.texto));
-    opt.addEventListener('click', function () { seleccionarOpcionQuizPreview_(opt, op.correcta); });
-    opciones.appendChild(opt);
-  });
-  quizCard.appendChild(opciones);
-  var acciones = nodoPreview_('div', 'quiz-actions');
-  var comprobar = nodoPreview_('button', 'btn-check-answer', 'Comprobar Respuesta');
-  comprobar.type = 'button';
-  comprobar.addEventListener('click', function () { verificarQuizPreview_(comprobar); });
-  acciones.appendChild(comprobar);
-  acciones.appendChild(nodoPreview_('div', 'quiz-feedback'));
-  quizCard.appendChild(acciones);
-  p4.appendChild(quizCard);
   cuerpo.appendChild(p4);
-  anexarContenidosAprendizajePreview_(p1, p2, p3, p4);
-  anexarLienzoVivoPreview_(p2);
+
   if (window._colorFondoSesionActiva_) marco.style.backgroundColor = window._colorFondoSesionActiva_;
 
   var cont = document.getElementById('contenedorIDevicesDinamicos');
-  if (cont) {
+  var totalTarjetasDom = cont ? cont.querySelectorAll('.idevice-card').length : 0;
+
+  if (cont && totalTarjetasDom > 0) {
     var filas = cont.querySelectorAll('.divi-row');
     if (filas.length > 0) {
       filas.forEach(function (fila) {
@@ -3098,8 +3403,9 @@ function armarMaquetaAlumno_() {
         var primeraCard = fila.querySelector('.idevice-card');
         if (!primeraCard) return;
 
-        var pagId = parseInt(fila.getAttribute('data-pagina-id') || primeraCard.getAttribute('data-pagina-id'), 10);
-        var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(primeraCard.getAttribute('data-tipo') || '');
+        var pagAttr = fila.getAttribute('data-pagina-id') || primeraCard.getAttribute('data-pagina-id');
+        var pagId = (pagAttr != null && pagAttr !== '') ? parseInt(pagAttr, 10) : NaN;
+        var m = !isNaN(pagId) ? (pagId + 1) : ((Number(window._nodoSesionActivo_) || 0) + 1);
         var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
         if (!panelDest) return;
 
@@ -3131,8 +3437,9 @@ function armarMaquetaAlumno_() {
 
       var sueltas = cont.querySelectorAll(':scope > .idevice-card, :scope > .divi-section > .idevice-card');
       sueltas.forEach(function (c) {
-        var pagId = parseInt(c.getAttribute('data-pagina-id'), 10);
-        var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(c.getAttribute('data-tipo') || '');
+        var pagAttr = c.getAttribute('data-pagina-id');
+        var pagId = (pagAttr != null && pagAttr !== '') ? parseInt(pagAttr, 10) : NaN;
+        var m = !isNaN(pagId) ? (pagId + 1) : ((Number(window._nodoSesionActivo_) || 0) + 1);
         var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
         if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
           panelDest.appendChild(tarjetaPreviewBloque_(c));
@@ -3141,14 +3448,108 @@ function armarMaquetaAlumno_() {
     } else {
       var cards = cont.querySelectorAll('.idevice-card');
       cards.forEach(function (c) {
-        var pagId = parseInt(c.getAttribute('data-pagina-id'), 10);
-        var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(c.getAttribute('data-tipo') || '');
+        var pagAttr = c.getAttribute('data-pagina-id');
+        var pagId = (pagAttr != null && pagAttr !== '') ? parseInt(pagAttr, 10) : NaN;
+        var m = !isNaN(pagId) ? (pagId + 1) : ((Number(window._nodoSesionActivo_) || 0) + 1);
         var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
         if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
           panelDest.appendChild(tarjetaPreviewBloque_(c));
         }
       });
     }
+  } else {
+    anexarContenidosAprendizajePreview_(p1, p2, p3, p4);
+    anexarLienzoVivoPreview_(p2);
+  }
+
+  /* Respaldo desde el Paso 1 únicamente para los momentos que aún no tienen bloques en el Constructor */
+  if (!p1.children.length) {
+    var c1 = encabezado('🎧', 'Saberes Previos y Lectura Guiada DUA', 'Activación de conocimientos mediante situación detonadora', 'Accesibilidad DUA con Audio');
+    var player = nodoPreview_('div', 'audio-dua-player');
+    var left = nodoPreview_('div', 'player-left');
+    var play = nodoPreview_('button', 'btn-play-dua', '▶');
+    play.type = 'button';
+    play.title = 'Escuchar narración en voz alta';
+    play.addEventListener('click', function () { toggleAudioDuaPreview_(play); });
+    var info = nodoPreview_('div', 'player-info');
+    info.appendChild(nodoPreview_('h4', '', 'Narración Asistida de la Sesión'));
+    info.appendChild(nodoPreview_('p', 'player-status', 'Voz guiada en español de México · Pulsa reproducir'));
+    left.appendChild(play);
+    left.appendChild(info);
+    var waves = nodoPreview_('div', 'waveform-bars');
+    for (var w = 0; w < 6; w++) waves.appendChild(nodoPreview_('span', 'wave-bar'));
+    player.appendChild(left);
+    player.appendChild(waves);
+    c1.appendChild(player);
+    c1.appendChild(nodoPreview_('div', 'reading-passage', apertura));
+    p1.appendChild(c1);
+  }
+
+  if (!p2.children.length) {
+    var c2 = encabezado('📖', 'Conceptos Centrales y Libro SEP', campo, 'Fase 6 · SEP');
+    c2.appendChild(nodoPreview_('div', 'reading-passage', desarrollo));
+    p2.appendChild(c2);
+  }
+
+  if (!p3.children.length) {
+    var c3 = encabezado('✍️', 'Actividad situada', 'Evidencia del alumno', 'Evidencia Evaluable');
+    c3.appendChild(nodoPreview_('p', 'reading-passage', actividad));
+    var drop = nodoPreview_('div', 'dropzone-box');
+    drop.appendChild(nodoPreview_('div', 'dropzone-icon', '☁️'));
+    drop.appendChild(nodoPreview_('div', 'dropzone-title', 'Subir evidencia de la actividad'));
+    drop.appendChild(nodoPreview_('div', 'dropzone-subtitle', 'Arrastra tu archivo aquí o haz clic para seleccionarlo (PDF, JPG o PNG)'));
+    var examinar = nodoPreview_('button', 'btn-browse', 'Examinar mi dispositivo');
+    examinar.type = 'button';
+    var input = nodoPreview_('input', 'inp-evidencia-preview');
+    input.type = 'file';
+    input.accept = '.pdf,.jpg,.jpeg,.png';
+    input.style.display = 'none';
+    input.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    input.addEventListener('change', function () { marcarEvidenciaPreview_(input); });
+    drop.addEventListener('click', function (ev) {
+      if (ev.target === input) return;
+      simularCargaEvidenciaPreview_(drop);
+    });
+    drop.appendChild(examinar);
+    drop.appendChild(input);
+    c3.appendChild(drop);
+    p3.appendChild(c3);
+  }
+
+  if (!p4.children.length) {
+    var quizCard = nodoPreview_('div', 'quiz-card');
+    var qHead = nodoPreview_('div', 'card-header');
+    var qWrap = nodoPreview_('div', 'card-title-wrap');
+    qWrap.appendChild(nodoPreview_('div', 'card-icon-bubble', '🎯'));
+    var qTextos = nodoPreview_('div');
+    qTextos.appendChild(nodoPreview_('h2', 'card-title', 'Quiz Formativo de Cierre'));
+    qTextos.appendChild(nodoPreview_('p', '', 'Autocalificación inmediata · ' + quiz.puntos + ' puntos'));
+    qWrap.appendChild(qTextos);
+    qHead.appendChild(qWrap);
+    qHead.appendChild(nodoPreview_('span', 'card-badge', 'Autocalificable'));
+    quizCard.appendChild(qHead);
+    var pregunta = nodoPreview_('div', 'quiz-question');
+    pregunta.appendChild(nodoPreview_('span', '', '1.'));
+    pregunta.appendChild(nodoPreview_('span', '', cierre));
+    quizCard.appendChild(pregunta);
+    var opciones = nodoPreview_('div', 'quiz-options');
+    var letras = ['A', 'B', 'C', 'D', 'E', 'F'];
+    quiz.opciones.forEach(function (op, i) {
+      var opt = nodoPreview_('div', 'quiz-option');
+      opt.appendChild(nodoPreview_('span', 'option-letter', letras[i] || String(i + 1)));
+      opt.appendChild(nodoPreview_('span', '', op.texto));
+      opt.addEventListener('click', function () { seleccionarOpcionQuizPreview_(opt, op.correcta); });
+      opciones.appendChild(opt);
+    });
+    quizCard.appendChild(opciones);
+    var acciones = nodoPreview_('div', 'quiz-actions');
+    var comprobar = nodoPreview_('button', 'btn-check-answer', 'Comprobar Respuesta');
+    comprobar.type = 'button';
+    comprobar.addEventListener('click', function () { verificarQuizPreview_(comprobar); });
+    acciones.appendChild(comprobar);
+    acciones.appendChild(nodoPreview_('div', 'quiz-feedback'));
+    quizCard.appendChild(acciones);
+    p4.appendChild(quizCard);
   }
 
   marco.appendChild(cuerpo);
@@ -3172,7 +3573,12 @@ function pintarVistaPreviaIntegrada_() {
   var caja = document.getElementById('vistaPreviaIntegrada');
   if (!caja) return;
   vaciarNodo_(caja);
-  caja.appendChild(armarMaquetaAlumno_());
+  var maqueta = armarMaquetaAlumno_();
+  caja.appendChild(maqueta);
+  var momActivo = Math.max(1, Math.min(4, (Number(window._nodoSesionActivo_) || 0) + 1));
+  if (typeof mostrarMomentoPreview_ === 'function') {
+    mostrarMomentoPreview_(momActivo, maqueta);
+  }
 }
 
 function aplicarColorFondoPreview_() {
@@ -3238,7 +3644,12 @@ function abrirModalPreviewAlumno_() {
   var modal = asegurarPreviewAlumno_();
   var cuerpo = modal.querySelector('.preview-cuerpo-web');
   vaciarNodo_(cuerpo);
-  cuerpo.appendChild(armarMaquetaAlumno_());
+  var maquetaModal = armarMaquetaAlumno_();
+  cuerpo.appendChild(maquetaModal);
+  var momActivo = Math.max(1, Math.min(4, (Number(window._nodoSesionActivo_) || 0) + 1));
+  if (typeof mostrarMomentoPreview_ === 'function') {
+    mostrarMomentoPreview_(momActivo, maquetaModal);
+  }
   aplicarColorFondoPreview_();
   mostrarOverlay_('modalPreviewAlumno');
   var cierre = modal.querySelector('[data-cerrar-preview]');
@@ -6590,7 +7001,13 @@ window.resaltarTextoEditor = resaltarTextoEditor;
 window.aplicarEstiloTexto = aplicarEstiloTexto;
 
 function necesitaEditorEnriquecido_(tipo) {
-  return tipo === 'texto_dua' || tipo === 'lectura' || tipo === 'objetivos' || tipo === 'reto_ciencias' || tipo === 'formula' || tipo === 'callout';
+  return (
+    tipo === 'texto_dua' || tipo === 'lectura' || tipo === 'objetivos' ||
+    tipo === 'reto_ciencias' || tipo === 'formula' || tipo === 'callout' ||
+    tipo === 'toggle_notion' || tipo === 'huecos' || tipo === 'rosco' ||
+    tipo === 'sopa' || tipo === 'adivina' || tipo === 'desafio' ||
+    tipo === 'embebido' || tipo === 'codigo'
+  );
 }
 
 function crearTarjetaCurricular_(tipo, datos) {

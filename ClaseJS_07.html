@@ -558,17 +558,48 @@
             };
             const renderBloqueDUA = function (b) {
               if (!b) return '';
+              const tipoB = String(b.tipo || 'texto').trim();
               const titB = String(b.titulo || b.tipo || 'Módulo').trim();
               const cuerpoB = String(b.cuerpo || b.contenido || '').trim();
-              const textoLimpio = cuerpoB.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+              const ex = b.extra || {};
+              let extraHtml = '';
+              if (tipoB === 'timeline' && Array.isArray(ex.fases) && ex.fases.length) {
+                extraHtml += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">';
+                ex.fases.forEach(function (f, idxF) {
+                  if (!String(f || '').trim()) return;
+                  extraHtml += '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8fafc;border:1px solid #cbd5e1;border-left:4px solid #0d9488;border-radius:8px;">' +
+                    '<span style="width:24px;height:24px;border-radius:50%;background:#0d9488;color:#fff;font-weight:800;font-size:12px;display:inline-flex;align-items:center;justify-content:center;">' + (idxF + 1) + '</span>' +
+                    '<span style="font-weight:600;color:#0f172a;">' + escaparHtml(String(f)) + '</span></div>';
+                });
+                extraHtml += '</div>';
+              } else if (tipoB === 'vf' && (ex.afirmacion || cuerpoB)) {
+                extraHtml += '<div style="margin-top:6px;padding:10px;background:#f8fafc;border-left:4px solid #0284c7;border-radius:6px;font-weight:700;">' + escaparHtml(String(ex.afirmacion || cuerpoB)) + '</div>';
+              } else if (tipoB === 'flashcards' && Array.isArray(ex.pares) && ex.pares.length) {
+                extraHtml += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px;">';
+                ex.pares.forEach(function (par) {
+                  if (!par || (!par.palabra && !par.traduccion)) return;
+                  extraHtml += '<div style="padding:10px;border:1px solid #bae6fd;border-radius:8px;background:#f0f9ff;text-align:center;"><strong>' + escaparHtml(par.palabra || '') + '</strong><br><span style="font-size:12px;color:#0369a1;">' + escaparHtml(par.traduccion || '') + '</span></div>';
+                });
+                extraHtml += '</div>';
+              } else if (tipoB === 'algoritmo' && (ex.inicio || ex.proceso || ex.condicion || ex.fin)) {
+                extraHtml += '<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">';
+                [['Inicio', ex.inicio], ['Proceso', ex.proceso], ['Condición', ex.condicion], ['Fin', ex.fin]].forEach(function (p) {
+                  if (p[1]) extraHtml += '<div style="padding:8px 12px;background:#f8fafc;border:1px solid #94a3b8;border-radius:6px;"><strong>' + p[0] + ':</strong> ' + escaparHtml(String(p[1])) + '</div>';
+                });
+                extraHtml += '</div>';
+              } else if (tipoB === 'word_shape' && ex.texto) {
+                extraHtml += '<div class="word-shape-box ' + escaparHtml(ex.estiloForma || ex.color || 'shape-teal') + '" style="margin-top:8px;padding:12px;border-left:4px solid #0d9488;background:#f0fdfa;border-radius:8px;">' + ex.texto + '</div>';
+              }
+              const textoLimpio = (cuerpoB + ' ' + extraHtml).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
               if (titB || textoLimpio) {
                 parrafosVozAlu_.push((titB ? titB + ': ' : '') + textoLimpio);
                 pIdx++;
               }
               const cuerpoHtml = /<[a-z][\s\S]*>/i.test(cuerpoB) ? cuerpoB : escaparHtml(cuerpoB).replace(/\n/g, '<br>');
-              return '<div class="content-card dua-bloque-idevice" data-tipo="' + escaparHtml(String(b.tipo || 'texto')) + '" style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;box-sizing:border-box;min-width:0;max-width:100%;overflow-x:auto;">' +
+              return '<div class="content-card dua-bloque-idevice" data-tipo="' + escaparHtml(tipoB) + '" style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;box-sizing:border-box;min-width:0;max-width:100%;overflow-x:auto;">' +
                 (titB ? '<h4 style="margin:0 0 6px;font-size:14px;color:#0f172a;font-weight:700;">' + escaparHtml(titB) + '</h4>' : '') +
-                '<div class="dua-bloque-cuerpo" style="font-size:13.5px;color:#334155;line-height:1.5;">' + cuerpoHtml + '</div>' +
+                (cuerpoHtml ? '<div class="dua-bloque-cuerpo" style="font-size:13.5px;color:#334155;line-height:1.5;">' + cuerpoHtml + '</div>' : '') +
+                extraHtml +
               '</div>';
             };
             exe.paginas.forEach(function (pag) {

@@ -2576,12 +2576,14 @@ function tarjetaPreviewBloque_(card) {
     var imgUrl = ((card.querySelector('.inp-img-url') || {}).value || '').trim();
     var imgPrev = card.querySelector('.caja-img-prev img');
     var altDua = ((card.querySelector('.txt-alt-dua') || {}).value || '').trim();
-    var srcFinal = imgUrl || (imgPrev && imgPrev.src) || '';
+    var srcAttr = card.getAttribute('data-img-src') || '';
+    var srcRaw = srcAttr || (imgPrev && imgPrev.src) || imgUrl || '';
+    var srcFinal = (typeof normalizarUrlImagenMedia_ === 'function') ? normalizarUrlImagenMedia_(srcRaw) : srcRaw;
     if (srcFinal) {
       var imgEl = document.createElement('img');
       imgEl.src = srcFinal;
       imgEl.alt = altDua || tituloTexto;
-      imgEl.style.cssText = 'max-width:100%;border-radius:8px;margin-top:10px;display:block;';
+      imgEl.style.cssText = 'max-width:100%;max-height:420px;border-radius:8px;margin-top:10px;display:block;';
       art.appendChild(imgEl);
     }
     if (altDua) {
@@ -2593,6 +2595,28 @@ function tarjetaPreviewBloque_(card) {
   }
 
   if (tipo === 'fichero' || tipo === 'reto' || tipo === 'reto_ciencias' || tipo === 'encuesta') {
+    if (tipo === 'fichero') {
+      var fichUrl = ((card.querySelector('.inp-fichero-url') || {}).value || card.getAttribute('data-fichero-url') || '').trim();
+      var fichNom = ((card.querySelector('.nombre-fichero-label') || {}).textContent || card.getAttribute('data-fichero-nombre') || '').trim();
+      if (fichUrl || (fichNom && fichNom.indexOf('Ningún archivo') < 0)) {
+        var fichCard = document.createElement('div');
+        fichCard.style.cssText = 'margin-top:8px;margin-bottom:8px;padding:10px 14px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;';
+        var fichLbl = document.createElement('span');
+        fichLbl.style.cssText = 'font-weight:700;font-size:13px;color:#0f766e;';
+        fichLbl.textContent = '📄 ' + (fichNom && fichNom.indexOf('Ningún archivo') < 0 ? fichNom : 'Documento de consulta adjunto');
+        fichCard.appendChild(fichLbl);
+        if (fichUrl && /^https?:\/\//i.test(fichUrl)) {
+          var fichLink = document.createElement('a');
+          fichLink.href = fichUrl;
+          fichLink.target = '_blank';
+          fichLink.rel = 'noopener';
+          fichLink.style.cssText = 'padding:5px 10px;background:#0d9488;color:#ffffff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;';
+          fichLink.textContent = '↗ Abrir / Descargar';
+          fichCard.appendChild(fichLink);
+        }
+        art.appendChild(fichCard);
+      }
+    }
     var drop = document.createElement('div');
     drop.className = 'dropzone-box';
     var dropIcon = document.createElement('div');
@@ -6066,6 +6090,249 @@ function cargarVideoLocalExe_(input) {
   if (card) card.setAttribute('data-video-nombre', file.name);
 }
 
+function normalizarUrlImagenMedia_(url) {
+  var s = String(url || '').trim();
+  if (!s) return '';
+  if (/^data:image\//i.test(s) || /^blob:/i.test(s)) return s;
+  var mDrive = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || s.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (mDrive && mDrive[1]) {
+    return 'https://lh3.googleusercontent.com/d/' + mDrive[1];
+  }
+  return s;
+}
+
+function conmutarOrigenMedia_(btn, origen) {
+  if (!btn) return;
+  var tabsWrap = btn.closest ? btn.closest('.tabs-origen-media') : null;
+  var card = btn.closest ? btn.closest('.idevice-card') : null;
+  if (tabsWrap) {
+    tabsWrap.querySelectorAll('.tab-btn-media').forEach(function (b) {
+      b.classList.toggle('activo', b === btn);
+    });
+  }
+  if (!card) return;
+  var pLocal = card.querySelector('.panel-origen-local');
+  var pUrl = card.querySelector('.panel-origen-url');
+  var pYt = card.querySelector('.panel-origen-yt');
+  var pDrive = card.querySelector('.panel-origen-drive');
+
+  if (origen === 'local') {
+    if (pLocal) pLocal.style.display = '';
+    if (pUrl) pUrl.style.display = 'none';
+    if (pYt) pYt.style.display = 'none';
+    if (pDrive) pDrive.style.display = 'none';
+  } else if (origen === 'url') {
+    if (pLocal) pLocal.style.display = 'none';
+    if (pUrl) pUrl.style.display = '';
+    var inpImg = card.querySelector('.inp-img-url');
+    if (inpImg) {
+      inpImg.placeholder = 'Pega el enlace directo de la imagen (https://...imagen.png o .jpg)';
+      if (inpImg.focus) inpImg.focus();
+    }
+  } else if (origen === 'drive') {
+    if (pLocal) pLocal.style.display = 'none';
+    if (pDrive) {
+      pDrive.style.display = '';
+      var inpFich = card.querySelector('.inp-fichero-url');
+      if (inpFich && inpFich.focus) inpFich.focus();
+    } else if (pUrl) {
+      pUrl.style.display = '';
+      var inpImgDrive = card.querySelector('.inp-img-url');
+      if (inpImgDrive) {
+        inpImgDrive.placeholder = 'Pega el enlace compartido de Google Drive (https://drive.google.com/file/d/...)';
+        if (inpImgDrive.focus) inpImgDrive.focus();
+      }
+    } else if (pYt) {
+      pYt.style.display = '';
+      var inpVidDrive = card.querySelector('.inp-video-url');
+      if (inpVidDrive) {
+        inpVidDrive.placeholder = 'Pega el enlace del video en Google Drive (https://drive.google.com/file/d/...)';
+        if (inpVidDrive.focus) inpVidDrive.focus();
+      }
+    }
+  } else if (origen === 'yt') {
+    if (pLocal) pLocal.style.display = 'none';
+    if (pYt) {
+      pYt.style.display = '';
+      var inpVidYt = card.querySelector('.inp-video-url');
+      if (inpVidYt) {
+        inpVidYt.placeholder = 'Pega el enlace de YouTube (ej. https://youtube.com/watch?v=...)';
+        if (inpVidYt.focus) inpVidYt.focus();
+      }
+    }
+  }
+}
+
+function pintarPreviewImagenEnCard_(card, srcRaw) {
+  if (!card) return;
+  var prev = card.querySelector('.caja-img-prev');
+  if (!prev) return;
+  var url = normalizarUrlImagenMedia_(srcRaw);
+  if (!url) {
+    prev.style.display = 'none';
+    prev.innerHTML = '';
+    card.removeAttribute('data-img-src');
+    return;
+  }
+  card.setAttribute('data-img-src', url);
+  prev.style.display = 'block';
+  prev.innerHTML = '';
+  var img = document.createElement('img');
+  img.src = url;
+  img.alt = 'Vista previa de la imagen';
+  img.style.cssText = 'max-width:100%;max-height:280px;border-radius:8px;display:block;margin:8px auto;border:1px solid #cbd5e1;';
+  img.onerror = function () {
+    var mDrive = String(srcRaw || '').match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || String(srcRaw || '').match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (mDrive && mDrive[1] && img.src.indexOf('thumbnail') < 0) {
+      var fallback = 'https://drive.google.com/thumbnail?id=' + mDrive[1] + '&sz=w1200';
+      img.src = fallback;
+      card.setAttribute('data-img-src', fallback);
+    }
+  };
+  prev.appendChild(img);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cargarImagenLocal_(input) {
+  var file = input && input.files && input.files[0];
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!file || !card) return;
+  var reader = new FileReader();
+  reader.onload = function (ev) {
+    var dataUrl = ev && ev.target ? String(ev.target.result || '') : '';
+    if (dataUrl) {
+      pintarPreviewImagenEnCard_(card, dataUrl);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function actualizarPreviewImg_(input) {
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!card) return;
+  pintarPreviewImagenEnCard_(card, input.value || '');
+}
+
+function actualizarPreviewVideo_(input) {
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!card) return;
+  var prev = card.querySelector('.caja-video-prev');
+  var raw = String((input && input.value) || '').trim();
+  if (!prev) return;
+  if (!raw) {
+    prev.style.display = 'none';
+    prev.innerHTML = '';
+    return;
+  }
+  var yt = raw.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  var drive = raw.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  prev.style.display = 'block';
+  if (yt && yt[1]) {
+    prev.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + yt[1] + '" style="width:100%;height:260px;border:0;border-radius:8px;margin-top:8px;" allowfullscreen></iframe>';
+  } else if (drive && drive[1]) {
+    prev.innerHTML = '<iframe src="https://drive.google.com/file/d/' + drive[1] + '/preview" style="width:100%;height:260px;border:0;border-radius:8px;margin-top:8px;" allowfullscreen></iframe>';
+  } else if (/\.(mp4|webm)(\?.*)?$/i.test(raw)) {
+    prev.innerHTML = '<video src="' + escaparHtmlEditor_(raw) + '" controls style="width:100%;max-height:260px;border-radius:8px;margin-top:8px;background:#000;"></video>';
+  } else {
+    prev.innerHTML = '';
+    prev.style.display = 'none';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cargarVideoLocal_(input) {
+  var file = input && input.files && input.files[0];
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!file || !card) return;
+  var prev = card.querySelector('.caja-video-prev');
+  if (!prev) return;
+  if (prev._urlLocal) URL.revokeObjectURL(prev._urlLocal);
+  prev._urlLocal = URL.createObjectURL(file);
+  prev.style.display = 'block';
+  prev.innerHTML = '<video class="video-local-player" src="' + prev._urlLocal + '" controls style="width:100%;max-height:260px;border-radius:8px;margin-top:8px;background:#000;"></video>';
+  card.setAttribute('data-video-nombre', file.name);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cargarFicheroLocal_(input) {
+  var file = input && input.files && input.files[0];
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!file || !card) return;
+  var lbl = card.querySelector('.nombre-fichero-label');
+  if (lbl) lbl.textContent = 'Archivo adjunto: ' + file.name + ' (' + Math.max(1, Math.round(file.size / 1024)) + ' KB)';
+  card.setAttribute('data-fichero-nombre', file.name);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function actualizarFicheroDrive_(input) {
+  var card = input && input.closest ? input.closest('.idevice-card') : null;
+  if (!card) return;
+  var url = String((input && input.value) || '').trim();
+  var lbl = card.querySelector('.nombre-fichero-label');
+  if (lbl) lbl.textContent = url ? ('Enlace vinculado: ' + url) : 'Ningún archivo seleccionado todavía';
+  card.setAttribute('data-fichero-url', url);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function agregarOpcionQuiz_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  var cont = card ? card.querySelector('.contenedor-opciones-quiz') : null;
+  if (!cont) return;
+  var primeraRadio = cont.querySelector('input[type="radio"]');
+  var groupName = (primeraRadio && primeraRadio.name) || ('correcta_' + Date.now());
+  var num = cont.querySelectorAll('.fila-opcion-quiz').length;
+  var letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  var letra = letras[num] || String(num + 1);
+  var fila = document.createElement('div');
+  fila.className = 'fila-opcion-quiz';
+  fila.innerHTML = '<input type="radio" name="' + groupName + '" title="Marcar como respuesta correcta">' +
+    '<input type="text" class="campo-input inp-opcion-texto" value="Opción ' + letra + '">' +
+    '<button type="button" class="btn-quitar-opcion" onclick="quitarOpcionQuiz_(this)">✕</button>';
+  cont.appendChild(fila);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function quitarOpcionQuiz_(btn) {
+  var fila = btn && btn.closest ? btn.closest('.fila-opcion-quiz') : null;
+  var cont = fila && fila.parentNode ? fila.parentNode : null;
+  if (!fila || !cont) return;
+  if (cont.querySelectorAll('.fila-opcion-quiz').length <= 2) {
+    if (typeof toast === 'function') toast('El reactivo debe tener al menos 2 opciones de respuesta.', 'info');
+    return;
+  }
+  var eraChecked = !!(fila.querySelector('input[type="radio"]') && fila.querySelector('input[type="radio"]').checked);
+  fila.remove();
+  if (eraChecked) {
+    var primero = cont.querySelector('input[type="radio"]');
+    if (primero) primero.checked = true;
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function reproducirAudioDuaCard_(btn) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  var cue = card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo');
+  var tit = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+  var txt = (cue ? textoPlanoCampoBloque_(cue) : '') || (tit ? String(tit.value || '').trim() : '');
+  if (!txt) {
+    if (typeof toast === 'function') toast('Escribe primero el texto en el bloque para escucharlo en voz alta.', 'info');
+    return;
+  }
+  if (typeof hablarTextoGuia_ === 'function') hablarTextoGuia_(txt);
+}
+
+window.conmutarOrigenMedia_ = conmutarOrigenMedia_;
+window.cargarImagenLocal_ = cargarImagenLocal_;
+window.actualizarPreviewImg_ = actualizarPreviewImg_;
+window.actualizarPreviewVideo_ = actualizarPreviewVideo_;
+window.cargarVideoLocal_ = cargarVideoLocal_;
+window.cargarFicheroLocal_ = cargarFicheroLocal_;
+window.actualizarFicheroDrive_ = actualizarFicheroDrive_;
+window.agregarOpcionQuiz_ = agregarOpcionQuiz_;
+window.quitarOpcionQuiz_ = quitarOpcionQuiz_;
+window.reproducirAudioDuaCard_ = reproducirAudioDuaCard_;
+
 function actualizarMarcoH5P_(input) {
   var card = input && input.closest ? input.closest('.idevice-card') : null;
   if (!card) return;
@@ -6336,7 +6603,7 @@ function htmlEspecialExe_(tipo, datos, idUnico) {
         '<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" class="campo-input inp-fichero-file" onchange="cargarFicheroLocal_(this)">' +
       '</div>' +
       '<div class="panel-origen-drive" style="display:none;">' +
-        '<input type="url" class="campo-input inp-fichero-url" placeholder="https://drive.google.com/file/d/..."> ' +
+        '<input type="url" class="campo-input inp-fichero-url" placeholder="https://drive.google.com/file/d/..." oninput="actualizarFicheroDrive_(this)"> ' +
       '</div>' +
       '<div class="fichero-descarga-card" style="margin-top:8px;padding:8px 12px;background:#f0fdfa;border:1px solid #ccfbf1;border-radius:6px;display:flex;align-items:center;gap:8px;">' +
         '<span style="font-size:20px;color:#0d9488;">📄</span>' +
@@ -7130,6 +7397,23 @@ function leerTarjetaExe_(card) {
     extra = { url: ((card.querySelector('.inp-h5p-url') || {}).value || '') };
   } else if (tipo === 'video_local') {
     extra = { nombre: card.getAttribute('data-video-nombre') || '' };
+  } else if (tipo === 'galeria') {
+    extra = {
+      imgUrl: ((card.querySelector('.inp-img-url') || {}).value || card.getAttribute('data-img-src') || ''),
+      altDua: ((card.querySelector('.txt-alt-dua') || {}).value || '')
+    };
+  } else if (tipo === 'video_interactivo') {
+    extra = {
+      videoUrl: ((card.querySelector('.inp-video-url') || {}).value || ''),
+      pausaSeg: ((card.querySelector('.inp-pausa-seg') || {}).value || ''),
+      pausaPreg: ((card.querySelector('.inp-pausa-preg') || {}).value || ''),
+      videoNombre: card.getAttribute('data-video-nombre') || ''
+    };
+  } else if (tipo === 'fichero') {
+    extra = {
+      ficheroUrl: ((card.querySelector('.inp-fichero-url') || {}).value || card.getAttribute('data-fichero-url') || ''),
+      ficheroNombre: card.getAttribute('data-fichero-nombre') || ''
+    };
   } else if (tipo === 'encuesta' && typeof serializarEncuestaIDevice_ === 'function') {
     try { extra = JSON.parse(serializarEncuestaIDevice_(card)); } catch (e) { extra = {}; }
   }
@@ -7213,6 +7497,34 @@ function rellenarTarjetaExe_(card, datos) {
     if (urlH5) {
       urlH5.value = extra.url || '';
       actualizarMarcoH5P_(urlH5);
+    }
+  } else if (tipo === 'galeria') {
+    var inpImgG = card.querySelector('.inp-img-url');
+    var txtAltG = card.querySelector('.txt-alt-dua');
+    if (txtAltG && extra.altDua) txtAltG.value = extra.altDua;
+    if (extra.imgUrl) {
+      if (inpImgG && !/^data:image\//i.test(extra.imgUrl)) inpImgG.value = extra.imgUrl;
+      pintarPreviewImagenEnCard_(card, extra.imgUrl);
+    }
+  } else if (tipo === 'video_interactivo') {
+    var inpVidU = card.querySelector('.inp-video-url');
+    var inpPausaS = card.querySelector('.inp-pausa-seg');
+    var inpPausaP = card.querySelector('.inp-pausa-preg');
+    if (inpPausaS && extra.pausaSeg) inpPausaS.value = extra.pausaSeg;
+    if (inpPausaP && extra.pausaPreg) inpPausaP.value = extra.pausaPreg;
+    if (inpVidU && extra.videoUrl) {
+      inpVidU.value = extra.videoUrl;
+      actualizarPreviewVideo_(inpVidU);
+    }
+  } else if (tipo === 'fichero') {
+    var inpFichU = card.querySelector('.inp-fichero-url');
+    if (inpFichU && extra.ficheroUrl) {
+      inpFichU.value = extra.ficheroUrl;
+      actualizarFicheroDrive_(inpFichU);
+    } else if (extra.ficheroNombre) {
+      var lblF = card.querySelector('.nombre-fichero-label');
+      if (lblF) lblF.textContent = 'Archivo adjunto: ' + extra.ficheroNombre;
+      card.setAttribute('data-fichero-nombre', extra.ficheroNombre);
     }
   } else if (tipo === 'encuesta') {
     var modoSel = card.querySelector('.sel-modo-encuesta-idevice');
@@ -10005,656 +10317,5 @@ if (document.readyState === 'loading') {
 
   function marcarColumnaActiva_(col, abrirSidebar) {
     if (!col) return;
-    document.querySelectorAll('.divi-column.active-target').forEach(function (otra) {
-      if (otra !== col) otra.classList.remove('active-target');
-    });
-    col.classList.add('active-target');
-    window._columnaObjetivoActiva_ = col;
-    if (abrirSidebar) {
-      var ws = workspaceExe_();
-      if (ws && ws.classList.contains('sidebar-colapsado')) alternarSidebarExe_(false);
-    }
-  }
-
-  function activarColumnaObjetivo_(columnaDiv) {
-    marcarColumnaActiva_(columnaDiv, true);
-  }
-
-  function crearColumnaDivi_() {
-    var col = document.createElement('div');
-    col.className = 'divi-column';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn-add-module-inside';
-    btn.textContent = '+ Añadir Módulo';
-    col.appendChild(btn);
-    return col;
-  }
-
-  function crearPlusVerde_() {
-    var fila = document.createElement('div');
-    fila.className = 'divi-plus-row';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn-plus-green';
-    btn.textContent = '+';
-    btn.setAttribute('aria-label', 'Elegir distribución de columnas');
-    fila.appendChild(btn);
-    return fila;
-  }
-
-  function cerrarSelectoresColumnas_() {
-    window._filaPlusOrigenPopover_ = null;
-    document.querySelectorAll('.divi-columns-picker, .columns-popover').forEach(function (menu) {
-      if (menu.parentNode) menu.parentNode.removeChild(menu);
-    });
-  }
-
-  function abrirSelectorColumnas_(filaPlus, btnPlus) {
-    cerrarSelectoresColumnas_();
-    if (typeof window.cerrarMenusInsercionExe_ === 'function') window.cerrarMenusInsercionExe_();
-    var menu = document.createElement('div');
-    menu.className = 'divi-columns-picker columns-popover visible';
-    menu.setAttribute('role', 'menu');
-    menu._filaPlusOrigen_ = filaPlus || null;
-    window._filaPlusOrigenPopover_ = filaPlus || null;
-    [
-      ['col-1', '1 Columna', 'preview-1', 1],
-      ['col-2', '50 / 50', 'preview-2', 2],
-      ['col-2-70-30', '70 / 30', 'preview-70-30', 2],
-      ['col-3', '33 / 33 / 33', 'preview-3', 3]
-    ].forEach(function (op) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'divi-col-option col-card-option';
-      b.setAttribute('data-distribucion', op[0]);
-      b.setAttribute('role', 'menuitem');
-      b.title = op[1];
-      var spans = '';
-      for (var s = 0; s < op[3]; s++) spans += '<span></span>';
-      b.innerHTML = '<div class="preview-mini ' + op[2] + '">' + spans + '</div><span class="option-label">' + op[1] + '</span>';
-      menu.appendChild(b);
-    });
-    document.body.appendChild(menu);
-    var boton = btnPlus || (filaPlus && filaPlus.querySelector('.btn-plus-green'));
-    if (boton && boton.getBoundingClientRect) {
-      var rBtn = boton.getBoundingClientRect();
-      var topPx = Math.max(12, Math.round(rBtn.bottom + 8));
-      var leftPx = Math.round(rBtn.left + (rBtn.width / 2));
-      menu.style.position = 'fixed';
-      menu.style.zIndex = '99999';
-      menu.style.top = topPx + 'px';
-      menu.style.left = leftPx + 'px';
-      menu.style.transform = 'translateX(-50%)';
-    }
-  }
-
-  function repintarPlusVerdesDivi_(seccionUnica) {
-    var lista = [];
-    if (seccionUnica) lista = [seccionUnica];
-    else {
-      var cont = contenedorExe_();
-      if (cont) lista = Array.prototype.slice.call(cont.querySelectorAll('.divi-section'));
-    }
-    lista.forEach(function (seccion) {
-      if (!seccion) return;
-      Array.prototype.slice.call(seccion.children).forEach(function (hijo) {
-        if (hijo.classList.contains('divi-plus-row')) hijo.remove();
-      });
-      var filas = [];
-      Array.prototype.forEach.call(seccion.children, function (hijo) {
-        if (hijo.classList.contains('divi-row')) filas.push(hijo);
-      });
-      filas.forEach(function (fila) {
-        seccion.insertBefore(crearPlusVerde_(), fila);
-      });
-      seccion.appendChild(crearPlusVerde_());
-    });
-  }
-
-  function asegurarSeccionDivi_() {
-    var cont = contenedorExe_();
-    if (!cont) return null;
-    var sec = cont.querySelector('.divi-section');
-    if (sec) return sec;
-    sec = document.createElement('section');
-    sec.className = 'divi-section';
-    var header = document.createElement('div');
-    header.className = 'divi-section-header';
-    header.innerHTML = '<span class="divi-section-label">SECCIÓN PEDAGÓGICA</span>' + htmlControlesDivi_();
-    sec.appendChild(header);
-    cont.appendChild(sec);
-    repintarPlusVerdesDivi_(sec);
-    return sec;
-  }
-
-  function insertarFilaDivi_(distribucion, filaRef) {
-    var mapa = MAPA_COLUMNAS_[distribucion] || MAPA_COLUMNAS_['col-1'];
-    var seccion = (filaRef && filaRef.closest) ? filaRef.closest('.divi-section') : null;
-    if (!seccion) seccion = asegurarSeccionDivi_();
-    if (!seccion) return null;
-    var fila = document.createElement('div');
-    fila.className = 'divi-row ' + (distribucion || 'col-1');
-    fila.setAttribute('data-distribucion', distribucion || 'col-1');
-    var pIdActiva = (typeof idPaginaActivaExe_ === 'function') ? String(idPaginaActivaExe_()) : '0';
-    fila.setAttribute('data-pagina-id', pIdActiva);
-    var header = document.createElement('div');
-    header.className = 'divi-row-header';
-    header.innerHTML = '<span class="divi-row-label">FILA (' + (distribucion || 'col-1') + ')</span>' + htmlControlesDivi_();
-    var grid = document.createElement('div');
-    grid.className = 'divi-columns-grid ' + mapa.grid;
-    var i;
-    for (i = 0; i < mapa.n; i++) {
-      var col = crearColumnaDivi_();
-      if (i === 0) marcarColumnaActiva_(col, false);
-      grid.appendChild(col);
-    }
-    fila.appendChild(header);
-    fila.appendChild(grid);
-    if (filaRef && filaRef.parentNode === seccion) seccion.insertBefore(fila, filaRef);
-    else seccion.appendChild(fila);
-    repintarPlusVerdesDivi_(seccion);
-    return fila;
-  }
-
-  function resolverColumnaDestino_() {
-    var col = window._columnaObjetivoActiva_;
-    if (col && col.isConnected && col.classList && col.classList.contains('divi-column')) return col;
-    var cont = contenedorExe_();
-    var cols = cont ? cont.querySelectorAll('.divi-column') : [];
-    if (cols.length) return cols[cols.length - 1];
-    var fila = insertarFilaDivi_('col-1', null);
-    var nueva = fila ? fila.querySelector('.divi-column') : null;
-    if (nueva) marcarColumnaActiva_(nueva, false);
-    return nueva;
-  }
-
-  function asegurarControlesModulo_(card) {
-    if (!card || card.querySelector('.divi-ctrl-bar')) return;
-    var header = card.querySelector('.idevice-header, .idevice-card-header') || card;
-    var barra = document.createElement('div');
-    barra.innerHTML = htmlControlesDivi_();
-    var nodo = barra.firstElementChild;
-    if (nodo) header.insertBefore(nodo, header.firstChild);
-  }
-
-  function marcarAreasEditablesDivi_(raiz) {
-    var base = raiz || lienzoExe_() || document;
-    if (!base || !base.querySelectorAll) return;
-    base.querySelectorAll('[contenteditable="true"]').forEach(function (el) {
-      el.classList.add('rich-editable-area');
-    });
-  }
-
-  function colocarModuloEnColumnaActiva_(card) {
-    if (!card || !card.classList) return card;
-    var col = resolverColumnaDestino_();
-    if (!col) return card;
-    card.classList.add('divi-module');
-    if (card.parentNode !== col) {
-      var ancla = null;
-      Array.prototype.forEach.call(col.children, function (hijo) {
-        if (hijo.classList.contains('btn-add-module-inside')) ancla = hijo;
-      });
-      if (ancla) col.insertBefore(card, ancla);
-      else col.appendChild(card);
-    }
-    asegurarControlesModulo_(card);
-    marcarAreasEditablesDivi_(card);
-    return card;
-  }
-
-  function insertarModuloEnColumnaActiva_(tipo, previa) {
-    erradicarBarraFijaLienzo_();
-    var card = (typeof previa === 'function') ? previa(tipo) : null;
-    if (card) colocarModuloEnColumnaActiva_(card);
-    if (typeof window.repintarDivisoresExe_ === 'function') window.repintarDivisoresExe_();
-    erradicarBarraFijaLienzo_();
-    if (card && card.scrollIntoView) card.scrollIntoView({ block: 'nearest' });
-    return card;
-  }
-
-  function limpiarInsertoresDentroDeColumnas_() {
-    document.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque, .inserter-popup-dropdown').forEach(function (nodo) {
-      if (nodo.parentNode) nodo.parentNode.removeChild(nodo);
-    });
-  }
-
-  function adoptarTarjetasEnDivi_() {
-    var cont = document.getElementById('contenedorIDevicesDinamicos');
-    if (!cont) return;
-    var sec = asegurarSeccionDivi_();
-    if (!sec) return;
-
-    var sueltas = [];
-    Array.prototype.forEach.call(cont.children, function (hijo) {
-      if (hijo && hijo.classList && hijo.classList.contains('idevice-card')) {
-        sueltas.push(hijo);
-      }
-    });
-
-    if (sueltas.length > 0) {
-      sueltas.forEach(function (card) {
-        colocarModuloEnColumnaActiva_(card);
-      });
-      repintarPlusVerdesDivi_(sec);
-    }
-
-    cont.querySelectorAll('.divi-column > .idevice-card').forEach(function (card) {
-      card.classList.add('divi-module');
-      asegurarControlesModulo_(card);
-      marcarAreasEditablesDivi_(card);
-    });
-  }
-  window.adoptarTarjetasEnDivi_ = adoptarTarjetasEnDivi_;
-
-  function envolverRepintadoDivi_() {
-    if (!window.repintarDivisoresExe_ || window.repintarDivisoresExe_._st90Divi603) return;
-    window.repintarDivisoresExe_ = function () {
-      if (window._repintandoDivi603_) return;
-      window._repintandoDivi603_ = true;
-      var cont = document.getElementById('contenedorIDevicesDinamicos');
-      var anidadas = [];
-      try {
-        adoptarTarjetasEnDivi_();
-        if (cont) {
-          cont.querySelectorAll('.divi-column > .idevice-card').forEach(function (card) {
-            anidadas.push({ card: card, parent: card.parentNode, next: card.nextSibling });
-            card.remove();
-          });
-          cont.querySelectorAll('.block-inserter-row, .divisor-insertar-bloque, .inserter-popup-dropdown').forEach(function (d) { d.remove(); });
-        }
-        anidadas.forEach(function (item) {
-          if (!item.parent || !item.parent.isConnected) return;
-          if (item.next && item.next.parentNode === item.parent) item.parent.insertBefore(item.card, item.next);
-          else {
-            var ancla = null;
-            Array.prototype.forEach.call(item.parent.children, function (hijo) {
-              if (hijo.classList.contains('btn-add-module-inside')) ancla = hijo;
-            });
-            if (ancla) item.parent.insertBefore(item.card, ancla);
-            else item.parent.appendChild(item.card);
-          }
-          item.card.classList.add('divi-module');
-          asegurarControlesModulo_(item.card);
-        });
-        limpiarInsertoresDentroDeColumnas_();
-        repintarPlusVerdesDivi_();
-        marcarAreasEditablesDivi_();
-        erradicarBarraFijaLienzo_();
-      } finally {
-        window._repintandoDivi603_ = false;
-      }
-    };
-    window.repintarDivisoresExe_._st90Divi603 = true;
-  }
-
-  function mostrarPastillaDeshacer603_() {
-    var pill = document.getElementById('pastillaDeshacerBloque');
-    if (!pill) {
-      pill = document.createElement('div');
-      pill.id = 'pastillaDeshacerBloque';
-      pill.setAttribute('role', 'status');
-      document.body.appendChild(pill);
-    }
-    pill.innerHTML = '<span>Bloque eliminado.</span>';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = 'Deshacer';
-    btn.addEventListener('click', function () { deshacerEliminarBloque603_(); });
-    pill.appendChild(btn);
-    clearTimeout(window._timerPastillaDeshacer_);
-    window._timerPastillaDeshacer_ = setTimeout(function () {
-      var nodo = document.getElementById('pastillaDeshacerBloque');
-      if (nodo && nodo.parentNode) nodo.parentNode.removeChild(nodo);
-      window.ultimoBloqueEliminado_ = null;
-    }, 5000);
-  }
-
-  function deshacerEliminarBloque603_() {
-    var buf = window.ultimoBloqueEliminado_;
-    if (buf && buf.kind === 'divi603') {
-      window.ultimoBloqueEliminado_ = null;
-      var padre = (buf.padre && buf.padre.isConnected) ? buf.padre : contenedorExe_();
-      if (!padre || !buf.html) return;
-      var cont = document.createElement('div');
-      cont.innerHTML = buf.html;
-      var nodo = cont.firstElementChild;
-      if (!nodo) return;
-      if (buf.siguiente && buf.siguiente.parentNode === padre) padre.insertBefore(nodo, buf.siguiente);
-      else padre.appendChild(nodo);
-      repintarPlusVerdesDivi_();
-      if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
-    } else if (typeof window._deshacerBloquePrevio603_ === 'function') {
-      window._deshacerBloquePrevio603_();
-    }
-    var pill = document.getElementById('pastillaDeshacerBloque');
-    if (pill && pill.parentNode) pill.parentNode.removeChild(pill);
-    clearTimeout(window._timerPastillaDeshacer_);
-  }
-
-  function eliminarNodoDivi_(btn) {
-    var el = nodoControladoDivi_(btn);
-    if (!el) return;
-    if (el.classList.contains('idevice-card')) {
-      if (typeof window.eliminarBloqueTarjeta_ === 'function' && el.id) window.eliminarBloqueTarjeta_(el.id);
-      else if (el.parentNode) el.parentNode.removeChild(el);
-      limpiarInsertoresDentroDeColumnas_();
-      if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
-      return;
-    }
-    window.ultimoBloqueEliminado_ = {
-      kind: 'divi603',
-      html: el.outerHTML,
-      padre: el.parentNode,
-      siguiente: el.nextSibling
-    };
-    if (el.parentNode) el.parentNode.removeChild(el);
-    if (window._columnaObjetivoActiva_ && !window._columnaObjetivoActiva_.isConnected) window._columnaObjetivoActiva_ = null;
-    repintarPlusVerdesDivi_();
-    mostrarPastillaDeshacer603_();
-    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
-  }
-
-  function asegurarBubbleToolbar_() {
-    var tb = document.getElementById('bubbleToolbar');
-    if (!tb) {
-      tb = document.createElement('div');
-      tb.id = 'bubbleToolbar';
-      tb.className = 'floating-bubble-toolbar';
-      tb.setAttribute('role', 'toolbar');
-      tb.setAttribute('aria-label', 'Formato del texto seleccionado');
-      [
-        ['bold', 'B', 'Negrita'],
-        ['italic', 'I', 'Cursiva'],
-        ['underline', 'U', 'Subrayado'],
-        ['h3', 'H3', 'Subtítulo'],
-        ['insertUnorderedList', '•', 'Lista con viñetas'],
-        ['createLink', '🔗', 'Enlace']
-      ].forEach(function (def) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'bubble-btn';
-        btn.setAttribute('data-cmd', def[0]);
-        btn.title = def[2];
-        btn.setAttribute('aria-label', def[2]);
-        btn.textContent = def[1];
-        btn.addEventListener('mousedown', function (ev) { ev.preventDefault(); });
-        tb.appendChild(btn);
-      });
-    }
-    var canvas = lienzoExe_();
-    if (canvas && tb.parentNode !== canvas) canvas.appendChild(tb);
-    else if (!tb.parentNode) document.body.appendChild(tb);
-    return tb;
-  }
-
-  function areaSeleccionEditable_(sel) {
-    if (!sel || !sel.rangeCount || sel.isCollapsed) return null;
-    var nodo = sel.anchorNode;
-    if (!nodo) return null;
-    var el = nodo.nodeType === 1 ? nodo : nodo.parentElement;
-    if (!el || !el.closest) return null;
-    return el.closest('.rich-editable-area, [contenteditable="true"]');
-  }
-
-  function posicionarBubble_() {
-    var tb = document.getElementById('bubbleToolbar') || asegurarBubbleToolbar_();
-    var sel = window.getSelection();
-    var area = areaSeleccionEditable_(sel);
-    var canvas = lienzoExe_();
-    if (!area || (canvas && !canvas.contains(area)) || (area.closest && area.closest('#bubbleToolbar'))) {
-      tb.classList.remove('visible');
-      return;
-    }
-    var range = sel.getRangeAt(0);
-    var rect = range.getBoundingClientRect();
-    if (!rect || (rect.width === 0 && rect.height === 0)) {
-      tb.classList.remove('visible');
-      return;
-    }
-    try { window._rangoBurbuja_ = range.cloneRange(); } catch (e) { window._rangoBurbuja_ = null; }
-    if (canvas && tb.parentNode !== canvas) canvas.appendChild(tb);
-    var base = (canvas || document.body).getBoundingClientRect();
-    var scroller = canvas || document.body;
-    var top = rect.top - base.top + scroller.scrollTop - 42;
-    var left = rect.left - base.left + scroller.scrollLeft + (rect.width / 2);
-    tb.style.top = Math.max(4, top) + 'px';
-    tb.style.left = left + 'px';
-    tb.style.transform = 'translateX(-50%)';
-    tb.classList.add('visible');
-  }
-
-  function aplicarComandoBurbuja_(cmd) {
-    var sel = window.getSelection();
-    if (window._rangoBurbuja_ && sel) {
-      sel.removeAllRanges();
-      sel.addRange(window._rangoBurbuja_);
-    }
-    var area = areaSeleccionEditable_(window.getSelection());
-    if (area && area.focus) area.focus();
-    if (cmd === 'h3') {
-      try { document.execCommand('formatBlock', false, '<h3>'); } catch (e) {}
-    } else if (cmd === 'createLink') {
-      var url = window.prompt('Ingresa el enlace web (URL):', 'https://');
-      if (!url || !String(url).trim() || String(url).trim() === 'https://') return;
-      try { document.execCommand('createLink', false, String(url).trim()); } catch (e2) {}
-    } else {
-      try { document.execCommand(cmd, false, null); } catch (e3) {}
-    }
-    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
-    posicionarBubble_();
-  }
-
-  function escucharBubble_() {
-    if (window._bubbleToolbarLista_) return;
-    window._bubbleToolbarLista_ = true;
-    var pendiente = false;
-    document.addEventListener('selectionchange', function () {
-      if (pendiente) return;
-      pendiente = true;
-      window.requestAnimationFrame(function () {
-        pendiente = false;
-        posicionarBubble_();
-      });
-    });
-  }
-
-  function prepararAnclaCanvas_() {
-    var canvas = lienzoExe_();
-    if (!canvas || !window.getComputedStyle) return;
-    if (window.getComputedStyle(canvas).position === 'static') canvas.style.position = 'relative';
-  }
-
-  function prepararLienzoDivi603_() {
-    erradicarBarraFijaLienzo_();
-    vigilarBarraFijaLienzo_();
-    prepararAnclaCanvas_();
-    asegurarBubbleToolbar_();
-    escucharBubble_();
-    asegurarBotonSidebarExe_();
-    if (contenedorExe_()) asegurarSeccionDivi_();
-    marcarAreasEditablesDivi_();
-  }
-
-  function envolverInsercionDivi_() {
-    if (typeof window.insertariDeviceSesion_ !== 'function' || window.insertariDeviceSesion_._st90Divi603) return;
-    var previa = window.insertariDeviceSesion_;
-    window.insertariDeviceSesion_ = function (tipo) {
-      return insertarModuloEnColumnaActiva_(tipo, previa);
-    };
-    window.insertariDeviceSesion_._st90Divi603 = true;
-    window.insertariDeviceSesion_._st90Exe = previa._st90Exe || window.insertariDeviceSesion_._st90Exe;
-  }
-
-  function envolverDeshacerDivi_() {
-    if (typeof window.deshacerEliminarBloque_ === 'function' && !window._deshacerBloquePrevio603_) {
-      window._deshacerBloquePrevio603_ = window.deshacerEliminarBloque_;
-    }
-    window.deshacerEliminarBloque_ = deshacerEliminarBloque603_;
-  }
-
-  function instalarEventosDivi603_() {
-    if (window._eventosDivi603_) return;
-    window._eventosDivi603_ = true;
-    document.addEventListener('mousedown', function (ev) {
-      var t = ev.target;
-      if (!t || !t.closest) return;
-      if (t.closest('#bubbleToolbar, .btn-plus-green, .divi-columns-picker, .btn-add-module-inside, .btn-ctrl-up, .btn-ctrl-down, .btn-ctrl-del, .btn-toggle-sidebar-exe')) {
-        ev.preventDefault();
-      }
-    });
-    document.addEventListener('click', function (ev) {
-      var t = ev.target;
-      if (!t || !t.closest) return;
-      var burbuja = t.closest('#bubbleToolbar .bubble-btn');
-      if (burbuja) {
-        ev.preventDefault();
-        aplicarComandoBurbuja_(burbuja.getAttribute('data-cmd'));
-        return;
-      }
-      var arriba = t.closest('.btn-ctrl-up');
-      if (arriba) {
-        ev.preventDefault();
-        moverElementoDOM_(nodoControladoDivi_(arriba), -1);
-        return;
-      }
-      var abajo = t.closest('.btn-ctrl-down');
-      if (abajo) {
-        ev.preventDefault();
-        moverElementoDOM_(nodoControladoDivi_(abajo), 1);
-        return;
-      }
-      var quitar = t.closest('.btn-ctrl-del');
-      if (quitar) {
-        ev.preventDefault();
-        eliminarNodoDivi_(quitar);
-        return;
-      }
-      var anadir = t.closest('.btn-add-module-inside');
-      if (anadir) {
-        ev.preventDefault();
-        var col = anadir.closest('.divi-column');
-        if (col) activarColumnaObjetivo_(col);
-        return;
-      }
-      var opcion = t.closest('.divi-columns-picker [data-distribucion], .columns-popover [data-distribucion]');
-      if (opcion) {
-        ev.preventDefault();
-        var picker = opcion.closest('.divi-columns-picker, .columns-popover');
-        var filaOpcion = (picker && picker._filaPlusOrigen_) || window._filaPlusOrigenPopover_ || opcion.closest('.divi-plus-row');
-        insertarFilaDivi_(opcion.getAttribute('data-distribucion'), filaOpcion);
-        cerrarSelectoresColumnas_();
-        return;
-      }
-      var plus = t.closest('.btn-plus-green');
-      if (plus) {
-        ev.preventDefault();
-        var fila = plus.closest('.divi-plus-row, .inserter-row-divi');
-        var yaAbierto = !!(fila && (window._filaPlusOrigenPopover_ === fila || fila.querySelector('.divi-columns-picker, .columns-popover')) && document.querySelector('.divi-columns-picker, .columns-popover'));
-        cerrarSelectoresColumnas_();
-        if (!yaAbierto && fila) abrirSelectorColumnas_(fila, plus);
-        return;
-      }
-      var colClick = t.closest('.divi-column');
-      if (colClick && !t.closest('.divi-ctrl-bar, .btn-ctrl-up, .btn-ctrl-down, .btn-ctrl-del')) {
-        marcarColumnaActiva_(colClick, false);
-      }
-      if (!t.closest('.divi-columns-picker, .columns-popover')) cerrarSelectoresColumnas_();
-    });
-    document.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Escape') cerrarSelectoresColumnas_();
-    });
-    document.addEventListener('dragover', function (ev) {
-      var t = ev.target;
-      if (!t || !t.closest) return;
-      var col = t.closest('#contenedorIDevicesDinamicos .divi-column');
-      var grid = !col ? t.closest('#contenedorIDevicesDinamicos .divi-columns-grid') : null;
-      if (grid && !col) col = grid.querySelector('.divi-column');
-      if (!col) return;
-      ev.preventDefault();
-      if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'copy';
-      document.querySelectorAll('.divi-column.drag-over-target').forEach(function (c) {
-        if (c !== col) c.classList.remove('drag-over-target');
-      });
-      col.classList.add('drag-over-target');
-    });
-    document.addEventListener('dragleave', function (ev) {
-      var t = ev.target;
-      if (!t || !t.closest) return;
-      var col = t.closest('#contenedorIDevicesDinamicos .divi-column');
-      if (col && (!ev.relatedTarget || !col.contains(ev.relatedTarget))) {
-        col.classList.remove('drag-over-target');
-      }
-    });
-    document.addEventListener('drop', function (ev) {
-      var t = ev.target;
-      if (!t || !t.closest) return;
-      var col = t.closest('#contenedorIDevicesDinamicos .divi-column');
-      var grid = !col ? t.closest('#contenedorIDevicesDinamicos .divi-columns-grid') : null;
-      if (grid && !col) col = grid.querySelector('.divi-column');
-      if (!col) return;
-      ev.preventDefault();
-      col.classList.remove('drag-over-target');
-      var tipo = '';
-      if (ev.dataTransfer) {
-        try { tipo = ev.dataTransfer.getData('text/plain') || ''; } catch (e) {}
-      }
-      if (!tipo) tipo = window._moduloArrastradoCatalogo_ || '';
-      window._moduloArrastradoCatalogo_ = '';
-      if (!tipo) return;
-      marcarColumnaActiva_(col, false);
-      invocarInsertarDesdeCatalogo609_(tipo);
-    });
-  }
-
-  function instalarConstructorDivi603_() {
-    if (window._st90Divi603Instalado_) {
-      prepararLienzoDivi603_();
-      envolverInsercionDivi_();
-      return;
-    }
-    window._st90Divi603Instalado_ = true;
-    envolverRepintadoDivi_();
-    envolverDeshacerDivi_();
-    envolverInsercionDivi_();
-    instalarEventosDivi603_();
-    if (typeof window.montarEntornoExeLearning_ === 'function' && !window.montarEntornoExeLearning_._st90Divi603) {
-      var montarPrevio = window.montarEntornoExeLearning_;
-      window.montarEntornoExeLearning_ = function () {
-        var r = montarPrevio.apply(this, arguments);
-        prepararLienzoDivi603_();
-        envolverInsercionDivi_();
-        return r;
-      };
-      window.montarEntornoExeLearning_._st90Divi603 = true;
-    }
-    prepararLienzoDivi603_();
-  }
-
-  window.alternarSidebarExe_ = alternarSidebarExe_;
-  window.activarColumnaObjetivo_ = activarColumnaObjetivo_;
-  window.insertarFilaDivi_ = insertarFilaDivi_;
-  window.insertarModuloEnColumnaActiva_ = function (tipo) {
-    if (typeof window.insertariDeviceSesion_ === 'function' && window.insertariDeviceSesion_._st90Divi603) {
-      return window.insertariDeviceSesion_(tipo);
-    }
-    return insertarModuloEnColumnaActiva_(tipo, window.insertariDeviceSesion_);
-  };
-  window.colocarModuloEnColumnaActiva_ = colocarModuloEnColumnaActiva_;
-  window.insertarEnColumnaActiva = colocarModuloEnColumnaActiva_;
-  window.moverElementoDOM_ = moverElementoDOM_;
-  window.eliminarNodoDivi_ = eliminarNodoDivi_;
-  window.erradicarBarraFijaLienzo_ = erradicarBarraFijaLienzo_;
-  window.nodoControladoDivi_ = nodoControladoDivi_;
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', instalarConstructorDivi603_);
-  } else {
-    instalarConstructorDivi603_();
-  }
-})();
-/* BUILD-608-CONSOLIDACION-FIN */
-
-/* ENTREGA-AYUDAJS-FIN */
-</script>
+    document.querySelectorAll('.divi-column.active-
+... [truncated for diff preview]

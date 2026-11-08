@@ -9808,3 +9808,35 @@ function insertarFilaGridOla18_(distribucion) {
   lienzo.appendChild(fila);
 }
 /* BUILD-608-CURSOR-FIN */
+
+<script>
+/* BUILD-608-CURSOR: Enlace de Catálogo a Columna Dropzone */
+(function() {
+  window.insertarEnColumnaActiva = function(nodoModulo) {
+    const colActiva = document.querySelector('.divi-column.active-target');
+    if (colActiva) {
+      // Si la columna tiene el botón placeholder de "+ Añadir Módulo", insertamos antes de él
+      const btnAdd = colActiva.querySelector('.btn-add-module-inner');
+      if (btnAdd) {
+        colActiva.insertBefore(nodoModulo, btnAdd);
+      } else {
+        colActiva.appendChild(nodoModulo);
+      }
+      return true;
+    }
+    return false; // Fallback al lienzo general si no hay columna seleccionada
+  };
+
+  // Delegación de clic para marcar columna activa al hacer foco o clic interno
+  document.addEventListener('click', function(e) {
+    const col = e.target.closest('.divi-column');
+    if (col) {
+      document.querySelectorAll('.divi-column.active-target').forEach(c => {
+        if (c !== col) c.classList.remove('active-target');
+      });
+      col.classList.add('active-target');
+    }
+  });
+})();
+/* FIN BUILD-608-CURSOR */
+</script>

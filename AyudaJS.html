@@ -9251,20 +9251,21 @@ if (document.readyState === 'loading') {
     cerrarSelectoresColumnas_();
     if (typeof window.cerrarMenusInsercionExe_ === 'function') window.cerrarMenusInsercionExe_();
     var menu = document.createElement('div');
-    menu.className = 'divi-columns-picker';
+    menu.className = 'divi-columns-picker columns-popover visible';
     menu.setAttribute('role', 'menu');
     [
-      ['col-1', '1 Columna [100%]'],
-      ['col-2', '2 Columnas [50 / 50]'],
-      ['col-2-70-30', '2 Columnas [70 / 30]'],
-      ['col-3', '3 Columnas [33 / 33 / 33]']
+      ['col-1', '1 Columna [100%]', 'preview-1'],
+      ['col-2', '2 Columnas [50 / 50]', 'preview-2'],
+      ['col-2-70-30', '2 Columnas [70 / 30]', 'preview-70-30'],
+      ['col-3', '3 Columnas [33 / 33 / 33]', 'preview-3']
     ].forEach(function (op) {
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'divi-col-option';
+      b.className = 'divi-col-option col-card-option';
       b.setAttribute('data-distribucion', op[0]);
       b.setAttribute('role', 'menuitem');
-      b.textContent = op[1];
+      b.title = op[1];
+      b.innerHTML = '<div class="preview-mini ' + op[2] + '"><span></span>' + (op[0] === 'col-1' ? '' : (op[0] === 'col-3' ? '<span></span><span></span>' : '<span></span>')) + '</div><span class="option-label">' + op[1] + '</span>';
       menu.appendChild(b);
     });
     filaPlus.appendChild(menu);
@@ -9315,15 +9316,19 @@ if (document.readyState === 'loading') {
     if (!seccion) seccion = asegurarSeccionDivi_();
     if (!seccion) return null;
     var fila = document.createElement('div');
-    fila.className = 'divi-row';
+    fila.className = 'divi-row ' + (distribucion || 'col-1');
     fila.setAttribute('data-distribucion', distribucion || 'col-1');
     var header = document.createElement('div');
     header.className = 'divi-row-header';
-    header.innerHTML = '<span class="divi-row-label">FILA</span>' + htmlControlesDivi_();
+    header.innerHTML = '<span class="divi-row-label">FILA (' + (distribucion || 'col-1') + ')</span>' + htmlControlesDivi_();
     var grid = document.createElement('div');
     grid.className = 'divi-columns-grid ' + mapa.grid;
     var i;
-    for (i = 0; i < mapa.n; i++) grid.appendChild(crearColumnaDivi_());
+    for (i = 0; i < mapa.n; i++) {
+      var col = crearColumnaDivi_();
+      if (i === 0) marcarColumnaActiva_(col, false);
+      grid.appendChild(col);
+    }
     fila.appendChild(header);
     fila.appendChild(grid);
     if (filaRef && filaRef.parentNode === seccion) seccion.insertBefore(fila, filaRef);
@@ -9713,7 +9718,7 @@ if (document.readyState === 'loading') {
         if (col) activarColumnaObjetivo_(col);
         return;
       }
-      var opcion = t.closest('.divi-columns-picker [data-distribucion]');
+      var opcion = t.closest('.divi-columns-picker [data-distribucion], .columns-popover [data-distribucion]');
       if (opcion) {
         ev.preventDefault();
         var filaOpcion = opcion.closest('.divi-plus-row');
@@ -9725,12 +9730,16 @@ if (document.readyState === 'loading') {
       if (plus) {
         ev.preventDefault();
         var fila = plus.closest('.divi-plus-row');
-        var yaAbierto = fila && fila.querySelector('.divi-columns-picker');
+        var yaAbierto = fila && fila.querySelector('.divi-columns-picker, .columns-popover');
         cerrarSelectoresColumnas_();
         if (!yaAbierto && fila) abrirSelectorColumnas_(fila);
         return;
       }
-      if (!t.closest('.divi-columns-picker')) cerrarSelectoresColumnas_();
+      var colClick = t.closest('.divi-column');
+      if (colClick && !t.closest('.divi-ctrl-bar, .btn-ctrl-up, .btn-ctrl-down, .btn-ctrl-del')) {
+        marcarColumnaActiva_(colClick, false);
+      }
+      if (!t.closest('.divi-columns-picker, .columns-popover')) cerrarSelectoresColumnas_();
     });
     document.addEventListener('keydown', function (ev) {
       if (ev.key === 'Escape') cerrarSelectoresColumnas_();
@@ -9771,6 +9780,7 @@ if (document.readyState === 'loading') {
     return insertarModuloEnColumnaActiva_(tipo, window.insertariDeviceSesion_);
   };
   window.colocarModuloEnColumnaActiva_ = colocarModuloEnColumnaActiva_;
+  window.insertarEnColumnaActiva = colocarModuloEnColumnaActiva_;
   window.moverElementoDOM_ = moverElementoDOM_;
   window.eliminarNodoDivi_ = eliminarNodoDivi_;
   window.erradicarBarraFijaLienzo_ = erradicarBarraFijaLienzo_;
@@ -9782,61 +9792,7 @@ if (document.readyState === 'loading') {
     instalarConstructorDivi603_();
   }
 })();
-/* BUILD-603-CURSOR-FIN */
+/* BUILD-608-CONSOLIDACION-FIN */
 
 /* ENTREGA-AYUDAJS-FIN */
-</script>
-/* BUILD-608-CURSOR */
-function configurarSelectorColumnasOla18_() {
-  document.querySelectorAll('.btn-plus-green').forEach(btn => {
-    btn.onclick = function(e) {
-      e.stopPropagation();
-      const popover = document.querySelector('.columns-popover');
-      if (popover) popover.classList.toggle('visible');
-    };
-  });
-}
-
-function insertarFilaGridOla18_(distribucion) {
-  const lienzo = document.getElementById('lienzoExeActivo') || document.body;
-  const fila = document.createElement('div');
-  fila.className = `divi-row ${distribucion}`;
-  fila.innerHTML = `
-    <div class="divi-column active-target" onclick="activarColumnaObjetivo_(this)">
-      <button type="button" class="btn-add-module-inside">+</button>
-    </div>`;
-  lienzo.appendChild(fila);
-}
-/* BUILD-608-CURSOR-FIN */
-
-<script>
-/* BUILD-608-CURSOR: Enlace de Catálogo a Columna Dropzone */
-(function() {
-  window.insertarEnColumnaActiva = function(nodoModulo) {
-    const colActiva = document.querySelector('.divi-column.active-target');
-    if (colActiva) {
-      // Si la columna tiene el botón placeholder de "+ Añadir Módulo", insertamos antes de él
-      const btnAdd = colActiva.querySelector('.btn-add-module-inner');
-      if (btnAdd) {
-        colActiva.insertBefore(nodoModulo, btnAdd);
-      } else {
-        colActiva.appendChild(nodoModulo);
-      }
-      return true;
-    }
-    return false; // Fallback al lienzo general si no hay columna seleccionada
-  };
-
-  // Delegación de clic para marcar columna activa al hacer foco o clic interno
-  document.addEventListener('click', function(e) {
-    const col = e.target.closest('.divi-column');
-    if (col) {
-      document.querySelectorAll('.divi-column.active-target').forEach(c => {
-        if (c !== col) c.classList.remove('active-target');
-      });
-      col.classList.add('active-target');
-    }
-  });
-})();
-/* FIN BUILD-608-CURSOR */
 </script>

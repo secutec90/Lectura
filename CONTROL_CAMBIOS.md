@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-07] - [Ola 18: Consolidación de Retícula DIVI, Selector Gráfico de Columnas y Dropzone Activa en build-608]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola18): consolidacion reticula divi, selector de columnas y dropzone activa en build-608`
+- **Cambios Realizados:**
+  - **Saneamiento Sintáctico y Unificación CSS (`AdminPlaneacionCSS.html`):**
+    - Reubicadas las reglas CSS de retículas (`.divi-row.col-1`, `.col-2`, `.col-2-70-30`, `.col-3`), popovers (`.columns-popover`) y tarjetas de opciones (`.col-card-option`) dentro del bloque `<style>`, eliminando el código huérfano fuera de etiquetas.
+    - Compatibilizadas las clases de grilla (`grid-col-*` y `col-*`) para visualización responsive en escritorio y móviles.
+  - **Limpieza de Scripts y Conexión de Columnas (`AyudaJS.html`):**
+    - Erradicado el código huérfano fuera de `</script>` y unificado el documento en un único bloque de script normativo (`#script0`).
+    - Conectado el botón circular verde `(+)` (`.btn-plus-green`) para desplegar el selector de columnas con vista previa gráfica (`preview-mini`).
+    - Generación efectiva de las columnas solicitadas (`MAPA_COLUMNAS_`) al elegir distribución, marcando automáticamente la primera columna como `.active-target`.
+    - Enlace de inserción modular hacia `.divi-column.active-target` (`window.insertarEnColumnaActiva`), depositando los módulos seleccionados de las 7 familias antes del botón de añadir interior.
+  - **Restauración y Actualización de Contratos (`ESTADO_COORDINACION.md`):**
+    - Restaurado el contrato de gobernanza multi-agente, la tabla de responsabilidades y la bitácora de olas, integrando formalmente la Ola 18 (`build-608`).
+  - **Validación y Versión:**
+    - Verificada la integridad estructural con `node herramientas/manifiesto.js` regresando estrictamente a 79 documentos.
+    - Incrementada la versión en `00_Constantes.gs` a `v440 · build-608`.
+- **Archivos Afectados:** `AdminPlaneacionCSS.html`, `AyudaJS.html`, `ESTADO_COORDINACION.md`, `00_Constantes.gs`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-06] - [Ola 17: Unificación de Cabecera en Una Sola Fila, Erradicación de 'eXeLearning', Corrección de Persistencia de Borrado y Sincronización de los 4 Momentos en build-607]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola17): unificacion de cabecera en una fila, sincronizacion de los 4 momentos pedagógicos y correccion de persistencia de borrado en build-607`
 - **Cambios Realizados:**

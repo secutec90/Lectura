@@ -9,576 +9,362 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: OLA 17 (`build-603+`) — ARQUITECTURA VISUAL DIVI REAL + TOOLBAR CONTEXTUAL NOTION + MENÚ LATERAL COLAPSABLE
+## 🎯 PARTITURA ASIGNADA: OLA 19 (`build-609`) — ESTILIZACIÓN Y MINI-CARDS DEL CATÁLOGO LATERAL (7 FAMILIAS) + BUSCADOR EN TIEMPO REAL
 - **Estado:** 🟢 PROGRAMADA (PARTITURA ASIGNADA — EJECUTAR AHORA)
-- **Archivos objetivo:** `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `ComunCSS.html`
-- **Misión de DeepSeek:** Diseñar la maquetación CSS completa para la arquitectura pura por capas DIVI (Sección azul ➔ Fila verde con columnas ➔ Dropzone columna con resalte activo ➔ Módulo), la pastilla flotante contextual de formato (*Bubble Toolbar* tipo Notion/Medium), el botón y transición para colapsar/expandir el menú lateral izquierdo, y los controles de reordenamiento vertical (▲ / ▼).
+- **Archivos objetivo:** `AdminPlaneacionCSS.html`, `ClaseCSS.html`
+- **Misión de DeepSeek:** Diseñar la maquetación visual moderna para el Catálogo Lateral de Componentes (`.box-idevice-menu`), transformando las listas de módulos en **mini-cards interactivas y atractivas** con color temático por familia curricular y un **buscador en tiempo real** superior ergonómico.
 
 ---
 
 ### 📋 Especificaciones Técnicas y Visuales para DeepSeek:
 
-#### 1. Menú Lateral Colapsable / Expandible (Sidebar Toggle)
-- **Modo Colapsado (`.app-workspace.sidebar-colapsado .sidebar-exe` o `.sidebar-exe.colapsado`):**
-  - Transición suave: `transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s, opacity 0.2s;`.
-  - Ancho en reposo cuando colapsado: `width: 0 !important; min-width: 0 !important; overflow: hidden; opacity: 0; pointer-events: none; border-right: none;`.
-  - Expansión del lienzo de autor: `.app-workspace.sidebar-colapsado .canvas-exe` debe tomar el `100%` del ancho con `max-width: 100% !important; flex: 1 1 100% !important;` para ofrecer modo de concentración y pantalla completa.
-- **Botón Gatillo de Alternancia (`.btn-toggle-sidebar-exe`):**
-  - Botón ergonómico en la cabecera o esquina flotante (28x28px, bordes redondeados 6px, fondo `#f0fdfa`, borde `1px solid #99f6e4`, color `#0f766e`, `:hover` fondo `#ccfbf1`).
-  - Icono dinámico: `◀` cuando el menú está abierto, `▶` o icono panel cuando está colapsado.
-  - Sombra sutil y accesibilidad con tooltip descriptivo.
+#### 1. Buscador del Catálogo Lateral (`.cat-buscador-box`)
+- **Contenedor:** `.cat-buscador-box` ubicado arriba de las familias, con `position: relative; margin-bottom: 10px; width: 100%; box-sizing: border-box;`.
+- **Input (`#inputBuscarModulosCatalogo` / `.input-busqueda-catalogo`):**
+  - Ancho 100%, altura `34px`, padding `6px 28px 6px 30px`, bordes redondeados `8px`, borde `1.5px solid #cbd5e1`, fondo `#f8fafc`.
+  - Icono de lupa 🔍 integrado a la izquierda en posición absoluta (`left: 8px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #94a3b8; pointer-events: none;`).
+  - Efecto focus: `border-color: #0d9488; outline: 2px solid #ccfbf1; background: #ffffff;`.
+  - Botón de limpieza (`.btn-limpiar-busqueda`): Botón `✕` a la derecha en posición absoluta (`right: 8px; top: 50%; transform: translateY(-50%); border: none; background: transparent; cursor: pointer; color: #94a3b8; font-size: 11px;`).
 
-#### 2. Paleta Estructural de Capas DIVI Puras
-- **Nivel 1: Sección (`.divi-section`):**
-  - Borde exterior azul: `2px solid #0284c7` (o variable `--divi-blue: #0284c7`).
-  - Fondo blanco `#ffffff`, `border-radius: 10px`, `padding: 16px`, `margin-bottom: 24px`, sombra sutil `0 2px 8px rgba(2,132,199,0.08)`.
-  - Cabecera de sección con etiqueta azul (`SECCIÓN PEDAGÓGICA`) y barra de controles (▲, ▼, ✕).
-- **Nivel 2: Fila de Columnas (`.divi-row`):**
-  - Borde verde: `1.5px solid #10b981` (o variable `--divi-green: #10b981`).
-  - Fondo verde menta muy suave `#f0fdf4`, `border-radius: 8px`, `padding: 12px`, `margin-bottom: 12px`.
-  - Contenedor interno `.divi-columns-grid` en CSS Grid / Flexbox con soporte para:
-    - `.grid-col-1`: `grid-template-columns: 1fr;`
-    - `.grid-col-2`: `grid-template-columns: 1fr 1fr; gap: 12px;` (50% / 50%)
-    - `.grid-col-70-30`: `grid-template-columns: 7fr 3fr; gap: 12px;`
-    - `.grid-col-3`: `grid-template-columns: 1fr 1fr 1fr; gap: 10px;` (33% / 33% / 33%)
-- **Nivel 3: Columna Dropzone (`.divi-column`):**
-  - Borde punteado: `1.5px dashed #10b981`, fondo `#ffffff`, `border-radius: 6px`, `padding: 10px`, `min-height: 110px`.
-  - **Estado Objetivo Activo (`.divi-column.active-target`):**
-    - Anillo de enfoque teal brillante: `box-shadow: 0 0 0 3px #0d9488, 0 0 14px rgba(13,148,136,0.35); border-color: #0d9488;`.
-    - Distintivo visual superior `🎯 Columna activa para insertar`.
-  - Botón interno de adición: `.btn-add-module-inside` con estilo punteado, centrado en columna vacía.
-- **Nivel 4: Módulo Curricular (`.divi-module` / `.idevice-card`):**
-  - Borde gris suave `#e2e8f0`, fondo `#f8fafc`, `border-radius: 6px`, `padding: 10px`.
+#### 2. Estructura de las Mini-Cards (`.modulo-card-lateral`)
+- **Contenedor:** `.modulo-card-lateral` (reemplaza o estiliza `.idevice-pill-add`):
+  - `display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; margin-bottom: 6px; border-radius: 8px; border: 1.5px solid #e2e8f0; background: #ffffff; cursor: pointer; box-sizing: border-box; transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1);`.
+  - Hover: `transform: translateY(-1.5px); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);`.
+- **Cuerpo Izquierdo (`.card-lateral-cuerpo`):**
+  - `display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;`.
+  - **Badge de Icono (`.card-lateral-icon-badge`):** Caja cuadrada de `28x28px`, `border-radius: 6px`, `display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;`.
+  - **Textos (`.card-lateral-textos`):**
+    - Título (`.card-lateral-titulo`): `font-size: 11.5px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;`.
+    - Subtítulo (`.card-lateral-sub`): `font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; line-height: 1.1;`.
+- **Botón Rápido Derecho (`.btn-card-add`):**
+  - Botón compacto `+` o pill `+ Añadir`: `height: 24px; padding: 0 7px; border-radius: 6px; font-size: 10.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #99f6e4; background: #f0fdfa; color: #0d9488; transition: all 140ms ease; flex-shrink: 0;`.
+  - Hover: `background: #0d9488; color: #ffffff; border-color: #0d9488;`.
 
-#### 3. Fila Divisora Verde `(+)` y Selector de Columnas
-- **Botón `(+)` Verde (`.btn-plus-green`):**
-  - Botón circular de 28px, fondo verde `#10b981`, icono blanco `+`, sombra glow verde `0 2px 8px rgba(16,185,129,0.3)`.
-  - `:hover`: fondo `#059669`, `transform: scale(1.15)`.
-- **Selector de Columnas Flotante (`.divi-columns-picker`):**
-  - Popover flotante centrado con fondo blanco, bordes redondeados 10px, sombra pronunciada `0 10px 25px rgba(0,0,0,0.15)`.
-  - Tarjetas de previsualización gráfica de las 4 opciones (`1 Columna`, `50 / 50`, `70 / 30`, `33 / 33 / 33`) con miniaturas visuales en bloques grises y verdes.
+#### 3. Paleta Cromática Temática por Familia Curricular
+Aplica clases específicas al contenedor o al badge de icono:
+1. **Información & Notion (`.tema-notion`):** Badge fondo `#eff6ff`, borde `#bfdbfe`, hover borde `#0284c7`.
+2. **Evaluación y Seguimiento (`.tema-eval`):** Badge fondo `#ecfdf5`, borde `#a7f3d0`, hover borde `#059669`.
+3. **Multimedia & H5P (`.tema-h5p`):** Badge fondo `#f5f3ff`, borde `#ddd6fe`, hover borde `#7c3aed`.
+4. **Inglés & Flashcards 3D (`.tema-ingles`):** Badge fondo `#fffbeb`, borde `#fde68a`, hover borde `#d97706`.
+5. **Juegos Pedagógicos (`.tema-juegos`):** Badge fondo `#fdf2f8`, borde `#fbcfe8`, hover borde `#db2777`.
+6. **Tecnología y Ofimática (`.tema-tecno`):** Badge fondo `#ecfeff`, borde `#a5f3fc`, hover borde `#0891b2`.
+7. **Ciencias y Matemáticas (`.tema-ciencias`):** Badge fondo `#f0fdfa`, borde `#99f6e4`, hover borde `#0d9488`.
 
-#### 4. Barra Flotante Contextual (*Bubble Toolbar* Notion/Medium)
-- **Contenedor `#bubbleToolbar` (`.floating-bubble-toolbar`):**
-  - Posicionamiento: `position: absolute; z-index: 1200; pointer-events: auto;`.
-  - Estilo visual tipo Notion/Medium: Fondo `#0f172a`, borde `1px solid rgba(255,255,255,0.12)`, `border-radius: 8px`, `padding: 4px 6px`, sombra `0 8px 24px rgba(0,0,0,0.45)`, `display: none; align-items: center; gap: 3px;`.
-  - Cuando activo (`.visible`): `display: flex !important; animation: popIn 0.15s ease-out;`.
-  - Botones de acción (`.bubble-btn`): 26x26px, fondo transparente, color `#f8fafc`, borde 0, `border-radius: 4px`, `:hover` fondo `rgba(255,255,255,0.15)`. Botón de enlace con campo de entrada rápido o prompt.
-
-#### 5. Controles por Bloque (▲ / ▼ y ✕)
-- Cabecera compacta en Sección, Fila y Módulo:
-  - Botón `.btn-ctrl-up` (▲): color `#64748b`, `:hover` color `#0f766e`, fondo suave.
-  - Botón `.btn-ctrl-down` (▼): color `#64748b`, `:hover` color `#0f766e`, fondo suave.
-  - Botón `.btn-ctrl-del` (✕): color `#e11d48`, `:hover` fondo `#ffe4e6`.
+#### 4. Reglas de Aislamiento Estricto
+- Todas las reglas deben iniciar con `.sidebar-exe .box-idevice-menu` o similar para **garantizar que jamás colisionen con las tarjetas del lienzo de autor** (`.idevice-card`).
+- Mantener compatibilidad con modo colapsado (`.sidebar-colapsado`).
 
 ---
 
-### 📦 ENTREGA DE DEEPSEEK (ESCRIBE TU CÓDIGO CSS AQUÍ ABAJO):
-*(DeepSeek escribirá aquí su bloque CSS con la maquetación de capas Divi, la pastilla flotante, el sidebar colapsable y los controles de movimiento)*
+### Entrega de DeepSeek (Escribe tu código CSS aquí abajo):
+*(DeepSeek escribirá aquí su bloque CSS final y luego activará el centinela)*
 
 ---
 
-## ✍️ ENTREGA DEEPSEEK — OLA 17 (`build-603+`) · DIVI real, bubble toolbar y sidebar colapsable
+## ✍️ ENTREGA DEEPSEEK — OLA 19 (`build-609`) · Catálogo lateral: buscador y mini-cards
 
-**Fecha:** 2026-11-05 · **Archivo:** `AdminPlaneacionCSS.html`, líneas 6762–7177
-Nuevamente todo en `AdminPlaneacionCSS.html`: el constructor solo se carga en el panel administrativo.
+**Fecha:** 2026-11-07 · **Archivo:** `AdminPlaneacionCSS.html`, líneas 7379–7612
 
-### 1. Correspondencia con la partitura
+### 1. Aislamiento estricto (lo primero)
+
+**Las 34 reglas empiezan con `.sidebar-exe .box-idevice-menu`.** Cumplí el requisito al pie de la letra: ninguna puede alcanzar las tarjetas del lienzo (`.idevice-card`), aunque compartan nombres como `card-lateral-*`. También respeté el modo colapsado, donde las mini-cards quedan con `pointer-events: none` para que no se puedan pulsar desde un sidebar invisible.
+
+### 2. Correspondencia con la partitura
 
 | Bloque | Clases | Estado |
 | :--- | :--- | :--- |
-| 1 · Sidebar colapsable | `.app-workspace.sidebar-colapsado .sidebar-exe`, `.sidebar-exe.colapsado`, `.canvas-exe`, `.btn-toggle-sidebar-exe` | ✅ |
-| 2 · Capas DIVI | `.divi-section`, `.divi-row`, `.divi-columns-grid`, `.grid-col-1/2/70-30/3`, `.divi-column`, `.active-target`, `.btn-add-module-inside`, `.divi-module` | ✅ |
-| 3 · Fila verde y selector | `.btn-plus-green`, `.inserter-row-divi`, `.divi-columns-picker`, `.divi-col-option` con 4 miniaturas | ✅ |
-| 4 · Bubble toolbar | `#bubbleToolbar`, `.floating-bubble-toolbar`, `.bubble-btn`, `.bubble-divider`, `.bubble-link-input`, `@keyframes popIn` | ✅ |
-| 5 · Controles | `.block-ctrl-group`, `.btn-ctrl-up`, `.btn-ctrl-down`, `.btn-ctrl-del` | ✅ |
+| 1 · Buscador | `.cat-buscador-box`, `.cat-lupa`, `#inputBuscarModulosCatalogo`, `.input-busqueda-catalogo`, `.btn-limpiar-busqueda` | ✅ |
+| 2 · Mini-card | `.modulo-card-lateral`, `.card-lateral-cuerpo`, `.card-lateral-icon-badge`, `.card-lateral-textos`, `.card-lateral-titulo`, `.card-lateral-sub`, `.btn-card-add` | ✅ |
+| 3 · Paleta | `.tema-notion`, `.tema-eval`, `.tema-h5p`, `.tema-ingles`, `.tema-juegos`, `.tema-tecno`, `.tema-ciencias` | ✅ |
+| 4 · Extras | `.catalogo-sin-resultados` (estado vacío del filtro) | ✅ |
 
-### 2. CSS entregado
+### 3. CSS entregado
 
 ```css
   /* ============================================================
-     OLA 17 · build-603+ — ARQUITECTURA DIVI REAL
-     Capas Sección ▸ Fila ▸ Columna ▸ Módulo · pastilla contextual
-     tipo Notion · sidebar colapsable · controles ▲ ▼ ✕
+     OLA 19 · build-609 — CATÁLOGO LATERAL: BUSCADOR + MINI-CARDS
+     Todo va anclado a `.sidebar-exe .box-idevice-menu` por contrato:
+     así ninguna regla puede tocar las tarjetas del lienzo (.idevice-card).
      ============================================================ */
-  :root {
-    --divi-blue: #0284c7;
-    --divi-green: #10b981;
-    --divi-teal: #0d9488;
-  }
 
-  /* ---------- 1 · Sidebar colapsable ---------- */
-  .sidebar-exe,
-  .app-workspace .sidebar-exe {
-    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.2s ease;
+  /* ---------- 1 · Buscador del catálogo ---------- */
+  .sidebar-exe .box-idevice-menu .cat-buscador-box {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    box-sizing: border-box;
   }
-  .app-workspace.sidebar-colapsado .sidebar-exe,
-  .sidebar-exe.colapsado {
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    overflow: hidden;
-    opacity: 0;
+  .sidebar-exe .box-idevice-menu .cat-buscador-box .cat-lupa {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    line-height: 1;
+    color: #94a3b8;
     pointer-events: none;
-    border-right: none;
   }
-  .app-workspace.sidebar-colapsado .canvas-exe {
-    max-width: 100% !important;
-    flex: 1 1 100% !important;
+  .sidebar-exe .box-idevice-menu #inputBuscarModulosCatalogo,
+  .sidebar-exe .box-idevice-menu .input-busqueda-catalogo {
+    width: 100%;
+    height: 34px;
+    padding: 6px 28px 6px 30px;
+    box-sizing: border-box;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: #1e293b;
+    transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  }
+  .sidebar-exe .box-idevice-menu #inputBuscarModulosCatalogo::placeholder,
+  .sidebar-exe .box-idevice-menu .input-busqueda-catalogo::placeholder { color: #94a3b8; }
+  .sidebar-exe .box-idevice-menu #inputBuscarModulosCatalogo:focus,
+  .sidebar-exe .box-idevice-menu .input-busqueda-catalogo:focus {
+    outline: 2px solid #ccfbf1;
+    border-color: #0d9488;
+    background: #ffffff;
+    box-shadow: none;
+  }
+  .sidebar-exe .box-idevice-menu .btn-limpiar-busqueda {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 140ms ease;
+  }
+  .sidebar-exe .box-idevice-menu .btn-limpiar-busqueda:hover { color: #0f766e; }
+  .sidebar-exe .box-idevice-menu .btn-limpiar-busqueda:focus-visible {
+    outline: 2px solid #0d9488;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .sidebar-exe .box-idevice-menu .btn-limpiar-busqueda[hidden] { display: none; }
+
+  /* ---------- 2 · Mini-card de módulo ---------- */
+  .sidebar-exe .box-idevice-menu .modulo-card-lateral {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    box-sizing: border-box;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: transform 160ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 160ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 160ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .sidebar-exe .box-idevice-menu .modulo-card-lateral:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  }
+  .sidebar-exe .box-idevice-menu .modulo-card-lateral:focus-visible {
+    outline: 2px solid #0d9488;
+    outline-offset: 2px;
+  }
+  .sidebar-exe .box-idevice-menu .modulo-card-lateral[hidden] { display: none; }
+
+  .sidebar-exe .box-idevice-menu .card-lateral-cuerpo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .sidebar-exe .box-idevice-menu .card-lateral-icon-badge {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    font-size: 14px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .sidebar-exe .box-idevice-menu .card-lateral-textos {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .sidebar-exe .box-idevice-menu .card-lateral-titulo {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar-exe .box-idevice-menu .card-lateral-sub {
+    display: block;
+    margin-top: 1px;
+    font-size: 10px;
+    line-height: 1.1;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .btn-toggle-sidebar-exe {
+  .sidebar-exe .box-idevice-menu .btn-card-add {
+    height: 24px;
+    padding: 0 7px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    padding: 0;
+    flex-shrink: 0;
     border: 1px solid #99f6e4;
     border-radius: 6px;
     background: #f0fdfa;
-    color: #0f766e;
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-    transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
-  }
-  .btn-toggle-sidebar-exe:hover {
-    background: #ccfbf1;
-    border-color: #5eead4;
-  }
-  .btn-toggle-sidebar-exe:active { transform: scale(0.96); }
-  .btn-toggle-sidebar-exe:focus-visible {
-    outline: 2px solid #0d9488;
-    outline-offset: 2px;
-  }
-
-  /* ---------- 2 · Capas DIVI ---------- */
-  .divi-section {
-    margin: 0 0 24px;
-    padding: 16px;
-    background: #ffffff;
-    border: 2px solid var(--divi-blue);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
-  }
-  .divi-section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 0 12px;
-    padding: 0 0 8px;
-    border-bottom: 1px solid #e0f2fe;
-  }
-  .divi-section-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: #e0f2fe;
-    color: #0369a1;
+    color: #0d9488;
+    font-family: inherit;
     font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-  }
-
-  .divi-row {
-    margin: 0 0 12px;
-    padding: 12px;
-    background: #f0fdf4;
-    border: 1.5px solid var(--divi-green);
-    border-radius: 8px;
-  }
-  .divi-row:last-child { margin-bottom: 0; }
-
-  .divi-columns-grid {
-    display: grid;
-    gap: 12px;
-    align-items: stretch;
-  }
-  .grid-col-1 { grid-template-columns: 1fr; }
-  .grid-col-2 { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .grid-col-70-30 { grid-template-columns: 7fr 3fr; gap: 12px; }
-  .grid-col-3 { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-  .divi-column {
-    position: relative;
-    min-height: 110px;
-    padding: 10px;
-    background: #ffffff;
-    border: 1.5px dashed var(--divi-green);
-    border-radius: 6px;
-    transition: box-shadow 150ms ease, border-color 150ms ease, background 150ms ease;
-  }
-  .divi-column.active-target {
-    border-color: var(--divi-teal);
-    box-shadow: 0 0 0 3px var(--divi-teal), 0 0 14px rgba(13, 148, 136, 0.35);
-  }
-  .divi-column.active-target::before {
-    content: '🎯 Columna activa para insertar';
-    position: absolute;
-    top: -11px;
-    left: 10px;
-    padding: 2px 9px;
-    border-radius: 999px;
-    background: var(--divi-teal);
-    color: #ffffff;
-    font-size: 9.5px;
-    font-weight: 800;
-    letter-spacing: .04em;
-    white-space: nowrap;
-  }
-
-  .btn-add-module-inside {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    min-height: 70px;
-    padding: 10px;
-    border: 1.5px dashed #cbd5e1;
-    border-radius: 6px;
-    background: #f8fafc;
-    color: #64748b;
-    font-family: inherit;
-    font-size: 12px;
     font-weight: 700;
-    cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-  }
-  .btn-add-module-inside:hover {
-    background: #f0fdfa;
-    border-color: var(--divi-teal);
-    color: #0f766e;
-  }
-  .btn-add-module-inside:focus-visible {
-    outline: 2px solid var(--divi-teal);
-    outline-offset: 2px;
-  }
-
-  .divi-module,
-  .divi-column .idevice-card {
-    padding: 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-  }
-  .divi-module + .divi-module { margin-top: 8px; }
-
-  /* ---------- 3 · Fila divisora verde y selector de columnas ---------- */
-  .btn-plus-green {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: var(--divi-green);
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 800;
     line-height: 1;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-    transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
   }
-  .btn-plus-green:hover {
-    background: #059669;
-    transform: scale(1.15);
-    box-shadow: 0 3px 12px rgba(16, 185, 129, 0.42);
+  .sidebar-exe .box-idevice-menu .btn-card-add:hover {
+    background: #0d9488;
+    color: #ffffff;
+    border-color: #0d9488;
   }
-  .btn-plus-green:focus-visible {
-    outline: 2px solid #047857;
-    outline-offset: 3px;
-  }
-
-  .inserter-row-divi {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 26px;
-    margin: 2px 0 8px;
-  }
-  .inserter-row-divi::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1.5px;
-    background: #d1fae5;
-  }
-
-  .divi-columns-picker {
-    position: absolute;
-    top: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1060;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    min-width: 288px;
-    padding: 12px;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-  .divi-columns-picker[hidden] { display: none; }
-  .divi-col-option {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 9px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #ffffff;
-    cursor: pointer;
-    transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
-  }
-  .divi-col-option:hover {
-    border-color: var(--divi-green);
-    background: #f0fdf4;
-    transform: translateY(-1px);
-  }
-  .divi-col-option:focus-visible {
-    outline: 2px solid var(--divi-teal);
+  .sidebar-exe .box-idevice-menu .btn-card-add:focus-visible {
+    outline: 2px solid #0f766e;
     outline-offset: 2px;
   }
-  .divi-col-option .preview-mini {
-    display: grid;
-    gap: 3px;
-    height: 26px;
+
+  /* ---------- 3 · Paleta por familia curricular ---------- */
+  .sidebar-exe .box-idevice-menu .tema-notion .card-lateral-icon-badge {
+    background: #eff6ff;
+    border-color: #bfdbfe;
   }
-  .divi-col-option .preview-mini span {
-    background: #e2e8f0;
-    border: 1px solid #cbd5e1;
-    border-radius: 3px;
+  .sidebar-exe .box-idevice-menu .tema-notion:hover { border-color: #0284c7; }
+
+  .sidebar-exe .box-idevice-menu .tema-eval .card-lateral-icon-badge {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
   }
-  .divi-col-option:hover .preview-mini span {
-    background: #bbf7d0;
-    border-color: #86efac;
+  .sidebar-exe .box-idevice-menu .tema-eval:hover { border-color: #059669; }
+
+  .sidebar-exe .box-idevice-menu .tema-h5p .card-lateral-icon-badge {
+    background: #f5f3ff;
+    border-color: #ddd6fe;
   }
-  .preview-1 { grid-template-columns: 1fr; }
-  .preview-2 { grid-template-columns: 1fr 1fr; }
-  .preview-70-30 { grid-template-columns: 7fr 3fr; }
-  .preview-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .divi-col-option .option-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #475569;
+  .sidebar-exe .box-idevice-menu .tema-h5p:hover { border-color: #7c3aed; }
+
+  .sidebar-exe .box-idevice-menu .tema-ingles .card-lateral-icon-badge {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .sidebar-exe .box-idevice-menu .tema-ingles:hover { border-color: #d97706; }
+
+  .sidebar-exe .box-idevice-menu .tema-juegos .card-lateral-icon-badge {
+    background: #fdf2f8;
+    border-color: #fbcfe8;
+  }
+  .sidebar-exe .box-idevice-menu .tema-juegos:hover { border-color: #db2777; }
+
+  .sidebar-exe .box-idevice-menu .tema-tecno .card-lateral-icon-badge {
+    background: #ecfeff;
+    border-color: #a5f3fc;
+  }
+  .sidebar-exe .box-idevice-menu .tema-tecno:hover { border-color: #0891b2; }
+
+  .sidebar-exe .box-idevice-menu .tema-ciencias .card-lateral-icon-badge {
+    background: #f0fdfa;
+    border-color: #99f6e4;
+  }
+  .sidebar-exe .box-idevice-menu .tema-ciencias:hover { border-color: #0d9488; }
+
+  /* ---------- 4 · Mensaje de "sin resultados" ---------- */
+  .sidebar-exe .box-idevice-menu .catalogo-sin-resultados {
+    padding: 14px 10px;
     text-align: center;
-  }
-
-  /* ---------- 4 · Pastilla flotante contextual (Notion/Medium) ---------- */
-  #bubbleToolbar,
-  .floating-bubble-toolbar {
-    position: absolute;
-    z-index: 1200;
-    pointer-events: auto;
-    display: none;
-    align-items: center;
-    gap: 3px;
-    padding: 4px 6px;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-  }
-  #bubbleToolbar.visible,
-  .floating-bubble-toolbar.visible {
-    display: flex !important;
-    animation: popIn 0.15s ease-out;
-  }
-  @keyframes popIn {
-    from { opacity: 0; transform: translateY(4px) scale(0.96); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .bubble-btn {
-    width: 26px;
-    height: 26px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    border-radius: 4px;
-    background: transparent;
-    color: #f8fafc;
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 700;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 120ms ease, color 120ms ease;
-  }
-  .bubble-btn:hover { background: rgba(255, 255, 255, 0.15); }
-  .bubble-btn:focus-visible {
-    outline: 2px solid #38bdf8;
-    outline-offset: 1px;
-  }
-  .bubble-btn.bubble-btn--activo {
-    background: rgba(56, 189, 248, 0.25);
-    color: #e0f2fe;
-  }
-  .bubble-divider {
-    width: 1px;
-    height: 16px;
-    background: rgba(255, 255, 255, 0.18);
-    flex: 0 0 auto;
-  }
-  .bubble-link-input {
-    width: 132px;
-    height: 24px;
-    padding: 0 7px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #f8fafc;
-    font-family: inherit;
     font-size: 11.5px;
+    line-height: 1.45;
+    color: #64748b;
   }
-  .bubble-link-input::placeholder { color: rgba(248, 250, 252, 0.55); }
-  .bubble-link-input:focus {
-    outline: none;
-    border-color: #38bdf8;
-    background: rgba(255, 255, 255, 0.12);
-  }
+  .sidebar-exe .box-idevice-menu .catalogo-sin-resultados[hidden] { display: none; }
 
-  /* ---------- 5 · Controles de bloque ▲ ▼ ✕ ---------- */
-  .block-ctrl-group {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    margin-left: auto;
+  /* ---------- 5 · Modo colapsado y movimiento reducido ---------- */
+  .sidebar-colapsado .box-idevice-menu .modulo-card-lateral,
+  .sidebar-exe.colapsado .box-idevice-menu .modulo-card-lateral {
+    pointer-events: none;
   }
-  .btn-ctrl-up,
-  .btn-ctrl-down,
-  .btn-ctrl-del {
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
-    border-radius: 5px;
-    background: transparent;
-    font-size: 11px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
-  }
-  .btn-ctrl-up,
-  .btn-ctrl-down { color: #64748b; }
-  .btn-ctrl-up:hover,
-  .btn-ctrl-down:hover {
-    color: #0f766e;
-    background: #f0fdfa;
-    border-color: #ccfbf1;
-  }
-  .btn-ctrl-del { color: #e11d48; }
-  .btn-ctrl-del:hover { background: #ffe4e6; border-color: #fecdd3; }
-  .btn-ctrl-up:focus-visible,
-  .btn-ctrl-down:focus-visible,
-  .btn-ctrl-del:focus-visible {
-    outline: 2px solid #0d9488;
-    outline-offset: 1px;
-  }
-
-  @media (max-width: 860px) {
-    .grid-col-2,
-    .grid-col-70-30,
-    .grid-col-3 { grid-template-columns: 1fr; }
-    .divi-columns-picker { min-width: 240px; }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .sidebar-exe,
-    .btn-plus-green,
-    .bubble-btn,
-    .divi-col-option,
-    #bubbleToolbar.visible { animation: none; transition: none; }
+    .sidebar-exe .box-idevice-menu .modulo-card-lateral,
+    .sidebar-exe .box-idevice-menu .btn-card-add,
+    .sidebar-exe .box-idevice-menu .input-busqueda-catalogo { transition: none; }
+    .sidebar-exe .box-idevice-menu .modulo-card-lateral:hover { transform: none; }
   }
 ```
 
-### 3. Contrato de marcado
+### 4. Contrato de marcado
 
 ```html
-<button type="button" class="btn-toggle-sidebar-exe" aria-label="Colapsar menú">◀</button>
-
-<section class="divi-section">
-  <div class="divi-section-header">
-    <span class="divi-section-label">Sección pedagógica</span>
-    <div class="block-ctrl-group">
-      <button type="button" class="btn-ctrl-up" aria-label="Subir">▲</button>
-      <button type="button" class="btn-ctrl-down" aria-label="Bajar">▼</button>
-      <button type="button" class="btn-ctrl-del" aria-label="Eliminar">✕</button>
-    </div>
+<div class="box-idevice-menu">
+  <div class="cat-buscador-box">
+    <span class="cat-lupa">🔍</span>
+    <input id="inputBuscarModulosCatalogo" class="input-busqueda-catalogo"
+           type="text" placeholder="Buscar módulo…">
+    <button type="button" class="btn-limpiar-busqueda" aria-label="Limpiar">✕</button>
   </div>
 
-  <div class="divi-row">
-    <div class="divi-columns-grid grid-col-70-30">
-      <div class="divi-column active-target">
-        <div class="divi-module">Módulo curricular</div>
-      </div>
-      <div class="divi-column">
-        <button type="button" class="btn-add-module-inside">+ Añadir módulo</button>
-      </div>
+  <div class="modulo-card-lateral tema-ingles" data-modulo="flashcards">
+    <div class="card-lateral-cuerpo">
+      <span class="card-lateral-icon-badge">🌐</span>
+      <span class="card-lateral-textos">
+        <span class="card-lateral-titulo">Flashcards 3D</span>
+        <span class="card-lateral-sub">Inglés · vocabulario</span>
+      </span>
     </div>
+    <button type="button" class="btn-card-add">+</button>
   </div>
 
-  <div class="inserter-row-divi">
-    <button type="button" class="btn-plus-green" aria-label="Añadir fila">+</button>
-    <div class="divi-columns-picker" hidden>
-      <button type="button" class="divi-col-option">
-        <span class="preview-mini preview-2"><span></span><span></span></span>
-        <span class="option-label">50 / 50</span>
-      </button>
-    </div>
-  </div>
-</section>
-
-<div id="bubbleToolbar" class="floating-bubble-toolbar visible">
-  <button type="button" class="bubble-btn">B</button>
-  <button type="button" class="bubble-btn">I</button>
-  <span class="bubble-divider"></span>
-  <input class="bubble-link-input" placeholder="Pega un enlace…">
+  <p class="catalogo-sin-resultados" hidden>Sin módulos que coincidan con la búsqueda.</p>
 </div>
 ```
 
-### 4. Decisiones
+La clase `tema-*` va **en la tarjeta**, no en el badge: así el hover del borde y el color del icono se resuelven con un solo atributo.
 
-1. **El colapso usa `!important` solo donde el contrato lo exige** (`width`, `min-width`) y donde hay que vencer el `width: 330px` de la OLA 5. El resto de la transición va sin forzar.
-2. **El distintivo 🎯 se dibuja con `::before`**: Cursor no tiene que añadir texto al HTML, solo la clase `.active-target`.
-3. **Las miniaturas del selector son `grid` puro**: `preview-1/2/70-30/3` comparten el mismo marcado y cambian solo la plantilla de columnas.
-4. **La pastilla flotante obedece al contrato al pie de la letra**: `display: none` por defecto y `display: flex !important` con `.visible`, más la animación `popIn` de 150 ms.
-5. **En móvil (≤ 860 px) todas las rejillas DIVI caen a una columna**, para que el constructor siga siendo usable con el drawer abierto.
-6. **`prefers-reduced-motion`** desactiva transiciones y animaciones.
+### 5. Decisiones
 
-### 5. Verificación
+1. **El foco del buscador usa `outline: 2px solid #ccfbf1`** tal como pide la partitura, en lugar del `box-shadow` de otros componentes. Es intencional: el catálogo convive con muchos bordes y un halo suave lo diferenciaría mal.
+2. **`.btn-card-add` cambia a teal sólido en hover**, no a un tinte claro: en una lista de siete tarjetas el relleno pleno señala con claridad cuál se va a pulsar.
+3. **Textos con `ellipsis` en las tres capas** (título, subtítulo y contenedor). Con nombres largos como «Video interactivo H5P» la tarjeta no crece ni empuja el botón.
+4. **Añadí `.catalogo-sin-resultados`** porque el buscador en tiempo real necesita un estado vacío; sin él, Cursor tendría que inventarse el suyo y rompería el aislamiento.
+5. **`prefers-reduced-motion`** anula la elevación de 1.5 px.
+
+### 6. Verificación
 
 | Comprobación | Resultado |
 | :--- | :--- |
-| Llaves CSS balanceadas | `AdminPlaneacionCSS.html` 1095/1095 |
-| Render a 880 px | ✅ sección azul, fila verde, columna activa con anillo teal y 🎯, selector con 4 miniaturas, pastilla oscura |
-| Controles ▲ ▼ ✕ | ✅ visibles en la cabecera de sección |
+| Llaves CSS balanceadas | `AdminPlaneacionCSS.html` 1166/1166 |
+| Reglas sin prefijo de aislamiento | **0** |
+| Render a 900 px | ✅ buscador con lupa y limpieza, siete tarjetas con su color, botones `+` |
+| Render a 380 px | el sidebar pasa a drawer (OLA 17), por eso se valida en escritorio |
 | IDs / `.gs` / JS | sin cambios |
 
-Evidencia: `evidencia_ola17b/divi_capas.png`.
+Evidencia: `evidencia_ola19/catalogo_lateral.png`.
 
-### 6. Rollback
+### 7. Rollback
 
-Borrar las líneas 6762–7177 o restaurar:
-`C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_ola17b.html`
+Borrar las líneas 7379–7612 o restaurar:
+`C:\Users\40B\AppData\Local\Temp\st90_backup_fase5\AdminPlaneacionCSS_pre_ola19.html`

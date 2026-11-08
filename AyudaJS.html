@@ -2079,6 +2079,10 @@ function tarjetaPreviewBloque_(card) {
 
   var art = document.createElement('article');
   art.className = 'content-card tarjeta-alumno-bloque';
+  art.style.minWidth = '0';
+  art.style.maxWidth = '100%';
+  art.style.overflowX = 'auto';
+  art.style.boxSizing = 'border-box';
 
   var head = document.createElement('div');
   head.className = 'card-header';
@@ -2141,6 +2145,33 @@ function tarjetaPreviewBloque_(card) {
     player.appendChild(left);
     player.appendChild(waves);
     art.appendChild(player);
+  }
+
+  if (tipo === 'tabla_notion' || tipo === 'tabla' || tipo === 'excel_split_table') {
+    var tbl = card.querySelector('table.tabla-notion, table.excel-layout-table, table');
+    if (tbl) {
+      var tblWrap = document.createElement('div');
+      tblWrap.className = 'notion-table-wrap preview-table-wrap';
+      tblWrap.style.overflowX = 'auto';
+      tblWrap.style.maxWidth = '100%';
+      tblWrap.style.marginTop = '8px';
+      tblWrap.style.boxSizing = 'border-box';
+      var clonTbl = tbl.cloneNode(true);
+      clonTbl.removeAttribute('contenteditable');
+      clonTbl.querySelectorAll('[contenteditable]').forEach(function (el) { el.removeAttribute('contenteditable'); });
+      tblWrap.appendChild(clonTbl);
+      art.appendChild(tblWrap);
+    }
+  }
+
+  if (tipo === 'word_shape') {
+    var ws = card.querySelector('.word-shape-box');
+    if (ws) {
+      var clonWs = ws.cloneNode(true);
+      clonWs.removeAttribute('contenteditable');
+      clonWs.style.marginTop = '8px';
+      art.appendChild(clonWs);
+    }
   }
 
   if (tipo === 'fichero' || tipo === 'reto' || tipo === 'reto_ciencias' || tipo === 'encuesta') {
@@ -3025,15 +3056,65 @@ function armarMaquetaAlumno_() {
 
   var cont = document.getElementById('contenedorIDevicesDinamicos');
   if (cont) {
-    var cards = cont.querySelectorAll('.idevice-card');
-    cards.forEach(function (c) {
-      var pagId = parseInt(c.getAttribute('data-pagina-id'), 10);
-      var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(c.getAttribute('data-tipo') || '');
-      var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
-      if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
-        panelDest.appendChild(tarjetaPreviewBloque_(c));
-      }
-    });
+    var filas = cont.querySelectorAll('.divi-row');
+    if (filas.length > 0) {
+      filas.forEach(function (fila) {
+        var layout = fila.getAttribute('data-distribucion') || 'col-1';
+        var mapa = (typeof MAPA_COLUMNAS_ !== 'undefined' && MAPA_COLUMNAS_[layout]) ? MAPA_COLUMNAS_[layout] : { grid: 'grid-col-1' };
+        var primeraCard = fila.querySelector('.idevice-card');
+        if (!primeraCard) return;
+
+        var pagId = parseInt(fila.getAttribute('data-pagina-id') || primeraCard.getAttribute('data-pagina-id'), 10);
+        var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(primeraCard.getAttribute('data-tipo') || '');
+        var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
+        if (!panelDest) return;
+
+        var filaPrev = document.createElement('div');
+        filaPrev.className = 'divi-row ' + layout;
+        var gridPrev = document.createElement('div');
+        gridPrev.className = 'divi-columns-grid ' + mapa.grid;
+
+        var cols = fila.querySelectorAll('.divi-column');
+        var hayContenidoFila = false;
+        cols.forEach(function (col) {
+          var colPrev = document.createElement('div');
+          colPrev.className = 'divi-column';
+          var tarjetas = col.querySelectorAll('.idevice-card');
+          tarjetas.forEach(function (c) {
+            hayContenidoFila = true;
+            if (typeof tarjetaPreviewBloque_ === 'function') {
+              colPrev.appendChild(tarjetaPreviewBloque_(c));
+            }
+          });
+          gridPrev.appendChild(colPrev);
+        });
+
+        if (hayContenidoFila) {
+          filaPrev.appendChild(gridPrev);
+          panelDest.appendChild(filaPrev);
+        }
+      });
+
+      var sueltas = cont.querySelectorAll(':scope > .idevice-card, :scope > .divi-section > .idevice-card');
+      sueltas.forEach(function (c) {
+        var pagId = parseInt(c.getAttribute('data-pagina-id'), 10);
+        var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(c.getAttribute('data-tipo') || '');
+        var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
+        if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
+          panelDest.appendChild(tarjetaPreviewBloque_(c));
+        }
+      });
+    } else {
+      var cards = cont.querySelectorAll('.idevice-card');
+      cards.forEach(function (c) {
+        var pagId = parseInt(c.getAttribute('data-pagina-id'), 10);
+        var m = !isNaN(pagId) ? (pagId + 1) : momentoDeBloquePreview_(c.getAttribute('data-tipo') || '');
+        var panelDest = (m === 1) ? p1 : (m === 2) ? p2 : (m === 3) ? p3 : p4;
+        if (panelDest && typeof tarjetaPreviewBloque_ === 'function') {
+          panelDest.appendChild(tarjetaPreviewBloque_(c));
+        }
+      });
+    }
   }
 
   marco.appendChild(cuerpo);
@@ -3074,16 +3155,44 @@ function anexarLienzoVivoPreview_(panel) {
   if (!estado || !estado.paginas) return;
   estado.paginas.forEach(function (pag) {
     (pag.idevices || []).forEach(function (bloque) {
-      if (!bloque || !bloque.cuerpo) return;
-      var art = document.createElement('article');
-      art.className = 'idevice-card';
-      var h = document.createElement('h3');
-      h.textContent = bloque.titulo || 'Bloque';
-      var cuerpo = document.createElement('div');
-      cuerpo.innerHTML = String(bloque.cuerpo);
-      art.appendChild(h);
-      art.appendChild(cuerpo);
-      panel.appendChild(art);
+      if (!bloque) return;
+      if (bloque.tipo === 'fila') {
+        var fila = document.createElement('div');
+        fila.className = 'divi-row ' + (bloque.layout || 'col-1');
+        var grid = document.createElement('div');
+        var mapa = (typeof MAPA_COLUMNAS_ !== 'undefined' && MAPA_COLUMNAS_[bloque.layout]) ? MAPA_COLUMNAS_[bloque.layout] : { grid: 'grid-col-1' };
+        grid.className = 'divi-columns-grid ' + mapa.grid;
+        (bloque.columnas || []).forEach(function (colBloques) {
+          var col = document.createElement('div');
+          col.className = 'divi-column';
+          (colBloques || []).forEach(function (b) {
+            if (!b) return;
+            var art = document.createElement('article');
+            art.className = 'content-card idevice-card';
+            var h = document.createElement('h3');
+            h.textContent = b.titulo || 'Bloque';
+            var cuerpo = document.createElement('div');
+            cuerpo.innerHTML = String(b.cuerpo || '');
+            art.appendChild(h);
+            art.appendChild(cuerpo);
+            col.appendChild(art);
+          });
+          grid.appendChild(col);
+        });
+        fila.appendChild(grid);
+        panel.appendChild(fila);
+      } else {
+        if (!bloque.cuerpo) return;
+        var art = document.createElement('article');
+        art.className = 'idevice-card';
+        var h = document.createElement('h3');
+        h.textContent = bloque.titulo || 'Bloque';
+        var cuerpo = document.createElement('div');
+        cuerpo.innerHTML = String(bloque.cuerpo);
+        art.appendChild(h);
+        art.appendChild(cuerpo);
+        panel.appendChild(art);
+      }
     });
   });
 }
@@ -4562,62 +4671,177 @@ function alternarTodasCatsExe_() {
 }
 window.alternarTodasCatsExe_ = alternarTodasCatsExe_;
 
+function escAttrCatalogo609_(texto) {
+  return String(texto || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function normalizarTextoBusquedaCatalogo609_(texto) {
+  return String(texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
+function invocarInsertarDesdeCatalogo609_(tipo) {
+  if (!tipo) return;
+  if (typeof window.insertarModuloEnColumnaActiva_ === 'function') {
+    window.insertarModuloEnColumnaActiva_(tipo);
+    return;
+  }
+  if (typeof window.insertariDeviceSesion_ === 'function') window.insertariDeviceSesion_(tipo);
+}
+
+function htmlMiniCardCatalogo609_(mod) {
+  mod = mod || {};
+  var tipo = escAttrCatalogo609_(mod.tipo);
+  var titulo = escAttrCatalogo609_(mod.titulo);
+  var sub = escAttrCatalogo609_(mod.sub);
+  var tema = escAttrCatalogo609_(mod.tema || 'tema-notion');
+  var icono = mod.icono || '📦';
+  return '<div class="modulo-card-lateral ' + tema + '" data-tipo="' + tipo + '" data-nombre="' + titulo + '" data-sub="' + sub + '" role="button" tabindex="0" title="' + titulo + ' — ' + sub + '">' +
+    '<div class="card-lateral-cuerpo" onclick="invocarInsertarDesdeCatalogo609_(\'' + tipo + '\')">' +
+      '<span class="card-lateral-icon-badge" aria-hidden="true">' + icono + '</span>' +
+      '<div class="card-lateral-textos">' +
+        '<span class="card-lateral-titulo">' + titulo + '</span>' +
+        '<span class="card-lateral-sub">' + sub + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<button type="button" class="btn-card-add" title="Añadir a la columna activa" aria-label="Añadir ' + titulo + '" onclick="event.stopPropagation(); invocarInsertarDesdeCatalogo609_(\'' + tipo + '\');">+</button>' +
+  '</div>';
+}
+
+function aplicarFiltroBuscadorCatalogo609_() {
+  var input = document.getElementById('inputBuscarModulosCatalogo');
+  if (!input) return;
+  var caja = input.closest('.box-idevice-menu') || document.querySelector('.box-idevice-menu');
+  var limpiar = document.getElementById('btnLimpiarBusquedaModulos');
+  var consulta = normalizarTextoBusquedaCatalogo609_(input.value);
+  var tarjetas = document.querySelectorAll('.cat-accordion .modulo-card-lateral');
+  var visibles = 0;
+  tarjetas.forEach(function (card) {
+    var blob = normalizarTextoBusquedaCatalogo609_(
+      (card.getAttribute('data-nombre') || '') + ' ' +
+      (card.getAttribute('data-sub') || '') + ' ' +
+      (card.getAttribute('data-tipo') || '')
+    );
+    var coincide = !consulta || blob.indexOf(consulta) >= 0;
+    card.style.display = coincide ? '' : 'none';
+    if (coincide) visibles += 1;
+  });
+  document.querySelectorAll('.cat-accordion .cat-group').forEach(function (grupo) {
+    var header = grupo.querySelector('.cat-header');
+    var cardsGrupo = grupo.querySelectorAll('.modulo-card-lateral');
+    var visiblesGrupo = 0;
+    cardsGrupo.forEach(function (c) { if (c.style.display !== 'none') visiblesGrupo += 1; });
+    if (consulta) {
+      grupo.classList.toggle('abierto', visiblesGrupo > 0);
+      if (header) header.style.display = visiblesGrupo > 0 ? '' : 'none';
+    } else if (header) header.style.display = '';
+  });
+  if (limpiar) limpiar.style.display = consulta ? '' : 'none';
+  var sinResultados = caja ? caja.querySelector('.sin-resultados-catalogo') : null;
+  if (!sinResultados && caja) {
+    sinResultados = document.createElement('p');
+    sinResultados.className = 'sin-resultados-catalogo';
+    sinResultados.setAttribute('role', 'status');
+    sinResultados.textContent = 'No se encontraron componentes';
+    sinResultados.style.display = 'none';
+    var acc = caja.querySelector('.cat-accordion');
+    if (acc && acc.parentNode) acc.parentNode.insertBefore(sinResultados, acc.nextSibling);
+  }
+  if (sinResultados) sinResultados.style.display = consulta && visibles === 0 ? '' : 'none';
+}
+
+function limpiarBusquedaCatalogo_() {
+  var input = document.getElementById('inputBuscarModulosCatalogo');
+  if (!input) return;
+  input.value = '';
+  aplicarFiltroBuscadorCatalogo609_();
+  input.focus();
+}
+
+function configurarBuscadorCatalogo_() {
+  var input = document.getElementById('inputBuscarModulosCatalogo');
+  if (!input || input._st90Build609) return;
+  input._st90Build609 = true;
+  input.addEventListener('input', aplicarFiltroBuscadorCatalogo609_);
+  var limpiar = document.getElementById('btnLimpiarBusquedaModulos');
+  if (limpiar && !limpiar._st90Build609) {
+    limpiar._st90Build609 = true;
+    limpiar.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      limpiarBusquedaCatalogo_();
+    });
+  }
+  aplicarFiltroBuscadorCatalogo609_();
+}
+
+window.invocarInsertarDesdeCatalogo609_ = invocarInsertarDesdeCatalogo609_;
+window.limpiarBusquedaCatalogo_ = limpiarBusquedaCatalogo_;
+window.configurarBuscadorCatalogo_ = configurarBuscadorCatalogo_;
+
 function htmlCatalogoExe_() {
+  /* BUILD-609-CURSOR — catálogo lateral con mini-cards y metadatos DUA */
   var cats = [
-    { id: 'cat-info', icon: '📖', titulo: 'Información & Notion', abierto: true, items: [
-      ['texto_dua', '📖 Lectura Guiada DUA (Voz)'],
-      ['objetivos', '🎯 Objetivos de Clase'],
-      ['callout', '💡 Callout / Recuadro (Notion)'],
-      ['timeline', '⏱️ Timeline / Fases NEM (Notion)'],
-      ['tabla_notion', '📊 Tabla Dinámica (Notion)'],
-      ['toggle_notion', '🔽 Toggle / Desplegable (Notion)'],
-      ['galeria', '🖼️ Galería de Imágenes'],
-      ['fichero', '📎 Archivo o Fichero Adjunto']
+    { id: 'cat-info', icon: '📖', titulo: 'Información & Notion', abierto: true, tema: 'tema-notion', items: [
+      { tipo: 'texto_dua', icono: '📖', titulo: 'Lectura DUA', sub: 'Texto guiado con voz narrada', tema: 'tema-notion' },
+      { tipo: 'objetivos', icono: '🎯', titulo: 'Objetivos', sub: 'Metas de clase y PDA', tema: 'tema-notion' },
+      { tipo: 'callout', icono: '💡', titulo: 'Recuadro Notion', sub: 'Caja destacada de notas', tema: 'tema-notion' },
+      { tipo: 'timeline', icono: '⏱️', titulo: 'Línea de Tiempo', sub: 'Fases y secuencias NEM', tema: 'tema-notion' },
+      { tipo: 'tabla_notion', icono: '📊', titulo: 'Tabla Dinámica', sub: 'Cuadrícula editable Notion', tema: 'tema-notion' },
+      { tipo: 'toggle_notion', icono: '🔽', titulo: 'Desplegable', sub: 'Sección oculta expandible', tema: 'tema-notion' },
+      { tipo: 'galeria', icono: '🖼️', titulo: 'Galería', sub: 'Colección de imágenes DUA', tema: 'tema-notion' },
+      { tipo: 'fichero', icono: '📎', titulo: 'Fichero Adjunto', sub: 'Documentos descargables', tema: 'tema-notion' },
+      { tipo: 'word_shape', icono: '▢', titulo: 'Cuadro de forma', sub: 'Texto en forma Word con DUA', tema: 'tema-notion' }
     ]},
-    { id: 'cat-eval', icon: '📝', titulo: 'Evaluación y Seguimiento', abierto: true, items: [
-      ['quiz_evaluativo', '📝 Quiz Evaluativo (Puntos)'],
-      ['encuesta', '📊 Encuesta / Diagnóstico'],
-      ['vf', '✅ Pregunta Verdadero / Falso'],
-      ['huecos', '✏️ Rellenar Huecos']
+    { id: 'cat-eval', icon: '📝', titulo: 'Evaluación y Seguimiento', abierto: true, tema: 'tema-eval', items: [
+      { tipo: 'quiz_evaluativo', icono: '📝', titulo: 'Quiz Formativo', sub: 'Reactivos autocalificables', tema: 'tema-eval' },
+      { tipo: 'encuesta', icono: '📊', titulo: 'Encuesta DUA', sub: 'Diagnóstico y sondeo', tema: 'tema-eval' },
+      { tipo: 'vf', icono: '✅', titulo: 'Verdadero / Falso', sub: 'Pregunta interactiva V/F', tema: 'tema-eval' },
+      { tipo: 'huecos', icono: '✏️', titulo: 'Rellenar Huecos', sub: 'Completar texto clave', tema: 'tema-eval' }
     ]},
-    { id: 'cat-interact', icon: '🧩', titulo: 'Multimedia & H5P', abierto: true, items: [
-      ['h5p_interactivo', '🧩 H5P / Lumi Interactivo'],
-      ['video_local', '🎬 Video Local (Offline / MP4)'],
-      ['video_interactivo', '🎥 Vídeo con Pausas (YouTube)'],
-      ['embebido', '🌐 Embebido Canva / Genially / Slides'],
-      ['geogebra', '📐 GeoGebra / Simulador']
+    { id: 'cat-interact', icon: '🧩', titulo: 'Multimedia & H5P', abierto: true, tema: 'tema-h5p', items: [
+      { tipo: 'h5p_interactivo', icono: '🧩', titulo: 'H5P / Lumi', sub: 'Actividad interactiva externa', tema: 'tema-h5p' },
+      { tipo: 'video_local', icono: '🎬', titulo: 'Video Local', sub: 'Video offline o Google Drive', tema: 'tema-h5p' },
+      { tipo: 'video_interactivo', icono: '🎥', titulo: 'Video YouTube', sub: 'Video con pausas y preguntas', tema: 'tema-h5p' },
+      { tipo: 'embebido', icono: '🌐', titulo: 'Embebido Web', sub: 'Canva, Genially o Slides', tema: 'tema-h5p' },
+      { tipo: 'geogebra', icono: '📐', titulo: 'GeoGebra', sub: 'Simulador matemático dinámico', tema: 'tema-h5p' },
+      { tipo: 'geogebra_param', icono: '📐', titulo: 'GeoGebra con parámetros', sub: 'Material con ID y tamaño', tema: 'tema-h5p' }
     ]},
-    { id: 'cat-ingles', icon: '🗣️', titulo: 'Inglés & Flashcards 3D', abierto: true, items: [
-      ['flashcards', '🃏 Flashcards 3D (Notion)'],
-      ['listening', '🎧 Audio Listening y Comprensión'],
-      ['pronunciacion', '🎙️ Práctica de Pronunciación (Voz)']
+    { id: 'cat-ingles', icon: '🗣️', titulo: 'Inglés & Flashcards 3D', abierto: true, tema: 'tema-ingles', items: [
+      { tipo: 'flashcards', icono: '🃏', titulo: 'Flashcards 3D', sub: 'Tarjetas giratorias de memoria', tema: 'tema-ingles' },
+      { tipo: 'listening', icono: '🎧', titulo: 'Audio Listening', sub: 'Comprensión auditiva en inglés', tema: 'tema-ingles' },
+      { tipo: 'pronunciacion', icono: '🎙️', titulo: 'Pronunciación', sub: 'Práctica de habla asistida', tema: 'tema-ingles' }
     ]},
-    { id: 'cat-juegos', icon: '🎮', titulo: 'Juegos Pedagógicos', abierto: false, items: [
-      ['rosco', '🔤 Rosco de Palabras'],
-      ['sopa', '🔍 Sopa de Letras'],
-      ['adivina', '❓ Adivina el Concepto'],
-      ['desafio', '🏆 Desafío / Escape Room NEM']
+    { id: 'cat-juegos', icon: '🎮', titulo: 'Juegos Pedagógicos', abierto: false, tema: 'tema-juegos', items: [
+      { tipo: 'rosco', icono: '🔤', titulo: 'Rosco Pasapalabra', sub: 'Alfabeto de definiciones', tema: 'tema-juegos' },
+      { tipo: 'sopa', icono: '🔍', titulo: 'Sopa de Letras', sub: 'Búsqueda de conceptos clave', tema: 'tema-juegos' },
+      { tipo: 'adivina', icono: '❓', titulo: 'Adivina Concepto', sub: 'Pistas progresivas DUA', tema: 'tema-juegos' },
+      { tipo: 'desafio', icono: '🏆', titulo: 'Escape Room NEM', sub: 'Misión por retos consecutivos', tema: 'tema-juegos' }
     ]},
-    { id: 'cat-tecnologia', icon: '💻', titulo: 'Tecnología y Ofimática', abierto: false, items: [
-      ['sim_ofimatica', '📊 Práctica de Hoja de Cálculo'],
-      ['algoritmo', '🔀 Diagrama de Flujo / Algoritmo'],
-      ['codigo', '💻 Editor de Código / Sintaxis']
+    { id: 'cat-tecnologia', icon: '💻', titulo: 'Tecnología y Ofimática', abierto: false, tema: 'tema-tecno', items: [
+      { tipo: 'sim_ofimatica', icono: '📊', titulo: 'Hoja de Cálculo', sub: 'Simulador de fórmulas y tablas', tema: 'tema-tecno' },
+      { tipo: 'algoritmo', icono: '🔀', titulo: 'Diagrama de Flujo', sub: 'Lógica y pasos algorítmicos', tema: 'tema-tecno' },
+      { tipo: 'codigo', icono: '💻', titulo: 'Editor de Código', sub: 'Sintaxis y programación', tema: 'tema-tecno' },
+      { tipo: 'excel_split_table', icono: '📊', titulo: 'Tabla dividida (Excel)', sub: 'Celdas con formato autónomo', tema: 'tema-tecno' }
     ]},
-    { id: 'cat-ciencias', icon: '🔬', titulo: 'Ciencias y Matemáticas', abierto: false, items: [
-      ['reto_ciencias', '🔬 Problema Situado'],
-      ['formula', '📐 Fórmulas Matemáticas (KaTeX)']
+    { id: 'cat-ciencias', icon: '🔬', titulo: 'Ciencias y Matemáticas', abierto: false, tema: 'tema-ciencias', items: [
+      { tipo: 'reto_ciencias', icono: '🔬', titulo: 'Problema Situado', sub: 'Investigación experimental', tema: 'tema-ciencias' },
+      { tipo: 'formula', icono: '📐', titulo: 'Fórmula KaTeX', sub: 'Ecuaciones matemáticas', tema: 'tema-ciencias' }
     ]}
   ];
   var toolbar = '<div class="cat-toolbar-wrap" style="display:flex;justify-content:flex-end;margin-bottom:6px;"><button type="button" class="btn-toggle-todas-cats" onclick="alternarTodasCatsExe_()" style="font-size:11px;color:#0d9488;background:transparent;border:none;cursor:pointer;font-weight:700;padding:2px 4px;">▾ Desplegar / Colapsar todo</button></div>';
-  return toolbar + cats.map(function (cat) {
-    var items = cat.items.map(function (it) {
-      return '<div class="idevice-pill-add" data-tipo="' + it[0] + '" onclick="insertariDeviceSesion_(\'' + it[0] + '\')"><span>' + it[1] + '</span><span class="btn-mas">Añadir</span></div>';
-    }).join('');
+  var buscador = '<div class="cat-buscador-box">' +
+    '<span class="cat-lupa-icon" aria-hidden="true">🔍</span>' +
+    '<input type="text" id="inputBuscarModulosCatalogo" class="input-busqueda-catalogo" placeholder="Buscar componente..." autocomplete="off" aria-label="Buscar componente en el catálogo">' +
+    '<button type="button" class="btn-limpiar-busqueda" id="btnLimpiarBusquedaModulos" style="display:none;" title="Limpiar búsqueda" aria-label="Limpiar búsqueda">✕</button>' +
+  '</div>';
+  var acordeon = cats.map(function (cat) {
+    var items = cat.items.map(htmlMiniCardCatalogo609_).join('');
     return '<div class="cat-group' + (cat.abierto ? ' abierto' : '') + '" id="' + cat.id + '">' +
       '<div class="cat-header" onclick="toggleCatIDevices_(\'' + cat.id + '\')"><div class="cat-header-left">' + (cat.icon ? ('<span class="cat-header-icon" style="margin-right:6px;">' + cat.icon + '</span>') : '') + '<span>' + cat.titulo + '</span></div><i class="cat-chevron"></i></div>' +
       '<div class="cat-items">' + items + '</div></div>';
   }).join('');
+  return buscador + toolbar + acordeon;
 }
+htmlCatalogoExe_._st90Build609 = true;
 
 /* BUILD-581 — la barra .idevice-bar no se publica en el lienzo. Cualquier inyección se retira. */
 function erradicarBarraModularExe_() {
@@ -4689,6 +4913,7 @@ function montarEntornoExeLearning_() {
   asegurarPaginasExe_();
   renderArbolSesion_();
   renderAsistenteSecuenciaIA_();
+  if (typeof configurarBuscadorCatalogo_ === 'function') configurarBuscadorCatalogo_();
 }
 
 function renderArbolSesion_() {
@@ -4732,6 +4957,16 @@ function aplicarFiltroPaginaExe_() {
     var pid = card.getAttribute('data-pagina-id');
     if (!pid) card.setAttribute('data-pagina-id', activa);
     card.style.display = String(card.getAttribute('data-pagina-id')) === activa ? '' : 'none';
+  });
+  cont.querySelectorAll('.divi-row').forEach(function (fila) {
+    var fPid = fila.getAttribute('data-pagina-id');
+    if (!fPid) {
+      var primerCard = fila.querySelector('.idevice-card');
+      if (primerCard) fPid = primerCard.getAttribute('data-pagina-id');
+      if (!fPid) fPid = activa;
+      fila.setAttribute('data-pagina-id', fPid);
+    }
+    fila.style.display = String(fPid) === activa ? '' : 'none';
   });
   repintarDivisoresExe_();
 }
@@ -6623,11 +6858,50 @@ function capturarEstadoExe_() {
   paginas.forEach(function (p) { porId[String(p.id)] = p; });
   var cont = document.getElementById('contenedorIDevicesDinamicos');
   if (cont) {
-    cont.querySelectorAll('.idevice-card').forEach(function (card) {
-      var bloque = leerTarjetaExe_(card);
-      var dest = porId[String(bloque.paginaId)] || paginas[0];
-      if (dest) dest.idevices.push(bloque);
-    });
+    var filas = cont.querySelectorAll('.divi-row');
+    if (filas.length > 0) {
+      filas.forEach(function (fila) {
+        var layout = fila.getAttribute('data-distribucion') || 'col-1';
+        var cols = fila.querySelectorAll('.divi-column');
+        var colArrays = [];
+        var filaPaginaId = fila.getAttribute('data-pagina-id');
+        var hayContenido = false;
+        cols.forEach(function (col) {
+          var bloquesCol = [];
+          col.querySelectorAll('.idevice-card').forEach(function (card) {
+            var b = leerTarjetaExe_(card);
+            bloquesCol.push(b);
+            hayContenido = true;
+            if (!filaPaginaId && b.paginaId) filaPaginaId = b.paginaId;
+          });
+          colArrays.push(bloquesCol);
+        });
+        if (hayContenido) {
+          var destPid = filaPaginaId != null ? String(filaPaginaId) : String(idPaginaActivaExe_());
+          var dest = porId[destPid] || paginas[0];
+          if (dest) {
+            dest.idevices.push({
+              tipo: 'fila',
+              layout: layout,
+              columnas: colArrays,
+              paginaId: destPid
+            });
+          }
+        }
+      });
+      // Tarjetas sueltas que no estén dentro de ninguna .divi-row
+      cont.querySelectorAll(':scope > .idevice-card, :scope > .divi-section > .idevice-card').forEach(function (card) {
+        var bloque = leerTarjetaExe_(card);
+        var dest = porId[String(bloque.paginaId)] || paginas[0];
+        if (dest) dest.idevices.push(bloque);
+      });
+    } else {
+      cont.querySelectorAll('.idevice-card').forEach(function (card) {
+        var bloque = leerTarjetaExe_(card);
+        var dest = porId[String(bloque.paginaId)] || paginas[0];
+        if (dest) dest.idevices.push(bloque);
+      });
+    }
   }
   var estado = {
     paginas: paginas,
@@ -6661,17 +6935,41 @@ function deserializarIDevicesSesion_(data) {
     };
   });
   window._nodoSesionActivo_ = Math.max(0, Math.min(window.paginasSesionActiva_.length - 1, Number(data.nodoActivo) || 0));
-  var trabajos = [];
-  data.paginas.forEach(function (p, i) {
-    var paginaId = window.paginasSesionActiva_[i] ? window.paginasSesionActiva_[i].id : i;
-    (p.idevices || []).forEach(function (bloque) { trabajos.push({ paginaId: paginaId, bloque: bloque }); });
-  });
+
   var cont = document.getElementById('contenedorIDevicesDinamicos');
-  if (cont) cont.querySelectorAll('.idevice-card').forEach(function (n) { n.remove(); });
+  if (cont) {
+    cont.innerHTML = '';
+  }
   window._st90RestaurandoExe_ = true;
   window._st90RestaurandoEnc_ = true;
-  trabajos.forEach(function (job) {
-    insertarBloqueExe_(job.bloque.tipo, job.bloque, job.paginaId);
+  if (typeof asegurarSeccionDivi_ === 'function') asegurarSeccionDivi_();
+
+  data.paginas.forEach(function (p, i) {
+    var paginaId = window.paginasSesionActiva_[i] ? window.paginasSesionActiva_[i].id : i;
+    (p.idevices || []).forEach(function (item) {
+      if (!item) return;
+      if (item.tipo === 'fila') {
+        var fila = (typeof insertarFilaDivi_ === 'function') ? insertarFilaDivi_(item.layout || 'col-1', null) : null;
+        if (fila) {
+          fila.setAttribute('data-pagina-id', String(paginaId));
+          var cols = fila.querySelectorAll('.divi-column');
+          (item.columnas || []).forEach(function (bloquesCol, cIdx) {
+            var col = cols[cIdx];
+            if (!col) return;
+            (bloquesCol || []).forEach(function (b) {
+              if (!b) return;
+              window._columnaObjetivoActiva_ = col;
+              var card = insertarBloqueExe_(b.tipo, b, paginaId);
+              if (card && typeof colocarModuloEnColumnaActiva_ === 'function') {
+                colocarModuloEnColumnaActiva_(card);
+              }
+            });
+          });
+        }
+      } else {
+        insertarBloqueExe_(item.tipo, item, paginaId);
+      }
+    });
   });
   window._st90RestaurandoEnc_ = false;
   window._st90RestaurandoExe_ = false;
@@ -8279,8 +8577,12 @@ if (document.readyState === 'loading') {
   }
 
   function inyectarPillsCatalogoDom_() {
+    if (typeof htmlCatalogoExe_ === 'function' && htmlCatalogoExe_._st90Build609) {
+      if (typeof configurarBuscadorCatalogo_ === 'function') configurarBuscadorCatalogo_();
+      return;
+    }
     function poner(ancla, tipo, etiqueta) {
-      if (document.querySelector('.idevice-pill-add[data-tipo="' + tipo + '"]')) return;
+      if (document.querySelector('.idevice-pill-add[data-tipo="' + tipo + '"], .modulo-card-lateral[data-tipo="' + tipo + '"]')) return;
       var nodo = document.querySelector('.idevice-pill-add[data-tipo="' + ancla + '"]');
       if (nodo) nodo.insertAdjacentHTML('afterend', pillHtmlOla17_(tipo, etiqueta));
     }
@@ -8289,7 +8591,7 @@ if (document.readyState === 'loading') {
     poner('formula', 'geogebra_param', '📐 GeoGebra con parámetros');
   }
 
-  if (typeof htmlCatalogoExe_ === 'function' && !htmlCatalogoExe_._st90Ola17) {
+  if (typeof htmlCatalogoExe_ === 'function' && !htmlCatalogoExe_._st90Ola17 && !htmlCatalogoExe_._st90Build609) {
     var catalogoPrevio = htmlCatalogoExe_;
     htmlCatalogoExe_ = function () {
       return enriquecerCatalogoHtml_(catalogoPrevio());
@@ -9320,6 +9622,8 @@ if (document.readyState === 'loading') {
     var fila = document.createElement('div');
     fila.className = 'divi-row ' + (distribucion || 'col-1');
     fila.setAttribute('data-distribucion', distribucion || 'col-1');
+    var pIdActiva = (typeof idPaginaActivaExe_ === 'function') ? String(idPaginaActivaExe_()) : '0';
+    fila.setAttribute('data-pagina-id', pIdActiva);
     var header = document.createElement('div');
     header.className = 'divi-row-header';
     header.innerHTML = '<span class="divi-row-label">FILA (' + (distribucion || 'col-1') + ')</span>' + htmlControlesDivi_();

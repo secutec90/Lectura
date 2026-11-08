@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-07] - [Ola 19: Corrección de Desbordamiento en Grillas Divi, Persistencia Estructurada y Renderizado Fiel en Vista Alumno en build-609]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(ola19): correccion desbordamiento columnas col-3, persistencia estructurada filas/columnas y renderizado fiel en vista previa alumno en build-609`
+- **Cambios Realizados:**
+  - **Corrección de Desbordamiento en Constructor y Reglas CSS Grid (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Ajustadas las retículas Divi (`.divi-row.col-3`, `.grid-col-3`) utilizando `repeat(3, minmax(0, 1fr))` y configurado `minmax(0, 1fr)` en todas las variantes de columna para impedir que tablas o módulos ensanchen la celda.
+    - Agregado `min-width: 0; box-sizing: border-box;` a `.divi-column` y `overflow-x: auto; max-width: 100%;` a `.divi-module`, `.divi-column .idevice-card` y contenedores de tablas (`.notion-table-wrap`, `.tabla-notion`, `.excel-layout-table`).
+    - Añadidos estilos específicos para el frame de Vista Previa de Alumno (`.browser-frame .divi-row`, `.divi-columns-grid`, `.divi-column`) sin marcos verdes de edición pero preservando las columnas CSS Grid y la responsividad a 1 columna en pantallas ≤ 860px.
+  - **Persistencia Estructurada de Filas y Columnas (`AyudaJS.html`):**
+    - Serialización en `capturarEstadoExe_`: ahora guarda fielmente la jerarquía `{ tipo: 'fila', layout: 'col-3', columnas: [[bloque1], [bloque2], [bloque3]] }` en el JSON de la planeación, preservando compatibilidad con tarjetas sueltas.
+    - Deserialización en `deserializarIDevicesSesion_`: recrea las filas Divi mediante `insertarFilaDivi_` inyectando cada bloque en su respectiva columna con `colocarModuloEnColumnaActiva_`.
+    - Asignación de `data-pagina-id` a cada fila Divi y filtrado estricto por página activa en `aplicarFiltroPaginaExe_`.
+  - **Renderizado Fiel en Vista Previa del Alumno (`AyudaJS.html`):**
+    - Adaptado `armarMaquetaAlumno_` y `anexarLienzoVivoPreview_` para renderizar contenedores de fila (`.divi-row {layout}`) con sus cuadrículas (`.divi-columns-grid`) y columnas (`.divi-column`), erradicando el apilamiento plano 100% y reflejando las columnas activas.
+    - Añadido renderizado enriquecido de tablas y cuadros Word dentro de `tarjetaPreviewBloque_` con clonación protegida y contenedor scroll horizontal.
+  - **Validación del Manifiesto:**
+    - Verificación con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores sintácticos.
+- **Archivos Afectados:** `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `AyudaJS.html`, `00_Constantes.gs`, `ESTADO_COORDINACION.md`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-07] - [Ola 18: Consolidación de Retícula DIVI, Selector Gráfico de Columnas y Dropzone Activa en build-608]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola18): consolidacion reticula divi, selector de columnas y dropzone activa en build-608`
 - **Cambios Realizados:**

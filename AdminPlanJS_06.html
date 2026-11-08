@@ -437,6 +437,12 @@
     }
 
     function insertariDeviceSesion_(tipo) {
+      if (typeof window.insertarModuloEnColumnaActiva_ === 'function') {
+        return window.insertarModuloEnColumnaActiva_(tipo);
+      }
+      if (typeof window.insertariDeviceSesion_ === 'function' && window.insertariDeviceSesion_._st90Exe) {
+        return window.insertariDeviceSesion_(tipo);
+      }
       const contenedor = document.getElementById('contenedorIDevicesDinamicos');
       if (!contenedor) {
         toast('No encontré el contenedor de iDevices de la sesión.', 'error');

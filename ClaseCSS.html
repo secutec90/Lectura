@@ -4363,6 +4363,53 @@
     margin-bottom: 0;
   }
 
+  /* Vista Previa Alumno: Soporte de Retículas Divi en ClaseCSS */
+  .browser-frame .divi-row,
+  .moment-panel .divi-row {
+    margin: 0 0 20px;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  .browser-frame .divi-columns-grid,
+  .moment-panel .divi-columns-grid {
+    display: grid;
+    gap: 16px;
+    align-items: stretch;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .browser-frame .grid-col-1, .moment-panel .grid-col-1 { grid-template-columns: minmax(0, 1fr); }
+  .browser-frame .grid-col-2, .moment-panel .grid-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .browser-frame .grid-col-70-30, .moment-panel .grid-col-70-30 { grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 16px; }
+  .browser-frame .grid-col-3, .moment-panel .grid-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .browser-frame .divi-column,
+  .moment-panel .divi-column {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+  .browser-frame .divi-column .content-card,
+  .moment-panel .divi-column .content-card {
+    height: 100%;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+  @media (max-width: 860px) {
+    .browser-frame .grid-col-2,
+    .browser-frame .grid-col-70-30,
+    .browser-frame .grid-col-3,
+    .moment-panel .grid-col-2,
+    .moment-panel .grid-col-70-30,
+    .moment-panel .grid-col-3 {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+  }
+
   /* ---------- Adaptación al modal (#modalPreviewAlumno) ---------- */
   /* La barra del modal hereda el look de .browser-topbar: fondo oscuro,
      dirección translúcida y cierre circular. Así no se duplica el marco:

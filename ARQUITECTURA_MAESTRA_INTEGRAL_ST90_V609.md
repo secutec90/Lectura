@@ -168,3 +168,4 @@ $$\text{Promedio Final} = \frac{(\text{Nota Proy} \times P_{\text{proy}}) + (\te
 3. Regularizar `CONTROL_CAMBIOS.md` registrando el cierre del build-609 y los sprints de la deuda técnica.
 4. Validar integridad estricta con `node herramientas/manifiesto.js` (**79 documentos exactos**).
 5. Desplegar con `clasp push -f` y entregar la URL `/dev` verificada.
+

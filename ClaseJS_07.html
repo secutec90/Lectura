@@ -552,8 +552,14 @@
             let htmlDivi = '';
             const mapClaseGrid = function (lay) {
               if (lay === 'col-2') return 'grid-col-2';
-              if (lay === 'col-2-70-30') return 'grid-col-70-30';
               if (lay === 'col-3') return 'grid-col-3';
+              if (lay === 'col-4') return 'grid-col-4';
+              if (lay === 'col-2-70-30') return 'grid-col-70-30';
+              if (lay === 'col-2-33-67') return 'grid-col-33-67';
+              if (lay === 'col-2-67-33') return 'grid-col-67-33';
+              if (lay === 'col-2-25-75') return 'grid-col-25-75';
+              if (lay === 'col-2-75-25') return 'grid-col-75-25';
+              if (/^mosaico-\d+$/.test(lay)) return 'grid-' + lay;
               return 'grid-col-1';
             };
             const renderBloqueDUA = function (b) {
@@ -562,6 +568,10 @@
               const titB = String(b.titulo || b.tipo || 'Módulo').trim();
               const cuerpoB = String(b.cuerpo || b.contenido || '').trim();
               const ex = b.extra || {};
+              const estB = b.estilo || {};
+              const bgCard = estB.bg || ex.bgColor || '#ffffff';
+              const colCard = estB.color || ex.textColor || '';
+              const alignCard = estB.align || b.alineacion || ex.textAlign || '';
               let extraHtml = '';
               if (tipoB === 'timeline' && Array.isArray(ex.fases) && ex.fases.length) {
                 extraHtml += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">';
@@ -589,16 +599,27 @@
                 extraHtml += '</div>';
               } else if (tipoB === 'word_shape' && ex.texto) {
                 extraHtml += '<div class="word-shape-box ' + escaparHtml(ex.estiloForma || ex.color || 'shape-teal') + '" style="margin-top:8px;padding:12px;border-left:4px solid #0d9488;background:#f0fdfa;border-radius:8px;">' + ex.texto + '</div>';
+              } else if (tipoB === 'boton_cta' || tipoB === 'Boton' || tipoB === 'boton') {
+                const txtBtn = String(ex.texto || cuerpoB || 'Haz clic aquí').trim();
+                const urlBtn = String(ex.enlace || b.enlace || '#').trim();
+                const alignBtn = String(ex.alineacion || alignCard || 'center').trim();
+                const bgBtn = (ex.bgColor && ex.bgColor !== '#ffffff') ? ex.bgColor : ((estB.bg && estB.bg !== '#ffffff') ? estB.bg : '#007cba');
+                const colBtn = ex.textColor || estB.color || '#ffffff';
+                extraHtml += '<div class="modulo-boton-wrapper" style="text-align:' + escaparHtml(alignBtn) + ';"><a href="' + escaparHtml(urlBtn) + '" target="_blank" rel="noopener" class="modulo-boton" style="background-color:' + escaparHtml(bgBtn) + ';color:' + escaparHtml(colBtn) + ';">' + escaparHtml(txtBtn) + '</a></div>';
               }
               const textoLimpio = (cuerpoB + ' ' + extraHtml).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
               if (titB || textoLimpio) {
                 parrafosVozAlu_.push((titB ? titB + ': ' : '') + textoLimpio);
                 pIdx++;
               }
+              const mostrarCuerpo = !(tipoB === 'boton_cta' || tipoB === 'Boton' || tipoB === 'boton');
               const cuerpoHtml = /<[a-z][\s\S]*>/i.test(cuerpoB) ? cuerpoB : escaparHtml(cuerpoB).replace(/\n/g, '<br>');
-              return '<div class="content-card dua-bloque-idevice" data-tipo="' + escaparHtml(tipoB) + '" style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;box-sizing:border-box;min-width:0;max-width:100%;overflow-x:auto;">' +
-                (titB ? '<h4 style="margin:0 0 6px;font-size:14px;color:#0f172a;font-weight:700;">' + escaparHtml(titB) + '</h4>' : '') +
-                (cuerpoHtml ? '<div class="dua-bloque-cuerpo" style="font-size:13.5px;color:#334155;line-height:1.5;">' + cuerpoHtml + '</div>' : '') +
+              const styleCard = 'background:' + escaparHtml(bgCard) + ';border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;box-sizing:border-box;min-width:0;max-width:100%;overflow-x:auto;' +
+                (colCard ? 'color:' + escaparHtml(colCard) + ';' : '') +
+                (alignCard ? 'text-align:' + escaparHtml(alignCard) + ';' : '');
+              return '<div class="content-card dua-bloque-idevice" data-tipo="' + escaparHtml(tipoB) + '" style="' + styleCard + '">' +
+                (titB ? '<h4 style="margin:0 0 6px;font-size:14px;color:' + (colCard ? escaparHtml(colCard) : '#0f172a') + ';font-weight:700;">' + escaparHtml(titB) + '</h4>' : '') +
+                (mostrarCuerpo && cuerpoHtml ? '<div class="dua-bloque-cuerpo" style="font-size:13.5px;color:' + (colCard ? escaparHtml(colCard) : '#334155') + ';line-height:1.5;">' + cuerpoHtml + '</div>' : '') +
                 extraHtml +
               '</div>';
             };
@@ -607,10 +628,14 @@
                 if (!item) return;
                 if (item.tipo === 'fila' && Array.isArray(item.columnas)) {
                   const lay = item.layout || 'col-1';
-                  htmlDivi += '<div class="divi-row ' + escaparHtml(lay) + '" data-distribucion="' + escaparHtml(lay) + '">';
+                  const rowEst = item.estilo || {};
+                  const rowStyle = (rowEst.bg && rowEst.bg !== '#ffffff' ? 'background-color:' + escaparHtml(rowEst.bg) + ';padding:14px;border-radius:10px;' : '') +
+                    (rowEst.color ? 'color:' + escaparHtml(rowEst.color) + ';' : '');
+                  htmlDivi += '<div class="divi-row ' + escaparHtml(lay) + '" data-distribucion="' + escaparHtml(lay) + '"' + (rowStyle ? ' style="' + rowStyle + '"' : '') + '>';
                   htmlDivi += '<div class="divi-columns-grid ' + mapClaseGrid(lay) + '">';
-                  item.columnas.forEach(function (colBloques) {
-                    htmlDivi += '<div class="divi-column" style="min-width:0;max-width:100%;box-sizing:border-box;">';
+                  item.columnas.forEach(function (colBloques, cIdx) {
+                    const flexCol = (item.flexColumnas && item.flexColumnas[cIdx]) || '1';
+                    htmlDivi += '<div class="divi-column columna-renderizada" style="flex:' + escaparHtml(String(flexCol)) + ';min-width:0;max-width:100%;box-sizing:border-box;">';
                     (colBloques || []).forEach(function (b) {
                       htmlDivi += renderBloqueDUA(b);
                     });
@@ -624,13 +649,133 @@
             });
             if (htmlDivi) {
               html += '<div class="dua-seccion-momento dua-divi-lienzo"><h3 style="margin-bottom:10px;">🧩 Actividades Interactivas de la Sesión</h3>' + htmlDivi + '</div>';
+            } else if (typeof htmlLeccionAlumno610_ === 'function') {
+              const lec610 = htmlLeccionAlumno610_(cont, escaparHtml, parrafosVozAlu_);
+              if (lec610) html += lec610;
             }
+          } else if (typeof htmlLeccionAlumno610_ === 'function') {
+            const lec610 = htmlLeccionAlumno610_(cont, escaparHtml, parrafosVozAlu_);
+            if (lec610) html += lec610;
           }
         }
       } catch (eDiviAlu) {}
 
       html += '</div>';
       vis.innerHTML = html;
+    }
+
+    function urlVideoEmbed610_(url) {
+      var s = String(url || '').trim();
+      var m = s.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{6,})/);
+      if (m) return 'https://www.youtube.com/embed/' + m[1];
+      return s;
+    }
+
+    function renderizarModulo(b, escapar, voz) {
+      if (!b) return '';
+      var esc = typeof escapar === 'function' ? escapar : function (x) { return String(x == null ? '' : x); };
+      var tipoB = String(b.tipo || 'texto').trim();
+      var ex = b.extra || {};
+      var est = b.estilo || {};
+      var cuerpo = String(b.cuerpo || b.contenido || b.texto || '').trim();
+      var titulo = String(b.titulo || '').trim();
+      var bg = est.bg || ex.bgColor || ex.bg || '';
+      var color = est.color || ex.textColor || ex.color || '';
+      var align = b.alineacion || est.align || ex.alineacion || ex.align || '';
+      var html = '';
+      var plano = '';
+
+      if (tipoB === 'Texto' || tipoB === 'texto' || tipoB === 'texto_dua' || tipoB === 'objetivos' || tipoB === 'lectura') {
+        var rico = /<[a-z][\s\S]*>/i.test(cuerpo) ? cuerpo : esc(cuerpo).replace(/\n/g, '<br>');
+        html = '<div class="modulo-texto">' + rico + '</div>';
+        plano = cuerpo.replace(/<[^>]+>/g, ' ');
+      } else if (tipoB === 'Imagen' || tipoB === 'imagen' || tipoB === 'galeria') {
+        var src = ex.imgUrl || ex.url || b.url || b.src || '';
+        var alt = ex.altDua || ex.alt || titulo || 'Imagen de la lección';
+        html = '<div class="modulo-imagen">' + (src ? '<img src="' + esc(src) + '" alt="' + esc(alt) + '">' : '') + '</div>';
+        plano = alt;
+      } else if (tipoB === 'Video' || tipoB === 'video' || tipoB === 'video_interactivo' || tipoB === 'video_local') {
+        var bruto = ex.videoUrl || ex.url || b.url || cuerpo;
+        var embed = urlVideoEmbed610_(bruto);
+        if (embed) {
+          html = '<div class="modulo-video"><iframe src="' + esc(embed) + '" title="' + esc(titulo || 'Video') + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+        }
+        plano = titulo || 'Video';
+      } else if (tipoB === 'Boton' || tipoB === 'boton' || tipoB === 'boton_cta') {
+        var txtBtn = String(ex.texto || cuerpo || 'Haz clic aquí').trim();
+        var urlBtn = String(ex.link || ex.enlace || b.enlace || '#').trim();
+        var alignBtn = String(ex.alineacion || align || 'center');
+        var bgBtn = ex.bg || est.bg || '#007cba';
+        var colBtn = ex.color || est.color || '#ffffff';
+        html = '<div class="modulo-boton-wrapper" style="text-align:' + esc(alignBtn) + ';">' +
+          '<a class="modulo-boton" href="' + esc(urlBtn) + '" target="_blank" rel="noopener" style="background-color:' + esc(bgBtn) + ';color:' + esc(colBtn) + ';">' + esc(txtBtn) + '</a></div>';
+        plano = txtBtn;
+      } else {
+        var cuerpoHtml = /<[a-z][\s\S]*>/i.test(cuerpo) ? cuerpo : esc(cuerpo).replace(/\n/g, '<br>');
+        html = '<div class="content-card dua-bloque-idevice" data-tipo="' + esc(tipoB) + '">' +
+          (titulo ? '<h4>' + esc(titulo) + '</h4>' : '') +
+          (cuerpoHtml ? '<div class="modulo-texto">' + cuerpoHtml + '</div>' : '') +
+        '</div>';
+        plano = (titulo ? titulo + '. ' : '') + cuerpo.replace(/<[^>]+>/g, ' ');
+      }
+
+      if (voz && plano && String(plano).trim()) voz.push(String(plano).replace(/\s+/g, ' ').trim());
+      var estilo = (bg ? 'background:' + esc(bg) + ';' : '') + (color ? 'color:' + esc(color) + ';' : '') + (align ? 'text-align:' + esc(align) + ';' : '');
+      return '<div class="modulo-renderizado" data-tipo="' + esc(tipoB) + '"' + (estilo ? ' style="' + estilo + '"' : '') + '>' + html + '</div>';
+    }
+
+    function renderizarLeccion(data, escapar, voz) {
+      var esc = typeof escapar === 'function' ? escapar : function (x) { return String(x == null ? '' : x); };
+      var secciones = [];
+      if (data && Array.isArray(data.secciones)) secciones = data.secciones;
+      else if (data && data.exelearning && Array.isArray(data.exelearning.secciones)) secciones = data.exelearning.secciones;
+      else if (data && data.extra && data.extra.exelearning && Array.isArray(data.extra.exelearning.secciones)) secciones = data.extra.exelearning.secciones;
+      if (!secciones.length) return '';
+      var html = '';
+      secciones.forEach(function (sec) {
+        if (!sec) return;
+        var est = sec.estilo || {};
+        var estiloSec = (est.bg ? 'background-color:' + esc(est.bg) + ';' : '') + (est.color ? 'color:' + esc(est.color) + ';' : '');
+        html += '<section class="seccion-renderizada" data-sec-tipo="' + esc(sec.tipo || 'regular') + '"' + (estiloSec ? ' style="' + estiloSec + '"' : '') + '>';
+        var filas = Array.isArray(sec.contenido) ? sec.contenido : (Array.isArray(sec.filas) ? sec.filas : []);
+        if (!filas.length) html += '<p class="alerta-vacia">Esta sección todavía no tiene filas.</p>';
+        filas.forEach(function (fila) {
+          if (!fila) return;
+          var cols = Array.isArray(fila.columnas) ? fila.columnas : [];
+          html += '<div class="fila-renderizada">';
+          if (!cols.length) html += '<p class="alerta-vacia">Fila sin columnas.</p>';
+          cols.forEach(function (col, idx) {
+            var flex = '1';
+            var modulos = [];
+            if (Array.isArray(col)) {
+              modulos = col;
+              flex = (fila.flexColumnas && fila.flexColumnas[idx]) || '1';
+            } else if (col) {
+              flex = col.flex || (fila.flexColumnas && fila.flexColumnas[idx]) || '1';
+              modulos = col.modulos || col.bloques || [];
+            }
+            html += '<div class="columna-renderizada" style="flex:' + esc(String(flex)) + ';">';
+            if (!modulos.length) html += '<p class="alerta-vacia">Columna vacía.</p>';
+            modulos.forEach(function (mod) { html += renderizarModulo(mod, esc, voz); });
+            html += '</div>';
+          });
+          html += '</div>';
+        });
+        html += '</section>';
+      });
+      if (!html) return '';
+      return '<div class="dua-seccion-momento dua-leccion-alumno"><h3>Actividades de la sesión</h3>' + html + '</div>';
+    }
+
+    function htmlLeccionAlumno610_(cont, escapar, voz) {
+      if (!cont) return '';
+      var doc = null;
+      var raw = cont.guionDocenteJSON || cont.GuionDocenteJSON || '';
+      if (raw) {
+        try { doc = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { doc = null; }
+      }
+      var fuente = doc || cont;
+      return renderizarLeccion(fuente, escapar, voz) || renderizarLeccion(fuente && fuente.extra && fuente.extra.exelearning, escapar, voz) || '';
     }
 
     function hablarDesdeParrafo(idx) {

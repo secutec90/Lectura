@@ -10519,7 +10519,7 @@ if (document.readyState === 'loading') {
 
     var btnAddRow = document.createElement('button');
     btnAddRow.type = 'button';
-    btnAddRow.className = 'btn-mini-sec btn-mini-sec-regular';
+    btnAddRow.className = 'btn-mini-sec btn-mini-sec-row btn-mini-sec-regular';
     btnAddRow.textContent = '+';
     btnAddRow.title = 'Añadir nueva fila / diseño de columnas';
     btnAddRow.setAttribute('aria-label', btnAddRow.title);
@@ -10674,13 +10674,7 @@ if (document.readyState === 'loading') {
       Array.prototype.forEach.call(seccion.children, function (hijo) {
         if (hijo.classList.contains('divi-row')) filas.push(hijo);
       });
-      if (filas.length === 0) {
-        seccion.appendChild(crearPlusVerde_(null));
-      } else {
-        filas.forEach(function (fila) {
-          seccion.appendChild(crearPlusVerde_(fila));
-        });
-      }
+      seccion.appendChild(crearPlusVerde_(filas.length ? filas[filas.length - 1] : null));
     });
   }
 

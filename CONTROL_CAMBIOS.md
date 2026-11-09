@@ -2,6 +2,22 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-09] - [Ola 21: Erradicación de (+) Múltiples Apilados al Fondo de Sección, Botón de Fila Verde Diferenciado y Ocultamiento Total de Textos en Barra Lateral Colapsada en build-614]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): erradica multiplicacion de plus al fondo de seccion, boton fila verde y ocultamiento total sidebar colapsado (build-614)`
+- **Cambios Realizados:**
+  - **1. Erradicación de (+) Múltiples Apilados al Fondo de Sección (`AyudaJS.html`):**
+    - En `repintarPlusVerdesDivi_`, corregido el bucle `filas.forEach` que insertaba un divisor por cada fila acumulándolos todos al pie de la sección. Ahora se añade estrictamente **un único divisor contextual de fila (`crearPlusVerde_`)** al final de cada sección.
+  - **2. Diferenciación Visual del Botón de Fila Verde (`AdminPlaneacionCSS.html`, `ClaseCSS.html`, `AyudaJS.html`):**
+    - El botón de añadir fila (`.btn-mini-sec-row`, `.btn-mini-sec-regular`) ahora tiene fondo verde (`#10b981`), eliminando la confusión y duplicidad visual con los botones azules de Sección de la cabecera.
+    - Se aclara la jerarquía: Azul = Secciones globales, Verde = Filas dentro de la sección, Negro = Módulos dentro de columnas.
+  - **3. Ocultamiento Total de Textos en Menú Lateral Colapsado (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - En `.app-workspace.sidebar-colapsado .sidebar-exe`, configurado `display: none !important;` en `.doc-titulo`, `.arbol-toolbar`, `#listaNodos`, `.nodos-lista` y `.box-arbol > *:not(.arbol-titulo-fila)`.
+    - Erradicado cualquier texto o recorte que se asomaba en el riel de 36px, dejando únicamente el botón `[ ▶ ]` centrado.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Versión creada en clasp (`v441 build-614`) y propagada a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-09] - [Ola 21: Corrección Integral de los 6 Puntos Visuales y de Interacción del Constructor de Clases en build-613: Desduplicación de (+), (+) Negro Circular Perfecto, Control Explícito de Ancho de Página, Colapso Total Limpio de Sidebar, Modal Centrado con Fichas Compactas y Engrane ⚙️ Reactivo]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): desduplica insertores, boton add circular, colapso limpio sidebar, modal centrado con fichas compactas y engrane reactivo (build-613)`
 - **Cambios Realizados:**

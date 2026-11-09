@@ -9,101 +9,149 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: OLA 19 (`build-609`) — CUADRÍCULA INTERACTIVA DE 2 COLUMNAS (GRAPESJS BLOCK MANAGER), INSERCIÓN EN COLUMNA ACTIVA Y DRAG & DROP EN AYUDAJS.HTML
-- **Estado:** 🟢 AUDITADA E INTEGRADA EN BUILD-609
-- **Archivo objetivo:** `AyudaJS.html`
-- **Objetivo:** Conectar el renderizado de la cuadrícula de 2 columnas (`.cat-group-body`) estilo GrapesJS, asegurar la inserción directa en la columna activa (`.divi-column.active-target`) al hacer clic en cualquier parte de la tarjeta, habilitar soporte Drag & Drop (`draggable="true"` / `dragstart` -> `.divi-columns-grid` / `.divi-column`) y mantener el buscador en tiempo real.
+## 📜 HISTORIAL RECIENTE: OLA 20 (`build-610`)
+- **Estado:** Auditada e integrada en `build-610` y `build-612`.
 
 ---
+
+## 🎯 PARTITURA ASIGNADA: OLA 21 (`build-613`) — RESOLUCIÓN DE LÓGICA FRONTEND JS: DESDUPLICACIÓN DE (+), CONTROL DE ANCHO DE PÁGINA, ACTIVACIÓN DEL ENGRANE ⚙️ Y CENTRADO DE MODALES
+- **Agente responsable:** **Cursor** (Ingeniero Frontend JS & DOM)
+- **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
+- **Archivos objetivo:** `AyudaJS.html`, `AdminPlanJS_05.html`, `ClaseJS_07.html`
 
 ### 📋 Requerimientos Técnicos para Cursor:
 
-1. **Generación de tarjetas en `htmlMiniCardCatalogo609_(mod)`:**
-   - Renderizar cada módulo como un bloque interactivo (`.modulo-card-lateral`) con su icono, título descriptivo, `data-tipo="${mod.tipo}"` y `draggable="true"`.
-   - Envolver los ítems de cada categoría dentro de `<div class="cat-items cat-group-body">`.
-2. **Interacción de inserción directa (`invocarInsertarDesdeCatalogo609_`):**
-   - Al hacer clic en cualquier punto de la tarjeta (`.modulo-card-lateral`), capturar `mod.tipo` e invocar `insertarBloqueExe_(mod.tipo)`.
-   - Verificar que el bloque se dirija directamente a la columna activa (`.divi-column.active-target`) del lienzo central. Si existen columnas en el lienzo pero ninguna está seleccionada como `.active-target`, mostrar un toast/alerta accesible indicando que debe seleccionar una columna en el lienzo primero.
-3. **Soporte para Arrastre (Drag & Drop):**
-   - Añadir `draggable="true"` a cada `.modulo-card-lateral` y cablear `dragstart` / `dragend` para permitir soltarlo en las dropzones de las filas Divi (`.divi-columns-grid` / `.divi-column`).
-   - Al soltar (`drop`) sobre una columna Divi, marcarla como `.active-target` e invocar `insertarBloqueExe_(tipo)`.
-4. **Buscador en tiempo real (`aplicarFiltroBuscadorCatalogo609_`):**
-   - Mantener activo el filtro sobre `#inputBuscarModulosCatalogo` para que al teclear expanda automáticamente los acordeones con coincidencias y filtre las tarjetas visibles.
+1. **Desduplicar botones (+) entre filas (Imagen 1):**
+   - En `crearPlusVerde_` / `envolverRepintadoDivi_` en `AyudaJS.html`:
+     - Actualmente genera `.divi-plus-row-actions` con tres botones (Regular, Fullwidth, Specialty), clonando los mismos 3 botones que ya están arriba a la derecha en la barra de lienzo.
+     - **Corrección:** Simplificar el separador entre filas para que renderice un único botón divisor contextual limpio:
+       ```javascript
+       function crearPlusVerde_(filaRef) {
+         var fila = document.createElement('div');
+         fila.className = 'divi-plus-row-actions';
+         fila.setAttribute('data-origen', 'divi-actions');
+
+         var btnAddRow = document.createElement('button');
+         btnAddRow.type = 'button';
+         btnAddRow.className = 'btn-mini-sec btn-mini-sec-regular';
+         btnAddRow.textContent = '+';
+         btnAddRow.title = 'Añadir nueva fila / diseño de columnas';
+         btnAddRow.setAttribute('aria-label', btnAddRow.title);
+         btnAddRow.addEventListener('click', function (ev) {
+           ev.preventDefault();
+           ev.stopPropagation();
+           window._filaPlusOrigenPopover_ = filaRef || fila;
+           abrirModalLayoutDivi610_(filaRef || fila, btnAddRow);
+         });
+
+         fila.appendChild(btnAddRow);
+         return fila;
+       }
+       ```
+     - Mantener los 3 botones `.top-actions` (Azul, Morado, Naranja) exclusivamente en `.divi-canvas-topbar` para la creación de nuevas Secciones globales.
+
+2. **Restaurar control explícito de Ancho de Página (Imagen 1 y 3):**
+   - En la barra `.divi-canvas-topbar` de `montarTopbarLienzo_` (`AyudaJS.html`):
+     - Restituir la etiqueta visible y clara `Página` en lugar del genérico `Ancho`:
+       ```html
+       <div class="control-grupo">
+         <label>Página <span class="valor-ancho" id="val-ancho-lienzo">100%</span></label>
+         <input type="range" id="slider-ancho-lienzo" min="40" max="100" value="100" oninput="ajustarAnchoLienzo(this.value)">
+       </div>
+       ```
+     - Asegurar que `ajustarAnchoLienzo(valor)` actualice el contenedor del lienzo (`#contenedorIDevicesDinamicos` / `#lienzoExeActivo`) y preserve compatibilidad con `window.ajustarAnchoPagina` y `window.ajustarAnchoSeccion`.
+
+3. **Activar el engrane ⚙️ (`.btn-ctrl-props` y `.toolbar-flotante`) (Imagen 4):**
+   - En `htmlControlesDivi_()`, el botón de engrane se genera como:
+     `<button type="button" class="btn-ctrl-props" title="Propiedades de diseño y color" aria-label="Propiedades">⚙️</button>`
+   - En `instalarEventosDivi603_()` e `instalarEventos610_()`, **agregar el listener correspondiente**:
+     ```javascript
+     var btnProps = t.closest('.btn-ctrl-props, button[title*="Propiedades"], button[aria-label*="Propiedades"]');
+     if (btnProps) {
+       ev.preventDefault();
+       ev.stopPropagation();
+       abrirPropiedades(btnProps);
+       return;
+     }
+     ```
+   - En `abrirPropiedades(btn)`:
+     - Identificar el elemento padre usando `nodoDeToolbar_(btn)` o `nodoControladoDivi_(btn)`, soportando `.divi-section`, `.divi-row` e `.idevice-card`.
+     - Abrir el modal `#modal-propiedades` precargado con los estilos actuales del elemento (`data-bg-color`, `data-text-color`, `data-text-align`).
+     - Al hacer clic en "Aplicar Cambios" (`guardarPropiedades()`):
+       - Aplicar los colores y alineación en vivo sobre el elemento activo.
+       - Disparar `guardarEstado()` y marcar cambios para guardado con `marcarIDevicesTocados_()`.
+       - Cerrar `#modal-propiedades`.
+
+4. **Garantizar centrado y no distorsión de modales:**
+   - En `posicionarDialogEnVista610_(dialogEl)`:
+     ```javascript
+     function posicionarDialogEnVista610_(dialogEl) {
+       if (!dialogEl) return;
+       dialogEl.style.margin = 'auto';
+       dialogEl.style.position = 'relative';
+       dialogEl.style.top = '';
+       dialogEl.style.left = '';
+     }
+     ```
+   - Evitar calcular coordenadas `getBoundingClientRect()` absolutas que anclen el diálogo al botón pulsado; el selector de 20 retículas `#modal-overlay` y las propiedades `#modal-propiedades` deben centrarse siempre en el viewport.
 
 ---
 
-## ✅ ENTREGA CURSOR — BLOQUE DE FUNCIONES (`AyudaJS.html` · `build-609`)
+## ✅ ENTREGA CURSOR — OLA 21 (build-613)
+
+**Estado:** Implementado en `AyudaJS.html` (listo para auditoría Antigravity). `AdminPlanJS_05.html` y `ClaseJS_07.html` no requieren cambios en esta ola (CSS y colapso lateral los cubre DeepSeek).
+
+### Resumen de cambios JS (`AyudaJS.html`)
+
+| Punto | Función / selector | Cambio |
+| :--- | :--- | :--- |
+| 1 | `crearPlusVerde_(filaRef)` | Un solo `+` en `.divi-plus-row-actions`; abre `abrirModalLayoutDivi610_`. La terna azul/morada/naranja queda solo en `.divi-canvas-topbar .top-actions`. |
+| 2 | `asegurarTopbar610_()` | Etiqueta **Página** en `#val-ancho-lienzo` / `#slider-ancho-lienzo` (`data-build="613"`). Aliases `window.ajustarAnchoPagina` y `window.ajustarAnchoSeccion` → `ajustarAnchoLienzo`. |
+| 3 | `instalarEventosDivi603_`, `instalarEventos610_` | Delegación click en `.btn-ctrl-props` y botones con título/aria *Propiedades* → `abrirPropiedades`. |
+| 3 | `htmlToolbar_`, `abrirPropiedades` | Clase `.btn-ctrl-props` en el engrane flotante; fallback `nodoControladoDivi_(btn)` si `nodoDeToolbar_` no resuelve. |
+| 4 | `posicionarDialogEnVista610_` | Solo `margin: auto`, `position: relative`, sin anclaje `getBoundingClientRect` (llamadas sin segundo argumento). |
+
+### Fragmentos normativos (referencia de integración)
 
 ```javascript
-function invocarInsertarDesdeCatalogo609_(tipo) {
-  if (!tipo) return;
-  var cont = document.getElementById('contenedorIDevicesDinamicos');
-  if (cont) {
-    var colActiva = cont.querySelector('.divi-column.active-target') ||
-      (window._columnaObjetivoActiva_ && window._columnaObjetivoActiva_.isConnected ? window._columnaObjetivoActiva_ : null);
-    var todasCols = cont.querySelectorAll('.divi-column');
-    if (todasCols.length > 0 && !colActiva) {
-      if (typeof toast === 'function') {
-        toast('Selecciona primero una columna en el lienzo (+ Añadir Módulo) para insertar este bloque.', 'info');
-      }
-      return;
-    }
-    if (colActiva) {
-      window._columnaObjetivoActiva_ = colActiva;
-    }
-  }
-  if (typeof insertarBloqueExe_ === 'function') {
-    var card = insertarBloqueExe_(tipo, null, typeof idPaginaActivaExe_ === 'function' ? idPaginaActivaExe_() : 0);
-    if (typeof aplicarFiltroPaginaExe_ === 'function') aplicarFiltroPaginaExe_();
-    if (typeof actualizarContadorIDevicesExe_ === 'function') actualizarContadorIDevicesExe_();
-    if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    return;
-  }
-  if (typeof window.insertarModuloEnColumnaActiva_ === 'function') {
-    window.insertarModuloEnColumnaActiva_(tipo);
-    return;
-  }
-  if (typeof window.insertariDeviceSesion_ === 'function') window.insertariDeviceSesion_(tipo);
-}
-
-function htmlMiniCardCatalogo609_(mod) {
-  mod = mod || {};
-  var tipo = escAttrCatalogo609_(mod.tipo);
-  var titulo = escAttrCatalogo609_(mod.titulo);
-  var sub = escAttrCatalogo609_(mod.sub);
-  var tema = escAttrCatalogo609_(mod.tema || 'tema-notion');
-  var icono = mod.icono || '📦';
-  return '<div class="modulo-card-lateral ' + tema + '" draggable="true" data-tipo="' + tipo + '" data-nombre="' + titulo + '" data-sub="' + sub + '" role="button" tabindex="0" title="' + titulo + (sub ? ' — ' + sub : '') + '" onclick="invocarInsertarDesdeCatalogo609_(\'' + tipo + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();invocarInsertarDesdeCatalogo609_(\'' + tipo + '\');}" ondragstart="iniciarArrastreModuloCatalogo609_(event, \'' + tipo + '\')" ondragend="finalizarArrastreModuloCatalogo609_(event)">' +
-    '<div class="card-lateral-cuerpo">' +
-      '<span class="card-lateral-icon-badge" aria-hidden="true">' + icono + '</span>' +
-      '<div class="card-lateral-textos">' +
-        '<span class="card-lateral-titulo">' + titulo + '</span>' +
-        '<span class="card-lateral-sub">' + sub + '</span>' +
-      '</div>' +
-    '</div>' +
-    '<span class="btn-card-add" aria-hidden="true">+</span>' +
-  '</div>';
-}
-
-function iniciarArrastreModuloCatalogo609_(ev, tipo) {
-  window._moduloArrastradoCatalogo_ = String(tipo || '');
-  if (ev && ev.currentTarget && ev.currentTarget.classList) {
-    ev.currentTarget.classList.add('dragging');
-  }
-  if (ev && ev.dataTransfer) {
-    try {
-      ev.dataTransfer.effectAllowed = 'copy';
-      ev.dataTransfer.setData('text/plain', String(tipo || ''));
-    } catch (e) {}
-  }
-}
-
-function finalizarArrastreModuloCatalogo609_(ev) {
-  if (ev && ev.currentTarget && ev.currentTarget.classList) {
-    ev.currentTarget.classList.remove('dragging');
-  }
-  document.querySelectorAll('.divi-column.drag-over-target').forEach(function (col) {
-    col.classList.remove('drag-over-target');
+function crearPlusVerde_(filaRef) {
+  var fila = document.createElement('div');
+  fila.className = 'divi-plus-row-actions';
+  fila.setAttribute('data-origen', 'divi-actions');
+  var btnAddRow = document.createElement('button');
+  btnAddRow.type = 'button';
+  btnAddRow.className = 'btn-mini-sec btn-mini-sec-regular';
+  btnAddRow.textContent = '+';
+  btnAddRow.title = 'Añadir nueva fila / diseño de columnas';
+  btnAddRow.setAttribute('aria-label', btnAddRow.title);
+  btnAddRow.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    window._filaPlusOrigenPopover_ = filaRef || fila;
+    abrirModalLayoutDivi610_(filaRef || fila, btnAddRow);
   });
+  fila.appendChild(btnAddRow);
+  return fila;
+}
+
+function posicionarDialogEnVista610_(dialogEl) {
+  if (!dialogEl) return;
+  dialogEl.style.margin = 'auto';
+  dialogEl.style.position = 'relative';
+  dialogEl.style.top = '';
+  dialogEl.style.left = '';
+}
+
+// En delegación click (603 y 610):
+var btnProps = t.closest('.btn-ctrl-props, button[title*="Propiedades"], button[aria-label*="Propiedades"]');
+if (btnProps) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  abrirPropiedades(btnProps);
+  return;
 }
 ```
+
+### Commit sugerido (Conventional Commits)
+
+`fix(constructor): desduplica insertores, etiqueta pagina, engrane y modales centrados (build-613)`

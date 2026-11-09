@@ -2,6 +2,73 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-09] - [Ola 21: Corrección Integral de los 6 Puntos Visuales y de Interacción del Constructor de Clases en build-613: Desduplicación de (+), (+) Negro Circular Perfecto, Control Explícito de Ancho de Página, Colapso Total Limpio de Sidebar, Modal Centrado con Fichas Compactas y Engrane ⚙️ Reactivo]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): desduplica insertores, boton add circular, colapso limpio sidebar, modal centrado con fichas compactas y engrane reactivo (build-613)`
+- **Cambios Realizados:**
+  - **1. Desduplicación de Botones (+) entre Filas (`AyudaJS.html`):**
+    - En `crearPlusVerde_`, sustituida la terna repetida de 3 botones (azul, morado, naranja) por un único botón divisor contextual de fila (`+ Fila`) que invoca `abrirModalLayoutDivi610_`.
+    - La terna de 3 botones `.top-actions` se mantiene exclusivamente en `.divi-canvas-topbar` para la inserción de Secciones globales.
+  - **2. (+) Negro Circular Perfecto en Columnas (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Erradicado el óvalo vertical de 70px en `.btn-add-module-inside.btn-modulo`. Ahora posee dimensiones fijas cuadradas de `32px × 32px` (`min-height: 32px`, `max-height: 32px`), `border-radius: 50%`, fondo `#1e1e1e`, color blanco y centrado con `margin: 14px auto`.
+  - **3. Control Explícito de Ancho de Página (`AyudaJS.html`):**
+    - Restituida la etiqueta visible `Página` en lugar del genérico `Ancho` en `#slider-ancho-lienzo` / `#val-ancho-lienzo` (`data-build="613"`), preservando la vinculación con `ajustarAnchoLienzo()`.
+  - **4. Colapso Total y Limpio del Menú Lateral (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - En `.app-workspace.sidebar-colapsado .sidebar-exe`, configurado `display: none !important; visibility: hidden !important;` en `.doc-titulo`, `.arbol-toolbar`, `#listaNodos`, `.box-idevice-menu` y el árbol interno.
+    - Se erradicaron todos los textos asomados o recortados (*"sión"*, *"ira previos"*, etc.), manteniendo un riel de 36px limpio con el botón `[ ▶ ]` centrado.
+  - **5. Centrado Absoluto de Modales y Fichas Compactas (`AdminPlaneacionCSS.html`, `ClaseCSS.html`, `AyudaJS.html`):**
+    - `#modal-overlay` y `#modal-propiedades` centrados con `position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;` y `margin: auto;`.
+    - `posicionarDialogEnVista610_` ajustado para no distorsionar márgenes.
+    - Fichas de 20 retículas `.grid-cards .card` compactadas a `min-height: 62px`, preview de `32px`, padding `6px 8px` y tipografía `10.5px` en 4 columnas con `gap: 8px`, ocupando el espacio visual de forma óptima sin scroll innecesario.
+  - **6. Engrane ⚙️ Funcional y Reactivo (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Registrada la delegación de eventos `click` para `.btn-ctrl-props` en `instalarEventosDivi603_` e `instalarEventos610_`.
+    - Conectado `abrirPropiedades(btn)` identificando el contenedor padre (.divi-section, .divi-row o .idevice-card) con apertura reactiva de `#modal-propiedades`.
+    - Desacopladas las toolbars en `:hover` para que la sección (`left: 10px; background: rgba(2, 132, 199, 0.9);`) y la fila (`right: 10px; background: rgba(16, 185, 129, 0.9);`) no se encimen.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Versión actualizada en `00_Constantes.gs` (`v441 build-613`) y desplegada con clasp (`87 archivos subidos con éxito`).
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`, `ENTREGA_DEEPSEEK.md`, `ENTREGA_CURSOR.md`.
+
+### 🛠️ [2026-11-09] - [Ola 21: Refinamiento Integral UX/UI del Constructor de Clases en build-612: Botón de Colapso Anclado, Limpieza de (+) en Columnas, Activación de Botón de Sección Regular, Divisores Compactos de 3 Botones Mini y Unificación de Control de Ancho de Lienzo]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): correccion de colapso de sidebar, boton add modulo sin texto, modal centrado, botones mini de seccion y slider unificado de ancho en build-612`
+- **Cambios Realizados:**
+  - **Botón de Colapso de Sidebar Anclado (`AyudaJS.html`, `AdminPlaneacionCSS.html`):**
+    - Eliminado el botón flotante `#btnToggleSidebarFloat` que tapaba el banner (`⏱️ 1. Apertura`).
+    - Anclado el control de colapso exclusivamente en `.sidebar-exe .arbol-titulo-fila` (`#btnToggleSidebar`), que permanece centrado en el riel colapsado de 36px alternando limpiamente entre `◀` y `▶` sin invadir el lienzo pedagógico.
+  - **Limpieza de Botón Inserter de Módulo en Columnas (`AyudaJS.html`, `AdminPlaneacionCSS.html`):**
+    - Retirado el texto vertical apretado (`+ ñad ódu`) de `.btn-add-module-inside`. Ahora es un botón circular limpio con solo `+` y tooltip nativo `title="Añadir Módulo"`.
+  - **Resolución de Conflicto de Nombres en Modal de Sección Regular (`AyudaJS.html`, `AdminEncJS_04.html`):**
+    - Renombrada la función a `abrirModalLayoutDivi610_` para evitar colisión con `abrirModal(indice)` de `AdminEncJS_04.html`.
+    - Agregada interceptación en fase de captura para `.add-btn.btn-seccion`, garantizando la apertura inmediata del selector de retículas.
+  - **Sustitución de Divisores Verdes Redundantes por Acciones de 3 Botones Mini y Centrado de Modal (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Reemplazados los círculos verdes apilados por `.divi-plus-row-actions` con una línea divisoria sutil y 3 botones circulares compactos de 22px: Azul (Sección Regular / Fila), Morado (Ancho Completo) y Naranja (Sección Especial).
+    - Ajustado `#modal-overlay` y `#modal-propiedades` con `align-items: center; justify-content: center;` y `margin: auto;` para que el modal de layouts de 20 diseños se abra siempre 100% centrado en el viewport.
+  - **Unificación de Controles de Ancho en Topbar (`AyudaJS.html`):**
+    - Unificados los dos sliders redundantes (`Lienzo 100%` y `Sección 100%`) en un único control elegante: `Ancho [---o] 100%` (`slider-ancho-lienzo` / `ajustarAnchoLienzo()`), simplificando la barra superior y manteniendo compatibilidad regresiva.
+  - **Despliegue y Validación:**
+    - AST acorn verificado con `node herramientas/manifiesto.js` (79 documentos, 0 errores).
+    - Versión creada en clasp (`v440 build-612`) y desplegada en los 6 endpoints de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
+### 🛠️ [2026-11-09] - [Ola 20: Integración Multi-Agente (DeepSeek + Cursor + Antigravity) de Constructor Visual Avanzado (`mover.html` + `alumno.html`) con 20 Layouts Flex/Mosaico, Drag & Drop Completo, Toolbar Flotante `:hover`, Modal de Propiedades en Vivo y Motor de Renderizado del Alumno en build-610]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola20): integracion multi-agente de mover.html y alumno.html con 20 layouts, drag and drop de secciones/filas/modulos, toolbar flotante y propiedades en vivo en build-610`
+- **Cambios Realizados:**
+  - **Orquestación Multi-Agente Completa (`ESTADO_COORDINACION.md`, `ENTREGA_DEEPSEEK.md`, `ENTREGA_CURSOR.md`):**
+    - Reparto formal de partituras y recepción automática mediante `herramientas/centinela_buzon.js` de la entrega CSS de **DeepSeek** (`ENTREGA_DEEPSEEK.md`) y la entrega JS de **Cursor** (`ENTREGA_CURSOR.md`).
+  - **Eliminación de Conflictos con `build-609` (`AyudaJS.html`):**
+    - Excluido `.drag-handle` del `ev.preventDefault()` en `mousedown` dentro de `instalarEventosDivi603_()` para que el Drag & Drop HTML5 funcione nativamente sobre módulos, filas y secciones sin perder el foco de `.rich-editable-area`.
+    - Separada la barra de acciones en `.toolbar-flotante` (`.divi-ctrl-bar`) revelada únicamente en `:hover` en la esquina superior derecha, dejando intacta `.idevice-header` con su badge de familia e input de título.
+    - Colocada `.divi-canvas-topbar` debajo de `.pagina-banner` sin superponerse con `#btnToggleSidebarFloat`.
+  - **Catálogo Visual Completo de `mover.html` (`#modal-overlay` + 20 Diseños) (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Integrado `#modal-overlay` (900px) con badges `.badge.flex` y `.badge.grid` y las 20 tarjetas `.card` exactas (4 Columnas Iguales, 4 Columnas Desplazadas y 12 Mosaicos `Mosaico 1` a `Mosaico 12`) con pesos `flex` (`f05`, `f1`, `f15`, `f2`, `.h100`) en `seleccionarLayout()` y compatibilidad con las clases CSS Grid de `build-609`.
+    - Integrados los 3 botones circulares `.top-actions` (`.btn-seccion` azul `abrirModal()`, `.btn-fullwidth` morado `crearSeccionFullwidth()`, `.btn-specialty` naranja `crearSeccionSpecialty()`) y el menú rápido `.dropdown-modulo` (`abrirMenuModulo` / `insertarModulo`) en cada columna.
+  - **Drag & Drop Completo, Duplicación y Modal `#modal-propiedades` en Vivo (`AyudaJS.html`):**
+    - Implementadas todas las funciones de `mover.html`: `guardarEstado`, `deshacer`, `rehacer`, `ajustarAnchoPagina`, `ajustarAnchoSeccion`, `alinearSecciones`, `iniciarArrastre`, `finalizarArrastre`, `permitirSoltarSeccion`, `permitirSoltarModulo`, `soltarSeccion`, `soltarModulo`, `duplicarElemento`, `eliminarElemento`, `abrirPropiedades`, `cerrarPropiedades`, `previsualizarColor` (preview en tiempo real antes de guardar), `setAlineacionInterna` (`#int-izq`, `#int-centro`, `#int-der`), `guardarPropiedades` y `exportarAJson_`.
+  - **Motor de Renderizado del Alumno (`alumno.html`) y Botón CTA (`AyudaJS.html`, `ClaseJS_07.html`, `AdminPlanJS_05.html`):**
+    - Integradas `renderizarLeccion`, `renderizarModulo`, `urlVideoEmbed610_` (conversión automática `watch?v=` / `youtu.be/` ➔ `embed/`) y `htmlLeccionAlumno610_` en `ClaseJS_07.html`, `AdminPlanJS_05.html` y `AyudaJS.html`, soportando tanto el esquema JSON de `alumno.html` (`configuracionGlobal`, `secciones`, `filas`, `columnas` con `flex`, `Texto`, `Imagen`, `Video`, `Boton`) como el esquema ST90 (`fila`, `boton_cta`, y las 7 familias de iDevices).
+  - **Validación Estricta del Manifiesto:**
+    - Verificación con `node herramientas/manifiesto.js` confirmando **79 documentos exactos** y `0` documentos sin parsear.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `AdminPlanJS_05.html`, `ClaseJS_07.html`, `ESTADO_COORDINACION.md`, `ENTREGA_DEEPSEEK.md`, `ENTREGA_CURSOR.md`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-08] - [Ola 19: Consolidación de Arquitectura Maestra Integral V609, Catálogo Lateral en Cuadrícula 2 Columnas Estilo GrapesJS (Drag & Drop), Puente Divi al Portal del Alumno, Motor Evaluativo SEP (5-10) y Sincronización Google Calendar en build-609]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola19): catalogo lateral en cuadricula 2 columnas estilo GrapesJS con drag and drop, puente divi en portal alumno y motor evaluativo SEP en build-609`
 - **Cambios Realizados:**

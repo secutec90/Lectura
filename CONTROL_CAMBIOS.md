@@ -2,6 +2,30 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Icono de Ayuda Contextual (❓) para Configuración de Cada Elemento dentro de Secciones en build-625]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): icono de ayuda contextual (❓) para cada elemento en secciones con guia interactiva (build-625)`
+- **Cambios Realizados:**
+  - **1. Icono de Ayuda Contextual `❓` en Toolbars de Elementos (`AyudaJS.html`):**
+    - Se integró el botón `<button class="btn-ctrl-ayuda" title="Guía y ayuda de configuración">❓</button>` en `htmlControlesDivi_()` y `htmlToolbar_()`.
+    - Ahora cada Sección (`.divi-section`), cada Fila (`.divi-row`) y cada Módulo individual (`.idevice-card`) cuenta con su botón `❓` ubicado junto al engrane `⚙️`.
+  - **2. Modal Inteligente de Ayuda por Elemento (`#modal-ayuda-elemento`):**
+    - Se implementó `abrirAyudaElemento(btn)`, `cerrarAyudaElemento()` y `obtenerGuiaElemento_()`.
+    - Adapta su contenido dinámicamente según el elemento seleccionado:
+      - **Sección Pedagógica:** Propósito, control de fondo, color de texto, alineación, deslizador de ancho de sección (40%-100%), duplicación y reordenamiento.
+      - **Fila y Columnas:** Retícula de columnas (1, 2, 3 cols y mosaicos), inserción con `(+)` negro, fondo, texto y justificación interna.
+      - **Módulos Específicos:** Guía paso a paso para Texto DUA (edición directa de títulos y badges, tablas estilo Excel con `🪣` y `📐Tabla`, toolbar flotante de imágenes, síntesis DUA), Tablas, Imágenes, Videos, Botones CTA y Quizzes formativos.
+    - Incluye acceso directo: botón `[ ⚙️ Abrir Configuración ]` para saltar inmediatamente al panel de propiedades.
+  - **3. Acceso a Ayuda desde el Modal de Propiedades:**
+    - Se agregó el botón `❓ Ayuda` en la cabecera de `#modal-propiedades` para consultar la guía sin necesidad de cerrar la ventana de configuración.
+  - **4. Estilos Visuales (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Estilos y efectos de foco/hover en azul cielo (`#38bdf8`) para el icono `❓` en toolbars flotantes y fijas.
+    - Estilos para `#modal-ayuda-elemento` con backdrop blur, badges semánticos por elemento y tipografía limpia.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v448 build-625`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Edición de Título del Módulo y Etiqueta (Badge) en Modal Propiedades (⚙️) y Directamente en Cabecera en build-624]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): permite editar titulo de modulo y etiqueta badge en modal propiedades y directamente en cabecera (build-624)`
 - **Cambios Realizados:**

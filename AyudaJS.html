@@ -10657,6 +10657,7 @@ if (document.readyState === 'loading') {
       '<span class="drag-handle" draggable="true" title="Arrastrar para mover (Drag & Drop)" aria-label="Arrastrar">✥</span>' +
       '<button type="button" class="btn-ctrl-dup" title="Duplicar elemento" aria-label="Duplicar">📄</button>' +
       '<button type="button" class="btn-ctrl-props" title="Propiedades de diseño y color" aria-label="Propiedades" onclick="abrirPropiedades(this)">⚙️</button>' +
+      '<button type="button" class="btn-ctrl-ayuda" title="Guía y ayuda de configuración" aria-label="Ayuda" onclick="abrirAyudaElemento(this)">❓</button>' +
       '<button type="button" class="btn-ctrl-up" title="Subir" aria-label="Subir">▲</button>' +
       '<button type="button" class="btn-ctrl-down" title="Bajar" aria-label="Bajar">▼</button>' +
       '<button type="button" class="btn-ctrl-del" title="Eliminar" aria-label="Eliminar">✕</button>' +
@@ -11439,6 +11440,13 @@ if (document.readyState === 'loading') {
         if (typeof abrirPropiedades === 'function') abrirPropiedades(btnProps603);
         return;
       }
+      var btnAyuda603 = t.closest('.btn-ctrl-ayuda, button[title*="ayuda"], button[aria-label*="ayuda"], button[title*="Ayuda"], button[aria-label*="Ayuda"]');
+      if (btnAyuda603) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (typeof abrirAyudaElemento === 'function') abrirAyudaElemento(btnAyuda603);
+        return;
+      }
       var arriba = t.closest('.btn-ctrl-up');
       if (arriba) {
         ev.preventDefault();
@@ -11711,6 +11719,7 @@ if (document.readyState === 'loading') {
       '<span class="drag-handle" draggable="true" title="Arrastrar" aria-label="Arrastrar">✥</span>' +
       '<button type="button" title="Duplicar" aria-label="Duplicar" onclick="duplicarElemento(this)">📄</button>' +
       '<button type="button" class="btn-ctrl-props" title="Propiedades de diseño y color" aria-label="Propiedades" onclick="abrirPropiedades(this)">⚙️</button>' +
+      '<button type="button" class="btn-ctrl-ayuda" title="Guía y ayuda de configuración" aria-label="Ayuda" onclick="abrirAyudaElemento(this)">❓</button>' +
       '<button type="button" class="btn-ctrl-up" title="Subir" aria-label="Subir">▲</button>' +
       '<button type="button" class="btn-ctrl-down" title="Bajar" aria-label="Bajar">▼</button>' +
       '<button type="button" title="Eliminar" aria-label="Eliminar" onclick="eliminarElemento(this)">🗑️</button>' +
@@ -12261,8 +12270,11 @@ if (document.readyState === 'loading') {
     m.style.zIndex = '100000';
     m.innerHTML =
       '<div class="modal modal-pequeno" role="dialog" aria-modal="true" aria-label="Propiedades" style="display:flex;flex-direction:column;position:relative;">' +
-        '<div class="header">' +
-          '<h2 id="prop-titulo" style="margin:0;font-size:16px;color:#0f172a;">Propiedades</h2>' +
+        '<div class="header" style="display:flex;align-items:center;justify-content:space-between;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<h2 id="prop-titulo" style="margin:0;font-size:16px;color:#0f172a;">Propiedades</h2>' +
+            '<button type="button" class="btn-ayuda-prop-header" onclick="abrirAyudaDesdeProps()" title="Ver guía y ayuda de configuración para este elemento" style="background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;">❓ Ayuda</button>' +
+          '</div>' +
           '<button type="button" class="close-btn" onclick="cerrarPropiedades()" aria-label="Cerrar">✕</button>' +
         '</div>' +
         '<div class="content">' +
@@ -12299,6 +12311,231 @@ if (document.readyState === 'loading') {
     return m;
   }
 
+
+  function asegurarModalAyudaElemento_() {
+    var m = document.getElementById('modal-ayuda-elemento');
+    if (m) {
+      m.style.position = 'fixed';
+      m.style.inset = '0';
+      m.style.zIndex = '100005';
+      return m;
+    }
+    m = document.createElement('div');
+    m.id = 'modal-ayuda-elemento';
+    m.style.display = 'none';
+    m.style.position = 'fixed';
+    m.style.inset = '0';
+    m.style.zIndex = '100005';
+    m.style.backgroundColor = 'rgba(15, 23, 42, 0.45)';
+    m.style.backdropFilter = 'blur(3px)';
+    m.style.alignItems = 'center';
+    m.style.justifyContent = 'center';
+    m.innerHTML =
+      '<div class="modal modal-ayuda-dialog" role="dialog" aria-modal="true" aria-label="Ayuda del elemento" style="display:flex;flex-direction:column;position:relative;background:#fff;border-radius:12px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);max-width:560px;width:92%;max-height:85vh;overflow:hidden;border:1px solid #e2e8f0;">' +
+        '<div class="header" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span id="ayuda-elem-badge" style="font-size:10px;font-weight:800;padding:2px 7px;border-radius:12px;letter-spacing:0.5px;text-transform:uppercase;">ELEMENTO</span>' +
+            '<h3 id="ayuda-elem-titulo" style="margin:0;font-size:15px;color:#0f172a;font-weight:700;">Guía de Configuración</h3>' +
+          '</div>' +
+          '<button type="button" class="close-btn" onclick="cerrarAyudaElemento()" aria-label="Cerrar" style="background:transparent;border:none;font-size:18px;color:#64748b;cursor:pointer;line-height:1;padding:4px;">✕</button>' +
+        '</div>' +
+        '<div class="content" id="ayuda-elem-cuerpo" style="padding:16px 18px;overflow-y:auto;max-height:calc(85vh - 120px);">' +
+        '</div>' +
+        '<div class="modal-actions" style="display:flex;gap:8px;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid #f1f5f9;background:#f8fafc;">' +
+          '<button type="button" onclick="abrirPropsDesdeAyuda()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #0284c7;border-radius:6px;background:#e0f2fe;color:#0284c7;cursor:pointer;font-weight:700;font-size:13px;">⚙️ Abrir Configuración</button>' +
+          '<button type="button" onclick="cerrarAyudaElemento()" style="padding:8px 16px;border:none;border-radius:6px;background:#007cba;color:#fff;cursor:pointer;font-weight:700;font-size:13px;">Entendido</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', function (ev) { if (ev.target === m) cerrarAyudaElemento(); });
+    return m;
+  }
+
+  function obtenerGuiaElemento_(nodo, esSeccion, esFila, esModulo, tipo, titActual, badgeActual) {
+    if (esSeccion) {
+      return {
+        titulo: 'Configuración de la Sección Pedagógica',
+        badge: 'SECCIÓN',
+        badgeBg: '#e0f2fe',
+        badgeCol: '#0284c7',
+        html:
+          '<div style="font-size:13px;line-height:1.6;color:#334155;">' +
+            '<div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:8px 12px;border-radius:4px;margin-bottom:12px;">' +
+              '<strong>🎯 Propósito:</strong> Es el contenedor principal que agrupa tus filas y módulos de aprendizaje.' +
+            '</div>' +
+            '<h4 style="margin:10px 0 4px;font-size:13px;color:#0f172a;">⚙️ Opciones de Configuración (Engrane):</h4>' +
+            '<ul style="margin:0 0 10px 18px;padding:0;">' +
+              '<li><strong>Color de Fondo:</strong> Define el color general para toda la sección.</li>' +
+              '<li><strong>Color de Texto:</strong> Aplica el color base a los textos secundarios dentro de la sección.</li>' +
+              '<li><strong>Alineación (⬅️ ↔️ ➡️):</strong> Alinea el bloque completo a la izquierda, centro o derecha.</li>' +
+              '<li><strong>Ancho de Sección:</strong> En la barra superior puedes deslizar entre el <strong>40% y 100%</strong>.</li>' +
+            '</ul>' +
+            '<h4 style="margin:10px 0 4px;font-size:13px;color:#0f172a;">🛠️ Acciones de la Barra Flotante:</h4>' +
+            '<ul style="margin:0 0 10px 18px;padding:0;">' +
+              '<li><code>✥</code> <strong>Arrastrar:</strong> Mueve la sección completa hacia arriba o abajo en el lienzo.</li>' +
+              '<li><code>📄</code> <strong>Duplicar:</strong> Crea una copia idéntica de la sección con todas sus filas y contenidos.</li>' +
+              '<li><code>▲ / ▼</code> <strong>Reordenar:</strong> Sube o baja la posición de la sección con un clic.</li>' +
+              '<li><code>🗑️</code> <strong>Eliminar:</strong> Borra la sección (puedes deshacer con <code>↩️</code> en la barra superior).</li>' +
+              '<li><code>+ Fila</code> <strong>(Botón Verde):</strong> Inserta una nueva retícula de columnas dentro de esta sección.</li>' +
+            '</ul>' +
+          '</div>'
+      };
+    }
+    if (esFila) {
+      return {
+        titulo: 'Configuración de Fila y Columnas',
+        badge: 'FILA',
+        badgeBg: '#dcfce7',
+        badgeCol: '#15803d',
+        html:
+          '<div style="font-size:13px;line-height:1.6;color:#334155;">' +
+            '<div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:8px 12px;border-radius:4px;margin-bottom:12px;">' +
+              '<strong>🎯 Propósito:</strong> Organiza la distribución horizontal en 1, 2, 3 columnas o mosaicos tipo revista.' +
+            '</div>' +
+            '<h4 style="margin:10px 0 4px;font-size:13px;color:#0f172a;">⚙️ Opciones de Configuración (Engrane):</h4>' +
+            '<ul style="margin:0 0 10px 18px;padding:0;">' +
+              '<li><strong>Color de Fondo y Texto:</strong> Personaliza el fondo individual de esta fila.</li>' +
+              '<li><strong>Alineación interna:</strong> Justifica los módulos contenidos en sus columnas.</li>' +
+            '</ul>' +
+            '<h4 style="margin:10px 0 4px;font-size:13px;color:#0f172a;">🛠️ Inserción y Gestión:</h4>' +
+            '<ul style="margin:0 0 10px 18px;padding:0;">' +
+              '<li><code>(+)</code> <strong>Negro en cada columna:</strong> Despliega el menú rápido para insertar Texto, Imágenes, Videos, Botones o acceder al Catálogo completo.</li>' +
+              '<li><code>📄</code> <strong>Duplicar Fila:</strong> Duplica la fila con todos sus módulos interiores.</li>' +
+              '<li><code>▲ / ▼</code> <strong>Subir / Bajar:</strong> Reordena la fila dentro de la sección.</li>' +
+            '</ul>' +
+          '</div>'
+      };
+    }
+    var nombreMod = titActual || 'Módulo Curricular';
+    var esTexto = tipo === 'texto_dua' || tipo === 'lectura' || tipo === 'texto' || tipo === 'Texto';
+    var esTabla = tipo === 'tabla_notion';
+    var esImg = tipo === 'galeria' || tipo === 'Imagen';
+    var esVideo = tipo === 'video_interactivo' || tipo === 'video_local' || tipo === 'Video';
+    var esBoton = tipo === 'boton_cta' || tipo === 'Boton';
+    var tips = '';
+    if (esTexto) {
+      tips =
+        '<li><strong>Título y Etiqueta:</strong> Haz clic sobre <code>' + (titActual || 'Título') + '</code> o la etiqueta para editarlos en directo, o usa ⚙️.</li>' +
+        '<li><strong>Editor Enriquecido:</strong> Formatea texto (negrita, cursiva, encabezados H3, viñetas, alineación).</li>' +
+        '<li><strong>Tablas Excel:</strong> Inserta tablas, usa <code>🪣</code> para color de celda, <code>📐Tabla</code> para ancho y arrastra bordes como en Excel.</li>' +
+        '<li><strong>Imágenes:</strong> Haz clic en cualquier imagen para abrir la barra flotante (<code>25%</code>, <code>50%</code>, <code>75%</code>, <code>100%</code>, <code>📐 Celda</code>) o doble clic para escalar rápido.</li>' +
+        '<li><strong>Voz DUA:</strong> Prueba la narración automática para alumnos con el botón inferior de Síntesis de Voz.</li>';
+    } else if (esTabla) {
+      tips =
+        '<li><strong>Celdas y Filas:</strong> Usa <code>➕ Fila</code>, <code>➖ Fila</code>, <code>➕ Columna</code>, <code>➖ Columna</code>.</li>' +
+        '<li><strong>Ancho estilo Excel:</strong> Arrastra la línea derecha de cualquier columna con el mouse.</li>' +
+        '<li><strong>Color de fondo:</strong> Selecciona una celda y pulsa <code>🪣</code> en la barra del editor.</li>';
+    } else if (esImg) {
+      tips =
+        '<li><strong>Carga de Imagen:</strong> Pega la URL directa de la imagen o archivo compartido en Google Drive.</li>' +
+        '<li><strong>Texto Alternativo (DUA):</strong> Escribe una descripción para lectores de pantalla de alumnos con debilidad visual.</li>' +
+        '<li><strong>Ajuste:</strong> Selecciona el tamaño óptimo para que no rompa la retícula.</li>';
+    } else if (esVideo) {
+      tips =
+        '<li><strong>URL del Video:</strong> Compatible con enlaces de YouTube (se transforman a reproductor sin anuncios externos) y archivos MP4.</li>' +
+        '<li><strong>Interacción:</strong> Puedes programar preguntas detonadoras durante la reproducción.</li>';
+    } else if (esBoton) {
+      tips =
+        '<li><strong>Configuración en ⚙️:</strong> Define el texto del botón (ej. "Ir al Simulador"), la URL de destino y sus colores de fondo y texto.</li>' +
+        '<li><strong>Alineación:</strong> Centrado, a la izquierda o derecha de la columna.</li>';
+    } else {
+      tips =
+        '<li><strong>Título y Etiqueta:</strong> Editables directamente en la cabecera o mediante el engrane ⚙️.</li>' +
+        '<li><strong>Configuración de Colores:</strong> Personaliza fondo y texto con el engrane ⚙️ de la barra flotante.</li>' +
+        '<li><strong>Reordenar:</strong> Arrastra con <code>✥</code> o mueve con <code>▲ / ▼</code> a otra columna o posición.</li>';
+    }
+    return {
+      titulo: 'Guía de Configuración: ' + nombreMod,
+      badge: badgeActual || 'MÓDULO',
+      badgeBg: '#fef3c7',
+      badgeCol: '#92400e',
+      html:
+        '<div style="font-size:13px;line-height:1.6;color:#334155;">' +
+          '<div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:8px 12px;border-radius:4px;margin-bottom:12px;">' +
+            '<strong>💡 Elemento Activo:</strong> ' + nombreMod + (tipo ? ' (tipo <code>' + tipo + '</code>)' : '') +
+          '</div>' +
+          '<h4 style="margin:10px 0 4px;font-size:13px;color:#0f172a;">⚙️ Configuración y Edición:</h4>' +
+          '<ul style="margin:0 0 10px 18px;padding:0;">' + tips + '</ul>' +
+          '<h4 style="margin:10px 0 4px;font-size:13px;color:#0f172a;">🛠️ Herramientas de Barra:</h4>' +
+          '<ul style="margin:0 0 10px 18px;padding:0;">' +
+            '<li><code>⚙️</code> <strong>Propiedades:</strong> Abre el panel para ajustar título, etiqueta, fondo, texto y enlaces.</li>' +
+            '<li><code>📄</code> <strong>Duplicar:</strong> Crea una copia idéntica debajo de este elemento.</li>' +
+            '<li><code>✥</code> <strong>Mover:</strong> Arrastra este módulo a cualquier otra columna del lienzo.</li>' +
+            '<li><code>🗑️</code> <strong>Eliminar:</strong> Quita este módulo (con soporte de deshacer).</li>' +
+          '</ul>' +
+        '</div>'
+    };
+  }
+
+  function abrirAyudaElemento(btn) {
+    try {
+      var nodo = nodoDeToolbar_(btn);
+      if (!nodo && typeof nodoControladoDivi_ === 'function') nodo = nodoControladoDivi_(btn);
+      if (!nodo && btn && btn.closest) nodo = btn.closest('.idevice-card, .divi-row, .divi-section, .divi-column');
+      if (!nodo && window._nodoEditandoProps610_) nodo = window._nodoEditandoProps610_;
+      if (!nodo) {
+        nodo = document.querySelector('#contenedorIDevicesDinamicos .divi-section') || document.querySelector('.divi-section');
+      }
+      if (!nodo) return;
+      window._nodoAyudaActivo_ = nodo;
+      var esSeccion = !!(nodo.classList && nodo.classList.contains('divi-section'));
+      var esFila = !!(nodo.classList && nodo.classList.contains('divi-row'));
+      var esModulo = !!(nodo.classList && nodo.classList.contains('idevice-card'));
+      var tipo = (nodo.getAttribute && nodo.getAttribute('data-tipo')) || '';
+      var tagEl = nodo.querySelector && nodo.querySelector('.idevice-tag');
+      var badgeEl = nodo.querySelector && nodo.querySelector('.badge');
+      var titActual = (tagEl ? tagEl.textContent.trim() : '') || (nodo.getAttribute && nodo.getAttribute('data-titulo')) || '';
+      var badgeActual = (badgeEl ? badgeEl.textContent.trim() : '') || (nodo.getAttribute && nodo.getAttribute('data-etiqueta')) || '';
+      var m = asegurarModalAyudaElemento_();
+      var titEl = document.getElementById('ayuda-elem-titulo');
+      var badgeElem = document.getElementById('ayuda-elem-badge');
+      var cuerpoEl = document.getElementById('ayuda-elem-cuerpo');
+      var config = obtenerGuiaElemento_(nodo, esSeccion, esFila, esModulo, tipo, titActual, badgeActual);
+      if (titEl) titEl.textContent = config.titulo;
+      if (badgeElem) {
+        badgeElem.textContent = config.badge;
+        badgeElem.style.background = config.badgeBg || '#e0f2fe';
+        badgeElem.style.color = config.badgeCol || '#0369a1';
+      }
+      if (cuerpoEl) cuerpoEl.innerHTML = config.html;
+      m.classList.add('active');
+      m.style.display = 'flex';
+      m.style.zIndex = '100005';
+      var dlg = m.querySelector('.modal');
+      if (dlg) {
+        dlg.style.display = 'flex';
+        dlg.style.flexDirection = 'column';
+        if (typeof posicionarDialogEnVista610_ === 'function') posicionarDialogEnVista610_(dlg);
+      }
+    } catch (e) {
+      console.error('Error al abrir ayuda del elemento:', e);
+    }
+  }
+
+  function cerrarAyudaElemento() {
+    var m = document.getElementById('modal-ayuda-elemento');
+    if (m) {
+      m.classList.remove('active');
+      m.style.display = 'none';
+    }
+    window._nodoAyudaActivo_ = null;
+  }
+
+  function abrirPropsDesdeAyuda() {
+    var nodo = window._nodoAyudaActivo_;
+    cerrarAyudaElemento();
+    if (nodo && typeof abrirPropiedades === 'function') {
+      var btn = (nodo.querySelector && nodo.querySelector('.btn-ctrl-props')) || nodo;
+      abrirPropiedades(btn);
+    }
+  }
+
+  function abrirAyudaDesdeProps() {
+    var nodo = window._nodoEditandoProps610_;
+    if (nodo) {
+      abrirAyudaElemento(nodo);
+    }
+  }
   function abrirPropiedades(btn) {
     try {
       var nodo = nodoDeToolbar_(btn);
@@ -12680,6 +12917,13 @@ if (document.readyState === 'loading') {
         abrirPropiedades(btnProps);
         return;
       }
+      var btnAyuda610 = t.closest('.btn-ctrl-ayuda, button[title*="ayuda"], button[aria-label*="ayuda"], button[title*="Ayuda"], button[aria-label*="Ayuda"]');
+      if (btnAyuda610) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        abrirAyudaElemento(btnAyuda610);
+        return;
+      }
       var miniReg = t.closest('.btn-mini-sec.btn-mini-sec-regular');
       if (miniReg) {
         ev.preventDefault();
@@ -12875,6 +13119,10 @@ if (document.readyState === 'loading') {
   window.soltarSeccion = soltarSeccion;
   window.soltarModulo = soltarModulo;
   window.abrirPropiedades = abrirPropiedades;
+  window.abrirAyudaElemento = abrirAyudaElemento;
+  window.cerrarAyudaElemento = cerrarAyudaElemento;
+  window.abrirPropsDesdeAyuda = abrirPropsDesdeAyuda;
+  window.abrirAyudaDesdeProps = abrirAyudaDesdeProps;
   window.cerrarPropiedades = cerrarPropiedades;
   window.previsualizarColor = previsualizarColor;
   window.setAlineacionInterna = setAlineacionInterna;

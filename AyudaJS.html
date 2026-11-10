@@ -6813,11 +6813,20 @@ function htmlEditorEnriquecido_(idUnico) {
         '<span style="font-weight:800;background:#fef08a;font-size:13px;padding:0 2px;border-radius:2px;">🖍️</span>' +
         '<input type="color" value="#fef08a" onchange="cambiarResalteEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
       '</label>' +
+      '<label class="btn-tb btn-tb-color" title="Color de fondo de celda (Bote de pintura)" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
+        '<span style="font-weight:800;font-size:13px;">🪣</span>' +
+        '<input type="color" value="#f1f5f9" onchange="cambiarColorFondoCeldaEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+      '</label>' +
       '<span class="tb-sep"></span>' +
       '<button type="button" class="btn-tb" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗</button>' +
       '<button type="button" class="btn-tb" title="Insertar imagen" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️</button>' +
       '<button type="button" class="btn-tb" title="Insertar video" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬</button>' +
       '<button type="button" class="btn-tb" title="Insertar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">▦</button>' +
+      '<button type="button" class="btn-tb" title="Añadir fila a tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">➕Fila</button>' +
+      '<button type="button" class="btn-tb" title="Eliminar fila de tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">➖Fila</button>' +
+      '<button type="button" class="btn-tb" title="Añadir columna a tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">➕Col</button>' +
+      '<button type="button" class="btn-tb" title="Eliminar columna de tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">➖Col</button>' +
+      '<button type="button" class="btn-tb" title="Cambiar tamaño de tabla (100% / 80% / 60% / Auto)" onmousedown="event.preventDefault()" onclick="cambiarAnchoTablaEditor(this)">📐Tabla</button>' +
       '<button type="button" class="btn-tb" title="Limpiar formato" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">🧹</button>' +
     '</div>' +
     // Cuerpo editable enriquecido
@@ -7224,22 +7233,261 @@ function insertarImagenEditor(btn) {
   var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
   var editor = wrap ? wrap.querySelector('.campo-editor-rich') : document.querySelector('.campo-editor-rich');
   if (!editor) return;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  var enCelda = !!(td && editor.contains(td));
   var url = prompt('Pega el enlace (URL) de la imagen (JPG, PNG, WebP):', 'https://');
   if (!url || url === 'https://' || !url.trim()) return;
   url = url.trim();
-  var desc = prompt('Pie de imagen o descripción breve (opcional):', 'Figura ilustrativa');
+  var desc = prompt('Pie de imagen o descripción breve (opcional):', enCelda ? '' : 'Figura ilustrativa');
   if (editor.focus) editor.focus();
-  var htmlImg =
-    '<figure style="margin:14px 0;text-align:center;">' +
-      '<img src="' + url + '" alt="' + (desc || 'Imagen de la clase') + '" style="max-width:100%;max-height:400px;height:auto;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid #e2e8f0;display:inline-block;">' +
-      '<figcaption style="font-size:12px;color:#64748b;margin-top:6px;font-style:italic;">' + (desc || '') + '</figcaption>' +
-    '</figure><p><br></p>';
+  var htmlImg = enCelda
+    ? '<figure style="margin:4px auto;text-align:center;max-width:100%;">' +
+        '<img src="' + url + '" alt="' + (desc || 'Imagen en celda') + '" style="max-width:100%;max-height:160px;height:auto;border-radius:6px;border:1px solid #cbd5e1;display:block;margin:0 auto;object-fit:contain;cursor:pointer;" onclick="mostrarToolbarImagenFlotante_(this)">' +
+        (desc ? ('<figcaption style="font-size:11px;color:#64748b;margin-top:2px;font-style:italic;">' + desc + '</figcaption>') : '') +
+      '</figure>'
+    : '<figure style="margin:14px 0;text-align:center;">' +
+        '<img src="' + url + '" alt="' + (desc || 'Imagen de la clase') + '" style="max-width:100%;max-height:400px;height:auto;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid #e2e8f0;display:inline-block;cursor:pointer;" onclick="mostrarToolbarImagenFlotante_(this)">' +
+        '<figcaption style="font-size:12px;color:#64748b;margin-top:6px;font-style:italic;">' + (desc || '') + '</figcaption>' +
+      '</figure><p><br></p>';
   try {
     document.execCommand('insertHTML', false, htmlImg);
   } catch (e) {
-    editor.innerHTML += htmlImg;
+    if (enCelda && td) td.innerHTML += htmlImg;
+    else editor.innerHTML += htmlImg;
   }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
+
+function cambiarColorFondoCeldaEditor(input, color) {
+  if (!color) return;
+  var wrap = input && input.closest ? input.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  if (!td && editor) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) {
+      var celdas = tablas[tablas.length - 1].querySelectorAll('td, th');
+      td = celdas.length ? celdas[celdas.length - 1] : null;
+    }
+  }
+  if (!td) {
+    alert('Haz clic dentro de una celda de la tabla para aplicarle color de fondo con el bote de pintura 🪣.');
+    return;
+  }
+  td.style.backgroundColor = color;
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function cambiarAnchoTablaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  var tabla = td ? td.closest('table') : null;
+  if (!tabla && editor) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) tabla = tablas[tablas.length - 1];
+  }
+  if (!tabla) {
+    alert('Haz clic dentro de una tabla para cambiar su tamaño.');
+    return;
+  }
+  var anchos = ['100%', '80%', '60%', 'auto'];
+  var actual = tabla.getAttribute('data-ancho-custom') || tabla.style.width || '100%';
+  var idx = anchos.indexOf(actual);
+  var siguiente = anchos[(idx + 1) % anchos.length];
+  tabla.setAttribute('data-ancho-custom', siguiente);
+  tabla.style.width = siguiente;
+  tabla.style.maxWidth = '100%';
+  tabla.style.marginLeft = 'auto';
+  tabla.style.marginRight = 'auto';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Ancho de tabla: ' + siguiente, 'info');
+}
+
+var _imagenActivaST90_ = null;
+
+function mostrarToolbarImagenFlotante_(img) {
+  if (!img) return;
+  _imagenActivaST90_ = img;
+  var tb = document.getElementById('toolbarImagenFlotante');
+  if (!tb) {
+    tb = document.createElement('div');
+    tb.id = 'toolbarImagenFlotante';
+    tb.className = 'toolbar-img-flotante';
+    tb.innerHTML =
+      '<span style="font-weight:700;font-size:11px;color:#94a3b8;margin-right:2px;">Imagen:</span>' +
+      '<button type="button" class="btn-img-tb" onclick="ajustarImagenDirecta_(\'25%\')">25%</button>' +
+      '<button type="button" class="btn-img-tb" onclick="ajustarImagenDirecta_(\'50%\')">50%</button>' +
+      '<button type="button" class="btn-img-tb" onclick="ajustarImagenDirecta_(\'75%\')">75%</button>' +
+      '<button type="button" class="btn-img-tb" onclick="ajustarImagenDirecta_(\'100%\')">100%</button>' +
+      '<span class="tb-sep-mini"></span>' +
+      '<button type="button" class="btn-img-tb" onclick="alinearImagenDirecta_(\'left\')">⬅️</button>' +
+      '<button type="button" class="btn-img-tb" onclick="alinearImagenDirecta_(\'center\')">↔️</button>' +
+      '<button type="button" class="btn-img-tb" onclick="alinearImagenDirecta_(\'right\')">➡️</button>' +
+      '<span class="tb-sep-mini"></span>' +
+      '<button type="button" class="btn-img-tb" onclick="recortarAjustarCelda_()" title="Ajustar como miniatura a la celda">📐 Celda</button>' +
+      '<button type="button" class="btn-img-tb btn-img-del" onclick="eliminarImagenDirecta_()" title="Eliminar imagen">🗑️</button>';
+    document.body.appendChild(tb);
+  }
+  var rect = img.getBoundingClientRect();
+  tb.style.position = 'fixed';
+  tb.style.top = Math.max(10, rect.top - 38) + 'px';
+  tb.style.left = Math.max(10, rect.left + (rect.width / 2) - 160) + 'px';
+  tb.style.display = 'flex';
+  tb.style.zIndex = '100005';
+}
+
+function ocultarToolbarImagenFlotante_() {
+  var tb = document.getElementById('toolbarImagenFlotante');
+  if (tb) tb.style.display = 'none';
+}
+
+function ajustarImagenDirecta_(ancho) {
+  if (!_imagenActivaST90_) return;
+  _imagenActivaST90_.style.width = ancho;
+  _imagenActivaST90_.style.maxWidth = '100%';
+  _imagenActivaST90_.style.height = 'auto';
+  _imagenActivaST90_.style.objectFit = 'contain';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  ocultarToolbarImagenFlotante_();
+}
+
+function alinearImagenDirecta_(lado) {
+  if (!_imagenActivaST90_) return;
+  var fig = _imagenActivaST90_.closest('figure') || _imagenActivaST90_;
+  fig.style.display = 'block';
+  if (lado === 'left') {
+    fig.style.marginLeft = '0';
+    fig.style.marginRight = 'auto';
+    fig.style.textAlign = 'left';
+  } else if (lado === 'right') {
+    fig.style.marginLeft = 'auto';
+    fig.style.marginRight = '0';
+    fig.style.textAlign = 'right';
+  } else {
+    fig.style.marginLeft = 'auto';
+    fig.style.marginRight = 'auto';
+    fig.style.textAlign = 'center';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  ocultarToolbarImagenFlotante_();
+}
+
+function recortarAjustarCelda_() {
+  if (!_imagenActivaST90_) return;
+  _imagenActivaST90_.style.width = '100%';
+  _imagenActivaST90_.style.maxWidth = '160px';
+  _imagenActivaST90_.style.maxHeight = '140px';
+  _imagenActivaST90_.style.objectFit = 'cover';
+  _imagenActivaST90_.style.borderRadius = '6px';
+  _imagenActivaST90_.style.display = 'block';
+  _imagenActivaST90_.style.margin = '4px auto';
+  var fig = _imagenActivaST90_.closest('figure');
+  if (fig) fig.style.margin = '4px auto';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  ocultarToolbarImagenFlotante_();
+}
+
+function eliminarImagenDirecta_() {
+  if (!_imagenActivaST90_) return;
+  var fig = _imagenActivaST90_.closest('figure');
+  if (fig) fig.remove();
+  else _imagenActivaST90_.remove();
+  _imagenActivaST90_ = null;
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  ocultarToolbarImagenFlotante_();
+}
+
+function iniciarRedimensionColumnasExcel_() {
+  if (window._redimensionExcelIniciada_) return;
+  window._redimensionExcelIniciada_ = true;
+
+  document.addEventListener('mousedown', function (e) {
+    var cell = e.target.closest ? e.target.closest('th, td') : null;
+    if (!cell || !cell.closest('.campo-editor-rich, .tabla-notion, .excel-split-table')) return;
+    var rect = cell.getBoundingClientRect();
+    if (rect.right - e.clientX <= 8 && rect.right - e.clientX >= 0) {
+      e.preventDefault();
+      var tabla = cell.closest('table');
+      if (!tabla) return;
+      var startX = e.clientX;
+      var startWidth = cell.offsetWidth;
+      var colIdx = cell.cellIndex;
+      tabla.style.tableLayout = 'fixed';
+
+      function onMouseMove(ev) {
+        var diff = ev.clientX - startX;
+        var newWidth = Math.max(35, startWidth + diff);
+        tabla.querySelectorAll('tr').forEach(function (tr) {
+          if (tr.children[colIdx]) {
+            tr.children[colIdx].style.width = newWidth + 'px';
+            tr.children[colIdx].style.minWidth = newWidth + 'px';
+          }
+        });
+      }
+
+      function onMouseUp() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = '';
+        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      }
+
+      document.body.style.cursor = 'col-resize';
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    var cell = e.target.closest ? e.target.closest('th, td') : null;
+    if (cell && cell.closest('.campo-editor-rich, .tabla-notion, .excel-split-table')) {
+      var rect = cell.getBoundingClientRect();
+      if (rect.right - e.clientX <= 8 && rect.right - e.clientX >= 0) {
+        cell.style.cursor = 'col-resize';
+      } else {
+        cell.style.cursor = '';
+      }
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    var cell = e.target.closest ? e.target.closest('td, th') : null;
+    if (cell && cell.closest('.campo-editor-rich, .tabla-notion, .excel-split-table')) {
+      window._ultimaCeldaSeleccionada_ = cell;
+    }
+    var img = e.target && e.target.tagName === 'IMG' ? e.target : null;
+    if (img && img.closest('.campo-editor-rich, .tabla-notion, .idevice-card')) {
+      mostrarToolbarImagenFlotante_(img);
+    } else if (!e.target.closest('#toolbarImagenFlotante')) {
+      ocultarToolbarImagenFlotante_();
+    }
+  });
+
+  document.addEventListener('dblclick', function (e) {
+    var img = e.target && e.target.tagName === 'IMG' ? e.target : null;
+    if (img && img.closest('.campo-editor-rich, .tabla-notion, .idevice-card')) {
+      redimensionarImagenDirecta_(img);
+      mostrarToolbarImagenFlotante_(img);
+    }
+  });
+}
+
+window.cambiarColorFondoCeldaEditor = cambiarColorFondoCeldaEditor;
+window.cambiarAnchoTablaEditor = cambiarAnchoTablaEditor;
+window.mostrarToolbarImagenFlotante_ = mostrarToolbarImagenFlotante_;
+window.ocultarToolbarImagenFlotante_ = ocultarToolbarImagenFlotante_;
+window.ajustarImagenDirecta_ = ajustarImagenDirecta_;
+window.alinearImagenDirecta_ = alinearImagenDirecta_;
+window.recortarAjustarCelda_ = recortarAjustarCelda_;
+window.eliminarImagenDirecta_ = eliminarImagenDirecta_;
+window.iniciarRedimensionColumnasExcel_ = iniciarRedimensionColumnasExcel_;
 
 function insertarVideoEditor(btn) {
   var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
@@ -11215,6 +11463,7 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', instalarConstructorDivi603_);
   } else {
     instalarConstructorDivi603_();
+    iniciarRedimensionColumnasExcel_();
   }
 })();
 /* BUILD-608-CONSOLIDACION-FIN */

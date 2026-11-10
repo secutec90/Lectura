@@ -8916,4 +8916,82 @@
   .divi-column .idevice-card .idevice-header .idevice-btn {
     display: none !important;
   }
+
+  /* Tablas manipulables estilo Excel y redimensión de imágenes (build-623) */
+  .editor-tabla-estilo,
+  .tabla-notion {
+    border-collapse: collapse !important;
+    transition: width 0.15s ease, margin 0.15s ease;
+  }
+  .editor-tabla-estilo th,
+  .editor-tabla-estilo td,
+  .tabla-notion th,
+  .tabla-notion td {
+    position: relative;
+    box-sizing: border-box;
+    user-select: text;
+  }
+  .campo-editor-rich table td img,
+  .campo-editor-rich table th img,
+  .tabla-notion td img,
+  .tabla-notion th img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 4px auto;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  .campo-editor-rich table td img:hover,
+  .campo-editor-rich table th img:hover,
+  .campo-editor-rich img:hover {
+    outline: 2px solid #0284c7;
+    outline-offset: 2px;
+  }
+  .campo-editor-rich figure {
+    margin: 6px auto !important;
+    max-width: 100% !important;
+  }
+  .toolbar-img-flotante {
+    position: fixed;
+    z-index: 100005;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px;
+  }
+  .toolbar-img-flotante button {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .12s ease;
+    line-height: 1.2;
+  }
+  .toolbar-img-flotante button:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #38bdf8;
+  }
+  .toolbar-img-flotante .btn-img-del:hover {
+    background: #ef4444;
+    border-color: #f87171;
+  }
+  .tb-sep-mini {
+    width: 1px;
+    height: 14px;
+    background: #334155;
+    margin: 0 2px;
+  }
 </style>

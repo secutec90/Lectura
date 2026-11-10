@@ -2,6 +2,26 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Manipulación de Tablas Estilo Excel, Color de Fondo de Celda (🪣) y Toolbar Flotante de Redimensión de Imágenes en build-623]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): manipulacion de tablas estilo excel con redimension de columnas arrastrando, color de celda y toolbar flotante de imagenes (build-623)`
+- **Cambios Realizados:**
+  - **1. Toolbar Flotante y Redimensión Instantánea de Imágenes (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se resolvió el problema de imágenes que desbordan las celdas de las tablas: al hacer clic en cualquier imagen, se despliega una barra flotante contextual con accesos rápidos para ajustar tamaño (`25%`, `50%`, `75%`, `100%`), alinear (`⬅️`, `↔️`, `➡️`), ajustar a miniatura de celda (`📐 Celda`) y eliminar (`🗑️`).
+    - Doble clic sobre cualquier imagen cicla automáticamente su escala (25% ➔ 50% ➔ 75% ➔ 100%).
+    - Al insertar una imagen dentro de una celda, adopta automáticamente proporciones contenidas (`max-height: 160px; object-fit: contain`) para no romper la retícula de la tabla.
+  - **2. Color de Fondo de Celda con Bote de Pintura 🪣 (`AyudaJS.html`):**
+    - Se integró el botón **`🪣` (Bote de pintura)** en la barra de herramientas del editor con selector nativo de color.
+    - Se implementó `cambiarColorFondoCeldaEditor` con seguimiento persistente de la celda activa (`window._ultimaCeldaSeleccionada_`), garantizando que el color se aplique a la celda seleccionada aunque se pierda el foco al abrir la paleta.
+  - **3. Control de Tamaño de Tabla y Redimensión de Columnas Estilo Excel (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se integró el botón **`📐Tabla`** en la barra del editor (`cambiarAnchoTablaEditor`), permitiendo alternar el ancho de la tabla entre `100%`, `80%`, `60%` y `Auto` (compacta centrada).
+    - Se integraron botones rápidos de manipulación de tabla en la barra: `➕Fila`, `➖Fila`, `➕Col`, `➖Col`.
+    - Se implementó `iniciarRedimensionColumnasExcel_`: permite arrastrar el borde derecho de cualquier celda o cabecera con el cursor `col-resize` para ajustar el ancho exacto de esa columna en píxeles, exactamente igual que en Excel/Word.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v448 build-623`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Solución a Inserción de Módulo Texto DUA y Corrección de Visibilidad de Toolbars Flotantes en build-622]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): soluciona insercion de modulo de texto y visibilidad de toolbar flotante sin recorte (build-622)`
 - **Cambios Realizados:**

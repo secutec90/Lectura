@@ -6795,6 +6795,19 @@ function htmlEditorEnriquecido_(idUnico) {
       '<button type="button" class="btn-tb" title="Subrayado (Ctrl+U)" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'underline\')"><u>U</u></button>' +
       '<button type="button" class="btn-tb" title="Tachado" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'strikeThrough\')"><s>S</s></button>' +
       '<button type="button" class="btn-tb" title="Subtítulo H3" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'formatBlock\', \'<h3>\')"><b>H3</b></button>' +
+      '<select class="btn-tb select-tb-fuente" title="Tipo de fuente / tipografía" onchange="cambiarFuenteEditor(this, this.value)" style="height:24px;font-size:11.5px;border:1px solid #cbd5e1;border-radius:4px;background:#fff;padding:0 4px;cursor:pointer;margin:0 2px;">' +
+        '<option value="">Fuente...</option>' +
+        '<option value="Inter, Segoe UI, sans-serif">Inter (Por defecto)</option>' +
+        '<option value="Arial, Helvetica, sans-serif">Arial</option>' +
+        '<option value="\'Comic Sans MS\', cursive, sans-serif">Comic Sans (Escolar)</option>' +
+        '<option value="\'Courier New\', Courier, monospace">Courier (Código)</option>' +
+        '<option value="Georgia, serif">Georgia (Elegante)</option>' +
+        '<option value="Impact, fantasy">Impact (Titular)</option>' +
+        '<option value="\'Montserrat\', sans-serif">Montserrat</option>' +
+        '<option value="\'Roboto\', sans-serif">Roboto</option>' +
+        '<option value="\'Times New Roman\', Times, serif">Times New Roman</option>' +
+        '<option value="Verdana, Geneva, sans-serif">Verdana</option>' +
+      '</select>' +
       '<span class="tb-sep"></span>' +
       '<button type="button" class="btn-tb" title="Alinear a la izquierda" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyLeft\')">⬅️</button>' +
       '<button type="button" class="btn-tb" title="Centrar" onmousedown="event.preventDefault()" onclick="aplicarEstiloTexto(this, \'justifyCenter\')">↔️</button>' +
@@ -6826,7 +6839,11 @@ function htmlEditorEnriquecido_(idUnico) {
       '<button type="button" class="btn-tb" title="Eliminar fila de tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">➖Fila</button>' +
       '<button type="button" class="btn-tb" title="Añadir columna a tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">➕Col</button>' +
       '<button type="button" class="btn-tb" title="Eliminar columna de tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">➖Col</button>' +
+      '<button type="button" class="btn-tb" title="Definir ancho exacto de esta columna" onmousedown="event.preventDefault()" onclick="cambiarAnchoColumnaDirecto(this)">↔️Col</button>' +
+      '<button type="button" class="btn-tb" title="Unir / Combinar celda con la de la derecha" onmousedown="event.preventDefault()" onclick="unirCeldasTablaEditor(this)">🔗Unir</button>' +
+      '<button type="button" class="btn-tb" title="Separar celda combinada" onmousedown="event.preventDefault()" onclick="separarCeldasTablaEditor(this)">✂️Sep</button>' +
       '<button type="button" class="btn-tb" title="Cambiar tamaño de tabla (100% / 80% / 60% / Auto)" onmousedown="event.preventDefault()" onclick="cambiarAnchoTablaEditor(this)">📐Tabla</button>' +
+      '<button type="button" class="btn-tb" title="Alinear tabla completa (Centro ↔️ / Derecha ➡️ / Izquierda ⬅️)" onmousedown="event.preventDefault()" onclick="alinearTablaEditor(this)">📐Pos</button>' +
       '<button type="button" class="btn-tb" title="Limpiar formato" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">🧹</button>' +
     '</div>' +
     // Cuerpo editable enriquecido
@@ -6838,9 +6855,149 @@ function cambiarFuenteEditor(select, fuente) {
   if (!fuente) return;
   var wrap = select && select.closest ? select.closest('.editor-enriquecido-wrap') : null;
   var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
-  if (editor && editor.focus) editor.focus();
-  try { document.execCommand('fontName', false, fuente); } catch (e) {}
+  if (!editor) return;
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    document.execCommand('fontName', false, fuente);
+    var fonts = editor.querySelectorAll('font[face]');
+    fonts.forEach(function (f) {
+      f.style.fontFamily = f.getAttribute('face');
+    });
+  } else {
+    var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+    var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+    if (td) {
+      td.style.fontFamily = fuente;
+    } else {
+      editor.style.fontFamily = fuente;
+    }
+  }
   if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Fuente aplicada: ' + fuente.split(',')[0], 'info');
+}
+
+function cambiarAnchoColumnaDirecto(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  if (!td && editor) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) td = tablas[tablas.length - 1].querySelector('td, th');
+  }
+  if (!td) {
+    alert('Haz clic dentro de la columna cuyo ancho deseas modificar.');
+    return;
+  }
+  var tabla = td.closest('table');
+  if (!tabla) return;
+  var anchoActual = td.style.width || (td.offsetWidth + 'px');
+  var nuevo = prompt('Introduce el ancho para esta columna (ej. 150px, 200px, 25%):\nO arrastra la línea divisoria de la columna con el mouse.', anchoActual);
+  if (!nuevo || !nuevo.trim()) return;
+  nuevo = nuevo.trim();
+  if (!/(px|%|em|rem)$/i.test(nuevo) && !isNaN(Number(nuevo))) nuevo += 'px';
+  var colIdx = td.cellIndex;
+  tabla.style.tableLayout = 'fixed';
+  tabla.querySelectorAll('tr').forEach(function (tr) {
+    if (tr.children[colIdx]) {
+      tr.children[colIdx].style.width = nuevo;
+      tr.children[colIdx].style.minWidth = nuevo;
+    }
+  });
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Ancho de columna: ' + nuevo, 'success');
+}
+
+function unirCeldasTablaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  if (!td && editor) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) td = tablas[tablas.length - 1].querySelector('td, th');
+  }
+  if (!td) {
+    alert('Coloca el cursor en la celda que deseas unir con la de la derecha.');
+    return;
+  }
+  var next = td.nextElementSibling;
+  if (!next) {
+    alert('No hay ninguna celda a la derecha para unir en esta fila.');
+    return;
+  }
+  var colSpanActual = parseInt(td.getAttribute('colspan') || '1', 10);
+  var nextColSpan = parseInt(next.getAttribute('colspan') || '1', 10);
+  var contenidoNext = next.innerHTML.trim();
+  if (contenidoNext && contenidoNext !== '&nbsp;' && contenidoNext !== '<br>') {
+    td.innerHTML = td.innerHTML.trim() + ' ' + contenidoNext;
+  }
+  td.setAttribute('colspan', colSpanActual + nextColSpan);
+  next.remove();
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Celdas unidas (Colspan ' + (colSpanActual + nextColSpan) + ')', 'success');
+}
+
+function separarCeldasTablaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  if (!td || !td.hasAttribute('colspan')) {
+    alert('Esta celda no está combinada / unida.');
+    return;
+  }
+  var colSpanActual = parseInt(td.getAttribute('colspan') || '1', 10);
+  if (colSpanActual <= 1) {
+    td.removeAttribute('colspan');
+    return;
+  }
+  td.setAttribute('colspan', colSpanActual - 1);
+  if (colSpanActual - 1 === 1) td.removeAttribute('colspan');
+  var nuevaCelda = document.createElement(td.tagName.toLowerCase());
+  nuevaCelda.innerHTML = '&nbsp;';
+  nuevaCelda.style.border = td.style.border || '1px solid #cbd5e1';
+  nuevaCelda.style.padding = td.style.padding || '8px 12px';
+  td.parentNode.insertBefore(nuevaCelda, td.nextSibling);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Celda separada', 'info');
+}
+
+function alinearTablaEditor(btn) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : null;
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  var tabla = td ? td.closest('table') : null;
+  if (!tabla && editor) {
+    var tablas = editor.querySelectorAll('table');
+    if (tablas.length) tabla = tablas[tablas.length - 1];
+  }
+  if (!tabla) {
+    alert('Coloca el cursor dentro de la tabla para alinearla.');
+    return;
+  }
+  var posActual = tabla.getAttribute('data-align-tabla') || 'center';
+  var ciclo = { 'center': 'right', 'right': 'left', 'left': 'center' };
+  var siguiente = ciclo[posActual] || 'center';
+  tabla.setAttribute('data-align-tabla', siguiente);
+  if (siguiente === 'center') {
+    tabla.style.marginLeft = 'auto';
+    tabla.style.marginRight = 'auto';
+  } else if (siguiente === 'right') {
+    tabla.style.marginLeft = 'auto';
+    tabla.style.marginRight = '0';
+  } else {
+    tabla.style.marginLeft = '0';
+    tabla.style.marginRight = 'auto';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  var nombres = { 'left': 'Izquierda ⬅️', 'center': 'Centro ↔️', 'right': 'Derecha ➡️' };
+  if (typeof toast === 'function') toast('Tabla alineada al: ' + nombres[siguiente], 'info');
 }
 
 function cambiarTamanoEditor(select, tamano) {
@@ -7412,7 +7569,7 @@ function iniciarRedimensionColumnasExcel_() {
     var cell = e.target.closest ? e.target.closest('th, td') : null;
     if (!cell || !cell.closest('.campo-editor-rich, .tabla-notion, .excel-split-table')) return;
     var rect = cell.getBoundingClientRect();
-    if (rect.right - e.clientX <= 8 && rect.right - e.clientX >= 0) {
+    if (rect.right - e.clientX <= 14 && rect.right - e.clientX >= -2) {
       e.preventDefault();
       var tabla = cell.closest('table');
       if (!tabla) return;
@@ -7449,7 +7606,7 @@ function iniciarRedimensionColumnasExcel_() {
     var cell = e.target.closest ? e.target.closest('th, td') : null;
     if (cell && cell.closest('.campo-editor-rich, .tabla-notion, .excel-split-table')) {
       var rect = cell.getBoundingClientRect();
-      if (rect.right - e.clientX <= 8 && rect.right - e.clientX >= 0) {
+      if (rect.right - e.clientX <= 14 && rect.right - e.clientX >= -2) {
         cell.style.cursor = 'col-resize';
       } else {
         cell.style.cursor = '';
@@ -7467,6 +7624,17 @@ function iniciarRedimensionColumnasExcel_() {
       mostrarToolbarImagenFlotante_(img);
     } else if (!e.target.closest('#toolbarImagenFlotante')) {
       ocultarToolbarImagenFlotante_();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      var cell = e.target && e.target.closest ? e.target.closest('td, th') : null;
+      if (cell && cell.closest('.campo-editor-rich, .tabla-notion')) {
+        e.preventDefault();
+        document.execCommand('insertLineBreak');
+        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      }
     }
   });
 
@@ -7488,6 +7656,11 @@ window.alinearImagenDirecta_ = alinearImagenDirecta_;
 window.recortarAjustarCelda_ = recortarAjustarCelda_;
 window.eliminarImagenDirecta_ = eliminarImagenDirecta_;
 window.iniciarRedimensionColumnasExcel_ = iniciarRedimensionColumnasExcel_;
+window.cambiarFuenteEditor = cambiarFuenteEditor;
+window.cambiarAnchoColumnaDirecto = cambiarAnchoColumnaDirecto;
+window.unirCeldasTablaEditor = unirCeldasTablaEditor;
+window.separarCeldasTablaEditor = separarCeldasTablaEditor;
+window.alinearTablaEditor = alinearTablaEditor;
 
 function insertarVideoEditor(btn) {
   var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;

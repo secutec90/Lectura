@@ -2,6 +2,30 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Eliminación de Títulos Repetidos, Selector de Tipografías, Unión de Celdas (🔗/✂️), Ancho Individual de Columna y Alineación de Tabla (📐Pos) en build-626]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): elimina titulos repetidos, selector de tipografias, union de celdas y alineacion de tablas (build-626)`
+- **Cambios Realizados:**
+  - **1. Erradicación de Título Repetido bajo la Cabecera (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se ocultó el input redundante `.idevice-card .idevice-campo-titulo` (`display: none !important`), eliminando la visualización duplicada de "Hola" bajo "HOLA" señalada por el usuario. La sincronización interna y serialización siguen intactas.
+  - **2. Selector de Tipografías / Fuentes en Editor (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se integró el menú desplegable de fuentes en `htmlEditorEnriquecido_`: Inter (Por defecto), Arial, Comic Sans (Escolar), Courier (Código), Georgia (Elegante), Impact (Titular), Montserrat, Roboto, Times New Roman y Verdana.
+    - `cambiarFuenteEditor` aplica la tipografía a la selección activa, a la celda de la tabla seleccionada o al editor completo.
+  - **3. Unión y Separación de Celdas estilo Excel (`AyudaJS.html`):**
+    - Se agregaron las herramientas **`🔗Unir`** (`unirCeldasTablaEditor`) y **`✂️Sep`** (`separarCeldasTablaEditor`).
+    - Permiten combinar una celda con la celda contigua a la derecha mediante `colspan`, preservando el contenido y permitiendo revertir la combinación.
+  - **4. Ancho Individual de Columnas y Zona de Arrastre Mejorada (`AyudaJS.html`):**
+    - Se añadió la herramienta **`↔️Col`** (`cambiarAnchoColumnaDirecto`) para fijar el ancho exacto en píxeles o porcentaje de la columna activa.
+    - Se amplió la zona de arrastre con cursor `col-resize` a 14px en `iniciarRedimensionColumnasExcel_()`, haciendo el arrastre manual mucho más cómodo y preciso.
+  - **5. Alineación Completa de la Tabla (`AyudaJS.html`):**
+    - Se integró el botón **`📐Pos`** (`alinearTablaEditor`) para ciclar la posición de toda la tabla entre **Centro (`↔️`) ➔ Derecha (`➡️`) ➔ Izquierda (`⬅️`)**.
+  - **6. Salto de Línea Limpio en Celdas y Texto:**
+    - Se configuró el interceptor de `Enter` en celdas de tabla para insertar un salto de línea limpio (`<br>`) sin romper la estructura ni la altura de la fila.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v448 build-626`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Icono de Ayuda Contextual (❓) para Configuración de Cada Elemento dentro de Secciones en build-625]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): icono de ayuda contextual (❓) para cada elemento en secciones con guia interactiva (build-625)`
 - **Cambios Realizados:**

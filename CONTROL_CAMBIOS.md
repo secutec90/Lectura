@@ -2,6 +2,21 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Aplicación Directa de Ancho y Márgenes a .divi-section, Respaldo de Event Listeners y Adopción en Secciones Nuevas en build-620]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): aplica ancho y margen directamente a cada seccion divi con listeners dedicados (build-620)`
+- **Cambios Realizados:**
+  - **1. Aplicación Directa del Ancho de Sección (`AyudaJS.html`):**
+    - Se identificó la causa por la que el deslizador de sección no producía cambio visual: `ajustarAnchoSeccion` forzaba `sec.style.width = '100%'` en cada sección mientras intentaba redimensionar `#contenedorIDevicesDinamicos`, el cual se expandía por comportamiento de flexbox (`align-items: stretch`).
+    - Se creó la función unificada `aplicarAnchoYMargenSeccion_(sec, v, modo)` que aplica directamente a cada `.divi-section` (`width: v% !important; max-width: v% !important; box-sizing: border-box !important; transition: width .15s ease, margin .15s ease !important;`) junto con sus márgenes calculados según la alineación activa (`flex-start` = `0 auto`, `center` = `auto auto`, `flex-end` = `auto 0`).
+  - **2. Conexión de Event Listeners Duales y Adopción Inmediata (`AyudaJS.html`):**
+    - En `asegurarTopbar610_` (`data-build="620"`), se vincularon listeners directos de `input` y `change` a `#slider-ancho-pagina` y `#slider-ancho-seccion`.
+    - En `crearNuevaSeccionRegular_`, cada sección nueva adopta de inmediato el ancho activo (`window._anchoSeccionActivo_`) y la alineación activa (`window._alineacionSeccionActiva_`).
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v447 build-620`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Separación e Independencia del Control de Ancho de Página vs. Control de Ancho de Sección con Alineación en build-619]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): control dual independiente de ancho de pagina y ancho de seccion con alineacion (build-619)`
 - **Cambios Realizados:**

@@ -10423,12 +10423,40 @@ if (document.readyState === 'loading') {
     if (!el || !el.parentNode) return;
     if (direccion === -1) {
       var previo = hermanoEstructural_(el, -1);
-      if (previo) el.parentNode.insertBefore(el, previo);
+      if (previo) {
+        el.parentNode.insertBefore(el, previo);
+      } else if (el.classList && el.classList.contains('divi-row')) {
+        var secAct = el.closest('.divi-section');
+        var secPrev = secAct ? secAct.previousElementSibling : null;
+        while (secPrev && (!secPrev.classList || !secPrev.classList.contains('divi-section'))) secPrev = secPrev.previousElementSibling;
+        if (secPrev) {
+          var plusPrev = secPrev.querySelector('.divi-plus-row');
+          if (plusPrev) secPrev.insertBefore(el, plusPrev);
+          else secPrev.appendChild(el);
+          promoverToolbars610_(secPrev);
+        }
+      }
     } else if (direccion === 1) {
       var siguiente = hermanoEstructural_(el, 1);
-      if (siguiente) el.parentNode.insertBefore(el, siguiente.nextElementSibling);
+      if (siguiente) {
+        el.parentNode.insertBefore(el, siguiente.nextElementSibling);
+      } else if (el.classList && el.classList.contains('divi-row')) {
+        var secAct2 = el.closest('.divi-section');
+        var secNext = secAct2 ? secAct2.nextElementSibling : null;
+        while (secNext && (!secNext.classList || !secNext.classList.contains('divi-section'))) secNext = secNext.nextElementSibling;
+        if (secNext) {
+          var primerFila = secNext.querySelector('.divi-row');
+          if (primerFila) secNext.insertBefore(el, primerFila);
+          else {
+            var plusNext = secNext.querySelector('.divi-plus-row');
+            if (plusNext) secNext.insertBefore(el, plusNext);
+            else secNext.appendChild(el);
+          }
+          promoverToolbars610_(secNext);
+        }
+      }
     }
-    if (el.classList.contains('divi-row') || el.classList.contains('divi-section')) repintarPlusVerdesDivi_();
+    if (el.classList && (el.classList.contains('divi-row') || el.classList.contains('divi-section'))) repintarPlusVerdesDivi_();
     if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
   }
 
@@ -11514,8 +11542,34 @@ if (document.readyState === 'loading') {
     }
   }
 
+  function crearNuevaSeccionRegular_(codigo) {
+    var cont = contLienzo_();
+    if (!cont) return null;
+    var sec = document.createElement('section');
+    sec.className = 'divi-section';
+    sec.setAttribute('data-sec-tipo', 'regular');
+    var header = document.createElement('div');
+    header.className = 'divi-section-header';
+    header.innerHTML = '<span class="divi-section-label">SECCIÓN PEDAGÓGICA</span>' + htmlControlesDivi_();
+    sec.appendChild(header);
+    var ancla = document.createElement('div');
+    ancla.className = 'divi-plus-row';
+    sec.appendChild(ancla);
+    cont.appendChild(sec);
+    var fila = window.insertarFilaDivi_(codigo || 'col-1', ancla);
+    if (fila) {
+      aplicarPesosFlex610_(fila, codigo || 'col-1');
+      promoverToolbars610_(fila);
+    }
+    promoverToolbars610_(sec);
+    repintarPlusVerdesDivi_(sec);
+    return sec;
+  }
+
   function abrirModalLayoutDivi610_(ancla, btnRef) {
-    window._anclaLayout610_ = (ancla && ancla.nodeType === 1 && !ancla.classList.contains('add-btn')) ? ancla : (window._filaPlusOrigenPopover_ || null);
+    var esBotonSeccionTop = !!(btnRef && (btnRef.classList.contains('btn-seccion') || (btnRef.closest && btnRef.closest('.top-actions'))));
+    window._creandoNuevaSeccion610_ = esBotonSeccionTop;
+    window._anclaLayout610_ = (!esBotonSeccionTop && ancla && ancla.nodeType === 1 && !ancla.classList.contains('add-btn')) ? ancla : (esBotonSeccionTop ? null : (window._filaPlusOrigenPopover_ || null));
     var refEl = btnRef || (ancla && ancla.nodeType === 1 ? ancla : null) || document.querySelector('#lienzoExeActivo .btn-seccion');
     var ov = asegurarModalOverlay_();
     ov.classList.add('active');
@@ -11530,12 +11584,22 @@ if (document.readyState === 'loading') {
   function seleccionarLayout(codigo) {
     cerrarModal610_();
     if (typeof window.insertarFilaDivi_ !== 'function') return;
+    var esNuevaSec = !!window._creandoNuevaSeccion610_;
+    window._creandoNuevaSeccion610_ = false;
     var ancla = window._anclaLayout610_ || window._filaPlusOrigenPopover_ || null;
     window._anclaLayout610_ = null;
+    window._filaPlusOrigenPopover_ = null;
     guardarEstado();
-    var fila = window.insertarFilaDivi_(codigo, ancla);
-    aplicarPesosFlex610_(fila, codigo);
-    promoverToolbars610_(fila);
+    if (esNuevaSec) {
+      crearNuevaSeccionRegular_(codigo);
+    } else {
+      var fila = window.insertarFilaDivi_(codigo, ancla);
+      if (fila) {
+        aplicarPesosFlex610_(fila, codigo);
+        promoverToolbars610_(fila);
+      }
+    }
+    repintarPlusVerdesDivi_();
     guardarEstado();
     if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
   }

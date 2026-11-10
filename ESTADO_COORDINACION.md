@@ -80,14 +80,15 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 | **Ola 21 (`build-614`)** | **Erradicación de Múltiples (+) al Fondo de Sección y Botón Verde:**<br>• Erradicado el bucle acumulativo al final de sección en `repintarPlusVerdesDivi_`.<br>• Botón de fila en verde `#10b981` diferenciado del azul de sección.<br>• Riel de menú lateral colapsado a 36px 100% limpio. | 🟢 **COMPLETADA (DESPLEGADA @614)** |
 | **Ola 21 (`build-615`)** | **Solución Integral del Engrane ⚙️ de Propiedades del Constructor:**<br>• Rescate de `#modal-propiedades > .modal, .modal-pequeno` frente a regla colisionante `.modal { display: none }` de Bootstrap.<br>• Normalización de `t` (nodos de texto en emojis) en delegación de eventos y click directo `onclick="abrirPropiedades(this)"`.<br>• Cascadas de fallback para contenedor en `abrirPropiedades` con título dinámico e inyección de estilos `zIndex: 100000` y `display: flex !important`. | 🟢 **COMPLETADA (DESPLEGADA @615)** |
 | **Ola 21 (`build-618`)** | **Inserción Exitosa de Secciones Nuevas desde (+) Azul Superior:**<br>• Exposición y enlace de `htmlControlesDivi_` / `htmlToolbar_` entre las IIFEs de `AyudaJS.html`, eliminando el `ReferenceError` que abortaba la creación del DOM.<br>• Detección estricta de `_creandoNuevaSeccion610_` al pulsar botones en `.top-actions` o `.btn-seccion`.<br>• Inserción de `<section class="divi-section">` completamente nueva e independiente en el lienzo.<br>• Fallback en `contLienzo_` asegurando `#lienzo-divi` / `#lienzoExeActivo`. | 🟢 **COMPLETADA (DESPLEGADA @618)** |
+| **Ola 21 (`build-619`)** | **Control Dual Independiente de Ancho de Página vs. Ancho de Sección con Alineación:**<br>• Separación de dos controles de ancho en la barra superior (`data-build="619"`): slider de **Página** (`ajustarAnchoPagina` sobre `#lienzoExeActivo` / `.canvas-container`) y slider de **Sección** (`ajustarAnchoSeccion` sobre `#contenedorIDevicesDinamicos`).<br>• Erradicada la restricción rígida `max-width: 900px !important;` en `.canvas-container` para permitir expansión fluida al 100% de pantalla con transición CSS.<br>• Botones de alineación (`⬅️`, `↔️`, `➡️`) vinculados a `alinearSecciones(lado)`. | 🟢 **COMPLETADA (DESPLEGADA @619)** |
 
 ---
 
-## 5. Tarea Activa y Reparto por Agente — OLA 21 (`build-618`)
-✅ **INTEGRADA Y DESPLEGADA (`build-618`)** — Creación de nuevas secciones con (+) azul 100% operativa:
+## 5. Tarea Activa y Reparto por Agente — OLA 21 (`build-619`)
+✅ **INTEGRADA Y DESPLEGADA (`build-619`)** — Control dual de Página y Sección 100% operativo:
 
 | Agente | Partitura Asignada | Buzón / Archivos |
 | :--- | :--- | :--- |
-| **DeepSeek** *(Diseño UI/UX & CSS)* | Estilos de tarjetas de layout en `#modal-overlay` y delimitación visual clara de cada sección independiente en el lienzo. | `AdminPlaneacionCSS.html`<br>`ClaseCSS.html` |
-| **Cursor** *(Frontend & DOM)* | Control de eventos en barra superior `.divi-canvas-topbar`, inserción de nueva sección en `crearNuevaSeccionRegular_` y conexión con `seleccionarLayout`. | `AyudaJS.html` |
-| **Antigravity** *(Backend, Auditoría & Despliegue)* | Auditoría AST (`node herramientas/manifiesto.js`: 79 docs, 0 errores), actualización de versión a `v445 build-618`, `git commit & push`, y `clasp push -f / deploy` en todos los 6 endpoints activos de producción. | `00_Constantes.gs`<br>`CONTROL_CAMBIOS.md`<br>`ESTADO_COORDINACION.md` |
+| **DeepSeek** *(Diseño UI/UX & CSS)* | Ajuste fino de sliders en `.controles-ancho` (`width: 68px`) y transición fluida en `.canvas-container`. | `AdminPlaneacionCSS.html`<br>`ClaseCSS.html` |
+| **Cursor** *(Frontend & DOM)* | Controladores `ajustarAnchoPagina` y `ajustarAnchoSeccion` en `AyudaJS.html` y actualización de `.divi-canvas-topbar` (`data-build="619"`). | `AyudaJS.html` |
+| **Antigravity** *(Backend, Auditoría & Despliegue)* | Auditoría AST (`node herramientas/manifiesto.js`: 79 docs, 0 errores), actualización de versión a `v446 build-619`, `git commit & push`, y `clasp push -f / deploy` en todos los 6 endpoints activos de producción. | `00_Constantes.gs`<br>`CONTROL_CAMBIOS.md`<br>`ESTADO_COORDINACION.md` |

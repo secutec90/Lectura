@@ -11309,41 +11309,59 @@ if (document.readyState === 'loading') {
     if (r) r.disabled = idx >= hist.length - 1;
   }
 
-  function ajustarAnchoLienzo(valor) {
+  function ajustarAnchoPagina(valor) {
     var v = Math.max(40, Math.min(100, parseInt(valor, 10) || 100));
-    var cont = contLienzo_();
-    if (cont) {
-      cont.style.width = v + '%';
-      cont.style.maxWidth = v + '%';
-      cont.style.marginLeft = 'auto';
-      cont.style.marginRight = 'auto';
+    window._anchoPaginaActivo_ = v;
+    var canvas = document.getElementById('lienzoExeActivo') || document.querySelector('.canvas-container');
+    if (canvas) {
+      canvas.style.setProperty('width', v + '%', 'important');
+      canvas.style.setProperty('max-width', v === 100 ? '100%' : (v + '%'), 'important');
+      canvas.style.setProperty('margin-left', 'auto', 'important');
+      canvas.style.setProperty('margin-right', 'auto', 'important');
     }
-    document.querySelectorAll('#contenedorIDevicesDinamicos .divi-section').forEach(function (sec) {
-      sec.style.width = '100%';
-      sec.style.maxWidth = '100%';
-    });
-    var lab = document.getElementById('val-ancho-lienzo');
-    var sl = document.getElementById('slider-ancho-lienzo');
+    var lab = document.getElementById('val-ancho-pagina') || document.getElementById('val-pagina') || document.getElementById('val-ancho-lienzo');
+    var sl = document.getElementById('slider-ancho-pagina') || document.getElementById('slider-pagina') || document.getElementById('slider-ancho-lienzo');
     if (lab) lab.textContent = v + '%';
     if (sl && String(sl.value) !== String(v)) sl.value = String(v);
-    var labOldP = document.getElementById('val-pagina');
-    var labOldS = document.getElementById('val-seccion');
-    if (labOldP) labOldP.textContent = v + '%';
-    if (labOldS) labOldS.textContent = v + '%';
-  }
-
-  function ajustarAnchoPagina(valor) {
-    return ajustarAnchoLienzo(valor);
   }
 
   function ajustarAnchoSeccion(valor) {
-    return ajustarAnchoLienzo(valor);
+    var v = Math.max(40, Math.min(100, parseInt(valor, 10) || 100));
+    window._anchoSeccionActivo_ = v;
+    var cont = document.getElementById('contenedorIDevicesDinamicos') || (typeof contLienzo_ === 'function' ? contLienzo_() : null);
+    var modo = window._alineacionSeccionActiva_ || 'center';
+    if (cont) {
+      cont.style.width = v + '%';
+      cont.style.maxWidth = v + '%';
+      if (modo === 'flex-start') { cont.style.marginLeft = '0'; cont.style.marginRight = 'auto'; }
+      else if (modo === 'flex-end') { cont.style.marginLeft = 'auto'; cont.style.marginRight = '0'; }
+      else { cont.style.marginLeft = 'auto'; cont.style.marginRight = 'auto'; }
+    }
+    document.querySelectorAll('#contenedorIDevicesDinamicos .divi-section, .divi-section').forEach(function (sec) {
+      sec.style.width = '100%';
+      sec.style.maxWidth = '100%';
+    });
+    var lab = document.getElementById('val-ancho-seccion') || document.getElementById('val-seccion');
+    var sl = document.getElementById('slider-ancho-seccion') || document.getElementById('slider-seccion');
+    if (lab) lab.textContent = v + '%';
+    if (sl && String(sl.value) !== String(v)) sl.value = String(v);
+  }
+
+  function ajustarAnchoLienzo(valor) {
+    return ajustarAnchoPagina(valor);
   }
 
   function alinearSecciones(lado) {
     var modo = lado === 'flex-start' || lado === 'left' ? 'flex-start'
       : (lado === 'flex-end' || lado === 'right' ? 'flex-end' : 'center');
-    document.querySelectorAll('#contenedorIDevicesDinamicos .divi-section').forEach(function (sec) {
+    window._alineacionSeccionActiva_ = modo;
+    var cont = document.getElementById('contenedorIDevicesDinamicos') || (typeof contLienzo_ === 'function' ? contLienzo_() : null);
+    if (cont) {
+      if (modo === 'flex-start') { cont.style.marginLeft = '0'; cont.style.marginRight = 'auto'; }
+      else if (modo === 'flex-end') { cont.style.marginLeft = 'auto'; cont.style.marginRight = '0'; }
+      else { cont.style.marginLeft = 'auto'; cont.style.marginRight = 'auto'; }
+    }
+    document.querySelectorAll('#contenedorIDevicesDinamicos .divi-section, .divi-section').forEach(function (sec) {
       sec.setAttribute('data-align-seccion', modo);
       if (modo === 'flex-start') { sec.style.marginLeft = '0'; sec.style.marginRight = 'auto'; }
       else if (modo === 'flex-end') { sec.style.marginLeft = 'auto'; sec.style.marginRight = '0'; }
@@ -12199,23 +12217,20 @@ if (document.readyState === 'loading') {
       if (banner && banner.parentNode) banner.parentNode.insertBefore(bar, banner.nextSibling);
       else canvas.insertBefore(bar, canvas.firstChild);
     }
-    var labPag = bar.querySelector('#val-ancho-lienzo');
-    if (labPag && labPag.parentNode && labPag.parentNode.tagName === 'LABEL') {
-      var txt = labPag.parentNode.childNodes[0];
-      if (txt && txt.nodeType === 3 && String(txt.textContent).indexOf('Ancho') !== -1) {
-        txt.textContent = 'Página ';
-      }
-    }
-    if (bar.getAttribute('data-build') === '613') return;
-    bar.setAttribute('data-build', '613');
+    if (bar.getAttribute('data-build') === '619') return;
+    bar.setAttribute('data-build', '619');
+    var anchoPag = window._anchoPaginaActivo_ || 100;
+    var anchoSec = window._anchoSeccionActivo_ || 100;
     bar.innerHTML =
       '<div class="history-btns">' +
         '<button type="button" class="btn-history" id="btnDiviUndo" title="Deshacer" onclick="deshacer()" disabled>↩️</button>' +
         '<button type="button" class="btn-history" id="btnDiviRedo" title="Rehacer" onclick="rehacer()" disabled>↪️</button>' +
       '</div>' +
       '<div class="controles-ancho">' +
-        '<div class="control-grupo"><label>Página <span class="valor-ancho" id="val-ancho-lienzo">100%</span></label>' +
-          '<input type="range" id="slider-ancho-lienzo" min="40" max="100" value="100" oninput="ajustarAnchoLienzo(this.value)"></div>' +
+        '<div class="control-grupo"><label>Página <span class="valor-ancho" id="val-ancho-pagina">' + anchoPag + '%</span></label>' +
+          '<input type="range" id="slider-ancho-pagina" min="40" max="100" value="' + anchoPag + '" oninput="ajustarAnchoPagina(this.value)"></div>' +
+        '<div class="control-grupo"><label>Sección <span class="valor-ancho" id="val-ancho-seccion">' + anchoSec + '%</span></label>' +
+          '<input type="range" id="slider-ancho-seccion" min="40" max="100" value="' + anchoSec + '" oninput="ajustarAnchoSeccion(this.value)"></div>' +
         '<div class="controles-alineacion">' +
           '<button type="button" class="btn-alinear" id="btn-izq" title="Izquierda" onclick="alinearSecciones(\'flex-start\')">⬅️</button>' +
           '<button type="button" class="btn-alinear activo" id="btn-centro" title="Centro" onclick="alinearSecciones(\'center\')">↔️</button>' +

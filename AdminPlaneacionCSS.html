@@ -2778,12 +2778,14 @@
     flex-direction: column;
   }
   .canvas-container {
-    width: 100% !important;
-    max-width: 900px !important;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    box-sizing: border-box;
+    transition: width .2s ease, max-width .2s ease;
   }
   #contenedorIDevicesDinamicos {
     display: flex;
@@ -8383,7 +8385,7 @@
     white-space: nowrap;
   }
   .control-grupo input[type="range"] {
-    width: 80px;
+    width: 68px;
     accent-color: var(--color-seccion);
     cursor: pointer;
   }

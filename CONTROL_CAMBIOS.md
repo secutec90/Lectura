@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Separación e Independencia del Control de Ancho de Página vs. Control de Ancho de Sección con Alineación en build-619]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): control dual independiente de ancho de pagina y ancho de seccion con alineacion (build-619)`
+- **Cambios Realizados:**
+  - **1. Control Dual de Ancho en la Barra Superior (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se identificó la causa raíz: el control existente estaba rotulado como "Página" pero modificaba el contenedor interior de las secciones (`#contenedorIDevicesDinamicos`), mientras que la hoja de trabajo / lienzo general (`.canvas-container` / `#lienzoExeActivo`) permanecía inalterable al 100%.
+    - Se separaron dos controles independientes y perfectamente diferenciados en `.controles-ancho` (`data-build="619"`):
+      1. **Control de Página (`#slider-ancho-pagina` / `#val-ancho-pagina`):** Invoca `ajustarAnchoPagina(valor)`, dimensionando directamente la tarjeta/hoja de trabajo de la clase (`#lienzoExeActivo` / `.canvas-container`) de 40% a 100% centrado con `margin: 0 auto`.
+      2. **Control de Sección (`#slider-ancho-seccion` / `#val-ancho-seccion`):** Invoca `ajustarAnchoSeccion(valor)`, dimensionando el contenedor pedagógico de las secciones (`#contenedorIDevicesDinamicos`) de 40% a 100%.
+      3. **Botones de Alineación (`⬅️`, `↔️`, `➡️`):** Conectados a `alinearSecciones(lado)`, permitiendo alinear las secciones a la izquierda, centro o derecha cuando su ancho sea menor al 100% de la página.
+  - **2. Flexibilidad y Transición Fluida en CSS (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se eliminó la restricción rígida `max-width: 900px !important;` en `.canvas-container`, permitiendo que el lienzo responda con fluidez al porcentaje definido por el usuario con transición CSS suave (`transition: width .2s ease, max-width .2s ease;`).
+    - Se optimizó el ancho de los sliders (`input[type="range"] { width: 68px; }`) para que ambos controles de ancho y los 3 botones de alineación quepan perfectamente alineados en la barra superior.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v446 build-619`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Solución Definitiva a Inserción de Nuevas Secciones con el Botón (+) Azul Superior en build-618: Exposición de htmlControlesDivi_, Fallback de Contenedor y Desacoplamiento de IIFEs]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): resuelve error en crearNuevaSeccionRegular eliminando ReferenceError de toolbar (build-618)`
 - **Cambios Realizados:**

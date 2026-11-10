@@ -11701,7 +11701,8 @@ if (document.readyState === 'loading') {
     if (!nodo || window._tipoArrastre610_ === 'seccion') return;
     var col = ev.target.closest && ev.target.closest('#contenedorIDevicesDinamicos .divi-column');
     var fila = ev.target.closest && ev.target.closest('#contenedorIDevicesDinamicos .divi-row');
-    if (window._tipoArrastre610_ === 'fila' && fila && fila !== nodo) {
+    var sec = ev.target.closest && ev.target.closest('#contenedorIDevicesDinamicos .divi-section');
+    if (window._tipoArrastre610_ === 'fila' && ((fila && fila !== nodo) || (sec && sec !== nodo.parentNode))) {
       ev.preventDefault();
       if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'move';
       return;
@@ -11740,17 +11741,30 @@ if (document.readyState === 'loading') {
     var nodo = window._nodoArrastradoDivi_;
     if (!nodo || !nodo.classList.contains('divi-row')) return;
     var filaDestino = ev.target.closest && ev.target.closest('#contenedorIDevicesDinamicos .divi-row');
-    if (!filaDestino || filaDestino === nodo || !filaDestino.parentNode) return;
-    ev.preventDefault();
-    guardarEstado();
-    var r = filaDestino.getBoundingClientRect();
-    if (ev.clientY < r.top + r.height / 2) filaDestino.parentNode.insertBefore(nodo, filaDestino);
-    else filaDestino.parentNode.insertBefore(nodo, filaDestino.nextSibling);
+    if (filaDestino && filaDestino !== nodo && filaDestino.parentNode) {
+      ev.preventDefault();
+      guardarEstado();
+      var r = filaDestino.getBoundingClientRect();
+      if (ev.clientY < r.top + r.height / 2) filaDestino.parentNode.insertBefore(nodo, filaDestino);
+      else filaDestino.parentNode.insertBefore(nodo, filaDestino.nextSibling);
+    } else {
+      var secDestino = ev.target.closest && ev.target.closest('#contenedorIDevicesDinamicos .divi-section');
+      if (secDestino && secDestino !== nodo.parentNode) {
+        ev.preventDefault();
+        guardarEstado();
+        var plus = secDestino.querySelector('.divi-plus-row');
+        if (plus) secDestino.insertBefore(nodo, plus);
+        else secDestino.appendChild(nodo);
+      } else {
+        return;
+      }
+    }
     nodo.classList.remove('dragging');
     window._nodoArrastradoDivi_ = null;
     window._tipoArrastre610_ = '';
+    if (typeof repintarPlusVerdesDivi_ === 'function') repintarPlusVerdesDivi_();
     if (typeof window.repintarDivisoresExe_ === 'function') window.repintarDivisoresExe_();
-    promoverToolbars610_(filaDestino.parentNode);
+    promoverToolbars610_(nodo.parentNode);
     guardarEstado();
     if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
   }

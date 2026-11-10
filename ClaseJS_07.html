@@ -692,7 +692,19 @@
       } else if (tipoB === 'Imagen' || tipoB === 'imagen' || tipoB === 'galeria') {
         var src = ex.imgUrl || ex.url || b.url || b.src || '';
         var alt = ex.altDua || ex.alt || titulo || 'Imagen de la lección';
-        html = '<div class="modulo-imagen">' + (src ? '<img src="' + esc(src) + '" alt="' + esc(alt) + '">' : '') + '</div>';
+        var ancho = ex.ancho || '100%';
+        var align = ex.alineacion || 'center';
+        var recorte = ex.recorte || 'original';
+        var cssImg = 'width:' + esc(ancho) + ';max-width:100%;display:block;';
+        if (align === 'left') cssImg += 'margin-left:0;margin-right:auto;';
+        else if (align === 'right') cssImg += 'margin-left:auto;margin-right:0;';
+        else cssImg += 'margin-left:auto;margin-right:auto;';
+        if (recorte === '16-9') cssImg += 'aspect-ratio:16/9;object-fit:cover;border-radius:8px;';
+        else if (recorte === '4-3') cssImg += 'aspect-ratio:4/3;object-fit:cover;border-radius:8px;';
+        else if (recorte === '1-1') cssImg += 'aspect-ratio:1/1;object-fit:cover;border-radius:8px;';
+        else if (recorte === 'circle') cssImg += 'aspect-ratio:1/1;object-fit:cover;border-radius:50%;max-width:240px;';
+        else cssImg += 'object-fit:contain;border-radius:8px;';
+        html = '<div class="modulo-imagen" style="text-align:' + esc(align) + ';">' + (src ? '<img src="' + esc(src) + '" alt="' + esc(alt) + '" style="' + cssImg + '">' : '') + '</div>';
         plano = alt;
       } else if (tipoB === 'Video' || tipoB === 'video' || tipoB === 'video_interactivo' || tipoB === 'video_local') {
         var bruto = ex.videoUrl || ex.url || b.url || cuerpo;

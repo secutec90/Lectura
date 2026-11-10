@@ -2,6 +2,26 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Barra de Controles de Tamaño, Recorte (16:9, 4:3, 1:1, Círculo) y Alineación en Galería y Editor en build-627]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): barra de controles de tamano, recorte y alineacion para imagenes de galeria y editor (build-627)`
+- **Cambios Realizados:**
+  - **1. Barra de Controles en Módulo Galería de Imágenes (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se integró una barra de herramientas visible y accesible (`.barra-controles-galeria`) dentro del iDevice "Galería de Imágenes" con tres secciones:
+      - **📏 Tamaño:** `25%`, `50%`, `75%`, `100%`.
+      - **📐 Alineación:** Izquierda (`⬅️`), Centro (`↔️`), Derecha (`➡️`).
+      - **✂️ Recorte / Formato:** Original (`contain`), Panorámica `16:9` (`cover`), Estándar `4:3` (`cover`), Cuadrada `1:1` (`cover`) y Circular `🔘` (`border-radius: 50%`).
+    - Se implementaron los controladores `cambiarTamanoGaleria_`, `cambiarAlineacionGaleria_`, `cambiarRecorteGaleria_` y `aplicarEstilosImagenGaleria_`.
+  - **2. Recortes en Toolbar Flotante del Editor Enriquecido (`AyudaJS.html`):**
+    - Se agregaron las opciones de proporción de recorte (`Orig`, `16:9`, `1:1`, `🔘`) a la barra flotante que aparece al hacer clic sobre cualquier imagen dentro de textos o tablas.
+  - **3. Persistencia y Renderizado en Portal del Alumno (`AyudaJS.html`, `ClaseJS_07.html`):**
+    - En `leerTarjetaExe_` y `rellenarTarjetaExe_` se serializan y restauran los atributos `ancho`, `alineacion` y `recorte`.
+    - En `ClaseJS_07.html` el portal del alumno reproduce con total fidelidad la alineación, proporción de recorte (`aspect-ratio`, `object-fit: cover`) y ancho fijados por el docente.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v448 build-627`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `ClaseJS_07.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Eliminación de Títulos Repetidos, Selector de Tipografías, Unión de Celdas (🔗/✂️), Ancho Individual de Columna y Alineación de Tabla (📐Pos) en build-626]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): elimina titulos repetidos, selector de tipografias, union de celdas y alineacion de tablas (build-626)`
 - **Cambios Realizados:**

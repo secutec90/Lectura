@@ -6216,6 +6216,122 @@ function conmutarOrigenMedia_(btn, origen) {
   }
 }
 
+function aplicarEstilosImagenGaleria_(card) {
+  if (!card) return;
+  var img = card.querySelector('.caja-img-prev img');
+  if (!img) return;
+  var ancho = card.getAttribute('data-img-ancho') || '100%';
+  var align = card.getAttribute('data-img-align') || 'center';
+  var recorte = card.getAttribute('data-img-recorte') || 'original';
+  img.style.width = ancho;
+  img.style.maxWidth = '100%';
+  var prev = card.querySelector('.caja-img-prev');
+  if (prev) prev.style.textAlign = align;
+  if (align === 'left') {
+    img.style.marginLeft = '0';
+    img.style.marginRight = 'auto';
+  } else if (align === 'right') {
+    img.style.marginLeft = 'auto';
+    img.style.marginRight = '0';
+  } else {
+    img.style.marginLeft = 'auto';
+    img.style.marginRight = 'auto';
+  }
+  if (recorte === '16-9') {
+    img.style.aspectRatio = '16 / 9';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+    img.style.maxHeight = '';
+  } else if (recorte === '4-3') {
+    img.style.aspectRatio = '4 / 3';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+    img.style.maxHeight = '';
+  } else if (recorte === '1-1') {
+    img.style.aspectRatio = '1 / 1';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+    img.style.maxHeight = '';
+  } else if (recorte === 'circle') {
+    img.style.aspectRatio = '1 / 1';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '50%';
+    img.style.maxWidth = '260px';
+    img.style.maxHeight = '';
+  } else {
+    img.style.aspectRatio = 'auto';
+    img.style.objectFit = 'contain';
+    img.style.borderRadius = '8px';
+    img.style.maxHeight = '340px';
+  }
+  // Sincronizar botones activos
+  var barra = card.querySelector('.barra-controles-galeria');
+  if (barra) {
+    barra.querySelectorAll('.btn-img-ctrl').forEach(function (btn) {
+      var v = btn.getAttribute('data-val');
+      if (v === ancho || v === align || v === recorte) btn.classList.add('activo');
+      else if (btn.getAttribute('onclick').indexOf('cambiarTamanoGaleria_') >= 0 && v !== ancho) btn.classList.remove('activo');
+      else if (btn.getAttribute('onclick').indexOf('cambiarAlineacionGaleria_') >= 0 && v !== align) btn.classList.remove('activo');
+      else if (btn.getAttribute('onclick').indexOf('cambiarRecorteGaleria_') >= 0 && v !== recorte) btn.classList.remove('activo');
+    });
+  }
+}
+
+function cambiarTamanoGaleria_(btn, ancho) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  card.setAttribute('data-img-ancho', ancho);
+  aplicarEstilosImagenGaleria_(card);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof guardarEstado === 'function') guardarEstado();
+}
+
+function cambiarAlineacionGaleria_(btn, align) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  card.setAttribute('data-img-align', align);
+  aplicarEstilosImagenGaleria_(card);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof guardarEstado === 'function') guardarEstado();
+}
+
+function cambiarRecorteGaleria_(btn, recorte) {
+  var card = btn && btn.closest ? btn.closest('.idevice-card') : null;
+  if (!card) return;
+  card.setAttribute('data-img-recorte', recorte);
+  aplicarEstilosImagenGaleria_(card);
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof guardarEstado === 'function') guardarEstado();
+}
+
+function recortarImagenDirecta_(recorte) {
+  if (!_imagenActivaST90_) return;
+  var img = _imagenActivaST90_;
+  if (recorte === '16-9') {
+    img.style.aspectRatio = '16 / 9';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+  } else if (recorte === '4-3') {
+    img.style.aspectRatio = '4 / 3';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+  } else if (recorte === '1-1') {
+    img.style.aspectRatio = '1 / 1';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+  } else if (recorte === 'circle') {
+    img.style.aspectRatio = '1 / 1';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '50%';
+  } else {
+    img.style.aspectRatio = 'auto';
+    img.style.objectFit = 'contain';
+    img.style.borderRadius = '8px';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  ocultarToolbarImagenFlotante_();
+}
+
 function pintarPreviewImagenEnCard_(card, srcRaw) {
   if (!card) return;
   var prev = card.querySelector('.caja-img-prev');
@@ -6243,6 +6359,9 @@ function pintarPreviewImagenEnCard_(card, srcRaw) {
     }
   };
   prev.appendChild(img);
+  var barraCtrl = card.querySelector('.barra-controles-galeria');
+  if (barraCtrl) barraCtrl.style.display = 'flex';
+  aplicarEstilosImagenGaleria_(card);
   if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
 }
 
@@ -6642,6 +6761,29 @@ function htmlEspecialExe_(tipo, datos, idUnico) {
         '<input type="url" class="campo-input inp-img-url" placeholder="https://...imagen.png" oninput="actualizarPreviewImg_(this)">' +
       '</div>' +
       '<div class="caja-preview-media caja-img-prev" style="display:none;"></div>' +
+      '<div class="barra-controles-galeria" style="display:none;margin:8px 0;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;">' +
+        '<div style="display:inline-flex;align-items:center;gap:4px;">' +
+          '<span style="font-size:11px;font-weight:700;color:#475569;">📏 Tamaño:</span>' +
+          '<button type="button" class="btn-img-ctrl" data-val="25%" onclick="cambiarTamanoGaleria_(this, \'25%\')">25%</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="50%" onclick="cambiarTamanoGaleria_(this, \'50%\')">50%</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="75%" onclick="cambiarTamanoGaleria_(this, \'75%\')">75%</button>' +
+          '<button type="button" class="btn-img-ctrl activo" data-val="100%" onclick="cambiarTamanoGaleria_(this, \'100%\')">100%</button>' +
+        '</div>' +
+        '<div style="display:inline-flex;align-items:center;gap:4px;">' +
+          '<span style="font-size:11px;font-weight:700;color:#475569;">📐 Alineación:</span>' +
+          '<button type="button" class="btn-img-ctrl" data-val="left" onclick="cambiarAlineacionGaleria_(this, \'left\')" title="Alinear a la izquierda">⬅️</button>' +
+          '<button type="button" class="btn-img-ctrl activo" data-val="center" onclick="cambiarAlineacionGaleria_(this, \'center\')" title="Centrar">↔️</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="right" onclick="cambiarAlineacionGaleria_(this, \'right\')" title="Alinear a la derecha">➡️</button>' +
+        '</div>' +
+        '<div style="display:inline-flex;align-items:center;gap:4px;">' +
+          '<span style="font-size:11px;font-weight:700;color:#475569;">✂️ Recorte:</span>' +
+          '<button type="button" class="btn-img-ctrl activo" data-val="original" onclick="cambiarRecorteGaleria_(this, \'original\')" title="Proporción original">Original</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="16-9" onclick="cambiarRecorteGaleria_(this, \'16-9\')" title="Panorámica 16:9">16:9</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="4-3" onclick="cambiarRecorteGaleria_(this, \'4-3\')" title="Estándar 4:3">4:3</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="1-1" onclick="cambiarRecorteGaleria_(this, \'1-1\')" title="Cuadrada 1:1">1:1</button>' +
+          '<button type="button" class="btn-img-ctrl" data-val="circle" onclick="cambiarRecorteGaleria_(this, \'circle\')" title="Circular / Redonda">🔘 Círculo</button>' +
+        '</div>' +
+      '</div>' +
       '<label class="campo-label" style="margin-top:8px;display:block;">Descripción Oral Accesible DUA (para invidentes):</label>' +
       '<textarea class="campo-textarea txt-alt-dua" rows="2" placeholder="Describe la imagen para que el sintetizador de voz se la lea a alumnos con discapacidad visual..."></textarea>';
   }
@@ -7488,6 +7630,10 @@ function mostrarToolbarImagenFlotante_(img) {
       '<button type="button" class="btn-img-tb" onclick="alinearImagenDirecta_(\'center\')">↔️</button>' +
       '<button type="button" class="btn-img-tb" onclick="alinearImagenDirecta_(\'right\')">➡️</button>' +
       '<span class="tb-sep-mini"></span>' +
+      '<button type="button" class="btn-img-tb" onclick="recortarImagenDirecta_(\'original\')" title="Proporción original">Orig</button>' +
+      '<button type="button" class="btn-img-tb" onclick="recortarImagenDirecta_(\'16-9\')" title="Panorámica 16:9">16:9</button>' +
+      '<button type="button" class="btn-img-tb" onclick="recortarImagenDirecta_(\'1-1\')" title="Cuadrada 1:1">1:1</button>' +
+      '<button type="button" class="btn-img-tb" onclick="recortarImagenDirecta_(\'circle\')" title="Circular">🔘</button>' +
       '<button type="button" class="btn-img-tb" onclick="recortarAjustarCelda_()" title="Ajustar como miniatura a la celda">📐 Celda</button>' +
       '<button type="button" class="btn-img-tb btn-img-del" onclick="eliminarImagenDirecta_()" title="Eliminar imagen">🗑️</button>';
     document.body.appendChild(tb);
@@ -7661,6 +7807,11 @@ window.cambiarAnchoColumnaDirecto = cambiarAnchoColumnaDirecto;
 window.unirCeldasTablaEditor = unirCeldasTablaEditor;
 window.separarCeldasTablaEditor = separarCeldasTablaEditor;
 window.alinearTablaEditor = alinearTablaEditor;
+window.cambiarTamanoGaleria_ = cambiarTamanoGaleria_;
+window.cambiarAlineacionGaleria_ = cambiarAlineacionGaleria_;
+window.cambiarRecorteGaleria_ = cambiarRecorteGaleria_;
+window.aplicarEstilosImagenGaleria_ = aplicarEstilosImagenGaleria_;
+window.recortarImagenDirecta_ = recortarImagenDirecta_;
 
 function insertarVideoEditor(btn) {
   var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
@@ -7877,7 +8028,10 @@ function leerTarjetaExe_(card) {
   } else if (tipo === 'galeria') {
     extra = {
       imgUrl: ((card.querySelector('.inp-img-url') || {}).value || card.getAttribute('data-img-src') || ''),
-      altDua: ((card.querySelector('.txt-alt-dua') || {}).value || '')
+      altDua: ((card.querySelector('.txt-alt-dua') || {}).value || ''),
+      ancho: card.getAttribute('data-img-ancho') || '100%',
+      alineacion: card.getAttribute('data-img-align') || 'center',
+      recorte: card.getAttribute('data-img-recorte') || 'original'
     };
   } else if (tipo === 'video_interactivo') {
     extra = {
@@ -8014,6 +8168,10 @@ function rellenarTarjetaExe_(card, datos) {
       if (inpImgG && !/^data:image\//i.test(extra.imgUrl)) inpImgG.value = extra.imgUrl;
       pintarPreviewImagenEnCard_(card, extra.imgUrl);
     }
+    if (extra.ancho) card.setAttribute('data-img-ancho', extra.ancho);
+    if (extra.alineacion) card.setAttribute('data-img-align', extra.alineacion);
+    if (extra.recorte) card.setAttribute('data-img-recorte', extra.recorte);
+    aplicarEstilosImagenGaleria_(card);
   } else if (tipo === 'video_interactivo') {
     var inpVidU = card.querySelector('.inp-video-url');
     var inpPausaS = card.querySelector('.inp-pausa-seg');

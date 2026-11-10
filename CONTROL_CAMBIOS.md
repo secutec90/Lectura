@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Solución Integral del Engrane ⚙️ de Propiedades del Constructor en build-615: Rescate ante Colisión de .modal Bootstrap, Normalización de Event Targets y Fallbacks Robustos]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): resuelve apertura del engrane de propiedades protegiendo contra colision de modal bootstrap y blindando resolucion de nodo (build-615)`
+- **Cambios Realizados:**
+  - **1. Rescate ante Colisión de `.modal` Bootstrap (`AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se identificó la causa raíz crítica: `AdminEncuestasCSS` (incluido después de `AdminPlaneacionCSS`) contenía una regla Bootstrap filtrada `.modal { display: none; }` que ocultaba el contenedor interior `.modal.modal-pequeno` de `#modal-propiedades` aunque el overlay exterior se activara.
+    - Se blindó `#modal-propiedades > .modal, .modal-pequeno` con `display: flex !important; flex-direction: column !important; position: relative !important;` y `#modal-propiedades` con `position: fixed !important; inset: 0 !important; z-index: 100000 !important; display: flex !important;` bajo `.active`.
+  - **2. Normalización de Nodos en Delegación de Eventos (`AyudaJS.html`):**
+    - Se normalizó `t` en `instalarEventos610_`, `instalarEventosDivi603_` y `parchearMousedown_` (`if (t && t.nodeType === 3) t = t.parentElement;`) evitando que clicks directos sobre el emoji `⚙️` (nodo de texto) hicieran fallar `t.closest`.
+    - Se agregó `onclick="abrirPropiedades(this)"` en `htmlControlesDivi_()` para equipararlo a `htmlToolbar_()`.
+  - **3. Blindaje y Fallbacks de Contenedor en `abrirPropiedades` (`AyudaJS.html`):**
+    - `nodoDeToolbar_` y `abrirPropiedades` ahora cuentan con bloque `try/catch` defensivo y resolución en cascada: si el botón está en la toolbar flotante de la sección, fila o módulo, o si no se detecta, recurre a `_columnaObjetivoActiva_` o a la primera sección del lienzo.
+    - Se asigna título contextual dinámico al modal (`Propiedades de la Sección`, `Propiedades de la Fila`, `Propiedades del Módulo`).
+    - En `asegurarModalProps_`, se inyectan estilos inline directos en `m` y `.modal` (`zIndex: 100000`, `display: flex`, etc.) asegurando visibilidad inmediata en cualquier contexto.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v442 build-615`.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`.
+
 ### 🛠️ [2026-11-09] - [Ola 21: Erradicación de (+) Múltiples Apilados al Fondo de Sección, Botón de Fila Verde Diferenciado y Ocultamiento Total de Textos en Barra Lateral Colapsada en build-614]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): erradica multiplicacion de plus al fondo de seccion, boton fila verde y ocultamiento total sidebar colapsado (build-614)`
 - **Cambios Realizados:**

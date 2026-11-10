@@ -10387,7 +10387,7 @@ if (document.readyState === 'loading') {
     return '<div class="divi-ctrl-bar">' +
       '<span class="drag-handle" draggable="true" title="Arrastrar para mover (Drag & Drop)" aria-label="Arrastrar">✥</span>' +
       '<button type="button" class="btn-ctrl-dup" title="Duplicar elemento" aria-label="Duplicar">📄</button>' +
-      '<button type="button" class="btn-ctrl-props" title="Propiedades de diseño y color" aria-label="Propiedades">⚙️</button>' +
+      '<button type="button" class="btn-ctrl-props" title="Propiedades de diseño y color" aria-label="Propiedades" onclick="abrirPropiedades(this)">⚙️</button>' +
       '<button type="button" class="btn-ctrl-up" title="Subir" aria-label="Subir">▲</button>' +
       '<button type="button" class="btn-ctrl-down" title="Bajar" aria-label="Bajar">▼</button>' +
       '<button type="button" class="btn-ctrl-del" title="Eliminar" aria-label="Eliminar">✕</button>' +
@@ -11065,6 +11065,7 @@ if (document.readyState === 'loading') {
     window._eventosDivi603_ = true;
     document.addEventListener('mousedown', function (ev) {
       var t = ev.target;
+      if (t && t.nodeType === 3) t = t.parentElement;
       if (!t || !t.closest) return;
       if (t.closest('.drag-handle') || t.closest('[draggable="true"]')) return;
       if (t.closest('#bubbleToolbar, .btn-plus-green, .divi-columns-picker, .btn-add-module-inside, .btn-ctrl-up, .btn-ctrl-down, .btn-ctrl-del, .btn-toggle-sidebar-exe')) {
@@ -11073,6 +11074,7 @@ if (document.readyState === 'loading') {
     });
     document.addEventListener('click', function (ev) {
       var t = ev.target;
+      if (t && t.nodeType === 3) t = t.parentElement;
       if (!t || !t.closest) return;
       var burbuja = t.closest('#bubbleToolbar .bubble-btn');
       if (burbuja) {
@@ -11336,12 +11338,19 @@ if (document.readyState === 'loading') {
   }
 
   function nodoDeToolbar_(btn) {
+    if (!btn) return null;
+    if (btn.nodeType === 3) btn = btn.parentElement;
     if (!btn || !btn.closest) return null;
+    var direct = btn.closest('.idevice-card, .divi-row, .divi-section');
+    if (direct) return direct;
     var tb = btn.closest('.toolbar-flotante, .divi-ctrl-bar');
-    if (!tb || !tb.parentElement) return null;
-    var padre = tb.parentElement;
-    if (padre.classList.contains('idevice-card') || padre.classList.contains('divi-row') || padre.classList.contains('divi-section')) return padre;
-    return btn.closest('.idevice-card, .divi-row, .divi-section');
+    if (tb && tb.parentElement) {
+      var padre = tb.parentElement;
+      if (padre.classList && (padre.classList.contains('idevice-card') || padre.classList.contains('divi-row') || padre.classList.contains('divi-section'))) return padre;
+      var anc = padre.closest('.idevice-card, .divi-row, .divi-section');
+      if (anc) return anc;
+    }
+    return null;
   }
 
   function promoverToolbars610_(raiz) {
@@ -11779,12 +11788,22 @@ if (document.readyState === 'loading') {
 
   function asegurarModalProps_() {
     var m = document.getElementById('modal-propiedades');
-    if (m) return m;
+    if (m) {
+      m.style.position = 'fixed';
+      m.style.inset = '0';
+      m.style.zIndex = '100000';
+      var dlg = m.querySelector('.modal');
+      if (dlg) { dlg.style.display = 'flex'; dlg.style.flexDirection = 'column'; }
+      return m;
+    }
     m = document.createElement('div');
     m.id = 'modal-propiedades';
     m.style.display = 'none';
+    m.style.position = 'fixed';
+    m.style.inset = '0';
+    m.style.zIndex = '100000';
     m.innerHTML =
-      '<div class="modal modal-pequeno" role="dialog" aria-modal="true" aria-label="Propiedades">' +
+      '<div class="modal modal-pequeno" role="dialog" aria-modal="true" aria-label="Propiedades" style="display:flex;flex-direction:column;position:relative;">' +
         '<div class="header">' +
           '<h2 id="prop-titulo" style="margin:0;font-size:16px;color:#0f172a;">Propiedades</h2>' +
           '<button type="button" class="close-btn" onclick="cerrarPropiedades()" aria-label="Cerrar">✕</button>' +
@@ -11816,47 +11835,71 @@ if (document.readyState === 'loading') {
   }
 
   function abrirPropiedades(btn) {
-    var nodo = nodoDeToolbar_(btn);
-    if (!nodo && typeof nodoControladoDivi_ === 'function') nodo = nodoControladoDivi_(btn);
-    if (!nodo) return;
-    window._nodoEditandoProps610_ = nodo;
-    window._propsAntes610_ = {
-      bg: nodo.style.backgroundColor,
-      color: nodo.style.color,
-      align: nodo.style.textAlign
-    };
-    var m = asegurarModalProps_();
-    var bg = nodo.getAttribute('data-bg-color') || '#ffffff';
-    var col = nodo.getAttribute('data-text-color') || '#1e293b';
-    var al = nodo.getAttribute('data-text-align') || nodo.style.textAlign || 'left';
-    var inpBg = document.getElementById('input-bg-color');
-    var inpCol = document.getElementById('input-text-color');
-    if (inpBg) inpBg.value = /^#/.test(bg) ? bg : '#ffffff';
-    if (inpCol) inpCol.value = /^#/.test(col) ? col : '#1e293b';
-    var mapa = { left: 'int-izq', center: 'int-centro', right: 'int-der' };
-    document.querySelectorAll('.btn-alinear-int').forEach(function (b) { b.classList.remove('activo'); });
-    var bAl = document.getElementById(mapa[al] || 'int-izq');
-    if (bAl) bAl.classList.add('activo');
-    var tipo = nodo.getAttribute('data-tipo') || '';
-    var esBoton = tipo === 'boton_cta' || tipo === 'Boton' || tipo === 'boton';
-    var esMedia = tipo === 'galeria' || tipo === 'video_interactivo' || tipo === 'video_local' || tipo === 'Imagen' || tipo === 'Video';
-    grupoCampo_('grupo-contenido', esBoton || tipo === 'texto_dua' || tipo === 'Texto' || tipo === 'texto' || esMedia);
-    grupoCampo_('grupo-enlace', esBoton || esMedia);
-    var inpC = document.getElementById('input-contenido');
-    var inpE = document.getElementById('input-enlace');
-    if (inpC) {
-      if (esBoton) inpC.value = (nodo.querySelector('[data-cta="texto"]') || {}).value || '';
-      else if (tipo === 'galeria' || tipo === 'Imagen') inpC.value = (nodo.querySelector('.txt-alt-dua') || {}).value || '';
-      else inpC.value = (nodo.querySelector('[data-cta="texto"]') || {}).value || '';
+    try {
+      var nodo = nodoDeToolbar_(btn);
+      if (!nodo && typeof nodoControladoDivi_ === 'function') nodo = nodoControladoDivi_(btn);
+      if (!nodo && btn && btn.closest) nodo = btn.closest('.idevice-card, .divi-row, .divi-section, .divi-column');
+      if (!nodo && window._columnaObjetivoActiva_) {
+        nodo = window._columnaObjetivoActiva_.closest('.idevice-card, .divi-row, .divi-section') || window._columnaObjetivoActiva_;
+      }
+      if (!nodo) {
+        nodo = document.querySelector('#contenedorIDevicesDinamicos .divi-section') || document.querySelector('.divi-section');
+      }
+      if (!nodo) return;
+      window._nodoEditandoProps610_ = nodo;
+      window._propsAntes610_ = {
+        bg: (nodo.style && nodo.style.backgroundColor) || '',
+        color: (nodo.style && nodo.style.color) || '',
+        align: (nodo.style && nodo.style.textAlign) || ''
+      };
+      var m = asegurarModalProps_();
+      var titModal = document.getElementById('prop-titulo');
+      if (titModal && nodo.classList) {
+        if (nodo.classList.contains('divi-section')) titModal.textContent = 'Propiedades de la Sección';
+        else if (nodo.classList.contains('divi-row')) titModal.textContent = 'Propiedades de la Fila';
+        else if (nodo.classList.contains('idevice-card')) titModal.textContent = 'Propiedades del Módulo';
+        else titModal.textContent = 'Propiedades de Diseño';
+      }
+      var bg = (nodo.getAttribute && nodo.getAttribute('data-bg-color')) || (nodo.style && nodo.style.backgroundColor) || '#ffffff';
+      var col = (nodo.getAttribute && nodo.getAttribute('data-text-color')) || (nodo.style && nodo.style.color) || '#1e293b';
+      var al = (nodo.getAttribute && nodo.getAttribute('data-text-align')) || (nodo.style && nodo.style.textAlign) || 'left';
+      var inpBg = document.getElementById('input-bg-color');
+      var inpCol = document.getElementById('input-text-color');
+      if (inpBg) inpBg.value = /^#/.test(bg) ? bg : '#ffffff';
+      if (inpCol) inpCol.value = /^#/.test(col) ? col : '#1e293b';
+      var mapa = { left: 'int-izq', center: 'int-centro', right: 'int-der' };
+      document.querySelectorAll('.btn-alinear-int').forEach(function (b) { b.classList.remove('activo'); });
+      var bAl = document.getElementById(mapa[al] || 'int-izq');
+      if (bAl) bAl.classList.add('activo');
+      var tipo = (nodo.getAttribute && nodo.getAttribute('data-tipo')) || '';
+      var esBoton = tipo === 'boton_cta' || tipo === 'Boton' || tipo === 'boton';
+      var esMedia = tipo === 'galeria' || tipo === 'video_interactivo' || tipo === 'video_local' || tipo === 'Imagen' || tipo === 'Video';
+      grupoCampo_('grupo-contenido', esBoton || tipo === 'texto_dua' || tipo === 'Texto' || tipo === 'texto' || esMedia);
+      grupoCampo_('grupo-enlace', esBoton || esMedia);
+      var inpC = document.getElementById('input-contenido');
+      var inpE = document.getElementById('input-enlace');
+      if (inpC) {
+        if (esBoton) inpC.value = (nodo.querySelector && nodo.querySelector('[data-cta="texto"]') || {}).value || '';
+        else if (tipo === 'galeria' || tipo === 'Imagen') inpC.value = (nodo.querySelector && nodo.querySelector('.txt-alt-dua') || {}).value || '';
+        else inpC.value = (nodo.querySelector && nodo.querySelector('[data-cta="texto"]') || {}).value || '';
+      }
+      if (inpE) {
+        if (esBoton) inpE.value = (nodo.querySelector && nodo.querySelector('[data-cta="link"]') || {}).value || '';
+        else if (tipo === 'galeria' || tipo === 'Imagen') inpE.value = (nodo.querySelector && nodo.querySelector('.inp-img-url') || {}).value || '';
+        else inpE.value = (nodo.querySelector && nodo.querySelector('.inp-video-url') || {}).value || '';
+      }
+      m.classList.add('active');
+      m.style.display = 'flex';
+      m.style.zIndex = '100000';
+      var modalDialog = m.querySelector('.modal');
+      if (modalDialog) {
+        modalDialog.style.display = 'flex';
+        modalDialog.style.flexDirection = 'column';
+      }
+      posicionarDialogEnVista610_(modalDialog);
+    } catch (e) {
+      console.error('Error al abrir propiedades:', e);
     }
-    if (inpE) {
-      if (esBoton) inpE.value = (nodo.querySelector('[data-cta="link"]') || {}).value || '';
-      else if (tipo === 'galeria' || tipo === 'Imagen') inpE.value = (nodo.querySelector('.inp-img-url') || {}).value || '';
-      else inpE.value = (nodo.querySelector('.inp-video-url') || {}).value || '';
-    }
-    m.classList.add('active');
-    m.style.display = 'flex';
-    posicionarDialogEnVista610_(m.querySelector('.modal'));
   }
 
   function cerrarPropiedades() {
@@ -12101,6 +12144,7 @@ if (document.readyState === 'loading') {
     window._mousedown610_ = true;
     document.addEventListener('mousedown', function (ev) {
       var t = ev.target;
+      if (t && t.nodeType === 3) t = t.parentElement;
       if (!t || !t.closest) return;
       if (t.closest('.drag-handle') || t.closest('[draggable="true"]')) {
         ev.preventDefault = function () {};
@@ -12113,6 +12157,7 @@ if (document.readyState === 'loading') {
     window._eventos610_ = true;
     document.addEventListener('click', function (ev) {
       var t = ev.target;
+      if (t && t.nodeType === 3) t = t.parentElement;
       if (!t || !t.closest) return;
       var btnSecTop = t.closest('.add-btn.btn-seccion');
       if (btnSecTop) {

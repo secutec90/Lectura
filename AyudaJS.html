@@ -11352,8 +11352,8 @@ if (document.readyState === 'loading') {
     secciones.forEach(function (sec) {
       aplicarAnchoYMargenSeccion_(sec, v, modo);
     });
-    var cont = document.getElementById('contenedorIDevicesDinamicos') || (typeof contLienzo_ === 'function' ? contLienzo_() : null);
-    if (cont) {
+    var cont = document.getElementById('contenedorIDevicesDinamicos');
+    if (cont && cont.id === 'contenedorIDevicesDinamicos') {
       cont.style.setProperty('width', '100%', 'important');
       cont.style.setProperty('max-width', '100%', 'important');
     }
@@ -12230,8 +12230,8 @@ if (document.readyState === 'loading') {
       if (banner && banner.parentNode) banner.parentNode.insertBefore(bar, banner.nextSibling);
       else canvas.insertBefore(bar, canvas.firstChild);
     }
-    if (bar.getAttribute('data-build') === '620') return;
-    bar.setAttribute('data-build', '620');
+    if (bar.getAttribute('data-build') === '621') return;
+    bar.setAttribute('data-build', '621');
     var anchoPag = window._anchoPaginaActivo_ || 100;
     var anchoSec = window._anchoSeccionActivo_ || 100;
     bar.innerHTML =
@@ -12478,8 +12478,8 @@ if (document.readyState === 'loading') {
   window.deshacer = deshacer;
   window.rehacer = rehacer;
   window.ajustarAnchoLienzo = ajustarAnchoLienzo;
-  window.ajustarAnchoPagina = ajustarAnchoLienzo;
-  window.ajustarAnchoSeccion = ajustarAnchoLienzo;
+  window.ajustarAnchoPagina = ajustarAnchoPagina;
+  window.ajustarAnchoSeccion = ajustarAnchoSeccion;
   window.alinearSecciones = alinearSecciones;
   window.abrirModalLayoutDivi610_ = abrirModalLayoutDivi610_;
   window.abrirModal = abrirModalLayoutDivi610_;

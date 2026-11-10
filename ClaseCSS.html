@@ -6469,4 +6469,37 @@
     background: #334155;
     margin: 0 2px;
   }
+
+  /* --- EDICIÓN DE TÍTULO Y ETIQUETA EN TARJETAS DE MÓDULO (BUILD-624) --- */
+  .idevice-tag[contenteditable="true"] {
+    outline: none;
+    cursor: text;
+    border-radius: 4px;
+    padding: 1px 4px;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    min-width: 40px;
+    display: inline-block;
+  }
+  .idevice-tag[contenteditable="true"]:hover {
+    background-color: rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 1px #93c5fd;
+  }
+  .idevice-tag[contenteditable="true"]:focus {
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 2px #2563eb !important;
+    color: #0f172a !important;
+  }
+  .badge[contenteditable="true"] {
+    outline: none;
+    cursor: text;
+    min-width: 30px;
+    display: inline-block;
+    transition: box-shadow 0.15s ease;
+  }
+  .badge[contenteditable="true"]:hover {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  }
+  .badge[contenteditable="true"]:focus {
+    box-shadow: 0 0 0 2px #2563eb !important;
+  }
 </style>

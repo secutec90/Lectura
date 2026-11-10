@@ -2,6 +2,28 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Edición de Título del Módulo y Etiqueta (Badge) en Modal Propiedades (⚙️) y Directamente en Cabecera en build-624]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): permite editar titulo de modulo y etiqueta badge en modal propiedades y directamente en cabecera (build-624)`
+- **Cambios Realizados:**
+  - **1. Campos de Título y Etiqueta en Modal de Propiedades del Módulo (`AyudaJS.html`):**
+    - Se agregaron los campos `Título del Módulo:` (`#input-titulo-modulo`) y `Etiqueta (Badge):` (`#input-badge-modulo`) en `asegurarModalProps_()`.
+    - En `abrirPropiedades()`, al pulsar el engrane `⚙️` de cualquier módulo (`.idevice-card`), se muestran estos dos campos prellenados con el título (`.idevice-tag` / `data-campo="titulo"`) y la etiqueta actual (`.badge`).
+    - Se ocultó el área de `Contenido:` en blanco que se mostraba erróneamente en módulos de texto/dua, clarificando la interfaz del modal.
+    - En `guardarPropiedades()`, los cambios aplicados en el modal actualizan de inmediato tanto la cabecera del módulo (`.idevice-tag` y `.badge`) como los campos internos de título y los atributos serializados.
+  - **2. Edición Directa Inline en la Cabecera de la Tarjeta (`AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`):**
+    - Se implementó `sincronizarTituloModulo_(card)` con soporte bidireccional:
+      - Al hacer clic sobre el título del módulo en la cabecera (ej. `LECTURA DUA / TEXTO`), el texto se vuelve editable en el lugar (`contenteditable="true"`), sincronizando con el input de título y guardando el estado al salir (`blur`).
+      - Al hacer clic sobre la etiqueta (ej. `[ LECTURA ]`), también es editable directamente.
+      - Al escribir en el campo de texto de título en el cuerpo de la tarjeta, la cabecera se actualiza en tiempo real.
+    - Se agregaron estilos de foco y hover en `AdminPlaneacionCSS.html` y `ClaseCSS.html` para dar respuesta visual al pasar el cursor o hacer clic sobre el título y badge.
+  - **3. Persistencia en Serialización y Restauración:**
+    - `leerTarjetaExe_` y `rellenarTarjetaExe_` preservan tanto el título personalizado como la etiqueta personalizada al guardar la sesión o cambiar de página.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v448 build-624`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Manipulación de Tablas Estilo Excel, Color de Fondo de Celda (🪣) y Toolbar Flotante de Redimensión de Imágenes en build-623]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): manipulacion de tablas estilo excel con redimension de columnas arrastrando, color de celda y toolbar flotante de imagenes (build-623)`
 - **Cambios Realizados:**

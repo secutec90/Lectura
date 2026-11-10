@@ -7599,8 +7599,10 @@ function crearTarjetaCurricular_(tipo, datos) {
     cuerpoHtml = htmlEspecialExe_(tipo, datos, id);
   }
 
+  var etiquetaMostrada = datos.etiqueta || meta.etiqueta;
+  var tituloMostrado = datos.titulo || meta.titulo;
   div.innerHTML =
-    '<div class="idevice-header idevice-card-header"><div class="idevice-card-title"><span class="badge ' + badge + '">' + meta.etiqueta + '</span><span class="idevice-tag">' + meta.titulo + '</span></div>' +
+    '<div class="idevice-header idevice-card-header"><div class="idevice-card-title"><span class="badge ' + badge + '" contenteditable="true" spellcheck="false" title="Haz clic para editar etiqueta o usa el engrane ⚙️">' + etiquetaMostrada + '</span><span class="idevice-tag" contenteditable="true" spellcheck="false" title="Haz clic para editar título o usa el engrane ⚙️">' + tituloMostrado + '</span></div>' +
     '<button type="button" class="idevice-btn" onclick="eliminarIDeviceCard_(this)">Quitar</button></div>' +
     '<div class="idevice-body idevice-card-body">' +
       '<input type="text" class="campo-input idevice-campo-titulo" data-campo="titulo" value="">' +
@@ -7611,6 +7613,7 @@ function crearTarjetaCurricular_(tipo, datos) {
   if (titulo) titulo.value = datos.titulo || meta.titulo;
   if (cuerpo && necesitaEditorEnriquecido_(tipo)) escribirCampoBloque_(cuerpo, datos.cuerpo || meta.cuerpo);
   cont.appendChild(div);
+  if (typeof sincronizarTituloModulo_ === 'function') sincronizarTituloModulo_(div);
   if (tipo === 'flashcards') agregarParFlashcard_(div, null);
   return div;
 }
@@ -7729,7 +7732,8 @@ function leerTarjetaExe_(card) {
     id: card.id,
     tipo: tipo,
     paginaId: card.getAttribute('data-pagina-id') || String(idPaginaActivaExe_()),
-    titulo: tituloEl ? tituloEl.value : '',
+    titulo: (tituloEl ? tituloEl.value : '') || (((card.querySelector('.idevice-tag') || {}).textContent || '').trim()),
+    etiqueta: (((card.querySelector('.badge') || {}).textContent || '').trim()),
     cuerpo: cuerpoEl ? leerCampoBloque_(cuerpoEl) : '',
     extra: extra,
     estilo: estiloCard
@@ -7754,7 +7758,15 @@ function rellenarTarjetaExe_(card, datos) {
   }
   var titulo = campoTarjetaExe_(card, 'titulo');
   var cuerpo = campoTarjetaExe_(card, 'cuerpo');
-  if (titulo && datos.titulo) titulo.value = datos.titulo;
+  if (datos.titulo) {
+    if (titulo) titulo.value = datos.titulo;
+    var tagEl7 = card.querySelector('.idevice-tag');
+    if (tagEl7) tagEl7.textContent = datos.titulo;
+  }
+  if (datos.etiqueta) {
+    var badgeEl7 = card.querySelector('.badge');
+    if (badgeEl7) badgeEl7.textContent = datos.etiqueta;
+  }
   if (cuerpo && datos.cuerpo) escribirCampoBloque_(cuerpo, datos.cuerpo);
   var extra = datos.extra || {};
   var tipo = card.getAttribute('data-tipo');
@@ -11020,6 +11032,58 @@ if (document.readyState === 'loading') {
     return nueva;
   }
 
+  function sincronizarTituloModulo_(card) {
+    if (!card || card._sincronizadoTit624_) return;
+    card._sincronizadoTit624_ = true;
+    var tag = card.querySelector('.idevice-tag');
+    var badge = card.querySelector('.badge');
+    var inpTit = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+    if (tag) {
+      tag.setAttribute('contenteditable', 'true');
+      tag.setAttribute('spellcheck', 'false');
+      tag.setAttribute('title', 'Haz clic para editar el título directamente o usa el engrane ⚙️');
+      tag.addEventListener('input', function () {
+        var txt = (this.textContent || '').trim();
+        card.setAttribute('data-titulo', txt);
+        card.setAttribute('data-titulo-personalizado', '1');
+        if (inpTit) inpTit.value = txt;
+        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      });
+      tag.addEventListener('blur', function () {
+        if (typeof guardarEstado === 'function') guardarEstado();
+      });
+      tag.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+      });
+    }
+    if (badge) {
+      badge.setAttribute('contenteditable', 'true');
+      badge.setAttribute('spellcheck', 'false');
+      badge.setAttribute('title', 'Haz clic para editar la etiqueta o usa el engrane ⚙️');
+      badge.addEventListener('input', function () {
+        var bTxt = (this.textContent || '').trim().toUpperCase();
+        card.setAttribute('data-etiqueta', bTxt);
+        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      });
+      badge.addEventListener('blur', function () {
+        this.textContent = (this.textContent || '').trim().toUpperCase();
+        if (typeof guardarEstado === 'function') guardarEstado();
+      });
+      badge.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+      });
+    }
+    if (inpTit) {
+      inpTit.addEventListener('input', function () {
+        var v = (this.value || '').trim();
+        if (tag) tag.textContent = v;
+        card.setAttribute('data-titulo', v);
+        card.setAttribute('data-titulo-personalizado', '1');
+        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+      });
+    }
+  }
+
   function asegurarControlesModulo_(card) {
     if (!card || card.querySelector('.divi-ctrl-bar')) return;
     var header = card.querySelector('.idevice-header, .idevice-card-header') || card;
@@ -11027,6 +11091,7 @@ if (document.readyState === 'loading') {
     barra.innerHTML = htmlControlesDivi_();
     var nodo = barra.firstElementChild;
     if (nodo) header.insertBefore(nodo, header.firstChild);
+    sincronizarTituloModulo_(card);
   }
 
   function marcarAreasEditablesDivi_(raiz) {
@@ -12201,6 +12266,14 @@ if (document.readyState === 'loading') {
           '<button type="button" class="close-btn" onclick="cerrarPropiedades()" aria-label="Cerrar">✕</button>' +
         '</div>' +
         '<div class="content">' +
+          '<div class="form-group" id="grupo-titulo-modulo" style="display:none;margin-bottom:12px;">' +
+            '<label for="input-titulo-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Título del Módulo:</label>' +
+            '<input type="text" id="input-titulo-modulo" placeholder="Ej. Lectura DUA / Texto" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13.5px;color:#0f172a;font-weight:600;">' +
+          '</div>' +
+          '<div class="form-group" id="grupo-badge-modulo" style="display:none;margin-bottom:12px;">' +
+            '<label for="input-badge-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Etiqueta (Badge):</label>' +
+            '<input type="text" id="input-badge-modulo" placeholder="Ej. LECTURA" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:12.5px;color:#0f172a;text-transform:uppercase;">' +
+          '</div>' +
           '<div class="form-group" id="grupo-contenido" style="display:none;"><label id="label-contenido" for="input-contenido">Contenido:</label>' +
             '<textarea id="input-contenido" rows="3"></textarea></div>' +
           '<div class="form-group" id="grupo-enlace" style="display:none;"><label for="input-enlace">Enlace / URL:</label>' +
@@ -12263,10 +12336,26 @@ if (document.readyState === 'loading') {
       document.querySelectorAll('.btn-alinear-int').forEach(function (b) { b.classList.remove('activo'); });
       var bAl = document.getElementById(mapa[al] || 'int-izq');
       if (bAl) bAl.classList.add('activo');
+      var esCard = !!(nodo.classList && nodo.classList.contains('idevice-card'));
+      grupoCampo_('grupo-titulo-modulo', esCard);
+      grupoCampo_('grupo-badge-modulo', esCard);
+      if (esCard) {
+        var tagEl = nodo.querySelector('.idevice-tag');
+        var badgeEl = nodo.querySelector('.badge');
+        var campoTit = nodo.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+        var inpTit = document.getElementById('input-titulo-modulo');
+        var inpBadge = document.getElementById('input-badge-modulo');
+        if (inpTit) {
+          inpTit.value = (tagEl ? tagEl.textContent.trim() : '') || (campoTit ? campoTit.value.trim() : '') || (nodo.getAttribute('data-titulo') || '');
+        }
+        if (inpBadge) {
+          inpBadge.value = (badgeEl ? badgeEl.textContent.trim() : '') || (nodo.getAttribute('data-etiqueta') || '');
+        }
+      }
       var tipo = (nodo.getAttribute && nodo.getAttribute('data-tipo')) || '';
       var esBoton = tipo === 'boton_cta' || tipo === 'Boton' || tipo === 'boton';
       var esMedia = tipo === 'galeria' || tipo === 'video_interactivo' || tipo === 'video_local' || tipo === 'Imagen' || tipo === 'Video';
-      grupoCampo_('grupo-contenido', esBoton || tipo === 'texto_dua' || tipo === 'Texto' || tipo === 'texto' || esMedia);
+      grupoCampo_('grupo-contenido', esBoton || esMedia);
       grupoCampo_('grupo-enlace', esBoton || esMedia);
       var inpC = document.getElementById('input-contenido');
       var inpE = document.getElementById('input-enlace');
@@ -12345,6 +12434,25 @@ if (document.readyState === 'loading') {
     if (col) {
       nodo.setAttribute('data-text-color', col.value);
       nodo.style.color = col.value;
+    }
+    if (nodo.classList && nodo.classList.contains('idevice-card')) {
+      var inpTit = document.getElementById('input-titulo-modulo');
+      var inpBadge = document.getElementById('input-badge-modulo');
+      if (inpTit && inpTit.value.trim()) {
+        var nuevoTit = inpTit.value.trim();
+        var tagEl = nodo.querySelector('.idevice-tag');
+        if (tagEl) tagEl.textContent = nuevoTit;
+        var campoTit = nodo.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
+        if (campoTit) campoTit.value = nuevoTit;
+        nodo.setAttribute('data-titulo', nuevoTit);
+        nodo.setAttribute('data-titulo-personalizado', '1');
+      }
+      if (inpBadge && inpBadge.value.trim()) {
+        var nuevoBadge = inpBadge.value.trim().toUpperCase();
+        var badgeEl = nodo.querySelector('.badge');
+        if (badgeEl) badgeEl.textContent = nuevoBadge;
+        nodo.setAttribute('data-etiqueta', nuevoBadge);
+      }
     }
     var tipo = nodo.getAttribute('data-tipo') || '';
     if ((tipo === 'boton_cta' || tipo === 'Boton' || tipo === 'boton') && nodo.querySelector('[data-cta="texto"]')) {

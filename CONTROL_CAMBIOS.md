@@ -2,6 +2,20 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Homologación Total de Módulo Tabla Dinámica con Editor de Texto y Visibilidad Garantizada de Modal en build-629]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): homologacion de tabla dinamica con editor y visibilidad garantizada de modal (build-629)`
+- **Cambios Realizados:**
+  - **1. Homologación de Módulo 'Tabla Dinámica' (`tabla_notion`) con Editor de Texto (`AyudaJS.html`, `AdminPlaneacionCSS.html`):**
+    - Se integraron los botones **`📊 Propiedades de Tabla`** y **`📥 Pegar de Excel`** dentro de la barra de herramientas del módulo "Tabla Dinámica" (`.bloque-tabla-notion`).
+    - Ahora el módulo independiente de Tabla Dinámica comparte el 100% de las herramientas del editor de texto: anchos de tabla, alineación, estilos de borde, anchos de columna individuales (`Auto` a `50%`), distribución uniforme de columnas (`⚖️`), paleta de 13 colores visuales de celda/fila/columna, color de texto, combinación/separación (`🔗`/`✂️`) e importación directa desde Excel.
+  - **2. Corrección de Visibilidad del Modal de Propiedades (`AdminPlaneacionCSS.html`, `AyudaJS.html`):**
+    - Se resolvió la opacidad nula (`opacity: 0; pointer-events: none;`) provocada por la regla por defecto de `.st90-modal-fondo` sin `.visible`.
+    - Se forzaron reglas explícitas de alta prioridad `#modalPropsTablaEditor.visible { display: flex !important; opacity: 1 !important; pointer-events: auto !important; z-index: 100050 !important; }`.
+    - Se eliminó el bloqueo de foco `event.preventDefault()` en el botón `📊 Tabla`, garantizando que la apertura del modal responda al instante en cualquier dispositivo.
+  - **3. Importación Inteligente de Excel sobre Módulo Existente (`AyudaJS.html`):**
+    - Al usar "Pegar de Excel" sobre una tarjeta de "Tabla Dinámica", el sistema reemplaza limpiamente su contenido preservando la estructura editable del iDevice sin romper el árbol DOM.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Menú Unificado de Propiedades de Tabla, Importación desde Excel (Pegado directo Ctrl+V), Botón de Cierre en Barra de Imagen y Arrastre de Columnas en build-628]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): menu unificado de tabla, importacion de excel, cierre de barra de imagen y redimension (build-628)`
 - **Cambios Realizados:**

@@ -9164,4 +9164,22 @@
     border-color: #b91c1c !important;
   }
 
+
+  /* MODAL DE PROPIEDADES DE TABLA - VISIBILIDAD GARANTIZADA (BUILD-629) */
+  #modalPropsTablaEditor {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  #modalPropsTablaEditor.visible {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 100050 !important;
+  }
+  .btn-tb-menu-tabla {
+    cursor: pointer !important;
+  }
+
 </style>

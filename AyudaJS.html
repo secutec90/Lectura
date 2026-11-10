@@ -6630,21 +6630,24 @@ function htmlEspecialExe_(tipo, datos, idUnico) {
 
   if (tipo === 'tabla_notion' || tipo === 'tabla') {
     return '<div class="bloque-tabla-notion" style="margin-top:6px;">' +
-      '<div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">' +
+      '<div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap;">' +
         '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="agregarFilaTablaNotion_(this)">➕ Fila</button>' +
         '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="eliminarFilaTablaNotion_(this)">➖ Fila</button>' +
         '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="agregarColumnaTablaNotion_(this)">➕ Columna</button>' +
         '<button type="button" class="btn-tb" style="padding:4px 8px;font-size:12px;font-weight:700;" onclick="eliminarColumnaTablaNotion_(this)">➖ Columna</button>' +
+        '<span class="tb-sep"></span>' +
+        '<button type="button" class="btn-tb btn-tb-menu-tabla" style="padding:4px 10px;font-size:12px;font-weight:700;background:#0284c7;color:#ffffff;border:1px solid #0284c7;border-radius:4px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;" onclick="abrirMenuPropiedadesTablaEditor(this)"><span>📊</span> Propiedades de Tabla</button>' +
+        '<button type="button" class="btn-tb" style="padding:4px 10px;font-size:12px;font-weight:700;background:#16a34a;color:#ffffff;border:1px solid #16a34a;border-radius:4px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;" onclick="abrirMenuPropiedadesTablaEditor(this, \'excel\')"><span>📥</span> Pegar de Excel</button>' +
       '</div>' +
       '<div class="notion-table-wrap" style="overflow-x:auto;">' +
-        '<table class="tabla-notion idevice-campo-cuerpo" data-campo="cuerpo" style="width:100%;border-collapse:collapse;border:1px solid #cbd5e1;">' +
+        '<table class="tabla-notion editor-tabla-estilo idevice-campo-cuerpo" data-campo="cuerpo" style="width:100%;border-collapse:collapse;border:1.5px solid #cbd5e1;">' +
           '<thead><tr style="background:#f1f5f9;color:#334155;">' +
-            '<th contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;text-align:left;">Criterio / Categoría</th>' +
-            '<th contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;text-align:left;">Evidencia / Descripción</th>' +
+            '<th contenteditable="true" style="padding:8px 12px;border:1px solid #cbd5e1;text-align:left;font-weight:700;">Criterio / Categoría</th>' +
+            '<th contenteditable="true" style="padding:8px 12px;border:1px solid #cbd5e1;text-align:left;font-weight:700;">Evidencia / Descripción</th>' +
           '</tr></thead>' +
           '<tbody>' +
-            '<tr><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Elemento 1</td><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Detalle 1</td></tr>' +
-            '<tr><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Elemento 2</td><td contenteditable="true" style="padding:8px;border:1px solid #cbd5e1;">Detalle 2</td></tr>' +
+            '<tr><td contenteditable="true" style="padding:8px 12px;border:1px solid #cbd5e1;">Elemento 1</td><td contenteditable="true" style="padding:8px 12px;border:1px solid #cbd5e1;">Detalle 1</td></tr>' +
+            '<tr><td contenteditable="true" style="padding:8px 12px;border:1px solid #cbd5e1;">Elemento 2</td><td contenteditable="true" style="padding:8px 12px;border:1px solid #cbd5e1;">Detalle 2</td></tr>' +
           '</tbody>' +
         '</table>' +
       '</div>' +
@@ -6978,7 +6981,7 @@ function htmlEditorEnriquecido_(idUnico) {
       '<button type="button" class="btn-tb" title="Insertar video" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬</button>' +
       '<span class="tb-sep"></span>' +
       '<button type="button" class="btn-tb" title="Insertar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">▦</button>' +
-      '<button type="button" class="btn-tb btn-tb-menu-tabla" title="Propiedades de Tabla (Fila, Columna, Celda, Color, Ancho, Excel)" onmousedown="event.preventDefault()" onclick="abrirMenuPropiedadesTablaEditor(this)" style="font-weight:700;background:#0284c7;color:#ffffff;border-color:#0284c7;padding:0 7px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;"><span style="font-size:12px;">📊</span> Tabla</button>' +
+      '<button type="button" class="btn-tb btn-tb-menu-tabla" title="Propiedades de Tabla (Fila, Columna, Celda, Color, Ancho, Excel)" onclick="abrirMenuPropiedadesTablaEditor(this)" style="font-weight:700;background:#0284c7;color:#ffffff;border-color:#0284c7;padding:0 7px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;cursor:pointer;"><span style="font-size:12px;">📊</span> Tabla</button>' +
       '<button type="button" class="btn-tb" title="Limpiar formato" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">🧹</button>' +
     '</div>' +
     // Cuerpo editable enriquecido
@@ -7666,11 +7669,13 @@ function asegurarModalPropsTabla_() {
   m.style.left = '0';
   m.style.right = '0';
   m.style.bottom = '0';
-  m.style.background = 'rgba(15, 23, 42, 0.65)';
-  m.style.zIndex = '100020';
+  m.style.background = 'rgba(15, 23, 42, 0.72)';
+  m.style.zIndex = '100050';
   m.style.alignItems = 'center';
   m.style.justifyContent = 'center';
   m.style.padding = '14px';
+  m.style.opacity = '0';
+  m.style.pointerEvents = 'none';
 
   var paletaColores = [
     { n: 'Blanco', c: '#ffffff' },
@@ -7897,35 +7902,49 @@ function cambiarTabPropsTabla_(tabId, btn) {
 
 function cerrarModalPropsTablaEditor_() {
   var m = document.getElementById('modalPropsTablaEditor');
-  if (m) m.style.display = 'none';
+  if (m) {
+    m.classList.remove('visible');
+    m.style.display = 'none';
+    m.style.opacity = '0';
+    m.style.pointerEvents = 'none';
+  }
 }
 
 function abrirMenuPropiedadesTablaEditor(btn, tabInicial) {
-  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
-  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : (document.querySelector('.campo-editor-rich') || null);
-  _editorActivoTabla_ = editor;
+  try {
+    var card = btn && btn.closest ? (btn.closest('.idevice-card') || btn.closest('.bloque-tabla-notion') || btn.closest('.editor-enriquecido-wrap')) : null;
+    var editor = card ? (card.querySelector('.campo-editor-rich') || card.querySelector('.tabla-notion') || card) : (document.querySelector('.campo-editor-rich') || null);
+    _editorActivoTabla_ = editor;
 
-  var sel = window.getSelection();
-  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
-  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
-  var tabla = td ? td.closest('table') : (window._ultimaTablaSeleccionada_ || (editor ? editor.querySelector('table') : null));
+    var sel = window.getSelection();
+    var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+    var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+    var tabla = td ? td.closest('table') : (window._ultimaTablaSeleccionada_ || (card ? card.querySelector('table') : null) || (editor ? (editor.tagName === 'TABLE' ? editor : editor.querySelector('table')) : null));
 
-  _tablaEditandoProps_ = tabla;
-  _celdaEditandoProps_ = td || (tabla ? tabla.querySelector('td, th') : null);
+    _tablaEditandoProps_ = tabla;
+    _celdaEditandoProps_ = td || (tabla ? tabla.querySelector('td, th') : null);
 
-  var m = asegurarModalPropsTabla_();
-  m.style.display = 'flex';
+    var m = asegurarModalPropsTabla_();
+    m.classList.add('visible');
+    m.style.display = 'flex';
+    m.style.opacity = '1';
+    m.style.pointerEvents = 'auto';
+    m.style.zIndex = '100050';
 
-  var sub = document.getElementById('txtSubtituloPropsTabla');
-  var colNum = document.getElementById('lblColActivaNum');
-  if (_tablaEditandoProps_) {
-    var cIdx = _celdaEditandoProps_ ? (_celdaEditandoProps_.cellIndex + 1) : 1;
-    if (colNum) colNum.textContent = String(cIdx);
-    if (sub) sub.textContent = 'Editando tabla (' + (_tablaEditandoProps_.querySelectorAll('tr').length) + ' filas) · Columna activa: ' + cIdx;
-    cambiarTabPropsTabla_(tabInicial || 'tabla');
-  } else {
-    if (sub) sub.textContent = 'No hay tabla seleccionada. Crea una nueva o pega datos de Excel:';
-    cambiarTabPropsTabla_(tabInicial || 'excel');
+    var sub = document.getElementById('txtSubtituloPropsTabla');
+    var colNum = document.getElementById('lblColActivaNum');
+    if (_tablaEditandoProps_) {
+      var cIdx = _celdaEditandoProps_ ? (_celdaEditandoProps_.cellIndex + 1) : 1;
+      if (colNum) colNum.textContent = String(cIdx);
+      if (sub) sub.textContent = 'Editando tabla (' + (_tablaEditandoProps_.querySelectorAll('tr').length) + ' filas) · Columna activa: ' + cIdx;
+      cambiarTabPropsTabla_(tabInicial || 'tabla');
+    } else {
+      if (sub) sub.textContent = 'No hay tabla seleccionada. Crea una nueva o pega datos de Excel:';
+      cambiarTabPropsTabla_(tabInicial || 'excel');
+    }
+  } catch (err) {
+    console.error('Error al abrir menu propiedades tabla:', err);
+    if (typeof toast === 'function') toast('Error al abrir menú de tabla: ' + err.message, 'error');
   }
 }
 
@@ -8162,15 +8181,35 @@ function importarDatosExcelModal() {
     alert('No se detectaron filas o columnas válidas en el texto pegado.');
     return;
   }
-  if (!_editorActivoTabla_) _editorActivoTabla_ = document.querySelector('.campo-editor-rich');
-  if (!_editorActivoTabla_) return;
 
-  if (_editorActivoTabla_.focus) _editorActivoTabla_.focus();
-  try {
-    document.execCommand('insertHTML', false, htmlTabla);
-  } catch (e) {
-    _editorActivoTabla_.insertAdjacentHTML('beforeend', htmlTabla);
+  if (_tablaEditandoProps_) {
+    var parentWrap = _tablaEditandoProps_.closest('.notion-table-wrap') || _tablaEditandoProps_.parentNode;
+    if (parentWrap) {
+      var divTemp = document.createElement('div');
+      divTemp.innerHTML = htmlTabla;
+      var nuevaTbl = divTemp.querySelector('table');
+      if (nuevaTbl) {
+        if (_tablaEditandoProps_.classList.contains('tabla-notion')) {
+          nuevaTbl.classList.add('tabla-notion', 'idevice-campo-cuerpo');
+          nuevaTbl.setAttribute('data-campo', 'cuerpo');
+          nuevaTbl.querySelectorAll('td, th').forEach(function (c) { c.setAttribute('contenteditable', 'true'); });
+        }
+        _tablaEditandoProps_.parentNode.replaceChild(nuevaTbl, _tablaEditandoProps_);
+        _tablaEditandoProps_ = nuevaTbl;
+        _celdaEditandoProps_ = nuevaTbl.querySelector('td, th');
+      }
+    }
+  } else {
+    if (!_editorActivoTabla_) _editorActivoTabla_ = document.querySelector('.campo-editor-rich');
+    if (!_editorActivoTabla_) return;
+    if (_editorActivoTabla_.focus) _editorActivoTabla_.focus();
+    try {
+      document.execCommand('insertHTML', false, htmlTabla);
+    } catch (e) {
+      _editorActivoTabla_.insertAdjacentHTML('beforeend', htmlTabla);
+    }
   }
+
   cerrarModalPropsTablaEditor_();
   if (txt) txt.value = '';
   if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();

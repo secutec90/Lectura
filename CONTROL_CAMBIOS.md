@@ -2,6 +2,23 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Solución Definitiva a Inserción de Nuevas Secciones con el Botón (+) Azul Superior en build-618: Exposición de htmlControlesDivi_, Fallback de Contenedor y Desacoplamiento de IIFEs]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): resuelve error en crearNuevaSeccionRegular eliminando ReferenceError de toolbar (build-618)`
+- **Cambios Realizados:**
+  - **1. Exposición y Fallback de Toolbar entre IIFEs (`AyudaJS.html`):**
+    - Se identificó la causa raíz por la que el botón `(+)` azul superior abría el modal pero no insertaba la nueva sección: `crearNuevaSeccionRegular_()` invocaba `htmlControlesDivi_()`, que estaba encapsulada dentro del primer IIFE de `AyudaJS.html` y no existía en el segundo IIFE (`ReferenceError: htmlControlesDivi_ is not defined`), abortando la creación del DOM.
+    - Se expuso `window.htmlControlesDivi_ = htmlControlesDivi_;` y se blindó la invocación en `crearNuevaSeccionRegular_` con fallback condicional: `typeof htmlToolbar_ === 'function' ? htmlToolbar_() : (typeof window.htmlControlesDivi_ === 'function' ? window.htmlControlesDivi_() : '')` dentro de un bloque `try/catch`.
+  - **2. Detección Fiel de Acción de Sección en Modal de Layouts (`AyudaJS.html`):**
+    - En `abrirModalLayoutDivi610_`, se blindó la detección de `esBotonSeccionTop`: si el botón de origen se encuentra en `.top-actions`, tiene la clase `.btn-seccion`, o si `ancla` no está definido, se marca inequívocamente `_creandoNuevaSeccion610_ = true`.
+    - En `seleccionarLayout(codigo)`, si `esNuevaSec` es verdadero, se invoca directamente `crearNuevaSeccionRegular_(codigo)` agregando una sección `<section class="divi-section">` completamente nueva al lienzo con su cabecera azul, toolbar, fila y columnas según el layout elegido.
+  - **3. Resolución Robusta del Contenedor de Lienzo (`AyudaJS.html`):**
+    - Se mejoró `contLienzo_()` para buscar de forma secuencial `#lienzo-divi`, `#lienzoExeActivo`, `.lienzo-exe-bloques` y `contenedorExe_()`, garantizando que siempre se devuelva un contenedor DOM válido sin riesgo de `null`.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v445 build-618`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Solución Integral del Engrane ⚙️ de Propiedades del Constructor en build-615: Rescate ante Colisión de .modal Bootstrap, Normalización de Event Targets y Fallbacks Robustos]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): resuelve apertura del engrane de propiedades protegiendo contra colision de modal bootstrap y blindando resolucion de nodo (build-615)`
 - **Cambios Realizados:**

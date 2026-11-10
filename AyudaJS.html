@@ -11200,6 +11200,7 @@ if (document.readyState === 'loading') {
   window.eliminarNodoDivi_ = eliminarNodoDivi_;
   window.erradicarBarraFijaLienzo_ = erradicarBarraFijaLienzo_;
   window.nodoControladoDivi_ = nodoControladoDivi_;
+  window.htmlControlesDivi_ = htmlControlesDivi_;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', instalarConstructorDivi603_);
@@ -11246,7 +11247,7 @@ if (document.readyState === 'loading') {
   ];
 
   function contLienzo_() {
-    return document.getElementById('contenedorIDevicesDinamicos');
+    return document.getElementById('contenedorIDevicesDinamicos') || (typeof contenedorExe_ === 'function' ? contenedorExe_() : null) || document.getElementById('lienzoExeActivo');
   }
 
   function claseFlex_(valor) {
@@ -11543,31 +11544,42 @@ if (document.readyState === 'loading') {
   }
 
   function crearNuevaSeccionRegular_(codigo) {
-    var cont = contLienzo_();
-    if (!cont) return null;
-    var sec = document.createElement('section');
-    sec.className = 'divi-section';
-    sec.setAttribute('data-sec-tipo', 'regular');
-    var header = document.createElement('div');
-    header.className = 'divi-section-header';
-    header.innerHTML = '<span class="divi-section-label">SECCIÓN PEDAGÓGICA</span>' + htmlControlesDivi_();
-    sec.appendChild(header);
-    var ancla = document.createElement('div');
-    ancla.className = 'divi-plus-row';
-    sec.appendChild(ancla);
-    cont.appendChild(sec);
-    var fila = window.insertarFilaDivi_(codigo || 'col-1', ancla);
-    if (fila) {
-      aplicarPesosFlex610_(fila, codigo || 'col-1');
-      promoverToolbars610_(fila);
+    try {
+      var cont = contLienzo_() || (typeof contenedorExe_ === 'function' ? contenedorExe_() : null) || document.getElementById('contenedorIDevicesDinamicos') || document.getElementById('lienzoExeActivo');
+      if (!cont) return null;
+      var sec = document.createElement('section');
+      sec.className = 'divi-section';
+      sec.setAttribute('data-sec-tipo', 'regular');
+      var header = document.createElement('div');
+      header.className = 'divi-section-header';
+      header.innerHTML = '<span class="divi-section-label">SECCIÓN PEDAGÓGICA</span>' + (typeof htmlToolbar_ === 'function' ? htmlToolbar_() : (typeof window.htmlControlesDivi_ === 'function' ? window.htmlControlesDivi_() : ''));
+      sec.appendChild(header);
+      var ancla = document.createElement('div');
+      ancla.className = 'divi-plus-row';
+      sec.appendChild(ancla);
+      cont.appendChild(sec);
+      var fila = (typeof window.insertarFilaDivi_ === 'function') ? window.insertarFilaDivi_(codigo || 'col-1', ancla) : null;
+      if (fila) {
+        if (typeof aplicarPesosFlex610_ === 'function') aplicarPesosFlex610_(fila, codigo || 'col-1');
+        if (typeof promoverToolbars610_ === 'function') promoverToolbars610_(fila);
+      }
+      if (typeof promoverToolbars610_ === 'function') promoverToolbars610_(sec);
+      if (typeof repintarPlusVerdesDivi_ === 'function') repintarPlusVerdesDivi_(sec);
+      return sec;
+    } catch (e) {
+      console.error('Error al crear nueva sección regular:', e);
+      return null;
     }
-    promoverToolbars610_(sec);
-    repintarPlusVerdesDivi_(sec);
-    return sec;
   }
 
   function abrirModalLayoutDivi610_(ancla, btnRef) {
-    var esBotonSeccionTop = !!(btnRef && (btnRef.classList.contains('btn-seccion') || (btnRef.closest && btnRef.closest('.top-actions'))));
+    var esBotonSeccionTop = false;
+    if (btnRef) {
+      if (btnRef.classList && (btnRef.classList.contains('btn-seccion') || btnRef.classList.contains('btn-fullwidth') || btnRef.classList.contains('btn-specialty'))) esBotonSeccionTop = true;
+      else if (btnRef.closest && btnRef.closest('.top-actions, .divi-canvas-topbar')) esBotonSeccionTop = true;
+    } else if (!ancla) {
+      esBotonSeccionTop = true;
+    }
     window._creandoNuevaSeccion610_ = esBotonSeccionTop;
     window._anclaLayout610_ = (!esBotonSeccionTop && ancla && ancla.nodeType === 1 && !ancla.classList.contains('add-btn')) ? ancla : (esBotonSeccionTop ? null : (window._filaPlusOrigenPopover_ || null));
     var refEl = btnRef || (ancla && ancla.nodeType === 1 ? ancla : null) || document.querySelector('#lienzoExeActivo .btn-seccion');
@@ -11583,7 +11595,6 @@ if (document.readyState === 'loading') {
 
   function seleccionarLayout(codigo) {
     cerrarModal610_();
-    if (typeof window.insertarFilaDivi_ !== 'function') return;
     var esNuevaSec = !!window._creandoNuevaSeccion610_;
     window._creandoNuevaSeccion610_ = false;
     var ancla = window._anclaLayout610_ || window._filaPlusOrigenPopover_ || null;
@@ -11593,13 +11604,15 @@ if (document.readyState === 'loading') {
     if (esNuevaSec) {
       crearNuevaSeccionRegular_(codigo);
     } else {
-      var fila = window.insertarFilaDivi_(codigo, ancla);
-      if (fila) {
-        aplicarPesosFlex610_(fila, codigo);
-        promoverToolbars610_(fila);
+      if (typeof window.insertarFilaDivi_ === 'function') {
+        var fila = window.insertarFilaDivi_(codigo, ancla);
+        if (fila) {
+          if (typeof aplicarPesosFlex610_ === 'function') aplicarPesosFlex610_(fila, codigo);
+          if (typeof promoverToolbars610_ === 'function') promoverToolbars610_(fila);
+        }
       }
     }
-    repintarPlusVerdesDivi_();
+    if (typeof repintarPlusVerdesDivi_ === 'function') repintarPlusVerdesDivi_();
     guardarEstado();
     if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
   }

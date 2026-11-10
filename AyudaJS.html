@@ -6970,22 +6970,15 @@ function htmlEditorEnriquecido_(idUnico) {
       '</label>' +
       '<label class="btn-tb btn-tb-color" title="Color de fondo de celda (Bote de pintura)" onmousedown="event.preventDefault()" style="cursor:pointer;position:relative;display:inline-flex;align-items:center;padding:0 6px;">' +
         '<span style="font-weight:800;font-size:13px;">🪣</span>' +
-        '<input type="color" value="#f1f5f9" onchange="cambiarColorFondoCeldaEditor(this, this.value)" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
+        '<input type="color" value="#f1f5f9" onchange="cambiarColorFondoCeldaEditor(this, this.value)" onclick="abrirMenuPropiedadesTablaEditor(this, \'celda\')" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer;">' +
       '</label>' +
       '<span class="tb-sep"></span>' +
       '<button type="button" class="btn-tb" title="Insertar enlace web" onmousedown="event.preventDefault()" onclick="insertarEnlaceEditor(this)">🔗</button>' +
       '<button type="button" class="btn-tb" title="Insertar imagen" onmousedown="event.preventDefault()" onclick="insertarImagenEditor(this)">🖼️</button>' +
       '<button type="button" class="btn-tb" title="Insertar video" onmousedown="event.preventDefault()" onclick="insertarVideoEditor(this)">🎬</button>' +
+      '<span class="tb-sep"></span>' +
       '<button type="button" class="btn-tb" title="Insertar tabla" onmousedown="event.preventDefault()" onclick="insertarTablaEditor(this)">▦</button>' +
-      '<button type="button" class="btn-tb" title="Añadir fila a tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarFila\')">➕Fila</button>' +
-      '<button type="button" class="btn-tb" title="Eliminar fila de tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarFila\')">➖Fila</button>' +
-      '<button type="button" class="btn-tb" title="Añadir columna a tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'agregarColumna\')">➕Col</button>' +
-      '<button type="button" class="btn-tb" title="Eliminar columna de tabla" onmousedown="event.preventDefault()" onclick="modificarTablaEditor(this, \'eliminarColumna\')">➖Col</button>' +
-      '<button type="button" class="btn-tb" title="Definir ancho exacto de esta columna" onmousedown="event.preventDefault()" onclick="cambiarAnchoColumnaDirecto(this)">↔️Col</button>' +
-      '<button type="button" class="btn-tb" title="Unir / Combinar celda con la de la derecha" onmousedown="event.preventDefault()" onclick="unirCeldasTablaEditor(this)">🔗Unir</button>' +
-      '<button type="button" class="btn-tb" title="Separar celda combinada" onmousedown="event.preventDefault()" onclick="separarCeldasTablaEditor(this)">✂️Sep</button>' +
-      '<button type="button" class="btn-tb" title="Cambiar tamaño de tabla (100% / 80% / 60% / Auto)" onmousedown="event.preventDefault()" onclick="cambiarAnchoTablaEditor(this)">📐Tabla</button>' +
-      '<button type="button" class="btn-tb" title="Alinear tabla completa (Centro ↔️ / Derecha ➡️ / Izquierda ⬅️)" onmousedown="event.preventDefault()" onclick="alinearTablaEditor(this)">📐Pos</button>' +
+      '<button type="button" class="btn-tb btn-tb-menu-tabla" title="Propiedades de Tabla (Fila, Columna, Celda, Color, Ancho, Excel)" onmousedown="event.preventDefault()" onclick="abrirMenuPropiedadesTablaEditor(this)" style="font-weight:700;background:#0284c7;color:#ffffff;border-color:#0284c7;padding:0 7px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;"><span style="font-size:12px;">📊</span> Tabla</button>' +
       '<button type="button" class="btn-tb" title="Limpiar formato" onmousedown="event.preventDefault()" onclick="limpiarFormatoEditor(this)">🧹</button>' +
     '</div>' +
     // Cuerpo editable enriquecido
@@ -7609,6 +7602,581 @@ function cambiarAnchoTablaEditor(btn) {
   if (typeof toast === 'function') toast('Ancho de tabla: ' + siguiente, 'info');
 }
 
+
+var _tablaEditandoProps_ = null;
+var _celdaEditandoProps_ = null;
+var _editorActivoTabla_ = null;
+
+function parsearExcelPegado(texto, primeraFilaHead) {
+  if (!texto || !texto.trim()) return null;
+  var lineas = texto.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(function (l) { return l.trim().length > 0; });
+  if (!lineas.length) return null;
+
+  var sep = '\t';
+  if (lineas[0].indexOf('\t') === -1) {
+    if (lineas[0].indexOf(';') !== -1) sep = ';';
+    else if (lineas[0].indexOf(',') !== -1) sep = ',';
+    else return null;
+  }
+
+  var filas = lineas.map(function (l) { return l.split(sep); });
+  var maxCols = 0;
+  for (var i = 0; i < filas.length; i++) {
+    if (filas[i].length > maxCols) maxCols = filas[i].length;
+  }
+  if (maxCols < 1) return null;
+
+  var html = '<table class="editor-tabla-estilo" style="width:100%;border-collapse:collapse;margin:12px 0;border:1.5px solid #cbd5e1;">';
+  var inicio = 0;
+
+  if (primeraFilaHead && filas.length > 0) {
+    html += '<thead><tr>';
+    for (var c = 0; c < maxCols; c++) {
+      var val = (filas[0][c] || '').trim();
+      html += '<th style="padding:8px 12px;border:1px solid #cbd5e1;background:#f1f5f9;text-align:left;font-weight:700;">' + (val || ('Columna ' + (c + 1))) + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+    inicio = 1;
+  } else {
+    html += '<tbody>';
+  }
+
+  for (var r = inicio; r < filas.length; r++) {
+    html += '<tr>';
+    for (var c2 = 0; c2 < maxCols; c2++) {
+      var celVal = (filas[r][c2] || '').trim();
+      html += '<td style="padding:8px 12px;border:1px solid #cbd5e1;">' + (celVal || '<br>') + '</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table><p><br></p>';
+  return html;
+}
+
+function asegurarModalPropsTabla_() {
+  var m = document.getElementById('modalPropsTablaEditor');
+  if (m) return m;
+
+  m = document.createElement('div');
+  m.id = 'modalPropsTablaEditor';
+  m.className = 'st90-modal-fondo';
+  m.style.display = 'none';
+  m.style.position = 'fixed';
+  m.style.top = '0';
+  m.style.left = '0';
+  m.style.right = '0';
+  m.style.bottom = '0';
+  m.style.background = 'rgba(15, 23, 42, 0.65)';
+  m.style.zIndex = '100020';
+  m.style.alignItems = 'center';
+  m.style.justifyContent = 'center';
+  m.style.padding = '14px';
+
+  var paletaColores = [
+    { n: 'Blanco', c: '#ffffff' },
+    { n: 'Gris claro', c: '#f8fafc' },
+    { n: 'Gris suave', c: '#e2e8f0' },
+    { n: 'Amarillo pastel', c: '#fef9c3' },
+    { n: 'Verde menta', c: '#dcfce7' },
+    { n: 'Turquesa suave', c: '#ccfbf1' },
+    { n: 'Celeste agua', c: '#e0f2fe' },
+    { n: 'Azul suave', c: '#dbeafe' },
+    { n: 'Lavanda', c: '#ede9fe' },
+    { n: 'Rosa pastel', c: '#fce7f3' },
+    { n: 'Rojo suave', c: '#fee2e2' },
+    { n: 'Melocotón', c: '#ffedd5' },
+    { n: 'Transparente', c: 'transparent' }
+  ];
+
+  var htmlChipsColor = paletaColores.map(function (col) {
+    var bg = col.c === 'transparent' ? 'background:linear-gradient(45deg, #eee 25%, transparent 25%), linear-gradient(-45deg, #eee 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #eee 75%), linear-gradient(-45deg, transparent 75%, #eee 75%);background-size:8px 8px;background-position:0 0, 0 4px, 4px -4px, -4px 0px;' : ('background:' + col.c + ';');
+    return '<button type="button" class="btn-chip-color" title="' + col.n + '" onclick="aplicarColorCeldaModal(\'' + col.c + '\', \'celda\')" style="width:24px;height:24px;border-radius:4px;border:1.5px solid #cbd5e1;cursor:pointer;padding:0;' + bg + '"></button>';
+  }).join('');
+
+  m.innerHTML =
+    '<div class="st90-modal-dialog" style="background:#ffffff;border-radius:12px;box-shadow:0 20px 45px rgba(0,0,0,0.3);width:100%;max-width:580px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;">' +
+      // Header
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:22px;">📊</span>' +
+          '<div>' +
+            '<h3 style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">Menú y Propiedades de Tabla</h3>' +
+            '<span id="txtSubtituloPropsTabla" style="font-size:11.5px;color:#64748b;">Configuración completa de tabla, columnas, filas y celdas</span>' +
+          '</div>' +
+        '</div>' +
+        '<button type="button" onclick="cerrarModalPropsTablaEditor_()" style="border:none;background:transparent;font-size:22px;color:#94a3b8;cursor:pointer;padding:2px 8px;border-radius:6px;line-height:1;">&times;</button>' +
+      '</div>' +
+
+      // Tabs Header
+      '<div style="display:flex;border-bottom:1px solid #e2e8f0;background:#f1f5f9;padding:0 8px;gap:4px;overflow-x:auto;">' +
+        '<button type="button" id="tabBtnTabla" class="tab-tabla-btn activo" onclick="cambiarTabPropsTabla_(\'tabla\', this)">📋 Tabla</button>' +
+        '<button type="button" id="tabBtnColFilas" class="tab-tabla-btn" onclick="cambiarTabPropsTabla_(\'colfilas\', this)">↔️ Col / Fila</button>' +
+        '<button type="button" id="tabBtnCelda" class="tab-tabla-btn" onclick="cambiarTabPropsTabla_(\'celda\', this)">🔲 Celda & Color</button>' +
+        '<button type="button" id="tabBtnExcel" class="tab-tabla-btn" onclick="cambiarTabPropsTabla_(\'excel\', this)">📥 Pegar de Excel</button>' +
+      '</div>' +
+
+      // Contenedor scroll
+      '<div style="padding:16px 20px;overflow-y:auto;flex:1;max-height:60vh;">' +
+        // PANE 1: TABLA
+        '<div id="tabPaneTabla" class="tab-tabla-pane">' +
+          '<div style="margin-bottom:16px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">📏 Ancho total de la tabla:</label>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoTablaModal(\'100%\')">100% (Ancho total)</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoTablaModal(\'80%\')">80%</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoTablaModal(\'60%\')">60%</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoTablaModal(\'auto\')">Auto (Ajustar a contenido)</button>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;align-items:center;margin-top:8px;">' +
+              '<span style="font-size:11.5px;color:#64748b;">Personalizado:</span>' +
+              '<input type="text" id="inpAnchoTablaCustom" placeholder="ej. 90% o 650px" style="width:130px;padding:4px 8px;font-size:12px;border:1px solid #cbd5e1;border-radius:4px;">' +
+              '<button type="button" class="btn-ctrl-tabla btn-ctrl-primary" onclick="aplicarAnchoTablaCustomModal()">Aplicar</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-bottom:16px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">📐 Alineación de la tabla en la página:</label>' +
+            '<div style="display:flex;gap:8px;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionTablaModal(\'left\')">⬅️ Alinear Izquierda</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionTablaModal(\'center\')">↔️ Centrar Tabla</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionTablaModal(\'right\')">➡️ Alinear Derecha</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-bottom:16px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">🎨 Estilo de bordes:</label>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarEstiloBordeTablaModal(\'estandar\')">Borde estándar</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarEstiloBordeTablaModal(\'sin-borde\')">Sin bordes (Limpio)</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarEstiloBordeTablaModal(\'cebra\')">Filas alternas (Cebra)</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-top:20px;padding-top:12px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">' +
+            '<button type="button" class="btn-ctrl-tabla" onclick="insertarNuevaTablaDesdeModal()">➕ Insertar otra tabla</button>' +
+            '<button type="button" class="btn-ctrl-tabla btn-ctrl-danger" onclick="eliminarTablaModal()">🗑️ Eliminar esta tabla</button>' +
+          '</div>' +
+        '</div>' +
+
+        // PANE 2: COLUMNAS & FILAS
+        '<div id="tabPaneColFilas" class="tab-tabla-pane" style="display:none;">' +
+          '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:14px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#0284c7;margin-bottom:6px;">↔️ Columna Activa (<span id="lblColActivaNum">1</span>):</label>' +
+            '<div style="font-size:11.5px;color:#64748b;margin-bottom:6px;">Ancho de esta columna:</div>' +
+            '<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'auto\')">Auto</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'100px\')">100px</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'150px\')">150px</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'200px\')">200px</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'25%\')">25%</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'33%\')">33%</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAnchoColumnaModal(\'50%\')">50%</button>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;align-items:center;margin-top:8px;">' +
+              '<input type="text" id="inpAnchoColCustom" placeholder="ej. 180px o 20%" style="width:130px;padding:4px 8px;font-size:12px;border:1px solid #cbd5e1;border-radius:4px;">' +
+              '<button type="button" class="btn-ctrl-tabla btn-ctrl-primary" onclick="aplicarAnchoColumnaCustomModal()">Fijar ancho</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="distribuirColumnasUniformementeModal()" title="Hace que todas las columnas tengan exactamente el mismo ancho">⚖️ Distribuir iguales</button>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;margin-top:10px;padding-top:8px;border-top:1px dashed #cbd5e1;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="agregarColumnaModal(\'izq\')">➕ Insertar Col Izq</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="agregarColumnaModal(\'der\')">➕ Insertar Col Der</button>' +
+              '<button type="button" class="btn-ctrl-tabla btn-ctrl-danger" onclick="eliminarColumnaModal()">➖ Eliminar Columna</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#0d9488;margin-bottom:6px;">↕️ Fila Activa:</label>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="agregarFilaModal(\'arriba\')">➕ Insertar Fila Arriba</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="agregarFilaModal(\'abajo\')">➕ Insertar Fila Abajo</button>' +
+              '<button type="button" class="btn-ctrl-tabla btn-ctrl-danger" onclick="eliminarFilaModal()">➖ Eliminar Fila</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="toggleEncabezadoFilaModal()" title="Alternar entre encabezado TH y fila de contenido TD">⭐ Convertir en Encabezado</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        // PANE 3: CELDA (COLOR & ALINEACIÓN)
+        '<div id="tabPaneCelda" class="tab-tabla-pane" style="display:none;">' +
+          '<div style="margin-bottom:14px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">🪣 Color de Fondo de la Celda:</label>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">' +
+              htmlChipsColor +
+            '</div>' +
+            '<div style="display:flex;gap:8px;align-items:center;margin-top:6px;">' +
+              '<span style="font-size:11.5px;color:#64748b;">Color exacto:</span>' +
+              '<input type="color" id="inpColorCeldaCustom" value="#f1f5f9" onchange="aplicarColorCeldaModal(this.value, \'celda\')" style="cursor:pointer;width:34px;height:26px;border:1px solid #cbd5e1;border-radius:4px;padding:1px;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarColorCeldaModal(document.getElementById(\'inpColorCeldaCustom\').value, \'fila\')">Pintar toda la Fila</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarColorCeldaModal(document.getElementById(\'inpColorCeldaCustom\').value, \'columna\')">Pintar toda la Columna</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-bottom:14px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">✏️ Color de Texto en Celda:</label>' +
+            '<div style="display:flex;gap:8px;align-items:center;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarColorTextoCeldaModal(\'#0f172a\')" style="color:#0f172a;font-weight:700;">Negro</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarColorTextoCeldaModal(\'#0284c7\')" style="color:#0284c7;font-weight:700;">Azul</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarColorTextoCeldaModal(\'#16a34a\')" style="color:#16a34a;font-weight:700;">Verde</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarColorTextoCeldaModal(\'#dc2626\')" style="color:#dc2626;font-weight:700;">Rojo</button>' +
+              '<input type="color" id="inpColorTextoCelda" value="#0f172a" onchange="aplicarColorTextoCeldaModal(this.value)" style="cursor:pointer;width:34px;height:26px;border:1px solid #cbd5e1;border-radius:4px;padding:1px;">' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-bottom:14px;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">📐 Alineación dentro de la Celda:</label>' +
+            '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">' +
+              '<span style="font-size:11.5px;color:#64748b;width:65px;">Horizontal:</span>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionCeldaModal(\'left\', null)">⬅️ Izquierda</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionCeldaModal(\'center\', null)">↔️ Centro</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionCeldaModal(\'right\', null)">➡️ Derecha</button>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;align-items:center;">' +
+              '<span style="font-size:11.5px;color:#64748b;width:65px;">Vertical:</span>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionCeldaModal(null, \'top\')">⬆️ Arriba</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionCeldaModal(null, \'middle\')">↕️ Al medio</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="aplicarAlineacionCeldaModal(null, \'bottom\')">⬇️ Abajo</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-top:14px;padding-top:10px;border-top:1px dashed #cbd5e1;">' +
+            '<label style="display:block;font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">🔗 Combinar / Dividir Celdas (Excel):</label>' +
+            '<div style="display:flex;gap:8px;">' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="unirCeldasModal()">🔗 Combinar con la de la derecha</button>' +
+              '<button type="button" class="btn-ctrl-tabla" onclick="separarCeldasModal()">✂️ Separar celda combinada</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        // PANE 4: IMPORTAR DE EXCEL
+        '<div id="tabPaneExcel" class="tab-tabla-pane" style="display:none;">' +
+          '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:12px;">' +
+            '<div style="font-size:12.5px;font-weight:700;color:#166534;margin-bottom:4px;">📋 Cómo insertar datos de Excel o Google Sheets:</div>' +
+            '<ol style="margin:0;padding-left:18px;font-size:11.5px;color:#15803d;line-height:1.5;">' +
+              '<li>Abre tu hoja de Excel o Google Sheets y selecciona las celdas deseadas.</li>' +
+              '<li>Presiona <strong>Ctrl + C</strong> para copiarlas.</li>' +
+              '<li>Pégalas (<strong>Ctrl + V</strong>) en el cuadro de abajo o directamente dentro del editor de la clase.</li>' +
+              '<li>Presiona el botón verde <strong>"Generar e Insertar Tabla"</strong>.</li>' +
+            '</ol>' +
+          '</div>' +
+
+          '<textarea id="txtPegarExcelModal" rows="6" placeholder="Pega aquí las celdas copiadas de Excel (Ctrl+V)..." style="width:100%;box-sizing:border-box;font-family:monospace;font-size:11.5px;padding:8px 10px;border:1.5px solid #cbd5e1;border-radius:6px;resize:vertical;"></textarea>' +
+
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">' +
+            '<label style="font-size:12px;color:#334155;display:flex;align-items:center;gap:6px;cursor:pointer;">' +
+              '<input type="checkbox" id="chkPrimeraFilaEncabezado" checked> La primera fila contiene los encabezados' +
+            '</label>' +
+            '<button type="button" class="btn-ctrl-tabla btn-ctrl-primary" onclick="importarDatosExcelModal()" style="padding:8px 16px;font-size:12.5px;background:#16a34a!important;border-color:#16a34a!important;">📥 Generar e Insertar Tabla</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      // Footer
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-top:1px solid #e2e8f0;background:#f8fafc;">' +
+        '<span style="font-size:11px;color:#94a3b8;">Tip: Los cambios se aplican al instante.</span>' +
+        '<button type="button" onclick="cerrarModalPropsTablaEditor_()" style="padding:6px 16px;border:1px solid #cbd5e1;background:#ffffff;border-radius:6px;font-size:12px;font-weight:600;color:#475569;cursor:pointer;">Listo / Cerrar</button>' +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(m);
+  return m;
+}
+
+function cambiarTabPropsTabla_(tabId, btn) {
+  var m = asegurarModalPropsTabla_();
+  m.querySelectorAll('.tab-tabla-btn').forEach(function (b) { b.classList.remove('activo'); });
+  if (btn) btn.classList.add('activo');
+  else {
+    var bId = tabId === 'tabla' ? 'tabBtnTabla' : tabId === 'colfilas' ? 'tabBtnColFilas' : tabId === 'celda' ? 'tabBtnCelda' : 'tabBtnExcel';
+    var bEl = document.getElementById(bId);
+    if (bEl) bEl.classList.add('activo');
+  }
+
+  m.querySelectorAll('.tab-tabla-pane').forEach(function (p) { p.style.display = 'none'; });
+  var target = document.getElementById(tabId === 'tabla' ? 'tabPaneTabla' : tabId === 'colfilas' ? 'tabPaneColFilas' : tabId === 'celda' ? 'tabPaneCelda' : 'tabPaneExcel');
+  if (target) target.style.display = 'block';
+}
+
+function cerrarModalPropsTablaEditor_() {
+  var m = document.getElementById('modalPropsTablaEditor');
+  if (m) m.style.display = 'none';
+}
+
+function abrirMenuPropiedadesTablaEditor(btn, tabInicial) {
+  var wrap = btn && btn.closest ? btn.closest('.editor-enriquecido-wrap') : null;
+  var editor = wrap ? wrap.querySelector('.campo-editor-rich') : (document.querySelector('.campo-editor-rich') || null);
+  _editorActivoTabla_ = editor;
+
+  var sel = window.getSelection();
+  var nodo = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode) : null;
+  var td = (nodo && nodo.closest ? nodo.closest('td, th') : null) || window._ultimaCeldaSeleccionada_;
+  var tabla = td ? td.closest('table') : (window._ultimaTablaSeleccionada_ || (editor ? editor.querySelector('table') : null));
+
+  _tablaEditandoProps_ = tabla;
+  _celdaEditandoProps_ = td || (tabla ? tabla.querySelector('td, th') : null);
+
+  var m = asegurarModalPropsTabla_();
+  m.style.display = 'flex';
+
+  var sub = document.getElementById('txtSubtituloPropsTabla');
+  var colNum = document.getElementById('lblColActivaNum');
+  if (_tablaEditandoProps_) {
+    var cIdx = _celdaEditandoProps_ ? (_celdaEditandoProps_.cellIndex + 1) : 1;
+    if (colNum) colNum.textContent = String(cIdx);
+    if (sub) sub.textContent = 'Editando tabla (' + (_tablaEditandoProps_.querySelectorAll('tr').length) + ' filas) · Columna activa: ' + cIdx;
+    cambiarTabPropsTabla_(tabInicial || 'tabla');
+  } else {
+    if (sub) sub.textContent = 'No hay tabla seleccionada. Crea una nueva o pega datos de Excel:';
+    cambiarTabPropsTabla_(tabInicial || 'excel');
+  }
+}
+
+function aplicarAnchoTablaModal(ancho) {
+  if (!_tablaEditandoProps_) return;
+  _tablaEditandoProps_.style.width = ancho;
+  _tablaEditandoProps_.setAttribute('data-ancho-custom', ancho);
+  if (ancho === '100%') {
+    _tablaEditandoProps_.style.marginLeft = '0';
+    _tablaEditandoProps_.style.marginRight = '0';
+  } else {
+    _tablaEditandoProps_.style.marginLeft = 'auto';
+    _tablaEditandoProps_.style.marginRight = 'auto';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Ancho de tabla: ' + ancho, 'info');
+}
+
+function aplicarAnchoTablaCustomModal() {
+  var inp = document.getElementById('inpAnchoTablaCustom');
+  var val = inp ? inp.value.trim() : '';
+  if (!val) return;
+  if (!/(%|px|em|rem)$/i.test(val) && !isNaN(Number(val))) val += 'px';
+  aplicarAnchoTablaModal(val);
+}
+
+function aplicarAlineacionTablaModal(lado) {
+  if (!_tablaEditandoProps_) return;
+  if (lado === 'left') {
+    _tablaEditandoProps_.style.marginLeft = '0';
+    _tablaEditandoProps_.style.marginRight = 'auto';
+  } else if (lado === 'right') {
+    _tablaEditandoProps_.style.marginLeft = 'auto';
+    _tablaEditandoProps_.style.marginRight = '0';
+  } else {
+    _tablaEditandoProps_.style.marginLeft = 'auto';
+    _tablaEditandoProps_.style.marginRight = 'auto';
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Tabla alineada', 'info');
+}
+
+function aplicarEstiloBordeTablaModal(estilo) {
+  if (!_tablaEditandoProps_) return;
+  _tablaEditandoProps_.style.borderCollapse = 'collapse';
+  var celdas = _tablaEditandoProps_.querySelectorAll('td, th');
+  if (estilo === 'sin-borde') {
+    _tablaEditandoProps_.style.border = 'none';
+    celdas.forEach(function (c) { c.style.border = '1px dashed #e2e8f0'; });
+  } else if (estilo === 'cebra') {
+    _tablaEditandoProps_.style.border = '1.5px solid #cbd5e1';
+    celdas.forEach(function (c) { c.style.border = '1px solid #cbd5e1'; });
+    var filas = _tablaEditandoProps_.querySelectorAll('tbody tr');
+    filas.forEach(function (tr, i) {
+      if (i % 2 === 1) tr.style.backgroundColor = '#f8fafc';
+      else tr.style.backgroundColor = '#ffffff';
+    });
+  } else {
+    _tablaEditandoProps_.style.border = '1.5px solid #cbd5e1';
+    celdas.forEach(function (c) { c.style.border = '1px solid #cbd5e1'; });
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Estilo de tabla aplicado', 'info');
+}
+
+function eliminarTablaModal() {
+  if (!_tablaEditandoProps_) return;
+  _tablaEditandoProps_.remove();
+  _tablaEditandoProps_ = null;
+  _celdaEditandoProps_ = null;
+  cerrarModalPropsTablaEditor_();
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Tabla eliminada', 'info');
+}
+
+function insertarNuevaTablaDesdeModal() {
+  if (!_editorActivoTabla_) _editorActivoTabla_ = document.querySelector('.campo-editor-rich');
+  if (!_editorActivoTabla_) return;
+  cerrarModalPropsTablaEditor_();
+  if (typeof insertarTablaEditor === 'function') insertarTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } });
+}
+
+function aplicarAnchoColumnaModal(ancho) {
+  if (!_tablaEditandoProps_ || !_celdaEditandoProps_) return;
+  var colIdx = _celdaEditandoProps_.cellIndex;
+  _tablaEditandoProps_.style.tableLayout = 'fixed';
+  _tablaEditandoProps_.querySelectorAll('tr').forEach(function (tr) {
+    if (tr.children[colIdx]) {
+      tr.children[colIdx].style.width = ancho;
+      if (ancho !== 'auto') tr.children[colIdx].style.minWidth = ancho;
+      else tr.children[colIdx].style.minWidth = '';
+    }
+  });
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Ancho de columna: ' + ancho, 'info');
+}
+
+function aplicarAnchoColumnaCustomModal() {
+  var inp = document.getElementById('inpAnchoColCustom');
+  var val = inp ? inp.value.trim() : '';
+  if (!val) return;
+  if (!/(%|px|em|rem)$/i.test(val) && !isNaN(Number(val))) val += 'px';
+  aplicarAnchoColumnaModal(val);
+}
+
+function distribuirColumnasUniformementeModal() {
+  if (!_tablaEditandoProps_) return;
+  var primeraFila = _tablaEditandoProps_.querySelector('tr');
+  if (!primeraFila || !primeraFila.children.length) return;
+  var nCols = primeraFila.children.length;
+  var pct = (100 / nCols).toFixed(2) + '%';
+  _tablaEditandoProps_.style.tableLayout = 'fixed';
+  _tablaEditandoProps_.querySelectorAll('tr').forEach(function (tr) {
+    for (var i = 0; i < tr.children.length; i++) {
+      tr.children[i].style.width = pct;
+      tr.children[i].style.minWidth = pct;
+    }
+  });
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Columnas distribuidas uniformemente (' + pct + ')', 'info');
+}
+
+function agregarColumnaModal(lado) {
+  if (!_tablaEditandoProps_) return;
+  modificarTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } }, lado === 'izq' ? 'colIzquierda' : 'agregarColumna');
+  if (typeof toast === 'function') toast('Columna añadida', 'info');
+}
+
+function eliminarColumnaModal() {
+  if (!_tablaEditandoProps_) return;
+  modificarTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } }, 'eliminarColumna');
+  if (typeof toast === 'function') toast('Columna eliminada', 'info');
+}
+
+function agregarFilaModal(pos) {
+  if (!_tablaEditandoProps_) return;
+  modificarTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } }, pos === 'arriba' ? 'filaArriba' : 'agregarFila');
+  if (typeof toast === 'function') toast('Fila añadida', 'info');
+}
+
+function eliminarFilaModal() {
+  if (!_tablaEditandoProps_) return;
+  modificarTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } }, 'eliminarFila');
+  if (typeof toast === 'function') toast('Fila eliminada', 'info');
+}
+
+function toggleEncabezadoFilaModal() {
+  if (!_tablaEditandoProps_ || !_celdaEditandoProps_) return;
+  var tr = _celdaEditandoProps_.closest('tr');
+  if (!tr) return;
+  var esTh = tr.children[0] && tr.children[0].tagName.toUpperCase() === 'TH';
+  var nuevaFila = document.createElement('tr');
+  for (var i = 0; i < tr.children.length; i++) {
+    var c = tr.children[i];
+    var nuevaCelda = document.createElement(esTh ? 'td' : 'th');
+    nuevaCelda.innerHTML = c.innerHTML;
+    nuevaCelda.style.cssText = c.style.cssText;
+    if (!esTh) {
+      nuevaCelda.style.background = '#f1f5f9';
+      nuevaCelda.style.fontWeight = '700';
+    } else {
+      nuevaCelda.style.fontWeight = 'normal';
+      if (nuevaCelda.style.background === '#f1f5f9' || nuevaCelda.style.background === 'rgb(241, 245, 249)') nuevaCelda.style.background = '';
+    }
+    nuevaFila.appendChild(nuevaCelda);
+  }
+  tr.parentNode.replaceChild(nuevaFila, tr);
+  _celdaEditandoProps_ = nuevaFila.children[0];
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast(esTh ? 'Convertido en fila normal' : 'Convertido en encabezado de tabla', 'info');
+}
+
+function aplicarColorCeldaModal(color, destino) {
+  if (!_celdaEditandoProps_ && _tablaEditandoProps_) _celdaEditandoProps_ = _tablaEditandoProps_.querySelector('td, th');
+  if (!_celdaEditandoProps_) return;
+
+  if (destino === 'fila') {
+    var tr = _celdaEditandoProps_.closest('tr');
+    if (tr) {
+      tr.querySelectorAll('td, th').forEach(function (c) {
+        c.style.backgroundColor = color === 'transparent' ? '' : color;
+      });
+    }
+  } else if (destino === 'columna') {
+    if (_tablaEditandoProps_) {
+      var colIdx = _celdaEditandoProps_.cellIndex;
+      _tablaEditandoProps_.querySelectorAll('tr').forEach(function (row) {
+        if (row.children[colIdx]) {
+          row.children[colIdx].style.backgroundColor = color === 'transparent' ? '' : color;
+        }
+      });
+    }
+  } else {
+    _celdaEditandoProps_.style.backgroundColor = color === 'transparent' ? '' : color;
+  }
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Color de celda aplicado', 'info');
+}
+
+function aplicarColorTextoCeldaModal(color) {
+  if (!_celdaEditandoProps_ && _tablaEditandoProps_) _celdaEditandoProps_ = _tablaEditandoProps_.querySelector('td, th');
+  if (!_celdaEditandoProps_) return;
+  _celdaEditandoProps_.style.color = color;
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('Color de texto aplicado', 'info');
+}
+
+function aplicarAlineacionCeldaModal(h, v) {
+  if (!_celdaEditandoProps_ && _tablaEditandoProps_) _celdaEditandoProps_ = _tablaEditandoProps_.querySelector('td, th');
+  if (!_celdaEditandoProps_) return;
+  if (h) _celdaEditandoProps_.style.textAlign = h;
+  if (v) _celdaEditandoProps_.style.verticalAlign = v;
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+}
+
+function unirCeldasModal() {
+  if (typeof unirCeldasTablaEditor === 'function') unirCeldasTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } });
+}
+
+function separarCeldasModal() {
+  if (typeof separarCeldasTablaEditor === 'function') separarCeldasTablaEditor({ closest: function () { return { querySelector: function () { return _editorActivoTabla_; } }; } });
+}
+
+function importarDatosExcelModal() {
+  var txt = document.getElementById('txtPegarExcelModal');
+  var chk = document.getElementById('chkPrimeraFilaEncabezado');
+  var datos = txt ? txt.value : '';
+  if (!datos || !datos.trim()) {
+    alert('Por favor pega primero las celdas copiadas de Excel en el cuadro de texto.');
+    return;
+  }
+  var htmlTabla = parsearExcelPegado(datos, chk ? chk.checked : true);
+  if (!htmlTabla) {
+    alert('No se detectaron filas o columnas válidas en el texto pegado.');
+    return;
+  }
+  if (!_editorActivoTabla_) _editorActivoTabla_ = document.querySelector('.campo-editor-rich');
+  if (!_editorActivoTabla_) return;
+
+  if (_editorActivoTabla_.focus) _editorActivoTabla_.focus();
+  try {
+    document.execCommand('insertHTML', false, htmlTabla);
+  } catch (e) {
+    _editorActivoTabla_.insertAdjacentHTML('beforeend', htmlTabla);
+  }
+  cerrarModalPropsTablaEditor_();
+  if (txt) txt.value = '';
+  if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  if (typeof toast === 'function') toast('📋 ¡Tabla generada desde Excel con éxito!', 'exito');
+}
+
 var _imagenActivaST90_ = null;
 
 function mostrarToolbarImagenFlotante_(img) {
@@ -7635,7 +8203,8 @@ function mostrarToolbarImagenFlotante_(img) {
       '<button type="button" class="btn-img-tb" onclick="recortarImagenDirecta_(\'1-1\')" title="Cuadrada 1:1">1:1</button>' +
       '<button type="button" class="btn-img-tb" onclick="recortarImagenDirecta_(\'circle\')" title="Circular">🔘</button>' +
       '<button type="button" class="btn-img-tb" onclick="recortarAjustarCelda_()" title="Ajustar como miniatura a la celda">📐 Celda</button>' +
-      '<button type="button" class="btn-img-tb btn-img-del" onclick="eliminarImagenDirecta_()" title="Eliminar imagen">🗑️</button>';
+      '<button type="button" class="btn-img-tb btn-img-del" onclick="eliminarImagenDirecta_()" title="Eliminar imagen">🗑️</button>' +
+      '<button type="button" class="btn-img-tb btn-img-close" onclick="ocultarToolbarImagenFlotante_()" title="Cerrar panel" style="background:#ef4444!important;color:#fff!important;border-color:#ef4444!important;font-weight:700;margin-left:4px;padding:2px 7px;">✕</button>';
     document.body.appendChild(tb);
   }
   var rect = img.getBoundingClientRect();
@@ -7796,12 +8365,97 @@ function iniciarRedimensionColumnasExcel_() {
 window.cambiarColorFondoCeldaEditor = cambiarColorFondoCeldaEditor;
 window.cambiarAnchoTablaEditor = cambiarAnchoTablaEditor;
 window.mostrarToolbarImagenFlotante_ = mostrarToolbarImagenFlotante_;
+
+  window.abrirMenuPropiedadesTablaEditor = abrirMenuPropiedadesTablaEditor;
+  window.cerrarModalPropsTablaEditor_ = cerrarModalPropsTablaEditor_;
+  window.cambiarTabPropsTabla_ = cambiarTabPropsTabla_;
+  window.aplicarAnchoTablaModal = aplicarAnchoTablaModal;
+  window.aplicarAnchoTablaCustomModal = aplicarAnchoTablaCustomModal;
+  window.aplicarAlineacionTablaModal = aplicarAlineacionTablaModal;
+  window.aplicarEstiloBordeTablaModal = aplicarEstiloBordeTablaModal;
+  window.eliminarTablaModal = eliminarTablaModal;
+  window.insertarNuevaTablaDesdeModal = insertarNuevaTablaDesdeModal;
+  window.aplicarAnchoColumnaModal = aplicarAnchoColumnaModal;
+  window.aplicarAnchoColumnaCustomModal = aplicarAnchoColumnaCustomModal;
+  window.distribuirColumnasUniformementeModal = distribuirColumnasUniformementeModal;
+  window.agregarColumnaModal = agregarColumnaModal;
+  window.eliminarColumnaModal = eliminarColumnaModal;
+  window.agregarFilaModal = agregarFilaModal;
+  window.eliminarFilaModal = eliminarFilaModal;
+  window.toggleEncabezadoFilaModal = toggleEncabezadoFilaModal;
+  window.aplicarColorCeldaModal = aplicarColorCeldaModal;
+  window.aplicarColorTextoCeldaModal = aplicarColorTextoCeldaModal;
+  window.aplicarAlineacionCeldaModal = aplicarAlineacionCeldaModal;
+  window.unirCeldasModal = unirCeldasModal;
+  window.separarCeldasModal = separarCeldasModal;
+  window.importarDatosExcelModal = importarDatosExcelModal;
+  window.parsearExcelPegado = parsearExcelPegado;
+
 window.ocultarToolbarImagenFlotante_ = ocultarToolbarImagenFlotante_;
 window.ajustarImagenDirecta_ = ajustarImagenDirecta_;
 window.alinearImagenDirecta_ = alinearImagenDirecta_;
 window.recortarAjustarCelda_ = recortarAjustarCelda_;
 window.eliminarImagenDirecta_ = eliminarImagenDirecta_;
 window.iniciarRedimensionColumnasExcel_ = iniciarRedimensionColumnasExcel_;
+
+  // Seguimiento robusto de celda y tabla activa para el Menú Unificado
+  function registrarCeldaActivaST90_(e) {
+    var cell = e.target && e.target.closest ? e.target.closest('td, th') : null;
+    if (cell && cell.closest('.campo-editor-rich, .tabla-notion, .excel-split-table, .editor-tabla-estilo')) {
+      window._ultimaCeldaSeleccionada_ = cell;
+      window._ultimaTablaSeleccionada_ = cell.closest('table');
+    }
+  }
+  document.addEventListener('click', registrarCeldaActivaST90_, true);
+  document.addEventListener('focusin', registrarCeldaActivaST90_, true);
+
+  // Escuchar pegado de Excel directo en cualquier campo-editor-rich
+  document.addEventListener('paste', function (ev) {
+    var editor = ev.target && ev.target.closest ? ev.target.closest('.campo-editor-rich') : null;
+    if (!editor) return;
+
+    var cd = ev.clipboardData || window.clipboardData;
+    if (!cd) return;
+
+    var texto = cd.getData('text/plain') || '';
+    if (texto && texto.indexOf('\t') !== -1 && (texto.indexOf('\n') !== -1 || texto.indexOf('\r') !== -1)) {
+      ev.preventDefault();
+      var htmlTbl = parsearExcelPegado(texto, true);
+      if (htmlTbl) {
+        if (editor.focus) editor.focus();
+        try {
+          document.execCommand('insertHTML', false, htmlTbl);
+        } catch (e) {
+          editor.insertAdjacentHTML('beforeend', htmlTbl);
+        }
+        if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+        if (typeof toast === 'function') toast('📋 ¡Tabla copiada de Excel insertada correctamente!', 'exito');
+        return;
+      }
+    }
+  }, true);
+
+  // Cerrar toolbar de imagen y modal de tabla al hacer clic fuera o con Escape
+  document.addEventListener('mousedown', function (e) {
+    var tb = document.getElementById('toolbarImagenFlotante');
+    if (tb && tb.style.display !== 'none') {
+      if (!tb.contains(e.target) && e.target !== _imagenActivaST90_) {
+        ocultarToolbarImagenFlotante_();
+      }
+    }
+    var mTabla = document.getElementById('modalPropsTablaEditor');
+    if (mTabla && mTabla.style.display === 'flex' && e.target === mTabla) {
+      cerrarModalPropsTablaEditor_();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      ocultarToolbarImagenFlotante_();
+      cerrarModalPropsTablaEditor_();
+    }
+  });
+
 window.cambiarFuenteEditor = cambiarFuenteEditor;
 window.cambiarAnchoColumnaDirecto = cambiarAnchoColumnaDirecto;
 window.unirCeldasTablaEditor = unirCeldasTablaEditor;
@@ -11864,11 +12518,15 @@ if (document.readyState === 'loading') {
   window.htmlControlesDivi_ = htmlControlesDivi_;
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', instalarConstructorDivi603_);
+    document.addEventListener('DOMContentLoaded', function () {
+      instalarConstructorDivi603_();
+      iniciarRedimensionColumnasExcel_();
+    });
   } else {
     instalarConstructorDivi603_();
     iniciarRedimensionColumnasExcel_();
   }
+  try { iniciarRedimensionColumnasExcel_(); } catch (eInit) {}
 })();
 /* BUILD-608-CONSOLIDACION-FIN */
 

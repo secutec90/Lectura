@@ -2,6 +2,25 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Menú Unificado de Propiedades de Tabla, Importación desde Excel (Pegado directo Ctrl+V), Botón de Cierre en Barra de Imagen y Arrastre de Columnas en build-628]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): menu unificado de tabla, importacion de excel, cierre de barra de imagen y redimension (build-628)`
+- **Cambios Realizados:**
+  - **1. Menú Unificado de Propiedades de Tabla (`AyudaJS.html`, `AdminPlaneacionCSS.html`):**
+    - Se reemplazaron los 10 botones dispersos de tabla de la barra del editor por un único botón intuitivo y prominente **`📊 Tabla`** (`abrirMenuPropiedadesTablaEditor`).
+    - Modal integral con 4 pestañas especializadas:
+      - **📋 Tabla:** Ancho total (`100%`, `80%`, `60%`, `Auto`, personalizado), alineación (`⬅️`, `↔️`, `➡️`), estilos de borde (estándar, sin borde, cebra) y eliminación.
+      - **↔️ Columnas & Filas:** Ancho exacto de columna activa con botones rápidos (`Auto`, `100px`, `150px`, `200px`, `25%`, `33%`, `50%`, entrada libre), distribución uniforme de columnas (`⚖️`), agregar/eliminar columnas y filas, y conversión a encabezado `TH`.
+      - **🔲 Celda & Color:** Paleta visual con 13 muestras de color preseleccionadas (Blanco, Gris suave, Menta, Turquesa, Celeste, Rosa, Melocotón, etc.), selector libre `<input type="color">`, pintar fila o columna completa, color de texto, alineación H/V y combinación de celdas (`🔗`/`✂️`).
+      - **📥 Pegar de Excel:** Área de texto asistida para convertir cualquier bloque copiado de Excel / Google Sheets en una tabla HTML bien estructurada al presionar "Generar e Insertar Tabla".
+  - **2. Inserción Directa desde Excel vía Ctrl+V (`AyudaJS.html`):**
+    - Interceptor global de pegado en `.campo-editor-rich`: detecta datos tabulados (`\t` y `\n`) provenientes del portapapeles de Excel o Google Sheets y los transforma automáticamente en una tabla estilizada `.editor-tabla-estilo`.
+  - **3. Cierre y Desvanecimiento de Barra Flotante de Imagen (`AyudaJS.html`, `AdminPlaneacionCSS.html`):**
+    - Se incorporó un botón rojo **`✕`** en la esquina derecha de la barra flotante de imagen para cerrarla al instante.
+    - Se agregaron escuchadores para ocultar la barra al hacer clic en cualquier parte fuera de ella o al presionar la tecla `Escape`.
+  - **4. Activación Garantizada de Redimensión Arrastrable (`AyudaJS.html`):**
+    - Se aseguró la ejecución inmediata y en `DOMContentLoaded` de `iniciarRedimensionColumnasExcel_()` con zona sensible de 10px y cursor `col-resize`.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlaneacionCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Barra de Controles de Tamaño, Recorte (16:9, 4:3, 1:1, Círculo) y Alineación en Galería y Editor en build-627]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): barra de controles de tamano, recorte y alineacion para imagenes de galeria y editor (build-627)`
 - **Cambios Realizados:**

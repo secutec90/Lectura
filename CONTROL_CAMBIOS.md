@@ -2,6 +2,25 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🛠️ [2026-11-10] - [Ola 21: Solución a Inserción de Módulo Texto DUA y Corrección de Visibilidad de Toolbars Flotantes en build-622]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): soluciona insercion de modulo de texto y visibilidad de toolbar flotante sin recorte (build-622)`
+- **Cambios Realizados:**
+  - **1. Habilitación Directa de Módulos de Texto en `META_TARJETA_EXE_` (`AyudaJS.html`):**
+    - Se identificó la causa de "el de texto no inserta nada": `insertarBloqueExe_` mapeaba `texto_dua` a `lectura`, intentando delegar en `_insertariDeviceOriginal_`, el cual llamaba a `insertariDeviceSesion_` en `AdminPlanJS_06.html` / `ClaseJS_08.html`. Al contener este último una redirección a `window.insertarModuloEnColumnaActiva_`, se producía un bucle recursivo infinito (call stack overflow) que impedía la creación del bloque.
+    - Se añadieron `texto_dua`, `texto`, `lectura`, `pregunta` y `reto` directamente al diccionario canónico `META_TARJETA_EXE_`, permitiendo que `crearTarjetaCurricular_` genere el módulo enriquecido con síntesis DUA nativa y editor sin caer en recursión.
+    - Se incorporó protección reentrante (`window._insertandoModuloActivo_`) en `AdminPlanJS_06.html` y `ClaseJS_08.html`.
+  - **2. Corrección de Visibilidad del Panel Negro / Toolbar Flotante (`AdminPlaneacionCSS.html`, `ClaseCSS.html`, `AyudaJS.html`):**
+    - Se identificó la causa del panel negro cortado por la mitad ("se oculta el panel negro"): `.idevice-card` tenía `overflow: hidden;` y `.divi-column .idevice-card` tenía `overflow-x: auto;`, cortando cualquier elemento posicionado en `top: -14px;` por encima del borde superior de la tarjeta.
+    - Se forzó `overflow: visible !important;` en `.divi-section, .divi-row, .divi-column, .divi-module, .idevice-card`.
+    - Se añadió `margin-top: 16px !important;` en tarjetas dentro de columnas Divi para otorgar espacio superior y evitar colisiones visuales con los bordes de la columna.
+    - Se ocultó el botón redundante de texto `[ Quitar ]` en `.idevice-card` dentro de columnas Divi para eliminar superposiciones con la toolbar flotante (la cual ya cuenta con su botón `🗑️` dedicado).
+    - Se actualizó `promoverToolbars610_` para promover también al elemento raíz cuando se le pasa directamente como parámetro.
+  - **Despliegue y Validación:**
+    - Verificación AST con `node herramientas/manifiesto.js` confirmando 79 documentos y 0 errores.
+    - Actualización a versión `v448 build-622`.
+    - Despliegue con `@google/clasp deploy` a los 6 endpoints activos de producción.
+- **Archivos Afectados:** `00_Constantes.gs`, `AyudaJS.html`, `AdminPlanJS_06.html`, `ClaseJS_08.html`, `AdminPlaneacionCSS.html`, `ClaseCSS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Aplicación Directa de Ancho y Márgenes a .divi-section, Respaldo de Event Listeners y Adopción en Secciones Nuevas en build-620]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): aplica ancho y margen directamente a cada seccion divi con listeners dedicados (build-620)`
 - **Cambios Realizados:**

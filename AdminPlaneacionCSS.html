@@ -8869,4 +8869,51 @@
        background-color: #0f766e !important;
        transform: scale(1.08) !important;
      }
+
+  /* Corrección visibilidad integral de toolbars flotantes e idevices (build-622) */
+  .divi-section,
+  .divi-row,
+  .divi-column,
+  .divi-module,
+  .idevice-card {
+    overflow: visible !important;
+  }
+  .divi-column .idevice-card,
+  .idevice-card.divi-module {
+    margin-top: 16px !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+  }
+  .divi-section > .toolbar-flotante {
+    top: -14px !important;
+    left: 10px !important;
+    right: auto !important;
+    background: rgba(2, 132, 199, 0.92) !important;
+    z-index: 45 !important;
+  }
+  .divi-row > .toolbar-flotante {
+    top: -14px !important;
+    right: 10px !important;
+    left: auto !important;
+    background: rgba(16, 185, 129, 0.92) !important;
+    z-index: 50 !important;
+  }
+  .idevice-card > .toolbar-flotante {
+    top: -14px !important;
+    right: 10px !important;
+    left: auto !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    z-index: 55 !important;
+  }
+  .divi-section:hover > .toolbar-flotante,
+  .divi-row:hover > .toolbar-flotante,
+  .idevice-card:hover > .toolbar-flotante,
+  .idevice-card:focus-within > .toolbar-flotante,
+  .idevice-card.active-target > .toolbar-flotante {
+    display: flex !important;
+  }
+  .divi-module .idevice-header .idevice-btn,
+  .divi-column .idevice-card .idevice-header .idevice-btn {
+    display: none !important;
+  }
 </style>

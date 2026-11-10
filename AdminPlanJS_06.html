@@ -437,8 +437,14 @@
     }
 
     function insertariDeviceSesion_(tipo) {
+      if (window._insertandoModuloActivo_) return;
       if (typeof window.insertarModuloEnColumnaActiva_ === 'function') {
-        return window.insertarModuloEnColumnaActiva_(tipo);
+        window._insertandoModuloActivo_ = true;
+        try {
+          return window.insertarModuloEnColumnaActiva_(tipo);
+        } finally {
+          window._insertandoModuloActivo_ = false;
+        }
       }
       if (typeof window.insertariDeviceSesion_ === 'function' && window.insertariDeviceSesion_._st90Exe) {
         return window.insertariDeviceSesion_(tipo);

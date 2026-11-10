@@ -5131,6 +5131,11 @@ window.iniciarTemporizadorQuiz_ = iniciarTemporizadorQuiz_;
 
 /* BUILD-578-CURSOR-INICIO — árbol de páginas, acordeón e Contenidos de inglés y ofimática */
 var META_TARJETA_EXE_ = {
+  texto_dua: { badge: 'badge-info', etiqueta: 'LECTURA', titulo: 'Lectura DUA / Texto', cuerpo: 'Escribe el texto o consigna pedagógica que los estudiantes leerán en la sesión...' },
+  texto: { badge: 'badge-info', etiqueta: 'LECTURA', titulo: 'Texto', cuerpo: 'Escribe el texto de la sesión...' },
+  lectura: { badge: 'badge-info', etiqueta: 'LECTURA', titulo: 'Lectura DUA', cuerpo: 'Escribe el texto o consigna que los alumnos leerán y escucharán...' },
+  pregunta: { badge: 'badge-eval', etiqueta: 'PREGUNTA', titulo: 'Pregunta Formativa', cuerpo: 'Escribe la pregunta detonadora y la retroalimentación formativa...' },
+  reto: { badge: 'badge-juego', etiqueta: 'DESAFÍO', titulo: 'Desafío Práctico', cuerpo: 'Describe las instrucciones del reto o producto esperado...' },
   objetivos: { badge: 'badge-info', etiqueta: 'INFORMACIÓN', titulo: 'Objetivos de Aprendizaje', cuerpo: 'Describe lo que lograrán los estudiantes al concluir la sesión.' },
   galeria: { badge: 'badge-info', etiqueta: 'INFORMACIÓN', titulo: 'Galería de Imágenes', cuerpo: 'Describe las imágenes y su texto alternativo.' },
   fichero: { badge: 'badge-info', etiqueta: 'INFORMACIÓN', titulo: 'Archivo o Fichero Adjunto', cuerpo: 'Pega el enlace del PDF o de la ficha de trabajo.' },
@@ -7617,15 +7622,19 @@ function rellenarTarjetaExe_(card, datos) {
 function insertarBloqueExe_(tipo, datos, paginaId) {
   var t = String(tipo || '').toLowerCase();
   var base = ALIAS_IDEVICE_EXE_[t] || t;
-  var antes = document.querySelectorAll('#contenedorIDevicesDinamicos .idevice-card').length;
-  if (BASE_IDEVICE_EXE_[base] && typeof window._insertariDeviceOriginal_ === 'function') {
-    window._insertariDeviceOriginal_(base);
-  }
   var card = null;
-  if (document.querySelectorAll('#contenedorIDevicesDinamicos .idevice-card').length > antes) {
-    card = ultimaTarjetaExe_();
-  } else if (META_TARJETA_EXE_[t]) {
+  if (META_TARJETA_EXE_[t]) {
     card = crearTarjetaCurricular_(t, datos);
+  } else if (META_TARJETA_EXE_[base]) {
+    card = crearTarjetaCurricular_(base, datos);
+  } else {
+    var antes = document.querySelectorAll('#contenedorIDevicesDinamicos .idevice-card').length;
+    if (BASE_IDEVICE_EXE_[base] && typeof window._insertariDeviceOriginal_ === 'function') {
+      window._insertariDeviceOriginal_(base);
+    }
+    if (document.querySelectorAll('#contenedorIDevicesDinamicos .idevice-card').length > antes) {
+      card = ultimaTarjetaExe_();
+    }
   }
   if (!card) return null;
   card.setAttribute('data-pagina-id', String(paginaId != null ? paginaId : idPaginaActivaExe_()));
@@ -11412,8 +11421,13 @@ if (document.readyState === 'loading') {
 
   function promoverToolbars610_(raiz) {
     var base = raiz || contLienzo_() || document;
-    if (!base || !base.querySelectorAll) return;
-    base.querySelectorAll('.divi-section, .divi-row, .idevice-card').forEach(function (nodo) {
+    if (!base) return;
+    var lista = [];
+    if (base.matches && base.matches('.divi-section, .divi-row, .idevice-card')) lista.push(base);
+    if (base.querySelectorAll) {
+      base.querySelectorAll('.divi-section, .divi-row, .idevice-card').forEach(function (n) { lista.push(n); });
+    }
+    lista.forEach(function (nodo) {
       if (nodo.querySelector(':scope > .toolbar-flotante')) {
         nodo.querySelectorAll('.idevice-header .divi-ctrl-bar, .divi-section-header .divi-ctrl-bar, .divi-row-header .divi-ctrl-bar').forEach(function (vieja) {
           if (!vieja.classList.contains('toolbar-flotante') && vieja.parentNode) vieja.parentNode.removeChild(vieja);
@@ -11698,11 +11712,18 @@ if (document.readyState === 'loading') {
       var datos = null;
       if (tipo === 'boton_cta') datos = { tipo: 'boton_cta', extra: { texto: 'Haz clic aquí', link: 'https://' } };
       var card = insertarBloqueExe_(tipo, datos, typeof idPaginaActivaExe_ === 'function' ? idPaginaActivaExe_() : 0);
-      if (card && col && card.parentNode !== col && typeof colocarModuloEnColumnaActiva_ === 'function') {
-        window._columnaObjetivoActiva_ = col;
-        colocarModuloEnColumnaActiva_(card);
+      if (card) {
+        card.classList.add('divi-module');
+        if (col && card.parentNode !== col && typeof colocarModuloEnColumnaActiva_ === 'function') {
+          window._columnaObjetivoActiva_ = col;
+          colocarModuloEnColumnaActiva_(card);
+        }
+        promoverToolbars610_(col || card);
+        var inputTit = card.querySelector('[data-campo="titulo"]');
+        if (inputTit) {
+          try { inputTit.focus(); } catch (e) {}
+        }
       }
-      promoverToolbars610_(card || col);
     } else if (typeof window.insertariDeviceSesion_ === 'function') {
       window.insertariDeviceSesion_(tipo);
     }

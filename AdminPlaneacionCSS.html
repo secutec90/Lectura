@@ -9072,6 +9072,40 @@
     font-size: 10px;
     pointer-events: none;
   }
+
+  /* --- AJUSTES DE CABECERAS GLOBALES Y MÓDULOS LIMPIOS (BUILD-634) --- */
+  .idevice-card-title {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    column-gap: 6px;
+  }
+  .content-card.tarjeta-sin-cabecera {
+    padding-top: 12px !important;
+  }
+  .content-card.tarjeta-sin-cabecera > div:first-child {
+    margin-top: 0 !important;
+  }
+  .idevice-card[data-ocultar-cabecera="1"] > .idevice-header {
+    opacity: 0.65;
+    background: #f1f5f9;
+    border-bottom: 1px dashed #cbd5e1;
+    padding: 6px 14px;
+  }
+  .idevice-card[data-ocultar-cabecera="1"] > .idevice-header:hover {
+    opacity: 1;
+    background: #f8fafc;
+  }
+  .idevice-card[data-ocultar-cabecera="1"] > .idevice-header .idevice-tag::after {
+    content: " (Oculta)";
+    font-size: 10px;
+    font-style: italic;
+    color: #94a3b8;
+    font-weight: 400;
+  }
+  .btn-toggle-cabeceras:hover {
+    background: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+  }
   .badge[contenteditable="true"]:hover {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
   }

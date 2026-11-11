@@ -2126,10 +2126,10 @@ function tarjetaPreviewBloque_(card) {
   var tit = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
   var cue = card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo');
 
-  var fuenteCard = card.getAttribute('data-fuente') || (card.style && card.style.fontFamily) || '';
-  var tamanoCuerpo = card.getAttribute('data-tamano-fuente') || (card.style && card.style.fontSize) || '';
-  var tamanoTitulo = card.getAttribute('data-tamano-titulo') || '';
-  var ocultarCabecera = card.getAttribute('data-ocultar-cabecera') === '1';
+  var fuenteCard = card.getAttribute('data-fuente') || (card.style && card.style.fontFamily) || window._fuenteGlobalModulos_ || '';
+  var tamanoCuerpo = card.getAttribute('data-tamano-fuente') || (card.style && card.style.fontSize) || window._tamanoGlobalCue_ || '';
+  var tamanoTitulo = card.getAttribute('data-tamano-titulo') || window._tamanoGlobalTit_ || '';
+  var ocultarCabecera = card.getAttribute('data-ocultar-cabecera') === '1' || window._ocultarCabecerasGlobal_ === true;
 
   var tieneTitAttr = card.hasAttribute('data-titulo');
   var titAttrVal = tieneTitAttr ? card.getAttribute('data-titulo') : null;
@@ -2140,6 +2140,11 @@ function tarjetaPreviewBloque_(card) {
   var tituloTexto = '';
   if (card.getAttribute('data-titulo-personalizado') === '1' || tieneTitAttr) {
     tituloTexto = (titAttrVal !== null) ? titAttrVal : (titInputVal !== null ? titInputVal : tagElTxt);
+  } else if (tipo === 'galeria' || tipo === 'Imagen') {
+    // Para imágenes/galerías: nacer limpias por defecto si no han sido personalizadas
+    tituloTexto = '';
+  } else if (window._ocultarCabecerasGlobal_ === true) {
+    tituloTexto = '';
   } else if (titInputVal !== null && titInputVal !== '') {
     tituloTexto = titInputVal;
   } else if (tagElTxt !== '') {
@@ -2153,13 +2158,19 @@ function tarjetaPreviewBloque_(card) {
   var badgeAttrVal = tieneBadgeAttr ? card.getAttribute('data-etiqueta') : null;
   var badgeElEnCard = card.querySelector('.badge');
   var badgeTexto = '';
-  if (tieneBadgeAttr) {
-    badgeTexto = (badgeAttrVal !== null ? badgeAttrVal : '').trim();
+  if (card.getAttribute('data-etiqueta-personalizada') === '1' || tieneBadgeAttr) {
+    badgeTexto = (badgeAttrVal !== null ? badgeAttrVal : (badgeElEnCard ? (badgeElEnCard.textContent || '') : '')).trim();
+  } else if (tipo === 'galeria' || tipo === 'Imagen') {
+    // Para imágenes/galerías: nacer sin etiqueta genérica DUA/INFORMACIÓN a menos que el docente la defina
+    badgeTexto = '';
+  } else if (window._ocultarCabecerasGlobal_ === true) {
+    badgeTexto = '';
   } else if (badgeElEnCard) {
     badgeTexto = (badgeElEnCard.textContent || '').trim();
   } else {
     badgeTexto = etiquetaAlumno_(tipo);
   }
+  badgeTexto = (badgeTexto || '').trim();
 
   var cuerpoTexto = textoPlanoCampoBloque_(cue);
   var cuerpoHtml = (cue && typeof esEditorRico_ === 'function' && esEditorRico_(cue)) ? String(cue.innerHTML || '').trim() : '';
@@ -2635,7 +2646,7 @@ function tarjetaPreviewBloque_(card) {
       var imgWrap = document.createElement('div');
       imgWrap.style.width = '100%';
       imgWrap.style.display = 'flex';
-      imgWrap.style.marginTop = '10px';
+      imgWrap.style.marginTop = mostrarCabecera ? '10px' : '0px';
       if (align === 'center') imgWrap.style.justifyContent = 'center';
       else if (align === 'right') imgWrap.style.justifyContent = 'flex-end';
       else imgWrap.style.justifyContent = 'flex-start';
@@ -3773,6 +3784,7 @@ function asegurarTopbarPreview_() {
         '<button type="button" class="btn-alinear' + (modo === 'center' ? ' activo' : '') + '" id="btn-centro-prev" title="Centro" onclick="alinearSecciones(\'center\')">↔️</button>' +
         '<button type="button" class="btn-alinear' + (modo === 'flex-end' ? ' activo' : '') + '" id="btn-der-prev" title="Derecha" onclick="alinearSecciones(\'flex-end\')">➡️</button>' +
       '</div>' +
+      '<button type="button" id="btn-toggle-cabeceras-prev" class="btn-toggle-cabeceras" onclick="toggleCabecerasGlobales_()" title="Ocultar o mostrar cabeceras y etiquetas en todos los módulos" style="padding:4px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#ffffff;font-size:12px;font-weight:600;color:#334155;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">🏷️ Cabeceras: <span id="lbl-estado-cabeceras-prev" style="color:' + (window._ocultarCabecerasGlobal_ ? '#ef4444' : '#0284c7') + ';">' + (window._ocultarCabecerasGlobal_ ? 'Ocultas' : 'Visibles') + '</span></button>' +
     '</div>' +
     '<div style="font-size:12px;color:#64748b;font-weight:600;">Modo Vista Previa Alumno (100% Pantalla)</div>';
 }
@@ -8773,6 +8785,9 @@ function crearTarjetaCurricular_(tipo, datos) {
   var cuerpo = campoTarjetaExe_(div, 'cuerpo');
   if (titulo) titulo.value = datos.titulo || meta.titulo;
   if (cuerpo && necesitaEditorEnriquecido_(tipo)) escribirCampoBloque_(cuerpo, datos.cuerpo || meta.cuerpo);
+  if (window._ocultarCabecerasGlobal_) {
+    div.setAttribute('data-ocultar-cabecera', '1');
+  }
   cont.appendChild(div);
   if (typeof sincronizarTituloModulo_ === 'function') sincronizarTituloModulo_(div);
   if (tipo === 'flashcards') agregarParFlashcard_(div, null);
@@ -12271,10 +12286,14 @@ if (document.readyState === 'loading') {
       badge.addEventListener('input', function () {
         var bTxt = (this.textContent || '').trim().toUpperCase();
         card.setAttribute('data-etiqueta', bTxt);
+        card.setAttribute('data-etiqueta-personalizada', '1');
         if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
       });
       badge.addEventListener('blur', function () {
-        this.textContent = (this.textContent || '').trim().toUpperCase();
+        var bTxt = (this.textContent || '').trim().toUpperCase();
+        card.setAttribute('data-etiqueta', bTxt);
+        card.setAttribute('data-etiqueta-personalizada', '1');
+        this.textContent = bTxt;
         if (typeof guardarEstado === 'function') guardarEstado();
       });
       badge.addEventListener('keydown', function (e) {
@@ -12312,6 +12331,13 @@ if (document.readyState === 'loading') {
 
   function colocarModuloEnColumnaActiva_(card) {
     if (!card || !card.classList) return card;
+    if (window._ocultarCabecerasGlobal_ && card.setAttribute) {
+      card.setAttribute('data-ocultar-cabecera', '1');
+    }
+    if (window._fuenteGlobalModulos_ && card.setAttribute) {
+      card.setAttribute('data-fuente', window._fuenteGlobalModulos_);
+      card.style.fontFamily = window._fuenteGlobalModulos_;
+    }
     var col = resolverColumnaDestino_();
     if (!col) return card;
     card.classList.add('divi-module');
@@ -13577,9 +13603,10 @@ if (document.readyState === 'loading') {
             '<input type="color" id="input-bg-color" value="#ffffff" oninput="previsualizarColor()"></div>' +
           '<div class="form-group"><label for="input-text-color">Color de Texto:</label>' +
             '<input type="color" id="input-text-color" value="#1e293b" oninput="previsualizarColor()"></div>' +
-          '<div class="modal-actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">' +
+          '<div class="modal-actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;">' +
             '<button type="button" class="btn-cancel" onclick="cerrarPropiedades()" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;cursor:pointer;font-weight:600;">Cancelar</button>' +
-            '<button type="button" class="btn-primario btn-save" onclick="guardarPropiedades()" style="padding:8px 16px;border:none;border-radius:6px;background:#007cba;color:#fff;cursor:pointer;font-weight:700;">Aplicar Cambios</button>' +
+            '<button type="button" class="btn-secundario btn-save-all" onclick="guardarPropiedades(true)" title="Aplica cabecera, tipografía y estilos a todos los módulos" style="padding:8px 14px;border:1.5px solid #0284c7;border-radius:6px;background:#f0f9ff;color:#0284c7;cursor:pointer;font-weight:700;">🌐 Aplicar a Todos los Módulos</button>' +
+            '<button type="button" class="btn-primario btn-save" onclick="guardarPropiedades(false)" style="padding:8px 16px;border:none;border-radius:6px;background:#007cba;color:#fff;cursor:pointer;font-weight:700;">Aplicar a este Módulo</button>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -13956,7 +13983,7 @@ if (document.readyState === 'loading') {
     nodo.setAttribute('data-text-align', alineacion);
   }
 
-  function guardarPropiedades() {
+  function guardarPropiedades(aplicarATodos) {
     var nodo = window._nodoEditandoProps610_;
     if (!nodo) { cerrarPropiedades(); return; }
     guardarEstado();
@@ -13972,14 +13999,14 @@ if (document.readyState === 'loading') {
       nodo.setAttribute('data-text-color', col.value);
       nodo.style.color = col.value;
     }
-    if (nodo.classList && nodo.classList.contains('idevice-card')) {
-      var inpTit = document.getElementById('input-titulo-modulo');
-      var inpBadge = document.getElementById('input-badge-modulo');
-      var chkOcultar = document.getElementById('check-ocultar-cabecera');
-      var selFuente = document.getElementById('select-fuente-modulo');
-      var selTamTit = document.getElementById('select-tamano-tit-modulo');
-      var selTam = document.getElementById('select-tamano-modulo');
+    var inpTit = document.getElementById('input-titulo-modulo');
+    var inpBadge = document.getElementById('input-badge-modulo');
+    var chkOcultar = document.getElementById('check-ocultar-cabecera');
+    var selFuente = document.getElementById('select-fuente-modulo');
+    var selTamTit = document.getElementById('select-tamano-tit-modulo');
+    var selTam = document.getElementById('select-tamano-modulo');
 
+    if (nodo.classList && nodo.classList.contains('idevice-card')) {
       if (inpTit) {
         var nuevoTit = inpTit.value.trim();
         var tagEl = nodo.querySelector('.idevice-tag');
@@ -13999,6 +14026,7 @@ if (document.readyState === 'loading') {
           badgeEl.textContent = nuevoBadge;
         }
         nodo.setAttribute('data-etiqueta', nuevoBadge);
+        nodo.setAttribute('data-etiqueta-personalizada', '1');
       }
 
       if (chkOcultar) {
@@ -14059,12 +14087,70 @@ if (document.readyState === 'loading') {
     } else if (url && nodo.querySelector('.inp-video-url')) {
       nodo.querySelector('.inp-video-url').value = url.value;
     }
+
+    if (aplicarATodos) {
+      var ocultarGlobal = chkOcultar ? chkOcultar.checked : false;
+      window._ocultarCabecerasGlobal_ = ocultarGlobal;
+      var fValGlobal = selFuente ? selFuente.value : '';
+      var ttValGlobal = selTamTit ? selTamTit.value : '';
+      var tValGlobal = selTam ? selTam.value : '';
+
+      window._fuenteGlobalModulos_ = fValGlobal;
+      window._tamanoGlobalTit_ = ttValGlobal;
+      window._tamanoGlobalCue_ = tValGlobal;
+
+      var todasCards = document.querySelectorAll('.idevice-card, .divi-module');
+      todasCards.forEach(function (c) {
+        if (ocultarGlobal) c.setAttribute('data-ocultar-cabecera', '1');
+        else c.removeAttribute('data-ocultar-cabecera');
+
+        if (fValGlobal) {
+          c.setAttribute('data-fuente', fValGlobal);
+          c.style.fontFamily = fValGlobal;
+        }
+        if (ttValGlobal) {
+          c.setAttribute('data-tamano-titulo', ttValGlobal);
+          var tg = c.querySelector('.idevice-tag');
+          if (tg) tg.style.fontSize = ttValGlobal;
+        }
+        if (tValGlobal) {
+          c.setAttribute('data-tamano-fuente', tValGlobal);
+          c.style.fontSize = tValGlobal;
+        }
+      });
+
+      var lbls = document.querySelectorAll('#lbl-estado-cabeceras-prev, #lbl-estado-cabeceras-canvas');
+      lbls.forEach(function (lbl) {
+        lbl.textContent = ocultarGlobal ? 'Ocultas' : 'Visibles';
+        lbl.style.color = ocultarGlobal ? '#ef4444' : '#0284c7';
+      });
+    }
+
     window._propsGuardadas610_ = true;
     window._propsAntes610_ = null;
     guardarEstado();
     if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+    if (typeof pintarVistaPreviaIntegrada_ === 'function') pintarVistaPreviaIntegrada_();
     cerrarPropiedades();
   }
+
+  function toggleCabecerasGlobales_() {
+    window._ocultarCabecerasGlobal_ = !window._ocultarCabecerasGlobal_;
+    var todas = document.querySelectorAll('.idevice-card, .divi-module');
+    todas.forEach(function (c) {
+      if (window._ocultarCabecerasGlobal_) c.setAttribute('data-ocultar-cabecera', '1');
+      else c.removeAttribute('data-ocultar-cabecera');
+    });
+    var lbls = document.querySelectorAll('#lbl-estado-cabeceras-prev, #lbl-estado-cabeceras-canvas');
+    lbls.forEach(function (lbl) {
+      lbl.textContent = window._ocultarCabecerasGlobal_ ? 'Ocultas' : 'Visibles';
+      lbl.style.color = window._ocultarCabecerasGlobal_ ? '#ef4444' : '#0284c7';
+    });
+    if (typeof guardarEstado === 'function') guardarEstado();
+    if (typeof pintarVistaPreviaIntegrada_ === 'function') pintarVistaPreviaIntegrada_();
+    if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
+  }
+  window.toggleCabecerasGlobales_ = toggleCabecerasGlobales_;
 
   function filasConModulos_() {
     var cont = contLienzo_();
@@ -14214,6 +14300,7 @@ if (document.readyState === 'loading') {
           '<button type="button" class="btn-alinear activo" id="btn-centro" title="Centro" onclick="alinearSecciones(\'center\')">↔️</button>' +
           '<button type="button" class="btn-alinear" id="btn-der" title="Derecha" onclick="alinearSecciones(\'flex-end\')">➡️</button>' +
         '</div>' +
+        '<button type="button" id="btn-toggle-cabeceras-canvas" class="btn-toggle-cabeceras" onclick="toggleCabecerasGlobales_()" title="Ocultar o mostrar cabeceras y etiquetas en todos los módulos" style="padding:4px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#ffffff;font-size:12px;font-weight:600;color:#334155;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">🏷️ Cabeceras: <span id="lbl-estado-cabeceras-canvas" style="color:' + (window._ocultarCabecerasGlobal_ ? '#ef4444' : '#0284c7') + ';">' + (window._ocultarCabecerasGlobal_ ? 'Ocultas' : 'Visibles') + '</span></button>' +
       '</div>' +
       '<div class="top-actions">' +
         '<button type="button" class="add-btn btn-seccion" title="Sección regular / Diseño de Fila" onclick="abrirModalLayoutDivi610_(null, this)">+</button>' +

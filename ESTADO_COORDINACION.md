@@ -95,11 +95,15 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 
 ---
 
-## 5. Tarea Activa y Reparto por Agente — OLA 22 (`build-630`)
-✅ **INTEGRADA Y DESPLEGADA (`build-630`)** — Restauración y Consolidación Operativa:
+| **Ola 23 (`build-631`)** | **Sincronización Fiel de Vista Previa Alumno con Diseñador (Mosaicos y Dimensiones de Imágenes):**<br>• `window.MAPA_COLUMNAS_` exportado y conectado a la maqueta de vista previa.<br>• Respeto de anchos (`25%`, `50%`, `75%`, `100%`), alineación y recortes de imágenes en vista previa.<br>• Mosaico 3 y retículas asimétricas reproducidas fielmente en el portal del alumno. | 🟢 **COMPLETADA (DESPLEGADA @631)** |
+
+---
+
+## 5. Tarea Activa y Reparto por Agente — OLA 23 (`build-631`)
+✅ **INTEGRADA Y DESPLEGADA (`build-631`)** — Sincronización Fiel de Vista Previa:
 
 | Agente | Partitura Asignada | Buzón / Archivos |
 | :--- | :--- | :--- |
-| **DeepSeek** *(Diseño UI/UX & CSS)* | CSS Grid de alta fidelidad para mosaicos 1 al 12 en `AdminPlaneacionCSS.html`. | `AdminPlaneacionCSS.html` |
-| **Cursor** *(Frontend & DOM)* | Delimitadores universales de Excel y enlace limpio de tabla en `AyudaJS.html`. | `AyudaJS.html` |
-| **Antigravity** *(Backend, Auditoría & Despliegue)* | Auditoría AST (`node herramientas/manifiesto.js`: 79 docs, 0 errores), actualización a `v448 build-630`, `git commit & push`, y `clasp push -f / deploy` en todos los 6 endpoints activos de producción. | `00_Constantes.gs`<br>`CONTROL_CAMBIOS.md`<br>`ESTADO_COORDINACION.md` |
+| **DeepSeek** *(Diseño UI/UX & CSS)* | CSS Grid y especificidad de retículas en vista previa alumno. | `AdminPlaneacionCSS.html` |
+| **Cursor** *(Frontend & DOM)* | Export de mapa de columnas y enlace de dimensiones de imagen en `AyudaJS.html`. | `AyudaJS.html` |
+| **Antigravity** *(Backend, Auditoría & Despliegue)* | Auditoría AST (`node herramientas/manifiesto.js`: 79 docs, 0 errores), actualización a `v448 build-631`, `git commit & push`, y `clasp push -f / deploy` en todos los 6 endpoints activos de producción. | `00_Constantes.gs`<br>`CONTROL_CAMBIOS.md`<br>`ESTADO_COORDINACION.md` |

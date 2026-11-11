@@ -2,6 +2,16 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-11] - [Ola 23: Sincronización Fiel de Vista Previa Alumno con Diseñador (Retículas de Mosaico y Dimensiones de Imagen en build-631)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(preview): sincronizacion fiel de mosaicos y respeto de escala/alineacion de imagenes en vista previa (build-631)`
+- **Cambios Realizados:**
+  - **1. Exportación de `MAPA_COLUMNAS_` y Enlace de Retículas en Vista Previa (`AyudaJS.html`):**
+    - Se expuso `window.MAPA_COLUMNAS_ = MAPA_COLUMNAS_;` para que `armarMaquetaAlumno_` resuelva dinámicamente la clase CSS Grid de cualquier mosaico (`grid-mosaico-3`, etc.) en lugar de degradar a `grid-col-1`.
+  - **2. Respeto de Proporción, Alineación y Recorte de Imágenes en Vista Previa (`AyudaJS.html`):**
+    - En `tarjetaPreviewBloque_` para `galeria`, se conectó la lectura de `data-img-ancho` (`25%`, `50%`, `75%`, `100%`), `data-img-align` (`left`, `center`, `right`) y `data-img-recorte` (`16:9`, `4:3`, `1:1`, `circulo`), reproduciendo exactamente la escala y ubicación fijada por el docente en el constructor.
+- **Archivos Modificados:** `00_Constantes.gs`, `AyudaJS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+- **Impacto y Estado:** Todos los 79 documentos validan con 0 errores en Manifiesto Acorn. Desplegado a los 6 endpoints en versión 639.
+
 ### 🚀 [2026-11-11] - [Ola 22: Restauración y Consolidación Operativa en build-630 (Mosaicos Fieles 100%, Tablas con Excel y Jerarquía Limpia)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): restauracion operativa a build-630 con mosaicos 100% fieles y tablas funcionales (build-630)`
 - **Cambios Realizados:**

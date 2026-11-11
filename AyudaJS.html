@@ -2580,11 +2580,48 @@ function tarjetaPreviewBloque_(card) {
     var srcRaw = srcAttr || (imgPrev && imgPrev.src) || imgUrl || '';
     var srcFinal = (typeof normalizarUrlImagenMedia_ === 'function') ? normalizarUrlImagenMedia_(srcRaw) : srcRaw;
     if (srcFinal) {
+      var ancho = card.getAttribute('data-img-ancho') || ((card.querySelector('.btn-ctrl-tam.activo, .btn-ctrl-tam.active') || {}).textContent || '').trim() || '100%';
+      var align = card.getAttribute('data-img-align') || 'left';
+      var recorte = card.getAttribute('data-img-recorte') || 'original';
+
+      var imgWrap = document.createElement('div');
+      imgWrap.style.width = '100%';
+      imgWrap.style.display = 'flex';
+      imgWrap.style.marginTop = '10px';
+      if (align === 'center') imgWrap.style.justifyContent = 'center';
+      else if (align === 'right') imgWrap.style.justifyContent = 'flex-end';
+      else imgWrap.style.justifyContent = 'flex-start';
+
       var imgEl = document.createElement('img');
       imgEl.src = srcFinal;
       imgEl.alt = altDua || tituloTexto;
-      imgEl.style.cssText = 'max-width:100%;max-height:420px;border-radius:8px;margin-top:10px;display:block;';
-      art.appendChild(imgEl);
+      imgEl.style.width = ancho;
+      imgEl.style.maxWidth = '100%';
+      imgEl.style.display = 'block';
+
+      if (recorte === '16-9' || recorte === '16:9') {
+        imgEl.style.aspectRatio = '16 / 9';
+        imgEl.style.objectFit = 'cover';
+        imgEl.style.borderRadius = '8px';
+      } else if (recorte === '4-3' || recorte === '4:3') {
+        imgEl.style.aspectRatio = '4 / 3';
+        imgEl.style.objectFit = 'cover';
+        imgEl.style.borderRadius = '8px';
+      } else if (recorte === '1-1' || recorte === '1:1') {
+        imgEl.style.aspectRatio = '1 / 1';
+        imgEl.style.objectFit = 'cover';
+        imgEl.style.borderRadius = '8px';
+      } else if (recorte === 'circulo' || recorte === 'circle') {
+        imgEl.style.aspectRatio = '1 / 1';
+        imgEl.style.objectFit = 'cover';
+        imgEl.style.borderRadius = '50%';
+      } else {
+        imgEl.style.maxHeight = '420px';
+        imgEl.style.borderRadius = '8px';
+      }
+
+      imgWrap.appendChild(imgEl);
+      art.appendChild(imgWrap);
     }
     if (altDua) {
       var capEl = document.createElement('div');
@@ -3451,7 +3488,7 @@ function armarMaquetaAlumno_() {
     if (filas.length > 0) {
       filas.forEach(function (fila) {
         var layout = fila.getAttribute('data-distribucion') || 'col-1';
-        var mapa = (typeof MAPA_COLUMNAS_ !== 'undefined' && MAPA_COLUMNAS_[layout]) ? MAPA_COLUMNAS_[layout] : { grid: 'grid-col-1' };
+        var mapa = (window.MAPA_COLUMNAS_ && window.MAPA_COLUMNAS_[layout]) || (typeof MAPA_COLUMNAS_ !== 'undefined' && MAPA_COLUMNAS_[layout]) || null;
         var primeraCard = fila.querySelector('.idevice-card');
         if (!primeraCard) return;
 
@@ -3471,7 +3508,7 @@ function armarMaquetaAlumno_() {
           filaPrev.style.borderRadius = '10px';
         }
         if (rowColAttr) filaPrev.style.color = rowColAttr;
-        var gridCls = mapa.grid || (
+        var gridCls = (mapa && mapa.grid) ? mapa.grid : (
           layout === 'col-2' ? 'grid-col-2' :
           layout === 'col-3' ? 'grid-col-3' :
           layout === 'col-4' ? 'grid-col-4' :
@@ -11647,6 +11684,7 @@ if (document.readyState === 'loading') {
     'mosaico-11': { n: 5, grid: 'grid-mosaico-11', label: 'Mosaico 11 (2x2 izq / 1 der)' },
     'mosaico-12': { n: 5, grid: 'grid-mosaico-12', label: 'Mosaico 12 (2 izq / 1 cen / 2 der)' }
   };
+  window.MAPA_COLUMNAS_ = MAPA_COLUMNAS_;
 
   function lienzoExe_() {
     return document.getElementById('lienzoExeActivo') || document.querySelector('.canvas-exe');

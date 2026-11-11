@@ -9,34 +9,41 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: FASE 1 — MAQUETACIÓN BLADE Y TAILWIND DEL CONSTRUCTOR VISUAL DE AULA EN LARAVEL (`resources/views/aula/constructor.blade.php`)
+## 🎯 PARTITURA ASIGNADA: FASE 2 — CATÁLOGO LATERAL DE 7 FAMILIAS + RETÍCULAS CSS DE 20 ESTRUCTURAS + POPOVER DESACOPLADO
 - **Agente responsable:** **DeepSeek** (Diseñador Visual, UX/UI & Blade/Tailwind)
 - **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
 - **Documento Rector y Skill:** Consulta [.skills/aula-constructor/SKILL.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/.skills/aula-constructor/SKILL.md) y [RSC_MIGRACION_FUSION_LARAVEL.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/RSC_MIGRACION_FUSION_LARAVEL.md).
 
-### Especificación Técnica de la Entrega:
-1. **Vista Blade Principal (`resources/views/aula/constructor.blade.php`):**
-   - Diseñar la vista extendiendo del layout base de Laravel o creando una plantilla inmersiva de ancho completo (`w-full min-h-screen bg-slate-50`).
-2. **Barra Superior del Lienzo (`divi-canvas-topbar`):**
-   - Sliders de Página y Sección (`40%` a `100%`) con etiquetas de porcentaje dinámico.
-   - Botones de alineación (`⬅️` izquierda, `↔️` centro, `➡️` derecha).
-   - Botón toggle rápido: `🏷️ Cabeceras: Visibles / Ocultas`.
-   - Botones de Deshacer `↩️` y Rehacer `↪️`.
-3. **Jerarquía DIVI (Sección > Fila > Columna > Módulo):**
-   - Estilos hover limpios: Sección con borde azul (`hover:border-sky-500`), Fila con borde verde (`hover:border-emerald-500`).
-   - Botón circular verde flotante `(+)` entre filas para selector de columnas (`.btn-plus-green`).
-   - Dropzone de columna con estado activo (`.active-target` con fondo sutil y borde discontinuo).
-   - Botón interior `[+ Añadir Módulo]` al pie de cada columna.
-4. **Mosaicos y CSS Grid (Tailwind / CSS puro):**
-   - Implementar las clases de cuadrícula: `col-1`, `col-2`, `col-2-70-30`, `col-3`, `col-4`, `mosaico-3-izq`, `mosaico-3-der` y el `mosaico-3` (6 subcolumnas asimétricas).
-5. **Regla de Tarjetas Limpias:**
-   - La clase `.content-card.tarjeta-sin-cabecera` para que las imágenes y módulos sin cabecera personalizada se muestren al 100% de ancho sin encabezados genéricos intrusivos.
+### Especificación Técnica de la Entrega (Fase 2):
+1. **Catálogo Lateral de Contenidos (`#sidebarContenidos`):**
+   - Ancho expandido: 280px, colapsado: 36px (`transition-all duration-300`).
+   - Botón toggle `#btnAlternarSidebarExe` con icono dinámico (`[◀]` al abrir, `[▶]` al colapsar).
+   - Buscador reactivo `#inputBuscarModulosCatalogo` con input accesible y placeholder `"Buscar contenidos..."`.
+   - Acordeón de las 7 Familias Curriculares (`.familia-acordeon`):
+     1. 📝 Texto y DUA (Texto DUA, Lectura Guiada, Objetivos de Aprendizaje, Cuadro de Texto Word Shape)
+     2. ❓ Quizzes y Encuestas (Quiz Evaluable SEP 5-10, Encuesta Diagnóstica, Verdadero/Falso con DUA)
+     3. 🎬 Multimedia (Video con marcas/pausas, Galería Drive con alt-text DUA, Audio Síntesis)
+     4. 🧩 Actividades Interactivas (Rellenar huecos, Emparejamiento, Selección Múltiple)
+     5. 🔬 Ciencias y Matemáticas (GeoGebra dinámico con material_id, Simulador PhET, Tabla de Fórmulas)
+     6. 📊 Ofimática y Tablas (Tabla Dinámica con importador Excel/Sheets Ctrl+V, Documento Embebido)
+     7. 🏆 Gamificación y Cierre (Ruleta de conceptos, Tarjeta de Logros, Ticket de Salida)
+   - Cada módulo como mini-card arrastrable con Tailwind/CSS: `.modulo-card-lateral[draggable="true"][data-tipo="..."]`.
+2. **Popover Modal Desacoplado de 20 Estructuras (`#modal-overlay` / `.columns-popover`):**
+   - Montado centrado o flotante con backdrop `fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center`.
+   - Selector visual de las 20 estructuras organizadas en 3 pestañas o secciones:
+     - 4 Columnas Iguales (1 col, 2 cols, 3 cols, 4 cols)
+     - 4 Asimétricas (1/3-2/3, 2/3-1/3, 1/4-3/4, 3/4-1/4)
+     - 12 Mosaicos Divi (`Mosaico 1` a `Mosaico 12` con proporciones CSS Grid y flexbox `f05`, `f1`, `f15`, `f2`, `.h100`)
+   - Mini-previews gráficas compactas (32px de alto) de cada retícula.
+3. **Estilos de Drag & Drop y Dropzone:**
+   - `.divi-column.drag-over`: borde discontinuo acentuado (`border-emerald-500 bg-emerald-50/50 scale-[1.01] transition-all`).
+   - `.modulo-card-lateral.is-dragging`: opacidad al 50% con rotación sutil (`rotate-2`).
 
 ---
 
-### 📝 ZONA DE ENTREGA DE DEEPSEEK (Escribe tu propuesta aquí abajo):
+### 📝 ZONA DE ENTREGA DE DEEPSEEK (Escribe tu propuesta de Fase 2 aquí abajo):
 
-*(DeepSeek: deposita aquí tu código Blade, clases Tailwind y CSS modular)*
+*(DeepSeek: deposita aquí tu código Blade, clases Tailwind y CSS modular para la Fase 2)*
 
 ---
 

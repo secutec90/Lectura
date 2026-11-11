@@ -9,16 +9,34 @@
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: FASE 1 — CONTROLADOR API LARAVEL Y ESQUELETO DE PERSISTENCIA DEL LIENZO
+## 🎯 PARTITURA ASIGNADA: FASE 2 — MOTOR DRAG & DROP + SELECTOR DINÁMICO DE 20 MOSAICOS + TOOLBARS FLOTANTES
 - **Agente responsable:** **Cursor** (Desarrollador Fullstack & JS/DOM)
-- **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN (EN PARALELO CON DEEPSEEK)**
+- **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
 - **Documento Rector y Skill:** Consulta [.skills/aula-constructor/SKILL.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/.skills/aula-constructor/SKILL.md) y [RSC_MIGRACION_FUSION_LARAVEL.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/RSC_MIGRACION_FUSION_LARAVEL.md).
 
-### Tarea de Preparación:
-1. Diseñar el controlador de Laravel: `app/Http/Controllers/Aula/SesionAulaController.php` con los métodos:
-   - `guardarLienzo(Request $request, $sesionId)`: recibe el JSON del lienzo y lo persiste en `sesiones_clase.lienzo_json` y `config_visual_json`.
-   - `obtenerLienzo($sesionId)`: retorna la estructura JSON con tiempos de respuesta en milisegundos.
-2. Preparar el módulo de cliente JS `public/js/aula/constructor-cliente.js` para desacoplar las llamadas de `google.script.run` y reemplazarlas por `fetch('/api/aula/sesion/' + id + '/guardar')`.
+### Especificación Técnica de la Entrega (Fase 2):
+1. **Motor Drag & Drop (`dragstart`, `dragover`, `dragleave`, `drop`):**
+   - Conectar las tarjetas del catálogo lateral (`.modulo-card-lateral`) con las columnas dropzone (`.divi-column`).
+   - Gestión de estado: clase `.drag-over` en la columna bajo el puntero.
+   - Al soltar en `.divi-column`: instanciar el bloque correspondiente (`insertarModuloEnColumna(tipo, columnaEl)`).
+   - Soporte para clic directo: si una columna tiene foco activo (`.active-target`), hacer clic en cualquier tarjeta del catálogo la inserta de inmediato.
+   - Reordenamiento interno: permitir arrastrar módulos entre columnas y cambiar su orden dentro de la misma columna mediante el handle `✥` de la toolbar flotante.
+2. **Lógica del Selector de 20 Mosaicos (`.btn-plus-green` / `.columns-popover`):**
+   - Click en el botón circular verde `(+)` entre filas: abre el popover/modal centrado `#modal-overlay`.
+   - Click en una de las 20 opciones (4 iguales, 4 asimétricas, 12 mosaicos): genera dinámicamente `<div class="divi-row {reticula}">` con sus columnas `<div class="divi-column active-target">` y su botón interior `[+ Añadir Módulo]`.
+3. **Delegación de Eventos en Toolbars Flotantes (`.toolbar-flotante`):**
+   - Botón subir (▲) y bajar (▼): reordenar filas o módulos en el DOM.
+   - Botón duplicar (📄): clonar profundamente el elemento generando nuevos IDs únicos.
+   - Botón eliminar (✕): eliminar con toast de deshacer (buffer temporal).
+   - Botón engrane (⚙️): abrir modal `#modal-propiedades` para editar campos del módulo (título, colores, alineación, URL, etc.).
+4. **Sincronización Reactiva con la API:**
+   - Cada mutación del lienzo (crear, reordenar, borrar) invoca el debounce de autoguardado a `/api/aula/sesion/{sesion}/guardar` mediante `ST90ConstructorApi.marcarModificado()`.
+
+---
+
+### 📝 ZONA DE ENTREGA DE CURSOR (Escribe tu código JS y adaptadores aquí abajo):
+
+*(Cursor: deposita aquí tu implementación de Phase 2 para `public/js/aula/constructor-cliente.js`)*
 
 ---
 

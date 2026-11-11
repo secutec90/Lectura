@@ -95,15 +95,16 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 
 ---
 
-| **Ola 23 (`build-631`)** | **Sincronización Fiel de Vista Previa Alumno con Diseñador (Mosaicos y Dimensiones de Imágenes):**<br>• `window.MAPA_COLUMNAS_` exportado y conectado a la maqueta de vista previa.<br>• Respeto de anchos (`25%`, `50%`, `75%`, `100%`), alineación y recortes de imágenes en vista previa.<br>• Mosaico 3 y retículas asimétricas reproducidas fielmente en el portal del alumno. | 🟢 **COMPLETADA (DESPLEGADA @631)** |
+| **Ola 23 (`build-631`)** | **Sincronización Fiel de Vista Previa Alumno con Diseñador (Mosaicos y Dimensiones de Imágenes):**<br>• `window.MAPA_COLUMNAS_` exportado y conectado a la maqueta de vista previa.<br>• Respeto de anchos (`25%`, `50%`, `75%`, `100%`), alineación y recortes de imágenes en vista previa.<br>• Mosaico 3 y retículas asimétricas reproducidas fielmente en el portal del alumno. | 🟢 **COMPLETADA (DESPLEGADA @642)** |
+| **Ola 24 (Fase 1)** | **Fusión Arquitectónica: Migración de Suite de Aula a Laravel 12 + Filament (Academia):**<br>• Creación del contrato rector `RSC_MIGRACION_FUSION_LARAVEL.md` y skill `.skills/aula-constructor/SKILL.md`.<br>• Maquetación Blade y Tailwind del Constructor Visual (`resources/views/aula/constructor.blade.php`).<br>• Desacoplamiento de llamadas `google.script.run` a la API REST de Laravel (`SesionAulaController`). | 🟢 **PROGRAMADA / PARTITURA ASIGNADA** |
 
 ---
 
-## 5. Tarea Activa y Reparto por Agente — OLA 23 (`build-631`)
-✅ **INTEGRADA Y DESPLEGADA (`build-631`)** — Sincronización Fiel de Vista Previa:
+## 5. Tarea Activa y Reparto por Agente — OLA 24 (FASE 1: MIGRACIÓN A LARAVEL)
+🟢 **EN PROCESO — REPARTO FORMAL DE LA PRIMERA PARTITURA:**
 
 | Agente | Partitura Asignada | Buzón / Archivos |
 | :--- | :--- | :--- |
-| **DeepSeek** *(Diseño UI/UX & CSS)* | CSS Grid y especificidad de retículas en vista previa alumno. | `AdminPlaneacionCSS.html` |
-| **Cursor** *(Frontend & DOM)* | Export de mapa de columnas y enlace de dimensiones de imagen en `AyudaJS.html`. | `AyudaJS.html` |
-| **Antigravity** *(Backend, Auditoría & Despliegue)* | Auditoría AST (`node herramientas/manifiesto.js`: 79 docs, 0 errores), actualización a `v448 build-631`, `git commit & push`, y `clasp push -f / deploy` en todos los 6 endpoints activos de producción. | `00_Constantes.gs`<br>`CONTROL_CAMBIOS.md`<br>`ESTADO_COORDINACION.md` |
+| **DeepSeek** *(Diseño UI/UX & Blade/Tailwind)* | Maquetar la vista Blade `resources/views/aula/constructor.blade.php`, barra superior con sliders (`40%` a `100%`), botones de alineación, botón toggle de cabeceras, cuadrículas de mosaicos (`col-1` a `col-4`, `mosaico-3`) y tarjetas limpias. | `ENTREGA_DEEPSEEK.md` |
+| **Cursor** *(Fullstack & API/DOM)* | Diseñar el controlador `SesionAulaController.php` (métodos `guardarLienzo` y `obtenerLienzo`) y preparar `constructor-cliente.js` para reemplazar `google.script.run` por `fetch('/api/aula/sesion/...')`. | `ENTREGA_CURSOR.md` |
+| **Antigravity** *(Gobernanza, Arquitectura & BD)* | Gobernanza y supervisión del contrato `RSC_MIGRACION_FUSION_LARAVEL.md`, verificación de migraciones en MySQL `sesiones_clase`, auditoría e integración final en el repositorio de Laravel `Academia`. | `RSC_MIGRACION_FUSION_LARAVEL.md`<br>`.skills/aula-constructor/SKILL.md`<br>`ESTADO_COORDINACION.md` |

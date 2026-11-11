@@ -2125,7 +2125,42 @@ function tarjetaPreviewBloque_(card) {
   var tipo = card.getAttribute('data-tipo') || '';
   var tit = card.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
   var cue = card.querySelector('[data-campo="cuerpo"], .idevice-campo-cuerpo');
-  var tituloTexto = tit ? (tit.value || textoPlanoCampoBloque_(tit)) : etiquetaAlumno_(tipo);
+
+  var fuenteCard = card.getAttribute('data-fuente') || (card.style && card.style.fontFamily) || '';
+  var tamanoCuerpo = card.getAttribute('data-tamano-fuente') || (card.style && card.style.fontSize) || '';
+  var tamanoTitulo = card.getAttribute('data-tamano-titulo') || '';
+  var ocultarCabecera = card.getAttribute('data-ocultar-cabecera') === '1';
+
+  var tieneTitAttr = card.hasAttribute('data-titulo');
+  var titAttrVal = tieneTitAttr ? card.getAttribute('data-titulo') : null;
+  var titInputVal = tit ? (tit.value !== undefined ? tit.value : textoPlanoCampoBloque_(tit)) : null;
+  var tagElEnCard = card.querySelector('.idevice-tag');
+  var tagElTxt = tagElEnCard ? (tagElEnCard.textContent || '').trim() : '';
+
+  var tituloTexto = '';
+  if (card.getAttribute('data-titulo-personalizado') === '1' || tieneTitAttr) {
+    tituloTexto = (titAttrVal !== null) ? titAttrVal : (titInputVal !== null ? titInputVal : tagElTxt);
+  } else if (titInputVal !== null && titInputVal !== '') {
+    tituloTexto = titInputVal;
+  } else if (tagElTxt !== '') {
+    tituloTexto = tagElTxt;
+  } else {
+    tituloTexto = etiquetaAlumno_(tipo);
+  }
+  tituloTexto = (tituloTexto || '').trim();
+
+  var tieneBadgeAttr = card.hasAttribute('data-etiqueta');
+  var badgeAttrVal = tieneBadgeAttr ? card.getAttribute('data-etiqueta') : null;
+  var badgeElEnCard = card.querySelector('.badge');
+  var badgeTexto = '';
+  if (tieneBadgeAttr) {
+    badgeTexto = (badgeAttrVal !== null ? badgeAttrVal : '').trim();
+  } else if (badgeElEnCard) {
+    badgeTexto = (badgeElEnCard.textContent || '').trim();
+  } else {
+    badgeTexto = etiquetaAlumno_(tipo);
+  }
+
   var cuerpoTexto = textoPlanoCampoBloque_(cue);
   var cuerpoHtml = (cue && typeof esEditorRico_ === 'function' && esEditorRico_(cue)) ? String(cue.innerHTML || '').trim() : '';
 
@@ -2148,27 +2183,40 @@ function tarjetaPreviewBloque_(card) {
   art.style.maxWidth = '100%';
   art.style.overflowX = 'auto';
   art.style.boxSizing = 'border-box';
+  if (fuenteCard) art.style.fontFamily = fuenteCard;
+  if (tamanoCuerpo) art.style.fontSize = tamanoCuerpo;
 
-  var head = document.createElement('div');
-  head.className = 'card-header';
-  var wrap = document.createElement('div');
-  wrap.className = 'card-title-wrap';
-  var bubble = document.createElement('div');
-  bubble.className = 'card-icon-bubble';
-  bubble.textContent = icono;
-  var txtWrap = document.createElement('div');
-  var h = document.createElement('h2');
-  h.className = 'card-title';
-  h.textContent = tituloTexto;
-  txtWrap.appendChild(h);
-  wrap.appendChild(bubble);
-  wrap.appendChild(txtWrap);
-  head.appendChild(wrap);
-  var badge = document.createElement('span');
-  badge.className = 'card-badge';
-  badge.textContent = etiquetaAlumno_(tipo);
-  head.appendChild(badge);
-  art.appendChild(head);
+  var mostrarCabecera = !ocultarCabecera && (tituloTexto !== '' || badgeTexto !== '');
+
+  if (mostrarCabecera) {
+    var head = document.createElement('div');
+    head.className = 'card-header';
+    var wrap = document.createElement('div');
+    wrap.className = 'card-title-wrap';
+    var bubble = document.createElement('div');
+    bubble.className = 'card-icon-bubble';
+    bubble.textContent = icono;
+    var txtWrap = document.createElement('div');
+    var h = document.createElement('h2');
+    h.className = 'card-title';
+    h.textContent = tituloTexto;
+    if (tamanoTitulo) h.style.fontSize = tamanoTitulo;
+    if (fuenteCard) h.style.fontFamily = fuenteCard;
+    txtWrap.appendChild(h);
+    if (icono) wrap.appendChild(bubble);
+    wrap.appendChild(txtWrap);
+    head.appendChild(wrap);
+    if (badgeTexto) {
+      var badge = document.createElement('span');
+      badge.className = 'card-badge';
+      badge.textContent = badgeTexto;
+      if (fuenteCard) badge.style.fontFamily = fuenteCard;
+      head.appendChild(badge);
+    }
+    art.appendChild(head);
+  } else {
+    art.classList.add('tarjeta-sin-cabecera');
+  }
 
   var omiteCuerpoGenerico = (
     tipo === 'tabla_notion' || tipo === 'tabla' || tipo === 'excel_split_table' ||
@@ -8788,15 +8836,30 @@ function leerTarjetaExe_(card) {
   var bgCard = card.getAttribute('data-bg-color') || '';
   var colorCard = card.getAttribute('data-text-color') || '';
   var alignCard = card.getAttribute('data-text-align') || '';
+  var fuenteCard = card.getAttribute('data-fuente') || '';
+  var tamanoCard = card.getAttribute('data-tamano-fuente') || '';
+  var tamanoTitCard = card.getAttribute('data-tamano-titulo') || '';
+  var ocultarCab = card.getAttribute('data-ocultar-cabecera') === '1';
+
   if (bgCard) estiloCard.bg = bgCard;
   if (colorCard) estiloCard.color = colorCard;
   if (alignCard) estiloCard.align = alignCard;
+  if (fuenteCard) estiloCard.fuente = fuenteCard;
+  if (tamanoCard) estiloCard.tamano = tamanoCard;
+  if (tamanoTitCard) estiloCard.tamanoTitulo = tamanoTitCard;
+  if (ocultarCab) estiloCard.ocultarCabecera = true;
+
+  var titPersonalizado = card.getAttribute('data-titulo-personalizado') === '1' || card.hasAttribute('data-titulo');
+  var titValor = card.hasAttribute('data-titulo') ? card.getAttribute('data-titulo') : ((tituloEl ? tituloEl.value : '') || (((card.querySelector('.idevice-tag') || {}).textContent || '').trim()));
+  var etiquetaValor = card.hasAttribute('data-etiqueta') ? card.getAttribute('data-etiqueta') : (((card.querySelector('.badge') || {}).textContent || '').trim());
+
   return {
     id: card.id,
     tipo: tipo,
     paginaId: card.getAttribute('data-pagina-id') || String(idPaginaActivaExe_()),
-    titulo: (tituloEl ? tituloEl.value : '') || (((card.querySelector('.idevice-tag') || {}).textContent || '').trim()),
-    etiqueta: (((card.querySelector('.badge') || {}).textContent || '').trim()),
+    titulo: titValor,
+    tituloPersonalizado: titPersonalizado,
+    etiqueta: etiquetaValor,
     cuerpo: cuerpoEl ? leerCampoBloque_(cuerpoEl) : '',
     extra: extra,
     estilo: estiloCard
@@ -8818,17 +8881,36 @@ function rellenarTarjetaExe_(card, datos) {
       card.setAttribute('data-text-align', datos.estilo.align);
       card.style.textAlign = datos.estilo.align;
     }
+    if (datos.estilo.ocultarCabecera) {
+      card.setAttribute('data-ocultar-cabecera', '1');
+    }
+    if (datos.estilo.fuente) {
+      card.setAttribute('data-fuente', datos.estilo.fuente);
+      card.style.fontFamily = datos.estilo.fuente;
+    }
+    if (datos.estilo.tamano) {
+      card.setAttribute('data-tamano-fuente', datos.estilo.tamano);
+      card.style.fontSize = datos.estilo.tamano;
+    }
+    if (datos.estilo.tamanoTitulo) {
+      card.setAttribute('data-tamano-titulo', datos.estilo.tamanoTitulo);
+      var tagElTit = card.querySelector('.idevice-tag');
+      if (tagElTit) tagElTit.style.fontSize = datos.estilo.tamanoTitulo;
+    }
   }
   var titulo = campoTarjetaExe_(card, 'titulo');
   var cuerpo = campoTarjetaExe_(card, 'cuerpo');
-  if (datos.titulo) {
+  if (datos.titulo !== undefined) {
     if (titulo) titulo.value = datos.titulo;
     var tagEl7 = card.querySelector('.idevice-tag');
     if (tagEl7) tagEl7.textContent = datos.titulo;
+    card.setAttribute('data-titulo', datos.titulo);
+    if (datos.tituloPersonalizado) card.setAttribute('data-titulo-personalizado', '1');
   }
-  if (datos.etiqueta) {
+  if (datos.etiqueta !== undefined) {
     var badgeEl7 = card.querySelector('.badge');
     if (badgeEl7) badgeEl7.textContent = datos.etiqueta;
+    card.setAttribute('data-etiqueta', datos.etiqueta);
   }
   if (cuerpo && datos.cuerpo) escribirCampoBloque_(cuerpo, datos.cuerpo);
   var extra = datos.extra || {};
@@ -12119,6 +12201,10 @@ if (document.readyState === 'loading') {
         if (typeof marcarIDevicesTocados_ === 'function') marcarIDevicesTocados_();
       });
       tag.addEventListener('blur', function () {
+        var txt = (this.textContent || '').trim();
+        card.setAttribute('data-titulo', txt);
+        card.setAttribute('data-titulo-personalizado', '1');
+        if (inpTit) inpTit.value = txt;
         if (typeof guardarEstado === 'function') guardarEstado();
       });
       tag.addEventListener('keydown', function (e) {
@@ -13349,7 +13435,7 @@ if (document.readyState === 'loading') {
           '</div>' +
           '<button type="button" class="close-btn" onclick="cerrarPropiedades()" aria-label="Cerrar">✕</button>' +
         '</div>' +
-        '<div class="content">' +
+        '<div class="content" style="max-height:72vh;overflow-y:auto;padding-right:4px;">' +
           '<div class="form-group" id="grupo-titulo-modulo" style="display:none;margin-bottom:12px;">' +
             '<label for="input-titulo-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Título del Módulo:</label>' +
             '<input type="text" id="input-titulo-modulo" placeholder="Ej. Lectura DUA / Texto" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13.5px;color:#0f172a;font-weight:600;">' +
@@ -13357,6 +13443,46 @@ if (document.readyState === 'loading') {
           '<div class="form-group" id="grupo-badge-modulo" style="display:none;margin-bottom:12px;">' +
             '<label for="input-badge-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Etiqueta (Badge):</label>' +
             '<input type="text" id="input-badge-modulo" placeholder="Ej. LECTURA" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:12.5px;color:#0f172a;text-transform:uppercase;">' +
+          '</div>' +
+          '<div class="form-group" id="grupo-ocultar-cabecera-modulo" style="display:none;margin-bottom:12px;">' +
+            '<label style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;color:#0f172a;cursor:pointer;background:#f8fafc;padding:8px 10px;border-radius:6px;border:1px solid #e2e8f0;">' +
+              '<input type="checkbox" id="check-ocultar-cabecera" style="width:16px;height:16px;cursor:pointer;">' +
+              '<span>Ocultar cabecera (título, icono y etiqueta)</span>' +
+            '</label>' +
+          '</div>' +
+          '<div class="form-group" id="grupo-fuente-modulo" style="display:none;margin-bottom:12px;">' +
+            '<label for="select-fuente-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Tipo de Fuente (Tipografía):</label>' +
+            '<select id="select-fuente-modulo" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;color:#0f172a;">' +
+              '<option value="">Por defecto (Sans-Serif del Sistema)</option>' +
+              '<option value="system-ui, -apple-system, \'Segoe UI\', Roboto, sans-serif">Sans-Serif (Moderna)</option>' +
+              '<option value="Georgia, Cambria, \'Times New Roman\', serif">Serif (Editorial / Clásica)</option>' +
+              '<option value="\'Fira Code\', \'Courier New\', Consolas, monospace">Monospace (Código / Consola)</option>' +
+              '<option value="\'Comic Sans MS\', \'Comic Neue\', cursive, sans-serif">Amigable / Escolar</option>' +
+              '<option value="Impact, \'Arial Black\', sans-serif">Impactante / Título Fuerte</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="form-group" id="grupo-tamano-tit-modulo" style="display:none;margin-bottom:12px;">' +
+            '<label for="select-tamano-tit-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Tamaño de Fuente del Título:</label>' +
+            '<select id="select-tamano-tit-modulo" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;color:#0f172a;">' +
+              '<option value="">Por defecto (18px)</option>' +
+              '<option value="13px">Muy Pequeño (13px)</option>' +
+              '<option value="15px">Pequeño (15px)</option>' +
+              '<option value="18px">Normal / Mediano (18px)</option>' +
+              '<option value="22px">Grande (22px)</option>' +
+              '<option value="26px">Muy Grande (26px)</option>' +
+              '<option value="32px">Encabezado Titular (32px)</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="form-group" id="grupo-tamano-modulo" style="display:none;margin-bottom:12px;">' +
+            '<label for="select-tamano-modulo" style="font-weight:700;color:#0f172a;display:block;margin-bottom:4px;font-size:13px;">Tamaño de Fuente del Contenido:</label>' +
+            '<select id="select-tamano-modulo" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;color:#0f172a;">' +
+              '<option value="">Por defecto (15px)</option>' +
+              '<option value="12px">Muy Pequeño (12px)</option>' +
+              '<option value="14px">Compacto (14px)</option>' +
+              '<option value="16px">Normal / Estándar (16px)</option>' +
+              '<option value="18px">Amplio / Cómodo (18px)</option>' +
+              '<option value="20px">DUA Accesible (20px)</option>' +
+            '</select>' +
           '</div>' +
           '<div class="form-group" id="grupo-contenido" style="display:none;"><label id="label-contenido" for="input-contenido">Contenido:</label>' +
             '<textarea id="input-contenido" rows="3"></textarea></div>' +
@@ -13648,17 +13774,40 @@ if (document.readyState === 'loading') {
       var esCard = !!(nodo.classList && nodo.classList.contains('idevice-card'));
       grupoCampo_('grupo-titulo-modulo', esCard);
       grupoCampo_('grupo-badge-modulo', esCard);
+      grupoCampo_('grupo-ocultar-cabecera-modulo', esCard);
+      grupoCampo_('grupo-fuente-modulo', esCard);
+      grupoCampo_('grupo-tamano-tit-modulo', esCard);
+      grupoCampo_('grupo-tamano-modulo', esCard);
       if (esCard) {
         var tagEl = nodo.querySelector('.idevice-tag');
         var badgeEl = nodo.querySelector('.badge');
         var campoTit = nodo.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
         var inpTit = document.getElementById('input-titulo-modulo');
         var inpBadge = document.getElementById('input-badge-modulo');
+        var chkOcultar = document.getElementById('check-ocultar-cabecera');
+        var selFuente = document.getElementById('select-fuente-modulo');
+        var selTamTit = document.getElementById('select-tamano-tit-modulo');
+        var selTam = document.getElementById('select-tamano-modulo');
+
         if (inpTit) {
-          inpTit.value = (tagEl ? tagEl.textContent.trim() : '') || (campoTit ? campoTit.value.trim() : '') || (nodo.getAttribute('data-titulo') || '');
+          var valTitExistente = nodo.hasAttribute('data-titulo') ? nodo.getAttribute('data-titulo') : ((campoTit ? campoTit.value.trim() : '') || (tagEl ? tagEl.textContent.trim() : ''));
+          inpTit.value = valTitExistente;
         }
         if (inpBadge) {
-          inpBadge.value = (badgeEl ? badgeEl.textContent.trim() : '') || (nodo.getAttribute('data-etiqueta') || '');
+          var valBadgeExistente = nodo.hasAttribute('data-etiqueta') ? nodo.getAttribute('data-etiqueta') : (badgeEl ? badgeEl.textContent.trim() : '');
+          inpBadge.value = valBadgeExistente;
+        }
+        if (chkOcultar) {
+          chkOcultar.checked = nodo.getAttribute('data-ocultar-cabecera') === '1';
+        }
+        if (selFuente) {
+          selFuente.value = nodo.getAttribute('data-fuente') || (nodo.style ? nodo.style.fontFamily : '') || '';
+        }
+        if (selTamTit) {
+          selTamTit.value = nodo.getAttribute('data-tamano-titulo') || '';
+        }
+        if (selTam) {
+          selTam.value = nodo.getAttribute('data-tamano-fuente') || (nodo.style ? nodo.style.fontSize : '') || '';
         }
       }
       var tipo = (nodo.getAttribute && nodo.getAttribute('data-tipo')) || '';
@@ -13747,20 +13896,70 @@ if (document.readyState === 'loading') {
     if (nodo.classList && nodo.classList.contains('idevice-card')) {
       var inpTit = document.getElementById('input-titulo-modulo');
       var inpBadge = document.getElementById('input-badge-modulo');
-      if (inpTit && inpTit.value.trim()) {
+      var chkOcultar = document.getElementById('check-ocultar-cabecera');
+      var selFuente = document.getElementById('select-fuente-modulo');
+      var selTamTit = document.getElementById('select-tamano-tit-modulo');
+      var selTam = document.getElementById('select-tamano-modulo');
+
+      if (inpTit) {
         var nuevoTit = inpTit.value.trim();
         var tagEl = nodo.querySelector('.idevice-tag');
-        if (tagEl) tagEl.textContent = nuevoTit;
+        if (tagEl) {
+          tagEl.textContent = nuevoTit;
+        }
         var campoTit = nodo.querySelector('[data-campo="titulo"], .idevice-campo-titulo');
         if (campoTit) campoTit.value = nuevoTit;
         nodo.setAttribute('data-titulo', nuevoTit);
         nodo.setAttribute('data-titulo-personalizado', '1');
       }
-      if (inpBadge && inpBadge.value.trim()) {
+
+      if (inpBadge) {
         var nuevoBadge = inpBadge.value.trim().toUpperCase();
         var badgeEl = nodo.querySelector('.badge');
-        if (badgeEl) badgeEl.textContent = nuevoBadge;
+        if (badgeEl) {
+          badgeEl.textContent = nuevoBadge;
+        }
         nodo.setAttribute('data-etiqueta', nuevoBadge);
+      }
+
+      if (chkOcultar) {
+        if (chkOcultar.checked) nodo.setAttribute('data-ocultar-cabecera', '1');
+        else nodo.removeAttribute('data-ocultar-cabecera');
+      }
+
+      if (selFuente) {
+        var fVal = selFuente.value;
+        if (fVal) {
+          nodo.setAttribute('data-fuente', fVal);
+          nodo.style.fontFamily = fVal;
+        } else {
+          nodo.removeAttribute('data-fuente');
+          nodo.style.fontFamily = '';
+        }
+      }
+
+      if (selTamTit) {
+        var ttVal = selTamTit.value;
+        if (ttVal) {
+          nodo.setAttribute('data-tamano-titulo', ttVal);
+          var tagElTit = nodo.querySelector('.idevice-tag');
+          if (tagElTit) tagElTit.style.fontSize = ttVal;
+        } else {
+          nodo.removeAttribute('data-tamano-titulo');
+          var tagElTitDef = nodo.querySelector('.idevice-tag');
+          if (tagElTitDef) tagElTitDef.style.fontSize = '';
+        }
+      }
+
+      if (selTam) {
+        var tVal = selTam.value;
+        if (tVal) {
+          nodo.setAttribute('data-tamano-fuente', tVal);
+          nodo.style.fontSize = tVal;
+        } else {
+          nodo.removeAttribute('data-tamano-fuente');
+          nodo.style.fontSize = '';
+        }
       }
     }
     var tipo = nodo.getAttribute('data-tipo') || '';

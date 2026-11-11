@@ -9026,6 +9026,13 @@
     box-shadow: 0 0 0 2px #2563eb !important;
     color: #0f172a !important;
   }
+  .idevice-tag[contenteditable="true"]:empty::before {
+    content: "(Sin título)";
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 11px;
+    pointer-events: none;
+  }
   .badge[contenteditable="true"] {
     outline: none;
     cursor: text;
@@ -9033,11 +9040,21 @@
     display: inline-block;
     transition: box-shadow 0.15s ease;
   }
+  .badge[contenteditable="true"]:empty::before {
+    content: "(Sin etiqueta)";
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 10px;
+    pointer-events: none;
+  }
   .badge[contenteditable="true"]:hover {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
   }
   .badge[contenteditable="true"]:focus {
     box-shadow: 0 0 0 2px #2563eb !important;
+  }
+  .browser-frame .content-card.tarjeta-sin-cabecera {
+    padding-top: 18px;
   }
 
   /* --- ICONO DE AYUDA DE CADA ELEMENTO EN SECCIONES (BUILD-625) --- */

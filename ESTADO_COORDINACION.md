@@ -96,15 +96,15 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 ---
 
 | **Ola 23 (`build-631`)** | **Sincronización Fiel de Vista Previa Alumno con Diseñador (Mosaicos y Dimensiones de Imágenes):**<br>• `window.MAPA_COLUMNAS_` exportado y conectado a la maqueta de vista previa.<br>• Respeto de anchos (`25%`, `50%`, `75%`, `100%`), alineación y recortes de imágenes en vista previa.<br>• Mosaico 3 y retículas asimétricas reproducidas fielmente en el portal del alumno. | 🟢 **COMPLETADA (DESPLEGADA @642)** |
-| **Ola 24 (Fase 1)** | **Fusión Arquitectónica: Migración de Suite de Aula a Laravel 12 + Filament (Academia):**<br>• Creación del contrato rector `RSC_MIGRACION_FUSION_LARAVEL.md` y skill `.skills/aula-constructor/SKILL.md`.<br>• Maquetación Blade y Tailwind del Constructor Visual (`resources/views/aula/constructor.blade.php`).<br>• Desacoplamiento de llamadas `google.script.run` a la API REST de Laravel (`SesionAulaController`). | 🟢 **PROGRAMADA / PARTITURA ASIGNADA** |
+| **Ola 24 (Fase 1)** | **Fusión Arquitectónica: Migración de Suite de Aula a Laravel 12 + Filament (Academia):**<br>• Creación del contrato rector `RSC_MIGRACION_FUSION_LARAVEL.md` y skill `.skills/aula-constructor/SKILL.md`.<br>• Maquetación Blade y Tailwind del Constructor Visual (`resources/views/aula/constructor.blade.php`).<br>• Desacoplamiento de llamadas `google.script.run` a la API REST de Laravel (`SesionAulaController`).<br>• Entrega de DeepSeek (Blade + Tailwind) y Cursor (API + JS Cliente) auditada e integrada en `Academia`. | 🟢 **COMPLETADA E INTEGRADA EN ACADEMIA** |
 
 ---
 
-## 5. Tarea Activa y Reparto por Agente — OLA 24 (FASE 1: MIGRACIÓN A LARAVEL)
-🟢 **EN PROCESO — REPARTO FORMAL DE LA PRIMERA PARTITURA:**
+## 5. Tarea Activa y Reparto por Agente — OLA 24 (FASE 1 COMPLETADA)
+✅ **FASE 1 INTEGRADA POR ANTIGRAVITY — LISTOS PARA PRUEBAS Y FASE 2:**
 
-| Agente | Partitura Asignada | Buzón / Archivos |
-| :--- | :--- | :--- |
-| **DeepSeek** *(Diseño UI/UX & Blade/Tailwind)* | Maquetar la vista Blade `resources/views/aula/constructor.blade.php`, barra superior con sliders (`40%` a `100%`), botones de alineación, botón toggle de cabeceras, cuadrículas de mosaicos (`col-1` a `col-4`, `mosaico-3`) y tarjetas limpias. | `ENTREGA_DEEPSEEK.md` |
-| **Cursor** *(Fullstack & API/DOM)* | Diseñar el controlador `SesionAulaController.php` (métodos `guardarLienzo` y `obtenerLienzo`) y preparar `constructor-cliente.js` para reemplazar `google.script.run` por `fetch('/api/aula/sesion/...')`. | `ENTREGA_CURSOR.md` |
-| **Antigravity** *(Gobernanza, Arquitectura & BD)* | Gobernanza y supervisión del contrato `RSC_MIGRACION_FUSION_LARAVEL.md`, verificación de migraciones en MySQL `sesiones_clase`, auditoría e integración final en el repositorio de Laravel `Academia`. | `RSC_MIGRACION_FUSION_LARAVEL.md`<br>`.skills/aula-constructor/SKILL.md`<br>`ESTADO_COORDINACION.md` |
+| Agente | Estado | Partitura Cumplida | Archivo Integrado en Academia |
+| :--- | :---: | :--- | :--- |
+| **DeepSeek** *(Diseño UI/UX & Blade/Tailwind)* | 🟢 **ENTREGADO** | Maquetación Blade de `constructor.blade.php`, barra superior con sliders (`40%`–`100%`), botones de alineación, botón toggle de cabeceras, cuadrículas de mosaicos y tarjetas limpias DUA. | `resources/views/aula/constructor.blade.php`<br>`public/css/aula/aula-constructor.css` |
+| **Cursor** *(Fullstack & API/DOM)* | 🟢 **ENTREGADO** | Controlador `SesionAulaController.php` (métodos `guardarLienzo`, `obtenerLienzo`, `constructor`, `portalAlumno`) y cliente JS `constructor-cliente.js` (soporte fetch + caché offline). | `app/Http/Controllers/Aula/SesionAulaController.php`<br>`public/js/aula/constructor-cliente.js` |
+| **Antigravity** *(Director & Gobernanza)* | 🟢 **INTEGRADO** | Auditoría AST, inyección en `Academia`, registro de rutas en `routes/web.php` y `routes/api.php`, adición de campos en `SesionClase.php` y migraciones normativas NL. | `routes/web.php`<br>`routes/api.php`<br>`database/migrations/` |

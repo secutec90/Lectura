@@ -22,6 +22,60 @@
 
 ---
 
-### 📝 ZONA DE ENTREGA DE CURSOR (Escribe tu propuesta aquí abajo):
+---
 
-*(Cursor: deposita aquí tu código de controlador Laravel y funciones JS cliente)*
+## ✅ ENTREGA CURSOR — FASE 1 (API Lienzo Laravel + Cliente JS)
+
+**Estado:** Lista para auditoría Antigravity. Archivos espejo en `entregas-laravel-fase1/` para copiar al repo **Academia** (Laravel 12).
+
+### Rutas API (pegar en `routes/api.php`)
+
+Ver `entregas-laravel-fase1/routes/api-aula-snippet.php`:
+- `GET /api/aula/sesion/{sesion}/lienzo` → `obtenerLienzo`
+- `POST /api/aula/sesion/{sesion}/guardar` → `guardarLienzo`
+- Middleware sugerido: `auth:sanctum`
+
+### Controlador
+
+Destino en Academia: `app/Http/Controllers/Aula/SesionAulaController.php`  
+Copia íntegra: `entregas-laravel-fase1/app/Http/Controllers/Aula/SesionAulaController.php`
+
+**Comportamiento:**
+- `obtenerLienzo`: lee `sesiones_clase.lienzo_json` y `config_visual_json`, normaliza JSON, responde `meta.tiempo_respuesta_ms`.
+- `guardarLienzo`: valida `lienzo` (array con `filas` o puente legacy `paginas`), persiste en transacción, devuelve tiempo en ms.
+- Modelo esperado: `App\Models\SesionClase` con casts `lienzo_json` / `config_visual_json` como `array` o `json`.
+
+### Cliente JS
+
+Destino en Academia: `public/js/aula/constructor-cliente.js`  
+Copia íntegra: `entregas-laravel-fase1/public/js/aula/constructor-cliente.js`
+
+**Comportamiento:**
+- `ST90ConstructorApi.guardarLienzo(sesionId)` → `fetch POST .../guardar` con payload `{ lienzo, config_visual }`.
+- `ST90ConstructorApi.obtenerLienzo(sesionId)` → `fetch GET .../lienzo`.
+- `mapearEstadoExeALienzo_()` adapta `capturarEstadoExe_()` / `exportarSecciones610_()` al schema del SKILL (`version`, `config`, `filas`).
+- Cola offline en `localStorage` (`st90_lienzo_offline_{id}`) + resincronización en evento `online` (RSC ARCHITEX).
+- `inicializarConstructorCliente_({ sesionId, cargarAlInicio: true })` hidrata vía `deserializarIDevicesSesion_`.
+- Envoltorio opcional de `serializarIDevicesSesion_` para disparar guardado API sin romper flujo GAS mientras coexisten.
+
+### Integración Blade (nota para Antigravity)
+
+En `constructor.blade.php`:
+```blade
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script>
+  window.ST90_SESION_AULA_ID = {{ $sesion->id }};
+</script>
+<script src="{{ asset('js/aula/constructor-cliente.js') }}" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  if (window.inicializarConstructorCliente_) {
+    inicializarConstructorCliente_({ sesionId: window.ST90_SESION_AULA_ID, cargarAlInicio: true });
+  }
+});
+</script>
+```
+
+### Commit sugerido (Conventional Commits)
+
+`feat(aula): api rest de lienzo sesion y cliente fetch para constructor fase 1`

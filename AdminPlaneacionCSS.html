@@ -5761,14 +5761,39 @@
   }
 
   /* ---------- Adaptación a la pestaña 4 (#vistaPreviaIntegrada) ---------- */
+  .envoltorio:has(#panelPasoSesion_4.activo),
+  .envoltorio.ancho-preview-total {
+    width: 98% !important;
+    max-width: 100% !important;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  #panelPasoSesion_4 {
+    width: 100%;
+    max-width: 100%;
+  }
   #vistaPreviaIntegrada {
     margin-bottom: 16px;
+    width: 100%;
+    max-width: 100%;
   }
   #vistaPreviaIntegrada:empty {
     display: none;
   }
-  #vistaPreviaIntegrada .browser-frame {
+  #vistaPreviaIntegrada .browser-frame,
+  #modalPreviewAlumno .browser-frame {
     margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    transition: width 0.15s ease, max-width 0.15s ease;
+  }
+  #vistaPreviaIntegrada .browser-frame .class-title,
+  #modalPreviewAlumno .browser-frame .class-title {
+    max-width: 100%;
+  }
+  #vistaPreviaIntegrada .browser-frame .class-subtitle,
+  #modalPreviewAlumno .browser-frame .class-subtitle {
+    max-width: 100%;
   }
 
   /* ---------- Adaptación al modal (#modalPreviewAlumno) ---------- */

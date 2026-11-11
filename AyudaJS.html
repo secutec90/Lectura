@@ -3441,6 +3441,12 @@ function armarMaquetaAlumno_() {
   var marco = nodoPreview_('div', 'browser-frame');
   marco._momentoPreview_ = 1;
   marco._puntosQuiz_ = quiz.puntos;
+  var anchoPag = window._anchoPaginaActivo_ || 100;
+  marco.style.setProperty('width', (anchoPag === 100 ? '100%' : (anchoPag + '%')), 'important');
+  marco.style.setProperty('max-width', (anchoPag === 100 ? '100%' : (anchoPag + '%')), 'important');
+  marco.style.setProperty('margin-left', 'auto', 'important');
+  marco.style.setProperty('margin-right', 'auto', 'important');
+  marco.style.setProperty('box-sizing', 'border-box', 'important');
 
   var top = nodoPreview_('div', 'browser-topbar');
   var dots = nodoPreview_('div', 'browser-dots');
@@ -3525,6 +3531,16 @@ function armarMaquetaAlumno_() {
   cuerpo.appendChild(p3);
   var p4 = panelMomento(4, false);
   cuerpo.appendChild(p4);
+
+  var anchoSec = window._anchoSeccionActivo_ || 100;
+  var modoSec = window._alineacionSeccionActiva_ || 'center';
+  if (typeof aplicarAnchoYMargenSeccion_ === 'function') {
+    aplicarAnchoYMargenSeccion_(cuerpo, anchoSec, modoSec);
+    aplicarAnchoYMargenSeccion_(p1, anchoSec, modoSec);
+    aplicarAnchoYMargenSeccion_(p2, anchoSec, modoSec);
+    aplicarAnchoYMargenSeccion_(p3, anchoSec, modoSec);
+    aplicarAnchoYMargenSeccion_(p4, anchoSec, modoSec);
+  }
 
   if (window._colorFondoSesionActiva_) marco.style.backgroundColor = window._colorFondoSesionActiva_;
 
@@ -3725,10 +3741,47 @@ function armarMaquetaAlumno_() {
   return marco;
 }
 
+function asegurarTopbarPreview_() {
+  var panel = document.getElementById('panelPasoSesion_4');
+  if (!panel) return;
+  var bar = document.getElementById('barraAnchoPreview_');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'barraAnchoPreview_';
+    bar.className = 'divi-canvas-topbar';
+    bar.style.marginBottom = '14px';
+    bar.style.display = 'flex';
+    bar.style.alignItems = 'center';
+    bar.style.justifyContent = 'space-between';
+    bar.style.flexWrap = 'wrap';
+    bar.style.gap = '10px';
+    var vista = document.getElementById('vistaPreviaIntegrada');
+    if (vista && vista.parentNode === panel) panel.insertBefore(bar, vista);
+    else panel.insertBefore(bar, panel.firstChild);
+  }
+  var anchoPag = window._anchoPaginaActivo_ || 100;
+  var anchoSec = window._anchoSeccionActivo_ || 100;
+  var modo = window._alineacionSeccionActiva_ || 'center';
+  bar.innerHTML =
+    '<div class="controles-ancho" style="display:inline-flex;align-items:center;gap:16px;background:#f8fafc;padding:6px 14px;border:1px solid #cbd5e1;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,0.04);flex-wrap:wrap;">' +
+      '<div class="control-grupo" style="display:flex;align-items:center;gap:8px;"><label style="font-weight:700;font-size:13px;color:#0f172a;min-width:85px;">Página <span class="valor-ancho" id="val-ancho-pagina-prev" style="color:#0284c7;">' + anchoPag + '%</span></label>' +
+        '<input type="range" id="slider-ancho-pagina-prev" min="40" max="100" value="' + anchoPag + '" oninput="ajustarAnchoPagina(this.value)" style="cursor:pointer;"></div>' +
+      '<div class="control-grupo" style="display:flex;align-items:center;gap:8px;"><label style="font-weight:700;font-size:13px;color:#0f172a;min-width:90px;">Sección <span class="valor-ancho" id="val-ancho-seccion-prev" style="color:#0284c7;">' + anchoSec + '%</span></label>' +
+        '<input type="range" id="slider-ancho-seccion-prev" min="40" max="100" value="' + anchoSec + '" oninput="ajustarAnchoSeccion(this.value)" style="cursor:pointer;"></div>' +
+      '<div class="controles-alineacion" style="display:flex;align-items:center;gap:4px;">' +
+        '<button type="button" class="btn-alinear' + (modo === 'flex-start' ? ' activo' : '') + '" id="btn-izq-prev" title="Izquierda" onclick="alinearSecciones(\'flex-start\')">⬅️</button>' +
+        '<button type="button" class="btn-alinear' + (modo === 'center' ? ' activo' : '') + '" id="btn-centro-prev" title="Centro" onclick="alinearSecciones(\'center\')">↔️</button>' +
+        '<button type="button" class="btn-alinear' + (modo === 'flex-end' ? ' activo' : '') + '" id="btn-der-prev" title="Derecha" onclick="alinearSecciones(\'flex-end\')">➡️</button>' +
+      '</div>' +
+    '</div>' +
+    '<div style="font-size:12px;color:#64748b;font-weight:600;">Modo Vista Previa Alumno (100% Pantalla)</div>';
+}
+
 function pintarVistaPreviaIntegrada_() {
   var caja = document.getElementById('vistaPreviaIntegrada');
   if (!caja) return;
   vaciarNodo_(caja);
+  if (typeof asegurarTopbarPreview_ === 'function') asegurarTopbarPreview_();
   var maqueta = armarMaquetaAlumno_();
   caja.appendChild(maqueta);
   var momActivo = Math.max(1, Math.min(4, (Number(window._nodoSesionActivo_) || 0) + 1));
@@ -12827,10 +12880,22 @@ if (document.readyState === 'loading') {
       canvas.style.setProperty('margin-right', 'auto', 'important');
       canvas.style.setProperty('box-sizing', 'border-box', 'important');
     }
-    var lab = document.getElementById('val-ancho-pagina') || document.getElementById('val-pagina') || document.getElementById('val-ancho-lienzo');
-    var sl = document.getElementById('slider-ancho-pagina') || document.getElementById('slider-pagina') || document.getElementById('slider-ancho-lienzo');
-    if (lab) lab.textContent = v + '%';
-    if (sl && String(sl.value) !== String(v)) sl.value = String(v);
+    var marcos = document.querySelectorAll('#vistaPreviaIntegrada .browser-frame, #modalPreviewAlumno .browser-frame, .browser-frame');
+    marcos.forEach(function (marco) {
+      marco.style.setProperty('width', v === 100 ? '100%' : (v + '%'), 'important');
+      marco.style.setProperty('max-width', v === 100 ? '100%' : (v + '%'), 'important');
+      marco.style.setProperty('margin-left', 'auto', 'important');
+      marco.style.setProperty('margin-right', 'auto', 'important');
+      marco.style.setProperty('box-sizing', 'border-box', 'important');
+    });
+    ['val-ancho-pagina', 'val-ancho-pagina-prev', 'val-pagina', 'val-ancho-lienzo'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = v + '%';
+    });
+    ['slider-ancho-pagina', 'slider-ancho-pagina-prev', 'slider-pagina', 'slider-ancho-lienzo'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && String(el.value) !== String(v)) el.value = String(v);
+    });
   }
 
   function ajustarAnchoSeccion(valor) {
@@ -12841,15 +12906,23 @@ if (document.readyState === 'loading') {
     secciones.forEach(function (sec) {
       aplicarAnchoYMargenSeccion_(sec, v, modo);
     });
+    var panelesPreview = document.querySelectorAll('#vistaPreviaIntegrada .classroom-body, #vistaPreviaIntegrada .moment-panel, #modalPreviewAlumno .classroom-body, #modalPreviewAlumno .moment-panel, #vistaPreviaIntegrada .divi-row, #modalPreviewAlumno .divi-row');
+    panelesPreview.forEach(function (sec) {
+      aplicarAnchoYMargenSeccion_(sec, v, modo);
+    });
     var cont = document.getElementById('contenedorIDevicesDinamicos');
     if (cont && cont.id === 'contenedorIDevicesDinamicos') {
       cont.style.setProperty('width', '100%', 'important');
       cont.style.setProperty('max-width', '100%', 'important');
     }
-    var lab = document.getElementById('val-ancho-seccion') || document.getElementById('val-seccion');
-    var sl = document.getElementById('slider-ancho-seccion') || document.getElementById('slider-seccion');
-    if (lab) lab.textContent = v + '%';
-    if (sl && String(sl.value) !== String(v)) sl.value = String(v);
+    ['val-ancho-seccion', 'val-ancho-seccion-prev', 'val-seccion'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = v + '%';
+    });
+    ['slider-ancho-seccion', 'slider-ancho-seccion-prev', 'slider-seccion'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && String(el.value) !== String(v)) el.value = String(v);
+    });
   }
 
   function ajustarAnchoLienzo(valor) {
@@ -12866,10 +12939,16 @@ if (document.readyState === 'loading') {
       sec.setAttribute('data-align-seccion', modo);
       aplicarAnchoYMargenSeccion_(sec, v, modo);
     });
-    var mapa = { 'flex-start': 'btn-izq', 'center': 'btn-centro', 'flex-end': 'btn-der' };
+    var panelesPreview = document.querySelectorAll('#vistaPreviaIntegrada .classroom-body, #vistaPreviaIntegrada .moment-panel, #modalPreviewAlumno .classroom-body, #modalPreviewAlumno .moment-panel, #vistaPreviaIntegrada .divi-row, #modalPreviewAlumno .divi-row');
+    panelesPreview.forEach(function (sec) {
+      aplicarAnchoYMargenSeccion_(sec, v, modo);
+    });
+    var mapa = { 'flex-start': ['btn-izq', 'btn-izq-prev'], 'center': ['btn-centro', 'btn-centro-prev'], 'flex-end': ['btn-der', 'btn-der-prev'] };
     document.querySelectorAll('.btn-alinear').forEach(function (b) { b.classList.remove('activo'); });
-    var activo = document.getElementById(mapa[modo]);
-    if (activo) activo.classList.add('activo');
+    (mapa[modo] || []).forEach(function (btnId) {
+      var activo = document.getElementById(btnId);
+      if (activo) activo.classList.add('activo');
+    });
   }
 
   function htmlToolbar_() {

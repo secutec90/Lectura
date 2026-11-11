@@ -7616,10 +7616,16 @@ function parsearExcelPegado(texto, primeraFilaHead) {
   if (!lineas.length) return null;
 
   var sep = '\t';
-  if (lineas[0].indexOf('\t') === -1) {
-    if (lineas[0].indexOf(';') !== -1) sep = ';';
-    else if (lineas[0].indexOf(',') !== -1) sep = ',';
-    else return null;
+  if (lineas[0].indexOf('\t') !== -1) {
+    sep = '\t';
+  } else if (lineas[0].indexOf(';') !== -1) {
+    sep = ';';
+  } else if (lineas[0].indexOf('|') !== -1) {
+    sep = '|';
+  } else if (lineas[0].indexOf(',') !== -1) {
+    sep = ',';
+  } else if (/\t| {2,}/.test(lineas[0])) {
+    sep = /\t| {2,}/;
   }
 
   var filas = lineas.map(function (l) { return l.split(sep); });
@@ -11630,7 +11636,7 @@ if (document.readyState === 'loading') {
     'col-2-75-25': { n: 2, grid: 'grid-col-75-25', label: 'Desplazada (3/4 - 1/4)' },
     'mosaico-1': { n: 3, grid: 'grid-mosaico-1', label: 'Mosaico 1 (1 izq / 2 der)' },
     'mosaico-2': { n: 3, grid: 'grid-mosaico-2', label: 'Mosaico 2 (2 izq / 1 der)' },
-    'mosaico-3': { n: 4, grid: 'grid-mosaico-3', label: 'Mosaico 3 (1 izq / 3 der)' },
+    'mosaico-3': { n: 6, grid: 'grid-mosaico-3', label: 'Mosaico 3 (2 sup+1 inf izq / 1 alto centro / 2 der)' },
     'mosaico-4': { n: 4, grid: 'grid-mosaico-4', label: 'Mosaico 4 (3 izq / 1 der)' },
     'mosaico-5': { n: 3, grid: 'grid-mosaico-5', label: 'Mosaico 5 (1 sup / 2 inf)' },
     'mosaico-6': { n: 3, grid: 'grid-mosaico-6', label: 'Mosaico 6 (2 sup / 1 inf)' },
@@ -12586,7 +12592,7 @@ if (document.readyState === 'loading') {
     'col-2-75-25': ['1.5', '0.5'],
     'mosaico-1': ['2', '1', '1'],
     'mosaico-2': ['1', '1', '2'],
-    'mosaico-3': ['2', '1', '1', '1'],
+    'mosaico-3': ['1', '1', '1', '1', '1', '1'],
     'mosaico-4': ['1', '1', '1', '2'],
     'mosaico-5': ['2', '1', '1'],
     'mosaico-6': ['1', '1', '2'],

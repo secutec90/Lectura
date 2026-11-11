@@ -2,6 +2,20 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-11] - [Ola 22: Restauración y Consolidación Operativa en build-630 (Mosaicos Fieles 100%, Tablas con Excel y Jerarquía Limpia)]
+- **Mensaje de Commit sugerido (Conventional Commits):** `fix(constructor): restauracion operativa a build-630 con mosaicos 100% fieles y tablas funcionales (build-630)`
+- **Cambios Realizados:**
+  - **1. Retorno al Modal de Propiedades de Tabla Estable (`AyudaJS.html`):**
+    - Se neutralizó la plantilla foránea HTML que colisionaba con estilos globales y se restauró el modal unificado probado de 4 pestañas (**📋 Tabla**, **↔️ Col / Fila**, **🔲 Celda & Color**, **📥 Pegar de Excel**) con diseño en línea que no sufre alteraciones de CSS de Bootstrap ni de ComunCSS.
+  - **2. Fidelidad Geométrica 100% de Mosaicos (`AyudaJS.html`, `AdminPlaneacionCSS.html`):**
+    - Sincronización de los 12 mosaicos visuales. En particular, Mosaico 3 opera con 6 columnas (`n: 6`) y su distribución CSS Grid exacta (2 sup izq, 1 inf izq, 1 alto centro y 2 der), eliminando huecos blancos.
+  - **3. Parser Universal de Excel y Pegado Directo (`AyudaJS.html`):**
+    - Procesamiento tolerante a múltiples delimitadores (`\t`, `;`, `,`, `|`, y espacios múltiples) para pegar datos desde Excel, Sheets o páginas web.
+  - **4. Despeje de Divisores y Jerarquía Divi Pura:**
+    - Erradicación de interceptores de eventos duplicados; los botones `(+)` de sección, divisor y columna operan de forma limpia y predecible.
+- **Archivos Modificados:** `00_Constantes.gs`, `AdminPlaneacionCSS.html`, `AyudaJS.html`, `CONTROL_CAMBIOS.md`, `ESTADO_COORDINACION.md`.
+- **Impacto y Estado:** Todos los 79 documentos validan con 0 errores en Manifiesto Acorn. Desplegado a los 6 endpoints en versión 630.
+
 ### 🛠️ [2026-11-10] - [Ola 21: Homologación Total de Módulo Tabla Dinámica con Editor de Texto y Visibilidad Garantizada de Modal en build-629]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(constructor): homologacion de tabla dinamica con editor y visibilidad garantizada de modal (build-629)`
 - **Cambios Realizados:**

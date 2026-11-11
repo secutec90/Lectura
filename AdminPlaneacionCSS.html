@@ -7907,11 +7907,23 @@
   }
   /* Mosaicos (Masonry / Grid) 1 al 12 */
   .divi-columns-grid.grid-mosaico-1, .browser-frame .grid-mosaico-1, .moment-panel .grid-mosaico-1, .dua-clase-contenedor .grid-mosaico-1,
-  .divi-columns-grid.grid-mosaico-3, .browser-frame .grid-mosaico-3, .moment-panel .grid-mosaico-3, .dua-clase-contenedor .grid-mosaico-3,
   .divi-columns-grid.grid-mosaico-7, .browser-frame .grid-mosaico-7, .moment-panel .grid-mosaico-7, .dua-clase-contenedor .grid-mosaico-7 {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) !important;
     gap: 12px;
   }
+  /* Mosaico 3: 6 bloques exactos con miniaturas (2 sup izq, 1 inf izq span 2, 1 centro alto span 2 rows, 2 der) */
+  .divi-columns-grid.grid-mosaico-3, .browser-frame .grid-mosaico-3, .moment-panel .grid-mosaico-3, .dua-clase-contenedor .grid-mosaico-3 {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(130px, auto) minmax(130px, auto) !important;
+    gap: 12px !important;
+  }
+  .divi-columns-grid.grid-mosaico-3 > .divi-column:nth-child(1), .browser-frame .grid-mosaico-3 > .divi-column:nth-child(1), .moment-panel .grid-mosaico-3 > .divi-column:nth-child(1), .dua-clase-contenedor .grid-mosaico-3 > .divi-column:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .divi-columns-grid.grid-mosaico-3 > .divi-column:nth-child(2), .browser-frame .grid-mosaico-3 > .divi-column:nth-child(2), .moment-panel .grid-mosaico-3 > .divi-column:nth-child(2), .dua-clase-contenedor .grid-mosaico-3 > .divi-column:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .divi-columns-grid.grid-mosaico-3 > .divi-column:nth-child(3), .browser-frame .grid-mosaico-3 > .divi-column:nth-child(3), .moment-panel .grid-mosaico-3 > .divi-column:nth-child(3), .dua-clase-contenedor .grid-mosaico-3 > .divi-column:nth-child(3) { grid-column: 1 / span 2; grid-row: 2; }
+  .divi-columns-grid.grid-mosaico-3 > .divi-column:nth-child(4), .browser-frame .grid-mosaico-3 > .divi-column:nth-child(4), .moment-panel .grid-mosaico-3 > .divi-column:nth-child(4), .dua-clase-contenedor .grid-mosaico-3 > .divi-column:nth-child(4) { grid-column: 3; grid-row: 1 / span 2; }
+  .divi-columns-grid.grid-mosaico-3 > .divi-column:nth-child(5), .browser-frame .grid-mosaico-3 > .divi-column:nth-child(5), .moment-panel .grid-mosaico-3 > .divi-column:nth-child(5), .dua-clase-contenedor .grid-mosaico-3 > .divi-column:nth-child(5) { grid-column: 4; grid-row: 1; }
+  .divi-columns-grid.grid-mosaico-3 > .divi-column:nth-child(6), .browser-frame .grid-mosaico-3 > .divi-column:nth-child(6), .moment-panel .grid-mosaico-3 > .divi-column:nth-child(6), .dua-clase-contenedor .grid-mosaico-3 > .divi-column:nth-child(6) { grid-column: 4; grid-row: 2; }
   .divi-columns-grid.grid-mosaico-2, .browser-frame .grid-mosaico-2, .moment-panel .grid-mosaico-2, .dua-clase-contenedor .grid-mosaico-2,
   .divi-columns-grid.grid-mosaico-4, .browser-frame .grid-mosaico-4, .moment-panel .grid-mosaico-4, .dua-clase-contenedor .grid-mosaico-4 {
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr) !important;

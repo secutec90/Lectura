@@ -21,9 +21,14 @@ Todos los modelos deben acatar automáticamente estas reglas sin requerir que el
 
 ---
 
-## 3. Protocolo Centinela de Escucha Continua (Polling Automático cada 60 segundos)
+## 3. Protocolo de Enlace y Vigilancia Activa de la Orquesta
 
-- **Después de terminar cualquier tarea y guardar su entrega en el buzón**, tanto **Cursor** como **DeepSeek** NO deben cerrar su sesión en estado inactivo: deben activar inmediatamente el vigilante de buzón para revisar cada 60 segundos si Antigravity ya depositó la siguiente partitura:
-  - **Cursor:** Ejecutar `node herramientas/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0` (o `node .rsc/centinela_buzon.js cursor --intervalo=60 --max-ciclos=0`).
-  - **DeepSeek:** Ejecutar `node herramientas/centinela_buzon.js deepseek` (o `node .rsc/centinela_buzon.js deepseek`).
-- En cuanto el centinela detecte una nueva tarea (`🟢 PROGRAMADA` / `PARTITURA ASIGNADA`), el agente volverá a leer su buzón (`ENTREGA_CURSOR.md` o `ENTREGA_DEEPSEEK.md`) y `ESTADO_COORDINACION.md` y ejecutará la nueva tarea de forma autónoma.
+- **Arquitectura de Sincronización:**  
+  Los agentes conversacionales (Cursor Composer y DeepSeek Harness) concluyen su turno tras guardar en su buzón para permitir la auditoría de Antigravity.
+- **Vigilante Global de Orquesta (`iniciar_vigilante.cmd` / `node herramientas/vigilante_orquesta.js`):**
+  - Corre de fondo supervisando los buzones y `ESTADO_COORDINACION.md`.
+  - Cuando Antigravity deposita una nueva partitura (`🟢 PROGRAMADA` / `🎯 PARTITURA ASIGNADA`):
+    1. Emite una señal acústica en Windows (`SystemSounds::Exclamation`).
+    2. Dispara una notificación emergente en la bandeja del sistema (Toast / Balloon).
+    3. Copia automáticamente al **Portapapeles de Windows** el mensaje de arranque (`Ctrl+V` + `Enter` en la ventana del agente correspondiente).
+  - Al recibir dicho estímulo, el agente procede inmediatamente a leer su buzón y ejecutar la tarea de inicio a fin.

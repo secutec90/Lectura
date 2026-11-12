@@ -15,5 +15,6 @@
 4. **Respuesta en el chat:**
    - En el chat solo debes responder con un mensaje conciso:  
      *"✅ Entrega completada y guardada automáticamente en `ENTREGA_DEEPSEEK.md`. Listo para que Antigravity audite e integre."*
-5. **Re-lectura Automática del Buzón cada 60 segundos (Modo Centinela):**
-   - Inmediatamente después de guardar tu entrega en `ENTREGA_DEEPSEEK.md`, ejecuta el comando centinela `node herramientas/centinela_buzon.js deepseek` para revisar el buzón cada minuto. Si Antigravity carga una nueva tarea (`🟢`), léela y ejecútala automáticamente sin esperar intervención del usuario.
+5. **Ciclo de Ejecución de Tareas (Protocolo Orquesta):**
+   - Una vez guardada tu entrega en `ENTREGA_DEEPSEEK.md`, concluye tu turno de forma limpia para permitir la auditoría de Antigravity.
+   - En cuanto se active tu nuevo turno con el prompt del Centinela/Buzón, lee inmediatamente `ENTREGA_DEEPSEEK.md` y `ESTADO_COORDINACION.md`, localiza la nueva partitura (`🟢` / `🎯 PARTITURA ASIGNADA`) y ejecútala de principio a fin de forma autónoma.

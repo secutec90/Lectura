@@ -52,6 +52,8 @@ Este kit contiene la estructura base para inicializar cualquier proyecto bajo la
 | `INSTRUCCIONES_ORQUESTACION.html` | Guía interactiva navegable con botones de un clic para copiar prompts y ver la metodología. |
 | `.rsc/_cargar_codigo.js` | Cargador local de Node.js para simular el backend y ejecutar pruebas sin desplegar a la nube. |
 | `.rsc/test_regresion.js` | Suite de pruebas automatizadas locales (`node .rsc/test_regresion.js`). |
-| `.rsc/centinela_buzon.js` | Vigilante automático de buzón cada 60s (`node .rsc/centinela_buzon.js cursor|deepseek --intervalo=60 --max-ciclos=0`). Política v2: huella por bloque de partitura, aviso con origen explícito y filtro por agente, para no despertar al agente con ediciones que no son su tarea. |
+| `iniciar_vigilante.cmd` | Lanzador con doble clic del Vigilante de Orquesta: supervisa buzones, emite sonido, Toast y auto-copia el prompt al portapapeles. |
+| `.rsc/vigilante_orquesta.js` | Motor de supervisión continua de buzones con puente nativo a Windows (sonido, notificación y portapapeles). |
+| `.rsc/centinela_buzon.js` | Vigilante de buzón en consola con alertas sonoras y de portapapeles. |
 | `.rsc.json` | Configuración base del catálogo de arneses y herramientas. |
 | `.gitignore` | Ignora artefactos del sistema operativo (como `desktop.ini`), temporales y bloqueos de sincronización. |

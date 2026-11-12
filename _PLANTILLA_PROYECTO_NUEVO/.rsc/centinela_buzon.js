@@ -13,15 +13,30 @@
  *   e iniciar la auditoría AST, integración y despliegue.
  *
  * Uso:
- *   node herramientas/centinela_buzon.js cursor
- *   node herramientas/centinela_buzon.js deepseek
- *   node herramientas/centinela_buzon.js antigravity
- *   node herramientas/centinela_buzon.js antigravity --intervalo=15 --max-ciclos=120
+ *   node .rsc/centinela_buzon.js cursor
+ *   node .rsc/centinela_buzon.js deepseek
+ *   node .rsc/centinela_buzon.js antigravity
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { execSync } = require('child_process');
+
+function notificarSistema(titulo, mensaje, promptPortapapeles) {
+  try {
+    const safeTitulo = (titulo || '').replace(/'/g, "''");
+    const safeMensaje = (mensaje || '').replace(/'/g, "''");
+    let scriptPs = `[System.Media.SystemSounds]::Exclamation.Play();`;
+    if (promptPortapapeles) {
+      const safeClip = promptPortapapeles.replace(/'/g, "''");
+      scriptPs += ` Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetText('${safeClip}');`;
+    }
+    scriptPs += ` Add-Type -AssemblyName System.Windows.Forms; $notify = New-Object System.Windows.Forms.NotifyIcon; $notify.Icon = [System.Drawing.SystemIcons]::Information; $notify.BalloonTipTitle = '${safeTitulo}'; $notify.BalloonTipText = '${safeMensaje}'; $notify.Visible = $True; $notify.ShowBalloonTip(4000); Start-Sleep -Milliseconds 600; $notify.Dispose();`;
+
+    execSync(`powershell -NoProfile -NonInteractive -Command "${scriptPs}"`, { stdio: 'ignore', timeout: 5000 });
+  } catch (e) {}
+}
 
 const args = process.argv.slice(2);
 const agenteRaw = (args.find(a => !a.startsWith('--')) || 'cursor').toLowerCase().trim();
@@ -153,7 +168,8 @@ if (esAntigravity) {
       console.log('============================================================\n');
       console.log(bloque.slice(0, 500) + (bloque.length > 500 ? '\n... [ver buzón completo]' : ''));
       console.log('\n============================================================');
-      console.log('👉 ACCIÓN REQUERIDA (ANTIGRAVITY): Auditar AST (node herramientas/manifiesto.js), integrar código, incrementar versión y desplegar (clasp push).');
+      console.log('👉 ACCIÓN REQUERIDA (ANTIGRAVITY): Auditar AST (node .rsc/test_regresion.js), integrar código, incrementar versión y desplegar.');
+      notificarSistema(`Orquesta: Entrega de ${agenteDisparador}`, `Nueva entrega en ${archivoDisparador}. Auditar AST y desplegar.`, `Auditar entrega en ${archivoDisparador}`);
       process.exit(0);
     }
 
@@ -219,6 +235,8 @@ if (esAntigravity) {
       console.log(bloque);
       console.log('\n============================================================');
       console.log(`👉 ACCIÓN REQUERIDA: Lee ${origen} y ${archivoCoord}, ejecuta la partitura asignada y guarda tu entrega en ${archivoBuzon}.`);
+      const prompt = `Revisa tu buzón ${origen} y ${archivoCoord}, ejecuta la partitura asignada y guarda tu entrega en ${archivoBuzon}.`;
+      notificarSistema(`Orquesta: Tarea para ${nombreAgente}`, `Nueva partitura asignada. Prompt copiado al portapapeles.`, prompt);
       process.exit(0);
     }
 

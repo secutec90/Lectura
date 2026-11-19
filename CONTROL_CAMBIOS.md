@@ -2,6 +2,25 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-19] - [Ola 42: Módulo de Marbete Vehicular Docente y Padrón General de Estacionamiento Escolar]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-42): modulo de marbete vehicular docente y padron general de estacionamiento escolar`
+- **Cambios Realizados:**
+  - **1. Marbete Colgante Retrovisor y Cédula de Registro Vehicular (`marbete-vehicular-docente-nl.blade.php`):**
+    - Formato Carta con diseño recortable de doble sección:
+      - Sección 1: Marbete troquelado con ranura para colgar en espejo retrovisor interior, número de cajón asignado en tipografía gigante (ej. `C-18`), placas de circulación, datos del docente y código QR para caseta de vigilancia.
+      - Sección 2: Cédula de Registro Vehicular para expediente escolar con datos del vehículo, póliza de seguro, reglamento interno de velocidad (10 km/h) y firmas de conformidad.
+  - **2. Padrón General de Estacionamiento y Control de Cajones (`padron-estacionamiento-escolar-nl.blade.php`):**
+    - Formato Carta Horizontal (Landscape) con distribución de cajones: personal docente, directivo, accesibilidad (rampas azules) y visitas de supervisión técnica escolar.
+    - Cédula de inventario con placas, modelo y folio de marbete emitido por Servicios Generales.
+  - **3. Controlador Backend y Verificación Pública (`VehicularEscolarController.php`):**
+    - Métodos `verMarbeteVehicular()`, `verPadronEstacionamiento()` y `validarMarbete()` con datos tolerantes `asegurarDatosMarbeteDemo()` y `asegurarDatosPadronDemo()`.
+- **Rutas Conectadas:**
+  - `/reportes/marbete-vehicular/{folio?}`
+  - `/reportes/padron-estacionamiento/{zona?}`
+  - `/validar-marbete/{folio?}`
+- **Despliegue e Impacto:** Commit `4357af0` desplegado en producción `https://timbres.online` (Coolify `v77jr0s5ten5n04sib5p8vyy`). Cero perturbación en `https://aprendeajedrez.online/`.
+
+
 ### 🚀 [2026-11-19] - [Ola 41: Módulo de Asignación de Casilleros Escolares y Padrón de Lockers con Contrato de Corresponsabilidad]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-41): modulo de asignacion de casilleros escolares y padron de lockers con contrato de corresponsabilidad`
 - **Cambios Realizados:**

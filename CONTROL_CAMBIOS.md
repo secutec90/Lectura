@@ -2,6 +2,27 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-19] - [Ola 44: Módulo de Bitácora de Laboratorio de Ciencias y Vale de Resguardo de Cristalería]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-44): modulo de bitacora de laboratorio de ciencias y vale de resguardo de cristaleria`
+- **Cambios Realizados:**
+  - **1. Bitácora Oficial de Práctica Experimental de Ciencias (`bitacora-laboratorio-ciencias-nl.blade.php`):**
+    - Formato Carta Oficial con datos de la práctica: Asignatura (Química/Física/Biología), título experimental, PDA NEM, mesa de trabajo, integrantes del equipo con roles operativos (Coordinador, Reactivos, Registro, Seguridad).
+    - Protocolo de Seguridad EPP: Lista de verificación de bata 100% algodón, gafas de policarbonato, guantes de nitrilo y calzado cerrado.
+    - Cuadro de Reactivos Químicos y Manejo de Residuos bajo el Sistema Globalmente Armonizado (SGA / GHS) con procedimiento de neutralización ecológica.
+    - Observaciones experimentales, conclusiones y cuádruple firma: Alumno, Docente, Laboratorista y Dirección.
+  - **2. Vale Oficial de Resguardo de Cristalería y Material (`vale-material-laboratorio-nl.blade.php`):**
+    - Formato Carta con diseño de 2 tantos por página (Tanto 1: Laboratorio; Tanto 2: Equipo de Alumnos).
+    - Inventario detallado: Vasos precipitados, probetas, matraces Erlenmeyer, tubos de ensayo, termómetros, mecheros Bunsen y soportes universales.
+    - Pagaré y compromiso de reposición física en caso de rotura accidental (5 días hábiles).
+  - **3. Controlador Backend y Verificación Pública (`LaboratorioCienciasController.php`):**
+    - Métodos `verBitacoraPractica()`, `verValeMaterial()` y `validarPractica()` con datos tolerantes `asegurarDatosBitacoraDemo()` y `asegurarDatosValeDemo()`.
+- **Rutas Conectadas:**
+  - `/reportes/bitacora-laboratorio/{folio?}`
+  - `/reportes/vale-laboratorio/{id?}`
+  - `/validar-practica-laboratorio/{folio?}`
+- **Despliegue e Impacto:** Commit `f091cda` desplegado en producción `https://timbres.online` (Coolify `qqkls2ldcv6a7l45fpysrer3`). Cero perturbación en `https://aprendeajedrez.online/`.
+
+
 ### 🚀 [2026-11-19] - [Ola 43: Módulo de Carnet Digital de Biblioteca Escolar y Talonario de Préstamo a Domicilio]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-43): modulo de carnet digital de biblioteca escolar y talonario de prestamo a domicilio`
 - **Cambios Realizados:**

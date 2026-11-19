@@ -1184,3 +1184,14 @@ Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterre
   - Login exitoso probado mediante script de sesión automatizado: `HTTP 200 OK` en `https://timbres.online/admin/escuela-principal`.
   - Módulos de Ola 44 validados: `bitacora-laboratorio` (200), `vale-laboratorio` (200), `validar-practica-laboratorio` (200).
   - Sitio secundario `https://aprendeajedrez.online/` intacto (`HTTP 200 OK`).
+
+
+## [2026-11-19] - INTEGRACIÓN VISUAL DE REPORTES OFICIALES EN LA UI DEL PANEL ADMIN (FILAMENT)
+- **Objetivo:** Mostrar de forma directa, visual y accesible en la interfaz de usuario del panel administrativo (`/admin/escuela-principal`) todos los módulos y documentos oficiales de las Olas 39 a 44, eliminando la necesidad de escribir URLs manuales.
+- **Componentes Creados e Integrados:**
+  1. `App\Filament\Widgets\CentroReportesOficialesWidget`: Widget ejecutivo colocado en la parte superior del Dashboard de Filament con tarjetas para cada una de las Olas (Laboratorio de Ciencias, Biblioteca Escolar, Casilleros, Control Vehicular, Justificantes Médicos y Pases de Salida). Cada tarjeta incluye botones directos para abrir e imprimir documentos oficiales con formato Carta/Oficio y validación de QR.
+  2. `resources/views/filament/widgets/centro-reportes-oficiales-widget.blade.php`: Maquetación reactiva con soporte para modo oscuro/claro, tokens oficiales SENL, badges de estado y diseño SpaceX de alta fidelidad.
+  3. `App\Providers\Filament\AdminPanelProvider`: Registro del grupo de navegación lateral `Reportes Oficiales SENL` con enlaces directos e íconos temáticos de Heroicons a los 6 reportes institucionales.
+  4. `App\Filament\Pages\Dashboard`: Registro del widget en el método `getWidgets()`.
+  5. `App\Filament\Widgets\HomeContentWidget`: Auto-generación de contenido inicial para evitar el mensaje de *"No hay configuración de página de inicio"*.
+- **Verificación:** Desplegado en producción (`https://timbres.online/admin/escuela-principal`) y sitio secundario `https://aprendeajedrez.online/` intacto.

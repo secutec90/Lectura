@@ -2,6 +2,27 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-19] - [Ola 41: Módulo de Asignación de Casilleros Escolares y Padrón de Lockers con Contrato de Corresponsabilidad]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-41): modulo de asignacion de casilleros escolares y padron de lockers con contrato de corresponsabilidad`
+- **Cambios Realizados:**
+  - **1. Acta Oficial de Asignación y Contrato de Corresponsabilidad de Casilleros (`acta-asignacion-lockers-nl.blade.php`):**
+    - Formato Carta Oficial con número de locker, ubicación en edificio/planta, tipo de cierre y registro de candado/duplicado en prefectura.
+    - Contrato formal con 5 cláusulas normativas: uso exclusivo académico, prohibición estricta de objetos peligrosos/alimentos perecederos, derecho de inspección sanitaria/seguridad, corresponsabilidad en el cuidado y devolución al cierre de ciclo.
+    - Código de barras institucional y código QR para verificación rápida.
+    - Cuádruple firma de conformidad: Alumno, Padre/Tutor Legal, Prefectura General y Director del Plantel.
+  - **2. Padrón General de Inventario Físico de Lockers (`padron-inventario-lockers-nl.blade.php`):**
+    - Formato Carta Horizontal (Landscape) con desglose por edificio escolar.
+    - Métricas en vivo: total de lockers instalados, asignados y ocupados, disponibles para nuevo ingreso y módulos en reparación.
+    - Tabla pormenorizada con condición física, folio de acta y observaciones de mantenimiento.
+  - **3. Controlador Backend y Verificación Pública (`CasillerosEscolaresController.php`):**
+    - Métodos `verActaAsignacion()`, `verPadronInventario()` y `validarCasillero()` con datos tolerantes `asegurarDatosActaDemo()` y `asegurarDatosPadronDemo()`.
+- **Rutas Conectadas:**
+  - `/reportes/acta-lockers/{folio?}`
+  - `/reportes/padron-lockers/{edificio?}`
+  - `/validar-locker/{folio?}`
+- **Despliegue e Impacto:** Commit `12f5b81` desplegado en producción `https://timbres.online` (Coolify `xngfury5hxcxrleix7dppacy`). Cero perturbación en `https://aprendeajedrez.online/`.
+
+
 ### 🚀 [2026-11-19] - [Ola 40: Módulo de Pases de Salida Anticipada y Talonario de Retardos con Validación de Tutor]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-40): modulo de pases de salida anticipada y talonario de retardos con validacion tutor`
 - **Cambios Realizados:**

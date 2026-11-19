@@ -4,3 +4,10 @@ Desktop.ini
 *.gsheet/
 *.gsheet
 *.tmpdir/
+ 
+.env*
+herramientas/.env*
+\; Add-Content -Path 'G:\Mi unidad\PROYECTOS\Academia\.gitignore' -Value \
+.env*
+herramientas/.env*
+

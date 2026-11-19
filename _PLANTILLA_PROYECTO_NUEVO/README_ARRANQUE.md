@@ -1,6 +1,6 @@
-# GUÍA DE ARRANQUE RÁPIDO PARA PROYECTOS NUEVOS
+# GUÍA DE ARRANQUE RÁPIDO PARA PROYECTOS NUEVOS (SPACEX MULTI-AGENT FRAMEWORK)
 
-Este kit contiene la estructura base para inicializar cualquier proyecto bajo la **orquesta multi-agente: Antigravity + DeepSeek + Cursor**.
+Este kit contiene la estructura base para inicializar cualquier proyecto de software bajo una **organización de ingeniería autónoma multi-agente**: **Antigravity (Chief of Staff & Release Lead) + DeepSeek (Design & UX Lead) + Cursor (Software & DOM Lead)**.
 
 ---
 
@@ -8,31 +8,64 @@ Este kit contiene la estructura base para inicializar cualquier proyecto bajo la
 
 1. **Copia todo el contenido de esta carpeta (`_PLANTILLA_PROYECTO_NUEVO/`) a la raíz de tu proyecto nuevo.**
 2. **Abre Antigravity en la carpeta nueva y dile:**
-   > *"Hola Antigravity, inicialicemos este proyecto nuevo con la plantilla de orquestación. El proyecto consiste en: [describe brevemente tu objetivo]."*
-3. **Antigravity configurará la arquitectura y la FASE 1 en `ESTADO_COORDINACION.md`:**
-   * Definirá los contratos de DOM, clases CSS y backend.
-   * DeepSeek y Cursor trabajarán y **guardarán automáticamente sus entregas en sus buzones**, sin que tengas que copiar y pegar código a mano.
+   > *"Hola Antigravity, inicialicemos este proyecto nuevo con la plantilla de orquestación SpaceX. El proyecto consiste en: [describe brevemente tu objetivo y tecnologías]."*
+3. **Antigravity configurará la arquitectura, el Feature Map y la OLA 1 en `ESTADO_COORDINACION.md`:**
+   * Definirá los contratos de DOM, clases CSS, esquema de datos y Guardrails.
+   * DeepSeek y Cursor trabajarán en paralelo y **guardarán automáticamente sus entregas en sus buzones**, sin que tengas que copiar y pegar código a mano.
+   * Inicia el vigilante de orquesta haciendo doble clic en `iniciar_vigilante.cmd` para recibir alertas sonoras y tener el prompt de arranque listo en el portapapeles.
 
 ---
 
-## Flujo Automatizado de Buzones (Cero Copiado Manual):
+## Flujo Operativo Autónomo (SpaceX Framework):
 
 ```
-┌─────────────────────────┐          ┌─────────────────────────┐
-│     DEEPSEEK HARNESS    │          │         CURSOR          │
-│   (Diseño UI / CSS)     │          │    (Frontend JS / DOM)  │
-└───────────┬─────────────┘          └────────────┬────────────┘
-            │ Escribe en                          │ Escribe en
-            ▼ automático                          ▼ automático
- ┌──────────────────────┐               ┌──────────────────────┐
- │ ENTREGA_DEEPSEEK.md  │               │  ENTREGA_CURSOR.md   │
- └──────────┬───────────┘               └──────────┬───────────┘
-            │                                      │
-            └──────────────► ┌───────────────────┐ ◄┘
-                             │    ANTIGRAVITY    │
-                             │ (Audita, integra, │
-                             │  commitea y sube) │
-                             └───────────────────┘
+                                  REQUERIMIENTO DEL PROYECTO
+                                              │
+                                              ▼
+                                ┌───────────────────────────┐
+                                │   ANTIGRAVITY (Chief)     │
+                                │ • Redacta Feature Maps    │
+                                │ • Fija Guardrails e IDs   │
+                                │ • Asigna Olas en buzones  │
+                                └─────────────┬─────────────┘
+                                              │
+                    ┌─────────────────────────┴─────────────────────────┐
+                    ▼                                                   ▼
+     ┌─────────────────────────────┐                     ┌─────────────────────────────┐
+     │      DEEPSEEK (UX Lead)     │                     │     CURSOR (Software Lead)  │
+     │ • Maquetación Blade / HTML  │                     │ • Controladores y APIs      │
+     │ • Estilos CSS & Tokens      │                     │ • Widgets y Formularios     │
+     │ • Accesibilidad DUA / WCAG  │                     │ • Lógica reactiva del DOM   │
+     └──────────────┬──────────────┘                     └──────────────┬──────────────┘
+                    │ Escribe en                                        │ Escribe en
+                    │ automático                                        │ automático
+                    ▼                                                   ▼
+     ┌─────────────────────────────┐                     ┌─────────────────────────────┐
+     │     ENTREGA_DEEPSEEK.md     │                     │      ENTREGA_CURSOR.md      │
+     └──────────────┬──────────────┘                     └──────────────┬──────────────┘
+                    │                                                   │
+                    └─────────────────────────┬─────────────────────────┘
+                                              │
+                                              ▼
+                                ┌───────────────────────────┐
+                                │   VIGILANTE DE ORQUESTA   │
+                                │ • Alerta sonora en Windows│
+                                │ • Notificación Toast      │
+                                │ • Prompt en Portapapeles  │
+                                └─────────────┬─────────────┘
+                                              │
+                                              ▼
+                                ┌───────────────────────────┐
+                                │ AGENT EVALS & SELF-HEALING│
+                                │ • Pruebas php -l & Linters│
+                                │ • Verificación cURL HTTP  │
+                                └─────────────┬─────────────┘
+                                              │
+                                              ▼
+                                ┌───────────────────────────┐
+                                │ GIT COMMIT, PUSH & DEPLOY │
+                                │ (Gobernanza Antigravity)  │
+                                └───────────────────────────┘
 ```
 
 ---
@@ -41,19 +74,18 @@ Este kit contiene la estructura base para inicializar cualquier proyecto bajo la
 
 | Archivo / Carpeta | Propósito |
 | :--- | :--- |
-| `ESTADO_COORDINACION.md` | El contrato vivo previo. Contiene los IDs acordados y las partituras activas para cada fase. |
+| `AGENTS.md` | Directiva global del repositorio con las reglas inmutables de los 3 agentes y los 3 pilares SpaceX (Feature Maps, Closed Feedback Loops y Guardrails). |
+| `ESTADO_COORDINACION.md` | El contrato vivo previo. Contiene los Feature Maps, IDs acordados y las partituras activas para cada Ola. |
 | `CONTROL_CAMBIOS.md` | La bitácora técnica acumulada de cambios cerrados con formato Conventional Commits. |
-| `AGENTS.md` | Directiva global del repositorio que fija las reglas inmutables de los 3 agentes. |
-| `DEEPSEEK.md` | Regla para DeepSeek Harness que lo obliga a guardar directamente en `ENTREGA_DEEPSEEK.md`. |
+| `DEEPSEEK.md` | Regla para DeepSeek Harness que lo obliga a guardar directamente en `ENTREGA_DEEPSEEK.md` y ejecutar auto-reparación si hay errores. |
 | `ENTREGA_DEEPSEEK.md` | Buzón donde DeepSeek deposita automáticamente sus propuestas de CSS y maquetación. |
-| `ENTREGA_CURSOR.md` | Buzón donde Cursor deposita automáticamente sus controladores JS e informe técnico. |
-| `.cursor/rules/buzon-entrega-cursor.mdc` | Regla automática de Cursor (`alwaysApply: true`) que lo obliga a guardar en `ENTREGA_CURSOR.md`. |
+| `ENTREGA_CURSOR.md` | Buzón donde Cursor deposita automáticamente sus controladores, widgets e informe técnico. |
+| `.cursor/rules/buzon-entrega-cursor.mdc` | Regla automática de Cursor (`alwaysApply: true`) que lo obliga a consultar el Feature Map y guardar en `ENTREGA_CURSOR.md`. |
 | `.cursor/rules/control-cambios.mdc` | Regla automática de Cursor (`alwaysApply: true`) para estampar el bloque Conventional Commits. |
-| `INSTRUCCIONES_ORQUESTACION.html` | Guía interactiva navegable con botones de un clic para copiar prompts y ver la metodología. |
-| `.rsc/_cargar_codigo.js` | Cargador local de Node.js para simular el backend y ejecutar pruebas sin desplegar a la nube. |
-| `.rsc/test_regresion.js` | Suite de pruebas automatizadas locales (`node .rsc/test_regresion.js`). |
 | `iniciar_vigilante.cmd` | Lanzador con doble clic del Vigilante de Orquesta: supervisa buzones, emite sonido, Toast y auto-copia el prompt al portapapeles. |
 | `.rsc/vigilante_orquesta.js` | Motor de supervisión continua de buzones con puente nativo a Windows (sonido, notificación y portapapeles). |
 | `.rsc/centinela_buzon.js` | Vigilante de buzón en consola con alertas sonoras y de portapapeles. |
-| `.rsc.json` | Configuración base del catálogo de arneses y herramientas. |
-| `.gitignore` | Ignora artefactos del sistema operativo (como `desktop.ini`), temporales y bloqueos de sincronización. |
+| `.rsc/_cargar_codigo.js` | Cargador local para pruebas y simulación sin desplegar a la nube. |
+| `.rsc/test_regresion.js` | Suite de pruebas automatizadas locales (`node .rsc/test_regresion.js`). |
+| `INSTRUCCIONES_ORQUESTACION.html` | Guía interactiva navegable con botones de un clic para copiar prompts y ver la metodología. |
+| `.gitignore` | Ignora artefactos del sistema operativo, temporales y bloqueos de sincronización. |

@@ -2,6 +2,27 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-19] - [Ola 43: Módulo de Carnet Digital de Biblioteca Escolar y Talonario de Préstamo a Domicilio]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-43): modulo de carnet digital de biblioteca escolar y talonario de prestamo a domicilio`
+- **Cambios Realizados:**
+  - **1. Carnet Oficial de Lector y Cédula de Registro (`carnet-biblioteca-escolar-nl.blade.php`):**
+    - Formato Carta con diseño recortable y plegable de doble cara:
+      - Anverso: Credencial de lector con escudo oficial, fotografía infantil, matrícula escolar, código de barras Code128 y código QR institucional.
+      - Reverso: Tabla de control de préstamos a domicilio con 8 casillas reglamentarias (Fecha, Signatura Dewey, Fecha Límite de Devolución, Sello del Bibliotecario).
+      - Sección inferior: Cédula de Alta de Usuario de Biblioteca para archivo documental con firmas del Alumno, Bibliotecario y Director del Plantel.
+  - **2. Talonario Múltiple de Papeletas de Préstamo a Domicilio (`talonario-prestamo-biblioteca-nl.blade.php`):**
+    - Formato Carta con diseño optimizado de 3 fichas individuales por hoja para recorte rápido.
+    - Registro bibliográfico completo: Título de la obra, Autor, Editorial, Clasificación Decimal Dewey (ej. `863.64 G216c`) y Código de Ejemplar.
+    - Pagaré de reposición y compromiso de cuidado firmado por el alumno solicitante.
+  - **3. Controlador Backend y Verificación Pública (`BibliotecaEscolarController.php`):**
+    - Métodos `verCarnetBiblioteca()`, `verTalonarioPrestamo()` y `validarCarnet()` con datos tolerantes `asegurarDatosCarnetDemo()` y `asegurarDatosTalonarioDemo()`.
+- **Rutas Conectadas:**
+  - `/reportes/carnet-biblioteca/{folio?}`
+  - `/reportes/talonario-prestamo-biblioteca/{id?}`
+  - `/validar-carnet-biblioteca/{folio?}`
+- **Despliegue e Impacto:** Commit `3f5a536` desplegado en producción `https://timbres.online` (Coolify `5qntdqc1lo6vm9k5vig5vbhj`). Cero perturbación en `https://aprendeajedrez.online/`.
+
+
 ### 🚀 [2026-11-19] - [Ola 42: Módulo de Marbete Vehicular Docente y Padrón General de Estacionamiento Escolar]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-42): modulo de marbete vehicular docente y padron general de estacionamiento escolar`
 - **Cambios Realizados:**

@@ -2,6 +2,27 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-19] - [Ola 39: Módulo de Justificantes Médicos Oficiales y Bitácora de Filtro Sanitario SENL]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-39): modulo de justificantes medicos oficiales y bitacora de filtro sanitario SENL`
+- **Cambios Realizados:**
+  - **1. Justificante Médico Oficial y Licencia Escolar SENL (`justificante-medico-oficial-nl.blade.php`):**
+    - Formato Carta oficial con validación de cédula profesional, codificación diagnóstica CIE-10, período de incapacidad con cálculo de días hábiles.
+    - Adaptaciones razonables y exenciones de actividades físicas (DUA/Salud).
+    - Cadena digital criptográfica SHA-256 y código QR de verificación institucional.
+    - Cuádruple firma oficial: Médico Tratante, Trabajo Social, Dirección y Padre/Tutor.
+  - **2. Bitácora de Registro de Filtro Sanitario en Acceso (`filtro-sanitario-registro-nl.blade.php`):**
+    - Formato Carta Horizontal (Landscape) conforme a los protocolos epidemiológicos escolares de la Secretaría de Salud y Educación de Nuevo León.
+    - Métricas en tiempo real: total revisados, ingreso ordinario, síntomas leves monitoreados y canalizaciones a aislamiento preventivo.
+    - Tabla con registro térmico en colorimetría clínica, síntomas observados y firma de recepción por tutores.
+  - **3. Controlador Backend y Verificación Pública (`JustificanteMedicoController.php`):**
+    - Implementación de métodos `verJustificante()`, `verFiltroSanitario()` y `validarJustificante()` con `asegurarDatosJustificanteDemo()` y `asegurarDatosFiltroDemo()`.
+- **Rutas Conectadas:**
+  - `/reportes/justificante-medico/{folio?}`
+  - `/reportes/filtro-sanitario/{fecha?}`
+  - `/validar-justificante/{folio?}`
+- **Despliegue e Impacto:** Commit `3e30e9f` desplegado en producción `https://timbres.online` (Coolify `9qmwzpmt8fduwagxcjyaztx7`). Verificación HTTP 200 OK en todos los endpoints. Cero perturbación en `https://aprendeajedrez.online/`.
+
+
 ### 🚀 [2026-11-11] - [Ola 23: Sincronización Fiel de Vista Previa Alumno con Diseñador (Retículas de Mosaico y Dimensiones de Imagen en build-631)]
 - **Mensaje de Commit sugerido (Conventional Commits):** `fix(preview): sincronizacion fiel de mosaicos y respeto de escala/alineacion de imagenes en vista previa (build-631)`
 - **Cambios Realizados:**

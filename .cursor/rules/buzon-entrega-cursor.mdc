@@ -1,24 +1,28 @@
 ---
-description: Obliga a Cursor a guardar automáticamente sus entregas e informes en ENTREGA_CURSOR.md
+description: Obliga a Cursor a guardar automáticamente sus entregas e informes en ENTREGA_CURSOR.md bajo el modelo SpaceX
 alwaysApply: true
 ---
 
-# Directiva Automática de Entrega para Cursor
+# Directiva Automática de Entrega para Cursor (SpaceX Framework)
 
 Al trabajar en cualquier tarea, componente o refactorización dentro de este repositorio:
 
-1. **Destino Automático de Entrega:**
-   - Cada vez que termines de implementar, refactorizar o proponer código, escribe y guarda automáticamente tu informe técnico, tus controladores de JavaScript y tu bloque de Conventional Commits en el archivo:
+1. **Lectura Obligatoria del Feature Map:**
+   - Antes de codificar, lee `ESTADO_COORDINACION.md` y `ENTREGA_CURSOR.md`.
+   - Consulta el **Feature Map** de la Ola activa: rutas de archivos exactas, esquema de datos y contratos inmutables de IDs del DOM.
+2. **Destino Automático de Entrega (Cero Copiado Manual):**
+   - Escribe y guarda automáticamente tu informe técnico, tus controladores, widgets, lógica JS y bloque Conventional Commits directamente en el archivo:
      `ENTREGA_CURSOR.md`
-2. **Prohibido solicitar copiado manual:**
    - NO arrojes bloques largos de código en la ventana de chat pidiendo al usuario que los copie o pegue a mano.
-   - Modifica los archivos asignados y vuelca el resumen y código correspondiente directamente en `ENTREGA_CURSOR.md`.
-3. **Respeto de Contrato:**
-   - Respeta estrictamente los IDs definidos por Antigravity en `ESTADO_COORDINACION.md` y las clases de estilo de DeepSeek.
-   - Tienes restringido ejecutar `git commit`, `git push` o `clasp push`.
-4. **Respuesta en el chat:**
+3. **Respeto de Contrato y Guardrails:**
+   - Respeta estrictamente los IDs definidos en el Feature Map y las clases de estilo de DeepSeek.
+   - Implementa siempre resiliencia y fallbacks seguros (ej. `asegurarDatosDemo()`) para evitar excepciones 500 en producción.
+   - Tienes estrictamente prohibido ejecutar `git commit`, `git push` o comandos de despliegue.
+4. **Bucle de Auto-Reparación (*Self-Healing*):**
+   - Si Antigravity ejecuta pruebas (`php -l`, linters o cURL) y deposita un stack trace o error en tu buzón, lee el reporte, corrige el fallo en tus archivos y actualiza `ENTREGA_CURSOR.md` de inmediato.
+5. **Respuesta en el chat:**
    - En el chat de Cursor solo entrega un mensaje breve indicando:  
      *"✅ Entrega completada y guardada automáticamente en `ENTREGA_CURSOR.md` lista para la auditoría de Antigravity."*
-5. **Ciclo de Ejecución de Tareas (Protocolo Orquesta):**
+6. **Ciclo de Ejecución de Tareas (Protocolo Orquesta):**
    - Una vez guardada tu entrega en `ENTREGA_CURSOR.md`, concluye tu turno de forma limpia para permitir la auditoría de Antigravity.
-   - En cuanto se active tu nuevo turno con el prompt del Centinela/Buzón, lee inmediatamente `ENTREGA_CURSOR.md` y `ESTADO_COORDINACION.md`, localiza la nueva partitura (`🟢` / `🎯 PARTITURA ASIGNADA`) y ejecútala de principio a fin sin pedir confirmaciones innecesarias.
+   - En cuanto se active tu nuevo turno con el prompt del Centinela/Vigilante, localiza la nueva partitura (`🟢` / `🎯 PARTITURA ASIGNADA`) y ejecútala de principio a fin de forma autónoma.

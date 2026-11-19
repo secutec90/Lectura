@@ -2,6 +2,28 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-19] - [Ola 40: Módulo de Pases de Salida Anticipada y Talonario de Retardos con Validación de Tutor]
+- **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-40): modulo de pases de salida anticipada y talonario de retardos con validacion tutor`
+- **Cambios Realizados:**
+  - **1. Pase Oficial de Salida Anticipada con Doble Tanto (`pase-salida-anticipada-nl.blade.php`):**
+    - Formato Carta oficial con línea de corte punteada (`✂ - - - CORTAR AQUÍ - - - ✂`).
+    - Tanto 1: Expediente Escolar / Trabajo Social con motivo categorizado, justificante anexo y firma de guardia/vigilancia de puerta.
+    - Tanto 2: Comprobante y acuse de salida para Padre, Madre o Tutor Legal con acreditación de custodia y código QR institucional.
+    - Cotejo de identificación oficial (INE / Pasaporte) y número telefónico de enlace del adulto que retira al menor.
+  - **2. Talonario Múltiple de Pases de Entrada Extemporánea y Retardos (`talonario-retardo-pase-nl.blade.php`):**
+    - Formato Carta con diseño optimizado de 3 pases por página para recorte individual.
+    - Registro de hora de ingreso vs hora límite reglamentaria (07:05 hrs) y cómputo de minutos de tolerancia.
+    - Asignatura y docente de primera hora receptor del pase.
+    - Contador mensual de retardos acumulados con alerta de citatorio reglamentario al 3er retardo (Art. 42 del Reglamento Escolar).
+  - **3. Controlador Backend y Verificación Pública (`ControlAsistenciaIncidenciasController.php`):**
+    - Métodos `verPaseSalida()`, `verTalonarioRetardos()` y `validarPaseSalida()` con métodos tolerantes `asegurarDatosPaseSalidaDemo()` y `asegurarDatosRetardosDemo()`.
+- **Rutas Conectadas:**
+  - `/reportes/pase-salida/{folio?}`
+  - `/reportes/talonario-retardos/{id?}`
+  - `/validar-pase-salida/{folio?}`
+- **Despliegue e Impacto:** Commit `babb2ca` desplegado en producción `https://timbres.online` (Coolify `jejkyszltoplgcg4krjgdfur`). Cero perturbación en `https://aprendeajedrez.online/`.
+
+
 ### 🚀 [2026-11-19] - [Ola 39: Módulo de Justificantes Médicos Oficiales y Bitácora de Filtro Sanitario SENL]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-39): modulo de justificantes medicos oficiales y bitacora de filtro sanitario SENL`
 - **Cambios Realizados:**

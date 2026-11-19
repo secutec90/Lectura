@@ -1,18 +1,24 @@
 # GUÍA DE ARRANQUE RÁPIDO PARA PROYECTOS NUEVOS (SPACEX MULTI-AGENT FRAMEWORK)
 
-Este kit contiene la estructura base para inicializar cualquier proyecto de software bajo una **organización de ingeniería autónoma multi-agente**: **Antigravity (Chief of Staff & Release Lead) + DeepSeek (Design & UX Lead) + Cursor (Software & DOM Lead)**.
+Este kit contiene la estructura base para inicializar cualquier proyecto de software bajo una **organización de ingeniería autónoma multi-agente**: **Antigravity (Chief of Staff & Software/Release Lead) + DeepSeek API (Design & UX Lead) + Cursor (Local IDE / Review Lead)**.
+
+> 📖 **Documentación Técnica Completa:** Consulta [GUIA_MOTOR_AUTONOMO_SPACEX.md](GUIA_MOTOR_AUTONOMO_SPACEX.md) para conocer en detalle la arquitectura headless, guardrails inmutables y el motor `despachador_spacex.js`.
 
 ---
 
 ## Cómo arrancar un proyecto nuevo en 3 pasos:
 
 1. **Copia todo el contenido de esta carpeta (`_PLANTILLA_PROYECTO_NUEVO/`) a la raíz de tu proyecto nuevo.**
-2. **Abre Antigravity en la carpeta nueva y dile:**
+2. **Configura tu API Key de DeepSeek en `herramientas/.env.spacex`:**
+   ```bash
+   cp herramientas/.env.spacex.example herramientas/.env.spacex
+   # Coloca tu DEEPSEEK_API_KEY
+   ```
+3. **Abre Antigravity en la carpeta nueva y dile:**
    > *"Hola Antigravity, inicialicemos este proyecto nuevo con la plantilla de orquestación SpaceX. El proyecto consiste en: [describe brevemente tu objetivo y tecnologías]."*
-3. **Antigravity configurará la arquitectura, el Feature Map y la OLA 1 en `ESTADO_COORDINACION.md`:**
+4. **Antigravity configurará la arquitectura, el Feature Map y la OLA 1 en `ESTADO_COORDINACION.md`:**
    * Definirá los contratos de DOM, clases CSS, esquema de datos y Guardrails.
-   * DeepSeek y Cursor trabajarán en paralelo y **guardarán automáticamente sus entregas en sus buzones**, sin que tengas que copiar y pegar código a mano.
-   * Inicia el vigilante de orquesta haciendo doble clic en `iniciar_vigilante.cmd` para recibir alertas sonoras y tener el prompt de arranque listo en el portapapeles.
+   * Ejecutará el despachador autónomo (`herramientas/despachador_spacex.js`) para invocar a DeepSeek por API y desarrollará el backend en bucle cerrado (`php -l`), comiteará en Git y desplegará en la nube sin requerir intervención manual.
 
 ---
 

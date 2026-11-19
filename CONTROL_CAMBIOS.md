@@ -1171,3 +1171,16 @@ Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterre
   - Se replicaron las reglas en `_PLANTILLA_PROYECTO_NUEVO/` para que los nuevos proyectos hereden la automatización.
 - **Archivos Afectados:** `.cursor/rules/buzon-entrega-cursor.mdc`, `DEEPSEEK.md`, `AGENTS.md`, `ENTREGA_DEEPSEEK.md`, `ENTREGA_CURSOR.md`, `_PLANTILLA_PROYECTO_NUEVO/*`, `CONTROL_CAMBIOS.md`
 - **Contexto y Decisiones Técnicas (Resumen para Contexto AI):** Elimina el copiado manual entre ventanas. Los agentes vuelcan directamente su trabajo en el disco local y Antigravity los audita con un solo aviso del usuario.
+
+
+## [2026-11-19] - RESOLUCIÓN DEFINITIVA DE ACCESO Y CREDENCIALES ADMIN (PRODUCCIÓN)
+- **Causa Raíz:** La base de datos SQLite en producción se inicializó en el contenedor sin haber creado el usuario administrador, lo cual ocasionaba el mensaje de error *'Estas credenciales no coinciden con nuestros registros'*. Adicionalmente, el formulario de login solo admitía el formato de correo electrónico estricto y la redirección post-login apuntaba a `/admin/contents` en lugar del dashboard del panel administrativo.
+- **Acciones Implementadas:**
+  1. Activado y ejecutado el endpoint `/reset-admin-credenciales` que provisionó y vinculó a la base de datos el usuario `admin` / `secutec90@gmail.com` con hash verificado de `admin123`, rol Administrador y tenencia vinculada a `Escuela Principal` (`19DST0090X`).
+  2. Modificado `App\Http\Requests\Auth\LoginRequest` para aceptar indistintamente tanto `email` (`secutec90@gmail.com`) como `nombre_usuario` (`admin`).
+  3. Actualizada la ruta `/dashboard` para redirigir a los administradores directamente a `/admin`, aterrizando automáticamente en `https://timbres.online/admin/escuela-principal`.
+  4. Modificado `docker/entrypoint.sh` para forzar la ejecución incondicional de `AdministradorSeeder` en cada reinicio/despliegue del contenedor.
+- **Verificación en Producción:**
+  - Login exitoso probado mediante script de sesión automatizado: `HTTP 200 OK` en `https://timbres.online/admin/escuela-principal`.
+  - Módulos de Ola 44 validados: `bitacora-laboratorio` (200), `vale-laboratorio` (200), `validar-practica-laboratorio` (200).
+  - Sitio secundario `https://aprendeajedrez.online/` intacto (`HTTP 200 OK`).

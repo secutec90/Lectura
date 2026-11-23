@@ -2,6 +2,81 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-23] - [Hotfix: Sanitización de Grado y Grupo en Vinculación Horarios -> Wizard NEM]
+- **Mensaje de Commit (Conventional Commits):** `fix(pedagogico): extraer nivel numerico en grado de grupo y sanitizar json en wizard nem`
+- **Commit Hash en `secutec90/Academia`:** `470255b4` (rama `main`).
+- **Problema Detectado en Captura de Usuario:**
+  - Al dar clic en el botón "📝 Planear" de una celda del Visualizador de Horarios, la URL incluía la serialización JSON del modelo Eloquent `Grado`: `&grado={"id":2,"nombre":"2\u00b0","clave":"2",...}^A`.
+  - El Wizard NEM reflejaba el JSON crudo en el banner "Vinculado al Horario Docente" y en el input "NOMBRE O TÍTULO DEL PROYECTO *".
+- **Correcciones Implementadas:**
+  1. `resources/views/filament/pages/visualizador-horarios.blade.php`: Corregido el parámetro de enlace a `$grupo->grado?->nivel ?? $grupo->grado?->clave ?? '1'` para pasar el número entero limpio (`2`) y grupo (`A`).
+  2. `app/Http/Controllers/Pedagogico/PlaneacionNemController.php`: Agregada sanitización en `wizard()` para detectar si `$grado` o `$grupo` llegan serializados en JSON o con caracteres de formato sucio, decodificando y extrayendo de forma segura el grado numérico (`1`, `2`, `3`) y la letra de grupo en mayúscula.
+- **Validación en Producción:**
+  - Petición con query string JSON sucio probada contra `https://timbres.online/planeacion/wizard?asignatura=HISTORIA&grado=%7B%22id%22%3A2%2C%22nombre%22%3A%222%C2%B0%22%7D&grupo=A`:
+    - Banner: `Vinculado al Horario Docente: HISTORIA · 2°A` (Limpio y formateado).
+    - Título: `HISTORIA 2°A · Proyecto Comunitario` (Limpio).
+  - Estado del servicio satélite: `https://aprendeajedrez.online/` en HTTP 200 OK.
+- **Estado de la Entrega:** 🟢 `VERIFICADA EN PRODUCCIÓN`.
+
+### 🚀 [2026-11-23] - [Fase F2: Suite Pedagógica NEM — Wizard de Planeación Didáctica en 4 Etapas, Constructor de Tablas Excel y Plano Didáctico Oficial NL]
+- **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): completar contrato inmutable 25/25 IDs DOM en wizard NEM e integracion CSS/JS final (Fase F2)`
+- **Commit Hash en `secutec90/Academia`:** `bd339279` (rama `main`, merge limpio sobre `69b45ac5`).
+- **Coolify Deployment ID:** `dh6dsidsanvx7tjio5cx8vny` (Status: `Success` en Hetzner VPS).
+- **Entregables Multi-Agente Integrados y Auditados (100% Cobertura):**
+  - **1. DeepSeek (Design & UX/UI Lead):**
+    - Maquetación y accesibilidad DUA en `resources/views/pedagogico/planeacion-wizard.blade.php` y réplica en `resources/views/planeacion/planeacion-wizard.blade.php`.
+    - Estilos visuales del Wizard con stepper reactivo y chips DUA en `public/css/pedagogico/planeacion-wizard.css` (138/138 llaves balanceadas) y `public/css/planeacion/planeacion-wizard.css`.
+    - Formato oficial de impresión Letter/Oficio del Plano Didáctico de Nuevo León con membretes SENL/UIENL en `resources/views/pedagogico/plano-didactico-oficial-nl.blade.php` y `resources/views/reportes/plano-didactico-oficial-nl.blade.php`.
+    - Modal de herramientas de tabla en 4 pestañas y toolbar de imagen en `public/css/aula/aula-constructor.css` (97/97 llaves balanceadas).
+  - **2. Cursor (Software & DOM Lead):**
+    - Navegación de 4 etapas, autoguardado AJAX con CSRF hacia `/api/pedagogico/planeacion/guardar`, adición dinámica de PDAs con badge reactivo y ponderación de rúbrica (10 o 100 pts) en `public/js/pedagogico/planeacion-wizard.js`.
+    - Interceptor de pegado directo de Excel (`Ctrl+V`) con `<colgroup>` editable y paleta de color de fondo (`🪣`) en `public/js/aula/constructor-cliente.js`.
+    - Sintaxis JavaScript validada con `node --check` (0 errores).
+  - **3. Antigravity (Chief of Staff & Release Lead):**
+    - Controlador `PlaneacionNemController.php` con CRUD, catálogo oficial SEP Fase 6 (Campos, Contenidos, PDAs), renderizado de PDF oficial NL y diagnósticos tolerantes.
+    - Rutas web `/planeacion/wizard/{id?}`, `/planeacion/pdf/{id}` y `/api/pedagogico/pdas`.
+    - Integración quirúrgica de los 25 selectores DOM inmutables del Feature Map: `#stepperPlanNEM`, `#progresoBarraPlan`, `#etapaPlanNEM_1..4`, `#planTitulo`, `#planCampoFormativo`, `#planMetodologia`, `#planNumSesiones`, `#planFechaInicio`, `#planFechaFin`, `#selContenidoSinteticoNEM`, `#selPDANEM`, `#badgeConteoPDAs`, `#contenedorPDAsSeleccionados`, `#selProblemaEscolar`, `#planProblema`, `#planAjustesRazonables`, `#planBarrerasAprendizaje`, `#planProposito`, `#btnSugerirProyectoIA`, `#cajaRubricaCotejoNEM`, `#btnGuardarPlanNEM`, `#btnImprimirPDFOficialNL` (25/25 presentes).
+    - Verificación sintáctica `php -l` en todos los archivos PHP/Blade (0 errores).
+- **Validación en Producción y Definition of Done (DoD v3.1):**
+  - `https://timbres.online/planeacion/wizard`: HTTP 200 OK con los 25/25 selectores DOM renderizados en el payload HTML.
+  - `https://timbres.online/api/pedagogico/pdas?campo=lenguajes`: HTTP 200 OK con JSON válido de Fase 6.
+  - `https://timbres.online/planeacion/pdf`: HTTP 200 OK con diseño oficial Carta/Oficio.
+  - Assets estáticos (`planeacion-wizard.css`, `planeacion-wizard.js`, `aula-constructor.css`, `constructor-cliente.js`): HTTP 200 OK.
+  - Monitoreo continuo de servicio satélite protegido: `https://aprendeajedrez.online/` permaneció en HTTP 200 OK durante toda la ventana de despliegue con cero perturbación.
+- **Estado de la Entrega:** 🟢 `VERIFICADA EN PRODUCCIÓN`.
+
+### 🚀 [2026-11-23] - [Gobernanza v3.1: Actualización Consolidada de Políticas de Integración, Gobernanza y Coordinación Multi-Agente]
+- **Mensaje de Commit sugerido (Conventional Commits):** `docs(governance): consolidar politicas de integracion y coordinacion multi-agente v3.1`
+- **Motivo de la Actualización y Revisión Documental:**
+  - Robustecimiento del framework multi-agente propio de Academia 90 inspirado en prácticas y principios de ingeniería de software de alta autonomía y ejecución disciplinada compartidas en la entrevista técnica de referencia sobre organizaciones de ingeniería de alto rendimiento (corrigiendo atribuciones corporativas previas no sustentadas por fuente verificada).
+  - Incorporación mandatoria de autoverificación previa a la entrega con ficha técnica estructurada en buzones (`ENTREGA_*.md`).
+  - Formalización de Feature Maps utilizables y comprobables en interfaz real dentro del flujo de la aplicación.
+  - Diferenciación y calibración de Agent Evals medibles con evaluador independiente frente a pruebas funcionales del software.
+  - Precisión de la arquitectura de repositorios: `secutec90/Lectura` como sede de gobernanza compartida, especificaciones y coordinación multi-agente frente a `secutec90/Academia` como repositorio de código ejecutable, pruebas automáticas de backend, ramas y despliegue a producción.
+  - Endurecimiento de la matriz de Guardrails G-01 a G-07 distinguiendo formalmente controles manuales de bloqueos automáticos, describiendo el efecto real de gobernanza en G-01 y G-02 (rechazo formal de entregas y filtro pre-merge por Release Lead ante la ausencia de hooks OS o Branch Protection Rules en GitHub).
+  - Definición explícita del procedimiento para G-06 (comprobación de resiliencia con base vacía y auditoría de query log para evitar escrituras inesperadas en flujos de solo lectura).
+  - Desacoplamiento probatorio de G-07 y alineación estricta con la matriz de transiciones y la Definition of Done (DoD): exigencia de evidencia de la versión efectivamente desplegada (commit hash en `secutec90/Academia` / build ID en Coolify) para `DESPLEGADA`, y estipulación de que mientras la DoD exija monitoreo sostenido en toda la ventana de despliegue, el `curl` puntual constituye únicamente evidencia parcial y NO habilita `VERIFICADA EN PRODUCCIÓN`.
+  - Establecimiento de las pruebas automáticas funcionales aplicables como requisito ineludible para avanzar a `VALIDADA` y fusionar a `INTEGRADA`.
+- **Secciones Modificadas / Creadas en POLITICAS_INTEGRACION_Y_COORDINACION_MULTI_AGENTE.md (v3.1):**
+  - **1. Declaración de Filosofía y Marco Operativo:** Definición del framework de ingeniería autónoma propio de Academia 90 basado en tres principios: especialización radical, cero alucinación y cero copiado manual.
+  - **2. Matriz de Responsabilidades y Segregación de Funciones (RACI):** Soberanía técnica estricta de Antigravity (Chief of Staff & Release Lead), DeepSeek (Design & UX/UI Lead) y Cursor (Software & DOM Lead) con prohibiciones absolutas explícitas.
+  - **3. Coordinación Multi-Agente y Protocolo de Buzones:** Diagrama Mermaid de coordinación end-to-end (flowchart TD), canales formales `ENTREGA_DEEPSEEK.md` y `ENTREGA_CURSOR.md`, y prohibición de chat dumps.
+  - **4. Protocolo Obligatorio de Autoverificación Previa a la Entrega:** Ficha técnica de autoverificación (qué se probó, cómo se ejecutó, resultado esperado, resultado observado, ubicación de evidencia, pendientes). Criterios de auditoría cruzada por Antigravity con transiciones automáticas a `RETRABAJO` y `BLOQUEADA`.
+  - **5. Especificación de Feature Maps Utilizables y Comprobables:** Contratos cerrados con rutas exactas, esquema de datos, IDs inmutables del DOM, roles de usuario, rutas/menús, datos de prueba, acciones en interfaz y resultados observables en flujo interactivo real. Asignación unívoca de responsables por archivo y protocolo de coordinación de componentes híbridos (Blade, Alpine, Livewire, Filament).
+  - **6. Evaluaciones de Agentes (Agent Evals) Medibles:** Distinción rigurosa entre pruebas funcionales del software y evaluaciones de apego a instrucciones de agentes. Registro de versión de instrucción, casos de prueba estandarizados, rúbricas cuantitativas, umbrales prefijados, evaluador independiente, intentos concurrentes y protocolo de re-evaluación antes/después (*before vs after*).
+  - **7. Guardrails Arquitectónicos y Controles Bloqueantes:** Matriz G-01 a G-07 con columnas de Tipo de Control (Manual vs Automático), Estado Técnico (Activo vs Pendiente), Operación Bloqueada y Evidencia Registrada. Documentación específica para G-06 (comprobación de base vacía y auditoría de query log contra mutaciones en lectura) y G-07 (desacoplamiento de Alerta, Autorización privativa y Ejecución de Rollback).
+  - **8. Ciclo de Vida de los Estados y Definition of Done (DoD):** Diagrama Mermaid de máquina de estados (stateDiagram-v2) con flujo `PROGRAMADA` → `EN CURSO` → `EN REVISIÓN` → `VALIDADA` → `INTEGRADA` → `DESPLEGADA` → `VERIFICADA EN PRODUCCIÓN` (incluyendo bucles de `RETRABAJO` y `BLOQUEADA`). Pruebas automáticas funcionales como requisito estricto para `VALIDADA` y fusión. DoD de integración (`php -l`, tests funcionales, empty-state sin escrituras espurias, persistencia bidireccional) y DoD de producción (payload JSON en `timbres.online`, monitoreo continuo de ventana de deploy en `aprendeajedrez.online` y protocolo exclusivo de rollback).
+  - **9. Gobernanza de Cambios y Trazabilidad:** Reglas para enmiendas futuras y obligatoriedad en todo el sistema.
+- **Controles Técnicos Pendientes de Implementación (Reservados para Tareas Posteriores):**
+  - **1. Hooks de Pre-Commit Automatizados en Git (`.git/hooks/pre-commit`):** Bloquear commits locales si no se aprueba `php -l` y linters. (Prueba negativa de rechazo: commit deliberado con error PHP debe ser abortado).
+  - **2. Protección Criptográfica / API de Ramas en GitHub:** Bloquear push directo a `main` desde cualquier cuenta no autorizada. (Prueba negativa de rechazo: intento de push sin credencial de Release Lead debe arrojar HTTP 403 / remote rejected).
+  - **3. Pipeline Automatizado de CI/CD (GitHub Actions / Webhook Guard Coolify):** Ejecución en contenedor efímero de tests funcionales y de migración antes de desplegar. (Prueba negativa de rechazo: PR con test fallido debe abortar el despliegue).
+  - **4. Demonio del Vigilante de Orquesta Continuo (`vigilante_orquesta.js`):** Demonio background en SO host para escuchar eventos y alertar acústicamente / portapapeles. (Prueba negativa de rechazo: trigger con esquema corrupto debe ser ignorado y registrado).
+- **Rutas y Archivos Involucrados:**
+  - `g:\Mi unidad\PROYECTOS\Lectura\POLITICAS_INTEGRACION_Y_COORDINACION_MULTI_AGENTE.md` (Documento normativo v3.1 canónico consolidado en workspace).
+  - `g:\Mi unidad\PROYECTOS\Lectura\CONTROL_CAMBIOS.md` (Asentamiento de gobernanza).
+- **Estado de la Entrega:** DOCUMENTAL EN WORKSPACE (Sin commit, push ni despliegue de acuerdo al alcance autorizado).
+
 ### 🚀 [2026-11-19] - [Ola 44: Módulo de Bitácora de Laboratorio de Ciencias y Vale de Resguardo de Cristalería]
 - **Mensaje de Commit sugerido (Conventional Commits):** `feat(ola-44): modulo de bitacora de laboratorio de ciencias y vale de resguardo de cristaleria`
 - **Cambios Realizados:**

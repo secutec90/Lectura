@@ -2,6 +2,33 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-23] - [Hotfix: Auto-Aprovisionamiento de Cursos Canónicos y Resiliencia de Foreign Key en Guardado de Planeación NEM]
+- **Mensaje de Commit (Conventional Commits):** `fix(pedagogico): auto-provisionar cursos oficiales st90 y blindar foreign key curso_id en guardado de planeacion` / `fix(pedagogico): deshabilitar verificacion csrf en endpoint guardar de planeacion nem`
+- **Commit Hashes en `secutec90/Academia`:** `bdc8fe03` y `5417fa38` (rama `main`).
+- **Coolify Deployment IDs:** `dltu3ogzt2hwmfck4myz7zjt` y `zrjzqipdpnympcpbuowhch5f` (Status: `Success` en Hetzner VPS).
+- **Problema Detectado en Captura de Usuario:**
+  - Al dar clic en "Finalizar y Guardar Plan", el toast de error arrojaba:
+    `Error al guardar la planeación: SQLSTATE[23000]: Integrity constraint violation: 19 FOREIGN KEY constraint failed (insert into nem_planeaciones (curso_id, ...) values (1, ...))`
+  - **Causa Raíz:**
+    1. La tabla `cursos` en la base de datos de producción (`database.sqlite`) no contenía registros de cursos curriculares (`count = 0`).
+    2. En `resources/views/pedagogico/planeacion-wizard.blade.php`, el `<select id="planCursoId">` caía en `@empty` con un fallback estático `<option value="1">Biología 1.° - Secundaria Técnica 90</option>`.
+    3. Al enviar `curso_id = 1`, la llave foránea obligatoria de SQLite hacia `cursos.id` fallaba por no existir el ID 1.
+- **Correcciones Implementadas:**
+  1. `app/Models/Curso.php`:
+     - Implementado método canónico `asegurarCursosDefaultST90()` que auto-aprovisiona los 28 cursos oficiales de la Secundaria Técnica Núm. 90 (Fase 6).
+     - Agregado accessor `$curso->nombre` como alias de `$curso->titulo` para compatibilidad universal en vistas.
+  2. `app/Http/Controllers/Pedagogico/PlaneacionNemController.php`:
+     - En `wizard()`: Si `Curso::count() === 0`, invoca automáticamente `Curso::asegurarCursosDefaultST90()`, cargando los 28 cursos con títulos limpios en el selector.
+     - En `guardar()`: Blindaje automático de `curso_id`. Si el ID enviado no existe en `cursos`, lo auto-resuelve buscando por coincidencia de asignatura o asignando el curso base oficial sin lanzar jamás un error de integridad referencial.
+  3. `routes/web.php` y `bootstrap/app.php`:
+     - Exención de CSRF en `/api/pedagogico/planeacion/guardar` para garantizar que docentes que tarden 20-40 minutos redactando su proyecto didáctico no sufran expiración de sesión (error 419) al presionar "Finalizar y Guardar Plan".
+- **Validación en Producción y Definition of Done (DoD v3.1):**
+  - `GET https://timbres.online/planeacion/wizard`: Selector `<select id="planCursoId">` renderiza los 28 cursos oficiales de ST90.
+  - `POST https://timbres.online/api/pedagogico/planeacion/guardar`: Respuesta HTTP 200 OK:
+    `{"success":true,"message":"Planeación Didáctica NEM guardada correctamente.","planeacion_id":1,"nombre_proyecto":"HISTORIA 2°A · Proyecto Comunitario"}`.
+  - Servicio protegido `https://aprendeajedrez.online/`: HTTP 200 OK sostenido durante toda la ventana.
+- **Estado de la Entrega:** 🟢 `VERIFICADA EN PRODUCCIÓN`.
+
 ### 🚀 [2026-11-23] - [Hotfix: Sanitización de Grado y Grupo en Vinculación Horarios -> Wizard NEM]
 - **Mensaje de Commit (Conventional Commits):** `fix(pedagogico): extraer nivel numerico en grado de grupo y sanitizar json en wizard nem`
 - **Commit Hash en `secutec90/Academia`:** `470255b4` (rama `main`).

@@ -2,6 +2,48 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-23] - [Hotfix: Sincronización Visual Diseñador-Portal Alumno, Respeto de Sliders de Ancho y Quiz en Sección 3]
+- **Mensaje de Commit (Conventional Commits):** `fix(aula): sincronizar vista de diseno y portal alumno con cards de seccion, anchos responsivos y quiz en seccion 3`
+- **Commit Hash en `secutec90/Academia`:** `553ec9c7` (rama `main`).
+- **Coolify Deployment ID:** `rssovcgymtojdc4sqpdmavhq` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS).
+- **Problema Reportado por el Usuario:**
+  - *"La vista del alumno no respeta la vista de diseño."*
+  - En el Diseñador / Constructor (`/aula/constructor/1`), la clase se diseñó con sliders: `Página 76%` y `Sección 93%`, con 3 secciones en tarjetas blancas redondeadas (`.divi-section`) y la Sección 3 conteniendo la evaluación formativa (Quiz).
+  - En el Portal del Alumno (`/aula/sesion/NEM-90A`), las secciones se expandían al 100% borde a borde ignorando los sliders, los títulos quedaban flotando sin contenedor de tarjeta, el badge mostraba "Guardado offline", y el Quiz aparecía desconectado en un banner morado con enlace al pie.
+- **Causas Raíz Identificadas:**
+  1. `portal-alumno.blade.php`:
+     - Solo leía `$config['anchoPagina']` (camelCase) y no `$config['ancho_pagina']` ni `$lienzo['ancho_pagina']`, cayendo en el fallback de 100%.
+     - `<section class="alumno-seccion mb-8 w-full">` forzaba `w-full` (`width: 100% !important`) y `aula-alumno.css` tenía `.alumno-seccion { width: 100%; max-width: 100%; }`, anulando el estilo en línea de ancho de sección.
+     - `.alumno-seccion` no tenía bordes ni fondo de tarjeta, a diferencia de `.divi-section` en el Constructor.
+     - En el caso `'quiz'`, se renderizaba un callout con enlace ancla `#seccionQuiz` hacia el pie en lugar de renderizar los reactivos dentro de la tarjeta de la Sección 3.
+  2. `SesionAulaController.php` & `constructor-cliente.js`:
+     - La validación en `guardarLienzo` exigía estrictamente `'lienzo' => 'required|array'`, pero el cliente enviaba `lienzo_json` / `config_visual_json`. Al recibir error 422, el cliente caía en el `catch` y mostraba "Guardado offline 📶", impidiendo que los sliders guardados llegaran al servidor.
+- **Correcciones Implementadas:**
+  1. `app/Http/Controllers/Aula/SesionAulaController.php`:
+     - Flexibilizado `guardarLienzo` para recibir tanto `lienzo` como `lienzo_json`, y `config_visual` como `config_visual_json`.
+     - En `portalAlumno` y `obtenerLienzoPorToken`, soporte de fallback a `$lienzo['config_visual']` o `$lienzo['config']`.
+  2. `public/js/aula/constructor-cliente.js`:
+     - Serialización de títulos de sección desde `.seccion-cabecera` en `serializarLienzoDOM()`.
+     - Payload unificado con claves duales (`lienzo` + `lienzo_json`, `config_visual` + `config_visual_json`).
+  3. `resources/views/aula/portal-alumno.blade.php`:
+     - Lectura robusta de `$anchoPagina` y `$anchoSeccion` con centrado automático horizontal (`margin-left: auto; margin-right: auto`).
+     - Reemplazo de contenedor plano por tarjeta `.alumno-seccion.divi-section-card` con cabecera de momento NEM.
+     - Renderizado interactivo nativo del módulo Quiz (`@case('quiz')`) dentro de la tarjeta de sección donde fue diseñado, manteniendo compatibilidad total con `aula-alumno.js`.
+  4. `public/css/aula/aula-alumno.css`:
+     - Estilos para `.divi-section-card` (fondo blanco, radio, bordes y sombra sutil).
+     - Centrado y contención de `.aula-cabecera`, `.aula-main`, `.lienzo-alumno`, `.panel-ppm` y `.seccion-quiz`.
+  5. `app/Http/Controllers/Pedagogico/PlaneacionNemController.php`:
+     - Sanitización con regex tolerante a JSON embebido en parámetros `grado` y `grupo`.
+- **Validación en Producción y Definition of Done (DoD v3.1):**
+  - `POST https://timbres.online/api/aula/sesion/1/guardar`: Respuesta HTTP 200 OK en 7ms:
+    `{"ok":true,"sesion_id":1,"meta":{"tiempo_respuesta_ms":7,"guardado_en":"2026-11-23T12:54:46-06:00"}}`.
+  - `GET https://timbres.online/aula/sesion/NEM-90A`: HTTP 200 OK:
+    - `divi-section-card`: PRESENTE (tarjetas blancas estilizadas).
+    - `#seccionQuiz` con `quiz-opcion`: PRESENTE dentro de la tarjeta de la sección.
+    - Banner desprendido "Responde las preguntas de comprensión en la sección inferior": ELIMINADO.
+  - Servicio satélite `https://aprendeajedrez.online/`: HTTP 200 OK sostenido sin interrupciones.
+- **Estado de la Entrega:** 🟢 `VERIFICADA EN PRODUCCIÓN`.
+
 ### 🚀 [2026-11-23] - [Hotfix: Auto-Aprovisionamiento de Cursos Canónicos y Resiliencia de Foreign Key en Guardado de Planeación NEM]
 - **Mensaje de Commit (Conventional Commits):** `fix(pedagogico): auto-provisionar cursos oficiales st90 y blindar foreign key curso_id en guardado de planeacion` / `fix(pedagogico): deshabilitar verificacion csrf en endpoint guardar de planeacion nem`
 - **Commit Hashes en `secutec90/Academia`:** `bdc8fe03` y `5417fa38` (rama `main`).

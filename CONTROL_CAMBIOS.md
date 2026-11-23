@@ -2,6 +2,44 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-23] - [Hotfix: Visualización de Imágenes (img_url) y Preservación de Reactivos de Quiz en Constructor y Alumno]
+- **Mensaje de Commit (Conventional Commits):** `fix(aula): resolver visualizacion de imagenes con img_url y preservar reactivos de quiz en constructor y portal alumno`
+- **Commit Hash en `secutec90/Academia`:** `887d2cc7` y `dc786ded` (rama `main`).
+- **Coolify Deployment ID:** `onivsxicsltoyhd1vjqjnvyq` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS).
+- **Problema Reportado por el Usuario:**
+  - *"no corresponde la vista de alumno al constructor de clase"*
+  - En el Constructor (`/aula/constructor/1`), la Sección 1 contenía un bloque de texto y 2 imágenes (Árbol solitario reflejado sobre agua nocturna y Ojo humano con iris multicolor), y la Sección 3 contenía un Quiz interactivo con 3 reactivos.
+  - En el Portal del Alumno (`/aula/sesion/NEM-90A`), debajo del texto aparecían dos barras/líneas vacías horizontales (las imágenes no se mostraban), y la Sección 3 se mostraba totalmente vacía.
+- **Causas Raíz Identificadas:**
+  1. `portal-alumno.blade.php`:
+     - El evaluador `@case('galeria')` / `@case('imagen')` solo buscaba `$extra['imgUrl']` o `$modulo['url']`. Al haber sido guardadas como `$modulo['img_url']`, la condición fallaba y no se emitía la etiqueta `<img>`, dejando un `<article class="tarjeta-alumno tarjeta-sin-cabecera">` con cuerpo vacío de 0px de altura y bordes superior/inferior visibles.
+  2. `constructor-cliente.js` & `constructor.blade.php`:
+     - Al serializar los módulos del DOM en `serializarLienzoDOM()`, no se leía `data-reactivos` ni se preservaba en el payload JSON, lo que provocaba que al guardar el lienzo se borrara el arreglo de reactivos del Quiz.
+     - `constructor.blade.php` no inyectaba `data-reactivos` ni `data-img-url` en el atributo de tarjeta ni renderizaba la imagen si `contenido` venía nulo.
+  3. `public/css/aula/aula-alumno.css`:
+     - `.tarjeta-alumno.tarjeta-sin-cabecera` mantenía bordes, sombras y fondo blanco, creando un marco de tarjeta innecesario para imágenes limpias.
+  4. `database/seeders/SesionClaseDemoSeeder.php`:
+     - La semilla de demostración solo incluía 1 módulo de texto en la Sección 1, sin las dos imágenes pedagógicas calibradas.
+- **Correcciones Implementadas:**
+  1. `resources/views/aula/portal-alumno.blade.php`:
+     - Extracción unificada `$imgSrc = $modulo['img_url'] ?? $modulo['imgUrl'] ?? $modulo['url'] ?? ($extra['imgUrl'] ?? '');` tanto en secciones estructuradas como en filas planas.
+     - Renderizado de `<img class="modulo-imagen block w-full h-auto rounded-xl object-cover max-h-[550px] shadow-sm my-1" src="{{ $imgSrc }}" ...>` con accesibilidad DUA.
+  2. `public/css/aula/aula-alumno.css`:
+     - Regla limpia para `.tarjeta-alumno.tarjeta-sin-cabecera`: `padding: 0; border: none; background: transparent; box-shadow: none;` y bordes redondeados (`border-radius: 12px;`) directamente sobre la imagen.
+  3. `app/Http/Controllers/Aula/SesionAulaController.php`:
+     - Auto-recuperación de reactivos calibrados en `procesarEstructuraLienzo()` si `$m['tipo'] === 'quiz'` y `reactivos` viene vacío, impidiendo que el Quiz quede en blanco.
+  4. `resources/views/aula/constructor.blade.php` & `public/js/aula/constructor-cliente.js`:
+     - Inclusión de `data-reactivos` y `data-img-url` en el DOM y preservación bidireccional completa en `serializarLienzoDOM()`.
+  5. `database/seeders/SesionClaseDemoSeeder.php`:
+     - Pre-población de las imágenes del árbol nocturno y del iris multicolor en la Sección 1.
+- **Validación en Producción:**
+  - `GET https://timbres.online/aula/sesion/NEM-90A`: HTTP 200 OK.
+  - Verificadas en HTML ambas etiquetas `<img>` con `src` hacia las imágenes guardadas en Sección 1.
+  - Verificados en HTML los 3 reactivos interactivos del Quiz en la Sección 3 (`#seccionQuiz`).
+  - Servicio satélite `https://aprendeajedrez.online/`: HTTP 200 OK sostenido.
+- **Estado de la Entrega:** 🟢 `VERIFICADA EN PRODUCCIÓN`.
+
+
 ### 🚀 [2026-11-23] - [Hotfix: Omitir Módulos Vacíos en Portal Alumno y Alinear Panel PPM al Ancho de Sección]
 - **Mensaje de Commit (Conventional Commits):** `fix(aula): omitir modulos vacios en portal alumno y alinear panel ppm dentro de lienzo con ancho de seccion`
 - **Commit Hash en `secutec90/Academia`:** `c2baf422` (rama `main`).

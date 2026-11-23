@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-23] - [Hotfix: Omitir Módulos Vacíos en Portal Alumno y Alinear Panel PPM al Ancho de Sección]
+- **Mensaje de Commit (Conventional Commits):** `fix(aula): omitir modulos vacios en portal alumno y alinear panel ppm dentro de lienzo con ancho de seccion`
+- **Commit Hash en `secutec90/Academia`:** `c2baf422` (rama `main`).
+- **Coolify Deployment ID:** `gv6uehqdgxulufbt2gjntkgl` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS).
+- **Problema Detectado en Captura de Usuario (Sliders 78% y 61%):**
+  - Al probar sliders estrechos (`Página 78%`, `Sección 61%`), el módulo "Sin contenido" (galería/imagen sin URL cargada) renderizaba en el portal del alumno como una caja vacía con borde gris superior.
+  - El panel inferior "Lectura en voz alta" (`.panel-ppm`) se renderizaba fuera del contenedor de lienzo al 78% de ancho de pantalla, desbordando asimétricamente los bordes de la sección (61%) e invadiendo lecciones que no requerían prueba de velocidad lectora.
+- **Correcciones Implementadas:**
+  1. `resources/views/aula/portal-alumno.blade.php`:
+     - Condicional `$tieneContenido` en bucles de secciones y filas planas: si un módulo carece de imagen, video, audio o texto, se omite por completo del DOM, eliminando el marco vacío superior.
+     - Contención de `.panel-ppm` y `#seccionQuiz` dentro de `#lienzoAlumno`, aplicando `width: {{ $anchoSeccion }}%` y centrado horizontal (`margin: 0 auto`), garantizando que sus márgenes coincidan pixel por pixel con las tarjetas de sección.
+     - Filtro inteligente `$mostrarPpm`: solo se activa el panel de cronometría de lectura cuando existe un módulo de lectura guiada o el texto acumulado supera las 60 palabras, evitando mostrar pruebas de lectura en tarjetas de simple bienvenida.
+- **Validación en Producción:**
+  - `GET https://timbres.online/aula/sesion/NEM-90A`: HTTP 200 OK.
+  - Marco vacío de módulo no configurado eliminado.
+  - Servicio satélite `https://aprendeajedrez.online/`: HTTP 200 OK sostenido.
+- **Estado de la Entrega:** 🟢 `VERIFICADA EN PRODUCCIÓN`.
+
 ### 🚀 [2026-11-23] - [Hotfix: Sincronización Visual Diseñador-Portal Alumno, Respeto de Sliders de Ancho y Quiz en Sección 3]
 - **Mensaje de Commit (Conventional Commits):** `fix(aula): sincronizar vista de diseno y portal alumno con cards de seccion, anchos responsivos y quiz en seccion 3`
 - **Commit Hash en `secutec90/Academia`:** `553ec9c7` (rama `main`).

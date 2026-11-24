@@ -2,6 +2,31 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-24] - [Persistencia de Turno y Ciclo en Visualizador de Horarios & Grupos Homólogos Resilientes]
+- **Mensaje de Commit (Conventional Commits):** `fix(horarios): persistir turno y ciclo en query string y sesion, y resolver grupos homologos resilientes st90`
+- **Commit Hash en `secutec90/Academia`:** `17c1ae9f` (rama `main`).
+- **Coolify Deployment ID:** `aokkfxuvalgm2qow1mblobak` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS `62.238.121.52:8000`).
+- **Problema Reportado por el Usuario:**
+  - *"por que el horario se borra cada vez que recargo la pagina timbres.online/admin/escuela-principal/visualizador-horarios"*
+- **Causa Raíz Diagnosticada:**
+  1. *Pérdida de Estado en Livewire al recargar (F5):* La página `VisualizadorHorarios` no sincronizaba el turno (`$turnoSeleccionado`), el ciclo escolar (`$cicloEscolarId`) ni el día (`$diaSeleccionado`) con la URL ni con la sesión de usuario. Al recargar la página, el método `mount()` se ejecutaba de cero y forzaba `$this->turnoSeleccionado = 'matutino'`. Si el usuario estaba visualizando o configurando el turno **Vespertino**, o acababa de importar un horario para Vespertino, al pulsar F5 la vista cambiaba forzadamente a **Matutino** (que estaba vacío), dando la apariencia de que el horario "se había borrado".
+  2. *Desconexión de IDs de Grupos Homólogos:* En `construirHorarioData()`, la consulta filtraba estrictamente por `whereIn('grupo_id', $this->grupos->pluck('id'))`. Si los horarios pertenecían a registros homólogos de grupos creados con otro ciclo o con ID diferente (ej. un grupo creado por importación aSc o Excel), los horarios se ignoraban silenciosamente y dejaban las celdas en blanco.
+  3. *Importaciones no sincronizaban turno activo:* Al importar un archivo XML o Excel para un turno específico, la vista no actualizaba `$this->turnoSeleccionado` al turno importado.
+- **Correcciones Implementadas:**
+  1. **Sincronización Bidireccional de Filtros en URL y Sesión:**
+     - Añadidos atributos Livewire 3 `#[Url(as: 'turno', keep: true)]`, `#[Url(as: 'ciclo', keep: true)]` y `#[Url(as: 'dia', keep: true)]` a las propiedades públicas de `VisualizadorHorarios`.
+     - En `mount()`, implementada jerarquía de persistencia: `query string` ➔ `propiedad Livewire` ➔ `sesión de Laravel` ➔ `valor por defecto`.
+     - En los hooks reactivos `updatedTurnoSeleccionado`, `updatedCicloEscolarId` y `updatedDiaSeleccionado`, se persiste de inmediato en `session()`. Al recargar con F5, la página conserva exactamente el turno, ciclo y día seleccionados.
+  2. **Resolución Resiliente de Grupos Homólogos:**
+     - En `construirHorarioData()`, se consultan todos los grupos relacionados por coincidencia de grado, nombre de grupo y turno (`$mapaHomologos`), mapeando cualquier horario registrado a la columna correspondiente en la cuadrícula visual activa.
+  3. **Sincronización Automática tras Importación:**
+     - Al concluir con éxito una importación de aSc (XML) o Excel, el componente actualiza inmediatamente `$this->turnoSeleccionado` y la sesión al turno importado antes de invocar `cargarDatos()`.
+  4. **Respaldo Automático de SQLite en Contenedor (`entrypoint.sh`):**
+     - Añadido mecanismo de auto-restauración y respaldo en `/var/www/html/storage/app/database.sqlite` para mitigar pérdidas accidentales en reinicios de contenedor.
+- **Validación en Producción:**
+  - `https://timbres.online/admin/escuela-principal/visualizador-horarios` -> Despliegue completado (HTTP 302 a login Filament).
+  - `https://aprendeajedrez.online` -> HTTP 200 OK (satélite verificado).
+
 ### 🚀 [2026-11-24] - [Asistente Pedagógico NEM Lateral & Sincronización Reactiva de Contenidos y PDAs con 1 Clic]
 - **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): implementar asistente pedagogico nem lateral, sugerencias de titulos/pdas con 1 clic y sincronizacion reactiva st90`
 - **Commit Hash en `secutec90/Academia`:** `23792688` (rama `main`).

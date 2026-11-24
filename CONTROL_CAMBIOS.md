@@ -2,6 +2,32 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-24] - [Asistente Pedagógico NEM Lateral & Sincronización Reactiva de Contenidos y PDAs con 1 Clic]
+- **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): implementar asistente pedagogico nem lateral, sugerencias de titulos/pdas con 1 clic y sincronizacion reactiva st90`
+- **Commit Hash en `secutec90/Academia`:** `23792688` (rama `main`).
+- **Coolify Deployment ID:** `tfatdzq3do039eqxdh5atpzy` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS `62.238.121.52:8000`).
+- **Problemas Reportados por el Usuario (Comparación AppsScript vs Laravel):**
+  1. *Falta del Asistente Lateral:* En AppsScript (`AdminPlaneacion.html` / `AyudaJS.html`), al pulsar `✨ Sugerir con IA` en el Título o en el PDA, se abre un **Drawer Lateral derecho ("Asistente Pedagógico NEM")** con avatar, badge de asignatura/grado, voz DUA (`🔊 Escuchar`), chips de contexto y tarjetas de acción inmediata con 1 clic (`➕ Clic para aplicar al Título del Proyecto: "..."` y `➕ Insertar en PDA`).
+  2. *Error en Etapa 1:* El botón `✨ Sugerir con IA` en el Título sólo sustituía el texto por un valor estático sin abrir el asistente ni ofrecer alternativas interactivas.
+  3. *Error en Etapa 2:* Al seleccionar el contenido curricular en `selContenidoSinteticoNEM`, el textarea `planContenidoSintetico` permanecía en blanco y `#listaCheckboxesPDAs` mostraba "Selecciona un contenido curricular para cargar sus PDAs.", bloqueando el avance a la Etapa 3 con la alerta `⚠️ Vincula al menos un PDA antes de continuar.`.
+- **Correcciones Implementadas:**
+  1. **Asistente Pedagógico NEM Lateral (`#drawerAsistenteIA` & `#iaDrawerVelo`):**
+     - Añadido el panel drawer lateral con cabecera en degradado institucional (`#1e40af` a `#0ea5e9`), avatar oficial, chip dinámico de contexto (`#chipContextoAsistente`), botón de cierre y cuerpo de chat accesible (`#chatAsistenteCuerpo`).
+     - Añadido el botón flotante inferior `#btnAsistenteFlotanteIA` con halo respiratorio continuo en CSS.
+     - Añadida síntesis de voz interactiva (`Web Speech API`) con el botón `🔊 Escuchar` para lectura DUA accesible de cualquier respuesta del asistente.
+     - Añadido soporte de reconocimiento de voz (`SpeechRecognition`) en el composer con el botón `🎙️`.
+  2. **Tarjetas de Acción de 1 Clic:**
+     - Al pulsar `✨ Sugerir con IA` en el Título, el asistente propone 3 títulos motivadores con botones `➕ "..."`; al hacer clic, se inyecta en `#planTitulo` con animación de pulso visual (`.titulo-destacado-anim`) y notificación toast.
+     - Al pulsar `✨ Sugerir con IA` en la sección PDA, el asistente sugiere PDAs DUA con botones `➕ Insertar este PDA`; al hacer clic, se agrega al textarea `#planPDA` y se sincroniza con la lista de PDAs vinculados.
+  3. **Sincronización Reactiva Robusta en Etapa 2:**
+     - En `alCambiarContenidoSintetico()`, normalizada la búsqueda en `matrizContenidosCache` para soportar comparaciones flexibles por inclusión y preselección automática del PDA del grado escolar del docente, garantizando que nunca quede bloqueado el avance hacia la Etapa 3.
+  4. **Backend & Sanitización de Rutas:**
+     - Nuevo endpoint `POST /api/pedagogico/asistente-ia` en `PlaneacionNemController.php` y `routes/web.php` con respuestas pedagógicas estructuradas para Títulos, PDAs DUA y asesoría curricular Fase 6.
+     - Métodos de sanitización robusta (`sanitizarGrado`, `sanitizarAsignatura`, `sanitizarGrupo`) erradicando totalmente cualquier fuga de JSON crudo hacia la interfaz de usuario.
+- **Validación en Producción:**
+  - `https://timbres.online/planeacion/wizard` -> HTTP 200 OK (verificado con asistente lateral y endpoints activos).
+  - `https://aprendeajedrez.online` -> HTTP 200 OK (satélite intacto).
+
 ### 🚀 [2026-11-24] - [Sincronización Total con AppsScript ST90: Wizard NEM 4 Etapas & Secuencia 4 Pasos Constructor]
 - **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): sincronizar wizard nem y flujo de 4 pasos de sesion con logica appsscript st90`
 - **Commit Hash en `secutec90/Academia`:** `3afb6fdb` (rama `main`).

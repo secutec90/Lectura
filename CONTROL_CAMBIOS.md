@@ -2,6 +2,39 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-24] - [Fidelidad Canónica AppsScript: Modales de Membrete Oficial NL, Vista Previa PDF, Catálogo CTE, Banco de Encuestas y Sincronización Constructor-Alumno]
+- **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): implementar modales canonicos AppsScript (Membrete Oficial NL, Vista Previa PDF, Catalogo CTE y Banco de Encuestas)`
+- **Commit Hash en `secutec90/Academia`:** `22086588` (rama `main`).
+- **Coolify Deployment ID:** `falorbp4dlambdxoev44gk2l` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS `62.238.121.52:8000`).
+- **Problemas Reportados por el Usuario (con capturas de pantalla):**
+  1. *Imagen 1:* Los botones `[⚙️ Editar Catálogo CTE]` y `[📥 Importar datos de encuesta]` no realizaban la acción de gestión ni importación.
+  2. *Imagen 2:* Los botones `[⚙️ Membrete Oficial]` y `[👁️ Vista Previa PDF Oficial]` no daban el resultado adecuado (uno mostraba toast y el otro abría una ruta genérica `/planeacion/pdf/1` en vez del visor oficial).
+  3. *Imagen 3:* Vista canónica de AppsScript: Modal oficial de Plano Didáctico con barra azul marino (`#0f172a`), botones institucionales (`Membrete`, `Descargar PDF`, `Imprimir`, `Cerrar`) y maquetación de hoja membretada del Gobierno de Nuevo León (Secretaría de Educación).
+  4. *Imagen 4:* Modal canónico de AppsScript `⚙️ Membrete Institucional Oficial`: previsualización en vivo del banner con escudos oficiales de NL, campos para escudos y 3 renglones de encabezado, y botón de restauración.
+  5. *Error SQLite de Clave Foránea:* `SQLSTATE[23000]: Integrity constraint violation: 19 FOREIGN KEY constraint failed` al intentar guardar planeación con `curso_id = 1`.
+  6. *Inyección de JSON en Título del Proyecto:* Al vincular desde el Horario, el objeto de Grado se insertaba como cadena JSON cruda (`HISTORIA {"id":2,...}'A`).
+  7. *Desincronización Constructor vs Vista Alumno:* En el paso 4 ("Vista Alumno"), los módulos e imágenes añadidos en el constructor no aparecían de inmediato debido a falta de auto-guardado previo a la recarga y caché del iframe.
+- **Correcciones Implementadas:**
+  1. **Modal Canónico de Membrete Institucional Oficial (`#modalConfigMembreteST90`):**
+     - Réplica exacta de `AyudaJS.html:4744`: Previsualización interactiva en tiempo real con logotipos oficiales en Base64 (`LOGO_NL_EDUCACION_B64_` y `LOGO_NL_GOBIERNO_B64_`), campos de texto configurables para los 3 renglones institucionales de la EST 90, subida de logotipos locales con `FileReader`, persistencia en `localStorage` y botón `🔄 Restaurar escudos oficiales NL`.
+  2. **Modal Canónico de Vista Previa PDF Oficial (`#modalVistaPreviaPDFOficialNL`):**
+     - Réplica exacta de `AyudaJS.html:9537` y `9759`: Barra superior oscura con botones institucionales (`⚙️ Membrete Oficial`, `📥 Descargar / Guardar PDF`, `🖨️ Imprimir`, `✖ Cerrar`). Hoja tamaño carta normalizada con escudos oficiales, tabla institucional de dos columnas (Problemática, Metodología, PDA, Ejes, DUA/UDEI) y cronograma de sesiones de 4 columnas (`FASE / MOMENTO`, `FECHA / SESIÓN`, `ACTIVIDADES`, `EVALUACIÓN`).
+  3. **Gestión de Catálogo CTE (`abrirModalGestionCTE_()`):**
+     - Réplica de `AdminPlanJS_03.html:80`: Catálogo de 6 problemáticas analíticas oficiales de la EST 90 en `localStorage`, modal CRUD para agregar, editar y eliminar problemas escolares, y sincronización bidireccional con el selector `#selProblemaEscolar` y el campo de texto `#planProblema`.
+  4. **Banco de Encuestas Diagnósticas (`abrirBancoEncuestas_()`):**
+     - Réplica de `AdminPlanJS_02.html:700`: Modal para explorar encuestas de diagnóstico con desglose estadístico e inserción contextual en el proyecto escolar.
+  5. **Corrección de Clave Foránea SQLite y Sanitización:**
+     - En `PlaneacionNemController::guardar()`, se verifica la existencia real del `curso_id` antes de persistir, resolviendo automáticamente el curso correspondiente a la materia o generando un curso base si la tabla está vacía.
+     - En `sanitizarGrado()`, `sanitizarAsignatura()` y `sanitizarGrupo()`, extracción numérica y textual garantizando que ningún objeto JSON se filtre al título del proyecto.
+  6. **Sincronización Automática Constructor ➔ Alumno:**
+     - En `constructor-cliente.js`, al seleccionar el Paso 4 ("Vista Alumno"), se ejecuta `await guardarLienzo()` de forma imperativa antes de refrescar el iframe con un token de tiempo (`?t=Date.now()`), garantizando que cualquier imagen o bloque nuevo se visualice al instante.
+- **Validación en Producción:**
+  - `https://timbres.online/planeacion/wizard` -> HTTP 200 OK.
+  - Verificados por test HTTP los 5 modales y botones interactivos.
+  - Test de endpoint `POST /api/pedagogico/planeacion/guardar` -> HTTP 200 OK (`{"success":true,"message":"Planeación Didáctica NEM guardada correctamente."}`).
+  - `https://aprendeajedrez.online` -> HTTP 200 OK.
+
+
 ### 🚀 [2026-11-24] - [Persistencia de Turno y Ciclo en Visualizador de Horarios & Grupos Homólogos Resilientes]
 - **Mensaje de Commit (Conventional Commits):** `fix(horarios): persistir turno y ciclo en query string y sesion, y resolver grupos homologos resilientes st90`
 - **Commit Hash en `secutec90/Academia`:** `17c1ae9f` (rama `main`).

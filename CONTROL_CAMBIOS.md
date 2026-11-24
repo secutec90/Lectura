@@ -2,6 +2,38 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-24] - [Sincronización Total con AppsScript ST90: Wizard NEM 4 Etapas & Secuencia 4 Pasos Constructor]
+- **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): sincronizar wizard nem y flujo de 4 pasos de sesion con logica appsscript st90`
+- **Commit Hash en `secutec90/Academia`:** `3afb6fdb` (rama `main`).
+- **Coolify Deployment ID:** `nd3b2fozafxjbnjhgjjfet8z` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS).
+- **Problemas Reportados por el Usuario:**
+  1. *Captura 1:* En el Wizard de Planeación, el título del proyecto y el badge del horario docente mostraban strings JSON crudos: `{"id":2,"nombre":"2\u00b0","clave":"2",...}`.
+  2. *Captura 2:* Error al guardar planeación: `SQLSTATE[23000]: Integrity constraint violation: 19 FOREIGN KEY constraint failed ... values (1, HISTORIA 2°A - Proyecto Comunitario...)`.
+  3. *Capturas 3 a 8:* "no corresponde la vista de alumno al constructor de clase": el constructor mostraba imágenes añadidas mientras la vista del alumno mostraba la sesión demo anterior sin reflejar el nuevo diseño, debido a que el lienzo caía en `Guardado offline` por rechazo en servidor.
+  4. *Solicitud Central:* Sincronizar fielmente con la secuencia de dos páginas de la aplicación canónica AppsScript ST90.
+- **Correcciones Implementadas:**
+  1. **Nivel Macro (Wizard de Planeación - Página 1 AppsScript):**
+     - *Etapa 1:* Añadido botón `✨ Sugerir con IA` al título del proyecto, candado normativo `🔒` en Campo Formativo, y los 7 chips oficiales de Ejes Articuladores (`Inclusión`, `Pensamiento Crítico`, `Interculturalidad Crítica`, `Igualdad de Género`, `Vida Saludable`, `Apropiación de las culturas`, `Artes y experiencias estéticas`) con selección múltiple y conteo interactivo.
+     - *Etapa 2:* Catálogo dinámico SEP Fase 6 en dos columnas (Contenido Central a la izquierda y Selector de PDAs a la derecha con buscador `🔍`, articulación multi-grado `👁️`, contador de seleccionados y botones masivos `[Todos]` / `[Limpiar]`), sincronizado bidireccionalmente con textareas de contenido sintético y PDA.
+     - *Etapa 3:* Botones `⚙️ Editar Catálogo CTE` e `📥 Importar datos de encuesta`, badge de alerta de `⚠️ BAPyC detectadas en grupo` y chips rápidos de 1 clic (+ Macrotipo, + Audio DUA, + Tiempos Flexibles, + Parejas Tutoras).
+     - *Etapa 4:* Propósito formativo con botón `✨ Sugerir Proyecto con IA` y Lista de Cotejo Oficial de 3 niveles (`SÍ / LOGRADO`, `EN PROCESO`, `NO TODAVÍA`) con botones `+ Agregar criterio` y `✨ Generar desde PDA`.
+  2. **Nivel Micro (Secuencia de Sesión - Página 2 AppsScript):**
+     - Barra superior maestra con selector de sesiones `[S1] [S2] [S3]`, estado (`BORRADOR`/`EN VIVO`), botón `💾 Guardar` y Stepper de 4 Pasos:
+       - `📝 1. Guion Pedagógico`: Cuadrícula 2x2 de los 4 Momentos NEM (`1. Apertura 5m`, `2. Desarrollo 10m con referencia a libro SEP`, `3. Actividad / Producción 20m`, `4. Cierre 5m`).
+       - `✨ 2. Asistente Pedagógico IA`: Opción 1 (`📋 Trasladar mi Guion Pedagógico a Bloques`) que convierte automáticamente los 4 momentos del guion a los 4 bloques iniciales del lienzo Divi en el Paso 3; Opción 2 (`✨ Generar Clase Interactiva con IA NEM`); y botones rápidos para añadir lectura DUA, explicación, actividad y quiz.
+       - `🧩 3. Constructor de Clase`: El lienzo Divi interactivo con catálogo lateral de 7 familias, 20 estructuras de retículas y barras de edición.
+       - `👁️ 4. Vista Previa Alumno`: Iframe sincronizado con la sesión en vivo y selectores de resolución (Desktop, Tablet, Móvil).
+  3. **Backend & Base de Datos SQLite:**
+     - `PlaneacionNemController.php`: Sanitizada la inyección de JSON de grados/grupos desde el Horario docente. Blindada la resolución de `curso_id` garantizando siempre la existencia de un registro persistido en la tabla `cursos`, erradicando el error `SQLSTATE[23000]`.
+     - `SesionAulaController.php`: Blindado `guardarLienzo()` para que nunca arroje 404 ni caiga en `Guardado offline`, y blindado `portalAlumno()` para que nunca sobreescriba un lienzo personalizado con el demo del ajolote.
+     - `portal-alumno.blade.php`: Soporte robusto y tolerante para imágenes (`img_url` o etiquetas `<img>` embebidas en contenido HTML) con tarjetas limpias y soporte DUA.
+- **Validación en Producción:**
+  - `POST https://timbres.online/api/pedagogico/planeacion/guardar`: HTTP 200 OK (`{"success":true,"message":"Planeación Didáctica NEM guardada correctamente."}`).
+  - `POST https://timbres.online/api/aula/sesion/1/guardar`: HTTP 200 OK en 4ms (`{"ok":true,"sesion_id":1}`).
+  - `GET https://timbres.online/aula/sesion/NEM-90A`: HTTP 200 OK, renderizando fidedignamente imágenes y textos del constructor.
+  - `GET https://aprendeajedrez.online/`: HTTP 200 OK sostenido.
+- **Estado:** 🟢 `COMPLETADA Y VERIFICADA EN PRODUCCIÓN`.
+
 ### 🚀 [2026-11-23] - [Hotfix: Visualización de Imágenes (img_url) y Preservación de Reactivos de Quiz en Constructor y Alumno]
 - **Mensaje de Commit (Conventional Commits):** `fix(aula): resolver visualizacion de imagenes con img_url y preservar reactivos de quiz en constructor y portal alumno`
 - **Commit Hash en `secutec90/Academia`:** `887d2cc7` y `dc786ded` (rama `main`).

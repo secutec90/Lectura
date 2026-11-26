@@ -2,6 +2,14 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-26] - [Radiografía del Constructor de Encuestas AppsScript y Estrategia de Integración al Constructor de Clase Laravel]
+- **Mensaje de Commit (Conventional Commits):** `docs: zip del constructor de encuestas appsscript para analisis de integracion`
+- **Commit Hash en `secutec90/Academia`:** `99083eca` (rama `main`).
+- **Coolify Deployment ID:** `o1ql959zsklhnoj4tfnwzui8` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS `62.238.121.52:8000`).
+- **Entregable de Descarga:**
+  - `https://timbres.online/descargas/constructor_encuestas_appsscript.zip` (95 KB) - Paquete fuente completo (`AdminEncuestas.html`, `AdminEncuestasCSS.html`, `FormularioEncuesta.html`, `Encuestas.gs`, `16_EncuestasDemo.gs`, especificaciones de build-569 y build-570).
+- **Documento de Radiografía:** Generado en `RADIOGRAFIA_CONSTRUCTOR_ENCUESTAS.md` con el desglose del esquema de 11 columnas, roles analíticos, reglas condicionales, modo dual quiz/encuesta y plan de integración al menú lateral y tarjeta de lienzo del Constructor de Clase en Laravel.
+
 ### 🚀 [2026-11-26] - [Radiografía Arquitectónica del Constructor y Entrega de ZIPs de Contraste Laravel vs AppsScript]
 - **Mensaje de Commit (Conventional Commits):** `docs: zips de diagnostico y contraste constructor laravel vs appsscript`
 - **Commit Hash en `secutec90/Academia`:** `ba059c74` (rama `main`).

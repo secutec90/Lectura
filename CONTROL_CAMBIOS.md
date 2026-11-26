@@ -2,6 +2,15 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-26] - [Radiografía Arquitectónica del Constructor y Entrega de ZIPs de Contraste Laravel vs AppsScript]
+- **Mensaje de Commit (Conventional Commits):** `docs: zips de diagnostico y contraste constructor laravel vs appsscript`
+- **Commit Hash en `secutec90/Academia`:** `ba059c74` (rama `main`).
+- **Coolify Deployment ID:** `n8jzfysghkspod0bptyxlfpd` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS `62.238.121.52:8000`).
+- **Entregables de Descarga y Contraste:**
+  1. `https://timbres.online/descargas/constructor_laravel_archivos.zip` (116 KB) - Código fuente completo del Constructor Laravel.
+  2. `https://timbres.online/descargas/constructor_appsscript_muestras.zip` (1.35 MB) - Muestras canónicas y arquitectura original AppsScript.
+- **Radiografía Arquitectónica:** Documentada en detalle en el artefacto de la sesión y reporte técnico para homologar el comportamiento de inserción de celdas, menús contextuales, drag & drop y configuración polimórfica de módulos.
+
 ### 🚀 [2026-11-24] - [Fidelidad Canónica AppsScript: Modales de Membrete Oficial NL, Vista Previa PDF, Catálogo CTE, Banco de Encuestas y Sincronización Constructor-Alumno]
 - **Mensaje de Commit (Conventional Commits):** `feat(pedagogico): implementar modales canonicos AppsScript (Membrete Oficial NL, Vista Previa PDF, Catalogo CTE y Banco de Encuestas)`
 - **Commit Hash en `secutec90/Academia`:** `22086588` (rama `main`).

@@ -2,6 +2,35 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-26] - [Ola 44: Constructor Full-Width, Árbol de Páginas Colapsable y Slider de Sección Reactivo]
+- **Mensaje de Commit (Conventional Commits):** `feat(aula): constructor ancho completo, panel arbol colapsable, ocultar catalogo y slider ancho de seccion responsivo`
+- **Commit Hash en `secutec90/Academia`:** `37f71082` (rama `main`).
+- **Coolify Deployment ID:** `aaoaqgtu3uquynedenhhdjem` (Status: `Success` en Hetzner VPS `62.238.121.52:8000`).
+- **Ajustes Realizados Según Solicitud del Usuario (3 Imágenes):**
+  1. *Ocultación de la Sección de Imagen 1 (Catálogo de Contenidos):* Se ocultó `.box-idevice-menu-exacta` (`display: none !important;`) para maximizar el lienzo de trabajo y evitar duplicidades con los botones (+) de inserción rápida dentro de las secciones y columnas.
+  2. *Panel de Imagen 2 (Árbol de Páginas / Momentos) como Panel Único Colapsable:*
+     - El sidebar ahora aloja exclusivamente el panel `.box-arbol` con scroll vertical completo.
+     - Se dotó de botón de colapso de alto contraste `[ ◀ ]` (`#iconoSidebarToggle`) en la cabecera del panel.
+     - Al colapsar, se comprime a una tira vertical de 44px (`#stripAbrirSidebar`) con icono `[ ▶ ]` y texto rotado `📄 Páginas`, desplegable con un solo clic.
+     - Se añadió botón directo `[ 📑 ]` (`#btnToggleSidebarCanvas`) en la barra flotante superior del lienzo para alternar el panel sin desplazarse.
+  3. *Constructor al Ancho de Página (Full-Width Viewport):*
+     - Se removió el limitador `max-w-7xl` (1280px) de `#panelPaso3`, de la cabecera superior y del banner de página.
+     - El contenedor `#workspaceContenedor` y `#lienzoExeActivo` se expanden al 100% del ancho del navegador, permitiendo aprovechar pantallas panorámicas completas.
+  4. *Corrección del Control «Sección 80% / 100%» (Imagen 3):*
+     - **Causa Raíz:** En `aula-constructor.css`, `.divi-section` tenía la regla rígida `width: 100% !important;`, lo que bloqueaba la asignación dinámica del slider desde JavaScript.
+     - **Solución:** Se retiró el `!important` del CSS base y se reescribió `ajustarAnchoSeccion` en `constructor-cliente.js` utilizando `setProperty('width', n + '%', 'important')` junto con márgenes automáticos de alineación (`margin-left: auto; margin-right: auto;`).
+     - Se implementó `reaplicarAnchoYAlineacionSecciones_()` para que las dimensiones seleccionadas en el slider se mantengan automáticamente al navegar entre páginas o insertar nuevas secciones.
+- **Evidencia en Producción Verificada (`https://timbres.online/aula/constructor/1?paso=3`):**
+  - `Has max-w-none on panelPaso3: YES`
+  - `Has hidden on box-idevice-menu-exacta: YES`
+  - `Has btnToggleSidebarCanvas: YES`
+  - `Has iconoSidebarToggle: YES`
+  - `Has stripAbrirSidebar: YES`
+  - `JS has reaplicarAnchoYAlineacionSecciones_: YES`
+  - `CSS divi-section no important on width: YES`
+
+
+
 ### 🚀 [2026-11-26] - [Ola 43: Edición en Tarjeta, Desduplicación de Iconos, Indicador de Guardado y Video Responsivo]
 - **Mensaje de Commit (Conventional Commits):** `feat(aula): edicion en tarjeta para constructor, desduplicacion de iconos, sincronizacion visual de guardado y video responsive`
 - **Commit Hash en `secutec90/Academia`:** `e5e22207` (rama `main`).

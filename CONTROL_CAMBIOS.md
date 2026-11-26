@@ -2,6 +2,24 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-26] - [Entrega A: Catálogo Unificado 4 Categorías, Texto Enriquecido DUA, Video Responsive y Vista Previa Multi-Página]
+- **Mensaje de Commit (Conventional Commits):** `feat(aula): Entrega A - catalogo unificado 4 familias, texto enriquecido, video responsive y vista previa alumno multipagina`
+- **Commit Hash en `secutec90/Academia`:** `6774548d` (rama `main`).
+- **Coolify Deployment ID:** `pwj1r2uhqckhxuo4wken5qhc` (Status: `DEPLOYMENT COMPLETED: Success` en Hetzner VPS `62.238.121.52:8000`).
+- **Problemas Corregidos (Reportados por el Usuario con Evidencia Gráfica):**
+  1. *Imágenes 1 y 10 (Quick ribbon flotante):* Erradicada la barra flotante residual `[📝, 🎯, ❓, 📎, 🖼️ | ⚙️]` tanto del HTML Blade como por reglas estrictas en `aula-constructor.css`.
+  2. *Imágenes 5 y 8 (Barras de control duplicadas):* Erradicada la duplicación de controles `[✥ ▲ ▼ 📄 ⚙ 🗑]`. Cada tarjeta de módulo cuenta estrictamente con una única barra de control en su cabecera.
+  3. *Imagen 2 (Modal de 20 estructuras Divi):* Verificado que el botón verde `(+)` dentro de la sección y entre filas despliega el selector visual de los 20 mosaicos Divi.
+  4. *Imagen 3 (Menú contextual de celda):* El botón `(+)` interior de columna ofrece exactamente el nuevo catálogo normativo de 4 categorías en paridad 1:1 con el panel lateral.
+  5. *Imagen 5 (Inserción múltiple e idéntica):* Añadidos candados de idempotencia `_dragDropIniciado_` y `_reordenamientoIniciado_` para evitar inserciones triplicadas al arrastrar; creadas plantillas HTML específicas por tipo de elemento en `crearModuloHTML(tipo, datos)`.
+  6. *Imagen 6 (Modal de propiedades genérico/incongruente):* `abrirModalPropiedades` y `guardarPropiedades` ahora abren vistas contextuales específicas (editor HTML enriquecido y badges DUA para `texto`; URLs YouTube/Vimeo/MP4 con embed responsivo 16:9 y consigna para `video`).
+  7. *Imagen 7 (Mover con ✥):* Reordenamiento drag-and-drop estabilizado sin crear duplicados ni romper la estructura.
+  8. *Imágenes 4 y 9 (Vista Previa Alumno):* El botón "4. Vista Previa Alumno" carga el portal del alumno con soporte de navegación multi-página (`.moments-nav-wrapper`), barra de progreso e invisibilidad total de barras docentes.
+- **Validación en Producción:**
+  - `https://timbres.online/aula/constructor/1?paso=3` -> HTTP 200 OK (sin quick ribbon, con las 4 familias).
+  - `https://timbres.online/aula/sesion/NEM-90A` -> HTTP 200 OK (renderizado responsivo DUA).
+
+
 ### 🚀 [2026-11-26] - [Radiografía del Constructor de Encuestas AppsScript y Estrategia de Integración al Constructor de Clase Laravel]
 - **Mensaje de Commit (Conventional Commits):** `docs: zip del constructor de encuestas appsscript para analisis de integracion`
 - **Commit Hash en `secutec90/Academia`:** `99083eca` (rama `main`).

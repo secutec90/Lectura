@@ -1,99 +1,65 @@
-# BUZÓN DE ENTREGA: CURSOR -> ANTIGRAVITY
-
-> **INSTRUCCIÓN PARA CURSOR (REGLA AUTOMÁTICA):**  
-> Lee `ESTADO_COORDINACION.md`, `.skills/aula-constructor/SKILL.md` y esta partitura asignada.  
-> Escribe y guarda aquí mismo (`ENTREGA_CURSOR.md`) todo tu código JavaScript cliente y controladores Laravel para que Antigravity lo audite e integre.  
-> **PROTOCOLO CENTINELA (OBLIGATORIO AL TERMINAR):** En cuanto guardes tu entrega en este archivo, ejecuta inmediatamente en tu terminal:  
-> `node herramientas/centinela_buzon.js cursor`  
-> para quedar a la escucha (revisión automática cada 60 segundos) de la siguiente partitura que deposite Antigravity.
+# 🎯 PARTITURA ASIGNADA — CURSOR (FASE F3: IMPLEMENTACIÓN DE ENTREGAS A Y B)
+**Proyecto:** Suite Escolar Academia (Laravel 12 + Filament v3) — EST 90  
+**Gobernanza:** Metodología SpaceX Multi-Agente (Lauren Tan)  
+**Estado:** 🟢 **PARTITURA ASIGNADA Y LISTA PARA EJECUCIÓN**  
+**Responsable:** Cursor (Software & DOM Lead)  
+**Director & Release Lead:** Antigravity | **Design & UX Lead:** DeepSeek  
 
 ---
 
-## 🎯 PARTITURA ASIGNADA: FASE 2 — MOTOR DRAG & DROP + SELECTOR DINÁMICO DE 20 MOSAICOS + TOOLBARS FLOTANTES
-- **Agente responsable:** **Cursor** (Desarrollador Fullstack & JS/DOM)
-- **Estado:** 🟢 **PROGRAMADA Y LISTA PARA EJECUCIÓN**
-- **Documento Rector y Skill:** Consulta [.skills/aula-constructor/SKILL.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/.skills/aula-constructor/SKILL.md) y [RSC_MIGRACION_FUSION_LARAVEL.md](file:///g:/Mi%20unidad/PROYECTOS/Lectura/RSC_MIGRACION_FUSION_LARAVEL.md).
+## 1. Archivos Asignados para Edición (Exclusivos de Cursor)
+- `public/js/aula/constructor-cliente.js`
+- `public/js/aula/aula-alumno.js`
 
-### Especificación Técnica de la Entrega (Fase 2):
-1. **Motor Drag & Drop (`dragstart`, `dragover`, `dragleave`, `drop`):**
-   - Conectar las tarjetas del catálogo lateral (`.modulo-card-lateral`) con las columnas dropzone (`.divi-column`).
-   - Gestión de estado: clase `.drag-over` en la columna bajo el puntero.
-   - Al soltar en `.divi-column`: instanciar el bloque correspondiente (`insertarModuloEnColumna(tipo, columnaEl)`).
-   - Soporte para clic directo: si una columna tiene foco activo (`.active-target`), hacer clic en cualquier tarjeta del catálogo la inserta de inmediato.
-   - Reordenamiento interno: permitir arrastrar módulos entre columnas y cambiar su orden dentro de la misma columna mediante el handle `✥` de la toolbar flotante.
-2. **Lógica del Selector de 20 Mosaicos (`.btn-plus-green` / `.columns-popover`):**
-   - Click en el botón circular verde `(+)` entre filas: abre el popover/modal centrado `#modal-overlay`.
-   - Click en una de las 20 opciones (4 iguales, 4 asimétricas, 12 mosaicos): genera dinámicamente `<div class="divi-row {reticula}">` con sus columnas `<div class="divi-column active-target">` y su botón interior `[+ Añadir Módulo]`.
-3. **Delegación de Eventos en Toolbars Flotantes (`.toolbar-flotante`):**
-   - Botón subir (▲) y bajar (▼): reordenar filas o módulos en el DOM.
-   - Botón duplicar (📄): clonar profundamente el elemento generando nuevos IDs únicos.
-   - Botón eliminar (✕): eliminar con toast de deshacer (buffer temporal).
-   - Botón engrane (⚙️): abrir modal `#modal-propiedades` para editar campos del módulo (título, colores, alineación, URL, etc.).
-4. **Sincronización Reactiva con la API:**
-   - Cada mutación del lienzo (crear, reordenar, borrar) invoca el debounce de autoguardado a `/api/aula/sesion/{sesion}/guardar` mediante `ST90ConstructorApi.marcarModificado()`.
+*(Prohibido modificar archivos de backend PHP, blade views o estilos CSS base sin coordinar).*
 
 ---
 
-### 📝 ZONA DE ENTREGA DE CURSOR (Escribe tu código JS y adaptadores aquí abajo):
+## 2. Partitura Técnica Quirúrgica por Entrega
 
-*(Cursor: deposita aquí tu implementación de Phase 2 para `public/js/aula/constructor-cliente.js`)*
+### 📦 Tarea 1: Verificación y Consolidación de Entrega A (Texto, Video, Menú Popover (+))
+1. **Contrato de Inserción del Popover `(+)` (`abrirMenuModuloEnColumna`):**
+   - Asegurar que al pulsar el botón `(+)` interior de una columna, se despliegue el menú contextual con las 4 familias unificadas:
+     - `Contenido`: `texto`, `tabla`, `timeline`.
+     - `Multimedia`: `imagen`, `video`, `audio`.
+     - `Actividad`: `actividad`.
+     - `Formulario`: `formulario_encuesta`, `formulario_quiz`, `formulario_banco`.
+2. **Engranes de Configuración Contextual (`abrirModalPropiedades`):**
+   - **Texto:** Edición de HTML enriquecido, selección de tipografía DUA y selector de badge.
+   - **Video:** Selector de origen (YouTube, Vimeo, MP4 local), segundo de inicio y consigna didáctica.
+3. **Navegación del Portal Alumno (`aula-alumno.js`):**
+   - Manejo del evento click en `.moment-tab` para conmutar entre `.pagina-alumno-panel` sin recargar la página.
+
+### 📦 Tarea 2: Implementación de Entrega B (Tabla, Línea de Tiempo, Imagen/Galería, Audio, Actividad)
+1. **Módulo Tabla (`tabla`):**
+   - En `crearModuloHTML('tabla', datos)`: renderizar tabla con controles dinámicos de filas y columnas.
+   - Al abrir `abrirModalPropiedades`: desplegar modal de dimensiones de tabla, alineación y botón para agregar/eliminar filas.
+2. **Módulo Línea de Tiempo (`timeline`):**
+   - En `crearModuloHTML('timeline', datos)`: renderizar hito cronológico con fecha/etapa, título, descripción y punto conector vertical.
+   - Modal de propiedades: formulario estructurado para agregar/editar hitos del proceso histórico o procedimental.
+3. **Módulo Imagen / Galería (`imagen`):**
+   - En `crearModuloHTML('imagen', datos)`: contenedor responsive con soporte de recorte (16:9, 4:3, 1:1, Círculo) y descripción accesible DUA (`alt`).
+   - Modal de propiedades: selector de URL, selector de recorte de aspect-ratio y campo de texto alternativo para invidentes.
+4. **Módulo Audio / Podcast (`audio`):**
+   - En `crearModuloHTML('audio', datos)`: reproductor `<audio controls>` estilizado con selector de velocidad de reproducción (0.75x, 1x, 1.25x, 1.5x) y transcripción colapsable.
+5. **Módulo Actividad Práctica (`actividad`):**
+   - En `crearModuloHTML('actividad', datos)`: tarjeta pedagógica con 5 secciones:
+     - Consigna de la actividad.
+     - Producto esperado.
+     - Criterio de evaluación (Rúbrica/Lista de cotejo rápida).
+     - Material adjunto de consulta.
+     - Botón de entrega simulada (texto o archivo).
 
 ---
 
+## 3. Prueba de Aceptación Compartida (Criterios de Éxito)
+1. Al pulsar `(+)` en una columna, se despliega el menú de 4 categorías y permite insertar cada uno de los 5 nuevos tipos de Entrega B.
+2. Cada bloque insertado renderiza su maqueta estructurada propia (ninguno debe verse idéntico a otro).
+3. El engrane `⚙️` de cada tarjeta abre los campos correspondientes a su formato sin colisiones de datos.
+4. En el paso 4 ("Vista Previa Alumno"), todos los módulos se visualizan limpios, interactivos y con accesibilidad DUA.
+
 ---
 
-## ✅ ENTREGA CURSOR — FASE 1 (API Lienzo Laravel + Cliente JS)
-
-**Estado:** Lista para auditoría Antigravity. Archivos espejo en `entregas-laravel-fase1/` para copiar al repo **Academia** (Laravel 12).
-
-### Rutas API (pegar en `routes/api.php`)
-
-Ver `entregas-laravel-fase1/routes/api-aula-snippet.php`:
-- `GET /api/aula/sesion/{sesion}/lienzo` → `obtenerLienzo`
-- `POST /api/aula/sesion/{sesion}/guardar` → `guardarLienzo`
-- Middleware sugerido: `auth:sanctum`
-
-### Controlador
-
-Destino en Academia: `app/Http/Controllers/Aula/SesionAulaController.php`  
-Copia íntegra: `entregas-laravel-fase1/app/Http/Controllers/Aula/SesionAulaController.php`
-
-**Comportamiento:**
-- `obtenerLienzo`: lee `sesiones_clase.lienzo_json` y `config_visual_json`, normaliza JSON, responde `meta.tiempo_respuesta_ms`.
-- `guardarLienzo`: valida `lienzo` (array con `filas` o puente legacy `paginas`), persiste en transacción, devuelve tiempo en ms.
-- Modelo esperado: `App\Models\SesionClase` con casts `lienzo_json` / `config_visual_json` como `array` o `json`.
-
-### Cliente JS
-
-Destino en Academia: `public/js/aula/constructor-cliente.js`  
-Copia íntegra: `entregas-laravel-fase1/public/js/aula/constructor-cliente.js`
-
-**Comportamiento:**
-- `ST90ConstructorApi.guardarLienzo(sesionId)` → `fetch POST .../guardar` con payload `{ lienzo, config_visual }`.
-- `ST90ConstructorApi.obtenerLienzo(sesionId)` → `fetch GET .../lienzo`.
-- `mapearEstadoExeALienzo_()` adapta `capturarEstadoExe_()` / `exportarSecciones610_()` al schema del SKILL (`version`, `config`, `filas`).
-- Cola offline en `localStorage` (`st90_lienzo_offline_{id}`) + resincronización en evento `online` (RSC ARCHITEX).
-- `inicializarConstructorCliente_({ sesionId, cargarAlInicio: true })` hidrata vía `deserializarIDevicesSesion_`.
-- Envoltorio opcional de `serializarIDevicesSesion_` para disparar guardado API sin romper flujo GAS mientras coexisten.
-
-### Integración Blade (nota para Antigravity)
-
-En `constructor.blade.php`:
-```blade
-<meta name="csrf-token" content="{{ csrf_token() }}">
-<script>
-  window.ST90_SESION_AULA_ID = {{ $sesion->id }};
-</script>
-<script src="{{ asset('js/aula/constructor-cliente.js') }}" defer></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-  if (window.inicializarConstructorCliente_) {
-    inicializarConstructorCliente_({ sesionId: window.ST90_SESION_AULA_ID, cargarAlInicio: true });
-  }
-});
-</script>
-```
-
-### Commit sugerido (Conventional Commits)
-
-`feat(aula): api rest de lienzo sesion y cliente fetch para constructor fase 1`
+## 4. Instrucción de Entrega
+- Guarda tu código directamente en los archivos JS asignados.
+- Registra el `git diff` y tu informe en la sección inferior `## 📦 ENTREGA DE CURSOR`.

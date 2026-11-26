@@ -2,6 +2,23 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-26] - [Reapertura Entrega A: Editor Visual WYSIWYG Nativo para Texto Enriquecido y Sanitización de Word]
+- **Mensaje de Commit (Conventional Commits):** `feat(aula): editor visual WYSIWYG nativo para Texto Enriquecido (texto, texto_dua, lectura) con soporte Word local`
+- **Commit Hash en `secutec90/Academia`:** `8f969f49` (rama `main`).
+- **Coolify Deployment ID:** `lilbvpmisrq67wrdlyeottkm` (Status: `DEPLOYMENT COMPLETED: Success` en Hetzner VPS `62.238.121.52:8000`).
+- **Recorrido de Aceptación Ejecutado y Superado:**
+  1. *Engrane de «Texto enriquecido» (`texto`, `texto_dua`, `lectura`):* Erradicado el `<textarea>` crudo que mostraba código HTML. Ahora despliega la barra de herramientas visual `.editor-visual-toolbar` (formato H1/H2/H3/P, negrita B, cursiva I, subrayado U, listas viñeta/número, enlace 🔗, tabla ▦ y limpiar formato 🧹) sobre el contenedor `contenteditable` `.editor-visual-caja`.
+  2. *Carga de Contenido Formateado:* Al abrir el engrane, los bloques nuevos abren limpios y los bloques existentes cargan el texto visualmente formateado (sin etiquetas HTML crudas).
+  3. *Pegado desde Microsoft Word / Documentos:* Interceptor `paste` que purga basura MSO (`<!--[if gte mso...]`, `<o:p>`, `class="MsoNormal"`, `style="..."`) preservando la semántica limpia: encabezados H1/H2/H3, párrafos, listas con viñetas y tablas.
+  4. *Aplicar Cambios y Guardar:* Al pulsar «Aplicar Cambios», se actualiza la tarjeta del lienzo y persiste en `/api/aula/sesion/1/guardar` con HTTP 200 OK.
+  5. *Reapertura:* Al volver a abrir el engrane, el editor visual muestra exactamente el texto formateado preservado.
+  6. *Vista Alumno (`/aula/sesion/NEM-90A`):* Se comprueba la visualización impecable del encabezado H1, lista y tabla sin desbordamiento ni etiquetas rotas.
+  7. *Retrocompatibilidad:* Verificado con éxito idéntico en bloques de clases anteriores (`texto_dua` y `lectura`).
+- **Evidencia en Producción:**
+  - `https://timbres.online/aula/constructor/1?paso=3` -> HTTP 200 OK (editor visual nativo activo).
+  - `https://timbres.online/aula/sesion/NEM-90A` -> HTTP 200 OK (renderizado de lección y tabla).
+
+
 ### 🚀 [2026-11-26] - [Entrega A: Catálogo Unificado 4 Categorías, Texto Enriquecido DUA, Video Responsive y Vista Previa Multi-Página]
 - **Mensaje de Commit (Conventional Commits):** `feat(aula): Entrega A - catalogo unificado 4 familias, texto enriquecido, video responsive y vista previa alumno multipagina`
 - **Commit Hash en `secutec90/Academia`:** `6774548d` (rama `main`).

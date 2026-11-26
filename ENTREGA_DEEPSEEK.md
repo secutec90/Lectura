@@ -1,4 +1,4 @@
-# 🎯 PARTITURA ASIGNADA — DEEPSEEK (FASE F3: REVISIÓN DE CONTRATO Y MAQUETACIÓN UX/UI)
+# 🎯 PARTITURA ASIGNADA — DEEPSEEK (REAPERTURA ENTREGA A: REVISIÓN DE EDITOR VISUAL TEXTO)
 **Proyecto:** Suite Escolar Academia (Laravel 12 + Filament v3) — EST 90  
 **Gobernanza:** Metodología SpaceX Multi-Agente (Lauren Tan)  
 **Estado:** 🟢 **PARTITURA ASIGNADA Y LISTA PARA EJECUCIÓN**  
@@ -7,51 +7,39 @@
 
 ---
 
-## 1. Archivos Asignados para Revisión y Maquetación (Exclusivos de DeepSeek)
+## 1. Archivos Asignados para Revisión y Estilos
 - `resources/views/aula/constructor.blade.php`
-- `resources/views/aula/portal-alumno.blade.php`
 - `public/css/aula/aula-constructor.css`
 - `public/css/aula/aula-alumno.css`
 
-*(Prohibido modificar controladores PHP, migraciones de base de datos o lógica JS de eventos sin coordinar).*
-
 ---
 
-## 2. Partitura Técnica Quirúrgica por Entrega
+## 2. Requerimientos de Revisión de DeepSeek
 
-### 🎨 Tarea 1: Auditoría Visual y de Accesibilidad DUA sobre Entrega A
-1. **Catálogo Lateral Unificado en `constructor.blade.php`:**
-   - Verificar la maquetación de las 4 familias (`cat-contenido`, `cat-multimedia`, `cat-actividad`, `cat-formulario`).
-   - Confirmar que las tarjetas de demo o experimentales (`objetivos`, `word_shape`, `callout`, `rosco`, `sopa`, etc.) queden retiradas de las opciones de nueva inserción.
-2. **Navegador Superior Multi-Página en `portal-alumno.blade.php`:**
-   - Revisar `.moments-nav-wrapper` y botones `.moment-tab`:
-     - Contraste visual accesible en modo activo / inactivo.
-     - Responsividad en dispositivos móviles (scroll horizontal suave o flex-wrap).
-   - Validar que todas las barras de herramientas docentes (`.divi-ctrl-bar`, `.toolbar-flotante`, `.btn-add-module-inside`) queden estrictamente ocultas en la vista del alumno.
+### Tarea 1: Auditoría del Editor Visual en el Modal de Configuración
+1. Verificar que al abrir el engrane en los tres tipos de texto (`texto`, `texto_dua`, `lectura`):
+   - Se abra el editor visual estilizado, accesible e intuitivo, sin campos textarea crudos que expongan código HTML.
+   - La barra de herramientas del editor visual (`.editor-visual-toolbar`) tenga botones con tamaño táctil adecuado ($\ge 36\text{ px}$ en escritorio, $44\text{ px}$ en táctil), iconos claros y contraste WCAG 2.1 AA.
+   - El área editable (`.editor-visual-caja`) tenga tipografía accesible, scroll interno suave si el texto es extenso, y foco visible (`focus:ring-2`).
 
-### 🎨 Tarea 2: Maquetación y Tokens de Diseño para Entrega B (Tabla, Timeline, Galería, Audio, Actividad)
-1. **Estilos para Tabla Dinámica (`.modulo-tabla-didactica`):**
-   - Encabezado estilizado con bordes redondeados y tipografía accesible.
-   - Alternancia de color en filas (`zebra-striping` suave) y estados hover en celdas.
-2. **Estilos para Línea de Tiempo (`.modulo-timeline-didactica`):**
-   - Eje vertical conector, nodos circulares numerados o con icono de hito, tarjetas flotantes con sombra sutil y fecha destacada.
-3. **Estilos para Imagen / Galería (`.modulo-imagen-didactica`):**
-   - Clases de recorte de aspecto: `.aspect-16-9`, `.aspect-4-3`, `.aspect-square`, `.aspect-circle`.
-   - Pie de figura con estilo DUA (fuente legible, contraste oscuro sobre fondo claro).
-4. **Estilos para Audio / Podcast (`.modulo-audio-didactica`):**
-   - Contenedor con icono de onda sonora, barra de reproducción nativa y botón accesible para desplegar la transcripción textual.
-5. **Estilos para Actividad Práctica (`.modulo-actividad-didactica`):**
-   - Tarjeta con borde destacado color esmeralda/ámbar, badge de producto esperado, listado visual de criterios de evaluación y área de entrega.
+### Tarea 2: Verificación de Persistencia y Re-apertura
+1. Comprobar que al aplicar cambios, cerrar el modal y volver a abrir el engrane, el contenido se mantenga exactamente como se formateó.
+2. Comprobar la visualización fiel en la tarjeta del lienzo y en la Vista Previa del Alumno (`portal-alumno`).
+
+### Tarea 3: Estilos de la Barra de Herramientas y Tablas
+1. Maquetar los estilos en `aula-constructor.css` para:
+   - `.editor-visual-toolbar`: barra compacta con bordes redondeados y separación visual de grupos (formato, estilos, listas, inserciones).
+   - `.editor-visual-caja`: caja con fondo blanco, padding cómodo, borde estilizado y altura mínima de 180px con desbordamiento auto.
+   - Formato de tablas dentro del editor: bordes finos, padding en celdas y aspecto limpio.
 
 ---
 
 ## 3. Prueba de Aceptación Compartida (Criterios de Éxito)
-1. El catálogo lateral y el menú popover `(+)` presentan coherencia tipográfica y espacial idéntica.
-2. La vista previa del alumno cumple con la normativa de accesibilidad WCAG 2.1 AA (contraste mínimo 4.5:1, etiquetas ARIA, tamaño mínimo de botones táctiles 44x44px).
-3. Los estilos de impresión (`@media print`) en el portal del alumno permiten generar copias limpias de la clase sin recortes ni desbordamientos.
+1. Los tres tipos de bloque (`texto`, `texto_dua`, `lectura`) abren el editor visual formateado.
+2. El contraste de los botones de la barra de herramientas del editor cumple WCAG AA.
+3. Las tablas, listas y encabezados insertados se muestran con estética profesional tanto en el editor como en la vista del alumno.
 
 ---
 
 ## 4. Instrucción de Entrega
-- Guarda tus ajustes CSS y maquetación Blade en los archivos asignados.
-- Registra tu dictamen de diseño, hallazgos reproducibles y reporte en la sección inferior `## 📦 ENTREGA Y REVISIÓN DE DEEPSEEK`.
+- Registra tus hallazgos, dictamen y ajustes CSS en la sección inferior `## 📦 ENTREGA Y REVISIÓN DE DEEPSEEK`.

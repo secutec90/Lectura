@@ -1,4 +1,4 @@
-# 🎯 PARTITURA ASIGNADA — CURSOR (FASE F3: IMPLEMENTACIÓN DE ENTREGAS A Y B)
+# 🎯 PARTITURA ASIGNADA — CURSOR (REAPERTURA ENTREGA A: EDITOR VISUAL TEXTO ENRIQUECIDO)
 **Proyecto:** Suite Escolar Academia (Laravel 12 + Filament v3) — EST 90  
 **Gobernanza:** Metodología SpaceX Multi-Agente (Lauren Tan)  
 **Estado:** 🟢 **PARTITURA ASIGNADA Y LISTA PARA EJECUCIÓN**  
@@ -7,59 +7,61 @@
 
 ---
 
-## 1. Archivos Asignados para Edición (Exclusivos de Cursor)
-- `public/js/aula/constructor-cliente.js`
-- `public/js/aula/aula-alumno.js`
-
-*(Prohibido modificar archivos de backend PHP, blade views o estilos CSS base sin coordinar).*
+## 1. Archivos Asignados para Edición
+- `resources/views/aula/constructor.blade.php` (estructura del modal `#panelPropTextoDua`)
+- `public/js/aula/constructor-cliente.js` (lógica del editor visual, paste de Word, abrir y guardar)
 
 ---
 
-## 2. Partitura Técnica Quirúrgica por Entrega
+## 2. Requerimientos Quirúrgicos de Implementación
 
-### 📦 Tarea 1: Verificación y Consolidación de Entrega A (Texto, Video, Menú Popover (+))
-1. **Contrato de Inserción del Popover `(+)` (`abrirMenuModuloEnColumna`):**
-   - Asegurar que al pulsar el botón `(+)` interior de una columna, se despliegue el menú contextual con las 4 familias unificadas:
-     - `Contenido`: `texto`, `tabla`, `timeline`.
-     - `Multimedia`: `imagen`, `video`, `audio`.
-     - `Actividad`: `actividad`.
-     - `Formulario`: `formulario_encuesta`, `formulario_quiz`, `formulario_banco`.
-2. **Engranes de Configuración Contextual (`abrirModalPropiedades`):**
-   - **Texto:** Edición de HTML enriquecido, selección de tipografía DUA y selector de badge.
-   - **Video:** Selector de origen (YouTube, Vimeo, MP4 local), segundo de inicio y consigna didáctica.
-3. **Navegación del Portal Alumno (`aula-alumno.js`):**
-   - Manejo del evento click en `.moment-tab` para conmutar entre `.pagina-alumno-panel` sin recargar la página.
+### Tarea 1: Rastreo del Engrane y Sustitución del Textarea por Editor Visual
+1. En `resources/views/aula/constructor.blade.php` dentro de `#panelPropTextoDua`:
+   - Retirar el `<textarea id="prop-modulo-texto-html">` con etiquetas HTML visibles.
+   - En su lugar, implementar un **editor visual WYSIWYG nativo**:
+     - Barra de herramientas superior (`.editor-visual-toolbar`):
+       - Formato: desplegable con Párrafo, Título 1 (`H1`), Título 2 (`H2`), Título 3 (`H3`).
+       - Formato de texto: Botones de Negrita (**B**), Cursiva (*I*), Subrayado (<u>U</u>).
+       - Listas: Viñetas (`• Lista`), Numerada (`1. Lista`).
+       - Enlace: Botón `🔗` para insertar enlace `<a>`.
+       - Tabla: Botón `▦` para insertar una tabla simple (3x3).
+     - Área editable visual: `<div id="prop-modulo-texto-editor" contenteditable="true" class="editor-visual-caja"></div>`.
+     - Campo oculto `<input type="hidden" id="prop-modulo-texto-html">` para mantener compatibilidad con el serializador.
+   - Funcionar **100% con recursos locales** (sin scripts ni CDNs externos, apto para red de aula sin internet).
 
-### 📦 Tarea 2: Implementación de Entrega B (Tabla, Línea de Tiempo, Imagen/Galería, Audio, Actividad)
-1. **Módulo Tabla (`tabla`):**
-   - En `crearModuloHTML('tabla', datos)`: renderizar tabla con controles dinámicos de filas y columnas.
-   - Al abrir `abrirModalPropiedades`: desplegar modal de dimensiones de tabla, alineación y botón para agregar/eliminar filas.
-2. **Módulo Línea de Tiempo (`timeline`):**
-   - En `crearModuloHTML('timeline', datos)`: renderizar hito cronológico con fecha/etapa, título, descripción y punto conector vertical.
-   - Modal de propiedades: formulario estructurado para agregar/editar hitos del proceso histórico o procedimental.
-3. **Módulo Imagen / Galería (`imagen`):**
-   - En `crearModuloHTML('imagen', datos)`: contenedor responsive con soporte de recorte (16:9, 4:3, 1:1, Círculo) y descripción accesible DUA (`alt`).
-   - Modal de propiedades: selector de URL, selector de recorte de aspect-ratio y campo de texto alternativo para invidentes.
-4. **Módulo Audio / Podcast (`audio`):**
-   - En `crearModuloHTML('audio', datos)`: reproductor `<audio controls>` estilizado con selector de velocidad de reproducción (0.75x, 1x, 1.25x, 1.5x) y transcripción colapsable.
-5. **Módulo Actividad Práctica (`actividad`):**
-   - En `crearModuloHTML('actividad', datos)`: tarjeta pedagógica con 5 secciones:
-     - Consigna de la actividad.
-     - Producto esperado.
-     - Criterio de evaluación (Rúbrica/Lista de cotejo rápida).
-     - Material adjunto de consulta.
-     - Botón de entrega simulada (texto o archivo).
+### Tarea 2: Carga de Contenido Formateado
+1. En `constructor-cliente.js` dentro de `abrirModalPropiedades`:
+   - Detectar si el bloque es nuevo o existente (`texto`, `texto_dua`, `lectura`).
+   - Si el bloque es existente: extraer el contenido HTML de `.contenido-modulo` y asignarlo a `editor.innerHTML`.
+   - Si el bloque es nuevo o está vacío: dejar el editor limpio (`editor.innerHTML = ''`).
+   - El docente debe ver **el texto ya formateado en vivo**, jamás etiquetas crudas `<p>`, `<b>`, `<div>`.
+
+### Tarea 3: Filtro y Pegado Limpio desde Word / Documentos
+1. Conectar listener `paste` al área editable `prop-modulo-texto-editor`:
+   - Interceptar `e.clipboardData.getData('text/html')` o `getData('text/plain')`.
+   - Limpiar etiquetas propietarias de Microsoft Word (`<!--[if gte mso...]`, `mso-`, tags `<o:p>`, estilos inline innecesarios).
+   - Preservar el formato básico: encabezados (`<h1>`-`<h3>`), párrafos (`<p>`), negritas (`<b>`/`<strong>`), cursivas (`<i>`/`<em>`), listas (`<ul>`, `<ol>`, `<li>`), enlaces (`<a>`) y tablas simples (`<table>`, `<tr>`, `<td>`, `<th>`).
+
+### Tarea 4: Conexión de «Aplicar cambios» y Guardado
+1. En `guardarPropiedades`:
+   - Extraer el `innerHTML` del editor visual, sanearlo y actualizar la tarjeta en `.contenido-modulo`.
+   - Actualizar el input oculto `#prop-modulo-texto-html` y disparar la persistencia del bloque.
+   - Garantizar que al reabrir el engrane, el contenido editado vuelva a mostrarse tal cual, sin perder formato.
+   - Comprobar que en el paso 4 ("Vista Alumno"), el contenido se renderice perfectamente estructurado.
 
 ---
 
 ## 3. Prueba de Aceptación Compartida (Criterios de Éxito)
-1. Al pulsar `(+)` en una columna, se despliega el menú de 4 categorías y permite insertar cada uno de los 5 nuevos tipos de Entrega B.
-2. Cada bloque insertado renderiza su maqueta estructurada propia (ninguno debe verse idéntico a otro).
-3. El engrane `⚙️` de cada tarjeta abre los campos correspondientes a su formato sin colisiones de datos.
-4. En el paso 4 ("Vista Previa Alumno"), todos los módulos se visualizan limpios, interactivos y con accesibilidad DUA.
+1. Abrir engrane en tarjeta de Texto: abre el editor visual con barra de herramientas, NO un textarea con código HTML.
+2. Escribir una frase, aplicar negrita y un encabezado.
+3. Pegar contenido desde Word conteniendo encabezado, lista y tabla simple: se inserta formateado limpiamente.
+4. Pulsar «Aplicar cambios»: la tarjeta en el lienzo se actualiza con el texto visualmente formateado.
+5. Volver a abrir el engrane: el editor visual contiene exactamente lo guardado.
+6. Cambiar a "Vista Previa Alumno": se visualiza idéntico y sin etiquetas rotas.
+7. Repetir la prueba sobre un bloque de una clase anterior (`texto_dua` o `lectura`).
 
 ---
 
 ## 4. Instrucción de Entrega
-- Guarda tu código directamente en los archivos JS asignados.
-- Registra el `git diff` y tu informe en la sección inferior `## 📦 ENTREGA DE CURSOR`.
+- Realiza los cambios en los archivos indicados.
+- Registra tu diff y resultados de pruebas abajo en `## 📦 ENTREGA DE CURSOR`.

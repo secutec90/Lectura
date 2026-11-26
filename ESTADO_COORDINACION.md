@@ -116,41 +116,16 @@ Todos los agentes leen este documento ANTES de proponer o tocar código.
 | **Ola 41 (Fase F3 - Entrega A)** | **Catálogo Unificado de 4 Familias, Texto Enriquecido DUA, Video Responsive y Vista Previa Multi-Página:**<br>• **Auditoría Exhaustiva:** `AUDITORIA_CATALOGO_CONSTRUCTOR.md` mapeando los 24 tipos históricos y definiendo la matriz de 4 categorías normativas (Contenido, Multimedia, Actividad, Formulario).<br>• **Erradicación del Quick Ribbon:** Eliminada la barra flotante `[📝, 🎯, ❓, 📎, 🖼️ | ⚙️]` de `constructor.blade.php` y `aula-constructor.css`.<br>• **Desduplicación de Barras de Control:** Erradicadas las barras duplicadas `[✥ ▲ ▼ 📄 ⚙ 🗑]` (dejando una sola barra de control por tarjeta).<br>• **Plantillas y Modales de Configuración Dedicados:** `texto` (editor HTML enriquecido y selector de badges DUA) y `video` (conversor automático de URLs YouTube/Vimeo/MP4 a iframes responsivos 16:9 y consigna).<br>• **Protección contra Inserciones Múltiples:** Candados de idempotencia `_dragDropIniciado_` y `_reordenamientoIniciado_` en `constructor-cliente.js` (un solo módulo por drag & drop).<br>• **Vista Previa Alumno Multi-Página:** Navegador `.moments-nav-wrapper` con pastillas de momento, barra de progreso interactiva y supresión absoluta de controles docentes en `portal-alumno.blade.php` y `aula-alumno.css`.<br>• **Sanitización y Seguridad Backend:** `sanitizarLienzoRecursivo` en `SesionAulaController.php` permitiendo marcado semántico DUA y bloqueando scripts/iframes inseguros.<br>• **Despliegue Producción:** Commit `6774548d`, Coolify Deployment `pwj1r2uhqckhxuo4wken5qhc` (Success) en `https://timbres.online/aula/constructor/1?paso=3` y `https://timbres.online/aula/sesion/NEM-90A`. | 🟢 **COMPLETADA Y DESPLEGADA EN PRODUCCIÓN** |
 ---
 
-## 5. Tarea Activa y Reparto por Agente — FASE F3: CONSTRUCTOR DE CLASES Y FORMULARIOS (ENTREGA B)
-🎯 **FASE F3 — ENTREGA B EN CURSO: TABLA DINÁMICA, LÍNEA DE TIEMPO, IMAGEN/GALERÍA, AUDIO Y ACTIVIDAD INTERACTIVA.**
+## 5. Tarea Activa y Reparto por Agente — FASE F3: REAPERTURA DE TEXTO ENRIQUECIDO (ENTREGA A)
+🎯 **FASE F3 — REAPERTURA DE ACEPTACIÓN: EDITOR VISUAL WYSIWYG PARA TEXTO ENRIQUECIDO (`texto`, `texto_dua`, `lectura`).**
 
-### 📊 Barra de Avance Global del Proyecto
-```
-[█████████████████░░░] 86% Completado
-- Bloque 1: Rescate de UI y Estabilidad de Academia: 100% (Verificado en Producción)
-- Bloque 2: Planeación Didáctica NEM (Wizard 4 Etapas): 100% (Verificado en Producción, 25/25 IDs)
-- Bloque 3: Constructor Divi / Tablas Excel / Recorte de Imágenes: 100% (Verificado en Producción)
-- Bloque 4: Catálogo Unificado & Entrega A (Texto, Video, Multi-página): 100% (Verificado en Producción)
-- Bloque 5: Entrega B (Tabla, Línea de Tiempo, Galería, Audio, Actividad): En Ejecución (Fase F3)
-- Bloque 6: Entregas C y D (Formularios y Banco): Pendiente
-```
+> **Motivo de la Reapertura:** La captura de usuario evidenció que el engrane `⚙️` en tarjetas de texto aún abría un `<textarea>` con código HTML crudo visible en «Contenido Formativo DUA». El docente requiere un **editor visual WYSIWYG nativo local** con barra de herramientas (encabezados, negrita, cursiva, listas, enlaces, tablas simples) y pegado limpio desde Word, que cargue el texto formateado al abrir y al reabrir, sin exponer etiquetas HTML.
 
-### 🗺️ Feature Map: Nuevo Catálogo Unificado de 4 Categorías (Contrato Inmutable)
-1. **Contenido (`cat-contenido`):**
-   - `texto`: Texto enriquecido (con notas, enlaces, callouts y adjuntos integrados).
-   - `tabla`: Tabla dinámica (con editor propio de filas, columnas y celdas).
-   - `timeline`: Línea de tiempo (con editor propio de hitos cronológicos).
-2. **Multimedia (`cat-multimedia`):**
-   - `imagen`: Imagen / Galería (subida local, URL, pie accesible DUA, mosaico).
-   - `video`: Video didáctico (YouTube, Vimeo, MP4 con reproductor responsive).
-   - `audio`: Audio / Podcast (reproductor accesible con velocidad).
-3. **Actividad (`cat-actividad`):**
-   - `actividad`: Práctica interactiva (consigna, producto esperado, criterio de evaluación, adjunto opcional, entrega texto/archivo).
-4. **Formulario (`cat-formulario`):**
-   - `formulario_encuesta`: Crear Encuesta (diagnóstico / opinión comunitaria sin nota).
-   - `formulario_quiz`: Crear Quiz (evaluativo con clave de respuestas y ponderación).
-   - `formulario_banco`: Elegir del Banco Institucional ST90.
-
-### 📋 Asignación de Roles y Pruebas de Aceptación Compartidas (Entrega B)
+### 📋 Asignación de Roles y Pruebas de Aceptación Compartidas
 
 | Agente | Estado | Partitura Asignada | Archivos / Componentes Asignados |
 | :--- | :---: | :--- | :--- |
-| **Antigravity** *(Chief of Staff & Release Lead)* | 🟢 **ACTIVO / AUDITANDO** | 1. Dirección, gobernanza y despliegue del repositorio.<br>2. Backend en `SesionAulaController.php`: sanitización y persistencia de esquemas estructurados para `tabla`, `timeline`, `imagen`, `audio` y `actividad`.<br>3. Auditoría cruzada de diffs entregados por Cursor y hallazgos de DeepSeek.<br>4. Verificación en producción Hetzner VPS (`https://timbres.online`) y cierre en `CONTROL_CAMBIOS.md`. | `app/Http/Controllers/Aula/SesionAulaController.php`, `routes/web.php`. Control en `CONTROL_CAMBIOS.md`. |
-| **Cursor** *(Software & DOM Lead)* | 🟢 **PARTITURA ASIGNADA** | 1. Implementación en `constructor-cliente.js` de los 5 formatos de Entrega B: `tabla`, `timeline`, `imagen`, `audio`, `actividad`.<br>2. Generación de plantillas dedicadas en `crearModuloHTML(tipo, datos)`.<br>3. Modales de configuración propios en `abrirModalPropiedades` y guardado en `guardarPropiedades`.<br>4. Entrega de diff y pruebas en `ENTREGA_CURSOR.md`. | `public/js/aula/constructor-cliente.js`, `public/js/aula/aula-alumno.js`. Buzón: `ENTREGA_CURSOR.md`. |
-| **DeepSeek** *(Design & UX Lead)* | 🟢 **PARTITURA ASIGNADA** | 1. Auditoría de accesibilidad DUA sobre Entrega A y revisión de selectores DOM.<br>2. Maquetación y tokens de diseño CSS para Entrega B en `aula-constructor.css` y `aula-alumno.css`: tabla dinámica, eje de línea de tiempo, recortes de galería (16:9, 4:3, círculo), audio accesible con transcripción y ficha de actividad.<br>3. Entrega de reporte y estilos en `ENTREGA_DEEPSEEK.md`. | `resources/views/aula/constructor.blade.php`, `resources/views/aula/portal-alumno.blade.php`, `public/css/aula/aula-constructor.css`, `public/css/aula/aula-alumno.css`. Buzón: `ENTREGA_DEEPSEEK.md`. |
+| **Antigravity** *(Chief of Staff & Release Lead)* | 🟢 **ACTIVO / AUDITANDO** | 1. Dirección, gobernanza y despliegue del repositorio.<br>2. Verificación en navegador del recorrido exacto de la captura: engrane de «Texto enriquecido» ➔ editar frase ➔ pegar desde Word (encabezado, lista, tabla) ➔ aplicar cambios ➔ guardar sesión ➔ reabrir engrane ➔ comprobar en Vista Alumno.<br>3. Repetición de la prueba con bloque de clase anterior (`texto_dua` / `lectura`).<br>4. Registro de commit y evidencias de cierre. | `app/Http/Controllers/Aula/SesionAulaController.php`, `AUDITORIA_CATALOGO_CONSTRUCTOR.md`, `CONTROL_CAMBIOS.md`. |
+| **Cursor** *(Software & DOM Lead)* | 🟢 **PARTITURA ASIGNADA** | 1. Sustituir el `<textarea id="prop-modulo-texto-html">` visible por un editor visual nativo con barra de herramientas en `resources/views/aula/constructor.blade.php`.<br>2. En `constructor-cliente.js`: cargar el contenido formateado al abrir (no código HTML); soportar bloques nuevos (vacíos) y existentes (`texto`, `texto_dua`, `lectura`).<br>3. Manejador de pegado (`paste`) limpio desde Microsoft Word (encabezados, negrita, cursiva, listas, tablas simples).<br>4. Conectar «Aplicar cambios» a la actualización en vivo de la tarjeta y guardado del lienzo. | `resources/views/aula/constructor.blade.php`, `public/js/aula/constructor-cliente.js`. Buzón: `ENTREGA_CURSOR.md`. |
+| **DeepSeek** *(Design & UX Lead)* | 🟢 **PARTITURA ASIGNADA** | 1. Revisión de diseño y usabilidad del editor visual en el modal `#modal-propiedades`.<br>2. Comprobar que los tres tipos de texto (`texto`, `texto_dua`, `lectura`) abran el editor visual y conserven su contenido al reabrir.<br>3. Estilización accesible de la barra de herramientas del editor y de tablas en `aula-constructor.css` y `aula-alumno.css`. | `resources/views/aula/constructor.blade.php`, `public/css/aula/aula-constructor.css`, `public/css/aula/aula-alumno.css`. Buzón: `ENTREGA_DEEPSEEK.md`. |
 

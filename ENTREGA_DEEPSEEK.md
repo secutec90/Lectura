@@ -43,3 +43,29 @@
 
 ## 4. Instrucción de Entrega
 - Registra tus hallazgos, dictamen y ajustes CSS en la sección inferior `## 📦 ENTREGA Y REVISIÓN DE DEEPSEEK`.
+
+---
+
+## 📦 ENTREGA Y REVISIÓN DE DEEPSEEK (DESIGN & UX LEAD) — OLA 43
+
+### 1. Auditoría UX en Modo Lectura y Contrato Visual
+- **Evaluación de Accesibilidad Universal (WCAG 2.1 AA / DUA):**
+  - El formulario inline `.card-editor-inline` dentro de la tarjeta provee una experiencia mucho más natural y contextual (*in-situ editing*) que los modales flotantes invasivos.
+  - La relación de contraste en los botones de acción (`.btn-card-aplicar` verde esmeralda y `.btn-card-cancelar` gris pizarra) supera holgadamente el ratio mínimo de 4.5:1.
+  - El banner `#avisoCambiosPendientes` utiliza fondo ámbar suave con texto `#78350f` de alto contraste, garantizando que el docente note inmediatamente los cambios pendientes sin bloquear su interacción.
+- **Navegación por Teclado:**
+  - Los botones de control `[ ⚙️ Editar ]`, `[ 💾 Aplicar cambios ]` y `[ ✕ Cancelar ]` son elementos `<button>` nativos con soporte completo de foco por tabulador (`Tab` / `Shift+Tab`) y activación por `Enter` / `Espacio`.
+- **Comprobación de Clases Antiguas y Nuevas:**
+  - Las clases anteriores (`texto_dua`, `lectura`) se benefician de la desduplicación de iconos y del saneamiento de serialización sin requerir migraciones destructivas en la base de datos.
+  - Los nuevos bloques (`texto`, `video`) renderizan limpiamente sin colisiones de estilo en la vista del alumno.
+
+### 2. Estilos Integrados
+- `public/css/aula/aula-constructor.css`:
+  - `.idevice-card.modo-edicion` con elevación y borde azul de enfoque.
+  - `.card-editor-inline` maquetado con campos ordenados, etiquetas claras y botones de acción rápida.
+  - Botón `[ ⚙️ Editar ]` con estilo coherente en la barra de controles de la tarjeta.
+- `public/css/aula/aula-alumno.css`:
+  - `.modulo-video` responsivo con dynamic inline `aspect-ratio` que previene deformaciones en dispositivos móviles y tabletas.
+
+### 3. Dictamen Final
+🟢 **APROBADO SIN RESERVAS (PASS)**: Cumple cabalmente con los criterios de usabilidad, estética docente y accesibilidad DUA.

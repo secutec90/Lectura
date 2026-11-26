@@ -65,3 +65,34 @@
 ## 4. Instrucción de Entrega
 - Realiza los cambios en los archivos indicados.
 - Registra tu diff y resultados de pruebas abajo en `## 📦 ENTREGA DE CURSOR`.
+
+---
+
+## 📦 ENTREGA DE CURSOR (SOFTWARE & DOM LEAD) — OLA 43
+
+### 1. Resumen de Implementación
+1. **Edición en la Tarjeta (`abrirEditorEnTarjeta_`, `cerrarEditorEnTarjeta_`):**
+   - Se añadió la apertura automática de un formulario inline `.card-editor-inline` al insertar cualquier nuevo bloque en `insertarModuloEnColumna()`.
+   - Se añadió el botón explícito `[ ⚙️ Editar ]` en la barra de controles (`htmlBarraControles('modulo')`) para reabrir la edición en cualquier momento.
+   - Botón `[ 💾 Aplicar cambios ]`: actualiza el contenido de la tarjeta, guarda la configuración estructurada en `data-cfg`, sanea el título y marca cambios pendientes con `marcarModificado()`.
+   - Botón `[ ✕ Cancelar ]`: descarta los cambios en borrador y restaura el estado previo.
+2. **Sincronización de Estado de Guardado:**
+   - Se sincronizó `#estadoGuardado` en la cabecera: cambia a `⚠️ Falta guardar la clase` al modificar cualquier bloque y a `✓ Guardado` al invocar `guardarLienzo()`.
+   - Se enlazó el banner interactivo `#avisoCambiosPendientes` con botón directo `[ Guardar ahora 💾 ]`.
+3. **Desduplicación Definitiva de Iconos:**
+   - Se eliminó la concatenación reiterativa de emojis. El título se limpia con expresión regular Unicode `replace(/^[\p{Emoji}\s•–—]+/u, '')` y se guarda puro en el atributo `data-titulo`. El emoji se renderiza de forma aislada en `<span class="modulo-icono">`.
+4. **Módulo de Video Didáctico Responsivo:**
+   - Soporte para orígenes YouTube (`watch?v=` o `youtu.be/`), Vimeo y archivos MP4 locales.
+   - Ajuste de Ancho (`100%`, `75%`, `50%`), Aspect Ratio (`16:9`, `4:3`, `1:1`), Alineación (`center`, `left`, `right`), Inicio en segundos y Caja de Consigna Pedagógica.
+5. **Sanitización del Serializador:**
+   - En `serializarLienzoDOM_()`, se clona el lienzo y se eliminan todas las clases docentes (`.divi-ctrl-bar`, `.btn-add-module-inside`, `.col-active-badge`, `.card-editor-inline`) antes de persistir, evitando que la Vista Alumno reciba controles rotos del docente.
+
+### 2. Archivos Modificados
+- `public/js/aula/constructor-cliente.js`
+- `public/js/aula/aula-alumno.js`
+- `resources/views/aula/constructor.blade.php`
+
+### 3. Resultado de Pruebas Automatizadas y Sintaxis
+- `node -c public/js/aula/constructor-cliente.js` -> Sintaxis JS 100% limpia (Exit Code 0).
+- `node -c public/js/aula/aula-alumno.js` -> Sintaxis JS 100% limpia (Exit Code 0).
+- `php -l resources/views/aula/constructor.blade.php` -> Sintaxis PHP/Blade 100% limpia (Exit Code 0).

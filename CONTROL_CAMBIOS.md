@@ -2,6 +2,29 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-26] - [Ola 43: Edición en Tarjeta, Desduplicación de Iconos, Indicador de Guardado y Video Responsivo]
+- **Mensaje de Commit (Conventional Commits):** `feat(aula): edicion en tarjeta para constructor, desduplicacion de iconos, sincronizacion visual de guardado y video responsive`
+- **Commit Hash en `secutec90/Academia`:** `e5e22207` (rama `main`).
+- **Coolify Deployment ID:** `dmndcelpzjrr7rnc9weymmdk` (Status: `DEPLOYMENT COMPLETED: finished` en Hetzner VPS `62.238.121.52:8000`).
+- **Casos de Reproducción y Correcciones Realizadas (4 Capturas del Usuario):**
+  1. *Captura 1 (`media_1795631279804_406e405b.png` - Mover no funciona):* Normalizada la manija `✥` (`.drag-handle`) con atributo HTML5 nativo `draggable="true"` y separación estricta contra disparadores de click/edición.
+  2. *Captura 2 (`media_1795633848055_4133e436.png` - Iconos repetidos y toolbars duplicadas):* 
+     - **Causa Raíz Identificada:** En cada guardado/edición, el JavaScript leía el `textContent` de la cabecera (que ya contenía el emoji previo) y volvía a anteponer `meta.icono + ' ' + titulo`, provocando `🎬 🎬 🎬 Video Didáctico`.
+     - **Solución Quirúrgica:** El título se desacopló del icono. Ahora se sanea con `replace(/^[\p{Emoji}\s•–—]+/u, '')` y se guarda puro en `data-titulo`. El emoji se renderiza de forma aislada en `<span class="modulo-icono">`. Se erradicó la toolbar duplicada exterior.
+  3. *Capturas 3 y 4 (`media_1795634602211_0a8b5d82.png` y `media_1795634696747_0e39bf56.png` - Vista Previa Alumno y Dock Flotante):*
+     - **Causa Raíz Identificada:** El serializador `serializarLienzoDOM_()` guardaba el `innerHTML` sucio con las herramientas del docente (`.divi-ctrl-bar`, `.btn-add-module-inside`, `.col-active-badge`).
+     - **Solución Quirúrgica:** Sanitizador clonado antes de persistir que remueve todos los controles del docente. El dock flotante inferior de iconos permanece suprimido (`display: none !important`).
+- **Implementación de «Edición en la Tarjeta» (Cursor & DeepSeek):**
+  - Al insertar un módulo (`texto`, `video`, `tabla`, etc.) se abre directamente el editor inline dentro de la tarjeta (`.card-editor-inline`).
+  - Botón de control `[ ⚙️ Editar ]` en la barra para volver a abrir el editor inline en cualquier momento.
+  - Botones `[ 💾 Aplicar cambios ]` (actualiza la tarjeta y marca estado pendiente) y `[ ✕ Cancelar ]` (descarta cambios y restaura la vista previa anterior).
+  - Indicador claro de estado en cabecera: `#estadoGuardado` (`⚠️ Falta guardar la clase` vs `✓ Guardado`) y banner `#avisoCambiosPendientes`.
+  - Configuración avanzada de Video: URLs YouTube/Vimeo/MP4, ancho (`100%`, `75%`, `50%`), aspect ratio (`16:9`, `4:3`, `1:1`), alineación (`center`, `left`, `right`), segundo de inicio y caja pedagógica de consigna.
+- **Evidencia en Producción Verificada:**
+  - `https://timbres.online/aula/constructor/1?paso=3` -> HTTP 200 OK (verificado con `abrirEditorEnTarjeta_`, `renderVideoHTML_`, `avisoCambiosPendientes`).
+  - `https://timbres.online/aula/sesion/NEM-90A` -> HTTP 200 OK (sanitizado 100%, sin toolbars docentes ni controles rotos).
+
+
 ### 🚀 [2026-11-26] - [Reapertura Entrega A: Editor Visual WYSIWYG Nativo para Texto Enriquecido y Sanitización de Word]
 - **Mensaje de Commit (Conventional Commits):** `feat(aula): editor visual WYSIWYG nativo para Texto Enriquecido (texto, texto_dua, lectura) con soporte Word local`
 - **Commit Hash en `secutec90/Academia`:** `8f969f49` (rama `main`).

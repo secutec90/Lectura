@@ -2,6 +2,29 @@
 
 Pega aquí un bloque por cada cambio cerrado. La fecha es la de America/Monterrey (`AAAA-MM-DD`). La bitácora narrativa sigue en `avances.md`.
 
+### 🚀 [2026-11-27] - [Ola 45: Desacoplamiento Estricto Borrador vs. Publicado, Purga de Texto Flotante Huérfano y Aceptación de Dos Páginas]
+- **Mensaje de Commit (Conventional Commits):** `feat(aula): desacoplar borrador docente de version publicada, endpoint publicar, herramientas texto enriquecido y purga de bloques huerfanos` + `fix(aula): autoreparacion de columna lienzo_publicado_json en BD y aislamiento estricto de borrador`
+- **Commit Hashes en `secutec90/Academia`:** `59972aa2` y `79bee003` (rama `main`).
+- **Coolify Deployment ID:** `jhvbjsohok7zjhnodsqdru4k` (Status: `Success` en Hetzner VPS `62.238.121.52:8000`).
+- **Causa Raíz del Texto Flotante (Explicación de las 5 Capturas del Usuario):**
+  - **Diagnóstico:** En las pruebas anteriores de pegado desde Word en Entrega A, el contenido de «La Célula y su Estructura» se había guardado con una etiqueta `<div class="seccion-renderizada">...</div>` concatenada antes del bloque de secciones Divi (`paginas[0].html`).
+  - **Falla Observada:** Al renderizar la página en el constructor (`renderLienzoPaginaActiva_`), el motor inyectaba el HTML en el lienzo. Al estar fuera de una sección Divi, el navegador mostraba el texto crudo flotando en el fondo del lienzo (entre el banner de página y la primera sección), sin tarjeta, sin iconos y sin controles.
+  - **Solución y Guardrail Inmutable:**
+    1. Se implementó un filtro de auto-purga en `renderLienzoPaginaActiva_()` y `serializarLienzoDOM_()` que elimina inmediatamente cualquier etiqueta `.seccion-renderizada` y purga cualquier elemento raíz que no sea un `section.divi-section`.
+    2. En Ola 43/45 todo contenido queda confinado estrictamente dentro de `.idevice-card > .contenido-modulo`, haciendo físicamente imposible que el texto se escape fuera de su tarjeta.
+- **Alcance Funcional Entregado (Entrega 1 - Fase F3):**
+  1. *Editor Visual de Texto en Tarjeta:* Incorporados selector de tamaño de letra (10px a 24px), botones de historial deshacer/rehacer (Ctrl+Z / Ctrl+Y), y eliminación de columnas individuales (`🗑️Col`) en tablas.
+  2. *Desacoplamiento Borrador vs. Publicación:* Creada la columna `lienzo_publicado_json` y endpoint explícito `POST /api/aula/sesion/{id}/publicar`. El docente puede realizar y guardar borradores sin que el alumno vea cambios hasta que se pulse «Publicar».
+  3. *Manejo de Errores y Seguridad (Gate 404):* Tanto el portal del alumno como la API devuelven HTTP 404 estricto ante tokens o identificadores de sesión inexistentes (eliminado el fallback silencioso a la primera clase).
+- **Recorrido de Aceptación Verificado en Navegador (Clase de 2 Páginas):**
+  - *Página 1:* Pegado desde Word, texto enriquecido con encabezados, lista y tabla modificada con 3 columnas (`Orgánulo`, `Función Principal`, `Importancia DUA`).
+  - *Página 2:* Video MP4 vertical (`9:16`), ancho al 75%, alineación centrada y segundo de inicio configurado.
+  - *Persistencia:* Guardado desde la página 2, reapertura en constructor conservando las 2 páginas intactas.
+  - *Aislamiento Probado:* Se modificó el borrador con notas docentes; la API del alumno (`/aula/sesion/NEM-90A`) conservó 100% intacta la versión publicada anterior sin filtrar el borrador.
+  - *Publicación:* Invocado el endpoint `/publicar` (HTTP 200 OK); el alumno reflejó de inmediato la versión publicada de dos páginas.
+
+
+
 ### 🚀 [2026-11-26] - [Ola 44: Constructor Full-Width, Árbol de Páginas Colapsable y Slider de Sección Reactivo]
 - **Mensaje de Commit (Conventional Commits):** `feat(aula): constructor ancho completo, panel arbol colapsable, ocultar catalogo y slider ancho de seccion responsivo`
 - **Commit Hash en `secutec90/Academia`:** `37f71082` (rama `main`).
